@@ -1,19 +1,17 @@
-import Image from "next/image"
-import Link from "next/link"
 import { useTheme } from "next-themes";
-import Logo from "/public/images/beta-logo.png"
-import LogoWhite from "/public/images/beta-logo-white.png"
+import Logo from '@/components/logo'
+import { useRouter } from "next/router";
 
 export default function Header() {
+    const router = useRouter();    
     const { theme, setTheme } = useTheme();
-    return (
-        <>
+
+    if (router.asPath === '/') {
+        return (
+            <>
             <header className="bg-white dark:bg-gray-800 shadow-normal">
-                {/**Start - This header will show only for first quick screen view**/}
                 <div className="py-3 lg:px-14 md:px-10 px-4 w-full max-w-[1920px] mx-auto flex items-center justify-between">
-                    <Link href="/">
-                        <Image src={theme === "dark" ? LogoWhite : Logo} alt={'Somhako'} width={240} height={40} />
-                    </Link>
+                    <Logo url="/" width={205} />
                     <div className="flex items-center">
                         <button
                             aria-label="Toggle Dark Mode"
@@ -38,8 +36,13 @@ export default function Header() {
                         </button>
                     </div>
                 </div>
-                {/**End - This header will show only for first quick screen view**/}
             </header>
+            </>
+        )
+    }
+    return (
+        <>
+            
         </>
     )
 }

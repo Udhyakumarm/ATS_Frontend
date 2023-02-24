@@ -24,8 +24,13 @@ h1,h2,h3,h4,h5,h6 {
   line-height: normal !important;
 }
 
-i {
+i, img {
   vertical-align: middle;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  --tw-ring-offset-width: 0
 }
 
 a {

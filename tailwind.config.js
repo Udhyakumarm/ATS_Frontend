@@ -13,13 +13,17 @@ module.exports = {
     extend: {
       colors: {
         primary: "#5500FF",
-        lightBlue: "#F5F8FA"
+        secondary: "#6433c5",
+        lightBlue: "#F5F8FA",
+        lightGray: "#BEBEBE",
+        darkGray: "#727272"
       },
       boxShadow: {
         normal: "0 0 10px rgba(0, 0, 0, 0.1)",
       },
       borderRadius: {
-        normal: '16px'
+        normal: '16px',
+        large: '26px'
       }
     },
   },
