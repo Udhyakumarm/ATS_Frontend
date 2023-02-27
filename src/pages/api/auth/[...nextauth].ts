@@ -51,7 +51,7 @@ const axiosInstance = axios.create({
     },
 });
 
-const settings: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     secret: process.env.SESSION_SECRET,
     session: {
         maxAge: 24 * 60 * 60, // 24 hours
@@ -228,5 +228,5 @@ const settings: NextAuthOptions = {
 };
 
 const NextAuthWrapper = (req: NextApiRequest, res: NextApiResponse) =>
-    NextAuth(req, res, settings);
+    NextAuth(req, res, authOptions);
 export default NextAuthWrapper;
