@@ -17,10 +17,6 @@ const signUpInfoRules: Rules = {
 	organizationName: "required"
 };
 
-async function setCSRF(setCsrf: (arg0: string | undefined) => void) {
-	const csrfToken = await getCsrfToken();
-	setCsrf(csrfToken);
-}
 export default function SignUp() {
 	const router = useRouter();
 
