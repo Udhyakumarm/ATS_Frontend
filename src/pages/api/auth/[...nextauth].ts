@@ -94,8 +94,6 @@ export const authOptions: NextAuthOptions = {
 						return null;
 					});
 
-				console.log({ userObj });
-
 				return userObj;
 			}
 		})

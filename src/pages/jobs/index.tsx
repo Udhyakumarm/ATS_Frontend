@@ -8,31 +8,39 @@ import analyticsIcon from "/public/images/icons/analytics.png";
 import vendorsIcon from "/public/images/icons/vendors.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
 import collectionIcon from "/public/images/icons/collection.png";
+import { useRouter } from "next/router";
+import { axiosInstance } from "@/utils";
+import { getToken } from "next-auth/jwt";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+	const router = useRouter();
+
+	const { data: session } = useSession();
+
 	const quicklinks = [
+		// {
+		// 	name: "Post New Job",
+		// 	icon: jobsIcon,
+		// 	link: "/jobs/new"
+		// },
 		{
-			name: "Dashboard",
-			icon: dashboardIcon,
-			link: "/dashboard"
-		},
-		{
-			name: "Integration",
+			name: "Active Jobs",
 			icon: integrationIcon,
 			link: "/dashboard"
 		},
 		{
-			name: "Jobs",
+			name: "Drafted Jobs",
 			icon: jobsIcon,
-			link: "/jobs"
+			link: "/dashboard"
 		},
 		{
-			name: "Analytics",
+			name: "Archived Jobs",
 			icon: analyticsIcon,
 			link: "/dashboard"
 		},
 		{
-			name: "Vendors",
+			name: "Closed Jobs",
 			icon: vendorsIcon,
 			link: "/dashboard"
 		},
@@ -40,13 +48,30 @@ export default function Home() {
 			name: "Applicants",
 			icon: applicantsIcon,
 			link: "/dashboard"
-		},
-		{
-			name: "Offer Management",
-			icon: collectionIcon,
-			link: "/dashboard"
 		}
 	];
+
+	const createNewJob = async () => {
+		if (!session) return;
+		const refid = await axiosInstance.api
+			.post(
+				"/job/create/job/",
+				{},
+				{
+					headers: {
+						authorization: "Bearer " + session?.accessToken
+					}
+				}
+			)
+			.then((response) => response.data.refid)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (!refid) return;
+		await router.push("/jobs/" + refid);
+	};
 	return (
 		<>
 			<Head>
@@ -58,6 +83,17 @@ export default function Home() {
 					<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 						<div className="mx-auto w-full max-w-[1100px]">
 							<div className="-mx-4 flex flex-wrap items-center">
+								<div className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
+									<button
+										onClick={() => createNewJob()}
+										className=" flex w-full items-center rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+									>
+										<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+											<Image src={jobsIcon} alt="Post New Job" width={30} height={30} />
+										</div>
+										<span className="text-lg font-bold">Post New Job</span>
+									</button>
+								</div>
 								{quicklinks.map((links, i) => (
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
@@ -78,22 +114,4 @@ export default function Home() {
 			</main>
 		</>
 	);
-}
-
-import { authOptions } from "./api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next";
-
-export async function getServerSideProps(context: any) {
-	const session: any = await getServerSession(context.req, context.res, authOptions);
-	if (!session)
-		return {
-			redirect: {
-				destination: "/auth/signin",
-				permanent: false
-			}
-		};
-
-	return {
-		props: {}
-	};
 }
