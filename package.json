@@ -23,6 +23,8 @@
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-quill": "^2.0.0",
+    "react-tabs": "^6.0.0",
     "typescript": "4.9.5",
     "validatorjs": "^3.22.1"
   },
