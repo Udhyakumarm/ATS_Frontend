@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // Require Editor CSS files.
 import dynamic from "next/dynamic";
+import Multiselect from "multiselect-react-dropdown";
 
 const ReactQuill = dynamic(() => import("react-quill"), {
 	ssr: false
@@ -12,11 +13,13 @@ export default function JobFormField({
 	label,
 	required,
 	icon,
+	options,
 	inputType,
 	fieldType,
 	handleChange,
 	error,
 	value,
+	singleSelect,
 	id
 }: any) {
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
@@ -57,7 +60,6 @@ export default function JobFormField({
 							value={value}
 							onChange={(value: string) => handleChange({ target: { id, value } })}
 						/>
-						;
 					</div>
 					{errorMessage}
 				</div>
@@ -65,6 +67,32 @@ export default function JobFormField({
 		);
 	}
 	if (fieldType === "select") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700">
+							{label}
+							{required ? <sup className="text-red-500">*</sup> : ""}
+						</label>
+
+						<Multiselect
+							options={options} // Options to display in the dropdown
+							selectedValues={value} // Preselected value to persist in dropdown
+							singleSelect={singleSelect}
+							onSelect={(selected) =>
+								singleSelect
+									? handleChange({ target: { id, value: selected } })
+									: handleChange({ target: { id, value: selected } })
+							} // Function will trigger on select event
+							onRemove={(selected) => handleChange({ target: { id, value: selected } })} // Function will trigger on remove event
+							displayValue="name" // Property name to display in the dropdown options
+						/>
+					</div>
+					{errorMessage}
+				</div>
+			</>
+		);
 	}
 	return (
 		<>
