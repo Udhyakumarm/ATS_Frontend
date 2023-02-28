@@ -13,31 +13,38 @@ export default function Home() {
 	const quicklinks = [
 		{
 			name: "Dashboard",
-			icon: dashboardIcon
+			icon: dashboardIcon,
+			link: "/dashboard"
 		},
 		{
 			name: "Integration",
-			icon: integrationIcon
+			icon: integrationIcon,
+			link: "/dashboard"
 		},
 		{
 			name: "Jobs",
-			icon: jobsIcon
+			icon: jobsIcon,
+			link: "/jobs"
 		},
 		{
 			name: "Analytics",
-			icon: analyticsIcon
+			icon: analyticsIcon,
+			link: "/dashboard"
 		},
 		{
 			name: "Vendors",
-			icon: vendorsIcon
+			icon: vendorsIcon,
+			link: "/dashboard"
 		},
 		{
 			name: "Applicants",
-			icon: applicantsIcon
+			icon: applicantsIcon,
+			link: "/dashboard"
 		},
 		{
 			name: "Offer Management",
-			icon: collectionIcon
+			icon: collectionIcon,
+			link: "/dashboard"
 		}
 	];
 	return (
@@ -54,7 +61,7 @@ export default function Home() {
 								{quicklinks.map((links, i) => (
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
-											href="#"
+											href={links.link}
 											className=" flex w-full items-center rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 										>
 											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
