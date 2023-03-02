@@ -13,10 +13,13 @@ import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useReducer, useState } from "react";
 import JobFormField from "@/components/JobFormField";
+import Validator, { Rules } from "validatorjs";
+import { axiosInstance } from "@/utils";
+import { useSession } from "next-auth/react";
 
 const JobActionButton = ({ label, handleClick }: any) => {
 	return (
-		<button onClick={handleClick} className="rounded-md border px-3 py-2">
+		<button onClick={handleClick} className="rounded-md border px-3 py-2" type="button">
 			{label}
 		</button>
 	);
@@ -28,15 +31,40 @@ const StickyLabel = ({ label }: any) => (
 	</div>
 );
 
+const jobFormRules: Rules = {
+	job_title: "required",
+	job_function: "required",
+	department: "required",
+	location: "required",
+	currency: "required"
+};
+
 export default function Home() {
 	const router = useRouter();
 
+	const { data: session } = useSession();
+
 	const [index, setIndex] = useState(0);
+	const [formErrors, setFormErrors] = useState<any>({});
+
+	const [skillOptions, setSkillOptions] = useState<any>([]);
 
 	const updateFormInfo = (prevForm: any, event: { target: { id: string; value: any } }) => {
 		const { id: key, value } = event.target;
 
-		console.log(prevForm);
+		if (key in Object.keys(jobFormRules)) {
+			const validation = new Validator(
+				{ [key]: value },
+				{ [key]: jobFormRules[key] },
+				{
+					required: "This field is required"
+				}
+			);
+
+			if (!validation.passes()) setFormErrors((prev: any) => ({ ...prev, [key]: validation.errors.first(key) }));
+			else setFormErrors((prev: any) => ({ ...prev, [key]: null }));
+		}
+
 		return { ...prevForm, [key]: value };
 	};
 
@@ -54,6 +82,7 @@ export default function Home() {
 		experience: "",
 		education: "",
 		location: "",
+		skills: "",
 		currency: "",
 		salary: "",
 		relocation: "",
@@ -63,17 +92,67 @@ export default function Home() {
 		publish_date: ""
 	});
 
-	const [formErrors, setFormErrors] = useState<any>({});
+	const cleanMuliField = (field: any) =>
+		Object.values(field)
+			.map((item: any) => item.name)
+			.join(", ");
+	const cleanData = (data: any) => ({
+		...data,
+		employment_type: cleanMuliField(data.employment_type),
+		skills: cleanMuliField(data.skills),
+		relocation: cleanMuliField(data.relocation),
+		worktype: cleanMuliField(data.worktype),
+		visa: cleanMuliField(data.visa)
+	});
+	async function searchSkill(value: string) {
+		await axiosInstance.marketplace_api
+			.get(`/job/load/skills/?search=${value}`)
+			.then(async (res) => {
+				let obj = res.data;
+				let arr = [];
+				for (const [key, value] of Object.entries(obj)) {
+					arr.push({ name: value });
+				}
+				setSkillOptions(arr);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function createJob() {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) return;
+
+		const newJob = await axiosInstance.api
+			.post("/job/create-job/", cleanedData, {
+				headers: {
+					authorization: "Bearer " + session?.accessToken
+				}
+			})
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/jobs/" + newJob.refid);
+	}
 
 	const jobActions = [
 		{
-			label: "Preview"
+			label: "Preview",
+			action: createJob
 		},
 		{
-			label: "Save as Draft"
+			label: "Save as Draft",
+			action: createJob
 		},
 		{
-			label: "Publish"
+			label: "Publish",
+			action: createJob
 		}
 	];
 	return (
@@ -96,7 +175,7 @@ export default function Home() {
 									</div>
 									<div className="flex flex-row items-center justify-between">
 										{jobActions.map((action, i) => (
-											<JobActionButton label={action.label} key={i} />
+											<JobActionButton label={action.label} handleClick={action.action} key={i} />
 										))}
 									</div>
 								</div>
@@ -119,6 +198,7 @@ export default function Home() {
 											inputType="text"
 											label="Job Title"
 											id="job_title"
+											required
 											value={jobForm.job_title}
 											error={formErrors?.job_title}
 											handleChange={dispatch}
@@ -130,6 +210,7 @@ export default function Home() {
 													inputType="text"
 													label="Job Function"
 													id="job_function"
+													required
 													value={jobForm.job_function}
 													error={formErrors?.job_function}
 													handleChange={dispatch}
@@ -141,6 +222,7 @@ export default function Home() {
 													inputType="text"
 													label="Department"
 													id="department"
+													required
 													value={jobForm.department}
 													error={formErrors?.department}
 													handleChange={dispatch}
@@ -207,9 +289,9 @@ export default function Home() {
 										<JobFormField
 											fieldType="textarea"
 											inputType="textarea"
-											id="responsibilities"
-											value={jobForm.responsibilities}
-											error={formErrors?.responsibilities}
+											id="responsibility"
+											value={jobForm.responsibility}
+											error={formErrors?.responsibility}
 											handleChange={dispatch}
 										/>
 									</div>
@@ -233,11 +315,13 @@ export default function Home() {
 							<div className="relative">
 								<StickyLabel label="Skills" />
 
-								<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
+								<div className="mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
 									<div className="m-10 p-10 pt-24">
 										<JobFormField
-											fieldType="textarea"
-											id="looking_for"
+											options={skillOptions}
+											fieldType="select"
+											id="skills"
+											onSearch={searchSkill}
 											value={jobForm.skills}
 											error={formErrors?.skills}
 											handleChange={dispatch}
@@ -245,7 +329,7 @@ export default function Home() {
 									</div>
 								</div>
 							</div>
-							<div className="relative">
+							<div className="relative top-12">
 								<StickyLabel label="Employment Details" />
 
 								<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
@@ -261,11 +345,11 @@ export default function Home() {
 													error={formErrors?.employment_type}
 													handleChange={dispatch}
 													options={[
-														{ id: "full_time", name: "Full Time" },
-														{ id: "part_time", name: "Part Time" },
-														{ id: "contract", name: "Contract" },
-														{ id: "temporary", name: "Temporary" },
-														{ id: "internship", name: "Internship" }
+														{ name: "Full Time" },
+														{ name: "Part Time" },
+														{ name: "Contract" },
+														{ name: "Temporary" },
+														{ name: "Internship" }
 													]}
 												/>
 											</div>
@@ -311,6 +395,7 @@ export default function Home() {
 												inputType="text"
 												label="Job Location"
 												id="location"
+												required
 												value={jobForm.location}
 												error={formErrors?.location}
 												handleChange={dispatch}
@@ -342,6 +427,7 @@ export default function Home() {
 													inputType="text"
 													label="Currency"
 													id="currency"
+													required
 													value={jobForm.currency}
 													error={formErrors?.currency}
 													handleChange={dispatch}
@@ -397,6 +483,7 @@ export default function Home() {
 												value={jobForm.worktype}
 												error={formErrors?.worktype}
 												handleChange={dispatch}
+												singleSelect
 												options={[
 													{ id: "remote", name: "Remote" },
 													{ id: "office", name: "Office" },

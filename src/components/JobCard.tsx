@@ -1,0 +1,38 @@
+export default function JobCard({ job, handleView }: any) {
+	return (
+		<div className="w-auto max-w-md rounded-xl bg-white p-5 drop-shadow-md">
+			<div className="mb-5 flex flex-row justify-between">
+				<i className="fa-solid fa-star" />
+				<h1>{job.job_title}</h1>
+				<i className="fa-solid fa-copy" />
+				<i className="fa-solid fa-ellipsis-vertical" />
+			</div>
+			<div className="mb-5 flex flex-row items-center justify-start gap-2 text-gray-500">
+				<h1>{job.worktype}</h1>
+				{" • "}
+				<h1>{job.employment_type}</h1>
+			</div>
+			<div className="mb-5 flex flex-row items-center justify-start gap-10 ">
+				<div className="flex flex-col">
+					<h1 className="text-gray-500">Total Candidates</h1>
+					<h1>0</h1>
+				</div>
+				<h1 className="text-5xl font-thin text-gray-600">|</h1>
+				<div className="flex flex-col">
+					<h1 className="text-gray-500">Active Candidates</h1>
+					<h1>0</h1>
+				</div>
+				<h1 className="text-5xl font-thin text-gray-600">|</h1>
+				<div className="flex flex-col">
+					<h1 className="text-gray-500">Job ID</h1>
+					<h1>0</h1>
+				</div>
+			</div>
+			<div className="flex flex-row items-center justify-end">
+				<button className="rounded-lg border p-2 text-gray-700" type="button" onClick={handleView}>
+					View Job
+				</button>
+			</div>
+		</div>
+	);
+}

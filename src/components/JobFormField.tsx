@@ -13,6 +13,7 @@ export default function JobFormField({
 	label,
 	required,
 	icon,
+	onSearch,
 	options,
 	inputType,
 	fieldType,
@@ -80,6 +81,9 @@ export default function JobFormField({
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
+							className={onSearch && "z-20"}
+							onSearch={onSearch}
+							closeOnSelect
 							onSelect={(selected) =>
 								singleSelect
 									? handleChange({ target: { id, value: selected } })
