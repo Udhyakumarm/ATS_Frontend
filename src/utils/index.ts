@@ -53,4 +53,11 @@ export namespace axiosInstance {
 			"Content-Type": "multipart/form-data"
 		}
 	});
+	export const marketplace_api = axios.create({
+		baseURL: "https://marketplace.somhako.com/api",
+		timeout: process.env.NODE_ENV === "production" ? 5000 : 10000,
+		headers: {
+			"Content-Type": "application/json"
+		}
+	});
 }
