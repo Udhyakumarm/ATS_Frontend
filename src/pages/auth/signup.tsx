@@ -78,7 +78,7 @@ export default function SignUp() {
 
 		event.preventDefault();
 		await axiosInstance.api
-			.post("/organization/superadminreg/", {
+			.post("/organization/registration/superadmin/", {
 				email: signUpInfo.email,
 				name: signUpInfo.fullName,
 				company_name: signUpInfo.organizationName,

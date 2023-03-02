@@ -27,50 +27,34 @@ export default function Home() {
 		{
 			name: "Active Jobs",
 			icon: integrationIcon,
-			link: "/dashboard"
+			link: "/jobs/active"
 		},
 		{
 			name: "Drafted Jobs",
 			icon: jobsIcon,
-			link: "/dashboard"
+			link: "/jobs/drafted"
 		},
 		{
 			name: "Archived Jobs",
 			icon: analyticsIcon,
-			link: "/dashboard"
+			link: "/jobs/archived"
 		},
 		{
 			name: "Closed Jobs",
 			icon: vendorsIcon,
-			link: "/dashboard"
+			link: "/jobs/closed"
 		},
 		{
 			name: "Applicants",
 			icon: applicantsIcon,
-			link: "/dashboard"
+			link: "/jobs/applicant"
 		}
 	];
 
 	const createNewJob = async () => {
 		if (!session) return;
-		const refid = await axiosInstance.api
-			.post(
-				"/job/create/job/",
-				{},
-				{
-					headers: {
-						authorization: "Bearer " + session?.accessToken
-					}
-				}
-			)
-			.then((response) => response.data.refid)
-			.catch((err) => {
-				console.log(err);
-				return null;
-			});
 
-		if (!refid) return;
-		await router.push("/jobs/" + refid);
+		await router.push("/jobs/create");
 	};
 	return (
 		<>
