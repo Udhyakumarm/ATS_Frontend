@@ -1,11 +1,22 @@
+import { useState } from "react";
+
 export default function JobCard({ job, handleView }: any) {
+	const [starred, setStarred] = useState(false);
+
 	return (
-		<div className="w-auto max-w-md rounded-xl bg-white p-5 drop-shadow-md">
+		<div className="max-h-[250px] w-auto max-w-md rounded-xl bg-white p-5 shadow-md shadow-slate-400">
 			<div className="mb-5 flex flex-row justify-between">
-				<i className="fa-solid fa-star" />
-				<h1>{job.job_title}</h1>
-				<i className="fa-solid fa-copy" />
-				<i className="fa-solid fa-ellipsis-vertical" />
+				<div className="flex flex-row items-center justify-between gap-5">
+					<i
+						className={starred ? "fa-solid fa-star text-yellow-400" : "fa-solid fa-star text-slate-400"}
+						onClick={() => setStarred((prev) => !prev)}
+					/>
+					<h1>{job.job_title}</h1>
+				</div>
+				<div className="flex flex-row items-center justify-between gap-6 text-slate-400">
+					<i className="fa-solid fa-copy" />
+					<i className="fa-solid fa-ellipsis-vertical" />
+				</div>
 			</div>
 			<div className="mb-5 flex flex-row items-center justify-start gap-2 text-gray-500">
 				<h1>{job.worktype}</h1>
