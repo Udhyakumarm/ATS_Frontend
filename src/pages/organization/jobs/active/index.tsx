@@ -24,19 +24,19 @@ export default function Home() {
 
 	const { data: session } = useSession();
 
-	const [draftedJobs, setDraftedJobs] = useState([]);
+	const [active, setActiveJobs] = useState([]);
 
 	useEffect(() => {
 		const getDraftedJobs = async () => {
 			const newDraftedJobs = await axiosInstance.api
 				.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => response.data.map((job: any) => !job.jobStatus && job))
+				.then((response) => response.data.map((job: any) => job.jobStatus === "Published" && job))
 				.catch((error) => {
 					console.log({ error });
 					return null;
 				});
 
-			setDraftedJobs(newDraftedJobs);
+			setActiveJobs(newDraftedJobs);
 		};
 
 		getDraftedJobs();
@@ -45,22 +45,22 @@ export default function Home() {
 	return (
 		<>
 			<Head>
-				<title>Drafted Jobs</title>
+				<title>Active Jobs</title>
 			</Head>
 			<main className="py-8">
-				<div className="md:px-26 mx-auto w-full max-w-[1920px] lg:px-40">
-					<HeaderBar title="Drafted Jobs" icon={null} handleBack={() => router.back()} />
+				<div className="md:px-26 mx-auto w-full max-w-[1920px] overflow-hidden lg:px-40">
+					<HeaderBar title="Active Jobs" icon={null} handleBack={() => router.back()} />
 					<div className="bg-white p-10 dark:bg-gray-800 ">
 						<div className="grid grid-cols-2 gap-x-8 gap-y-8">
-							{draftedJobs &&
-								draftedJobs.map(
+							{active &&
+								active.map(
 									(job: any, i) =>
 										job && (
 											<JobCard
 												key={i}
 												job={job}
 												handleView={() => {
-													router.push("/jobs/drafted/" + job.refid);
+													router.push("/organization/jobs/active/" + job.refid);
 												}}
 											/>
 										)

@@ -22,32 +22,32 @@ export default function Home() {
 		{
 			name: "Post New Job",
 			icon: jobsIcon,
-			link: "/jobs/create"
+			link: "/organization/jobs/create"
 		},
 		{
 			name: "Active Jobs",
 			icon: integrationIcon,
-			link: "/jobs/active"
+			link: "/organization/jobs/active"
 		},
 		{
 			name: "Drafted Jobs",
 			icon: jobsIcon,
-			link: "/jobs/drafted"
+			link: "/organization/jobs/drafted"
 		},
 		{
 			name: "Archived Jobs",
 			icon: analyticsIcon,
-			link: "/jobs/archived"
+			link: "/organization/jobs/archived"
 		},
 		{
 			name: "Closed Jobs",
 			icon: vendorsIcon,
-			link: "/jobs/closed"
+			link: "/organization/jobs/closed"
 		},
 		{
 			name: "Applicants",
 			icon: applicantsIcon,
-			link: "/jobs/applicant"
+			link: "/organization/jobs/applicant"
 		}
 	];
 

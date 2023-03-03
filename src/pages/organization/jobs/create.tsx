@@ -147,7 +147,7 @@ export default function Home() {
 				return null;
 			});
 
-		if (newJob) router.push("/jobs/drafted/");
+		if (newJob) router.push("/organization/jobs/drafted/");
 	}
 	async function publishJob() {
 		const cleanedData = cleanData(jobForm);
@@ -171,7 +171,7 @@ export default function Home() {
 				return null;
 			});
 
-		if (newJob) router.push("/jobs/active/");
+		if (newJob) router.push("/organization/jobs/active/");
 	}
 
 	async function previewJob() {
@@ -193,7 +193,7 @@ export default function Home() {
 				return null;
 			});
 
-		if (newJob) router.push("/jobs/" + newJob.refid);
+		if (newJob) router.push("/organization/jobs/" + newJob.refid);
 	}
 
 	const jobActions = [
