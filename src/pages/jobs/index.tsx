@@ -19,11 +19,11 @@ export default function Home() {
 	const { data: session } = useSession();
 
 	const quicklinks = [
-		// {
-		// 	name: "Post New Job",
-		// 	icon: jobsIcon,
-		// 	link: "/jobs/new"
-		// },
+		{
+			name: "Post New Job",
+			icon: jobsIcon,
+			link: "/jobs/create"
+		},
 		{
 			name: "Active Jobs",
 			icon: integrationIcon,
@@ -51,11 +51,6 @@ export default function Home() {
 		}
 	];
 
-	const createNewJob = async () => {
-		if (!session) return;
-
-		await router.push("/jobs/create");
-	};
 	return (
 		<>
 			<Head>
@@ -67,17 +62,6 @@ export default function Home() {
 					<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 						<div className="mx-auto w-full max-w-[1100px]">
 							<div className="-mx-4 flex flex-wrap items-center">
-								<div className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
-									<button
-										onClick={() => createNewJob()}
-										className=" flex w-full items-center rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
-									>
-										<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
-											<Image src={jobsIcon} alt="Post New Job" width={30} height={30} />
-										</div>
-										<span className="text-lg font-bold">Post New Job</span>
-									</button>
-								</div>
 								{quicklinks.map((links, i) => (
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
