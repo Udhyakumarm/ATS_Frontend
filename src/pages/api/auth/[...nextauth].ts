@@ -102,7 +102,7 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ token, user, account, profile, isNewUser }: any) {
 			if (user) {
-				return { ...token, user_type: user.user_type };
+				return { ...token, user_type: user.user_type, ...user.token };
 			}
 
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
