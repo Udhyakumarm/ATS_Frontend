@@ -147,28 +147,31 @@ export default function Home() {
 				return null;
 			});
 
-		if (newJob) router.push("/jobs/drafted/" + newJob.refid);
+		if (newJob) router.push("/jobs/drafted/");
 	}
 	async function publishJob() {
-		return;
 		const cleanedData = cleanData(jobForm);
 		const validation = new Validator(cleanedData, jobFormRules);
 
 		if (validation.fails()) return;
 
 		const newJob = await axiosInstance.api
-			.post("/job/create-job/", cleanedData, {
-				headers: {
-					authorization: "Bearer " + session?.accessToken
+			.post(
+				"/job/create-job/",
+				{ ...cleanedData, jobStatus: "Published", publish_date: new Date() },
+				{
+					headers: {
+						authorization: "Bearer " + session?.accessToken
+					}
 				}
-			})
+			)
 			.then((response) => response.data)
 			.catch((err) => {
 				console.log(err);
 				return null;
 			});
 
-		if (newJob) router.push("/jobs/" + newJob.refid);
+		if (newJob) router.push("/jobs/active/");
 	}
 
 	async function previewJob() {
