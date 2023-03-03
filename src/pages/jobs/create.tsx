@@ -17,9 +17,14 @@ import Validator, { Rules } from "validatorjs";
 import { axiosInstance } from "@/utils";
 import { useSession } from "next-auth/react";
 
-const JobActionButton = ({ label, handleClick }: any) => {
+const JobActionButton = ({ label, handleClick, icon }: any) => {
 	return (
-		<button onClick={handleClick} className="rounded-md border px-3 py-2" type="button">
+		<button
+			onClick={handleClick}
+			className="flex flex-row items-center gap-3 rounded-lg border border-slate-400 px-3 py-2 font-semibold hover:bg-slate-100"
+			type="button"
+		>
+			{icon}
 			{label}
 		</button>
 	);
@@ -31,12 +36,16 @@ const StickyLabel = ({ label }: any) => (
 	</div>
 );
 
+const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
+
 const jobFormRules: Rules = {
 	job_title: "required",
 	job_function: "required",
 	department: "required",
 	location: "required",
-	currency: "required"
+	currency: "required",
+	employment_type: "required",
+	worktype: "required"
 };
 
 export default function Home() {
@@ -120,7 +129,50 @@ export default function Home() {
 			});
 	}
 
-	async function createJob() {
+	async function draftJob() {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) return;
+
+		const newJob = await axiosInstance.api
+			.post("/job/create-job/", cleanedData, {
+				headers: {
+					authorization: "Bearer " + session?.accessToken
+				}
+			})
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/jobs/drafted/" + newJob.refid);
+	}
+	async function publishJob() {
+		return;
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) return;
+
+		const newJob = await axiosInstance.api
+			.post("/job/create-job/", cleanedData, {
+				headers: {
+					authorization: "Bearer " + session?.accessToken
+				}
+			})
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/jobs/" + newJob.refid);
+	}
+
+	async function previewJob() {
+		return;
 		const cleanedData = cleanData(jobForm);
 		const validation = new Validator(cleanedData, jobFormRules);
 
@@ -144,17 +196,33 @@ export default function Home() {
 	const jobActions = [
 		{
 			label: "Preview",
-			action: createJob
+			action: previewJob,
+			icon: (
+				<i className="fa-solid fa-circle-play bg-gradient-to-r from-yellow-500 to-yellow-400 bg-clip-text font-extrabold text-transparent " />
+			)
 		},
 		{
 			label: "Save as Draft",
-			action: createJob
+			action: draftJob,
+			icon: (
+				<i className="fa-solid fa-file bg-gradient-to-r from-blue-400 to-blue-700 bg-clip-text font-extrabold text-transparent" />
+			)
 		},
 		{
 			label: "Publish",
-			action: createJob
+			action: publishJob,
+			icon: (
+				<i className="fa-solid fa-square-check  bg-gradient-to-r from-secondary to-primary bg-clip-text font-extrabold text-transparent" />
+			)
 		}
 	];
+
+	const CustomTabs = (currentIndex: number, tabIndex: number) => (
+		<Tab className="flex flex-col items-center justify-center gap-y-2 transition-all duration-100" key={tabIndex}>
+			<div className={tabIndex === currentIndex ? "font-semibold text-primary " : ""}>{tabTitles[tabIndex]}</div>
+			{tabIndex === currentIndex && <div className="w-28 border-2 border-primary" />}
+		</Tab>
+	);
 	return (
 		<>
 			<Head>
@@ -164,27 +232,25 @@ export default function Home() {
 			<main className="py-8">
 				<div className="md:px-26 mx-auto h-full w-full max-w-[1920px] overflow-hidden lg:px-40">
 					<Tabs onSelect={(i, l) => setIndex(i)}>
-						<div className="sticky top-0 z-20 overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-800">
-							<div className="mx-auto w-full max-w-[1100px]">
-								<div className="-mx-4 flex flex-wrap items-start justify-between p-6 py-2">
-									<button onClick={() => router.back()} className="justify-self-start">
+						<div className="sticky top-0 z-20 overflow-hidden rounded-t-lg bg-white pt-5 drop-shadow-md dark:bg-gray-800">
+							<div className="flex flex-row items-center justify-between pt-2 text-gray-800">
+								<div className="flex flex-row px-8">
+									<button onClick={() => router.back()} className="text-slate-400">
 										<i className="fa-solid fa-arrow-left pl-4 text-3xl"></i>
 									</button>
-									<div className="text-2xl font-normal text-slate-600">
-										<span>|{" Job Title"}</span>
-									</div>
-									<div className="flex flex-row items-center justify-between">
-										{jobActions.map((action, i) => (
-											<JobActionButton label={action.label} handleClick={action.action} key={i} />
-										))}
+									<div className="ml-20 text-xl font-normal text-slate-600">
+										<span>{jobForm.job_title !== "" ? jobForm.job_title : "| Job Title"}</span>
 									</div>
 								</div>
-								<TabList className="mx-10 mt-8 mb-0 flex flex-row justify-between p-3 text-lg text-slate-700">
-									<Tab className={index === 0 ? "font-semibold text-secondary " : ""}>Job Details</Tab>
-									<Tab>Assessment</Tab>
-									<Tab>Team Members</Tab>
-									<Tab>Vendors</Tab>
-									<Tab>Job Boards</Tab>
+								<div className="flex flex-row items-center justify-between gap-5 pr-10">
+									{jobActions.map((action, i) => (
+										<JobActionButton label={action.label} handleClick={action.action} icon={action.icon} key={i} />
+									))}
+								</div>
+							</div>
+							<div className="mx-auto w-full max-w-[1100px]">
+								<TabList className="mx-10 mt-8 mb-0 flex flex-row justify-between text-lg text-slate-700">
+									{tabTitles.map((_, i) => CustomTabs(index, i))}
 								</TabList>
 							</div>
 						</div>
@@ -494,6 +560,15 @@ export default function Home() {
 									</div>
 								</div>
 							</div>
+						</TabPanel>
+						<TabPanel>
+							<h2>Any content 2</h2>
+						</TabPanel>
+						<TabPanel>
+							<h2>Any content 2</h2>
+						</TabPanel>
+						<TabPanel>
+							<h2>Any content 2</h2>
 						</TabPanel>
 						<TabPanel>
 							<h2>Any content 2</h2>
