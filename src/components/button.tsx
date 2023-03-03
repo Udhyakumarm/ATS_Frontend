@@ -1,4 +1,4 @@
-export default function Button({ btnType, label, loader, disabled, full }: any) {
+export default function Button({ btnType, label, loader, disabled, full, handleClick }: any) {
 	return (
 		<>
 			<button
@@ -9,6 +9,7 @@ export default function Button({ btnType, label, loader, disabled, full }: any) 
 					(full ? "w-full" : "w-auto")
 				}
 				disabled={disabled}
+				onClick={btnType && handleClick}
 			>
 				{label}
 				{loader ? <i className="fa-solid fa-spinner fa-spin-pulse ml-2"></i> : ""}
