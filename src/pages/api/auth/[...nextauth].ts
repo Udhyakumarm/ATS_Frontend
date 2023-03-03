@@ -70,11 +70,12 @@ export const authOptions: NextAuthOptions = {
 			name: "Credentials",
 			credentials: {
 				email: { label: "Email", type: "email", placeholder: "email" },
-				password: { label: "Password", type: "password" }
+				password: { label: "Password", type: "password" },
+				user_type: { type: "string" }
 			},
 			async authorize(credentials) {
 				const userObj = await axiosInstance.api
-					.post("/organization/login/", {
+					.post(credentials?.user_type === "candidate" ? "/candidate/candidatelogin/" : "/organization/login/", {
 						email: credentials?.email,
 						password: credentials?.password
 					})
@@ -90,18 +91,18 @@ export const authOptions: NextAuthOptions = {
 						}
 					}))
 					.catch((err) => {
-						console.log(err);
+						console.log({ err });
 						return null;
 					});
 
-				return userObj;
+				return { ...userObj, user_type: credentials?.user_type };
 			}
 		})
 	],
 	callbacks: {
 		async jwt({ token, user, account, profile, isNewUser }: any) {
 			if (user) {
-				return user.token;
+				return { ...token, user_type: user.user_type };
 			}
 
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
@@ -116,10 +117,11 @@ export const authOptions: NextAuthOptions = {
 						exp: Math.floor(Date.now() / 1000 + 2 * 60 * 60)
 					};
 
-					return token;
+					return { ...user, token };
 				}
 
 				return {
+					...user,
 					...token,
 					exp: 0
 				};
@@ -128,12 +130,19 @@ export const authOptions: NextAuthOptions = {
 		},
 		async session({ session, token }) {
 			session["accessToken"] = token.accessToken as string;
+			session["user_type"] = token.user_type as string;
 			return session;
+		},
+		async redirect({ url, baseUrl }) {
+			// Allows relative callback URLs
+			if (url.startsWith("/")) return `${baseUrl}${url}`;
+			// Allows callback URLs on the same origin
+			return baseUrl;
 		}
 	},
 	pages: {
-		signIn: "/auth/error",
-		error: "/auth/error"
+		signIn: "/auth/signin",
+		error: "/auth/signin"
 	}
 };
 
