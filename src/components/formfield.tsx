@@ -1,3 +1,4 @@
+import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
 
 export default function FormField({
@@ -9,6 +10,8 @@ export default function FormField({
 	handleChange,
 	error,
 	value,
+	options,
+	singleSelect,
 	id
 }: any) {
 	const [typePass, setTypePass] = useState(false);
@@ -88,6 +91,34 @@ export default function FormField({
 							value={value}
 							onChange={handleChange}
 						></textarea>
+					</div>
+					{errorMessage}
+				</div>
+			</>
+		);
+	}
+	if (fieldType === "select") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
+							{label}
+							{required ? <sup className="text-red-500">*</sup> : ""}
+						</label>
+						<Multiselect
+							options={options} // Options to display in the dropdown
+							selectedValues={value} // Preselected value to persist in dropdown
+							singleSelect={singleSelect}
+							closeOnSelect
+							onSelect={(selected) =>
+								singleSelect
+									? handleChange({ target: { id, value: selected } })
+									: handleChange({ target: { id, value: selected } })
+							} // Function will trigger on select event
+							onRemove={(selected) => handleChange({ target: { id, value: selected } })} // Function will trigger on remove event
+							displayValue="name" // Property name to display in the dropdown options
+						/>
 					</div>
 					{errorMessage}
 				</div>
