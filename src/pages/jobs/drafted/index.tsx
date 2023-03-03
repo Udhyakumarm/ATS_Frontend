@@ -30,7 +30,7 @@ export default function Home() {
 		const getDraftedJobs = async () => {
 			const newDraftedJobs = await axiosInstance.api
 				.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => response.data.map((job: any) => !job.jobStatus))
+				.then((response) => response.data.map((job: any) => !job.jobStatus && job))
 				.catch((error) => {
 					console.log({ error });
 					return null;
@@ -41,6 +41,7 @@ export default function Home() {
 
 		getDraftedJobs();
 	}, [session]);
+
 	return (
 		<>
 			<Head>
@@ -50,7 +51,7 @@ export default function Home() {
 			<main className="py-8">
 				<div className="md:px-26 mx-auto h-full w-full max-w-[1920px] overflow-hidden lg:px-40">
 					<HeaderBar title="Drafted Jobs" icon={null} handleBack={() => router.back()} />
-					<div className="grid h-screen grid-cols-2 items-center bg-white p-10 dark:bg-gray-800">
+					<div className="grid h-screen grid-cols-2 items-start justify-center bg-white p-10 px-20 dark:bg-gray-800">
 						{draftedJobs &&
 							draftedJobs.map((job: any, i) => (
 								<JobCard
