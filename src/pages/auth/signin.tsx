@@ -57,6 +57,8 @@ export default function SignIn({ providers }: any) {
 		await signIn("credentials", {
 			email: loginInfo.email,
 			password: loginInfo.password,
+			//For NextAuth
+			user_type: "organization",
 			callbackUrl: callback
 		})
 			.then(async (res) => console.log({ res }))
@@ -105,7 +107,7 @@ export default function SignIn({ providers }: any) {
 						<div className="mb-4 flex flex-wrap items-center justify-between">
 							<div className="flex items-center">
 								<label htmlFor="rememberMe" className="text-darkGray">
-									<input type="checkbox" id="rememberMe" className="mr-2 mb-1 rounded border-lightGray" />
+									<input type="checkbox" id="rememberMe" className="mr-2 mb-1 rounded border-lightGray" checked />
 									Remember Me
 								</label>
 							</div>

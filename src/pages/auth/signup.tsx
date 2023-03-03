@@ -14,7 +14,8 @@ const signUpInfoRules: Rules = {
 	password: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"],
 	passwordConfirm: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"],
 	fullName: "required",
-	organizationName: "required"
+	organizationName: "required",
+	companyType: "required"
 };
 
 const errorMessages = {
@@ -43,6 +44,7 @@ export default function SignUp() {
 		organizationName: null,
 		fullName: null,
 		email: null,
+		companyType: null,
 		password: null,
 		passwordConfirm: ""
 	});
@@ -53,6 +55,7 @@ export default function SignUp() {
 			passwordConfirm: string;
 			fullName: string;
 			organizationName: string;
+			companyType: string;
 		},
 		event: { target: { id: string; value: any } }
 	) => {
@@ -79,7 +82,8 @@ export default function SignUp() {
 		fullName: "",
 		email: "",
 		password: "",
-		passwordConfirm: ""
+		passwordConfirm: "",
+		companyType: ""
 	});
 
 	useEffect(() => {
@@ -103,7 +107,7 @@ export default function SignUp() {
 				company_name: signUpInfo.organizationName,
 				password: signUpInfo.password,
 				password2: signUpInfo.passwordConfirm,
-				company_type: ""
+				company_type: signUpInfo.companyType
 			})
 			.then((response) => {
 				console.log(response);
@@ -165,6 +169,23 @@ export default function SignUp() {
 							value={signUpInfo.email}
 							handleChange={dispatch}
 							error={formError.email}
+							icon={<i className="fa-regular fa-envelope"></i>}
+							required
+						/>
+						<FormField
+							fieldType="select"
+							inputType="text"
+							label="Organization Type"
+							id="companyType"
+							singleSelect
+							value={signUpInfo.companyType}
+							options={[
+								{ name: "Sole Proprietorship" },
+								{ name: "Corporation" },
+								{ name: "Limited Liability Company (LLC)" }
+							]}
+							handleChange={dispatch}
+							error={formError.companyType}
 							icon={<i className="fa-regular fa-envelope"></i>}
 							required
 						/>
