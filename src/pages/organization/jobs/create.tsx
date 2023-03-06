@@ -8,6 +8,7 @@ import { axiosInstance } from "@/utils";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
+import axios from "axios";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -30,6 +31,22 @@ const StickyLabel = ({ label }: any) => (
 		{label}
 	</div>
 );
+
+const IntegrationCard = ({ handleIntegrate, label }: any) => {
+	return (
+		<div className="max-h-[250px] w-auto max-w-md rounded-xl bg-white p-5 shadow-xl dark:bg-slate-700 dark:text-white">
+			<div className="flex flex-col">
+				<div>Icon</div>
+				<div>{label}</div>
+			</div>
+			<div className="flex flex-row justify-end">
+				<button className="border border-slate-500" onClick={() => handleIntegrate()}>
+					Add
+				</button>
+			</div>
+		</div>
+	);
+};
 
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
@@ -577,7 +594,22 @@ export default function Home() {
 							<h2>Any content 2</h2>
 						</TabPanel>
 						<TabPanel>
-							<h2>Any content 2</h2>
+							<div className="relative">
+								<StickyLabel label="Post Jobs on different Job Boards" />
+								<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
+									<div className="m-10 grid grid-cols-3 gap-6 p-10 pt-24">
+										<IntegrationCard
+											label={"linkedin"}
+											handleIntegrate={async () => {
+												await router.push(
+													"https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=779bilbnf0kha5&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fintegration%2Flinkedin&scope=w_member_social"
+												);
+											}}
+										/>
+										<IntegrationCard label={"indeed"} />
+									</div>
+								</div>
+							</div>
 						</TabPanel>
 					</Tabs>
 				</div>
