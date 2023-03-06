@@ -1,14 +1,66 @@
 import { useState } from "react"
 import Image from "next/image";
+import Link from "next/link";
 import Logo from "../logo"
 import Favicon from '/public/favicon.ico'
+import FaviconWhite from '/public/favicon-white.ico'
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import dashboardIcon from "/public/images/icons/dashboard.png";
+import interviewsIcon from "/public/images/icons/interviews.png";
+import jobsIcon from "/public/images/icons/jobs.png";
+import analyticsIcon from "/public/images/icons/analytics.png";
+import inboxesIcon from "/public/images/icons/inboxes.png";
+import applicantsIcon from "/public/images/icons/applicants.png";
+import settingsIcon from "/public/images/icons/settings.png";
+import upgradeBadge from '/public/images/upgrade-badge.png'
 
 export default function orgsidebar() {
+    const router = useRouter()
+    const { theme } = useTheme();
     const [show, setShow] = useState(false);
     function toggleSidebar() {
         document.querySelector('main')?.classList.toggle('sidebarToggled')
         setShow(!show)
     }
+    
+    const menu = [
+        {
+            title: 'Dashboard',
+            url: '/organization/dashboard',
+            img: dashboardIcon
+        },
+        {
+            title: 'Jobs',
+            url: '#',
+            img: jobsIcon
+        },
+        {
+            title: 'Applicants',
+            url: '#',
+            img: applicantsIcon
+        },
+        {
+            title: 'Interviews',
+            url: '#',
+            img: interviewsIcon
+        },
+        {
+            title: 'Analytics',
+            url: '#',
+            img: analyticsIcon
+        },
+        {
+            title: 'Inboxes',
+            url: '#',
+            img: inboxesIcon
+        },
+        {
+            title: 'Settings',
+            url: '#',
+            img: settingsIcon
+        }
+    ]
     return (
         <>
             <div id="sidebar" className={`bg-white dark:bg-gray-800 shadow w-[270px] h-full fixed z-[10] lg:left-0 top-0 transition` + ' ' + (show ? 'left-[-50px]' : 'left-0')}>
@@ -21,7 +73,7 @@ export default function orgsidebar() {
                         show
                         ?
                         <>
-                        <Image src={Favicon} alt="Somhako" />
+                        <Image src={theme === "dark" ? FaviconWhite : Favicon} alt="Somhako" />
                         </>
                         :
                         <>
@@ -29,8 +81,39 @@ export default function orgsidebar() {
                         </>
                     }
                 </div>
-                <div className="p-3 overflow-y-auto">
-List
+                <div className="p-3 h-[calc(100%-65px)] overflow-y-auto">
+                    <ul className={show ? '' : 'border-b pb-4'}>
+                        {menu.map((menuItem, i) => (
+                            <li className={`my-[12px]` + ' ' + (show ? 'my-[24px]' : '')} key={i}>
+                                <Link href={menuItem.url}
+                                className={`flex items-center font-semibold rounded-[8px] hover:bg-lightBlue dark:hover:bg-gray-900` + ' ' + (router.pathname == menuItem.url
+                                    ? "bg-lightBlue border-r-secondary text-primary dark:bg-gray-900 dark:text-white"
+                                    : "bg-transparent border-r-transparent") + ' ' + (show ? 'justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent' : 'py-2 px-4 border-r-[10px]') }>
+                                    <span className={`w-[20px] h-[20px] inline-block` + ' ' + (show ? 'text-center' : 'mr-4')}>
+                                        <Image src={menuItem.img} alt={menuItem.title} height={20} className={show ? 'mx-auto' : ''} />
+                                    </span>
+                                    {
+                                        show
+                                        ?
+                                        ''
+                                        :
+                                        menuItem.title
+                                    }
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                    {
+                        show
+                        ?
+                        <></>
+                        :
+                        <>
+                            <div className="py-4">
+                                <Image src={upgradeBadge} alt="Upgrade" width={230} />
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
         </>

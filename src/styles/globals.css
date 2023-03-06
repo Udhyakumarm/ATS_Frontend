@@ -54,6 +54,9 @@ a {
 }
 
 @media (max-width: 1023px) {
+  .sidebarToggled #sidebar {
+    width: 48px;
+  }
   main:not(.sidebarToggled) #overlay {
     display: block !important;
   }
