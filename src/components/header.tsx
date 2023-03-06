@@ -7,7 +7,7 @@ export default function Header() {
 	const router = useRouter();
 	const { theme, setTheme } = useTheme();
 
-	if (router.asPath === "/") {
+	if (router.asPath === "/organization") {
 		return (
 			<>
 				<header className="bg-white shadow-normal dark:bg-gray-800">

@@ -12,7 +12,8 @@ export default function Dashboard () {
             <main>
                 <Orgsidebar />
                 <Orgtopbar />
-                <div className="py-8">
+                <div id="overlay" className="hidden bg-[rgba(0,0,0,0.2)] fixed left-0 top-0 z-[9] w-full h-full"></div>
+                <div id="dashboard" className="p-4 lg:p-8">
                     Dashboard
                 </div>
             </main>
