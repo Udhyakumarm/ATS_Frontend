@@ -19,16 +19,20 @@
     "eslint-config-next": "13.1.6",
     "jsonwebtoken": "^9.0.0",
     "multiselect-react-dropdown": "^2.0.25",
+    "moment": "^2.29.4",
     "next": "13.1.6",
     "next-auth": "^4.19.2",
     "next-themes": "^0.2.1",
+    "nprogress": "^0.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
+    "react-responsive-masonry": "^2.1.6",
     "react-quill": "^2.0.0",
     "react-tabs": "^6.0.0",
     "typescript": "4.9.5",
-    "validatorjs": "^3.22.1"
+    "validatorjs": "^3.22.1",
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.1",
