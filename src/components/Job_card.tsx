@@ -1,9 +1,28 @@
 import Image from "next/image"
 import moment from "moment"
+import { useCarrierId, useJobId } from "@/utils/code"
+import { useRouter } from "next/router"
+
 
 export default function Job_card(props: { data: any }) {
   const { data } = props
 
+  const router = useRouter();
+
+  
+	const cid = useCarrierId((state) => state.cid)
+	const addcid = useCarrierId((state) => state.addcid)
+	const jid = useJobId((state) => state.jid)
+	const addjid = useJobId((state) => state.addjid)
+	const jdata = useJobId((state) => state.jdata)
+	const addjdata = useJobId((state) => state.addjdata)
+
+  function viewJob(id: any,data: any){
+    addjid(id)
+    addcid('')
+    addjdata(data)
+    router.push(`/job/${id}`)
+  }
 
   return (
     <>
@@ -50,7 +69,7 @@ export default function Job_card(props: { data: any }) {
           <p className="text-black dark:text-white">{moment(data.timestamp).fromNow()}</p>
           <button
             type="button"
-            // onClick={e => viewJob(data.refid)}
+            onClick={e => viewJob(data.refid,data)}
             className="text-[#6D27F9] dark:text-gray-400 dark:hover:text-white hover:underline hover:text-black"
           >
             View Job

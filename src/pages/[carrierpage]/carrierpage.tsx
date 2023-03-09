@@ -1,10 +1,10 @@
+//@ts-nocheck
 import { useCarrierId, useSettingsStore, useStore } from "@/utils/code";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useState } from "react";
-import shallow from "zustand/shallow";
 import { axiosInstance } from "../api/axiosApi";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import Job_card from "@/components/job_card";
