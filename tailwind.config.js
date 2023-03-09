@@ -16,10 +16,13 @@ module.exports = {
         secondary: "#6433c5",
         lightBlue: "#F5F8FA",
         lightGray: "#BEBEBE",
-        darkGray: "#727272"
+        darkGray: "#727272",
+        gradLightBlue: "#9290FC",
+        gradDarkBlue: "#6A67EA",
       },
       boxShadow: {
         normal: "0 0 10px rgba(0, 0, 0, 0.1)",
+        highlight: "0 5px 10px rgba(0, 0, 0, 0.2)",
       },
       borderRadius: {
         normal: '16px',

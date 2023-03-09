@@ -1,8 +1,86 @@
 import Head from "next/head";
+import React from "react";
+import Image from "next/image";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
+import { CircularProgressbar, buildStyles  } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { Popover } from '@headlessui/react'
+import Button from "@/components/button";
 import Orgsidebar from "@/components/organisation/sidebar";
 import Orgtopbar from "@/components/organisation/topbar";
+import userImg from "/public/images/user-image.png"
+import googleIcon from "/public/images/social/google-icon.png"
+import customizeApplicants from "/public/images/icons/customize_applicants.png"
+import customizeActivity from "/public/images/icons/customize_activity.png"
+import customizeAnalytics from "/public/images/icons/customize_analytics.png"
+import customizeRecent from "/public/images/icons/customize_recent.png"
+import customizeTodo from "/public/images/icons/customize_todo.png"
+import customizeUpcoming from "/public/images/icons/customize_upcoming.png"
 
 export default function Dashboard () {
+    const settings = {
+        dots: false,
+        arrows: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 2.5,
+        slidesToScroll: 1,
+        rows: 2,
+        prevArrow:<button type='button' className='slick-arrow'><i className="fa-solid fa-chevron-left"></i></button>,
+        nextArrow:<button type='button' className='slick-arrow'><i className="fa-solid fa-chevron-right"></i></button>,
+    };
+    const aplc_status = [
+        {
+            percentage: 10,
+            title: 'Total Pipelines',
+            number: 99,
+            color: '#58E700',
+        },
+        {
+            percentage: 10,
+            title: 'Total On Hold',
+            number: 100,
+            color: '#FFF616',
+        },
+        {
+            percentage: 6,
+            title: 'Total Shortlisted',
+            number: 99,
+            color: '#58E700',
+        },
+        {
+            percentage: 10,
+            title: 'Total Hired',
+            number: 100,
+            color: '#58E700',
+        },
+        {
+            percentage: +10,
+            title: 'Total In Review',
+            number: 100,
+            color: '#FE8F66',
+        },
+        {
+            percentage: 6,
+            title: 'Total Rejected',
+            number: 100,
+            color: '#FF4500',
+        },
+        {
+            percentage: 6,
+            title: 'Total Interviews',
+            number: 100,
+            color: '#FE8F66',
+        },
+        {
+            percentage: 6,
+            title: 'Aging Profiles',
+            number: 100,
+            color: '#FF4500',
+        },
+    ]
     return (
         <>
             <Head>
@@ -13,8 +91,279 @@ export default function Dashboard () {
                 <Orgsidebar />
                 <Orgtopbar />
                 <div id="overlay" className="hidden bg-[rgba(0,0,0,0.2)] fixed left-0 top-0 z-[9] w-full h-full"></div>
-                <div id="dashboard" className="p-4 lg:p-8">
-                    Dashboard
+                <div id="dashboard" className="p-4 lg:p-8 relative">
+                    <div className="flex flex-wrap mx-[-15px]">
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">Applicant Details</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0 dashboardSlider">
+                                    <Slider {...settings}>
+                                        {aplc_status.map((item, i) => (
+                                            <div key={i} className="py-3 px-2">
+                                                <div className="bg-white dark:bg-gray-700 shadow-highlight rounded-normal p-3 pr-5 border-b-[4px] border-lightGray relative">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <h4 className="font-extrabold text-2xl">{item.number}</h4>
+                                                        <div className="bg-lightGray rounded py-1 px-2 text-white text-[12px]">
+                                                            <i className="fa-solid fa-timeline"></i>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm mb-2">{item.title}</p>
+                                                    <div style={{ width: 40, height: 40 }}>
+                                                        <CircularProgressbar value={item.percentage} text={`${item.percentage}`} 
+                                                        styles={buildStyles({pathColor: item.color, textSize: '26px', textColor: '#727272'})} />
+                                                    </div>
+                                                    <div className={`block border-[14px] border-transparent w-[15px] h-[74px] absolute right-0 top-[50%] translate-y-[-50%]`} style={{borderRightColor: item.color}}></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </Slider>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">Hiring Analytics</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0">
+                                    Body
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">Upcoming Interviews</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0">
+                                    <div className="max-h-[330px] overflow-y-auto">
+                                        {Array(6).fill(
+                                        <>
+                                            <div className="border rounded-[10px] py-2 px-3 mb-3 flex flex-wrap items-center">
+                                                <div className="w-[45%] pr-2 flex items-center">
+                                                    <Image src={userImg} alt="User" className="object-cover rounded-full" width={30} height={30} />
+                                                    <div className="pl-2">
+                                                        <h5 className="font-bold text-sm">Bethany Jackson</h5>
+                                                        <p className="text-darkGray text-[12px]">Software Developer</p>
+                                                    </div>
+                                                </div>
+                                                <div className="w-[30%] pr-2">
+                                                    <h5 className="font-bold text-sm">20 Nov 2023</h5>
+                                                    <p className="text-darkGray text-[12px]">10:40 AM</p>
+                                                </div>
+                                                <div className="w-[20%]">
+                                                    <Button btnStyle="outlined" label="View Profile" loader={false} />
+                                                </div>
+                                                <div className="w-[5%] text-center">
+                                                    <button type="button" className="text-lightGray">
+                                                        <i className="fa-solid fa-ellipsis-vertical"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">To do List</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0">
+                                <div className="max-h-[330px] overflow-y-auto">
+                                        {Array(6).fill(
+                                        <>
+                                            <div className="border rounded-[10px] mb-3 flex flex-wrap">
+                                                <div className="w-[65%] py-2 px-3 flex items-center">
+                                                    <p className="text-sm clamp_2">Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit users</p>
+                                                </div>
+                                                <div className="w-[35%] bg-lightBlue dark:bg-gray-700 px-3 py-6 flex items-center justify-center">
+                                                    <span className="bg-[#FF8A00] text-white dark:bg-gray-800 rounded mr-2 px-[6px] py-[1px] leading-normal text-xl text-center">
+                                                        <i className="fa-regular fa-square-check"></i>
+                                                    </span>
+                                                    <h5 className="font-bold">20 Nov 2023</h5>
+                                                </div>
+                                            </div>
+                                        </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">Recent Jobs</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0">
+                                    <div className="flex flex-wrap mx-[-7px] max-h-[330px] overflow-y-auto">
+                                        {Array(4).fill(
+                                            <>
+                                                <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]">
+                                                    <div className="h-full border rounded-normal bg-gradient-to-b from-[#eeeeee] to-white py-2 px-3">
+                                                        <div className="mb-4 flex items-center">
+                                                            <div className="bg-[#eeeeee] rounded-[10px] w-[45px] h-[45px] flex items-center justify-center mr-4">
+                                                                <Image src={googleIcon} alt={'Company'} width={25} height={25} />
+                                                            </div>
+                                                            <aside className="w-[calc(100%-60px)]">
+                                                                <h5 className="font-semibold clamp_2 text-sm">Ux Designer</h5>
+                                                                <p className="text-[12px]">
+                                                                    Figma
+                                                                </p>
+                                                            </aside>
+                                                        </div>
+                                                        <ul className="mb-2 flex flex-wrap items-center list-disc list-inside text-[12px] text-darkGray font-semibold">
+                                                            <li className="mr-3">
+                                                                Full Time
+                                                            </li>
+                                                            <li className="mr-3">
+                                                                Remote
+                                                            </li>
+                                                            <li className="mr-3">
+                                                                Junior
+                                                            </li>
+                                                        </ul>
+                                                        <div className="flex flex-wrap justify-between items-center">
+                                                            <p className="font-bold text-darkGray text-[12px] mr-4">$80k-110k/year</p>
+                                                            <Button btnStyle="outlined" label="View" loader={false} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full lg:max-w-[50%] px-[15px] mb-[30px]">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-normal h-full">
+                                <div className="p-6 flex items-center justify-between">
+                                    <h2 className="font-bold text-xl">Activity Log</h2>
+                                    <aside>
+                                        <button type="button" className="bg-darkGray text-gray-300 rounded-full w-[30px] h-[30px]">
+                                            <i className="fa-regular fa-hand"></i>
+                                        </button>
+                                    </aside>
+                                </div>
+                                <div className="p-6 pt-0">
+                                    <div className="max-h-[330px] overflow-y-auto">
+                                        {Array(2).fill(
+                                        <>
+                                            <div className="border rounded-[10px] py-1 px-2 mb-3 flex flex-wrap items-center">
+                                                <div className="p-3 flex items-center justify-center">
+                                                    <span className="bg-secondary text-white rounded-full mr-2 w-[40px] h-[40px] leading-normal text-lg flex items-center justify-center">
+                                                        <i className="fa-solid fa-briefcase"></i>
+                                                    </span>
+                                                    <p className="w-[calc(100%-40px)]">
+                                                        <b>Product Manager </b>
+                                                        Job has been posted by the Adam Smith
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </>
+                                        )}
+                                        {Array(2).fill(
+                                        <>
+                                            <div className="border rounded-[10px] py-1 px-2 mb-3 flex flex-wrap items-center">
+                                                <div className="p-3 flex items-center justify-center">
+                                                    <div className="bg-[#FF930F] text-white rounded-full mr-2 w-[40px] h-[40px] leading-normal text-lg flex items-center justify-center">
+                                                        <i className="fa-solid fa-star"></i>
+                                                    </div>
+                                                    <p className="w-[calc(100%-40px)]">
+                                                        <b>New User - Alison Will </b>
+                                                        has logged in as an <b>Admin</b>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <aside className="absolute left-4 top-4 lg:left-8 lg:top-8 rounded-tl-normal rounded-br-normal bg-lightBlue p-3">
+                        <Popover className="relative">
+                            <Popover.Button>
+                                <button type="button" className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue text-white text-2xl rounded-[10px] w-[45px] h-[45px] flex items-center justify-center">
+                                    <i className="fa-solid fa-gauge"></i>
+                                </button>
+                            </Popover.Button>
+                            <Popover.Overlay className="fixed inset-0 bg-black opacity-30" />
+                            <Popover.Panel className="absolute w-[300px] z-10 bg-white shadow-normal rounded-normal overflow-hidden">
+                                <div className="flex flex-wrap">
+                                    <label htmlFor="cust_applicants" className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_applicants" className="hidden" />
+                                        <Image src={customizeApplicants} alt="Applicants" className="mb-2" />
+                                        <p className="font-bold text-[12px]">Applicant Details</p>
+                                    </label>
+                                    <label htmlFor="cust_todo" className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_todo" className="hidden" />
+                                        <Image src={customizeTodo} alt="To Do List" className="mb-2" />
+                                        <p className="font-bold text-[12px]">To Do List</p>
+                                    </label>
+                                    <label htmlFor="cust_hiring" className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_hiring" className="hidden" />
+                                        <Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2" />
+                                        <p className="font-bold text-[12px]">Hiring Analytics</p>
+                                    </label>
+                                    <label htmlFor="cust_recent" className="w-[100px] h-[100px] bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_recent" className="hidden" />
+                                        <Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
+                                        <p className="font-bold text-[12px]">Recent Jobs</p>
+                                    </label>
+                                    <div className="w-[100px] h-[100px] bg-white flex items-center justify-center flex-col text-center p-2 relative overflow-hidden">
+                                        <p className="font-bold text-[12px]">Customize <br />Your <br />Dashboard</p>
+                                    </div>
+                                    <label htmlFor="cust_upcoming" className="w-[100px] h-[100px] bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_upcoming" className="hidden" />
+                                        <Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
+                                        <p className="font-bold text-[12px]">Upcoming Interviews</p>
+                                    </label>
+                                    <label htmlFor="cust_activity" className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden cursor-pointer">
+                                        <input type="checkbox" name="cust_dashboard" id="cust_activity" className="hidden" />
+                                        <Image src={customizeActivity} alt="Activity Log" className="mb-2" />
+                                        <p className="font-bold text-[12px]">Activity Log</p>
+                                    </label>
+                                    <div className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden">
+                                        
+                                    </div>
+                                    <div className="w-[100px] h-[100px] bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] flex items-center justify-center flex-col text-center p-2 relative overflow-hidden">
+                                        
+                                    </div>
+                                </div>
+                            </Popover.Panel>
+                        </Popover>
+                    </aside>
                 </div>
             </main>
         </>
