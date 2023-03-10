@@ -12,7 +12,8 @@ export default function FormField({
 	value,
 	options,
 	singleSelect,
-	id
+	id,
+	placeholder
 }: any) {
 	const [typePass, setTypePass] = useState(false);
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
@@ -21,10 +22,16 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
-							{label}
-							{required ? <sup className="text-red-500">*</sup> : ""}
-						</label>
+						{
+							label
+							?
+							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							:
+							<></>
+						}
 						{icon || inputType === "password" ? (
 							<>
 								<div className="relative">
@@ -35,6 +42,7 @@ export default function FormField({
 												id={id}
 												value={value}
 												onChange={handleChange}
+												placeholder={placeholder}
 												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
 											<button
@@ -52,6 +60,7 @@ export default function FormField({
 												id={id}
 												value={value}
 												onChange={handleChange}
+												placeholder={placeholder}
 												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
 											<span className="absolute right-3 top-2 text-lightGray">{icon}</span>
@@ -67,6 +76,7 @@ export default function FormField({
 									className="w-full rounded border-lightGray dark:bg-gray-700"
 									value={value}
 									onChange={handleChange}
+									placeholder={placeholder}
 								/>
 							</>
 						)}
@@ -81,15 +91,22 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
-							{label}
-							{required ? <sup className="text-red-500">*</sup> : ""}
-						</label>
+						{
+							label
+							?
+							<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							:
+							<></>
+						}
 						<textarea
 							id={id}
 							className="min-h-[100px] w-full resize-none rounded border-lightGray dark:bg-gray-700"
 							value={value}
 							onChange={handleChange}
+							placeholder={placeholder}
 						></textarea>
 					</div>
 					{errorMessage}
@@ -102,15 +119,22 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
-							{label}
-							{required ? <sup className="text-red-500">*</sup> : ""}
-						</label>
+						{
+							label
+							?
+							<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							:
+							<></>
+						}
 						<Multiselect
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
 							closeOnSelect
+							placeholder={placeholder}
 							onSelect={(selected) =>
 								singleSelect
 									? handleChange({ target: { id, value: selected } })
@@ -124,6 +148,38 @@ export default function FormField({
 				</div>
 			</>
 		);
+	}
+	if (fieldType === "addItem") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{
+							label
+							?
+							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							:
+							<></>
+						}
+						<div className="relative">
+							<input
+								type={inputType}
+								id={id}
+								value={value}
+								onChange={handleChange}
+								placeholder={placeholder}
+								className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+							/>
+							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white">{icon}</button>
+						</div>
+					</div>
+				</div>
+				{errorMessage}
+			</>
+		)
 	}
 	return (
 		<>
