@@ -37,48 +37,56 @@ export default function Dashboard () {
             title: 'Total Pipelines',
             number: 99,
             color: '#58E700',
+            icon: <i className="fa-solid fa-timeline"></i>
         },
         {
             percentage: 10,
             title: 'Total On Hold',
             number: 100,
             color: '#FFF616',
+            icon: <i className="fa-solid fa-circle-pause"></i>
         },
         {
             percentage: 6,
             title: 'Total Shortlisted',
             number: 99,
             color: '#58E700',
+            icon: <i className="fa-solid fa-circle-check"></i>
         },
         {
             percentage: 10,
             title: 'Total Hired',
             number: 100,
             color: '#58E700',
+            icon: <i className="fa-solid fa-users"></i>
         },
         {
             percentage: +10,
             title: 'Total In Review',
             number: 100,
             color: '#FE8F66',
+            icon: <i className="fa-solid fa-eye"></i>
         },
         {
             percentage: 6,
             title: 'Total Rejected',
             number: 100,
             color: '#FF4500',
+            icon: <i className="fa-solid fa-circle-xmark"></i>
         },
         {
             percentage: 6,
             title: 'Total Interviews',
             number: 100,
             color: '#FE8F66',
+            icon: <i className="fa-solid fa-clipboard-question"></i>
         },
         {
             percentage: 6,
             title: 'Aging Profiles',
             number: 100,
             color: '#FF4500',
+            icon: <i className="fa-solid fa-user-group"></i>
         },
     ]
     return (
@@ -112,7 +120,7 @@ export default function Dashboard () {
                                                         <div className="flex items-center justify-between mb-2">
                                                             <h4 className="font-extrabold text-2xl">{item.number}</h4>
                                                             <div className="bg-lightGray rounded py-1 px-2 text-white text-[12px]">
-                                                                <i className="fa-solid fa-timeline"></i>
+                                                                {item.icon}
                                                             </div>
                                                         </div>
                                                         <p className="text-sm mb-2">{item.title}</p>
