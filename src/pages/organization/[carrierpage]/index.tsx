@@ -59,6 +59,10 @@ export default function cancareer() {
     function viewAllJob(){
         router.push(`/organization/${cid}/search-jobs`)
     }
+
+    function viewJob(refid){
+        router.push(`/organization/${cid}/job/${refid}/job-detail`)
+    }
     
     
     return (

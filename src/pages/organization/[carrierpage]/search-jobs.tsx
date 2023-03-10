@@ -3,9 +3,13 @@ import FormField from "@/components/formfield";
 import { useCarrierId } from "@/utils/code";
 import moment from "moment";
 import { getProviders } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function SearchJobs() {
-    
+
+    const router = useRouter();
+    const cid = useCarrierId((state) => state.cid)
+	const addcid = useCarrierId((state) => state.addcid)
     const orgdetail = useCarrierId((state) => state.orgdetail)
 	const setorgdetail = useCarrierId((state) => state.setorgdetail)
     const orgfounderdetail = useCarrierId((state) => state.orgfounderdetail)
@@ -15,6 +19,11 @@ export default function SearchJobs() {
     const orgjobdetail = useCarrierId((state) => state.orgjobdetail)
 	const setorgjobdetail = useCarrierId((state) => state.setorgjobdetail)
     
+    
+    function viewJob(refid: never){
+        router.replace(`/organization/${cid}/job/${refid}/job-detail`)
+    }
+
     return (
         <>
             <main className="py-8">
@@ -74,7 +83,7 @@ export default function SearchJobs() {
                                         </ul>
                                         <div className="flex flex-wrap justify-between items-center">
                                             <div className="mr-4">
-                                                <Button btnStyle="sm" label="View" loader={false} />
+                                                <Button btnStyle="sm" label="View" loader={false} btnType="button" handleClick={viewJob(data['refid'])} />
                                             </div>
                                             <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>
                                         </div>
