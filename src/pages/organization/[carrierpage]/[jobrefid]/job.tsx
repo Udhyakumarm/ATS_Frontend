@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useState } from "react";
-import { axiosInstance } from "../api/axiosApi";
+import { axiosInstance } from "../../../api/axiosApi";
 
 
 export default function Home() {
