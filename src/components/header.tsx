@@ -1,12 +1,18 @@
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo";
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Header() {
 	const router = useRouter();
+	const { data: session } = useSession();
 	const { theme, setTheme } = useTheme();
-
+	useEffect(() => {
+		if (session?.error === "RefreshAccessTokenError" && !router.asPath.startsWith("/auth")) {
+			signIn(); // Force sign in to hopefully resolve error
+		}
+	}, [router.asPath, session]);
 	if (router.asPath === "/organization") {
 		return (
 			<>

@@ -104,7 +104,6 @@ export const authOptions: NextAuthOptions = {
 				return { ...token, user_type: user.user_type, accessToken: user.accessToken, refreshToken: user.refreshToken };
 			}
 
-			console.log({ token });
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
 				const [newAccessToken, newRefreshToken] = await NextAuthUtils.refreshToken(token.refreshToken);
 
