@@ -29,7 +29,7 @@ export default function JobFormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700">
+						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
 							{label}
 							{required ? <sup className="text-red-500">*</sup> : ""}
 						</label>
@@ -52,7 +52,7 @@ export default function JobFormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700">
+						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
 							{label}
 							{required ? <sup className="text-red-500">*</sup> : ""}
 						</label>
@@ -72,7 +72,7 @@ export default function JobFormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700">
+						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
 							{label}
 							{required ? <sup className="text-red-500">*</sup> : ""}
 						</label>
