@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import JobFormField from "@/components/JobFormField";
 import Validator, { Rules } from "validatorjs";
 import { axiosInstance } from "@/utils";
@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import axios from "axios";
+import Image from "next/image";
+
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -32,16 +34,20 @@ const StickyLabel = ({ label }: any) => (
 	</div>
 );
 
-const IntegrationCard = ({ handleIntegrate, label }: any) => {
+const IntegrationCard = ({ handleIntegrate, label, access, handlePost }: any) => {
 	return (
-		<div className="max-h-[250px] w-auto max-w-md rounded-xl bg-white p-5 shadow-xl dark:bg-slate-700 dark:text-white">
-			<div className="flex flex-col">
-				<div>Icon</div>
-				<div>{label}</div>
+		<div className="flex h-auto max-h-[250px] w-auto max-w-md flex-col justify-between rounded-xl bg-gray-100 p-5 shadow-xl dark:bg-slate-700 dark:text-white">
+			<div className="flex flex-col items-stretch justify-between">
+				<Image src={"/images/logos/" + label.toLowerCase() + "_logo.png"} width={50} height={50} alt="logo" />
+
+				<div className="mt-4 text-lg font-semibold">{label}</div>
 			</div>
-			<div className="flex flex-row justify-end">
-				<button className="border border-slate-500" onClick={() => handleIntegrate()}>
-					Add
+			<div className="mt-8 flex flex-row justify-end">
+				<button
+					className=" rounded-md border border-slate-300 px-5 text-base font-thin hover:bg-white hover:font-light"
+					onClick={() => (access ? handlePost() : handleIntegrate())}
+				>
+					{access ? "Post Job" : "Add"}
 				</button>
 			</div>
 		</div>
@@ -67,6 +73,14 @@ export default function Home() {
 
 	const [index, setIndex] = useState(0);
 	const [formErrors, setFormErrors] = useState<any>({});
+
+	const [integrationList, setIntegrationList] = useState({
+		LinkedIn: { access: null },
+		Indeed: { access: null },
+		Somhako: { access: null },
+		GlassDoor: { access: null },
+		Twitter: { access: null }
+	});
 
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 
@@ -125,6 +139,7 @@ export default function Home() {
 		worktype: cleanMuliField(data.work_type),
 		visa: cleanMuliField(data.visa)
 	});
+
 	async function searchSkill(value: string) {
 		await axiosInstance.marketplace_api
 			.get(`/job/load/skills/?search=${value}`)
@@ -140,6 +155,50 @@ export default function Home() {
 				console.log(err);
 			});
 	}
+
+	useEffect(() => {
+		async function loadIntegrations() {
+			console.log({ session });
+			if (!session) return;
+			console.log(session);
+			const organization = await axiosInstance.api
+				.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
+				.then((response) => response.data[0]);
+			const { integrations: newIntegrations } = await axiosInstance.api
+				.get("/organization/integrations/" + organization.unique_id + "/", {
+					headers: { authorization: "Bearer " + session?.accessToken }
+				})
+				.then((response) => response.data);
+
+			setIntegrationList((prevList: any) => {
+				newIntegrations.forEach((integration: { access_token: any; provider: string }) => {
+					Object.keys(prevList).map((key) =>
+						key.toLowerCase() === integration.provider ? (prevList[key] = { access: integration.access_token }) : null
+					);
+				});
+				console.log(prevList);
+				return prevList;
+			});
+		}
+
+		loadIntegrations();
+	}, [session]);
+
+	const handleIntegrate = async (provider: string) =>
+		await router.push("/api/integration/" + provider.toLowerCase() + "/create");
+
+	const handleIntegrationPost = async (provider: any) => {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
+	};
 
 	async function draftJob() {
 		const cleanedData = cleanData(jobForm);
@@ -598,15 +657,15 @@ export default function Home() {
 								<StickyLabel label="Post Jobs on different Job Boards" />
 								<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
 									<div className="m-10 grid grid-cols-3 gap-6 p-10 pt-24">
-										<IntegrationCard
-											label={"linkedin"}
-											handleIntegrate={async () => {
-												await router.push(
-													"https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=779bilbnf0kha5&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fintegration%2Flinkedin&scope=w_member_social"
-												);
-											}}
-										/>
-										<IntegrationCard label={"indeed"} />
+										{Object.keys(integrationList).map((key: any) => (
+											<IntegrationCard
+												key={key}
+												label={key}
+												access={integrationList[key as keyof typeof integrationList].access}
+												handleIntegrate={() => handleIntegrate(key)}
+												handlePost={() => handleIntegrationPost(key)}
+											/>
+										))}
 									</div>
 								</div>
 							</div>
