@@ -16,7 +16,7 @@ export default function Header() {
 	const cid = useCarrierId((state) => state.cid)
 	const addcid = useCarrierId((state) => state.addcid)
 
-	if (router.asPath === "/organization/"+ cid +"/carrierpage" || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard") {
+	if (router.asPath === "/organization/"+ cid +"/carrierpage" || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/job-detail" || router.asPath === "/organization/"+ cid +"/dashboard" || router.asPath === "/organization/"+ cid +"/apply-job") {
 		return(
 			<>
 				<header className="bg-white shadow-normal dark:bg-gray-800">

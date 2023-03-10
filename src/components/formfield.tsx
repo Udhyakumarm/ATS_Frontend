@@ -149,6 +149,38 @@ export default function FormField({
 			</>
 		);
 	}
+	if (fieldType === "addItem") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{
+							label
+							?
+							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							:
+							<></>
+						}
+						<div className="relative">
+							<input
+								type={inputType}
+								id={id}
+								value={value}
+								onChange={handleChange}
+								placeholder={placeholder}
+								className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+							/>
+							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white">{icon}</button>
+						</div>
+					</div>
+				</div>
+				{errorMessage}
+			</>
+		)
+	}
 	return (
 		<>
 			<p className="rounded bg-violet-200 p-2 text-sm">
