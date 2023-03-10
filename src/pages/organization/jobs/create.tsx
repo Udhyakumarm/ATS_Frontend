@@ -1,13 +1,17 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import JobFormField from "@/components/JobFormField";
 import Validator, { Rules } from "validatorjs";
 import { axiosInstance } from "@/utils";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
+import axios from "axios";
+import Image from "next/image";
+import Orgsidebar from "@/components/organisation/sidebar";
+import Orgtopbar from "@/components/organisation/topbar";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -16,7 +20,7 @@ const JobActionButton = ({ label, handleClick, icon }: any) => {
 	return (
 		<button
 			onClick={handleClick}
-			className="flex flex-row items-center gap-3 rounded-lg border border-slate-400 px-3 py-2 font-semibold hover:bg-slate-100"
+			className="flex flex-row items-center gap-3 rounded-lg border border-slate-400 px-3 py-2 font-semibold hover:bg-slate-100 dark:text-white"
 			type="button"
 		>
 			{icon}
@@ -30,6 +34,26 @@ const StickyLabel = ({ label }: any) => (
 		{label}
 	</div>
 );
+
+const IntegrationCard = ({ handleIntegrate, label, access, handlePost }: any) => {
+	return (
+		<div className="flex h-auto max-h-[250px] w-auto max-w-md flex-col justify-between rounded-xl bg-gray-100 p-5 shadow-xl dark:bg-slate-700 dark:text-white">
+			<div className="flex flex-col items-stretch justify-between">
+				<Image src={"/images/logos/" + label.toLowerCase() + "_logo.png"} width={50} height={50} alt="logo" />
+
+				<div className="mt-4 text-lg font-semibold">{label}</div>
+			</div>
+			<div className="mt-8 flex flex-row justify-end">
+				<button
+					className=" rounded-md border border-slate-300 px-5 text-base font-thin hover:bg-white hover:font-light"
+					onClick={() => (access ? handlePost() : handleIntegrate())}
+				>
+					{access ? "Post Job" : "Add"}
+				</button>
+			</div>
+		</div>
+	);
+};
 
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
@@ -50,6 +74,14 @@ export default function Home() {
 
 	const [index, setIndex] = useState(0);
 	const [formErrors, setFormErrors] = useState<any>({});
+
+	const [integrationList, setIntegrationList] = useState({
+		LinkedIn: { access: null },
+		Indeed: { access: null },
+		Somhako: { access: null },
+		GlassDoor: { access: null },
+		Twitter: { access: null }
+	});
 
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 
@@ -108,6 +140,7 @@ export default function Home() {
 		worktype: cleanMuliField(data.work_type),
 		visa: cleanMuliField(data.visa)
 	});
+
 	async function searchSkill(value: string) {
 		await axiosInstance.marketplace_api
 			.get(`/job/load/skills/?search=${value}`)
@@ -123,6 +156,50 @@ export default function Home() {
 				console.log(err);
 			});
 	}
+
+	useEffect(() => {
+		async function loadIntegrations() {
+			console.log({ session });
+			if (!session) return;
+			console.log(session);
+			const organization = await axiosInstance.api
+				.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
+				.then((response) => response.data[0]);
+			const { integrations: newIntegrations } = await axiosInstance.api
+				.get("/organization/integrations/" + organization.unique_id + "/", {
+					headers: { authorization: "Bearer " + session?.accessToken }
+				})
+				.then((response) => response.data);
+
+			setIntegrationList((prevList: any) => {
+				newIntegrations.forEach((integration: { access_token: any; provider: string }) => {
+					Object.keys(prevList).map((key) =>
+						key.toLowerCase() === integration.provider ? (prevList[key] = { access: integration.access_token }) : null
+					);
+				});
+				console.log(prevList);
+				return prevList;
+			});
+		}
+
+		loadIntegrations();
+	}, [session]);
+
+	const handleIntegrate = async (provider: string) =>
+		await router.push("/api/integration/" + provider.toLowerCase() + "/create");
+
+	const handleIntegrationPost = async (provider: any) => {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
+	};
 
 	async function draftJob() {
 		const cleanedData = cleanData(jobForm);
@@ -223,8 +300,13 @@ export default function Home() {
 	];
 
 	const CustomTabs = (currentIndex: number, tabIndex: number) => (
-		<Tab className="flex flex-col items-center justify-center gap-y-2 transition-all duration-100" key={tabIndex}>
-			<div className={tabIndex === currentIndex ? "font-semibold text-primary " : ""}>{tabTitles[tabIndex]}</div>
+		<Tab
+			className="flex flex-col items-center justify-center gap-y-2 transition-all duration-100 dark:text-slate-400"
+			key={tabIndex}
+		>
+			<div className={tabIndex === currentIndex ? "font-semibold text-primary dark:text-white" : ""}>
+				{tabTitles[tabIndex]}
+			</div>
 			{tabIndex === currentIndex && <div className="w-28 border-2 border-primary" />}
 		</Tab>
 	);
@@ -234,9 +316,13 @@ export default function Home() {
 				<title>Home</title>
 				<meta name="description" content="Generated by create next app" />
 			</Head>
-			<Toaster />
-			<main className="py-8">
-				<div className="md:px-26 mx-auto h-full w-full max-w-[1920px] overflow-hidden lg:px-40">
+			<main>
+				<Orgsidebar />
+				<Orgtopbar />
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+
+				<Toaster />
+				<div id="dashboard" className="relative p-4 lg:p-8">
 					<Tabs onSelect={(i, l) => setIndex(i)}>
 						<div className="sticky top-0 z-20 overflow-hidden rounded-t-lg bg-white pt-5 drop-shadow-md dark:bg-gray-800">
 							<div className="flex flex-row items-center justify-between pt-2 text-gray-800">
@@ -577,7 +663,22 @@ export default function Home() {
 							<h2>Any content 2</h2>
 						</TabPanel>
 						<TabPanel>
-							<h2>Any content 2</h2>
+							<div className="relative">
+								<StickyLabel label="Post Jobs on different Job Boards" />
+								<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
+									<div className="m-10 grid grid-cols-3 gap-6 p-10 pt-24">
+										{Object.keys(integrationList).map((key: any) => (
+											<IntegrationCard
+												key={key}
+												label={key}
+												access={integrationList[key as keyof typeof integrationList].access}
+												handleIntegrate={() => handleIntegrate(key)}
+												handlePost={() => handleIntegrationPost(key)}
+											/>
+										))}
+									</div>
+								</div>
+							</div>
 						</TabPanel>
 					</Tabs>
 				</div>

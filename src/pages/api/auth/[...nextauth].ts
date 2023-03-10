@@ -41,7 +41,7 @@ namespace NextAuthUtils {
 export const authOptions: NextAuthOptions = {
 	secret: process.env.SESSION_SECRET,
 	session: {
-		maxAge: 24 * 60 * 60 // 24 hours
+		maxAge: 60 * 20 // 20 Minutes
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET
@@ -94,7 +94,7 @@ export const authOptions: NextAuthOptions = {
 						console.log({ err });
 						return null;
 					});
-
+				if (!userObj) return null;
 				return { ...userObj, user_type: credentials?.user_type };
 			}
 		})
@@ -106,6 +106,7 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
+				console.log({ token });
 				const [newAccessToken, newRefreshToken] = await NextAuthUtils.refreshToken(token.refreshToken);
 
 				if (newAccessToken && newRefreshToken) {
