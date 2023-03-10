@@ -16,6 +16,23 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			</button>
 		)
 	}
+	if (btnStyle === "sm") {
+		return (
+			<button
+				type={btnType ? btnType : "button"}
+				className={
+					`my-2 min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400` +
+					" " +
+					(full ? "w-full" : "w-auto")
+				}
+				disabled={disabled}
+				onClick={btnType && handleClick}
+			>
+				{label}
+				{loader ? <i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> : ""}
+			</button>
+		)
+	}
 	return (
 		<>
 			<button

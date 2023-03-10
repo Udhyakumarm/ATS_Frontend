@@ -38,6 +38,18 @@ a {
   text-decoration: none;
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .clamp_2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -110,5 +122,11 @@ a {
   }
   #dashboard, .sidebarToggled #dashboard {
     margin-left: 0;
+  }
+}
+
+@media (min-width: 1000px) {
+  .container {
+    max-width: 1100px;
   }
 }
