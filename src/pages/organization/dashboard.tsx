@@ -106,20 +106,22 @@ export default function Dashboard () {
                                 <div className="p-6 pt-0 dashboardSlider">
                                     <Slider {...settings}>
                                         {aplc_status.map((item, i) => (
-                                            <div key={i} className="py-3 px-2">
-                                                <div className="bg-white dark:bg-gray-700 shadow-highlight rounded-normal p-3 pr-5 border-b-[4px] border-lightGray relative">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <h4 className="font-extrabold text-2xl">{item.number}</h4>
-                                                        <div className="bg-lightGray rounded py-1 px-2 text-white text-[12px]">
-                                                            <i className="fa-solid fa-timeline"></i>
+                                            <div key={i}>
+                                                <div className="py-3 px-2">
+                                                    <div className="bg-white dark:bg-gray-700 shadow-highlight rounded-normal p-3 pr-5 border-b-[4px] border-lightGray relative">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <h4 className="font-extrabold text-2xl">{item.number}</h4>
+                                                            <div className="bg-lightGray rounded py-1 px-2 text-white text-[12px]">
+                                                                <i className="fa-solid fa-timeline"></i>
+                                                            </div>
                                                         </div>
+                                                        <p className="text-sm mb-2">{item.title}</p>
+                                                        <div style={{ width: 40, height: 40 }}>
+                                                            <CircularProgressbar value={item.percentage} text={`${item.percentage}`} 
+                                                            styles={buildStyles({pathColor: item.color, textSize: '26px', textColor: '#727272'})} />
+                                                        </div>
+                                                        <div className={`block border-[14px] border-transparent w-[15px] h-[74px] absolute right-0 top-[50%] translate-y-[-50%]`} style={{borderRightColor: item.color}}></div>
                                                     </div>
-                                                    <p className="text-sm mb-2">{item.title}</p>
-                                                    <div style={{ width: 40, height: 40 }}>
-                                                        <CircularProgressbar value={item.percentage} text={`${item.percentage}`} 
-                                                        styles={buildStyles({pathColor: item.color, textSize: '26px', textColor: '#727272'})} />
-                                                    </div>
-                                                    <div className={`block border-[14px] border-transparent w-[15px] h-[74px] absolute right-0 top-[50%] translate-y-[-50%]`} style={{borderRightColor: item.color}}></div>
                                                 </div>
                                             </div>
                                         ))}
@@ -229,9 +231,9 @@ export default function Dashboard () {
                                         {Array(4).fill(
                                             <>
                                                 <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]">
-                                                    <div className="h-full border rounded-normal bg-gradient-to-b from-[#eeeeee] to-white py-2 px-3">
+                                                    <div className="h-full border rounded-normal bg-gradient-to-b from-[#eeeeee] to-white dark:from-gray-700 dark:to-gray-900 py-2 px-3">
                                                         <div className="mb-4 flex items-center">
-                                                            <div className="bg-[#eeeeee] rounded-[10px] w-[45px] h-[45px] flex items-center justify-center mr-4">
+                                                            <div className="bg-[#eeeeee] dark:bg-gray-800 rounded-[10px] w-[45px] h-[45px] flex items-center justify-center mr-4">
                                                                 <Image src={googleIcon} alt={'Company'} width={25} height={25} />
                                                             </div>
                                                             <aside className="w-[calc(100%-60px)]">
@@ -241,7 +243,7 @@ export default function Dashboard () {
                                                                 </p>
                                                             </aside>
                                                         </div>
-                                                        <ul className="mb-2 flex flex-wrap items-center list-disc list-inside text-[12px] text-darkGray font-semibold">
+                                                        <ul className="mb-2 flex flex-wrap items-center list-disc list-inside text-[12px] text-darkGray dark:text-white font-semibold">
                                                             <li className="mr-3">
                                                                 Full Time
                                                             </li>
@@ -253,7 +255,7 @@ export default function Dashboard () {
                                                             </li>
                                                         </ul>
                                                         <div className="flex flex-wrap justify-between items-center">
-                                                            <p className="font-bold text-darkGray text-[12px] mr-4">$80k-110k/year</p>
+                                                            <p className="font-bold text-darkGray dark:text-white text-[12px] mr-4">$80k-110k/year</p>
                                                             <Button btnStyle="outlined" label="View" loader={false} />
                                                         </div>
                                                     </div>
@@ -311,7 +313,7 @@ export default function Dashboard () {
                             </div>
                         </div>
                     </div>
-                    <aside className="absolute left-4 top-4 lg:left-8 lg:top-8 rounded-tl-normal rounded-br-normal bg-lightBlue p-3">
+                    <aside className="absolute left-4 top-4 lg:left-8 lg:top-8 rounded-tl-normal rounded-br-normal bg-lightBlue dark:bg-gray-700 p-3">
                         <Popover className="relative">
                             <Popover.Button>
                                 <button type="button" className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue text-white text-2xl rounded-[10px] w-[45px] h-[45px] flex items-center justify-center">
