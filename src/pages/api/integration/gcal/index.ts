@@ -32,17 +32,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const expires_in = Number(tokens.expiry_date) - Date.now();
 
-	const response = await axiosInstance.api.post(
-		"/organization/create_integration/" + unique_id + "/",
-		{
-			access_token: tokens.access_token,
-			refresh_token: tokens.refresh_token,
-			expires_in: expires_in,
-			scope: tokens.scope,
-			provider: "google"
-		},
-		{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
-	);
+	const response = await axiosInstance.api
+		.post(
+			"/organization/create_integration/" + unique_id + "/",
+			{
+				access_token: tokens.access_token,
+				refresh_token: tokens.refresh_token,
+				expires_in: expires_in,
+				scope: tokens.scope,
+				provider: "google"
+			},
+			{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
+		)
+		.catch((err) => {
+			console.log(err);
+			return { data: { success: false } };
+		});
 
 	const { success } = response.data;
 
