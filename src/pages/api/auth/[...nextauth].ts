@@ -32,7 +32,8 @@ namespace NextAuthUtils {
 				const { access } = response.data;
 				return [access, refreshToken];
 			}
-		} catch (err) {
+		} catch (err: any) {
+			console.log("Token refresh error, signing out");
 			return [null, null];
 		}
 	};
@@ -85,10 +86,8 @@ export const authOptions: NextAuthOptions = {
 					})
 					.then((response) => ({
 						...response.data.userObj[0],
-						token: {
-							refreshToken: response.data.tokens.refresh,
-							accessToken: response.data.tokens.access
-						}
+						refreshToken: response.data.tokens.refresh,
+						accessToken: response.data.tokens.access
 					}))
 					.catch((err) => {
 						console.log({ err });
@@ -102,13 +101,14 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ token, user, account, profile, isNewUser }: any) {
 			if (user) {
-				return { ...token, user_type: user.user_type, ...user.token };
+				return { ...token, user_type: user.user_type, accessToken: user.accessToken, refreshToken: user.refreshToken };
 			}
 
+			console.log({ token });
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
-				console.log({ token });
 				const [newAccessToken, newRefreshToken] = await NextAuthUtils.refreshToken(token.refreshToken);
 
+				console.log(newAccessToken && newRefreshToken);
 				if (newAccessToken && newRefreshToken) {
 					token = {
 						...token,
@@ -118,20 +118,15 @@ export const authOptions: NextAuthOptions = {
 						exp: Math.floor(Date.now() / 1000 + 2 * 60 * 60)
 					};
 
-					return { ...user, token };
-				}
-
-				return {
-					...user,
-					...token,
-					exp: 0
-				};
+					return { ...user, ...token };
+				} else return { error: "RefreshAccessTokenError" };
 			}
-			return token;
+			return { ...token };
 		},
 		async session({ session, token }) {
 			session["accessToken"] = token.accessToken as string;
 			session["user_type"] = token.user_type as string;
+			session["error"] = token.error as string;
 			return session;
 		},
 		async redirect({ url, baseUrl }) {
