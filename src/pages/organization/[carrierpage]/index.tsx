@@ -6,16 +6,30 @@ import React, { useEffect, useState } from "react"
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import { useCarrierId } from "@/utils/code"
 import { axiosInstance } from "@/pages/api/axiosApi"
+import Button from "@/components/button";
+import moment from "moment"
+import { useRouter } from "next/router"
 
 export default function cancareer() {
+    const router = useRouter();
     const cid = useCarrierId((state) => state.cid)
 	const addcid = useCarrierId((state) => state.addcid)
 	
+
+    const orgdetail = useCarrierId((state) => state.orgdetail)
+	const setorgdetail = useCarrierId((state) => state.setorgdetail)
+    const orgfounderdetail = useCarrierId((state) => state.orgfounderdetail)
+	const setorgfounderdetail = useCarrierId((state) => state.setorgfounderdetail)
+    const orggallerydetail = useCarrierId((state) => state.orggallerydetail)
+	const setorggallerydetail = useCarrierId((state) => state.setorggallerydetail)
+    const orgjobdetail = useCarrierId((state) => state.orgjobdetail)
+	const setorgjobdetail = useCarrierId((state) => state.setorgjobdetail)
+
     const [odetail, setodetail] = useState([])
-    const [orgdetail, setorgdetail] = useState([])
-    const [orgfounderdetail, setorgfounderdetail] = useState([])
-    const [orggallerydetail, setorggallerydetail] = useState([])
-    const [orgjobdetail, setorgjobdetail] = useState([])
+    // const [orgdetail, setorgdetail] = useState([])
+    // const [orgfounderdetail, setorgfounderdetail] = useState([])
+    // const [orggallerydetail, setorggallerydetail] = useState([])
+    // const [orgjobdetail, setorgjobdetail] = useState([])
 
 
     useEffect(() => {
@@ -41,6 +55,11 @@ export default function cancareer() {
             loadOrgDetail(cid)
         }
     },[cid,odetail])
+
+    function viewAllJob(){
+        router.push(`/organization/${cid}/search-jobs`)
+    }
+    
     
     return (
         <>
@@ -55,7 +74,7 @@ export default function cancareer() {
 					orgdetail.map((data,i)=>(
 						<>
                         <div className="w-full max-w-[1200px] mx-auto px-4" key={i}>
-                            <Image src={`http://127.0.0.1:8000${data['logo']}`} alt="Banner" width={1200} height={200} className="rounded-large mb-6 mx-auto max-h-[200px] object-cover" />
+                            <Image src={`http://127.0.0.1:8000${data['banner']}`} alt="Banner" width={1200} height={200} className="rounded-large mb-6 mx-auto max-h-[200px] object-cover" />
                             <div className="w-full max-w-[1100px] mx-auto px-4">
                                 <div className="bg-white dark:bg-gray-900 rounded-normal py-4 px-8">
                                     <div className="flex flex-wrap mb-3">
@@ -124,6 +143,42 @@ export default function cancareer() {
                                             </ResponsiveMasonry>
                                         </div>
                                     </div>}
+                                    <hr className="mb-6" />
+                                    { orgjobdetail && 
+                                    <div>
+                                        <h2 className="font-bold text-lg mb-3">Recent Jobs</h2>
+                                        <div className="border rounded-large p-6">
+                                        {orgjobdetail.slice(0, 2).map((data,i)=>(
+                                            <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]" key={i}>
+                                                <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
+                                                    <h4 className="font-bold text-lg mb-3">{data['job_title']}</h4>
+                                                    <ul className="mb-3 flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                                        <li className="mr-8">
+                                                            <i className="fa-solid fa-location-dot mr-2"></i>
+                                                            {data['worktype'] ? data['worktype'] : <>N/A</>}
+                                                        </li>
+                                                        <li className="mr-8">
+                                                            <i className="fa-regular fa-clock mr-2"></i>
+                                                            {data['employment_type'] ? data['employment_type'] : <>N/A</>}
+                                                        </li>
+                                                        <li className="mr-8">
+                                                            <i className="fa-solid fa-dollar-sign mr-2"></i>
+                                                            {data['currency'] ? data['currency'] : <>N/A</>}
+                                                        </li>
+                                                    </ul>
+                                                    <div className="flex flex-wrap justify-between items-center">
+                                                        <div className="mr-4">
+                                                            <Button btnStyle="sm" label="View" loader={false} />
+                                                        </div>
+                                                        <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <Button btnStyle="sm" label="View All Job" loader={false} btnType="button" handleClick={viewAllJob}/>
+                                        </div>
+                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>

@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
-import { useCarrierId } from "@/utils/code";
+import { useCarrierId, useCandiateStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange"
 import { Popover } from '@headlessui/react'
-import googleIcon from '/public/images/social/google-icon.png'
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Header() {
 	const router = useRouter();
@@ -15,29 +16,40 @@ export default function Header() {
 
 	const cid = useCarrierId((state) => state.cid)
 	const addcid = useCarrierId((state) => state.addcid)
+	const orgdetail = useCarrierId((state) => state.orgdetail)
+	const setorgdetail = useCarrierId((state) => state.setorgdetail)
 
-	if (router.asPath === "/organization/"+ cid +"/carrierpage" || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard") {
+	const auth = useCandiateStore((state) => state.auth)
+	const toggleAuthMode = useCandiateStore((state) => state.toggleAuthMode)
+
+	useEffect(()=>{console.log(auth)})
+	
+
+	if (router.asPath === "/organization/"+ cid  || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard") {
 		return(
 			<>
 				<header className="bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
-							<Image src={googleIcon} alt={'Somhako'} width={200} className="max-h-[40px] w-auto mr-8" />
+							<Image src={`http://127.0.0.1:8000${orgdetail[0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cid)}} />
 							<ul className="flex text-sm font-semibold text-darkGray">
 								<li className="mx-3">
 									<Link href={"/organization/"+ cid +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-primary text-primary`}>
 										Search Jobs
 									</Link>
 								</li>
+								{ auth == "true" &&
 								<li className="mx-3">
 									<Link href={"/organization/"+ cid +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-transparent`}>
 										Dashboard
 									</Link>
 								</li>
+								}
 							</ul>
 						</div>
 						<div className="flex items-center">
 							<ThemeChange />
+							{ auth == "true" && <>
 							<Popover className="relative mr-6">
 								<Popover.Button>
 									<button type="button" className="text-darkGray dark:text-white uppercase relative">
@@ -83,6 +95,7 @@ export default function Header() {
 									</ul>
 								</Popover.Panel>
 							</Popover>
+							</>}
 						</div>
 					</div>
 				</header>
@@ -127,4 +140,26 @@ export default function Header() {
 	}
 	
 	return <></>;
+}
+
+
+
+import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
+
+export async function getServerSideProps(context: any) {
+	const session: any = await getServerSession(context.req, context.res, authOptions);
+	
+	const auth = useCandiateStore((state) => state.auth)
+	const toggleAuthMode = useCandiateStore((state) => state.toggleAuthMode)
+
+	if (!session)
+		toggleAuthMode('false')
+	else
+		toggleAuthMode('true')
+
+
+	return {
+		props: {}
+	};
 }

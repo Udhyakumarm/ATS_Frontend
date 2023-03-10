@@ -1,8 +1,20 @@
 import Button from "@/components/button";
 import FormField from "@/components/formfield";
+import { useCarrierId } from "@/utils/code";
+import moment from "moment";
 import { getProviders } from "next-auth/react";
 
 export default function SearchJobs() {
+    
+    const orgdetail = useCarrierId((state) => state.orgdetail)
+	const setorgdetail = useCarrierId((state) => state.setorgdetail)
+    const orgfounderdetail = useCarrierId((state) => state.orgfounderdetail)
+	const setorgfounderdetail = useCarrierId((state) => state.setorgfounderdetail)
+    const orggallerydetail = useCarrierId((state) => state.orggallerydetail)
+	const setorggallerydetail = useCarrierId((state) => state.setorggallerydetail)
+    const orgjobdetail = useCarrierId((state) => state.orgjobdetail)
+	const setorgjobdetail = useCarrierId((state) => state.setorgjobdetail)
+    
     return (
         <>
             <main className="py-8">
@@ -40,35 +52,35 @@ export default function SearchJobs() {
                         </div>
                     </div>
                     <div className="w-[calc(100%-300px)] pl-8">
-                        <h3 className="mb-6 font-bold text-xl">170 Jobs</h3>
+                        <h3 className="mb-6 font-bold text-xl">{orgjobdetail.length} {orgjobdetail.length > 1 ? <>Jobs</> : <>Job</> }</h3>
                         <div className="flex flex-wrap mx-[-7px]">
-                            {Array(8).fill(
-                                <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]">
+                            {orgjobdetail.map((data,i)=>(
+                                <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]" key={i}>
                                     <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
-                                        <h4 className="font-bold text-lg mb-3">Software Engineer</h4>
+                                        <h4 className="font-bold text-lg mb-3">{data['job_title']}</h4>
                                         <ul className="mb-3 flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
                                             <li className="mr-8">
                                                 <i className="fa-solid fa-location-dot mr-2"></i>
-                                                Remote
+                                                {data['worktype'] ? data['worktype'] : <>N/A</>}
                                             </li>
                                             <li className="mr-8">
                                                 <i className="fa-regular fa-clock mr-2"></i>
-                                                Full Time
+                                                {data['employment_type'] ? data['employment_type'] : <>N/A</>}
                                             </li>
                                             <li className="mr-8">
                                                 <i className="fa-solid fa-dollar-sign mr-2"></i>
-                                                50-55k
+                                                {data['currency'] ? data['currency'] : <>N/A</>}
                                             </li>
                                         </ul>
                                         <div className="flex flex-wrap justify-between items-center">
                                             <div className="mr-4">
                                                 <Button btnStyle="sm" label="View" loader={false} />
                                             </div>
-                                            <p className="font-bold text-darkGray dark:text-white text-[12px]">29 min ago</p>
+                                            <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            ))}
                         </div>
                     </div>
                 </div>
