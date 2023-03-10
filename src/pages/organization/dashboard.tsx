@@ -18,6 +18,7 @@ import customizeAnalytics from "/public/images/icons/customize_analytics.png"
 import customizeRecent from "/public/images/icons/customize_recent.png"
 import customizeTodo from "/public/images/icons/customize_todo.png"
 import customizeUpcoming from "/public/images/icons/customize_upcoming.png"
+import { getProviders } from "next-auth/react";
 
 export default function Dashboard () {
     const settings = {
@@ -378,4 +379,14 @@ export default function Dashboard () {
             </main>
         </>
     )
+}
+
+
+export async function getServerSideProps(context: any) {
+	const providers = await getProviders();
+	return {
+		props: {
+			providers
+		}
+	};
 }
