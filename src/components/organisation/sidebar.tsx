@@ -13,6 +13,13 @@ import analyticsIcon from "/public/images/icons/analytics.png";
 import inboxesIcon from "/public/images/icons/inboxes.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
 import settingsIcon from "/public/images/icons/settings.png";
+import dashboardIconWhite from "/public/images/icons-white/dashboard.png";
+import interviewsIconWhite from "/public/images/icons-white/interviews.png";
+import jobsIconWhite from "/public/images/icons-white/jobs.png";
+import analyticsIconWhite from "/public/images/icons-white/analytics.png";
+import inboxesIconWhite from "/public/images/icons-white/inboxes.png";
+import applicantsIconWhite from "/public/images/icons-white/applicants.png";
+import settingsIconWhite from "/public/images/icons-white/settings.png";
 import upgradeBadge from '/public/images/upgrade-badge.png'
 
 export default function orgsidebar() {
@@ -28,37 +35,44 @@ export default function orgsidebar() {
         {
             title: 'Dashboard',
             url: '/organization/dashboard',
-            img: dashboardIcon
+            img: dashboardIcon,
+            imgWhite: dashboardIconWhite
         },
         {
             title: 'Jobs',
             url: '/organization/jobs',
-            img: jobsIcon
+            img: jobsIcon,
+            imgWhite: jobsIconWhite
         },
         {
             title: 'Applicants',
             url: '#',
-            img: applicantsIcon
+            img: applicantsIcon,
+            imgWhite: applicantsIconWhite
         },
         {
             title: 'Interviews',
             url: '#',
-            img: interviewsIcon
+            img: interviewsIcon,
+            imgWhite: interviewsIconWhite
         },
         {
             title: 'Analytics',
             url: '#',
-            img: analyticsIcon
+            img: analyticsIcon,
+            imgWhite: analyticsIconWhite
         },
         {
             title: 'Inboxes',
             url: '#',
-            img: inboxesIcon
+            img: inboxesIcon,
+            imgWhite: inboxesIconWhite
         },
         {
             title: 'Settings',
             url: '#',
-            img: settingsIcon
+            img: settingsIcon,
+            imgWhite: settingsIconWhite
         }
     ]
     return (
@@ -90,7 +104,7 @@ export default function orgsidebar() {
                                     ? "bg-lightBlue border-r-secondary text-primary dark:bg-gray-900 dark:text-white"
                                     : "bg-transparent border-r-transparent") + ' ' + (show ? 'justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent' : 'py-2 px-4 border-r-[10px]') }>
                                     <span className={`w-[20px] h-[20px] inline-block` + ' ' + (show ? 'text-center' : 'mr-4')}>
-                                        <Image src={menuItem.img} alt={menuItem.title} height={20} className={show ? 'mx-auto' : ''} />
+                                        <Image src={theme === "dark" ? menuItem.imgWhite : menuItem.img} alt={menuItem.title} height={20} className={show ? 'mx-auto' : ''} />
                                     </span>
                                     {
                                         show

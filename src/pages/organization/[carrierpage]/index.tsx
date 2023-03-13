@@ -84,7 +84,7 @@ export default function cancareer() {
                                     <div className="flex flex-wrap mb-3">
                                     {orgfounderdetail.map((data,i)=>(
                                         <div className="w-full md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)] pr-4 mb-3" key={i}>
-                                        <Image src={`http://127.0.0.1:8000${data['image']}`} alt="User" width={80} height={80} className="rounded-full object-cover mb-2" />
+                                        <Image src={`http://127.0.0.1:8000${data['image']}`} alt="User" width={80} height={80} className="h-[80px] rounded-full object-cover mb-2" />
                                         <p className="font-bold text-sm mb-1">{data['name']}</p>
                                         <p className="text-sm text-darkGray">{data['designation']}</p>
                                         </div>
