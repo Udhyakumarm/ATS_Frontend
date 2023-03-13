@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
-import { useCarrierId } from "@/utils/code"
+import { useCarrierStore } from "@/utils/code"
 import { axiosInstance } from "@/pages/api/axiosApi"
 import Button from "@/components/button";
 import moment from "moment"
@@ -12,58 +12,34 @@ import { useRouter } from "next/router"
 
 export default function cancareer() {
     const router = useRouter();
-    const cid = useCarrierId((state) => state.cid)
-	const addcid = useCarrierId((state) => state.addcid)
-	
 
-    const orgdetail = useCarrierId((state) => state.orgdetail)
-	const setorgdetail = useCarrierId((state) => state.setorgdetail)
-    const orgfounderdetail = useCarrierId((state) => state.orgfounderdetail)
-	const setorgfounderdetail = useCarrierId((state) => state.setorgfounderdetail)
-    const orggallerydetail = useCarrierId((state) => state.orggallerydetail)
-	const setorggallerydetail = useCarrierId((state) => state.setorggallerydetail)
-    const orgjobdetail = useCarrierId((state) => state.orgjobdetail)
-	const setorgjobdetail = useCarrierId((state) => state.setorgjobdetail)
-
-    const [odetail, setodetail] = useState([])
-    // const [orgdetail, setorgdetail] = useState([])
-    // const [orgfounderdetail, setorgfounderdetail] = useState([])
-    // const [orggallerydetail, setorggallerydetail] = useState([])
-    // const [orgjobdetail, setorgjobdetail] = useState([])
-
+    const cid = useCarrierStore((state) => state.cid)
+    const setcid = useCarrierStore((state) => state.setcid)
+    const jid = useCarrierStore((state) => state.jid)
+    const setjid = useCarrierStore((state) => state.setjid)
+    const jdata = useCarrierStore((state) => state.jdata)
+    const setjdata = useCarrierStore((state) => state.setjdata)
+    const orgdetail = useCarrierStore((state) => state.orgdetail)
+    const setorgdetail = useCarrierStore((state) => state.setorgdetail)
 
     useEffect(() => {
-        addcid(window.location.href.toString().split("/").pop())
-    }, [cid, addcid])
+        setcid(window.location.href.toString().split("/").pop())
+    }, [cid, setcid])
 
 
 	async function loadOrgDetail(carrierID: any) {
 		await axiosInstance
         .get(`/organization/get/organisationprofile/carrier/${carrierID}/`)
         .then((res) => {
-			setodetail(res.data)
-			setorgdetail(res.data["OrgProfile"])
-			setorgfounderdetail(res.data["Founder"])
-			setorggallerydetail(res.data["Gallery"])
-			setorgjobdetail(res.data["Job"])
+			setorgdetail(res.data)
         })
 	}
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(()=>{
-        if(cid && Object.keys(odetail).length === 0){
+        if(cid && Object.keys(orgdetail).length === 0){
             loadOrgDetail(cid)
         }
-    },[cid,odetail])
-
-    function viewAllJob(){
-        router.push(`/organization/${cid}/search-jobs`)
-    }
-
-    function viewJob(refid){
-        router.push(`/organization/${cid}/job/${refid}/job-detail`)
-    }
-    
+    },[cid,orgdetail])
     
     return (
         <>
@@ -73,16 +49,16 @@ export default function cancareer() {
             </Head>
             <main className="py-8">
             
-					{odetail && orgdetail && 
+					{orgdetail && orgdetail['OrgProfile'] && 
 					
-					orgdetail.map((data,i)=>(
+					orgdetail['OrgProfile'].map((data,i)=>(
 						<>
                         <div className="w-full max-w-[1200px] mx-auto px-4" key={i}>
                             <Image src={`http://127.0.0.1:8000${data['banner']}`} alt="Banner" width={1200} height={200} className="rounded-large mb-6 mx-auto max-h-[200px] object-cover" />
                             <div className="w-full max-w-[1100px] mx-auto px-4">
                                 <div className="bg-white dark:bg-gray-900 rounded-normal py-4 px-8">
                                     <div className="flex flex-wrap mb-3">
-                                    {orgfounderdetail.map((data,i)=>(
+                                    {orgdetail['Founder'].map((data,i)=>(
                                         <div className="w-full md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)] pr-4 mb-3" key={i}>
                                         <Image src={`http://127.0.0.1:8000${data['image']}`} alt="User" width={80} height={80} className="h-[80px] rounded-full object-cover mb-2" />
                                         <p className="font-bold text-sm mb-1">{data['name']}</p>
@@ -127,7 +103,7 @@ export default function cancareer() {
                                     </div>
                                     }
                                     <hr className="mb-6" />
-                                    { orggallerydetail && 
+                                    { orgdetail['Gallery'] && 
                                     <div>
                                         <h2 className="font-bold text-lg mb-3">Work Place Culture</h2>
                                         <div className="border rounded-large p-6">
@@ -135,7 +111,7 @@ export default function cancareer() {
                                                 columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}
                                             >
                                                 <Masonry>
-                                                    {orggallerydetail.map((data, i) => (
+                                                    {orgdetail['Gallery'].map((data, i) => (
                                                         <img
                                                         src={`http://127.0.0.1:8000${data.image}`}
                                                         alt="Office"
@@ -148,11 +124,11 @@ export default function cancareer() {
                                         </div>
                                     </div>}
                                     <hr className="mb-6" />
-                                    { orgjobdetail && 
+                                    { orgdetail['Job'] && 
                                     <div>
                                         <h2 className="font-bold text-lg mb-3">Recent Jobs</h2>
                                         <div className="border rounded-large p-6">
-                                        {orgjobdetail.slice(0, 2).map((data,i)=>(
+                                        {orgdetail['Job'].slice(0, 2).map((data,i)=>(
                                             <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]" key={i}>
                                                 <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
                                                     <h4 className="font-bold text-lg mb-3">{data['job_title']}</h4>
@@ -172,14 +148,22 @@ export default function cancareer() {
                                                     </ul>
                                                     <div className="flex flex-wrap justify-between items-center">
                                                         <div className="mr-4">
-                                                            <Button btnStyle="sm" label="View" loader={false} />
+                                                            <Button btnStyle="sm" label="View" loader={false} 
+                                                            btnType="button" handleClick={()=>{
+                                                                setjid(data['refid'])
+                                                                setjdata(data)
+                                                                router.push(`/organization/${cid}/job-detail`)
+                                                            }}
+                                                            />
                                                         </div>
                                                         <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
-                                        <Button btnStyle="sm" label="View All Job" loader={false} btnType="button" handleClick={viewAllJob}/>
+                                        <Button btnStyle="sm" label="View All Job" loader={false} btnType="button" handleClick={()=>{
+                                            router.push(`/organization/${cid}/search-jobs`)
+                                        }}/>
                                         </div>
                                     </div>
                                     }

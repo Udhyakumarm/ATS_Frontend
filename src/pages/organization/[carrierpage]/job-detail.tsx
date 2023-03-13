@@ -1,10 +1,34 @@
 import Button from "@/components/button";
 import FormField from "@/components/formfield";
 import HeaderBar from "@/components/HeaderBar";
-import { getProviders } from "next-auth/react";
+import { useCarrierStore } from "@/utils/code";
+import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
+import { useEffect } from "react";
 
 export default function SearchJobsDetail() {
+    const { data: session } = useSession();
+    const auth = useCarrierStore((state) => state.auth)
+    const cid = useCarrierStore((state) => state.cid)
+    const setcid = useCarrierStore((state) => state.setcid)
+    const orgdetail = useCarrierStore((state) => state.orgdetail)
+    const setorgdetail = useCarrierStore((state) => state.setorgdetail)
+    const jid = useCarrierStore((state) => state.jid)
+    const setjid = useCarrierStore((state) => state.setjid)
+    const jdata = useCarrierStore((state) => state.jdata)
+    const setjdata = useCarrierStore((state) => state.setjdata)
+    
+    useEffect(()=>{
+        if(orgdetail && Object.keys(orgdetail).length === 0 || jdata && Object.keys(jdata).length === 0 || jid && jid == ""){
+            if(cid && cid=="")
+                router.replace(`/organization/${cid}`)
+            else
+                router.back()
+        }
+    },[cid,orgdetail,jid,jdata])
+
+    useEffect(()=>{if(jdata)console.log(jdata)},[jdata])
+    
     return (
         <>
             <main className="py-8">
@@ -41,85 +65,111 @@ export default function SearchJobsDetail() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-[calc(100%-300px)] pl-8">
+                    {jdata && <div className="w-[calc(100%-300px)] pl-8">
                         <div className="mb-6 bg-white dark:bg-gray-800 rounded-normal shadow-normal">
                             <div className="rounded-t-normal overflow-hidden">
                                 <HeaderBar handleBack={() => router.back()} />
                             </div>
                             <div className="py-4 px-8">
-                                <h3 className="mb-4 font-bold text-lg">Software Engineer (Remote)</h3>
+                                <h3 className="mb-4 font-bold text-lg">{jdata['job_title']} ({jdata['worktype']})</h3>
                                 <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
-                                    <li className="mr-4">
-                                        Full Time
-                                    </li>
-                                    <li className="mr-4">
-                                        7.5 LPA INR
-                                    </li>
-                                    <li className="mr-4">
-                                        Vacancy - 50
-                                    </li>
+                                    {jdata['employment_type'] && <li className="mr-4">
+                                        {jdata['employment_type']}
+                                    </li> }
+                                    {jdata['currency'] && <li className="mr-4">
+                                        {jdata['currency']}
+                                    </li>}
+                                    {jdata['vacancy'] && <li className="mr-4">
+                                        Vacancy - {jdata['vacancy']}
+                                    </li>}
                                 </ul>
-                                <Button btnStyle="sm" label="Apply Here" loader={false} />
+                                <Button btnStyle="sm" label="Apply Here" loader={false} btnType="button" handleClick={()=>{
+                                                    if(session){
+                                                        router.push(`/organization/${cid}/job-apply`)
+                                                    }
+                                                    else{
+                                                        router.push(`/organization/${cid}/candidate/signin`)
+                                                    }
+                                                }} />
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Department Information</h3>
-                                    <article className="text-[12px] text-darkGray dark:text-white">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                    </article>
+                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                        {jdata['department'] && <li className="mr-4">
+                                            {jdata['department']} department
+                                        </li>}
+                                        {jdata['job_function'] && <li className="mr-4">
+                                            {jdata['job_function']} function
+                                        </li>}
+                                        {jdata['industry'] && <li className="mr-4">
+                                            {jdata['industry']} Industry
+                                        </li>}
+                                        {jdata['group_or_division'] && <li className="mr-4">
+                                            {jdata['group_or_division']} group_or_division
+                                        </li>}
+                                    </ul>
                                 </aside>
                                 <hr className="my-4" />
-                                <aside className="mb-4">
+                                {jdata['description'] && <aside className="mb-4">
+                                    <h3 className="mb-2 font-bold text-lg">Description</h3>
+                                    <article className="text-[12px] text-darkGray dark:text-white">
+                                    {jdata['description']}
+                                    </article>
+                                </aside>}
+                                <hr className="my-4" />
+                                {jdata['responsibility'] && <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Your Responsibilities</h3>
                                     <article className="text-[12px] text-darkGray dark:text-white">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                    {jdata['responsibility']}
                                     </article>
-                                </aside>
+                                </aside>}
                                 <hr className="my-4" />
-                                <aside className="mb-4">
+                                {jdata['looking_for'] && <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">What are we Looking For</h3>
                                     <article className="text-[12px] text-darkGray dark:text-white">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                    {jdata['looking_for']}
                                     </article>
-                                </aside>
+                                </aside>}
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Skills</h3>
-                                    <article className="text-[12px] text-darkGray dark:text-white">
-                                        <p>Skill 1</p>
-                                        <p>Skill 2</p>
-                                    </article>
+                                    {jdata['jobSkill'] && <article className="text-[12px] text-darkGray dark:text-white">
+                                        {
+                                            jdata['jobSkill'].split(',').map((item,i) => <p key={i}>{item}</p>)
+                                        }
+                                    </article>}
                                 </aside>
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Employment Details</h3>
                                     <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
-                                        <li className="mr-4">
-                                            Full Time
-                                        </li>
-                                        <li className="mr-4">
-                                            Bachelor's Degree
-                                        </li>
-                                        <li className="mr-4">
-                                            English, Japan
-                                        </li>
-                                        <li className="mr-4">
-                                            2+ Years of Experience
-                                        </li>
+                                        {jdata['employment_type'] && <li className="mr-4">
+                                            {jdata['employment_type']}
+                                        </li>}
+                                        {jdata['education'] && <li className="mr-4">
+                                            {jdata['education']}
+                                        </li>}
+                                        {jdata['location'] && <li className="mr-4">
+                                            {jdata['location']}
+                                        </li>}
+                                        {jdata['experience'] && <li className="mr-4">
+                                            {jdata['experience']} of Experience
+                                        </li>}
                                     </ul>
                                 </aside>
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Benefits</h3>
                                     <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
-                                        <li className="mr-4">
+                                        {jdata['relocation'] == "Yes" && <li className="mr-4">
                                             Paid Relocation
-                                        </li>
-                                        <li className="mr-4">
+                                        </li>}
+                                        {jdata['visa'] == "Yes" && <li className="mr-4">
                                             Visa Sponsorship
-                                        </li>
-                                        <li className="mr-4">
-                                            Remote Working
-                                        </li>
+                                        </li>}
+                                        {jdata['worktype'] && <li className="mr-4">
+                                            {jdata['worktype']} Working
+                                        </li>}
                                     </ul>
                                 </aside>
                             </div>
@@ -154,7 +204,7 @@ export default function SearchJobsDetail() {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </main>
         </>

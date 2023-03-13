@@ -1,28 +1,34 @@
 import Button from "@/components/button";
 import FormField from "@/components/formfield";
-import { useCarrierId } from "@/utils/code";
+import { useCarrierStore } from "@/utils/code";
 import moment from "moment";
 import { getProviders } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function SearchJobs() {
 
     const router = useRouter();
-    const cid = useCarrierId((state) => state.cid)
-	const addcid = useCarrierId((state) => state.addcid)
-    const orgdetail = useCarrierId((state) => state.orgdetail)
-	const setorgdetail = useCarrierId((state) => state.setorgdetail)
-    const orgfounderdetail = useCarrierId((state) => state.orgfounderdetail)
-	const setorgfounderdetail = useCarrierId((state) => state.setorgfounderdetail)
-    const orggallerydetail = useCarrierId((state) => state.orggallerydetail)
-	const setorggallerydetail = useCarrierId((state) => state.setorggallerydetail)
-    const orgjobdetail = useCarrierId((state) => state.orgjobdetail)
-	const setorgjobdetail = useCarrierId((state) => state.setorgjobdetail)
+    
+    const cid = useCarrierStore((state) => state.cid)
+    const setcid = useCarrierStore((state) => state.setcid)
+    const orgdetail = useCarrierStore((state) => state.orgdetail)
+    const setorgdetail = useCarrierStore((state) => state.setorgdetail)
+    const jid = useCarrierStore((state) => state.jid)
+    const setjid = useCarrierStore((state) => state.setjid)
+    const jdata = useCarrierStore((state) => state.jdata)
+    const setjdata = useCarrierStore((state) => state.setjdata)
+
+    useEffect(()=>{
+        if(orgdetail && Object.keys(orgdetail).length === 0){
+            if(cid && cid=="")
+                router.replace(`/organization/${cid}`)
+            else
+                router.back()
+        }
+    },[cid,orgdetail])
     
     
-    function viewJob(refid: never){
-        router.replace(`/organization/${cid}/job/${refid}/job-detail`)
-    }
 
     return (
         <>
@@ -60,10 +66,10 @@ export default function SearchJobs() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-[calc(100%-300px)] pl-8">
-                        <h3 className="mb-6 font-bold text-xl">{orgjobdetail.length} {orgjobdetail.length > 1 ? <>Jobs</> : <>Job</> }</h3>
+                    {orgdetail['Job'] && <div className="w-[calc(100%-300px)] pl-8">
+                        <h3 className="mb-6 font-bold text-xl">{orgdetail['Job'].length} {orgdetail['Job'].length > 1 ? <>Jobs</> : <>Job</> }</h3>
                         <div className="flex flex-wrap mx-[-7px]">
-                            {orgjobdetail.map((data,i)=>(
+                            {orgdetail['Job'].map((data,i)=>(
                                 <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]" key={i}>
                                     <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
                                         <h4 className="font-bold text-lg mb-3">{data['job_title']}</h4>
@@ -83,7 +89,11 @@ export default function SearchJobs() {
                                         </ul>
                                         <div className="flex flex-wrap justify-between items-center">
                                             <div className="mr-4">
-                                                <Button btnStyle="sm" label="View" loader={false} btnType="button" handleClick={viewJob(data['refid'])} />
+                                                <Button btnStyle="sm" label="View" loader={false} btnType="button" handleClick={()=>{
+                                                    setjid(data['refid'])
+                                                    setjdata(data)
+                                                    router.push(`/organization/${cid}/job-detail`)
+                                                }} />
                                             </div>
                                             <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>
                                         </div>
@@ -91,7 +101,7 @@ export default function SearchJobs() {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </main>
         </>

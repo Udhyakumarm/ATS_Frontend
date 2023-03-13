@@ -1,14 +1,13 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useCarrierId, useCandiateStore } from "@/utils/code";
+import { useCarrierStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange"
 import { Popover } from '@headlessui/react'
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
 
@@ -20,32 +19,42 @@ export default function Header() {
 		if (session?.error === "RefreshAccessTokenError" && !router.asPath.startsWith("/auth")) {
 			signIn(); // Force sign in to hopefully resolve error
 		}
+		
 	}, [router.asPath, session]);
-	const cid = useCarrierId((state) => state.cid)
-	const addcid = useCarrierId((state) => state.addcid)
-	const orgdetail = useCarrierId((state) => state.orgdetail)
-	const setorgdetail = useCarrierId((state) => state.setorgdetail)
+	
+    const [auth,setauth] = useState(false)
 
-	const auth = useCandiateStore((state) => state.auth)
-	const toggleAuthMode = useCandiateStore((state) => state.toggleAuthMode)
+	useEffect(()=>{
+		if(session){
+			setauth(true)
+		}
+		else{
+			setauth(false)
+		}
+	},[session])
 
-	useEffect(()=>{console.log(auth)})
+
+	
+    const cid = useCarrierStore((state) => state.cid)
+    const setcid = useCarrierStore((state) => state.setcid)	
+    const orgdetail = useCarrierStore((state) => state.orgdetail)
+    const setorgdetail = useCarrierStore((state) => state.setorgdetail)
 	
 
-	if (router.asPath === "/organization/"+ cid  || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard") {
+	if (router.asPath === "/organization/"+ cid  || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard" || router.asPath === "/organization/"+ cid +"/job-detail") {
 		return(
 			<>
 				<header className="bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
-							<Image src={`http://127.0.0.1:8000${orgdetail[0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cid)}} />
+							<Image src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cid)}} />
 							<ul className="flex text-sm font-semibold text-darkGray">
 								<li className="mx-3">
 									<Link href={"/organization/"+ cid +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-primary text-primary`}>
 										Search Jobs
 									</Link>
 								</li>
-								{ auth == "true" &&
+								{ auth &&
 								<li className="mx-3">
 									<Link href={"/organization/"+ cid +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-transparent`}>
 										Dashboard
@@ -56,7 +65,7 @@ export default function Header() {
 						</div>
 						<div className="flex items-center">
 							<ThemeChange />
-							{ auth == "true" && <>
+							{ auth  && <>
 							<Popover className="relative mr-6">
 								<Popover.Button>
 									<button type="button" className="text-darkGray dark:text-white uppercase relative">
@@ -97,7 +106,7 @@ export default function Header() {
 											</Link>
 										</li>
 										<li>
-											<button type="button" className="text-left w-full block py-2 font-bold py-1 px-4 text-white bg-red-500 hover:bg-red-600"><i className="fa-solid fa-right-from-bracket mr-3"></i> Logout</button>
+											<button type="button" className="text-left w-full block py-2 font-bold py-1 px-4 text-white bg-red-500 hover:bg-red-600" onClick={() => signOut()}><i className="fa-solid fa-right-from-bracket mr-3"></i> Logout</button>
 										</li>
 									</ul>
 								</Popover.Panel>
@@ -150,21 +159,4 @@ export default function Header() {
 		
 		</>
 	)
-}
-
-export async function getServerSideProps(context: any) {
-	const session: any = await getServerSession(context.req, context.res, authOptions);
-	
-	const auth = useCandiateStore((state) => state.auth)
-	const toggleAuthMode = useCandiateStore((state) => state.toggleAuthMode)
-
-	if (!session)
-		toggleAuthMode('false')
-	else
-		toggleAuthMode('true')
-
-
-	return {
-		props: {}
-	};
 }
