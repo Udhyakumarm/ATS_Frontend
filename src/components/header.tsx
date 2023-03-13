@@ -9,6 +9,8 @@ import ThemeChange from "./ThemeChange"
 import { Popover } from '@headlessui/react'
 import Link from "next/link";
 import { useEffect } from "react";
+import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 
 export default function Header() {
 	const router = useRouter();
@@ -19,8 +21,6 @@ export default function Header() {
 			signIn(); // Force sign in to hopefully resolve error
 		}
 	}, [router.asPath, session]);
-	if (router.asPath === "/organization") {
-
 	const cid = useCarrierId((state) => state.cid)
 	const addcid = useCarrierId((state) => state.addcid)
 	const orgdetail = useCarrierId((state) => state.orgdetail)
@@ -145,14 +145,12 @@ export default function Header() {
 			</>
 		);
 	}
-	
-	return <></>;
+	return (
+		<>
+		
+		</>
+	)
 }
-
-
-
-import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next";
 
 export async function getServerSideProps(context: any) {
 	const session: any = await getServerSession(context.req, context.res, authOptions);
