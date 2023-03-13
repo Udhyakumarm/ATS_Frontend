@@ -1,7 +1,10 @@
 import ThemeChange from "../ThemeChange"
 import { signOut } from "next-auth/react";
+import { useState } from 'react'
+import { Dialog } from '@headlessui/react'
 
 export default function orgtopbar() {
+    const [isOpen, setIsOpen] = useState(false)
     return (
         <>
             <div id="topbar" className="bg-white dark:bg-gray-800 shadow h-[65px] py-3 px-6 flex items-center justify-end fixed z-[12] top-0 left-0 lg:left-[270px] w-full lg:w-[calc(100%-270px)] transition">
@@ -9,7 +12,7 @@ export default function orgtopbar() {
                 <button type="button" className="mr-6 text-darkGray dark:text-white">
                     <i className="fa-regular fa-clipboard text-[20px]"></i>
                 </button>
-                <button type="button" className="mr-6 text-darkGray dark:text-white">
+                <button type="button" className="mr-6 text-darkGray dark:text-white" onClick={() => setIsOpen(true)}>
                     <i className="fa-regular fa-calendar-days text-[20px]"></i>
                 </button>
                 <button type="button" className="mr-6 text-darkGray dark:text-white uppercase relative">
@@ -27,6 +30,22 @@ export default function orgtopbar() {
                     <i className="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
+            <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+                <Dialog.Panel>
+                    <Dialog.Title>Deactivate account</Dialog.Title>
+                    <Dialog.Description>
+                    This will permanently deactivate your account
+                    </Dialog.Description>
+
+                    <p>
+                    Are you sure you want to deactivate your account? All of your data
+                    will be permanently removed. This action cannot be undone.
+                    </p>
+
+                    <button onClick={() => setIsOpen(false)}>Deactivate</button>
+                    <button onClick={() => setIsOpen(false)}>Cancel</button>
+                </Dialog.Panel>
+            </Dialog>
         </>
     )
 }
