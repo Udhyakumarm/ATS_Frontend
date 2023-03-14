@@ -4,6 +4,7 @@ import React, { useState } from "react";
 export default function FormField({
 	label,
 	required,
+	readOnly,
 	icon,
 	inputType,
 	fieldType,
@@ -43,6 +44,7 @@ export default function FormField({
 												value={value}
 												onChange={handleChange}
 												placeholder={placeholder}
+												readOnly={readOnly}
 												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
 											<button
@@ -61,6 +63,7 @@ export default function FormField({
 												value={value}
 												onChange={handleChange}
 												placeholder={placeholder}
+												readOnly={readOnly}
 												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
 											<span className="absolute right-3 top-2 text-lightGray">{icon}</span>
@@ -77,6 +80,7 @@ export default function FormField({
 									value={value}
 									onChange={handleChange}
 									placeholder={placeholder}
+									readOnly={readOnly}
 								/>
 							</>
 						)}
@@ -171,6 +175,7 @@ export default function FormField({
 								value={value}
 								onChange={handleChange}
 								placeholder={placeholder}
+								readOnly={readOnly}
 								className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 							/>
 							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white">{icon}</button>
