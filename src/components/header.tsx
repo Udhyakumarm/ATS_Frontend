@@ -35,28 +35,30 @@ export default function Header() {
 
 
 	
+    const cname = useCarrierStore((state) => state.cname)
+    const setcname = useCarrierStore((state) => state.setcname)	
     const cid = useCarrierStore((state) => state.cid)
     const setcid = useCarrierStore((state) => state.setcid)	
     const orgdetail = useCarrierStore((state) => state.orgdetail)
     const setorgdetail = useCarrierStore((state) => state.setorgdetail)
 	
 
-	if (router.asPath === "/organization/"+ cid  || router.asPath === "/organization/"+ cid +"/search-jobs" || router.asPath === "/organization/"+ cid +"/dashboard" || router.asPath === "/organization/"+ cid +"/job-detail") {
+	if (router.asPath === "/organization/"+ cname  || router.asPath === "/organization/"+ cname +"/search-jobs" || router.asPath === "/organization/"+ cname +"/dashboard" || router.asPath === "/organization/"+ cname +"/job-detail" || router.asPath === "/organization/"+ cname +"/job-apply") {
 		return(
 			<>
 				<header className="bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
-							<Image src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cid)}} />
+							<Image src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cname)}} />
 							<ul className="flex text-sm font-semibold text-darkGray">
 								<li className="mx-3">
-									<Link href={"/organization/"+ cid +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-primary text-primary`}>
+									<Link href={"/organization/"+ cname +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-primary text-primary`}>
 										Search Jobs
 									</Link>
 								</li>
 								{ auth &&
 								<li className="mx-3">
-									<Link href={"/organization/"+ cid +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-transparent`}>
+									<Link href={"/organization/"+ cname +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-transparent`}>
 										Dashboard
 									</Link>
 								</li>
@@ -106,7 +108,7 @@ export default function Header() {
 											</Link>
 										</li>
 										<li>
-											<button type="button" className="text-left w-full block py-2 font-bold py-1 px-4 text-white bg-red-500 hover:bg-red-600" onClick={() => signOut()}><i className="fa-solid fa-right-from-bracket mr-3"></i> Logout</button>
+											<button type="button" className="text-left w-full block py-2 font-bold py-1 px-4 text-white bg-red-500 hover:bg-red-600" onClick={() => signOut({callbackUrl: `/organization/${cname}`})}><i className="fa-solid fa-right-from-bracket mr-3"></i> Logout</button>
 										</li>
 									</ul>
 								</Popover.Panel>

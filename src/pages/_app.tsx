@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import "nprogress/nprogress.css";
 import Router from "next/router";
 import NProgress from "nprogress";
+import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const router = useRouter();
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   
 	return (
 		<>
+		<Toaster />
 			<ThemeProvider attribute="class">
 				<SessionProvider session={session}>
 					<Head>

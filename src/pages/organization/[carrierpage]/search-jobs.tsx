@@ -10,6 +10,7 @@ export default function SearchJobs() {
 
     const router = useRouter();
     
+    const cname = useCarrierStore((state) => state.cname)
     const cid = useCarrierStore((state) => state.cid)
     const setcid = useCarrierStore((state) => state.setcid)
     const orgdetail = useCarrierStore((state) => state.orgdetail)
@@ -21,12 +22,12 @@ export default function SearchJobs() {
 
     useEffect(()=>{
         if(orgdetail && Object.keys(orgdetail).length === 0){
-            if(cid && cid=="")
-                router.replace(`/organization/${cid}`)
+            if(cid=="" || cname=="")
+                router.replace(`/organization/${cname}`)
             else
                 router.back()
         }
-    },[cid,orgdetail])
+    },[cid,orgdetail,cname])
     
     
 
@@ -92,7 +93,7 @@ export default function SearchJobs() {
                                                 <Button btnStyle="sm" label="View" loader={false} btnType="button" handleClick={()=>{
                                                     setjid(data['refid'])
                                                     setjdata(data)
-                                                    router.push(`/organization/${cid}/job-detail`)
+                                                    router.push(`/organization/${cname}/job-detail`)
                                                 }} />
                                             </div>
                                             <p className="font-bold text-darkGray dark:text-white text-[12px]">{moment(data['publish_date']).fromNow()}</p>

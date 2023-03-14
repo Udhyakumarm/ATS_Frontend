@@ -1,14 +1,106 @@
 import Button from "@/components/button";
 import FormField from "@/components/formfield";
 import HeaderBar from "@/components/HeaderBar";
-import { getProviders } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { useCarrierStore } from "@/utils/code";
+import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { useState, Fragment, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
+import { useEffect, useState } from "react";
+
 export default function ApplyJob() {
+    const { data: session } = useSession();
     const cancelButtonRef = useRef(null)
     const [isOpen, setIsOpen] = useState(false)
+
+    
+    
+    const cname = useCarrierStore((state) => state.cname)
+    const cid = useCarrierStore((state) => state.cid)
+    const jid = useCarrierStore((state) => state.jid)
+    const jdata = useCarrierStore((state) => state.jdata)
+    const setjdata = useCarrierStore((state) => state.setjdata)
+
+    const [resume,setresume] = useState()
+    const [fname,setfname] = useState("")
+    const [lname,setlname] = useState("")
+    const [email,setemail] = useState("")
+    const [phone,setphone] = useState("")
+    const [summary,setsummary] = useState("")
+
+    const [token,settoken] = useState("")
+    const [done,setdone] = useState(0)
+
+    const axiosInstanceAuth2 = axiosInstanceAuth(token)
+
+    useEffect(()=>{
+        if(session){settoken(session['accessToken'])}
+    },[session,settoken])
+    
+    useEffect(()=>{
+        if(jdata && Object.keys(jdata).length === 0 || jid && jid == "" || !session){
+            if(cname=="" && cid=="")
+                router.replace(`/organization/${cname}`)
+            else
+                router.back()
+        }
+    },[cid,jid,jdata,session,cname])
+
+    function verifyForm() {
+        return fname.length > 0 && lname.length > 0 && email.length > 0 && phone.length > 0 && summary.length > 0 && resume
+    }
+
+    async function saveresume(){
+        const formData = new FormData()
+        formData.append("file", resume)
+        await axiosInstanceAuth2
+            .post(`/candidate/candidateresume/${jdata["refid"]}/`, formData)
+            .then(async res => {
+                console.log("Resume Saved")
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    async function saveprofile(){
+        const formData = new FormData()
+        formData.append("first_name", fname)
+        formData.append("last_name", lname)
+        formData.append("mobile", phone)
+        formData.append("summary", summary)
+        await axiosInstanceAuth2
+            .post(`/candidate/candidateprofile/${jdata["refid"]}/`, formData)
+            .then(async res => {
+                createapplicant()
+                console.log("profile saved")
+                
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    async function createapplicant(){
+        const formData = new FormData()
+        await axiosInstanceAuth2
+            .post(`/job/applicant/apply/${jdata["refid"]}/`,)
+            .then(async res => {
+                console.log("Applied")
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    function apply(){
+        saveresume()
+        saveprofile()
+    }
+    
     return (
         <>
             <main className="py-8">
@@ -60,26 +152,26 @@ export default function ApplyJob() {
                                 <p className="text-darkGray text-sm">
                                     Maximum File Size: 5 MB
                                 </p>
-                                <input type="file" className="hidden" id="uploadCV" />
+                                <input type="file" className="hidden" id="uploadCV"  onChange={e => setresume(e.target.files[0])} />
                             </label>
                             <div className="flex flex-wrap mx-[-10px]">
                                 <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                    <FormField fieldType="input" inputType="text" label="First Name" placeholder="First Name" />
+                                    <FormField fieldType="input" inputType="text" label="First Name" placeholder="First Name" value={fname} handleChange={e => setfname(e.target.value)} />
                                 </div>
                                 <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                    <FormField fieldType="input" inputType="text" label="Last Name" placeholder="Last Name" />
+                                    <FormField fieldType="input" inputType="text" label="Last Name" placeholder="Last Name" value={lname} handleChange={e => setlname(e.target.value)} />
                                 </div>
                             </div>
                             <div className="flex flex-wrap mx-[-10px]">
                                 <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                    <FormField fieldType="input" inputType="email" label="Email" placeholder="Email" required />
+                                    <FormField fieldType="input" inputType="email" label="Email" placeholder="Email" required value={email} handleChange={e => setemail(e.target.value)} />
                                 </div>
                                 <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                    <FormField fieldType="input" inputType="number" label="Phone Number" placeholder="Phone Number" />
+                                    <FormField fieldType="input" inputType="number" label="Phone Number" placeholder="Phone Number" value={phone} handleChange={e => setphone(e.target.value)} />
                                 </div>
                             </div>
                             <FormField fieldType="addItem" inputType="text" label="Social Links" placeholder="Add Social Profiles" icon={<i className="fa-regular fa-plus"></i>} />
-                            <FormField fieldType="textarea" label="Summary" placeholder="Summary" />
+                            <FormField fieldType="textarea" label="Summary" placeholder="Summary" value={summary} handleChange={e => setsummary(e.target.value)} />
                             <FormField fieldType="addItem" inputType="text" label="Skills" placeholder="Add Skills" icon={<i className="fa-regular fa-plus"></i>} />
                             <FormField fieldType="addItem" inputType="text" label="Education" placeholder="Add Education" icon={<i className="fa-regular fa-plus"></i>} />
                             <FormField fieldType="addItem" inputType="text" label="Certification" placeholder="Add Certification" icon={<i className="fa-regular fa-plus"></i>} />
@@ -101,7 +193,7 @@ export default function ApplyJob() {
                             </div>
                             <FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
                             <p className="text-darkGray mb-4"><small>Note: You can edit your details manually</small></p>
-                            <Button type="submit" label="Apply" loader={false} />
+                            <Button label="Apply" loader={false} disabled={!verifyForm()} btnType="button" handleClick={apply} />
                         </div>
                     </div>  
                 </div>

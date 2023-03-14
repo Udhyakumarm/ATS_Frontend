@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 export default function SearchJobsDetail() {
     const { data: session } = useSession();
-    const auth = useCarrierStore((state) => state.auth)
+    const cname = useCarrierStore((state) => state.cname)
     const cid = useCarrierStore((state) => state.cid)
     const setcid = useCarrierStore((state) => state.setcid)
     const orgdetail = useCarrierStore((state) => state.orgdetail)
@@ -20,12 +20,12 @@ export default function SearchJobsDetail() {
     
     useEffect(()=>{
         if(orgdetail && Object.keys(orgdetail).length === 0 || jdata && Object.keys(jdata).length === 0 || jid && jid == ""){
-            if(cid && cid=="")
-                router.replace(`/organization/${cid}`)
+            if(cname=="" || cid=="")
+                router.replace(`/organization/${cname}`)
             else
                 router.back()
         }
-    },[cid,orgdetail,jid,jdata])
+    },[cid,orgdetail,jid,jdata,cname])
 
     useEffect(()=>{if(jdata)console.log(jdata)},[jdata])
     
@@ -85,10 +85,10 @@ export default function SearchJobsDetail() {
                                 </ul>
                                 <Button btnStyle="sm" label="Apply Here" loader={false} btnType="button" handleClick={()=>{
                                                     if(session){
-                                                        router.push(`/organization/${cid}/job-apply`)
+                                                        router.push(`/organization/${cname}/job-apply`)
                                                     }
                                                     else{
-                                                        router.push(`/organization/${cid}/candidate/signin`)
+                                                        router.push(`/organization/${cname}/candidate/signin`)
                                                     }
                                                 }} />
                                 <hr className="my-4" />

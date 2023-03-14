@@ -9,6 +9,7 @@ import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
+import toastcomp from "@/components/toast";
 const Toaster = dynamic(() => import("../../components/Toaster"), {
 	ssr: false
 });
@@ -65,6 +66,14 @@ export default function SignIn({ providers }: any) {
 			.then(async () => await router.push("/"))
 			.catch((err) => {
 				console.log(err);
+				if (err.response.data.errors.non_field_errors) {
+					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"))
+					return false
+				}
+				if (err.response.data.errors.email) {
+					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"))
+					return false
+				}
 			});
 	};
 	return (

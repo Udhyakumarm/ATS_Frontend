@@ -10,12 +10,14 @@ let settingsStore = (set) => ({
 
 let carrierStore = (set) => ({
   // auth: false, // Candiate Auth
+  cname: "",//Company Name
   cid: "", // Carrier Page ID / Org Profile ID
   orgdetail: [], //Carrier Page Org Detail
   jid: "", //Job ID
   jdata: {}, //Particular Job Data
 
   // setauth: (id) => set((state) => ({ auth: id })),
+  setcname: (id) => set((state) => ({ cname: id })),
   setcid: (id) => set((state) => ({ cid: id })),
   setorgdetail: (id) => set((state) => ({ orgdetail: id })),
   setjid: (id) => set((state) => ({ jid: id })),

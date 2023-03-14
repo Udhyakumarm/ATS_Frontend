@@ -13,6 +13,9 @@ import { useRouter } from "next/router"
 export default function cancareer() {
     const router = useRouter();
 
+    const cname = useCarrierStore((state) => state.cname)
+    const setcname = useCarrierStore((state) => state.setcname)
+
     const cid = useCarrierStore((state) => state.cid)
     const setcid = useCarrierStore((state) => state.setcid)
     const jid = useCarrierStore((state) => state.jid)
@@ -23,9 +26,19 @@ export default function cancareer() {
     const setorgdetail = useCarrierStore((state) => state.setorgdetail)
 
     useEffect(() => {
-        setcid(window.location.href.toString().split("/").pop())
-    }, [cid, setcid])
+        if(cname=="" || cname != window.location.href.toString().split("/").pop()){
+            setcname(window.location.href.toString().split("/").pop())
+        }
+    }, [cname, setcname])
 
+
+	async function getcid(cname: any) {
+		await axiosInstance
+        .get(`/organization/get/organisationprofilecid/carrier/${cname}/`)
+        .then((res) => {
+			setcid(res.data["oprofiledata"][0]["unique_id"])
+        })
+	}
 
 	async function loadOrgDetail(carrierID: any) {
 		await axiosInstance
@@ -40,6 +53,13 @@ export default function cancareer() {
             loadOrgDetail(cid)
         }
     },[cid,orgdetail])
+
+    
+    useEffect(()=>{
+        if(cname && cid == ""){
+            getcid(cname)
+        }
+    },[cname,cid])
     
     return (
         <>
@@ -152,7 +172,7 @@ export default function cancareer() {
                                                             btnType="button" handleClick={()=>{
                                                                 setjid(data['refid'])
                                                                 setjdata(data)
-                                                                router.push(`/organization/${cid}/job-detail`)
+                                                                router.push(`/organization/${cname}/job-detail`)
                                                             }}
                                                             />
                                                         </div>
@@ -162,7 +182,7 @@ export default function cancareer() {
                                             </div>
                                         ))}
                                         <Button btnStyle="sm" label="View All Job" loader={false} btnType="button" handleClick={()=>{
-                                            router.push(`/organization/${cid}/search-jobs`)
+                                            router.push(`/organization/${cname}/search-jobs`)
                                         }}/>
                                         </div>
                                     </div>
