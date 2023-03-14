@@ -7,7 +7,6 @@ import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { useState, Fragment, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-
 import { useEffect, useState } from "react";
 
 export default function ApplyJob() {
@@ -100,7 +99,7 @@ export default function ApplyJob() {
         saveresume()
         saveprofile()
     }
-    
+
     return (
         <>
             <main className="py-8">
