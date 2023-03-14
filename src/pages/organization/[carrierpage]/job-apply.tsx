@@ -7,6 +7,7 @@ import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { useState, Fragment, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import toastcomp from "@/components/toast";
 
 export default function ApplyJob() {
     const { data: session } = useSession();
@@ -39,7 +40,7 @@ export default function ApplyJob() {
 
     useEffect(()=>{
         if(session){settoken(session['accessToken'])}
-    },[session,settoken])
+    },[session])
     
     useEffect(()=>{
         if(jdata && Object.keys(jdata).length === 0 || jid && jid == "" || !session){
@@ -52,6 +53,36 @@ export default function ApplyJob() {
 
     function verifyForm() {
         return fname.length > 0 && lname.length > 0 && email.length > 0 && phone.length > 0 && summary.length > 0 && resume
+    }
+
+    const [link,setlink] = useState("")
+    const [linkarr,setlinkarr] = useState([])
+
+    function verifySocialForm() {
+        return link.length > 0
+    }
+
+    const [skill, setSkill] = useState([])
+    const [stitle, setSTitle] = useState("")
+    const [sprf, setSProf] = useState("")
+    const [sset, setSSet] = useState("")
+
+    function verifySkillPopup() {
+        return stitle.length > 0 && sprf.length > 0 && sset.length > 0 
+    }
+
+
+    const [cert, setCert] = useState([])
+    const [certname, setCERTName] = useState("")
+    const [corg, setCOrg] = useState("")
+    const [cexp, setCExp] = useState(false)
+    const [cidate, setCIDate] = useState("")
+    const [cedate, setCEDate] = useState("")
+    const [certid, setCERTId] = useState("")
+    const [curl, setCUrl] = useState("")
+
+    function verifyCertPopup() {
+        return certname.length > 0 && corg.length > 0 && cidate.length > 0 && certid.length > 0 && curl.length > 0 && (cexp || cedate.length > 0)
     }
 
     async function saveresume(){
@@ -92,15 +123,23 @@ export default function ApplyJob() {
             .post(`/job/applicant/apply/${jdata["refid"]}/`,)
             .then(async res => {
                 console.log("Applied")
+                toastcomp("Applied Successfully","success")
             })
             .catch(err => {
                 console.log(err)
+                toastcomp("Applied Not Successfully","error")
             })
     }
 
     function apply(){
         saveresume()
         saveprofile()
+    }
+
+    function show(){
+        console.log("Link : ",linkarr)
+        console.log("Skill : ",skill)
+        console.log("Certificate : ",cert)
     }
 
     return (
@@ -302,10 +341,19 @@ export default function ApplyJob() {
                             <hr className="mt-8 mb-4" />
                             <div className="mb-4 relative">
                                 <FormField fieldType="addItem" inputType="text" label="Experience" placeholder="Add Experience" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                                <label htmlFor="newGraduate" className="font-bold text-sm absolute right-0 top-0">
-                                    <input type="checkbox" id="newGraduate" name="newGraduate" className="mr-2 mb-[3px]" />
-                                    New Graduate
-                                </label>
+                                <FormField fieldType="addItem" inputType="text" label="Social Links" placeholder="Add Social Profiles" icon={<i className="fa-regular fa-plus"></i>} clickevent={() => setSocialPopup(true)} />
+                                <FormField fieldType="textarea" label="Summary" placeholder="Summary" value={summary} handleChange={e => setsummary(e.target.value)} />
+                                <FormField fieldType="addItem" inputType="text" label="Skills" placeholder="Add Skills" icon={<i className="fa-regular fa-plus"></i>} clickevent={() => setSkillsPopup(true)} />
+                                <FormField fieldType="addItem" inputType="text" label="Education" placeholder="Add Education" icon={<i className="fa-regular fa-plus"></i>} clickevent={() => setEduPopup(true)} />
+                                <FormField fieldType="addItem" inputType="text" label="Certification" placeholder="Add Certification" icon={<i className="fa-regular fa-plus"></i>} clickevent={() => setCertPopup(true)} />
+                                <hr className="mt-8 mb-4" />
+                                <div className="mb-4 relative">
+                                    <FormField fieldType="addItem" inputType="text" label="Experience" placeholder="Add Experience" icon={<i className="fa-regular fa-plus"></i>} clickevent={() => setExpPopup(true)} />
+                                    <label htmlFor="newGraduate" className="font-bold text-sm absolute right-0 top-0">
+                                        <input type="checkbox" id="newGraduate" name="newGraduate" className="mr-2 mb-[3px]" />
+                                        New Graduate
+                                    </label>
+                                </div>
                             </div>
                             <div className="border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
                                 <div
@@ -351,6 +399,7 @@ export default function ApplyJob() {
                             <FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
                             <p className="text-darkGray mb-4"><small>Note: You can edit your details manually</small></p>
                             <Button label="Apply" loader={false} disabled={!verifyForm()} btnType="button" handleClick={apply} />
+                            <Button label="Show Data" loader={false} btnType="button" handleClick={show} />
                         </div>
                     </div>  
                 </div>
@@ -399,9 +448,15 @@ export default function ApplyJob() {
                                 </button>
                             </div>
                             <div className="p-8">
-                                <FormField fieldType="input" inputType="text" label="Enter Social Profile Url" placeholder="https://facebook.com" />
+                                <FormField fieldType="input" inputType="text" label="Enter Social Profile Url" placeholder="https://facebook.com" value={link} handleChange={(e)=>setlink(e.target.value)} />
                                 <div className="text-center">
-                                    <Button label="Save" />
+                                    <Button label="Save" disabled={!verifySocialForm()} btnType="button" handleClick={()=>{
+                                        let arr = linkarr
+                                        arr.push(link)
+                                        setlinkarr(arr)
+                                        setlink("")
+                                        setSocialPopup(false)
+                                    }} />
                                 </div>
                             </div>
                         </Dialog.Panel>
@@ -454,11 +509,51 @@ export default function ApplyJob() {
                                 </button>
                             </div>
                             <div className="p-8">
-                                <FormField fieldType="select" label="Choose desired skill" />
-                                <FormField fieldType="select" label="Choose profeciency" />
-                                <FormField fieldType="select" label="Set skill primary or secondary" />
+                                <FormField fieldType="select" label="Choose desired skill"
+                                singleSelect
+                                value={stitle}
+                                handleChange={(e)=>setSTitle(e.target.value)}
+                                options={[
+                                    { name: "HTML" },
+                                    { name: "PHP" },
+                                    { name: "PYTHON" },
+                                ]} />
+                                <FormField fieldType="select" label="Choose profeciency"
+                                singleSelect
+                                value={sprf}
+                                handleChange={(e)=>setSProf(e.target.value)}
+                                options={[
+                                    { name: "Beginner" },
+                                    { name: "Intermediate" },
+                                    { name: "Advance" },
+                                ]}
+                                />
+                                <FormField fieldType="select" label="Set skill primary or secondary" 
+                                
+                                singleSelect
+                                value={sset}
+                                handleChange={(e)=>setSSet(e.target.value)}
+                                options={[
+                                    { name: "Primary" },
+                                    { name: "Secondary" }
+                                ]}
+                                
+                                />
                                 <div className="text-center">
-                                    <Button label="Save" />
+                                    <Button label="Save"  disabled={!verifySkillPopup()} btnType="button" handleClick={()=>{
+                                        let arr = skill
+                                        var dict = {
+                                            title: stitle,
+                                            prof: sprf,
+                                            set: sset
+                                        }
+                                        arr.push(dict)
+                                        setSkill(arr)
+                                        setSTitle("")
+                                        setSProf("")
+                                        setSSet("")
+                                        setSkillsPopup(false)
+                                    }} />
                                 </div>
                             </div>
                         </Dialog.Panel>
@@ -582,35 +677,65 @@ export default function ApplyJob() {
                             <div className="p-8">
                                 <div className="flex flex-wrap mx-[-10px]">
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="text" label="Certificate Name" placeholder="Certificate Name" />
+                                        <FormField fieldType="input" inputType="text" label="Certificate Name" placeholder="Certificate Name" value={certname} handleChange={e => setCERTName(e.target.value)} />
                                     </div>
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="text" label="Issuing Organization" placeholder="Issuing Organization" />
+                                        <FormField fieldType="input" inputType="text" label="Issuing Organization" placeholder="Issuing Organization" value={corg} handleChange={e => setCOrg(e.target.value)} />
                                     </div>
                                 </div>
                                 <div className="mb-4">
                                     <label htmlFor="credNotExp" className="font-bold text-sm">
-                                        <input type="checkbox" id="credNotExp" name="credNotExp" className="mr-2 mb-[3px]" />
+                                        <input type="checkbox" id="credNotExp" name="credNotExp" className="mr-2 mb-[3px]" checked={cexp}
+                                        onChange={e => setCExp(e.target.checked)}/>
                                         This credential does not expire.
                                     </label>
                                 </div>
                                 <div className="flex flex-wrap mx-[-10px]">
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="date" label="Issue Date" placeholder="Issue Date" />
+                                        <FormField fieldType="input" inputType="date" label="Issue Date" placeholder="Issue Date" value={cidate}
+                                        handleChange={e => setCIDate(e.target.value)} />
                                     </div>
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="date" label="Expiration Date" placeholder="Expiration Date" />
+                                        <FormField fieldType="input" inputType="date" label="Expiration Date" placeholder="Expiration Date" value={cedate}
+                                        handleChange={e => setCEDate(e.target.value)}
+                                        disabled={cexp} />
                                     </div>
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="text" label="Credential ID" placeholder="Credential ID" />
+                                        <FormField fieldType="input" inputType="text" label="Credential ID" placeholder="Credential ID" value={certid}
+                                        handleChange={e => setCERTId(e.target.value)} />
                                     </div>
                                     <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
-                                        <FormField fieldType="input" inputType="text" label="Credential URL" placeholder="Credential URL" />
+                                        <FormField fieldType="input" inputType="text" label="Credential URL" placeholder="Credential URL" value={curl}
+                                        handleChange={e => setCUrl(e.target.value)} />
                                     </div>
                                 </div>
-                                <FormField fieldType="textarea" label="About" />
                                 <div className="text-center">
-                                    <Button label="Save" />
+                                    <Button label="Save" disabled={!verifyCertPopup()} btnType="button" handleClick={()=>{
+                                        let arr = cert
+                                        var dict = {
+                                            title: certname,
+                                            company: corg,
+                                            yearofissue: cidate,
+                                            creid: certid,
+                                            creurl: curl
+                                        }
+                                        if (!cexp) {
+                                            dict["yearofexp"]=cedate
+                                        } else {
+                                            dict["yearofexp"]=""
+                                        }
+
+                                        arr.push(dict)
+                                        setSkill(arr)
+                                        setCERTName("")
+                                        setCOrg("")
+                                        setCIDate("")
+                                        setCEDate("")
+                                        setCERTId("")
+                                        setCUrl("")
+                                        setCExp(false)
+                                        setCertPopup(false)
+                                    }}/>
                                 </div>
                             </div>
                         </Dialog.Panel>

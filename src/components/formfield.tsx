@@ -14,7 +14,9 @@ export default function FormField({
 	options,
 	singleSelect,
 	id,
-	placeholder
+	placeholder,
+	clickevent,
+	disabled
 }: any) {
 	const [typePass, setTypePass] = useState(false);
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
@@ -81,6 +83,7 @@ export default function FormField({
 									onChange={handleChange}
 									placeholder={placeholder}
 									readOnly={readOnly}
+									disabled={disabled}
 								/>
 							</>
 						)}
@@ -178,7 +181,7 @@ export default function FormField({
 								readOnly={readOnly}
 								className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 							/>
-							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white">{icon}</button>
+							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white" onClick={clickevent}>{icon}</button>
 						</div>
 					</div>
 				</div>

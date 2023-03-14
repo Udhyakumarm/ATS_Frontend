@@ -28,6 +28,7 @@ export default function cancareer() {
     useEffect(() => {
         if(cname=="" || cname != window.location.href.toString().split("/").pop()){
             setcname(window.location.href.toString().split("/").pop())
+            setcid("")
         }
     }, [cname, setcname])
 
@@ -36,7 +37,10 @@ export default function cancareer() {
 		await axiosInstance
         .get(`/organization/get/organisationprofilecid/carrier/${cname}/`)
         .then((res) => {
-			setcid(res.data["oprofiledata"][0]["unique_id"])
+            console.log(res.data)
+            console.log(res.data["OrgProfile"])
+            console.log(res.data["OrgProfile"][0]["unique_id"])
+			setcid(res.data["OrgProfile"][0]["unique_id"])
         })
 	}
 
@@ -46,21 +50,27 @@ export default function cancareer() {
         .then((res) => {
 			setorgdetail(res.data)
         })
+        .catch((err)=>{
+            setorgdetail([])
+        })
 	}
 
+
+    
+    useEffect(()=>{
+        if(cname!="" || cid == ""){
+            getcid(cname)
+        }
+    },[cname,cid])
+    
+
+    
     useEffect(()=>{
         if(cid && Object.keys(orgdetail).length === 0){
             loadOrgDetail(cid)
         }
     },[cid,orgdetail])
 
-    
-    useEffect(()=>{
-        if(cname && cid == ""){
-            getcid(cname)
-        }
-    },[cname,cid])
-    
     return (
         <>
             <Head>
