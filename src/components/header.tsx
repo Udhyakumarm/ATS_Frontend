@@ -50,15 +50,15 @@ export default function Header() {
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
 							<Image src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]['logo']}`} alt={'Somhako'} width={200} height={200} className="max-h-[40px] w-auto mr-8" onClick={()=>{router.push("/organization/"+ cname)}} />
-							<ul className="flex text-sm font-semibold text-darkGray">
+							<ul className="flex text-sm font-semibold">
 								<li className="mx-3">
-									<Link href={"/organization/"+ cname +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-primary text-primary`}>
+									<Link href={"/organization/"+ cname +"/search-jobs"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary` + ' ' + (router.pathname == "/organization/"+ cname +"/search-jobs" ? 'border-b-primary text-primary' : 'border-b-transparent')}>
 										Search Jobs
 									</Link>
 								</li>
 								{ auth &&
 								<li className="mx-3">
-									<Link href={"/organization/"+ cname +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary border-b-transparent`}>
+									<Link href={"/organization/"+ cname +"/dashboard"} className={`inline-block px-2 py-[10px] border-b-2 hover:text-primary` + ' ' + (router.pathname == "/organization/"+ cname +"/search-jobs" ? 'border-b-primary text-primary' : 'border-b-transparent')}>
 										Dashboard
 									</Link>
 								</li>

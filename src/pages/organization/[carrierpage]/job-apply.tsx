@@ -5,14 +5,17 @@ import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useCarrierStore } from "@/utils/code";
 import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
-import { useState, Fragment, useRef } from 'react'
+import { useState, Fragment, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { useEffect, useState } from "react";
 
 export default function ApplyJob() {
     const { data: session } = useSession();
     const cancelButtonRef = useRef(null)
-    const [isOpen, setIsOpen] = useState(false)
+    const [socialPopup, setSocialPopup] = useState(false)
+    const [skillsPopup, setSkillsPopup] = useState(false)
+    const [eduPopup, setEduPopup] = useState(false)
+    const [certPopup, setCertPopup] = useState(false)
+    const [expPopup, setExpPopup] = useState(true)
 
     
     
@@ -197,12 +200,12 @@ export default function ApplyJob() {
                     </div>  
                 </div>
             </main>
-            <Transition.Root show={isOpen} as={Fragment}>
+            <Transition.Root show={socialPopup} as={Fragment}>
                 <Dialog
                 as="div"
                 className="relative z-40"
                 initialFocus={cancelButtonRef}
-                onClose={setIsOpen}
+                onClose={setSocialPopup}
                 >
                 <Transition.Child
                     as={Fragment}
@@ -230,18 +233,308 @@ export default function ApplyJob() {
                         <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
                             <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
                                 <h4 className="leading-none font-semibold">
-                                    Title Here
+                                    Add Social Profile
                                 </h4>
                                 <button
                                     type="button"
                                     className="leading-none hover:text-gray-700"
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => setSocialPopup(false)}
                                 >
                                     <i className="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
                             <div className="p-8">
-                                    Body
+                                <FormField fieldType="input" inputType="text" label="Enter Social Profile Url" placeholder="https://facebook.com" />
+                                <div className="text-center">
+                                    <Button label="Save" />
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={skillsPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setSocialPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
+                            <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                <h4 className="leading-none font-semibold">
+                                    Add Skills
+                                </h4>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setSkillsPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-8">
+                                <FormField fieldType="select" label="Choose desired skill" />
+                                <FormField fieldType="select" label="Choose profeciency" />
+                                <FormField fieldType="select" label="Set skill primary or secondary" />
+                                <div className="text-center">
+                                    <Button label="Save" />
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={eduPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setEduPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
+                            <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                <h4 className="leading-none font-semibold">
+                                    Add Education
+                                </h4>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setEduPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-8">
+                                <div className="flex flex-wrap mx-[-10px]">
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Course Name" placeholder="Course Name" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="University Name" placeholder="University Name" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="Start Date" placeholder="Start Date" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="End Date" placeholder="End Date" />
+                                    </div>
+                                </div>
+                                <FormField fieldType="textarea" label="About" />
+                                <div className="text-center">
+                                    <Button label="Save" />
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={certPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setCertPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
+                            <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                <h4 className="leading-none font-semibold">
+                                    Add Certification
+                                </h4>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setCertPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-8">
+                                <div className="flex flex-wrap mx-[-10px]">
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Certificate Name" placeholder="Certificate Name" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Issuing Organization" placeholder="Issuing Organization" />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="credNotExp" className="font-bold text-sm">
+                                        <input type="checkbox" id="credNotExp" name="credNotExp" className="mr-2 mb-[3px]" />
+                                        This credential does not expire.
+                                    </label>
+                                </div>
+                                <div className="flex flex-wrap mx-[-10px]">
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="Issue Date" placeholder="Issue Date" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="Expiration Date" placeholder="Expiration Date" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Credential ID" placeholder="Credential ID" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Credential URL" placeholder="Credential URL" />
+                                    </div>
+                                </div>
+                                <FormField fieldType="textarea" label="About" />
+                                <div className="text-center">
+                                    <Button label="Save" />
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={expPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setExpPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-2xl">
+                            <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                <h4 className="leading-none font-semibold">
+                                    Add Experience
+                                </h4>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setExpPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-8">
+                                <div className="flex flex-wrap mx-[-10px]">
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Title" placeholder="Title" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="text" label="Company Name" placeholder="Company Name" />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="currentlyWorking" className="font-bold text-sm">
+                                        <input type="checkbox" id="currentlyWorking" name="currentlyWorking" className="mr-2 mb-[3px]" />
+                                        Currently Working?
+                                    </label>
+                                </div>
+                                <FormField fieldType="select" label="Job Type" />
+                                <div className="flex flex-wrap mx-[-10px]">
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="Start Date" placeholder="Start Date" />
+                                    </div>
+                                    <div className="w-full md:max-w-[50%] px-[10px] mb-[20px]">
+                                        <FormField fieldType="input" inputType="date" label="End Date" placeholder="End Date" />
+                                    </div>
+                                </div>
+                                <FormField fieldType="textarea" label="About" />
+                                <div className="text-center">
+                                    <Button label="Save" />
+                                </div>
                             </div>
                         </Dialog.Panel>
                     </Transition.Child>

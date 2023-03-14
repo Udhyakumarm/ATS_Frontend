@@ -41,7 +41,7 @@ export default function SearchJobs() {
                                 <input
                                     type={'search'}
                                     id={'jobSearch'}
-                                    className={`w-full rounded  border-0 text-sm dark:bg-gray-700 pl-8 focus:ring-0`}
+                                    className={`w-full rounded border-0 text-sm dark:bg-gray-800 pl-8 focus:ring-0`}
                                     placeholder="Search for Jobs"
                                 />
                                 <span className="absolute left-0 top-[2px] text-xl">

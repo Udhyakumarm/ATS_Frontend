@@ -76,18 +76,18 @@ export default function cancareer() {
                         <div className="w-full max-w-[1200px] mx-auto px-4" key={i}>
                             <Image src={`http://127.0.0.1:8000${data['banner']}`} alt="Banner" width={1200} height={200} className="rounded-large mb-6 mx-auto max-h-[200px] object-cover" />
                             <div className="w-full max-w-[1100px] mx-auto px-4">
-                                <div className="bg-white dark:bg-gray-900 rounded-normal py-4 px-8">
-                                    <div className="flex flex-wrap mb-3">
+                                <div className="bg-white dark:bg-gray-800 rounded-normal py-4 px-8 mb-6">
+                                    <div className="flex flex-wrap mb-3 border p-4 pb-0 rounded-normal">
                                     {orgdetail['Founder'].map((data,i)=>(
-                                        <div className="w-full md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)] pr-4 mb-3" key={i}>
-                                        <Image src={`http://127.0.0.1:8000${data['image']}`} alt="User" width={80} height={80} className="h-[80px] rounded-full object-cover mb-2" />
-                                        <p className="font-bold text-sm mb-1">{data['name']}</p>
-                                        <p className="text-sm text-darkGray">{data['designation']}</p>
+                                        <div className="w-full md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)] pr-4 mb-3 text-center" key={i}>
+                                            <Image src={`http://127.0.0.1:8000${data['image']}`} alt="User" width={80} height={80} className="h-[80px] rounded-full object-cover mb-2 mx-auto" />
+                                            <p className="font-bold text-sm mb-1">{data['name']}</p>
+                                            <p className="text-sm text-darkGray">{data['designation']}</p>
                                         </div>
                                     ))}
                                     </div>
                                     {data['org_Url'] && data['org_Url']!= '' && <p className="mb-3">
-                                        <Link href={`${data['org_Url']}`} target="_blank" className="text-primary hover:underline">{data['org_Url']}</Link>
+                                        <Link href={`${data['org_Url']}`} target="_blank" className="text-primary dark:text-white hover:underline"><i className="fa-solid fa-globe mr-2"></i> {data['org_Url']}</Link>
                                     </p>
                                     }
                                     <ul className="mb-6 flex flex-wrap items-center list-disc list-inside text-darkGray dark:text-white font-semibold">
@@ -102,7 +102,7 @@ export default function cancareer() {
                                         </li>}
                                     </ul>
                                     <hr className="mb-6" />
-                                    {data['about_org'] && data['about_org']!= '' && <article className="text-darkGray mb-6">
+                                    {data['about_org'] && data['about_org']!= '' && <article className="mb-6">
                                         {data['about_org']}
                                     </article>}
                                     <hr className="mb-6" />
@@ -143,13 +143,13 @@ export default function cancareer() {
                                             </ResponsiveMasonry>
                                         </div>
                                     </div>}
-                                    <hr className="mb-6" />
-                                    { orgdetail['Job'] && 
+                                </div>
+                                { orgdetail['Job'] && 
                                     <div>
-                                        <h2 className="font-bold text-lg mb-3">Recent Jobs</h2>
-                                        <div className="border rounded-large p-6">
+                                        <h2 className="font-bold text-xl mb-3">Similar Jobs</h2>
+                                        <div className="flex flex-wrap mx-[-7px]">
                                         {orgdetail['Job'].slice(0, 2).map((data,i)=>(
-                                            <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]" key={i}>
+                                            <div className="w-full md:max-w-[50%] lg:max-w-[calc(100%/3)] px-[7px] mb-[15px]" key={i}>
                                                 <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
                                                     <h4 className="font-bold text-lg mb-3">{data['job_title']}</h4>
                                                     <ul className="mb-3 flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
@@ -181,13 +181,12 @@ export default function cancareer() {
                                                 </div>
                                             </div>
                                         ))}
+                                        </div>
                                         <Button btnStyle="sm" label="View All Job" loader={false} btnType="button" handleClick={()=>{
                                             router.push(`/organization/${cname}/search-jobs`)
                                         }}/>
-                                        </div>
                                     </div>
-                                    }
-                                </div>
+                                }
                             </div>
                         </div>
 
