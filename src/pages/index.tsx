@@ -19,7 +19,7 @@ import { getServerSession } from "next-auth/next";
 
 export async function getServerSideProps(context: any) {
 	
-    const cid = useCarrierStore((state) => state.cid)
+    // const cid = useCarrierStore((state) => state.cid)
 
 	const session: any = await getServerSession(context.req, context.res, authOptions);
 	if (!session)
