@@ -39,7 +39,7 @@ export default function Home() {
 		{
 			name: "Applicants",
 			icon: applicantsIcon,
-			link: "/dashboard"
+			link: "/organization/applicants"
 		},
 		{
 			name: "Offer Management",
