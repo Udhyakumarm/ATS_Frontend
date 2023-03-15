@@ -45,11 +45,11 @@ export default function FormField({
 												onChange={handleChange}
 												placeholder={placeholder}
 												readOnly={readOnly}
-												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+												className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
 											<button
 												type="button"
-												className="absolute right-3 top-2 text-lightGray"
+												className="absolute right-3 top-[10px] text-lightGray"
 												onClick={() => setTypePass(!typePass)}
 											>
 												<i className={`fa-regular` + " " + (typePass == true ? "fa-eye-slash" : "fa-eye")}></i>
@@ -64,9 +64,9 @@ export default function FormField({
 												onChange={handleChange}
 												placeholder={placeholder}
 												readOnly={readOnly}
-												className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+												className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 											/>
-											<span className="absolute right-3 top-2 text-lightGray">{icon}</span>
+											<span className="absolute right-3 top-[10px] text-lightGray">{icon}</span>
 										</>
 									)}
 								</div>
@@ -76,7 +76,7 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className="w-full rounded border-lightGray dark:bg-gray-700"
+									className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + ' '}
 									value={value}
 									onChange={handleChange}
 									placeholder={placeholder}
@@ -107,7 +107,7 @@ export default function FormField({
 						}
 						<textarea
 							id={id}
-							className="min-h-[100px] w-full resize-none rounded border-lightGray dark:bg-gray-700"
+							className={`min-h-[120px] w-full resize-none rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + ' '}
 							value={value}
 							onChange={handleChange}
 							placeholder={placeholder}
@@ -138,6 +138,7 @@ export default function FormField({
 							selectedValues={value} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
 							closeOnSelect
+							showArrow={true}
 							placeholder={placeholder}
 							onSelect={(selected) =>
 								singleSelect
@@ -176,9 +177,9 @@ export default function FormField({
 								onChange={handleChange}
 								placeholder={placeholder}
 								readOnly={readOnly}
-								className={`w-full rounded border-lightGray dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+								className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
 							/>
-							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r text-white">{icon}</button>
+							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r-[12px] text-white">{icon}</button>
 						</div>
 					</div>
 				</div>
@@ -188,7 +189,7 @@ export default function FormField({
 	}
 	return (
 		<>
-			<p className="rounded bg-violet-200 p-2 text-sm">
+			<p className="rounded-normal bg-violet-200 p-2 text-sm">
 				Please choose some <b>type</b> to show field here.
 			</p>
 		</>

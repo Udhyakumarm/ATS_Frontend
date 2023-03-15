@@ -161,7 +161,7 @@ export default function cancareer() {
                                                             <i className="fa-regular fa-clock mr-2"></i>
                                                             {data['employment_type'] ? data['employment_type'] : <>N/A</>}
                                                         </li>
-                                                        <li className="mr-8">
+                                                        <li>
                                                             <i className="fa-solid fa-dollar-sign mr-2"></i>
                                                             {data['currency'] ? data['currency'] : <>N/A</>}
                                                         </li>

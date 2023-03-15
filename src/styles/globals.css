@@ -10,6 +10,7 @@
 
 :root {
   --primary: #6d27f9;
+  --gradDarkBlue: #6A67EA;
 }
 
 html,
@@ -167,6 +168,35 @@ input[type=number] {
 }
 .iconGroup.social input {
   padding-left: 60px;
+}
+
+.multiSelectContainer .searchWrapper {
+  border-color: #e5e7eb;
+  border-radius: 12px;
+  min-height: 45px;
+}
+.multiSelectContainer .searchWrapper .chip {
+  margin: 2px 2px 1px;
+  background: #cdcdcd;
+  font-size: 12px;
+  vertical-align: sub;
+}
+.multiSelectContainer .searchWrapper input#search_input {
+  margin: 2px 2px 1px;
+  line-height: 1;
+  padding: 2px 5px;
+  font-size: 14px;
+  vertical-align: -webkit-baseline-middle;
+}
+.multiSelectContainer ul li.option, .multiSelectContainer ul .notFound {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+.multiSelectContainer ul li.option.highlight, .multiSelectContainer ul li.option:hover {
+  background-color: var(--gradDarkBlue);
+}
+.multiSelectContainer .searchWrapper input#search_input:focus {
+  box-shadow: none;
 }
 
 @media (max-width: 1023px) {

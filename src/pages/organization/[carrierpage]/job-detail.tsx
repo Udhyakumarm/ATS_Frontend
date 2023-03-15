@@ -189,7 +189,7 @@ export default function SearchJobsDetail() {
                                                 <i className="fa-regular fa-clock mr-2"></i>
                                                 Full Time
                                             </li>
-                                            <li className="mr-8">
+                                            <li>
                                                 <i className="fa-solid fa-dollar-sign mr-2"></i>
                                                 50-55k
                                             </li>

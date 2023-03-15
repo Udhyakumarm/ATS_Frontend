@@ -172,171 +172,138 @@ export default function ApplyJob() {
                                     <FormField fieldType="input" inputType="number" label="Phone Number" placeholder="Phone Number" value={phone} handleChange={e => setphone(e.target.value)} />
                                 </div>
                             </div>
-                            <FormField fieldType="addItem" inputType="text" label="Social Links" placeholder="Add Social Profiles" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                            <div className="border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
-                                <div className="flex flex-wrap mx-[-10px]">
-                                    <div className="w-full md:max-w-[50%] px-[10px]">
-                                        <div className="iconGroup social delete">
-                                            <input
-                                                type="text"
-                                                className="w-full rounded border-lightGray dark:bg-gray-700"
-                                                readOnly
-                                                value="https://dsad.com"
-                                            />
-                                            <i className="fa-solid fa-link iconGroup__icon"></i>
-                                            <i
-                                                className="fa-solid fa-trash iconGroup__icon-delete"
-                                            ></i>
+                            <div className="mb-4">
+                                <label className="mb-1 inline-block font-bold">
+                                    Social Links
+                                </label>
+                                <div className="flex items-center">
+                                    <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px] flex items-center">
+                                        <div className="text-lg">
+                                            <i className="fa-brands fa-behance mr-5"></i>
+                                            <i className="fa-brands fa-stack-overflow mr-5"></i>
+                                            <i className="fa-brands fa-linkedin-in mr-5"></i>
+                                            <i className="fa-brands fa-github mr-5"></i>
                                         </div>
                                     </div>
-                                    <div className="w-full md:max-w-[50%] px-[10px]">
-                                        <div className="iconGroup social delete">
-                                            <input
-                                                type="text"
-                                                className="w-full rounded border-lightGray dark:bg-gray-700"
-                                                readOnly
-                                                value="https://dsad.com"
-                                            />
-                                            <i className="fa-solid fa-link iconGroup__icon"></i>
-                                            <i
-                                                className="fa-solid fa-trash iconGroup__icon-delete"
-                                            ></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <FormField fieldType="textarea" label="Summary" placeholder="Summary" value={summary} handleChange={e => setsummary(e.target.value)} />
-                            <FormField fieldType="addItem" inputType="text" label="Skills" placeholder="Add Skills" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                            <div className="flex flex-wrap items-start border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
-                                {Array(2).fill(
-                                <p
-                                    className="relative bg-[#C9B3FF] dark:bg-gray-900 dark:text-white rounded-lg py-2 px-3 flex items-center text-[14px] mr-2 mb-1"
-                                >
-                                    Php
-                                    <span
-                                    className="pl-1 text-[10px] flex text-[#FEF401] mt-[2px]"
-                                    >
-                                        <i className="fa-solid fa-star ml-1"></i>
-                                        <i className="fa-solid fa-star ml-1"></i>
-                                        <i className="fa-solid fa-star ml-1"></i>
-                                    </span>
-                                    <button
-                                    type="button"
-                                    className="absolute right-[0] top-[-5px] leading-none shadow-normal bg-white text-red-500 text-[10px] w-[15px] h-[15px] rounded"
-                                    >
-                                    <i className="fa-solid fa-xmark"></i>
-                                    </button>
-                                </p>
-                                )}
-                            </div>
-                            <FormField fieldType="addItem" inputType="text" label="Education" placeholder="Add Education" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                            <div className="border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
-                                <div
-                                className="w-full rounded-[20px] bg-[#FAF8FF] dark:bg-gray-900 text-black dark:text-white border border-slate-200 p-4 md:p-6 md:pr-[110px] pt-[35px] md:pt-6 mb-4 relative overflow-hidden"
-                                >
-                                    <article>
-                                        <h4 className="font-semibold mb-1 text-lg">
-                                            Education Title
-                                        </h4>
-                                        <p className="text-[#6D27F9] font-medium mb-2">
-                                            Education College
-                                        </p>
-                                        <p className="text-[#333] dark:text-white font-light text-sm mb-2">
-                                            Started Date:- 01-02-2020 <br /> End
-                                            Date:- 01-02-2021
-                                        </p>
-                                        <h6 className="font-medium">About</h6>
-                                        <p className="text-[#333] dark:text-white font-light text-sm">
-                                            Education About
-                                        </p>
-                                    </article>
-                                    <div className="bg-white shadow-md rounded-tl-[20px] rounded-bl-[20px] absolute right-0 top-[0px] md:top-[15px] p-1.5 md:py-2.5 md:px-4 text-[12px] md:text-sm">
-                                        <button
-                                            type="button"
-                                            className="text-red-500 mx-2"
-                                        >
-                                            <i className="fa-solid fa-trash"></i>
+                                    <div className="w-[40px] text-right">
+                                        <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
+                                            <i className="fa-regular fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <FormField fieldType="addItem" inputType="text" label="Certification" placeholder="Add Certification" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                            <div className="border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
-                                <div
-                                className="w-full rounded-[20px] bg-[#FAF8FF] dark:bg-gray-900 text-black dark:text-white border border-slate-200 p-4 md:p-6 md:pr-[110px] pt-[35px] md:pt-6 mb-4 relative overflow-hidden"
-                                >
-                                    <article>
-                                        <h4 className="font-semibold mb-1 text-lg">
-                                            Certification Title
-                                        </h4>
-                                        <p className="text-[#6D27F9] font-medium mb-2">
-                                            Certification Company
-                                        </p>
-                                        <p className="text-[#333] dark:text-white font-light text-sm mb-2">
-                                            Issued Date:- 01-02-2020 <br /> End
-                                            Expiration Date:- 01-02-2021
-                                        </p>
-                                        <p className="text-[#333] dark:text-white font-light text-sm">
-                                            Credential ID
-                                        </p>
-                                        <a
-                                            type="button"
-                                            href={'#'}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="my-2 min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400"
-                                        >
-                                            Show Certificate
-                                        </a>
-                                    </article>
-                                    <div className="bg-white shadow-md rounded-tl-[20px] rounded-bl-[20px] absolute right-0 top-[0px] md:top-[15px] p-1.5 md:py-2.5 md:px-4 text-[12px] md:text-sm">
-                                        <button
-                                            type="button"
-                                            className="text-red-500 mx-2"
-                                        >
-                                            <i className="fa-solid fa-trash"></i>
+                            <FormField fieldType="textarea" label="Summary" placeholder="Summary" value={summary} handleChange={e => setsummary(e.target.value)} />
+                            <div className="mb-4">
+                                <label className="mb-1 inline-block font-bold">
+                                    Skills
+                                </label>
+                                <div className="flex">
+                                    <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                        <div className="text-sm">
+                                            <p className="my-1">Skill 1</p>
+                                            <p className="my-1">Skill 2</p>
+                                            <p className="my-1">Skill 3</p>
+                                            <p className="my-1">Skill 4</p>
+                                        </div>
+                                    </div>
+                                    <div className="w-[40px] text-right">
+                                        <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
+                                            <i className="fa-regular fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <label className="mb-1 inline-block font-bold">
+                                    Education
+                                </label>
+                                <div className="flex">
+                                    <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                        {Array(2).fill(
+                                            <article className="border-b last:border-b-0">
+                                                <div className="flex flex-wrap text-sm">
+                                                    <div className="w-[30%] my-2">
+                                                        <h4 className="font-bold">XYZ Group</h4>
+                                                    </div>
+                                                    <div className="w-[70%] pl-4 my-2">
+                                                        <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm mb-2">
+                                                    <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                </p>
+                                            </article>
+                                        )}
+                                    </div>
+                                    <div className="w-[40px] text-right">
+                                        <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
+                                            <i className="fa-regular fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <label className="mb-1 inline-block font-bold">
+                                    Certifications
+                                </label>
+                                <div className="flex">
+                                    <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                        {Array(2).fill(
+                                            <article className="border-b last:border-b-0">
+                                                <div className="flex flex-wrap text-sm">
+                                                    <div className="w-[30%] my-2">
+                                                        <h4 className="font-bold">XYZ Group</h4>
+                                                    </div>
+                                                    <div className="w-[70%] pl-4 my-2">
+                                                        <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm mb-2">
+                                                    <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                </p>
+                                            </article>
+                                        )}
+                                    </div>
+                                    <div className="w-[40px] text-right">
+                                        <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
+                                            <i className="fa-regular fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <hr className="mt-8 mb-4" />
                             <div className="mb-4 relative">
-                                <FormField fieldType="addItem" inputType="text" label="Experience" placeholder="Add Experience" icon={<i className="fa-regular fa-plus"></i>} readOnly />
-                                <label htmlFor="newGraduate" className="font-bold text-sm absolute right-0 top-0">
+                                <label htmlFor="newGraduate" className="font-bold text-sm absolute right-12 top-0">
                                     <input type="checkbox" id="newGraduate" name="newGraduate" className="mr-2 mb-[3px]" />
                                     New Graduate
                                 </label>
-                            </div>
-                            <div className="border border-slate-300 border-t-0 -mt-5 rounded-b p-4 mb-4">
-                                <div
-                                className="w-full rounded-[20px] bg-[#FAF8FF] dark:bg-gray-900 text-black dark:text-white border border-slate-200 p-4 md:p-6 md:pr-[110px] pt-[35px] md:pt-6 mb-4 relative overflow-hidden"
-                                >
-                                    <article>
-                                        <h4 className="font-semibold mb-1 text-lg">
-                                            Experience Title
-                                        </h4>
-                                        <p className="text-[#6D27F9] font-medium mb-2">
-                                            Experience Company
-                                        </p>
-                                        <p className="text-[#333] dark:text-white font-light text-sm mb-2">
-                                            Started Date:- 01-02-2020 <br /> 
-                                            End Date:- 01-02-2021
-                                        </p>
-                                        <p className="text-[#333] dark:text-white font-light text-sm mb-2">
-                                            Job Type:- Full Time
-                                        </p>
-                                        <h6 className="font-medium">About</h6>
-                                        <p className="text-[#333] dark:text-white font-light text-sm">
-                                            Education About
-                                        </p>
-                                    </article>
-                                    <div className="bg-white shadow-md rounded-tl-[20px] rounded-bl-[20px] absolute right-0 top-[0px] md:top-[15px] p-1.5 md:py-2.5 md:px-4 text-[12px] md:text-sm">
-                                        <button
-                                            type="button"
-                                            className="text-red-500 mx-2"
-                                        >
-                                            <i className="fa-solid fa-trash"></i>
-                                        </button>
+                                <div className="mb-0">
+                                    <label className="mb-1 inline-block font-bold">
+                                        Education
+                                    </label>
+                                    <div className="flex">
+                                        <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                            {Array(2).fill(
+                                                <article className="border-b last:border-b-0">
+                                                    <div className="flex flex-wrap text-sm">
+                                                        <div className="w-[30%] my-2">
+                                                            <h4 className="font-bold">XYZ Group</h4>
+                                                        </div>
+                                                        <div className="w-[70%] pl-4 my-2">
+                                                            <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm mb-2">
+                                                        <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                    </p>
+                                                </article>
+                                            )}
+                                        </div>
+                                        <div className="w-[40px] text-right">
+                                            <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
+                                                <i className="fa-regular fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
