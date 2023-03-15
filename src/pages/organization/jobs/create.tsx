@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import Image from "next/image";
-import Orgsidebar from "@/components/organisation/sidebar";
-import Orgtopbar from "@/components/organisation/topbar";
+import Orgsidebar from "@/components/organisation/SideBar";
+import Orgtopbar from "@/components/organisation/TopBar";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });

@@ -1,6 +1,6 @@
-import Button from "@/components/button";
-import FormField from "@/components/formfield";
-import Logo from "@/components/logo";
+import Button from "@/components/Button";
+import FormField from "@/components/FormField";
+import Logo from "@/components/Logo";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useReducer, useState } from "react";

@@ -12,8 +12,8 @@ import { useRouter } from "next/router";
 import { axiosInstance } from "@/utils";
 import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
-import Orgsidebar from "@/components/organisation/sidebar";
-import Orgtopbar from "@/components/organisation/topbar";
+import Orgsidebar from "@/components/organisation/SideBar";
+import Orgtopbar from "@/components/organisation/TopBar";
 
 export default function Home() {
 	const router = useRouter();
