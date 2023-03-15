@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import { SessionProvider } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +39,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<meta name="viewport" content="width=device-width, initial-scale=1" />
 						<link rel="icon" href="/favicon.ico" />
 					</Head>
-					<Header session={session}/>
+					<Header />
 					<Component {...pageProps} />
 				</SessionProvider>
 			</ThemeProvider>

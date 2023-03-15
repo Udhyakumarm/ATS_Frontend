@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import userImg from '/public/images/user-image.png'
 
-export default function orgtopbar() {
+export default function OrgTopBar() {
     const cancelButtonRef = useRef(null)
     const [isOpen, setIsOpen] = useState(false)
     return (

@@ -1,5 +1,5 @@
-import Button from "@/components/button";
-import FormField from "@/components/formfield";
+import Button from "@/components/Button";
+import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
 import { useCarrierStore } from "@/utils/code";
 import { getProviders, useSession } from "next-auth/react";

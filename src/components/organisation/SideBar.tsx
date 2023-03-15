@@ -1,7 +1,7 @@
 import { useState } from "react"
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "../logo"
+import Logo from "../Logo"
 import Favicon from '/public/favicon.ico'
 import FaviconWhite from '/public/favicon-white.ico'
 import { useRouter } from "next/router";
@@ -22,7 +22,7 @@ import applicantsIconWhite from "/public/images/icons-white/applicants.png";
 import settingsIconWhite from "/public/images/icons-white/settings.png";
 import upgradeBadge from '/public/images/upgrade-badge.png'
 
-export default function orgsidebar() {
+export default function OrgSideBar() {
     const router = useRouter()
     const { theme } = useTheme();
     const [show, setShow] = useState(false);

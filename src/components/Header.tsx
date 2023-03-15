@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import Logo from "@/components/logo";
+import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useCarrierStore } from "@/utils/code";

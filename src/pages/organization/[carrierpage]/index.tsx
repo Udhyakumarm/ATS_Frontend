@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react"
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import { useCarrierStore } from "@/utils/code"
 import { axiosInstance } from "@/pages/api/axiosApi"
-import Button from "@/components/button";
+import Button from "@/components/Button";
 import moment from "moment"
 import { useRouter } from "next/router"
 
