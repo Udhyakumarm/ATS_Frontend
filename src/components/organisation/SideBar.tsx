@@ -46,7 +46,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Applicants',
-            url: '#',
+            url: '/organization/applicants',
             img: applicantsIcon,
             imgWhite: applicantsIconWhite
         },

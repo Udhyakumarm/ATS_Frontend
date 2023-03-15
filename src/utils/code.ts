@@ -24,6 +24,17 @@ let carrierStore = (set) => ({
   setjdata: (id) => set((state) => ({ jdata: id })),
 })
 
+let applicantStore = (set) => ({
+  applicantlist: [], //applicant list
+  applicantdetail: {}, //applicant list
+  jobid: "",
+  canid: "",
+  setapplicantlist: (id) => set((state) => ({ applicantlist: id })),
+  setapplicantdetail: (id) => set((state) => ({ applicantdetail: id })),
+  setjobid: (id) => set((state) => ({ jobid: id })),
+  setcanid: (id) => set((state) => ({ canid: id })),
+})
+
 
 settingsStore = devtools(settingsStore)
 settingsStore = persist(settingsStore, { name: 'user_settings' })
@@ -31,6 +42,10 @@ settingsStore = persist(settingsStore, { name: 'user_settings' })
 carrierStore = devtools(carrierStore)
 carrierStore = persist(carrierStore, { name: 'carrier_settings' })
 
+applicantStore = devtools(applicantStore)
+applicantStore = persist(applicantStore, { name: 'applicantStore' })
+
 
 export const useSettingsStore = create(settingsStore)
 export const useCarrierStore = create(carrierStore)
+export const useApplicantStore = create(applicantStore)
