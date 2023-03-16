@@ -74,16 +74,79 @@ const DaysOfMonth = ({
 };
 
 export default function OrganizationCalendar() {
+	const today = new Date(new Date().setHours(0));
+
+	const updateDate = (prevDate: Date, { action, value }: DateUpdate) => {
+		if (action) {
+			switch (action) {
+				case "setDate":
+					return value ? value : prevDate;
+				case "nextMonth":
+					return new Date(prevDate.getFullYear(), prevDate.getMonth() + 1);
+				case "previousMonth":
+					return new Date(prevDate.getFullYear(), prevDate.getMonth() - 1);
+			}
+		} else if (value) return value;
+
+		return prevDate;
+	};
+	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
+
+	const [currentDay, setCurrentDay] = useState<Date>(today);
+
+	const getDays = useCallback((selectedDate: Date) => {
+		const dayOffset = selectedDate.getDay();
+		const daysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+		const prevDaysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0).getDate();
+
+		const prevDaysList = Array.from(Array(dayOffset).keys())
+			.map((i) => prevDaysOfMonth - i)
+			.reverse();
+
+		const nextMonthDays = Array.from(Array(7 - ((prevDaysList.length + daysOfMonth) % 7)).keys()).map((i) => i + 1);
+
+		const currentMonthDays = Array.from(Array(daysOfMonth).keys()).map((i) => i + 1);
+
+		// console.log({ dayOffset, daysOfMonth, prevDaysList, currentMonthDays, nextMonthDays });
+
+		return [prevDaysList, currentMonthDays, nextMonthDays];
+	}, []);
+
+	const [pageDays, setPageDays] = useState<Array<Array<number>>>(getDays(today));
+
+	useEffect(() => {
+		setPageDays(getDays(currentDate));
+	}, [currentDate, getDays]);
+
 	return (
 		<div className="flex">
 			<div className="w-[75%] bg-white">
 				<div className="flex items-center justify-between px-6 py-4">
-					<h6 className="font-bold">January 19, 2023</h6>
+					<div>
+						<h6 className="font-bold">
+							{currentDate.toDateString().split(" ")[1] + ", " + currentDate.toDateString().split(" ")[3]}
+						</h6>
+						<button
+							type="button"
+							className="hover:text-gray-600"
+							onClick={() => handleDateUpdate({ action: "setDate", value: today })}
+						>
+							Today
+						</button>
+					</div>
 					<aside className="flex items-center">
-						<button type="button" className="hover:text-gray-600">
+						<button
+							type="button"
+							className="hover:text-gray-600"
+							onClick={() => handleDateUpdate({ action: "previousMonth" })}
+						>
 							<i className="fa-solid fa-circle-chevron-left"></i>
 						</button>
-						<button type="button" className="ml-2 hover:text-gray-600">
+						<button
+							type="button"
+							className="ml-2 hover:text-gray-600"
+							onClick={() => handleDateUpdate({ action: "nextMonth" })}
+						>
 							<i className="fa-solid fa-circle-chevron-right"></i>
 						</button>
 					</aside>
@@ -111,15 +174,13 @@ export default function OrganizationCalendar() {
 						<p className="font-bold">Sat</p>
 					</div>
 				</div>
-				<div className="flex flex-wrap p-3 pt-0">
-					{Array(30).fill(
-						<div className="group h-[100px] w-[calc(100%/7)] cursor-pointer border border-slate-100">
-							<div className="flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold group-hover:bg-primary group-hover:text-white">
-								01
-							</div>
-						</div>
-					)}
-				</div>
+				<DaysOfMonth
+					currentDate={currentDate}
+					currentDay={currentDay}
+					setCurrentDay={setCurrentDay}
+					handleDateUpdate={handleDateUpdate}
+					pageDays={pageDays}
+				/>
 			</div>
 			<div className="w-[25%] bg-lightBlue">
 				<div className="p-4">
