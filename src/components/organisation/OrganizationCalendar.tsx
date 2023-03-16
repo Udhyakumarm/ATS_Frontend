@@ -1,6 +1,77 @@
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
+import { useCallback, useEffect, useReducer, useState } from "react";
+
+type DateAction = "setDate" | "nextMonth" | "previousMonth";
+type DateUpdate = { action?: DateAction; value?: Date };
+
+const DaysOfMonth = ({
+	currentDay,
+	currentDate,
+	setCurrentDay,
+	pageDays,
+	handleDateUpdate
+}: {
+	currentDay: Date;
+	currentDate: Date;
+	setCurrentDay: (newDate: Date) => void;
+	pageDays: Array<Array<number>>;
+	handleDateUpdate: (update: DateUpdate) => void;
+}) => {
+	const handleDayClick = (day: number, dayType: number) => {
+		//If the day is in the current month
+		if (dayType === 1) {
+			setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+			return;
+		}
+
+		setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1 * (dayType === 0 ? -1 : 1), day));
+		handleDateUpdate({ action: dayType === 0 ? "previousMonth" : "nextMonth" });
+	};
+
+	const CalendarDay = ({
+		handleDayClick,
+		selected,
+		dayType,
+		day
+	}: {
+		handleDayClick: (selectedDay: number, dayType: number) => void;
+		selected: boolean;
+		dayType: number;
+		day: number;
+	}) => (
+		<div className="group h-[100px] w-[calc(100%/7)] cursor-pointer border border-slate-100" key={day.toString()}>
+			<div
+				className={
+					dayType !== 1
+						? "flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold text-slate-400  group-hover:bg-slate-400 group-hover:text-white "
+						: "flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold group-hover:bg-primary group-hover:text-white " +
+						  (selected ? "bg-secondary text-white group-hover:bg-secondary" : "")
+				}
+				onClick={() => handleDayClick(day, dayType)}
+			>
+				{day}
+			</div>
+		</div>
+	);
+
+	return (
+		<div className="flex flex-wrap p-3 pt-0">
+			{pageDays.map((dayList, dayType) =>
+				dayList.map((i: number) => (
+					<CalendarDay
+						handleDayClick={handleDayClick}
+						selected={currentDay.getTime() == new Date(currentDate.getFullYear(), currentDate.getMonth(), i).getTime()}
+						dayType={dayType}
+						day={i}
+						key={i.toString()}
+					/>
+				))
+			)}
+		</div>
+	);
+};
 
 export default function OrganizationCalendar() {
 	return (
