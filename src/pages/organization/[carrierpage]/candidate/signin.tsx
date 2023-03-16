@@ -1,12 +1,15 @@
-import Button from "@/components/button";
+import Button from "@/components/Button";
 import FormField from "@/components/FormField";
-import Logo from "@/components/logo";
+import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useReducer } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useCarrierStore } from "@/utils/code";
+import { axiosInstance } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 export default function SignIn({ providers }: any) {
 	const router = useRouter();
@@ -22,24 +25,44 @@ export default function SignIn({ providers }: any) {
 		password: ""
 	});
 
+	const cid = useCarrierStore((state) => state.cid)
+	const cname = useCarrierStore((state) => state.cname)
+
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
-		const callback = `${
-			process.env.NODE_ENV === "production"
-				? process.env.NEXT_PUBLIC_PROD_FRONTEND
-				: process.env.NEXT_PUBLIC_DEV_FRONTEND
-		}`;
-		await signIn("credentials", {
-			email: loginInfo.email,
-			password: loginInfo.password,
-			userType: "candidate",
-			callbackUrl: callback
-		})
-			.then(async (res) => console.log({ res }))
-			.then(async () => await router.push("/"))
-			.catch((err) => {
-				console.log(err);
-			});
+
+		await axiosInstance
+        .post(`/candidate/candidatecheck/${loginInfo.email}/${cid}/`)
+        .then(async (res) => {
+			console.log(res.data)
+			if(res.data.success){
+				const callback = `${
+					process.env.NODE_ENV === "production"
+						? process.env.NEXT_PUBLIC_PROD_FRONTEND
+						: `http://localhost:3000/organization/${cname}`
+				}`;
+				await signIn("credentials", {
+					email: loginInfo.email,
+					password: loginInfo.password,
+					user_type: "candidate",
+					callbackUrl: callback
+				})
+					.then(async (res) => console.log({ res }))
+					.then(async () => await router.push(`/organization/${cname}`))
+					.catch((err) => {
+						console.log(err);
+					});
+			}
+			else if(res.data.error){
+				toastcomp(res.data.error, "error")
+			}
+        })
+		.catch((err) => {
+			console.log(err);
+		});
+
+		
+		
 	};
 	return (
 		<>

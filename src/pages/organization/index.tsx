@@ -14,7 +14,7 @@ export default function Home() {
 		{
 			name: "Dashboard",
 			icon: dashboardIcon,
-			link: "/dashboard"
+			link: "/organization/dashboard"
 		},
 		{
 			name: "Integration",
@@ -39,7 +39,7 @@ export default function Home() {
 		{
 			name: "Applicants",
 			icon: applicantsIcon,
-			link: "/dashboard"
+			link: "/organization/applicants"
 		},
 		{
 			name: "Offer Management",

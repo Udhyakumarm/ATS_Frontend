@@ -32,7 +32,8 @@ namespace NextAuthUtils {
 				const { access } = response.data;
 				return [access, refreshToken];
 			}
-		} catch (err) {
+		} catch (err: any) {
+			console.log("Token refresh error, signing out");
 			return [null, null];
 		}
 	};
@@ -41,7 +42,7 @@ namespace NextAuthUtils {
 export const authOptions: NextAuthOptions = {
 	secret: process.env.SESSION_SECRET,
 	session: {
-		maxAge: 24 * 60 * 60 // 24 hours
+		maxAge: 60 * 20 // 20 Minutes
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET
@@ -85,16 +86,14 @@ export const authOptions: NextAuthOptions = {
 					})
 					.then((response) => ({
 						...response.data.userObj[0],
-						token: {
-							refreshToken: response.data.tokens.refresh,
-							accessToken: response.data.tokens.access
-						}
+						refreshToken: response.data.tokens.refresh,
+						accessToken: response.data.tokens.access
 					}))
 					.catch((err) => {
 						console.log({ err });
 						return null;
 					});
-
+				if (!userObj) return null;
 				return { ...userObj, user_type: credentials?.user_type };
 			}
 		})
@@ -102,12 +101,13 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ token, user, account, profile, isNewUser }: any) {
 			if (user) {
-				return { ...token, user_type: user.user_type, ...user.token };
+				return { ...token, user_type: user.user_type, accessToken: user.accessToken, refreshToken: user.refreshToken };
 			}
 
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
 				const [newAccessToken, newRefreshToken] = await NextAuthUtils.refreshToken(token.refreshToken);
 
+				console.log(newAccessToken && newRefreshToken);
 				if (newAccessToken && newRefreshToken) {
 					token = {
 						...token,
@@ -117,20 +117,15 @@ export const authOptions: NextAuthOptions = {
 						exp: Math.floor(Date.now() / 1000 + 2 * 60 * 60)
 					};
 
-					return { ...user, token };
-				}
-
-				return {
-					...user,
-					...token,
-					exp: 0
-				};
+					return { ...user, ...token };
+				} else return { error: "RefreshAccessTokenError" };
 			}
-			return token;
+			return { ...token };
 		},
 		async session({ session, token }) {
 			session["accessToken"] = token.accessToken as string;
 			session["user_type"] = token.user_type as string;
+			session["error"] = token.error as string;
 			return session;
 		},
 		async redirect({ url, baseUrl }) {

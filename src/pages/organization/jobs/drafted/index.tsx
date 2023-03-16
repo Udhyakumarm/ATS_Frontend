@@ -8,7 +8,7 @@ import analyticsIcon from "/public/images/icons/analytics.png";
 import vendorsIcon from "/public/images/icons/vendors.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
 import collectionIcon from "/public/images/icons/collection.png";
-import Button from "@/components/button";
+import Button from "@/components/Button";
 import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useReducer, useState } from "react";
@@ -39,7 +39,7 @@ export default function Home() {
 			setDraftedJobs(newDraftedJobs);
 		};
 
-		getDraftedJobs();
+		session && getDraftedJobs();
 	}, [session]);
 
 	return (
