@@ -270,7 +270,7 @@ export default function OrganizationCalendar() {
 									<Link
 										href="https://meet.google.com/ytk-jphs-dug"
 										target="_blank"
-										className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-primary text-white"
+										className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-white"
 									>
 										Meet
 									</Link>
