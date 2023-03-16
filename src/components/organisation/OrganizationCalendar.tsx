@@ -1,12 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import {
+	JSXElementConstructor,
+	Key,
+	ReactElement,
+	ReactFragment,
+	ReactPortal,
+	useCallback,
+	useEffect,
+	useReducer,
+	useState
+} from "react";
 
 type DateAction = "setDate" | "nextMonth" | "previousMonth";
 type DateUpdate = { action?: DateAction; value?: Date };
 
-const DaysOfMonth = ({
+function DaysOfMonth({
 	currentDay,
 	currentDate,
 	setCurrentDay,
@@ -18,7 +28,7 @@ const DaysOfMonth = ({
 	setCurrentDay: (newDate: Date) => void;
 	pageDays: Array<Array<number>>;
 	handleDateUpdate: (update: DateUpdate) => void;
-}) => {
+}) {
 	const handleDayClick = (day: number, dayType: number) => {
 		//If the day is in the current month
 		if (dayType === 1) {
@@ -71,7 +81,72 @@ const DaysOfMonth = ({
 			)}
 		</div>
 	);
-};
+}
+
+function EventCard({
+	jobTitle,
+	jobId,
+	platform,
+	participants,
+	date,
+	meetingLink
+}: {
+	jobTitle: string;
+	jobId: string;
+	platform: string;
+	participants: Array<any>;
+	date: Date;
+	meetingLink: string;
+}) {
+	const participantCards = participants.map((person: { name: string; role: string; userImg: string }) => (
+		<div className="flex items-center py-3 last:border-b" key={person.name}>
+			<Image src={person.userImg} alt="User" width={40} height={40} className="h-[40px] rounded-full object-cover" />
+			<div className="w-[calc(100%-40px)] pl-3 text-sm">
+				<h6 className="font-semibold">{person.name}</h6>
+				<p className="text-darkGray">{person.role}</p>
+			</div>
+		</div>
+	));
+
+	const meetingIcon =
+		platform == "Google Meet" ? <i className="fa-solid fa-video"></i> : <i className="fa-solid fa-phone"></i>;
+
+	return (
+		<div className="mb-4 overflow-hidden rounded-[10px] shadow">
+			<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
+				<div className="w-[50%] pr-2">
+					<h5 className="text-sm font-semibold">{jobTitle}</h5>
+				</div>
+				<div className="w-[50%]">
+					<p className="mb-1 text-sm font-semibold">{jobId}</p>
+					<span className="flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
+						<i className="fa-solid fa-video"></i>
+					</span>
+				</div>
+			</div>
+			<div className="bg-white p-3">
+				<div className="mb-3">{participantCards}</div>
+				<h4 className="mb-1 font-bold">Platform</h4>
+				<div className="flex">
+					<span className="mt-1 flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
+						{meetingIcon}
+					</span>
+					<div className="w-[calc(100%-16px)] pl-2 text-darkGray">
+						<h6 className="font-semibold">{platform}</h6>
+						<p className="my-1 text-sm">{date.toDateString()}</p>
+						<Link
+							href={meetingLink}
+							target="_blank"
+							className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-white"
+						>
+							Meet
+						</Link>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
 
 export default function OrganizationCalendar() {
 	const today = new Date(new Date().setHours(0));
@@ -187,97 +262,25 @@ export default function OrganizationCalendar() {
 					<h6 className="font-bold">Events</h6>
 				</div>
 				<div className="max-h-[580px] overflow-y-auto p-4 pt-0">
-					<div className="mb-4 overflow-hidden rounded-[10px] shadow">
-						<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
-							<div className="w-[50%] pr-2">
-								<h5 className="text-sm font-semibold">Software Developer</h5>
-							</div>
-							<div className="w-[50%]">
-								<p className="mb-1 text-sm font-semibold">ID-573219</p>
-								<span className="flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
-									<i className="fa-solid fa-phone"></i>
-								</span>
-							</div>
-						</div>
-						<div className="bg-white p-3">
-							<div className="mb-3">
-								{Array(2).fill(
-									<div className="flex items-center py-3 last:border-b">
-										<Image
-											src={userImg}
-											alt="User"
-											width={40}
-											height={40}
-											className="h-[40px] rounded-full object-cover"
-										/>
-										<div className="w-[calc(100%-40px)] pl-3 text-sm">
-											<h6 className="font-semibold">Bethany Jackson</h6>
-											<p className="text-darkGray">Interviewer</p>
-										</div>
-									</div>
-								)}
-							</div>
-							<h4 className="mb-1 font-bold">Platform</h4>
-							<div className="flex">
-								<span className="mt-1 flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
-									<i className="fa-solid fa-phone"></i>
-								</span>
-								<div className="w-[calc(100%-16px)] pl-2 text-darkGray">
-									<h6 className="font-semibold">Telephonic</h6>
-									<p className="my-1 text-sm">20-Jan-2023, 10:00 AM</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="mb-4 overflow-hidden rounded-[10px] shadow">
-						<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
-							<div className="w-[50%] pr-2">
-								<h5 className="text-sm font-semibold">Software Developer</h5>
-							</div>
-							<div className="w-[50%]">
-								<p className="mb-1 text-sm font-semibold">ID-573219</p>
-								<span className="flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
-									<i className="fa-solid fa-video"></i>
-								</span>
-							</div>
-						</div>
-						<div className="bg-white p-3">
-							<div className="mb-3">
-								{Array(2).fill(
-									<div className="flex items-center py-3 last:border-b">
-										<Image
-											src={userImg}
-											alt="User"
-											width={40}
-											height={40}
-											className="h-[40px] rounded-full object-cover"
-										/>
-										<div className="w-[calc(100%-40px)] pl-3 text-sm">
-											<h6 className="font-semibold">Bethany Jackson</h6>
-											<p className="text-darkGray">Interviewer</p>
-										</div>
-									</div>
-								)}
-							</div>
-							<h4 className="mb-1 font-bold">Platform</h4>
-							<div className="flex">
-								<span className="mt-1 flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
-									<i className="fa-solid fa-video"></i>
-								</span>
-								<div className="w-[calc(100%-16px)] pl-2 text-darkGray">
-									<h6 className="font-semibold">Google Meet</h6>
-									<p className="my-1 text-sm">20-Jan-2023, 10:00 AM</p>
-									<Link
-										href="https://meet.google.com/ytk-jphs-dug"
-										target="_blank"
-										className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-white"
-									>
-										Meet
-									</Link>
-								</div>
-							</div>
-						</div>
-					</div>
+					<EventCard
+						jobTitle={"Software Developer"}
+						jobId={"ID-573219"}
+						platform={"Telephonic"}
+						participants={[{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg }]}
+						date={new Date(2023, 1, 20, 10)}
+						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
+					/>
+					<EventCard
+						jobTitle={"Software Developer"}
+						jobId={"ID-573219"}
+						platform={"Google Meet"}
+						participants={[
+							{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg },
+							{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg }
+						]}
+						date={new Date(2023, 1, 20, 10)}
+						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
+					/>
 				</div>
 			</div>
 		</div>
