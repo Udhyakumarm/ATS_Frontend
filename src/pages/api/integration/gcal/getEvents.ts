@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const session = await getServerSession(req, res, authOptions);
 
-	if (!session) return res.status(200).json({ success: false, error: "Not authenticated" });
+	if (!session) return res.status(200).redirect("/");
 
 	const { unique_id } = await axiosInstance.api
 		.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		auth: oauth2Client
 	});
 
-	const calendar = await google.calendar({ version: "v3" });
+	const calendar = google.calendar({ version: "v3" });
 
 	const resp = await calendar.events
 		.list({
@@ -71,7 +71,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		})
 		.catch((err) => {
 			console.log({ error: err.errors });
-			return { data: null };
+			return { data: err };
 		});
+
+	if (resp.data.errors && resp.data.errors[0].reason == "authError")
+		return res.status(200).redirect("/api/integration/gcal/create");
+
 	res.status(200).json({ data: resp?.data });
 }
