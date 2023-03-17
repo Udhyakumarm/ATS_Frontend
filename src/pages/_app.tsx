@@ -10,6 +10,7 @@ import "nprogress/nprogress.css";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const router = useRouter();
@@ -31,7 +32,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   
 	return (
 		<>
-		<Toaster />
+			<Toaster />
 			<ThemeProvider attribute="class">
 				<SessionProvider session={session}>
 					<Head>
@@ -43,6 +44,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 					<Component {...pageProps} />
 				</SessionProvider>
 			</ThemeProvider>
+			<Analytics />
 		</>
 	);
 }
