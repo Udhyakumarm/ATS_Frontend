@@ -22,14 +22,12 @@ oauth2Client.on("tokens", (tokens) => {
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-	const { code, error } = req.query;
-
 	const session = await getServerSession(req, res, authOptions);
 
 	if (!session) return res.status(200).redirect("/");
 
 	const { unique_id } = await axiosInstance.api
-		.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
+		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
 		.then((response) => response.data[0])
 		.catch((err) => {
 			console.log(err);
@@ -37,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 
 	const { integrations }: { integrations: Array<any> } = await axiosInstance.api
-		.get("/organization/integrations/" + unique_id + "/", {
+		.get("/organization/integrations/calendar/" + unique_id + "/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
 		.then((response) => response.data)
@@ -46,14 +44,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	const googleAuth = integrations.find((integration: { provider: string }) => integration.provider == "google");
+	const googleCalendarIntegration = integrations.find(
+		(integration: { provider: string }) => integration.provider == "google"
+	);
 
-	// console.log({ googleAuth, expired :  Number(googleAuth.expires_in) + Date.now() > Date});
-	if (!googleAuth) return res.status(200).json({ success: false, error: "No provider found" });
-	const expiry_date = Number(googleAuth.expires_in) + Date.now();
+	if (!googleCalendarIntegration) return res.status(200).json({ success: false, error: "No provider found" });
+
+	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
 
 	oauth2Client.setCredentials({
-		...googleAuth,
+		...googleCalendarIntegration,
 		expiry_date,
 		token_type: "Bearer"
 	});
@@ -64,18 +64,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const calendar = google.calendar({ version: "v3" });
 
-	const resp = await calendar.events
-		.list({
-			calendarId: "primary"
-			// Specifies an event ID in the iCalendar format to be provided in the response. Optional. Use this if you want to search for an event by its iCalendar ID.
-		})
+	const somhakoCalendar = await calendar.calendars
+		.get({ calendarId: googleCalendarIntegration.calendar_id })
 		.catch((err) => {
-			console.log({ error: err.errors });
-			return { data: err };
+			return err;
 		});
 
-	if (resp.data.errors && resp.data.errors[0].reason == "authError")
-		return res.status(200).redirect("/api/integration/gcal/create");
+	if (somhakoCalendar.errors) {
+		if (somhakoCalendar.errors[0].reason == "authError") {
+		}
+		return res.status(200).json({ success: false, error: somhakoCalendar.errors });
+	}
 
-	res.status(200).json({ data: resp?.data });
+	console.log({ resp: somhakoCalendar });
+	// const resp = await calendar.events
+	// 	.list({
+	// 		calendarId: "primary"
+	// Specifies an event ID in the iCalendar format to be provided in the response. Optional. Use this if you want to search for an event by its iCalendar ID.
+	// 	})
+	// 	.catch((err) => {
+	// 		console.log({ error: err.errors });
+	// 		return { data: err };
+	// 	});
+
+	// if (resp.data.errors && resp.data.errors[0].reason == "authError")
+	// 	return res.status(200).redirect("/api/integration/gcal/create");
+
+	res.status(200).json({ data: somhakoCalendar });
 }
