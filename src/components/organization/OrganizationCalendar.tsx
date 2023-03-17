@@ -261,7 +261,7 @@ export default function OrganizationCalendar() {
 				<div className="p-4">
 					<h6 className="font-bold">Events</h6>
 				</div>
-				<div className="max-h-[580px] overflow-y-auto p-4 pt-0">
+				<div className="h-[calc(100vh-100px)] overflow-y-auto p-4 pt-0">
 					<EventCard
 						jobTitle={"Software Developer"}
 						jobId={"ID-573219"}

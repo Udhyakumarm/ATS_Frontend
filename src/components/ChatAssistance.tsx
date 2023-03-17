@@ -26,8 +26,8 @@ export default function ChatAssistance() {
     return (
         <>
             <div className={`fixed z-[65] left-0 top-0 w-full h-full bg-[rgba(0,0,0,0.2)]` + ' ' + (click ? 'block' : 'hidden')} onClick={handleClick}></div>
-            <div className={`fixed z-[66] right-5 bottom-5` + ' ' + (maximize ? 'w-[95%] max-w-[1200px]' : 'w-auto')}>
-                <div className={`bg-lightBlue shadow-normal rounded-normal overflow-hidden` + ' ' + (click ? 'block' : 'hidden') + ' ' + (maximize ? 'w-full h-[80vh]' : 'w-[450px] h-[70vh]')}>
+            <div className={`fixed z-[66] right-5 bottom-5` + ' ' + (maximize ? 'w-[calc(100%-2.5rem)] max-w-[1920px]' : 'w-auto')}>
+                <div className={`bg-lightBlue shadow-normal rounded-normal overflow-hidden` + ' ' + (click ? 'block' : 'hidden') + ' ' + (maximize ? 'w-full h-[calc(100vh-102px)]' : 'w-[450px] h-[70vh]')}>
                     <div className="bg-white flex items-center justify-between px-6 py-3">
                         <aside className="flex items-center">
                             <div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue w-[30px] h-[30px] rounded-full flex items-center justify-center p-2 mr-4">
