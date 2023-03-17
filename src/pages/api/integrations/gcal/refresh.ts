@@ -6,7 +6,7 @@ import { axiosInstance } from "@/utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 
-import { Integration } from "@/utils/index";
+import { Integration } from "@/utils/serverUtils";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const session = await getServerSession(req, res, authOptions);
@@ -31,6 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		(integration: { provider: string }) => integration.provider == "google"
 	);
 
+	if (!googleCalendarIntegration) return res.json({ success: false, message: "No google provider found." });
+
 	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
 
 	Integration.googleCalendarOAuth2Client.setCredentials({
@@ -41,8 +43,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const refreshedToken = await Integration.googleCalendarOAuth2Client
 		.refreshAccessToken()
-		.then((response) => response.res?.data);
+		.then((response) => response.res?.data)
+		.catch((err) => {
+			if (err.toString().match("invalid_grant")) return null;
+		});
 
+	if (!refreshedToken) {
+		const response = await axiosInstance.api
+			.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+				headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
+			})
+			.then((res) => res.data)
+			.catch((err) => {
+				console.log(err);
+				return { data: { success: false } };
+			});
+
+		return res.json({ success: true, response });
+	}
 	const expires_in = Number(refreshedToken.expiry_date) - Date.now();
 
 	const response = await axiosInstance.api
@@ -64,5 +82,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	res.json({ success: true, response });
+	res.json({ success: true, ...response });
 }

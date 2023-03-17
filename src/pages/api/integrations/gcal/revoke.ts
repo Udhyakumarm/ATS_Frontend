@@ -5,7 +5,7 @@ import { google } from "googleapis";
 import { axiosInstance } from "@/utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
-import { Integration } from "@/utils/index";
+import { Integration } from "@/utils/serverUtils";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const session = await getServerSession(req, res, authOptions);
@@ -26,12 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	console.log({ integrations });
 	const googleCalendarIntegration = integrations.find(
 		(integration: { provider: string }) => integration.provider == "google"
 	);
-
-	console.log({ googleCalendarIntegration });
 
 	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
 
