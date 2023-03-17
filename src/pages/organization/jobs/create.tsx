@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import Image from "next/image";
-import Orgsidebar from "@/components/organisation/SideBar";
-import Orgtopbar from "@/components/organisation/TopBar";
+import Orgsidebar from "@/components/organization/SideBar";
+import Orgtopbar from "@/components/organization/TopBar";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -163,7 +163,7 @@ export default function Home() {
 			if (!session) return;
 			console.log(session);
 			const organization = await axiosInstance.api
-				.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
+				.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
 				.then((response) => response.data[0]);
 			const { integrations: newIntegrations } = await axiosInstance.api
 				.get("/organization/integrations/" + organization.unique_id + "/", {
