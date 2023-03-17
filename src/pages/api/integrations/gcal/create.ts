@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Integration } from "@/utils/index";
+import { Integration } from "@/utils/serverUtils";
 
 const scopes = [
 	// "https://www.googleapis.com/auth/calendar",

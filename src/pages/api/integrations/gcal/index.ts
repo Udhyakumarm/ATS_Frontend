@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { google } from "googleapis";
-import { Integration } from "@/utils/index";
+import { Integration } from "@/utils/serverUtils";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const { code, error } = req.query;
