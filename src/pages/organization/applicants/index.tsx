@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { axiosInstance } from "@/utils";
 import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
-import Orgsidebar from "@/components/organization/sidebar";
-import Orgtopbar from "@/components/organization/topbar";
+import Orgsidebar from "@/components/organization/SideBar";
+import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useEffect, useState } from "react";
 import { useApplicantStore } from "@/utils/code";
@@ -39,7 +39,7 @@ export default function Home() {
 
 	useEffect(() => {
 		if (session) {
-			settoken(session["accessToken"]);
+			settoken(session.accessToken as string);
 		} else if (!session) {
 			settoken("");
 		}
