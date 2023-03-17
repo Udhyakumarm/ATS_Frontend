@@ -2,9 +2,10 @@
 import { axiosInstance } from "@/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]";
+import { authOptions } from "../auth/[...nextauth]";
 import { google } from "googleapis";
-import { Integration } from "@/utils/index";
+import { Integration } from "@/utils/serverUtils";
+import axios from "axios";
 
 interface Integration {
 	organization: string;
@@ -17,8 +18,30 @@ interface Integration {
 	scope: string;
 	calendar_id: string;
 }
-const validateIntegration = (integration: Integration) => {
-	return integration;
+
+const validateIntegration = async (integration: Integration) => {
+	switch (integration.provider) {
+		case "google": {
+			const oauth2Client = Integration.googleCalendarOAuth2Client;
+			const expiry_date = Number(integration.expires_in) + Date.now();
+
+			oauth2Client.setCredentials({
+				...integration,
+				expiry_date,
+				token_type: "Bearer"
+			});
+
+			const refreshedIntegration = await axios
+				.get(
+					(process.env.NODE_ENV === "production"
+						? process.env.NEXT_PUBLIC_PROD_FRONTEND
+						: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integrations/gcal/refresh"
+				)
+				.then((response) => response.data);
+			if (refreshedIntegration.success) return refreshedIntegration.newIntegration;
+		}
+	}
+	return;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -44,7 +67,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	const validatedIntegrations = integrations.map((integration) => validateIntegration(integration));
+	const validatedIntegrations = await Promise.all(
+		integrations.map(async (integration) => await validateIntegration(integration))
+	);
 
 	res.status(200).json({ validatedIntegrations });
 }
