@@ -22,31 +22,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 	const redirect_uri =
 		(process.env.NODE_ENV === "production"
 			? process.env.NEXT_PUBLIC_PROD_FRONTEND
-			: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integration/indeed";
+			: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integration/linkedin";
 
-	const indeedResponse: any = await axios.post(
-		"https://apis.indeed.com/oauth/v2/tokens",
+	const linkedinResponse: any = await axios.post(
+		"https://www.linkedin.com/oauth/v2/accessToken",
 		{
 			grant_type: "authorization_code",
 			code,
-			client_id: process.env.INDEED_CLIENT_ID,
-			client_secret: process.env.INDEED_CLIENT_SECRET,
+			client_id: process.env.LINKEDIN_APP_CLIENT_ID,
+			client_secret: process.env.LINKEDIN_APP_CLIENT_SECRET,
 			redirect_uri: redirect_uri
 		},
 		{ headers: { "Content-Type": "application/x-www-form-urlencoded" } }
 	);
 
 	const { unique_id } = await axiosInstance.api
-		.get("/organization/listorganisationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
+		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
 		.then((response) => response.data[0]);
 
 	const response = await axiosInstance.api.post(
 		"/organization/create_integration/" + unique_id + "/",
 		{
-			access_token: indeedResponse.data.access_token,
-			expires_in: indeedResponse.data.expires_in,
-			scope: indeedResponse.data.scope,
-			provider: "indeed"
+			access_token: linkedinResponse.data.access_token,
+			expires_in: linkedinResponse.data.expires_in,
+			scope: linkedinResponse.data.scope,
+			provider: "linkedin"
 		},
 		{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
 	);
