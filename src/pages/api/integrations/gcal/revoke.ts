@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const calendar = google.calendar({ version: "v3" });
 
 	if (googleCalendarIntegration.scope.match("https://www.googleapis.com/auth/calendar ")) {
-		const deletionResp = await calendar.calendars
+		await calendar.calendars
 			.delete({
 				calendarId: googleCalendarIntegration.calendar_id
 			})
