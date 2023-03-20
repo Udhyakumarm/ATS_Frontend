@@ -2,26 +2,83 @@ import React, { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import favIcon from "/public/favicon-white.ico"
 import Link from "next/link"
+import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi"
+import moment from "moment"
 
-export default function ChatAssistance() {
+export default function ChatAssistance(props: { accessToken: any }) {
 
     const [click, setClick] = useState(false);
     const [maximize, setMaximize] = useState(false);
     const messageEl = useRef(null);
+    const accessToken = props.accessToken;
+    const [prompt, setprompt] = useState("");
+    const [msgs,setmsgs] = useState([]);
+    // const [msg,setmsg] = useState([]);
+
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(accessToken);
 
     function handleClick() {
         setClick(!click)
         setMaximize(false)
     }
 
+    async function loadChat(){
+        await axiosInstanceAuth2
+			.get(`/chatbot/listchat/`)
+			.then(async (res) => {
+				console.log(res);
+				console.log(res.data);
+                setmsgs(res.data)
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+    }
+
+    async function addChat(formData: FormData){
+        await axiosInstanceAuth2
+			.post(`/chatbot/addchat/`,formData)
+			.then(async (res) => {
+				loadChat()
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+    }
+
+    async function sendMsg(){
+        var p = prompt
+        setprompt("Loading.....")
+        const formData = new FormData()
+        formData.append("prompt", p)
+        await axiosInstance2
+			.post(`/candidate/chatuserjob/clf0u1qzc0000dcu01f9a5x0m/`, formData)
+			.then((res) => {
+                const formData2 = new FormData()
+                formData2.append("message", p)
+                formData2.append("response", res.data.res)
+                addChat(formData2)
+                setprompt("")
+			})
+			.catch((err) => {
+                console.log(err)
+                setprompt("")
+			});
+    }
+
     useEffect(() => {
         if (messageEl) {
-          messageEl.current.addEventListener('DOMNodeInserted', event => {
+          messageEl.current.addEventListener('DOMNodeInserted', (event: { currentTarget: any }) => {
             const { currentTarget: target } = event;
             target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
           });
         }
     }, [])
+
+    useEffect(()=>{
+        if(click){loadChat()}
+    },[click])
     
     return (
         <>
@@ -52,7 +109,32 @@ export default function ChatAssistance() {
                         </aside>
                     </div>
                     <div className="h-[calc(100%-134px)] overflow-y-auto py-2 px-6" ref={messageEl}>
-                        <ul className="w-full text-sm">
+                    <ul className="w-full text-sm">
+                    {msgs && msgs.map((data, i) => (
+                        <>
+                        <div key={i}>
+
+                        <li className="my-2 text-right max-w-[90%] ml-auto">
+                        <div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+                            {data["message"]}
+                        </div>
+                        <div className="text-[10px] text-darkGray">
+                        {moment(data["timestamp"]).fromNow()}
+                        </div>
+                        </li>
+                        <li className="my-2 max-w-[90%]">
+                                <div className="inline-block bg-gradDarkBlue text-white py-2 px-4 rounded rounded-tr-normal rounded-bl-normal shadow mb-1">
+                                {data["response"]}
+                                </div>
+                                <div className="text-[10px] text-darkGray">
+                                {moment(data["timestamp"]).fromNow()}
+                                </div>
+                        </li>
+                        </div>
+                        </>
+                    ))}
+                    </ul>
+                        {/* <ul className="w-full text-sm">
                             <li className="my-2 text-right max-w-[90%] ml-auto">
                                 <div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
                                     Hi
@@ -158,12 +240,12 @@ export default function ChatAssistance() {
                                     4:03 PM
                                 </div>
                             </li>
-                        </ul>
+                        </ul> */}
                     </div>
                     <div className="bg-white p-3">
                         <div className="bg-lightBlue rounded p-2 flex items-center">
-                            <input type="text" placeholder="Type something..." className="w-[calc(100%-50px)] border-0 bg-transparent focus:shadow-none focus:outline-none focus:ring-0 focus:border-0" />
-                            <button type="button" className="leading-normal border-l-2 border-gray-400 w-[50px] text-sm block">
+                            <input type="text" placeholder="Type something..." className="w-[calc(100%-50px)] border-0 bg-transparent focus:shadow-none focus:outline-none focus:ring-0 focus:border-0" value={prompt} onChange={(e)=>setprompt(e.target.value)} />
+                            <button type="button" className="leading-normal border-l-2 border-gray-400 w-[50px] text-sm block" onClick={(e)=>sendMsg()}>
                                 <i className="fa-solid fa-paper-plane"></i>
                             </button>
                         </div>

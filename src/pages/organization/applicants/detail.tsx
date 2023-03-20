@@ -166,11 +166,63 @@ export default function Detail() {
 											<li className="pr-2 mb-2 w-[50%]">
 												Current Salary - 6.0 LPA
 											</li>
-											<li className="pr-2 mb-2 w-[50%]">
-												Expected Salary - 8.0 LPA
-											</li>
-											<li className="pr-2 mb-2 w-[50%]">
-												Notice Period - 30 Days
+											<li>
+												<Button
+													label="Sourced"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Sourced", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Applied"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Applied", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Phone Screen"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Phone Screen", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Assement"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Assement", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Interview"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Interview", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Offered"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Offered Letter", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Hired"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Hired", data["arefid"]);
+													}}
+												/>
 											</li>
 										</ul>
 									</div>
