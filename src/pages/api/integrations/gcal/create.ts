@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { Integration } from "@/utils/serverUtils";
 
 const scopes = [
-	// "https://www.googleapis.com/auth/calendar",
+	"https://www.googleapis.com/auth/calendar",
 	// "https://www.googleapis.com/auth/calendar.events",
 	// "https://www.googleapis.com/auth/calendar.events.readonly",
 	// "https://www.googleapis.com/auth/calendar.readonly"

@@ -11,7 +11,7 @@ import { Integration } from "@/utils/serverUtils";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const session = await getServerSession(req, res, authOptions);
 
-	if (!session) return res.status(200).redirect("/");
+	if (!session) return res.status(401).json({ success: false, error: "Unauthorized" });
 
 	const { unique_id } = await axiosInstance.api
 		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
@@ -79,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		.then((res) => res.data)
 		.catch((err) => {
 			console.log(err);
-			return { data: { success: false } };
+			return { data: { creationSuccess: false } };
 		});
 
 	res.json({ success: true, ...response });
