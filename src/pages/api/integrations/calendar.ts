@@ -19,7 +19,7 @@ interface Integration {
 	calendar_id: string;
 }
 
-const validateIntegration = async (integration: Integration) => {
+const validateIntegration = async (integration: Integration, cookie: string | undefined) => {
 	switch (integration.provider) {
 		case "google": {
 			const oauth2Client = Integration.googleCalendarOAuth2Client;
@@ -35,7 +35,13 @@ const validateIntegration = async (integration: Integration) => {
 				.get(
 					(process.env.NODE_ENV === "production"
 						? process.env.NEXT_PUBLIC_PROD_FRONTEND
-						: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integrations/gcal/refresh"
+						: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integrations/gcal/refresh",
+					{
+						headers: {
+							"Content-Type": "application/json",
+							cookie: cookie
+						}
+					}
 				)
 				.then((response) => response.data);
 			if (refreshedIntegration.success) return refreshedIntegration.newIntegration;
@@ -68,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 
 	const validatedIntegrations = await Promise.all(
-		integrations.map(async (integration) => await validateIntegration(integration))
+		integrations.map(async (integration) => await validateIntegration(integration, req.headers.cookie))
 	);
 
 	res.status(200).json({ validatedIntegrations });
