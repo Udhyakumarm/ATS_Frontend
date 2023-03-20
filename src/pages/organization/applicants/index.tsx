@@ -7,10 +7,16 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
-import { useEffect, useState } from "react";
+import { useEffect, Fragment, useRef, useState } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
+import Image from "next/image";
+import userImg from "/public/images/user-image.png";
+import socialIcon from "/public/images/social/linkedin-icon.png";
+import boardIcon from "/public/images/board-icon.png";
+import FormField from "@/components/FormField";
+import { Menu } from "@headlessui/react";
 
 const jobs = [
 	{ id: 1, name: "Software Developer", unavailable: false },
@@ -25,6 +31,9 @@ export default function Home() {
 	const router = useRouter();
 
 	const [selectedJob, setSelectedJob] = useState(jobs[0]);
+
+	const cancelButtonRef = useRef(null);
+	const [socialPopup, setSocialPopup] = useState(false);
 
 	const applicantlist = useApplicantStore((state) => state.applicantlist);
 	const setapplicantlist = useApplicantStore((state) => state.setapplicantlist);
@@ -118,55 +127,301 @@ export default function Home() {
 								</Transition>
 							</Listbox>
 						</div>
-						<div className="flex items-center">
-							<div></div>
+						<aside className="flex items-center">
+							<div className="mr-4 flex items-center">
+								<p className="mr-3 font-semibold">Add Board</p>
+								<button
+									type="button"
+									className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-800"
+									onClick={() => setSocialPopup(true)}
+								>
+									<i className="fa-solid fa-plus"></i>
+								</button>
+							</div>
+							<div className="flex items-center">
+								<div className="-mr-4">
+									<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
+								</div>
+								<div className="-mr-4">
+									<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
+								</div>
+								<Menu as="div" className="relative flex">
+									<Menu.Button className={"relative"}>
+										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
+										<span className="absolute left-0 top-0 block flex h-full w-full items-center justify-center rounded-full bg-[rgba(0,0,0,0.5)] text-sm text-white">
+											+5
+										</span>
+									</Menu.Button>
+									<Transition
+										as={Fragment}
+										enter="transition ease-out duration-100"
+										enterFrom="transform opacity-0 scale-95"
+										enterTo="transform opacity-100 scale-100"
+										leave="transition ease-in duration-75"
+										leaveFrom="transform opacity-100 scale-100"
+										leaveTo="transform opacity-0 scale-95"
+									>
+										<Menu.Items
+											className={
+												"absolute right-0 top-[100%] mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white py-2 shadow-normal"
+											}
+										>
+											<Menu.Item>
+												<div className="p-3">
+													<h6 className="border-b pb-2 font-bold">Team Members</h6>
+													<div>
+														{Array(5).fill(
+															<div className="mt-4 flex items-center">
+																<Image
+																	src={userImg}
+																	alt="User"
+																	width={40}
+																	className="h-[40px] rounded-full object-cover"
+																/>
+																<aside className="pl-4 text-sm">
+																	<h5 className="font-bold">Anne Jacob</h5>
+																	<p className="text-darkGray">Hiring Manager</p>
+																</aside>
+															</div>
+														)}
+													</div>
+												</div>
+											</Menu.Item>
+										</Menu.Items>
+									</Transition>
+								</Menu>
+							</div>
+						</aside>
+					</div>
+					<div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
+						<div className="min-w-[300px] px-2">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray">Sourced</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-2 flex items-center justify-between">
+									<aside className="flex items-center">
+										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+									</aside>
+									<aside>
+										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+									</aside>
+								</div>
+								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<div className="flex items-center justify-between">
+									<aside className="flex items-center text-[12px] text-darkGray">
+										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+										<p>25 Dec 2023</p>
+									</aside>
+									<Button btnStyle="outlined" label="View" />
+								</div>
+							</div>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-2 flex items-center justify-between">
+									<aside className="flex items-center">
+										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+									</aside>
+									<aside>
+										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+									</aside>
+								</div>
+								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<div className="flex items-center justify-between">
+									<aside className="flex items-center text-[12px] text-darkGray">
+										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+										<p>25 Dec 2023</p>
+									</aside>
+									<Button btnStyle="outlined" label="View" />
+								</div>
+							</div>
+						</div>
+						<div className="min-w-[300px] px-2">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray">Shortlist</h5>
+							{Array(10).fill(
+								<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+									<div className="mb-2 flex items-center justify-between">
+										<aside className="flex items-center">
+											<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+											<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+										</aside>
+										<aside>
+											<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+										</aside>
+									</div>
+									<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+									<div className="flex items-center justify-between">
+										<aside className="flex items-center text-[12px] text-darkGray">
+											<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+											<p>25 Dec 2023</p>
+										</aside>
+										<Button btnStyle="outlined" label="View" />
+									</div>
+								</div>
+							)}
+						</div>
+						<div className="min-w-[300px] px-2">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray">Interview</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-2 flex items-center justify-between">
+									<aside className="flex items-center">
+										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+									</aside>
+									<aside>
+										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+									</aside>
+								</div>
+								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<div className="flex items-center justify-between">
+									<aside className="flex items-center text-[12px] text-darkGray">
+										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+										<p>25 Dec 2023</p>
+									</aside>
+									<Button btnStyle="outlined" label="View" />
+								</div>
+							</div>
+						</div>
+						<div className="min-w-[300px] px-2">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray">Hired</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-2 flex items-center justify-between">
+									<aside className="flex items-center">
+										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+									</aside>
+									<aside>
+										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+									</aside>
+								</div>
+								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<div className="flex items-center justify-between">
+									<aside className="flex items-center text-[12px] text-darkGray">
+										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+										<p>25 Dec 2023</p>
+									</aside>
+									<Button btnStyle="outlined" label="View" />
+								</div>
+							</div>
+						</div>
+						<div className="min-w-[300px] px-2">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray">Offered Letter</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-2 flex items-center justify-between">
+									<aside className="flex items-center">
+										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
+									</aside>
+									<aside>
+										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+									</aside>
+								</div>
+								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<div className="flex items-center justify-between">
+									<aside className="flex items-center text-[12px] text-darkGray">
+										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+										<p>25 Dec 2023</p>
+									</aside>
+									<Button btnStyle="outlined" label="View" />
+								</div>
+							</div>
 						</div>
 					</div>
-					<div className="p-4 lg:p-8"></div>
-				</div>
-				<div id="dashboard" className="p-4 lg:p-8">
-					<div className="-mx-4 flex flex-wrap items-center">
-						{applicantlist &&
-							applicantlist.map((data, i) => (
-								<ul
-									key={i}
-									className="m-4 w-full list-disc rounded-normal bg-white p-4 p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
-								>
-									<li>
-										Aplicant Id : <span className="text-lg font-bold">{data["arefid"]}</span>
-									</li>
-									<li>
-										Job Id : <span className="text-lg font-bold">{data["job"]["refid"]}</span>
-									</li>
-									<li>
-										Candidate Id : <span className="text-lg font-bold"> {data["user"]["erefid"]}</span>
-									</li>
-									<li>
-										Applicant Status : <span className="text-lg font-bold">{data["status"]}</span>
-									</li>
-									<li>
-										Candidate Email : <span className="text-lg font-bold">{data["user"]["email"]}</span>
-									</li>
-									<li>
-										Job Title : <span className="text-lg font-bold">{data["job"]["job_title"]}</span>
-									</li>
-									<li>
-										<Button
-											label="View"
-											loader={false}
-											btnType="button"
-											handleClick={() => {
-												setjobid(data["job"]["refid"]);
-												setcanid(data["user"]["erefid"]);
-												router.push("applicants/detail");
-											}}
-										/>
-									</li>
-								</ul>
-							))}
-					</div>
+					{applicantlist &&
+						applicantlist.map((data, i) => (
+							<ul
+								key={i}
+								className="m-4 w-full list-disc rounded-normal bg-white p-4 p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+							>
+								<li>
+									Aplicant Id : <span className="text-lg font-bold">{data["arefid"]}</span>
+								</li>
+								<li>
+									Job Id : <span className="text-lg font-bold">{data["job"]["refid"]}</span>
+								</li>
+								<li>
+									Candidate Id : <span className="text-lg font-bold"> {data["user"]["erefid"]}</span>
+								</li>
+								<li>
+									Applicant Status : <span className="text-lg font-bold">{data["status"]}</span>
+								</li>
+								<li>
+									Candidate Email : <span className="text-lg font-bold">{data["user"]["email"]}</span>
+								</li>
+								<li>
+									Job Title : <span className="text-lg font-bold">{data["job"]["job_title"]}</span>
+								</li>
+								<li>
+									<Button
+										label="View"
+										loader={false}
+										btnType="button"
+										handleClick={() => {
+											setjobid(data["job"]["refid"]);
+											setcanid(data["user"]["erefid"]);
+											router.push("applicants/detail");
+										}}
+									/>
+								</li>
+							</ul>
+						))}
 				</div>
 			</main>
+			<Transition.Root show={socialPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setSocialPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											<Image src={boardIcon} alt="Add" width={24} className="mr-3" />
+											Add Board
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setSocialPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<FormField
+											fieldType="input"
+											inputType="text"
+											label="Board Title"
+											placeholder="Assign new board title"
+										/>
+										<div className="text-center">
+											<Button label="Save" />
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }

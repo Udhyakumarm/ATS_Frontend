@@ -38,7 +38,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-4 font-bold text-white disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400` +
+					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-6 font-bold text-white disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
