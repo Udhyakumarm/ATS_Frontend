@@ -31,12 +31,12 @@ export default function Header() {
 		}
 	}, [session]);
 
-	const cname = useCarrierStore((state) => state.cname);
-	const setcname = useCarrierStore((state) => state.setcname);
-	const cid = useCarrierStore((state) => state.cid);
-	const setcid = useCarrierStore((state) => state.setcid);
-	const orgdetail: any = useCarrierStore((state) => state.orgdetail);
-	const setorgdetail = useCarrierStore((state) => state.setorgdetail);
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
+	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
+	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
+	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
 	if (
 		router.asPath === "/organization/" + cname ||
