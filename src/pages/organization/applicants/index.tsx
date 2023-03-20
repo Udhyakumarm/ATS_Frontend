@@ -17,6 +17,7 @@ import socialIcon from "/public/images/social/linkedin-icon.png";
 import boardIcon from "/public/images/board-icon.png";
 import FormField from "@/components/FormField";
 import { Menu } from "@headlessui/react";
+import TeamMembers from "@/components/TeamMembers";
 
 const jobs = [
 	{ id: 1, name: "Software Developer", unavailable: false },
@@ -87,7 +88,7 @@ export default function Home() {
 				<Orgtopbar />
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
 				<div className="layoutWrap">
-					<div className="flex flex-wrap items-center justify-between bg-white py-6 px-4 py-4 shadow-normal lg:px-8">
+					<div className="flex flex-wrap items-center justify-between bg-white dark:bg-gray-800 py-6 px-4 py-4 shadow-normal lg:px-8">
 						<div className="mr-3">
 							<Listbox value={selectedJob} onChange={setSelectedJob}>
 								<Listbox.Button className={"text-xl font-bold"}>
@@ -102,14 +103,14 @@ export default function Home() {
 									leaveTo="transform scale-95 opacity-0"
 								>
 									<Listbox.Options
-										className={"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal"}
+										className={"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white dark:bg-gray-700 py-2 shadow-normal"}
 									>
 										{jobs.map((item) => (
 											<Listbox.Option
 												key={item.id}
 												value={item}
 												disabled={item.unavailable}
-												className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100"
+												className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 											>
 												{({ selected }) => (
 													<>
@@ -132,71 +133,19 @@ export default function Home() {
 								<p className="mr-3 font-semibold">Add Board</p>
 								<button
 									type="button"
-									className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-800"
+									className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
 									onClick={() => setSocialPopup(true)}
 								>
 									<i className="fa-solid fa-plus"></i>
 								</button>
 							</div>
-							<div className="flex items-center">
-								<div className="-mr-4">
-									<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-								</div>
-								<div className="-mr-4">
-									<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-								</div>
-								<Menu as="div" className="relative flex">
-									<Menu.Button className={"relative"}>
-										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-										<span className="absolute left-0 top-0 block flex h-full w-full items-center justify-center rounded-full bg-[rgba(0,0,0,0.5)] text-sm text-white">
-											+5
-										</span>
-									</Menu.Button>
-									<Transition
-										as={Fragment}
-										enter="transition ease-out duration-100"
-										enterFrom="transform opacity-0 scale-95"
-										enterTo="transform opacity-100 scale-100"
-										leave="transition ease-in duration-75"
-										leaveFrom="transform opacity-100 scale-100"
-										leaveTo="transform opacity-0 scale-95"
-									>
-										<Menu.Items
-											className={
-												"absolute right-0 top-[100%] mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white py-2 shadow-normal"
-											}
-										>
-											<Menu.Item>
-												<div className="p-3">
-													<h6 className="border-b pb-2 font-bold">Team Members</h6>
-													<div>
-														{Array(5).fill(
-															<div className="mt-4 flex items-center">
-																<Image
-																	src={userImg}
-																	alt="User"
-																	width={40}
-																	className="h-[40px] rounded-full object-cover"
-																/>
-																<aside className="pl-4 text-sm">
-																	<h5 className="font-bold">Anne Jacob</h5>
-																	<p className="text-darkGray">Hiring Manager</p>
-																</aside>
-															</div>
-														)}
-													</div>
-												</div>
-											</Menu.Item>
-										</Menu.Items>
-									</Transition>
-								</Menu>
-							</div>
+							<TeamMembers />
 						</aside>
 					</div>
 					<div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
 						<div className="min-w-[300px] px-2">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray">Sourced</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Sourced</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 								<div className="mb-2 flex items-center justify-between">
 									<aside className="flex items-center">
 										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -206,16 +155,16 @@ export default function Home() {
 										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 									</aside>
 								</div>
-								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray">
+									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 										<p>25 Dec 2023</p>
 									</aside>
 									<Button btnStyle="outlined" label="View" />
 								</div>
 							</div>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 								<div className="mb-2 flex items-center justify-between">
 									<aside className="flex items-center">
 										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -225,9 +174,9 @@ export default function Home() {
 										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 									</aside>
 								</div>
-								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray">
+									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 										<p>25 Dec 2023</p>
 									</aside>
@@ -236,9 +185,9 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="min-w-[300px] px-2">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray">Shortlist</h5>
+							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Shortlist</h5>
 							{Array(10).fill(
-								<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+								<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 									<div className="mb-2 flex items-center justify-between">
 										<aside className="flex items-center">
 											<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -248,9 +197,9 @@ export default function Home() {
 											<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 										</aside>
 									</div>
-									<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+									<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 									<div className="flex items-center justify-between">
-										<aside className="flex items-center text-[12px] text-darkGray">
+										<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 											<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 											<p>25 Dec 2023</p>
 										</aside>
@@ -260,8 +209,8 @@ export default function Home() {
 							)}
 						</div>
 						<div className="min-w-[300px] px-2">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray">Interview</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Interview</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 								<div className="mb-2 flex items-center justify-between">
 									<aside className="flex items-center">
 										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -271,9 +220,9 @@ export default function Home() {
 										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 									</aside>
 								</div>
-								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray">
+									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 										<p>25 Dec 2023</p>
 									</aside>
@@ -282,8 +231,8 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="min-w-[300px] px-2">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray">Hired</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Hired</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 								<div className="mb-2 flex items-center justify-between">
 									<aside className="flex items-center">
 										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -293,9 +242,9 @@ export default function Home() {
 										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 									</aside>
 								</div>
-								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray">
+									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 										<p>25 Dec 2023</p>
 									</aside>
@@ -304,8 +253,8 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="min-w-[300px] px-2">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray">Offered Letter</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Offered Letter</h5>
+							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
 								<div className="mb-2 flex items-center justify-between">
 									<aside className="flex items-center">
 										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -315,9 +264,9 @@ export default function Home() {
 										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
 									</aside>
 								</div>
-								<p className="mb-1 text-[12px] text-darkGray">ID - 301045</p>
+								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
 								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray">
+									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
 										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 										<p>25 Dec 2023</p>
 									</aside>

@@ -335,15 +335,10 @@ export default function Dashboard() {
 								</div>
 							</div>
 						</div>
-						<aside className="absolute left-4 top-4 rounded-tl-normal rounded-br-normal bg-lightBlue p-3 dark:bg-gray-700 lg:left-8 lg:top-8">
+						<aside className="absolute left-0 top-0 rounded-tl-normal rounded-br-normal bg-lightBlue p-3 dark:bg-gray-700">
 							<Popover className="relative">
-								<Popover.Button>
-									<button
-										type="button"
-										className="flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue"
-									>
-										<i className="fa-solid fa-gauge"></i>
-									</button>
+								<Popover.Button className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}>
+									<i className="fa-solid fa-gauge"></i>
 								</Popover.Button>
 								<Popover.Overlay className="fixed inset-0 bg-black opacity-30" />
 								<Popover.Panel className="absolute z-10 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
