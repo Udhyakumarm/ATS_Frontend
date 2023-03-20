@@ -44,12 +44,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const calendar = google.calendar({ version: "v3" });
 
-	const deletionResp = await calendar.calendars
-		.delete({
-			calendarId: googleCalendarIntegration.calendar_id
-		})
-		.then((resp) => resp.data)
-		.catch((err) => err);
+	if (googleCalendarIntegration.scope.match("https://www.googleapis.com/auth/calendar ")) {
+		const deletionResp = await calendar.calendars
+			.delete({
+				calendarId: googleCalendarIntegration.calendar_id
+			})
+			.then((resp) => resp.data)
+			.catch((err) => err);
+	}
 
 	await Integration.googleCalendarOAuth2Client.revokeCredentials();
 
@@ -63,5 +65,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	res.json({ success: true, deletionResp, response });
+	res.json({ success: true, response });
 }
