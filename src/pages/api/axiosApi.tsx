@@ -18,7 +18,7 @@ export const axiosInstance2 = axios.create({
     process.env.NODE_ENV === "production"
       ? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE
       : process.env.NEXT_PUBLIC_DEV_BACKEND_BASE,
-  timeout: process.env.NODE_ENV === "production" ? 5000 : 10000,
+  timeout: process.env.NODE_ENV === "production" ? 5000 : 15000,
   headers: {
     "Content-Type": "multipart/form-data",
   },
