@@ -428,7 +428,7 @@ export default function ApplyJob() {
                 as="div"
                 className="relative z-40"
                 initialFocus={cancelButtonRef}
-                onClose={setSocialPopup}
+                onClose={setSkillsPopup}
                 >
                 <Transition.Child
                     as={Fragment}

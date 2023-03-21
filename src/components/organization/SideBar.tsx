@@ -101,7 +101,7 @@ export default function OrgSideBar() {
                             <li className={`my-[12px]` + ' ' + (show ? 'my-[24px]' : '')} key={i}>
                                 <Link href={menuItem.url}
                                 className={`flex items-center font-semibold rounded-[8px] hover:bg-lightBlue dark:hover:bg-gray-900` + ' ' + (router.pathname == menuItem.url
-                                    ? "bg-lightBlue border-r-secondary text-primary dark:bg-gray-900 dark:text-white"
+                                    ? "bg-lightBlue border-r-gradDarkBlue text-primary dark:bg-gray-900 dark:text-white"
                                     : "bg-transparent border-r-transparent") + ' ' + (show ? 'justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent' : 'py-2 px-4 border-r-[10px]') }>
                                     <span className={`w-[20px] h-[20px] inline-block` + ' ' + (show ? 'text-center' : 'mr-4')}>
                                         <Image src={theme === "dark" ? menuItem.imgWhite : menuItem.img} alt={menuItem.title} height={20} className={show ? 'mx-auto' : ''} />
