@@ -30,7 +30,7 @@ const JobActionButton = ({ label, handleClick, icon }: any) => {
 };
 
 const StickyLabel = ({ label }: any) => (
-	<div className="absolute z-10 min-w-[200px] rounded-tl-normal rounded-br-normal bg-gradient-to-t from-[#6A67EA] to-[#9290FC] py-6 px-3 text-white shadow-md">
+	<div className="absolute z-10 min-w-[200px] rounded-tl-normal rounded-br-normal bg-gradient-to-t from-[#6A67EA] to-[#9290FC] py-6 px-6 text-center text-white shadow-md">
 		{label}
 	</div>
 );
@@ -325,14 +325,14 @@ export default function Home() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<Tabs onSelect={(i, l) => setIndex(i)}>
-							<div className="sticky top-0 z-20 overflow-hidden rounded-t-lg bg-white pt-5 drop-shadow-md dark:bg-gray-800">
+							<div className="sticky top-0 overflow-hidden rounded-t-lg bg-white pt-5 drop-shadow-md dark:bg-gray-800">
 								<div className="flex flex-row items-center justify-between pt-2 text-gray-800">
 									<div className="flex flex-row px-8">
 										<button onClick={() => router.back()} className="text-slate-400">
 											<i className="fa-solid fa-arrow-left pl-4 text-3xl"></i>
 										</button>
 										<div className="ml-20 text-xl font-normal text-slate-600">
-											<span>{jobForm.job_title !== "" ? jobForm.job_title : "| Job Title"}</span>
+											<span>{jobForm.job_title !== "" ? jobForm.job_title : "Job Title"}</span>
 										</div>
 									</div>
 									<div className="flex flex-row items-center justify-between gap-5 pr-10">

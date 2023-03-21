@@ -1,13 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import dashboardIcon from "/public/images/icons/dashboard.png";
-import integrationIcon from "/public/images/icons/integration.png";
-import jobsIcon from "/public/images/icons/jobs.png";
-import analyticsIcon from "/public/images/icons/analytics.png";
-import vendorsIcon from "/public/images/icons/vendors.png";
+import bulbIcon from "/public/images/icons/bulb.png";
+import jobsIcon from "/public/images/icons/post-new-job.png";
+import draftedIcon from "/public/images/icons/drafted.png";
+import folderIcon from "/public/images/icons/folder.png";
+import closedIcon from "/public/images/icons/closed.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
-import collectionIcon from "/public/images/icons/collection.png";
 import { useRouter } from "next/router";
 import { axiosInstance } from "@/utils";
 import { getToken } from "next-auth/jwt";
@@ -28,22 +27,22 @@ export default function Home() {
 		},
 		{
 			name: "Active Jobs",
-			icon: integrationIcon,
+			icon: bulbIcon,
 			link: "/organization/jobs/active"
 		},
 		{
 			name: "Drafted Jobs",
-			icon: jobsIcon,
+			icon: draftedIcon,
 			link: "/organization/jobs/drafted"
 		},
 		{
 			name: "Archived Jobs",
-			icon: analyticsIcon,
+			icon: folderIcon,
 			link: "/organization/jobs/archived"
 		},
 		{
 			name: "Closed Jobs",
-			icon: vendorsIcon,
+			icon: closedIcon,
 			link: "/organization/jobs/closed"
 		},
 		{
@@ -64,18 +63,22 @@ export default function Home() {
                 <Orgtopbar />
                 <div id="overlay" className="hidden bg-[rgba(0,0,0,0.2)] fixed left-0 top-0 z-[9] w-full h-full"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-					<div className="relative">
-						<div className="-mx-4 flex flex-wrap items-center">
+					<div className="relative bg-white rounded-normal shadow-normal p-10">
+						<h1 className="font-bold text-2xl mb-6">Jobs</h1>
+						<div className="flex flex-wrap items-center -mx-4">
 							{quicklinks.map((links, i) => (
-								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
+								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
 									<Link
 										href={links.link}
-										className=" flex w-full items-center rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+										className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 									>
-										<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
-											<Image src={links.icon} alt={links.name} width={30} height={30} />
+										<div className="flex w-full items-center mb-10">
+											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+												<Image src={links.icon} alt={links.name} height={20} />
+											</div>
+											<span className="text-lg font-bold">{links.name}</span>
 										</div>
-										<span className="text-lg font-bold">{links.name}</span>
+										<span className="text-primary text-sm flex items-center">Go To <i className="fa-solid fa-arrow-right text-[12px] ml-2"></i></span>
 									</Link>
 								</div>
 							))}
