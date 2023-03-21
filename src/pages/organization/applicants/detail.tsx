@@ -11,11 +11,11 @@ import { useEffect, useState, Fragment } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
-import { Tab } from '@headlessui/react'
-import jobIcon from '/public/images/icons/jobs.png'
+import { Tab } from "@headlessui/react";
+import jobIcon from "/public/images/icons/jobs.png";
 import TeamMembers from "@/components/TeamMembers";
-import userImg from '/public/images/user-image.png'
-import testGorrila from '/public/images/test-gorrila.png'
+import userImg from "/public/images/user-image.png";
+import testGorrila from "/public/images/test-gorrila.png";
 
 export default function Detail() {
 	const router = useRouter();
@@ -308,8 +308,8 @@ export default function Detail() {
 								</div>
 							</div>
 							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
-								<div className="bg-white dark:bg-gray-800 border-2 border-slate-300 dark:border-gray-700 shadow-normal rounded-large overflow-hidden">
-									<div className="flex flex-wrap items-center jusitfy-between shadow p-5">
+								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
+									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow">
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3" />
 											<h2 className="text-xl font-bold">
@@ -322,84 +322,90 @@ export default function Detail() {
 									</div>
 									<div className="">
 										<Tab.Group>
-											<Tab.List className={'px-4 border-b'}>
+											<Tab.List className={"border-b px-4"}>
 												<Tab as={Fragment}>
 													{({ selected }) => (
 														<button
-														className={
-															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
-														}
+															className={
+																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																" " +
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+															}
 														>
-														Profile
+															Profile
 														</button>
 													)}
 												</Tab>
 												<Tab as={Fragment}>
 													{({ selected }) => (
 														<button
-														className={
-															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
-														}
+															className={
+																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																" " +
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+															}
 														>
-														Assessment
+															Assessment
 														</button>
 													)}
 												</Tab>
 												<Tab as={Fragment}>
 													{({ selected }) => (
 														<button
-														className={
-															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
-														}
+															className={
+																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																" " +
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+															}
 														>
-														Feedback
+															Feedback
 														</button>
 													)}
 												</Tab>
 												<Tab as={Fragment}>
 													{({ selected }) => (
 														<button
-														className={
-															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
-														}
+															className={
+																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																" " +
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+															}
 														>
-														Timeline
+															Timeline
 														</button>
 													)}
 												</Tab>
 											</Tab.List>
 											<Tab.Panels>
-												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>
-													<div className="flex flex-wrap items-center justify-between bg-lightBlue text-sm p-2 px-8">
+												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
+													<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
 														<p className="my-2">PDF File</p>
-														<Link href={'#'} className="my-2 inline-block text-primary font-bold hover:underline">
+														<Link href={"#"} className="my-2 inline-block font-bold text-primary hover:underline">
 															<i className="fa-solid fa-download mr-2"></i>
 															Download
 														</Link>
 													</div>
-													<div className="px-8">
-														Preview Here
-													</div>
+													<div className="px-8">Preview Here</div>
 												</Tab.Panel>
-												<Tab.Panel className={'min-h-[calc(100vh-250px)] py-6 px-8'}>
-													<div className="flex flex-wrap mx-[-15px]">
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													<div className="mx-[-15px] flex flex-wrap">
 														{Array(6).fill(
-															<div className="w-full md:max-w-[50%] px-[15px] mb-[30px]">
-																<div className="h-full bg-lightBlue rounded-normal shadow-lg p-6">
-																	<div className="flex flex-wrap justify-between items-start mb-4">
-																		<Image src={testGorrila} alt="Assessment" className="h-[30px] w-auto mb-2" />
-																		<div className="-mt-2 pl-2">	
+															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+																<div className="h-full rounded-normal bg-lightBlue p-6 shadow-lg">
+																	<div className="mb-4 flex flex-wrap items-start justify-between">
+																		<Image src={testGorrila} alt="Assessment" className="mb-2 h-[30px] w-auto" />
+																		<div className="-mt-2 pl-2">
 																			<Button btnStyle="outlined" label="Add" />
 																		</div>
 																	</div>
-																	<h4 className="font-semibold text-lg">Test Gorilla</h4>
+																	<h4 className="text-lg font-semibold">Test Gorilla</h4>
 																</div>
 															</div>
 														)}
 													</div>
 												</Tab.Panel>
-												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>Content 3</Tab.Panel>
-												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>Content 4</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 3</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 4</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</div>
