@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,20 +9,20 @@ import Button from "@/components/Button";
 import moment from "moment";
 import { useRouter } from "next/router";
 
-export default function cancareer() {
+export default function CanCareer() {
 	const router = useRouter();
 
-	const cname = useCarrierStore((state) => state.cname);
-	const setcname = useCarrierStore((state) => state.setcname);
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
 
-	const cid = useCarrierStore((state) => state.cid);
-	const setcid = useCarrierStore((state) => state.setcid);
-	const jid = useCarrierStore((state) => state.jid);
-	const setjid = useCarrierStore((state) => state.setjid);
-	const jdata = useCarrierStore((state) => state.jdata);
-	const setjdata = useCarrierStore((state) => state.setjdata);
-	const orgdetail = useCarrierStore((state) => state.orgdetail);
-	const setorgdetail = useCarrierStore((state) => state.setorgdetail);
+	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
+	const jid = useCarrierStore((state: { jid: any }) => state.jid);
+	const setjid = useCarrierStore((state: { setjid: any }) => state.setjid);
+	const jdata = useCarrierStore((state: { jdata: any }) => state.jdata);
+	const setjdata = useCarrierStore((state: { setjdata: any }) => state.setjdata);
+	const orgdetail = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
+	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
 	useEffect(() => {
 		if (cname == "" || cname != window.location.href.toString().split("/").pop()) {
@@ -73,7 +72,7 @@ export default function cancareer() {
 			<main className="py-8">
 				{orgdetail &&
 					orgdetail["OrgProfile"] &&
-					orgdetail["OrgProfile"].map((data, i) => (
+					orgdetail["OrgProfile"].map((data: any, i: React.Key) => (
 						<>
 							<div className="mx-auto w-full max-w-[1200px] px-4" key={i}>
 								<Image
@@ -86,22 +85,37 @@ export default function cancareer() {
 								<div className="mx-auto w-full max-w-[1100px] px-4">
 									<div className="mb-6 rounded-normal bg-white py-4 px-8 dark:bg-gray-800">
 										<div className="mb-3 flex flex-wrap rounded-normal border p-4 pb-0">
-											{orgdetail["Founder"].map((data, i) => (
-												<div
-													className="mb-3 w-full pr-4 text-center md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)]"
-													key={i}
-												>
-													<Image
-														src={`http://127.0.0.1:8000${data["image"]}`}
-														alt="User"
-														width={80}
-														height={80}
-														className="mx-auto mb-2 h-[80px] rounded-full object-cover"
-													/>
-													<p className="mb-1 text-sm font-bold">{data["name"]}</p>
-													<p className="text-sm text-darkGray">{data["designation"]}</p>
-												</div>
-											))}
+											{orgdetail["Founder"].map(
+												(
+													data: {
+														[x: string]:
+															| string
+															| number
+															| boolean
+															| React.ReactElement<any, string | React.JSXElementConstructor<any>>
+															| React.ReactFragment
+															| React.ReactPortal
+															| null
+															| undefined;
+													},
+													i: React.Key | null | undefined
+												) => (
+													<div
+														className="mb-3 w-full pr-4 text-center md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)]"
+														key={i}
+													>
+														<Image
+															src={`http://127.0.0.1:8000${data["image"]}`}
+															alt="User"
+															width={80}
+															height={80}
+															className="mx-auto mb-2 h-[80px] rounded-full object-cover"
+														/>
+														<p className="mb-1 text-sm font-bold">{data["name"]}</p>
+														<p className="text-sm text-darkGray">{data["designation"]}</p>
+													</div>
+												)
+											)}
 										</div>
 										{data["org_Url"] && data["org_Url"] != "" && (
 											<p className="mb-3">
@@ -154,7 +168,7 @@ export default function cancareer() {
 												<div className="rounded-large border p-6">
 													<ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
 														<Masonry>
-															{orgdetail["Gallery"].map((data, i) => (
+															{orgdetail["Gallery"].map((data: { image: any }, i: React.Key | null | undefined) => (
 																<img
 																	src={`http://127.0.0.1:8000${data.image}`}
 																	alt="Office"
@@ -172,7 +186,7 @@ export default function cancareer() {
 										<div>
 											<h2 className="mb-3 text-xl font-bold">Similar Jobs</h2>
 											<div className="mx-[-7px] flex flex-wrap">
-												{orgdetail["Job"].slice(0, 2).map((data, i) => (
+												{orgdetail["Job"].slice(0, 2).map((data: any, i: React.Key) => (
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%] lg:max-w-[calc(100%/3)]" key={i}>
 														<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
 															<h4 className="mb-3 text-lg font-bold">{data["job_title"]}</h4>

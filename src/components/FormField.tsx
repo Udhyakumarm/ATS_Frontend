@@ -17,7 +17,23 @@ export default function FormField({
 	placeholder,
 	clickevent,
 	disabled
-}: any) {
+}: {
+	label?: string;
+	required?: boolean;
+	readOnly?: boolean;
+	icon?: any;
+	inputType?: string;
+	fieldType?: "input" | "textarea" | "select" | "addItem";
+	handleChange?: any;
+	error?: any;
+	value?: any;
+	options?: Array<any>;
+	singleSelect?: boolean;
+	id?: string;
+	placeholder?: string;
+	clickevent?: any;
+	disabled?: boolean;
+}) {
 	const [typePass, setTypePass] = useState(false);
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
 	if (fieldType === "input") {
@@ -25,16 +41,14 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						{
-							label
-							?
+						{label ? (
 							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
 								{label}
 								{required ? <sup className="text-red-500">*</sup> : ""}
 							</label>
-							:
+						) : (
 							<></>
-						}
+						)}
 						{icon || inputType === "password" ? (
 							<>
 								<div className="relative">
@@ -47,7 +61,11 @@ export default function FormField({
 												onChange={handleChange}
 												placeholder={placeholder}
 												readOnly={readOnly}
-												className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+												className={
+													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													" " +
+													(icon ? "pr-9" : "")
+												}
 											/>
 											<button
 												type="button"
@@ -66,7 +84,11 @@ export default function FormField({
 												onChange={handleChange}
 												placeholder={placeholder}
 												readOnly={readOnly}
-												className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+												className={
+													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													" " +
+													(icon ? "pr-9" : "")
+												}
 											/>
 											<span className="absolute right-3 top-[10px] text-lightGray">{icon}</span>
 										</>
@@ -78,7 +100,7 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + ' '}
+									className={`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "}
 									value={value}
 									onChange={handleChange}
 									placeholder={placeholder}
@@ -98,19 +120,23 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						{
-							label
-							?
-							<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
 								{label}
 								{required ? <sup className="text-red-500">*</sup> : ""}
 							</label>
-							:
+						) : (
 							<></>
-						}
+						)}
 						<textarea
 							id={id}
-							className={`min-h-[120px] w-full resize-none rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + ' '}
+							className={
+								`min-h-[120px] min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+								" "
+							}
 							value={value}
 							onChange={handleChange}
 							placeholder={placeholder}
@@ -126,16 +152,17 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						{
-							label
-							?
-							<label htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()} className="mb-1 inline-block font-bold">
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
 								{label}
 								{required ? <sup className="text-red-500">*</sup> : ""}
 							</label>
-							:
+						) : (
 							<></>
-						}
+						)}
 						<Multiselect
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
@@ -162,16 +189,14 @@ export default function FormField({
 			<>
 				<div className="mb-4 last:mb-0">
 					<div>
-						{
-							label
-							?
+						{label ? (
 							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
 								{label}
 								{required ? <sup className="text-red-500">*</sup> : ""}
 							</label>
-							:
+						) : (
 							<></>
-						}
+						)}
 						<div className="relative">
 							<input
 								type={inputType}
@@ -180,15 +205,25 @@ export default function FormField({
 								onChange={handleChange}
 								placeholder={placeholder}
 								readOnly={readOnly}
-								className={`w-full rounded-normal border-borderColor min-h-[45px] text-sm dark:bg-gray-700` + " " + (icon ? "pr-9" : "")}
+								className={
+									`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+									" " +
+									(icon ? "pr-9" : "")
+								}
 							/>
-							<button type="button" className="absolute right-0 top-0 bg-gradDarkBlue w-[30px] h-full rounded-r-[12px] text-white" onClick={clickevent}>{icon}</button>
+							<button
+								type="button"
+								className="absolute right-0 top-0 h-full w-[30px] rounded-r-[12px] bg-gradDarkBlue text-white"
+								onClick={clickevent}
+							>
+								{icon}
+							</button>
 						</div>
 					</div>
 				</div>
 				{errorMessage}
 			</>
-		)
+		);
 	}
 	return (
 		<>

@@ -60,4 +60,12 @@ export namespace axiosInstance {
 			"Content-Type": "application/json"
 		}
 	});
+
+	export const next_api = axios.create({
+		baseURL:
+			process.env.NODE_ENV === "production"
+				? process.env.NEXT_PUBLIC_PROD_FRONTEND
+				: process.env.NEXT_PUBLIC_DEV_FRONTEND,
+		timeout: process.env.NODE_ENV === "production" ? 5000 : 10000
+	});
 }

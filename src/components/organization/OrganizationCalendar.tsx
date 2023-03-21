@@ -1,20 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
-import {
-	JSXElementConstructor,
-	Key,
-	ReactElement,
-	ReactFragment,
-	ReactPortal,
-	useCallback,
-	useEffect,
-	useReducer,
-	useState
-} from "react";
+import { Fragment, useCallback, useEffect, useReducer, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import FormField from "../FormField";
 
 type DateAction = "setDate" | "nextMonth" | "previousMonth";
+
 type DateUpdate = { action?: DateAction; value?: Date };
+
+type Schedule = {
+	summary: string;
+	description: string;
+	start: Date;
+	end: Date;
+};
 
 function DaysOfMonth({
 	currentDay,
@@ -72,7 +72,10 @@ function DaysOfMonth({
 				dayList.map((i: number) => (
 					<CalendarDay
 						handleDayClick={handleDayClick}
-						selected={currentDay.getTime() == new Date(currentDate.getFullYear(), currentDate.getMonth(), i).getTime()}
+						selected={
+							new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()).getTime() ==
+							new Date(currentDate.getFullYear(), currentDate.getMonth(), i).getTime()
+						}
 						dayType={dayType}
 						day={i}
 						key={i.toString()}
@@ -98,8 +101,8 @@ function EventCard({
 	date: Date;
 	meetingLink: string;
 }) {
-	const participantCards = participants.map((person: { name: string; role: string; userImg: string }) => (
-		<div className="flex items-center py-3 last:border-b" key={person.name}>
+	const participantCards = participants.map((person: { name: string; role: string; userImg: string }, i) => (
+		<div className="flex items-center py-3 last:border-b" key={i}>
 			<Image src={person.userImg} alt="User" width={40} height={40} className="h-[40px] rounded-full object-cover" />
 			<div className="w-[calc(100%-40px)] pl-3 text-sm">
 				<h6 className="font-semibold">{person.name}</h6>
@@ -148,8 +151,57 @@ function EventCard({
 	);
 }
 
+function CreateNewSchedule({
+	createScheduleOpen,
+	setCreateScheduleOpen
+}: {
+	createScheduleOpen: boolean;
+	setCreateScheduleOpen: (open: boolean) => void;
+}) {
+	return (
+		<Transition.Root show={createScheduleOpen} as={Fragment}>
+			<Dialog as="div" className="relative z-40" onClose={() => setCreateScheduleOpen(false)}>
+				<Transition.Child
+					as={Fragment}
+					enter="ease-out duration-300"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="ease-in duration-200"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+				</Transition.Child>
+
+				<div className="fixed inset-0 z-10 overflow-y-auto">
+					<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<Transition.Child
+							as={Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							enterTo="opacity-100 translate-y-0 sm:scale-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						>
+							<Dialog.Panel className="relative w-[50%] transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+								<div>
+									<div>Schedule an ...</div>
+									{/* <FormField label={"Start Date and Time"} type="date" />
+									<FormField label={"End Date and Time"} /> */}
+								</div>
+							</Dialog.Panel>
+						</Transition.Child>
+					</div>
+				</div>
+			</Dialog>
+		</Transition.Root>
+	);
+}
 export default function OrganizationCalendar() {
-	const today = new Date(new Date().setHours(0));
+	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
+
+	const [currentDay, setCurrentDay] = useState<Date>(today);
 
 	const updateDate = (prevDate: Date, { action, value }: DateUpdate) => {
 		if (action) {
@@ -165,9 +217,21 @@ export default function OrganizationCalendar() {
 
 		return prevDate;
 	};
+
 	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
 
-	const [currentDay, setCurrentDay] = useState<Date>(today);
+	const updateSchedule = (prevScheduleDate: Schedule, newScheduleDate: Schedule) => {
+		return newScheduleDate;
+	};
+
+	const [newScheduleDate, handleNewScheduleDate] = useReducer(updateSchedule, {
+		summary: "",
+		description: "",
+		start: new Date(),
+		end: new Date()
+	});
+
+	const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
 
 	const getDays = useCallback((selectedDate: Date) => {
 		const dayOffset = selectedDate.getDay();
@@ -281,8 +345,19 @@ export default function OrganizationCalendar() {
 						date={new Date(2023, 1, 20, 10)}
 						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
 					/>
+					<div className="mb-4 overflow-hidden rounded-[10px] shadow">
+						<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
+							<div className="flex w-full flex-row items-center justify-between pr-2">
+								<h5 className="text-sm font-semibold">Schedule Meeting</h5>
+								<button type="button" onClick={() => setCreateScheduleOpen(true)}>
+									<i className="fa-solid fa-calendar-plus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
+			<CreateNewSchedule createScheduleOpen={createScheduleOpen} setCreateScheduleOpen={setCreateScheduleOpen} />
 		</div>
 	);
 }

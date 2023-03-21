@@ -20,14 +20,14 @@ import testGorrila from '/public/images/test-gorrila.png'
 export default function Detail() {
 	const router = useRouter();
 
-	const applicantlist = useApplicantStore((state) => state.applicantlist);
-	const setapplicantlist = useApplicantStore((state) => state.setapplicantlist);
-	const applicantdetail = useApplicantStore((state) => state.applicantdetail);
-	const setapplicantdetail = useApplicantStore((state) => state.setapplicantdetail);
-	const jobid = useApplicantStore((state) => state.jobid);
-	const setjobid = useApplicantStore((state) => state.setjobid);
-	const canid = useApplicantStore((state) => state.canid);
-	const setcanid = useApplicantStore((state) => state.setcanid);
+	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
+	const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
+	const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
+	const setapplicantdetail = useApplicantStore((state: { setapplicantdetail: any }) => state.setapplicantdetail);
+	const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const canid = useApplicantStore((state: { canid: any }) => state.canid);
+	const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -87,7 +87,7 @@ export default function Detail() {
 		}
 	}, [refersh1]);
 
-	async function chnageStatus(status, arefid) {
+	async function chnageStatus(status: string | Blob, arefid: any) {
 		const fdata = new FormData();
 		fdata.append("status", status);
 		await axiosInstanceAuth2
@@ -115,152 +115,193 @@ export default function Detail() {
 					<div className="relative">
 						<div className="flex flex-wrap">
 							<div className="w-full lg:max-w-[400px]">
-								<div className="bg-white dark:bg-gray-800 border-2 border-slate-300 dark:border-gray-700 shadow-normal rounded-large p-5 flex items-center mb-4">
-									<button className="justify-self-start text-darkGray dark:text-white mr-5">
+								<div className="mb-4 flex items-center rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+									<button className="mr-5 justify-self-start text-darkGray dark:text-white">
 										<i className="fa-solid fa-arrow-left text-2xl"></i>
 									</button>
 									<h2 className="text-xl font-bold">
 										<span>Profile</span>
 									</h2>
 								</div>
-								<div className="bg-white dark:bg-gray-800 border-2 border-slate-300 dark:border-gray-700 shadow-normal rounded-large p-5 mb-4">
-									<div className="border-b pb-4 mb-4">
-										<div className="text-center border-b pb-2 mb-4">
-											<Image src={userImg} alt="User" width={90} className="h-[90px] rounded-full object-cover shadow-normal mx-auto mb-3" />
-											<h3 className="font-bold mb-2">Anne Jacob</h3>
-											<p className="text-darkGray text-sm mb-2">Product Manager - ID 43108</p>
-											<p className="text-darkGray text-sm mb-2">
+								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+									<div className="mb-4 border-b pb-4">
+										<div className="mb-4 border-b pb-2 text-center">
+											<Image
+												src={userImg}
+												alt="User"
+												width={90}
+												className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
+											/>
+											<h3 className="mb-2 font-bold">Anne Jacob</h3>
+											<p className="mb-2 text-sm text-darkGray">Product Manager - ID 43108</p>
+											<p className="mb-2 text-sm text-darkGray">
 												Source - &nbsp;
-												<span className="text-primary font-semibold">
+												<span className="font-semibold text-primary">
 													<i className="fa-brands fa-linkedin"></i> LinkedIn
 												</span>
 											</p>
 										</div>
 										<div className="flex flex-wrap items-center justify-between">
-											<div className="flex items-center my-1">
-												<div className="w-[30px] h-[26px] leading-[23px] bg-red-100 text-red-500 block border border-white rounded shadow-normal text-center mr-2">
+											<div className="my-1 flex items-center">
+												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-red-100 text-center leading-[23px] text-red-500 shadow-normal">
 													<i className="fa-regular fa-envelope"></i>
 												</div>
-												<p className="text-darkGray text-[11px] font-semibold">annejacob121@gmail.com</p>
+												<p className="text-[11px] font-semibold text-darkGray">annejacob121@gmail.com</p>
 											</div>
-											<div className="flex items-center my-1">
-												<div className="w-[30px] h-[26px] leading-[23px] bg-teal-100 text-teal-500 block border border-white rounded shadow-normal text-center mr-2">
+											<div className="my-1 flex items-center">
+												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-teal-100 text-center leading-[23px] text-teal-500 shadow-normal">
 													<i className="fa-solid fa-phone text-[14px]"></i>
 												</div>
-												<p className="text-darkGray text-[11px] font-semibold">+91 - 9878548965</p>
+												<p className="text-[11px] font-semibold text-darkGray">+91 - 9878548965</p>
 											</div>
 										</div>
 										<div className="flex flex-wrap items-center justify-center text-2xl">
-											<Link href={'#'} target="_blank" className="m-3 mb-0">
+											<Link href={"#"} target="_blank" className="m-3 mb-0">
 												<i className="fa-brands fa-behance"></i>
-											</Link>	
-											<Link href={'#'} target="_blank" className="m-3 mb-0">
+											</Link>
+											<Link href={"#"} target="_blank" className="m-3 mb-0">
 												<i className="fa-brands fa-github"></i>
-											</Link>	
-											<Link href={'#'} target="_blank" className="m-3 mb-0">
+											</Link>
+											<Link href={"#"} target="_blank" className="m-3 mb-0">
 												<i className="fa-brands fa-stack-overflow"></i>
-											</Link>	
+											</Link>
 										</div>
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Details</h3>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Details</h3>
 										<ul className="flex flex-wrap text-[12px] text-darkGray">
-											<li className="pr-2 mb-2 w-[50%]">
-												Current Salary - 6.0 LPA
-											</li>
-											<li className="pr-2 mb-2 w-[50%]">
-												Expected Salary - 8.0 LPA
-											</li>
-											<li className="pr-2 mb-2 w-[50%]">
-												Notice Period - 30 Days
+											<li className="mb-2 w-[50%] pr-2">Current Salary - 6.0 LPA</li>
+											<li>
+												<Button
+													label="Sourced"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Sourced", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Applied"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Applied", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Phone Screen"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Phone Screen", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Assement"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Assement", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Interview"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Interview", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Offered"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Offered Letter", data["arefid"]);
+													}}
+												/>
+												<Button
+													label="Hired"
+													loader={false}
+													btnType="button"
+													handleClick={() => {
+														chnageStatus("Hired", data["arefid"]);
+													}}
+												/>
 											</li>
 										</ul>
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Summary</h3>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Summary</h3>
 										<p className="text-[12px] text-darkGray">
-										Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+											{
+												"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+											}
 										</p>
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Skills</h3>
-										<ul className="flex flex-wrap text-[12px] border rounded-normal shadow p-2">
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
-											<li className="bg-gray-100 rounded-[30px] min-w-[75px] m-1 text-center px-4 py-2">
-												Skill 1
-											</li>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Skills</h3>
+										<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
+											<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center">Skill 1</li>
 										</ul>
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Education</h3>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Education</h3>
 										{Array(2).fill(
-											<div className="text-[12px] text-darkGray border rounded-normal shadow p-3 mb-2 last:mb-0">
-												<h4 className="font-bold text-black dark:text-white mb-1">Web Developer</h4>
+											<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
+												<h4 className="mb-1 font-bold text-black dark:text-white">Web Developer</h4>
+												<p>XYZ Company</p>
+												<p className="mb-1">May 2019 - March 2022</p>
 												<p>
-													XYZ Company
-												</p>
-												<p className="mb-1">
-													May 2019 - March 2022
-												</p>
-												<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+													Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+													labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+													laboris nisi ut aliquip ex ea commodo consequat.
 												</p>
 											</div>
 										)}
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Certifications</h3>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Certifications</h3>
 										{Array(2).fill(
-											<div className="text-[12px] text-darkGray border rounded-normal shadow p-3 mb-2 last:mb-0">
-												<h4 className="font-bold text-black dark:text-white mb-1">Web Developer</h4>
+											<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
+												<h4 className="mb-1 font-bold text-black dark:text-white">Web Developer</h4>
+												<p>XYZ Company</p>
+												<p className="mb-1">May 2019 - March 2022</p>
 												<p>
-													XYZ Company
-												</p>
-												<p className="mb-1">
-													May 2019 - March 2022
-												</p>
-												<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+													Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+													labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+													laboris nisi ut aliquip ex ea commodo consequat.
 												</p>
 											</div>
 										)}
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Experience</h3>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Experience</h3>
 										{Array(2).fill(
-											<div className="text-[12px] text-darkGray border rounded-normal shadow p-3 mb-2 last:mb-0">
-												<h4 className="font-bold text-black dark:text-white mb-1">Web Developer</h4>
+											<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
+												<h4 className="mb-1 font-bold text-black dark:text-white">Web Developer</h4>
+												<p>XYZ Company</p>
+												<p className="mb-1">May 2019 - March 2022</p>
 												<p>
-													XYZ Company
-												</p>
-												<p className="mb-1">
-													May 2019 - March 2022
-												</p>
-												<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+													Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+													labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+													laboris nisi ut aliquip ex ea commodo consequat.
 												</p>
 											</div>
 										)}
 									</div>
-									<div className="border-b pb-4 mb-4">
-										<h3 className="text-lg font-semibold mb-4">Message from Vendor</h3>
-										<div className="text-[12px] text-darkGray border rounded-normal shadow p-3 mb-2 last:mb-0">
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">Message from Vendor</h3>
+										<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
 											<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+												Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+												labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+												laboris nisi ut aliquip ex ea commodo consequat.
 											</p>
 										</div>
 									</div>
@@ -275,7 +316,7 @@ export default function Detail() {
 												<span>Software Developer</span>
 											</h2>
 										</aside>
-										<aside className="grow flex justify-end">
+										<aside className="flex grow justify-end">
 											<TeamMembers />
 										</aside>
 									</div>
