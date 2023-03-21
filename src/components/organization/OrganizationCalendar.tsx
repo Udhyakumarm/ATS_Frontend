@@ -57,7 +57,7 @@ function DaysOfMonth({
 					dayType !== 1
 						? "flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold text-slate-400  group-hover:bg-slate-400 group-hover:text-white "
 						: "flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold group-hover:bg-primary group-hover:text-white " +
-						  (selected ? "bg-secondary text-white group-hover:bg-secondary" : "")
+						  (selected ? "bg-gradDarkBlue text-white group-hover:bg-gradDarkBlue" : "")
 				}
 				onClick={() => handleDayClick(day, dayType)}
 			>

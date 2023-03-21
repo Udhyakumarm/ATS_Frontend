@@ -304,7 +304,7 @@ export default function Dashboard() {
 												<>
 													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
 														<div className="flex items-center justify-center p-3">
-															<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary text-lg leading-normal text-white">
+															<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
 																<i className="fa-solid fa-briefcase"></i>
 															</span>
 															<p className="w-[calc(100%-40px)]">

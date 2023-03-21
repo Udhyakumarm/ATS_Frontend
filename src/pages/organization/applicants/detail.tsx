@@ -7,13 +7,15 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
+import { Tab } from '@headlessui/react'
 import jobIcon from '/public/images/icons/jobs.png'
 import TeamMembers from "@/components/TeamMembers";
 import userImg from '/public/images/user-image.png'
+import testGorrila from '/public/images/test-gorrila.png'
 
 export default function Detail() {
 	const router = useRouter();
@@ -264,7 +266,7 @@ export default function Detail() {
 									</div>
 								</div>
 							</div>
-							<div className="w-full lg:max-w-[calc(100%-400px)] pl-4 lg:-pl-8">
+							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
 								<div className="bg-white dark:bg-gray-800 border-2 border-slate-300 dark:border-gray-700 shadow-normal rounded-large overflow-hidden">
 									<div className="flex flex-wrap items-center jusitfy-between shadow p-5">
 										<aside className="flex items-center">
@@ -277,8 +279,88 @@ export default function Detail() {
 											<TeamMembers />
 										</aside>
 									</div>
-									<div>
-										Tabs
+									<div className="">
+										<Tab.Group>
+											<Tab.List className={'px-4 border-b'}>
+												<Tab as={Fragment}>
+													{({ selected }) => (
+														<button
+														className={
+															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
+														}
+														>
+														Profile
+														</button>
+													)}
+												</Tab>
+												<Tab as={Fragment}>
+													{({ selected }) => (
+														<button
+														className={
+															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
+														}
+														>
+														Assessment
+														</button>
+													)}
+												</Tab>
+												<Tab as={Fragment}>
+													{({ selected }) => (
+														<button
+														className={
+															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
+														}
+														>
+														Feedback
+														</button>
+													)}
+												</Tab>
+												<Tab as={Fragment}>
+													{({ selected }) => (
+														<button
+														className={
+															'font-semibold border-b-4 py-3 px-6 focus:outline-none' + ' ' + (selected ? 'text-primary border-primary' : 'text-darkGray border-transparent')
+														}
+														>
+														Timeline
+														</button>
+													)}
+												</Tab>
+											</Tab.List>
+											<Tab.Panels>
+												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>
+													<div className="flex flex-wrap items-center justify-between bg-lightBlue text-sm p-2 px-8">
+														<p className="my-2">PDF File</p>
+														<Link href={'#'} className="my-2 inline-block text-primary font-bold hover:underline">
+															<i className="fa-solid fa-download mr-2"></i>
+															Download
+														</Link>
+													</div>
+													<div className="px-8">
+														Preview Here
+													</div>
+												</Tab.Panel>
+												<Tab.Panel className={'min-h-[calc(100vh-250px)] py-6 px-8'}>
+													<div className="flex flex-wrap mx-[-15px]">
+														{Array(6).fill(
+															<div className="w-full md:max-w-[50%] px-[15px] mb-[30px]">
+																<div className="h-full bg-lightBlue rounded-normal shadow-lg p-6">
+																	<div className="flex flex-wrap justify-between items-start mb-4">
+																		<Image src={testGorrila} alt="Assessment" className="h-[30px] w-auto mb-2" />
+																		<div className="-mt-2 pl-2">	
+																			<Button btnStyle="outlined" label="Add" />
+																		</div>
+																	</div>
+																	<h4 className="font-semibold text-lg">Test Gorilla</h4>
+																</div>
+															</div>
+														)}
+													</div>
+												</Tab.Panel>
+												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>Content 3</Tab.Panel>
+												<Tab.Panel className={'min-h-[calc(100vh-250px)]'}>Content 4</Tab.Panel>
+											</Tab.Panels>
+										</Tab.Group>
 									</div>
 								</div>
 							</div>

@@ -294,7 +294,7 @@ export default function Home() {
 			label: "Publish",
 			action: publishJob,
 			icon: (
-				<i className="fa-solid fa-square-check  bg-gradient-to-r from-secondary to-primary bg-clip-text font-extrabold text-transparent" />
+				<i className="fa-solid fa-square-check  bg-gradient-to-r from-gradDarkBlue to-primary bg-clip-text font-extrabold text-transparent" />
 			)
 		}
 	];
