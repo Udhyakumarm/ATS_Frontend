@@ -14,20 +14,20 @@ type DateAction = "setDate" | "nextMonth" | "previousMonth";
 type DateUpdate = { action?: DateAction; value?: Date };
 
 function DaysOfMonth({
-	currentDay,
 	currentDate,
-	setCurrentDay,
 	pageDays,
 	handleDateUpdate,
 	handleDaySelect
 }: {
-	currentDay: Date;
 	currentDate: Date;
-	setCurrentDay: (newDate: Date) => void;
 	pageDays: Array<Array<number>>;
 	handleDateUpdate: (update: DateUpdate) => void;
 	handleDaySelect: (update: Date) => void;
 }) {
+	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
+
+	const [currentDay, setCurrentDay] = useState<Date>(today);
+
 	const handleDayClick = (day: number, dayType: number) => {
 		//If the day is in the current month
 		if (dayType === 1) {
@@ -61,7 +61,12 @@ function DaysOfMonth({
 				}
 				onClick={() => handleDayClick(day, dayType)}
 			>
-				{day}
+				{day > 50 && (
+					<div className="relative flex rounded-full ">
+						<div className={"absolute top-5 left-8 text-primary"}>•</div>
+					</div>
+				)}
+				{day > 50 ? day - 100 : day}
 			</div>
 		</div>
 	);
@@ -320,8 +325,6 @@ function CreateNewCalendarEventModal({
 export default function OrganizationCalendar({ integration }: any) {
 	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
-	const [currentDay, setCurrentDay] = useState<Date>(today);
-
 	const updateDate = (prevDate: Date, { action, value }: DateUpdate) => {
 		if (action) {
 			switch (action) {
@@ -341,7 +344,7 @@ export default function OrganizationCalendar({ integration }: any) {
 
 	const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
 
-	const [eventList, setEventList] = useState([]);
+	const [eventList, setEventList] = useState<Array<any>>([]);
 
 	const saveNewCalendarEvent = async (newEvent: CalendarEvent) => {
 		//TODO Add support for other integrations
@@ -357,23 +360,54 @@ export default function OrganizationCalendar({ integration }: any) {
 			});
 	};
 
-	const getDays = useCallback((selectedDate: Date) => {
-		const dayOffset = selectedDate.getDay();
-		const daysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
-		const prevDaysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0).getDate();
+	const getDays = useCallback(
+		(selectedDate: Date) => {
+			const dayOffset = selectedDate.getDay();
+			const daysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+			const prevDaysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0).getDate();
 
-		const prevDaysList = Array.from(Array(dayOffset).keys())
-			.map((i) => prevDaysOfMonth - i)
-			.reverse();
+			const prevDaysList = Array.from(Array(dayOffset).keys())
+				.map((i) => {
+					for (let x = 0; x < eventList.length; x++) {
+						const eventDate = new Date(eventList[x]?.start.dateTime);
 
-		const nextMonthDays = Array.from(Array(7 - ((prevDaysList.length + daysOfMonth) % 7)).keys()).map((i) => i + 1);
+						// * Returning 101 + i to differentiate
+						if (
+							eventDate.getDate() == prevDaysOfMonth - i &&
+							(selectedDate.getMonth() - 1) % 11 == eventDate.getMonth()
+						)
+							return prevDaysOfMonth - i + 100;
+					}
 
-		const currentMonthDays = Array.from(Array(daysOfMonth).keys()).map((i) => i + 1);
+					return prevDaysOfMonth - i;
+				})
+				.reverse();
 
-		// console.log({ dayOffset, daysOfMonth, prevDaysList, currentMonthDays, nextMonthDays });
+			const nextMonthDays = Array.from(Array(7 - ((prevDaysList.length + daysOfMonth) % 7)).keys()).map((i) => {
+				for (let x = 0; x < eventList.length; x++) {
+					const eventDate = new Date(eventList[x]?.start.dateTime);
 
-		return [prevDaysList, currentMonthDays, nextMonthDays];
-	}, []);
+					// * Returning 101 + i to differentiate
+					if (eventDate.getDate() == i + 1 && (selectedDate.getMonth() + 1) % 11 == eventDate.getMonth())
+						return i + 101;
+				}
+				return i + 1;
+			});
+
+			const currentMonthDays = Array.from(Array(daysOfMonth).keys()).map((i) => {
+				for (let x = 0; x < eventList.length; x++) {
+					const eventDate = new Date(eventList[x]?.start.dateTime);
+
+					// * Returning 101 + i to differentiate
+					if (eventDate.getDate() == i + 1 && selectedDate.getMonth() == eventDate.getMonth()) return i + 101;
+				}
+				return i + 1;
+			});
+
+			return [prevDaysList, currentMonthDays, nextMonthDays];
+		},
+		[eventList]
+	);
 
 	//TODO Make this call agnostic
 	const getEventsList = useCallback(
@@ -383,7 +417,7 @@ export default function OrganizationCalendar({ integration }: any) {
 					googleCalendarIntegration: integration
 				})
 				.then((response) => response.data)
-				.then((data) => setEventList(data)),
+				.then((data) => setEventList(data.items)),
 		[integration]
 	);
 
@@ -391,8 +425,11 @@ export default function OrganizationCalendar({ integration }: any) {
 
 	useEffect(() => {
 		setPageDays(getDays(currentDate));
-		getEventsList();
-	}, [currentDate, getDays, getEventsList, integration]);
+	}, [currentDate, getDays]);
+
+	useEffect(() => {
+		integration && getEventsList();
+	}, [getEventsList, integration]);
 
 	console.log(eventList);
 	return (
@@ -453,8 +490,6 @@ export default function OrganizationCalendar({ integration }: any) {
 				</div>
 				<DaysOfMonth
 					currentDate={currentDate}
-					currentDay={currentDay}
-					setCurrentDay={setCurrentDay}
 					handleDateUpdate={handleDateUpdate}
 					pageDays={pageDays}
 					handleDaySelect={() => {}}
