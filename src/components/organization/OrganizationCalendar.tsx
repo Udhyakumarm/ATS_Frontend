@@ -151,13 +151,46 @@ function EventCard({
 	);
 }
 
-function CreateNewSchedule({
+function CreateNewCalendarEventModal({
 	createScheduleOpen,
-	setCreateScheduleOpen
+	setCreateScheduleOpen,
+	handleSaveNewSchedule
 }: {
 	createScheduleOpen: boolean;
 	setCreateScheduleOpen: (open: boolean) => void;
+	handleSaveNewSchedule: (schedule: CalendarEvent) => void;
 }) {
+	const newScheduleRules: Rules = {
+		summary: "required",
+		type: "required",
+		start: "required",
+		end: "required"
+	};
+
+	const initialState: CalendarEvent = {
+		summary: "",
+		description: "",
+		type: [],
+		platform: [],
+		start: new Date(),
+		end: new Date()
+	};
+
+	const updateNewSchedule = (prevScheduleDate: CalendarEvent, { target: { id, value } }: any) => {
+		if (id === "reset") return initialState;
+
+		if (id === "start" && value.getTime() > prevScheduleDate.end.getTime())
+			return { ...prevScheduleDate, [id]: value, end: value };
+
+		if (id === "end" && value.getTime() < prevScheduleDate.start.getTime()) return prevScheduleDate;
+
+		return { ...prevScheduleDate, [id]: value };
+	};
+
+	const [newSchedule, handleNewSchedule] = useReducer(updateNewSchedule, initialState);
+
+	const validation = new Validator(newSchedule, newScheduleRules);
+
 	return (
 		<Transition.Root show={createScheduleOpen} as={Fragment}>
 			<Dialog as="div" className="relative z-40" onClose={() => setCreateScheduleOpen(false)}>
@@ -184,12 +217,97 @@ function CreateNewSchedule({
 							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 						>
-							<Dialog.Panel className="relative w-[50%] transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-								<div>
-									<div>Schedule an ...</div>
-									{/* <FormField label={"Start Date and Time"} type="date" />
-									<FormField label={"End Date and Time"} /> */}
+							<Dialog.Panel className="relative w-1/3 transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+								<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+									<h4 className="font-semibold leading-none">Schedule an Event</h4>
+									<button
+										type="button"
+										className="leading-none hover:text-gray-700"
+										onClick={() => setCreateScheduleOpen(false)}
+									>
+										<i className="fa-solid fa-xmark"></i>
+									</button>
 								</div>
+								<form
+									className="p-8"
+									onSubmit={(e) => {
+										e.preventDefault();
+										handleSaveNewSchedule(newSchedule);
+										handleNewSchedule({ target: { id: "reset" } });
+									}}
+								>
+									<FormField
+										id={"type"}
+										fieldType="select"
+										label="Choose type of meeting"
+										singleSelect
+										value={newSchedule.type}
+										handleChange={handleNewSchedule}
+										options={[{ name: "Interview" }, { name: "General Meeting" }]}
+										required
+									/>
+
+									<FormField
+										id={"start"}
+										fieldType="date"
+										label="Start Date"
+										singleSelect
+										value={newSchedule.start}
+										handleChange={handleNewSchedule}
+										showTimeSelect
+										required
+									/>
+									<FormField
+										id={"end"}
+										fieldType="date"
+										label="End Date"
+										singleSelect
+										value={newSchedule.end}
+										handleChange={handleNewSchedule}
+										showTimeSelect
+										required
+									/>
+									<FormField
+										id={"summary"}
+										fieldType="input"
+										label="Summary"
+										singleSelect
+										value={newSchedule.summary}
+										handleChange={handleNewSchedule}
+										required
+									/>
+									<FormField
+										id={"description"}
+										fieldType="input"
+										label="Description"
+										singleSelect
+										value={newSchedule.description}
+										handleChange={handleNewSchedule}
+									/>
+									<FormField
+										id={"platform"}
+										fieldType="select"
+										label="Platform"
+										singleSelect
+										value={newSchedule.platform}
+										handleChange={handleNewSchedule}
+										options={[{ name: "Google Meet" }, { name: "Telephonic" }]}
+									/>
+									{/* 
+									Add Participants
+									*/}
+									<FormField
+										id={"type"}
+										fieldType="select"
+										label="Add attendees"
+										value={""}
+										handleChange={() => {}}
+										options={[{ name: "Person 1" }, { name: "Person 2" }]}
+									/>
+									<div className="text-center">
+										<Button label="Save" disabled={!validation.passes()} btnType="submit" />
+									</div>
+								</form>
 							</Dialog.Panel>
 						</Transition.Child>
 					</div>
