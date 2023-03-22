@@ -1,5 +1,7 @@
 import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function FormField({
 	label,
@@ -16,6 +18,7 @@ export default function FormField({
 	id,
 	placeholder,
 	clickevent,
+	showTimeSelect,
 	disabled
 }: {
 	label?: string;
@@ -23,7 +26,7 @@ export default function FormField({
 	readOnly?: boolean;
 	icon?: any;
 	inputType?: string;
-	fieldType?: "input" | "textarea" | "select" | "addItem";
+	fieldType?: "input" | "textarea" | "select" | "addItem" | "date";
 	handleChange?: any;
 	error?: any;
 	value?: any;
@@ -32,6 +35,7 @@ export default function FormField({
 	id?: string;
 	placeholder?: string;
 	clickevent?: any;
+	showTimeSelect?: boolean;
 	disabled?: boolean;
 }) {
 	const [typePass, setTypePass] = useState(false);
@@ -134,8 +138,7 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[120px] min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` +
-								" "
+								`min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "
 							}
 							value={value}
 							onChange={handleChange}
@@ -218,6 +221,32 @@ export default function FormField({
 							>
 								{icon}
 							</button>
+						</div>
+					</div>
+				</div>
+				{errorMessage}
+			</>
+		);
+	}
+	if (fieldType === "date") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{label ? (
+							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+						) : (
+							<></>
+						)}
+						<div className="relative">
+							<DatePicker
+								selected={value}
+								onChange={(date) => handleChange({ target: { id, value: date } })}
+								showTimeSelect={showTimeSelect}
+							/>
 						</div>
 					</div>
 				</div>
