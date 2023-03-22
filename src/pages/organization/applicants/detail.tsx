@@ -15,8 +15,8 @@ import { Tab } from "@headlessui/react";
 import jobIcon from "/public/images/icons/jobs.png";
 import TeamMembers from "@/components/TeamMembers";
 import userImg from "/public/images/user-image.png";
-import testGorrila from "/public/images/test-gorrila.png";
 import moment from "moment";
+import CardLayout_1 from "@/components/CardLayout-1";
 
 export default function Detail() {
 	const router = useRouter();
@@ -337,15 +337,7 @@ export default function Detail() {
 													<div className="mx-[-15px] flex flex-wrap">
 														{Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
-																<div className="h-full rounded-normal bg-lightBlue p-6 shadow-lg">
-																	<div className="mb-4 flex flex-wrap items-start justify-between">
-																		<Image src={testGorrila} alt="Assessment" className="mb-2 h-[30px] w-auto" />
-																		<div className="-mt-2 pl-2">
-																			<Button btnStyle="outlined" label="Add" />
-																		</div>
-																	</div>
-																	<h4 className="text-lg font-semibold">Test Gorilla</h4>
-																</div>
+																<CardLayout_1 isBlank={true} />
 															</div>
 														)}
 													</div>

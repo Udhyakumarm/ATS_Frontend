@@ -29,7 +29,7 @@ export default function FormField({
 	readOnly?: boolean;
 	icon?: any;
 	inputType?: string;
-	fieldType?: "input" | "textarea" | "select" | "addItem" | "reactquill";
+	fieldType?: "input" | "textarea" | "select" | "reactquill";
 	handleChange?: any;
 	error?: any;
 	value?: any;
@@ -189,47 +189,6 @@ export default function FormField({
 					</div>
 					{errorMessage}
 				</div>
-			</>
-		);
-	}
-	if (fieldType === "addItem") {
-		return (
-			<>
-				<div className="mb-4 last:mb-0">
-					<div>
-						{label ? (
-							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
-								{label}
-								{required ? <sup className="text-red-500">*</sup> : ""}
-							</label>
-						) : (
-							<></>
-						)}
-						<div className="relative">
-							<input
-								type={inputType}
-								id={id}
-								value={value}
-								onChange={handleChange}
-								placeholder={placeholder}
-								readOnly={readOnly}
-								className={
-									`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
-									" " +
-									(icon ? "pr-9" : "")
-								}
-							/>
-							<button
-								type="button"
-								className="absolute right-0 top-0 h-full w-[30px] rounded-r-[12px] bg-gradDarkBlue text-white"
-								onClick={clickevent}
-							>
-								{icon}
-							</button>
-						</div>
-					</div>
-				</div>
-				{errorMessage}
 			</>
 		);
 	}

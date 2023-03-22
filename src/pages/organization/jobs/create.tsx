@@ -12,6 +12,9 @@ import axios from "axios";
 import Image from "next/image";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
+import CardLayout_1 from "@/components/CardLayout-1";
+import { Listbox, Transition } from "@headlessui/react";
+import CardLayout_2 from "@/components/CardLayout-2";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -20,42 +23,20 @@ const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
 		<button
 			onClick={handleClick}
-			className="flex items-center justify-center border border-gray-400 rounded py-2 px-6 text-sm font-bold mr-3 last:mr-0 hover:bg-lightBlue"
+			className="mr-3 flex items-center justify-center rounded border border-gray-400 py-2 px-6 text-sm font-bold last:mr-0 hover:bg-lightBlue"
 			type="button"
 		>
-			<span className={'mr-2 text-white text-[10px] block w-[20px] h-[20px] rounded-full' + ' ' + iconBg}>
-				{icon}
-			</span>
+			<span className={"mr-2 block h-[20px] w-[20px] rounded-full text-[10px] text-white" + " " + iconBg}>{icon}</span>
 			{label}
 		</button>
 	);
 };
 
 const StickyLabel = ({ label }: any) => (
-	<h2 className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-white inline-block font-semibold py-4 px-8 rounded-tl-normal rounded-br-normal min-w-[250px] text-center shadow-lg">
+	<h2 className="inline-block min-w-[250px] rounded-tl-normal rounded-br-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-4 px-8 text-center font-semibold text-white shadow-lg">
 		{label}
 	</h2>
 );
-
-const IntegrationCard = ({ handleIntegrate, label, access, handlePost }: any) => {
-	return (
-		<div className="flex h-auto max-h-[250px] w-auto max-w-md flex-col justify-between rounded-xl bg-gray-100 p-5 shadow-xl dark:bg-slate-700 dark:text-white">
-			<div className="flex flex-col items-stretch justify-between">
-				<Image src={"/images/logos/" + label.toLowerCase() + "_logo.png"} width={50} height={50} alt="logo" />
-
-				<div className="mt-4 text-lg font-semibold">{label}</div>
-			</div>
-			<div className="mt-8 flex flex-row justify-end">
-				<button
-					className=" rounded-md border border-slate-300 px-5 text-base font-thin hover:bg-white hover:font-light"
-					onClick={() => (access ? handlePost() : handleIntegrate())}
-				>
-					{access ? "Post Job" : "Add"}
-				</button>
-			</div>
-		</div>
-	);
-};
 
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
@@ -68,6 +49,13 @@ const jobFormRules: Rules = {
 	employment_type: "required",
 	work_type: "required"
 };
+const people = [
+  { id: 1, name: 'Durward Reynolds', unavailable: false },
+  { id: 2, name: 'Kenton Towne', unavailable: false },
+  { id: 3, name: 'Therese Wunsch', unavailable: false },
+  { id: 4, name: 'Benedict Kessler', unavailable: true },
+  { id: 5, name: 'Katelyn Rohan', unavailable: false },
+]
 
 export default function Home() {
 	const router = useRouter();
@@ -84,6 +72,8 @@ export default function Home() {
 		GlassDoor: { access: null },
 		Twitter: { access: null }
 	});
+
+	const [selectedPerson, setSelectedPerson] = useState(people[0])
 
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 
@@ -281,38 +271,56 @@ export default function Home() {
 		{
 			label: "Preview",
 			action: previewJob,
-			icon: (
-				<i className="fa-solid fa-play" />
-			),
-			iconBg: 'bg-gradient-to-r from-[#FF930F] to-[#FFB45B]'
+			icon: <i className="fa-solid fa-play" />,
+			iconBg: "bg-gradient-to-r from-[#FF930F] to-[#FFB45B]"
 		},
 		{
 			label: "Save as Draft",
 			action: draftJob,
-			icon: (
-				<i className="fa-regular fa-bookmark"></i>
-			),
-			iconBg: 'bg-gradient-to-r from-gradLightBlue to-gradDarkBlue'
+			icon: <i className="fa-regular fa-bookmark"></i>,
+			iconBg: "bg-gradient-to-r from-gradLightBlue to-gradDarkBlue"
 		},
 		{
 			label: "Publish",
 			action: publishJob,
-			icon: (
-				<i className="fa-solid fa-paper-plane"></i>
-			),
-			iconBg: 'bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]'
+			icon: <i className="fa-solid fa-paper-plane"></i>,
+			iconBg: "bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]"
 		}
 	];
 
 	const CustomTabs = (currentIndex: number, tabIndex: number) => (
-		<Tab
-			key={tabIndex}
-		>
-			<button type="button" className={'border-b-4 py-3 px-10 font-semibold focus:outline-none' + ' ' + (tabIndex === currentIndex ? "border-primary text-primary" : "border-transparent text-darkGray")}>
+		<Tab key={tabIndex}>
+			<button
+				type="button"
+				className={
+					"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
+					" " +
+					(tabIndex === currentIndex ? "border-primary text-primary" : "border-transparent text-darkGray")
+				}
+			>
 				{tabTitles[tabIndex]}
 			</button>
 		</Tab>
 	);
+
+	const TeamTableHead = [
+		{
+			title: 'User Name'
+		},
+		{
+			title: 'Department/Title'
+		},
+		{
+			title: 'Email'
+		},
+		{
+			title: 'Access'
+		},
+		{
+			title: ' '
+		},
+	]
+
 	return (
 		<>
 			<Head>
@@ -327,10 +335,13 @@ export default function Home() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<Tabs onSelect={(i, l) => setIndex(i)}>
-							<div className="bg-white dark:bg-gray-800 shadow-normal rounded-t-normal mb-8">
-								<div className="p-6 flex flex-wrap items-center justify-between">
+							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
+								<div className="flex flex-wrap items-center justify-between p-6">
 									<div className="flex flex-wrap items-center justify-start py-2">
-										<button className="justify-self-start text-darkGray dark:text-white mr-5" onClick={() => router.back()}>
+										<button
+											className="mr-5 justify-self-start text-darkGray dark:text-white"
+											onClick={() => router.back()}
+										>
 											<i className="fa-solid fa-arrow-left text-2xl"></i>
 										</button>
 										<h2 className="text-xl font-bold">
@@ -339,18 +350,24 @@ export default function Home() {
 									</div>
 									<div className="flex flex-wrap items-center">
 										{jobActions.map((action, i) => (
-											<JobActionButton label={action.label} handleClick={action.action} icon={action.icon} iconBg={action.iconBg} key={i} />
+											<JobActionButton
+												label={action.label}
+												handleClick={action.action}
+												icon={action.icon}
+												iconBg={action.iconBg}
+												key={i}
+											/>
 										))}
 									</div>
 								</div>
-								<TabList className={'flex flex-wrap w-full max-w-[1100px] mx-auto'}>
+								<TabList className={"mx-auto flex w-full max-w-[1100px] flex-wrap"}>
 									{tabTitles.map((_, i) => CustomTabs(index, i))}
 								</TabList>
 							</div>
 							<TabPanel>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Job Title and Department" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											fieldType="input"
 											inputType="text"
@@ -422,9 +439,9 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Department Informatiom" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											fieldType="reactquill"
 											id="description"
@@ -434,9 +451,9 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Your Responsibilities" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											fieldType="reactquill"
 											id="responsibility"
@@ -446,9 +463,9 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="What We're Looking For" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											fieldType="reactquill"
 											id="looking_for"
@@ -458,9 +475,9 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Skills" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											options={skillOptions}
 											fieldType="select"
@@ -472,9 +489,9 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Employment Details" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
@@ -544,9 +561,9 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal mb-8">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Annual Salary" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
@@ -576,9 +593,9 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative bg-white rounded-normal shadow-normal">
+								<div className="relative rounded-normal bg-white shadow-normal">
 									<StickyLabel label="Benefits" />
-									<div className="w-full max-w-[1055px] mx-auto px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
@@ -631,27 +648,186 @@ export default function Home() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<h2>Any content 2</h2>
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+									<StickyLabel label="Assessment" />
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+										<div className="mx-[-15px] flex flex-wrap">
+											{Array(6).fill(
+												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+													<CardLayout_1 isBlank={true} />
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
 							</TabPanel>
 							<TabPanel>
-								<h2>Any content 2</h2>
-							</TabPanel>
-							<TabPanel>
-								<h2>Any content 2</h2>
-							</TabPanel>
-							<TabPanel>
-								<div className="relative">
-									<StickyLabel label="Post Jobs on different Job Boards" />
-									<div className="relative mt-10 rounded-normal bg-white px-3 shadow-normal dark:bg-gray-800">
-										<div className="m-10 grid grid-cols-3 gap-6 p-10 pt-24">
-											{Object.keys(integrationList).map((key: any) => (
-												<IntegrationCard
-													key={key}
-													label={key}
-													access={integrationList[key as keyof typeof integrationList].access}
-													handleIntegrate={() => handleIntegrate(key)}
-													handlePost={() => handleIntegrationPost(key)}
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+									<StickyLabel label="Team Members" />
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+										<div className="mb-6 flex flex-wrap items-center justify-between">
+											<div className="w-[350px] pr-2">
+												<FormField
+													fieldType="input"
+													inputType="search"
+													placeholder="Search"
+													icon={<i className="fa-solid fa-magnifying-glass"></i>}
 												/>
+											</div>
+											<div className="flex grow items-center justify-end">
+												<div className="mr-3 w-[150px]">
+													<FormField
+														fieldType="select"
+														placeholder="Sort"
+														singleSelect={true}
+														options={[
+															{
+																id: "A-to-Z",
+																name: "A to Z"
+															},
+															{
+																id: "Z-to-A",
+																name: "Z to A"
+															}
+														]}
+													/>
+												</div>
+												<div className="w-[150px]">
+													<label
+														htmlFor="teamSelectAll"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700"
+													>
+														<span>Select All</span>
+														<input type="checkbox" id="teamSelectAll" />
+													</label>
+												</div>
+											</div>
+										</div>
+										<div className="overflow-x-auto">
+											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+												<thead>
+													<tr>
+														{TeamTableHead.map((item, i)=>(
+															<th className="border-b py-2 px-3 text-left">
+																{item.title}
+															</th>
+														))}
+													</tr>
+												</thead>
+												<tbody>
+													{Array(6).fill(
+													<tr>
+														<td className="border-b py-2 px-3 text-sm">
+															Jane Cooper
+														</td>
+														<td className="border-b py-2 px-3 text-sm">
+															Recruiter
+														</td>
+														<td className="border-b py-2 px-3 text-sm">
+															jane@microsoft.com
+														</td>
+														<td className="border-b py-2 px-3 w-[250px]">
+															<div className="w-full">
+																<FormField
+																	fieldType="select"
+																	placeholder="Select"
+																	singleSelect={true}
+																	options={[
+																		{
+																			id: "recruiter",
+																			name: "Recruiter"
+																		},
+																		{
+																			id: "collaborator",
+																			name: "Collaborator"
+																		},
+																		{
+																			id: "hiringmanager",
+																			name: "Hiring Manager"
+																		}
+																	]}
+																/>
+															</div>
+														</td>
+														<td className="border-b py-2 px-3 text-right">
+															<input type="checkbox" />
+														</td>
+													</tr>
+													)}
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</TabPanel>
+							<TabPanel>
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+									<StickyLabel label="Vendors" />
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+									<div className="mb-6 flex flex-wrap items-center justify-between">
+											<div className="w-[350px] pr-2">
+												<FormField
+													fieldType="input"
+													inputType="search"
+													placeholder="Search"
+													icon={<i className="fa-solid fa-magnifying-glass"></i>}
+												/>
+											</div>
+											<div className="flex grow items-center justify-end">
+												<div className="mr-3 w-[150px]">
+													<FormField
+														fieldType="select"
+														placeholder="Sort"
+														singleSelect={true}
+														options={[
+															{
+																id: "A-to-Z",
+																name: "A to Z"
+															},
+															{
+																id: "Z-to-A",
+																name: "Z to A"
+															}
+														]}
+													/>
+												</div>
+												<div className="w-[150px]">
+													<label
+														htmlFor="teamSelectAll"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700"
+													>
+														<span>Select All</span>
+														<input type="checkbox" id="teamSelectAll" />
+													</label>
+												</div>
+											</div>
+										</div>
+										<div className="mx-[-15px] flex flex-wrap">
+											{Array(6).fill(
+												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+													<CardLayout_2 />
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
+							</TabPanel>
+							<TabPanel>
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+									<StickyLabel label="Job Boards" />
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+										<div className="mx-[-15px] flex flex-wrap">
+											{Object.keys(integrationList).map((key: any) => (
+												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+													<CardLayout_1
+														key={key}
+														label={key}
+														access={integrationList[key as keyof typeof integrationList].access}
+														handleIntegrate={() => handleIntegrate(key)}
+														handlePost={() => handleIntegrationPost(key)}
+														isBlank={false}
+													/>
+												</div>
 											))}
 										</div>
 									</div>
