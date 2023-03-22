@@ -4,12 +4,11 @@ import Logo from "@/components/Logo";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useReducer, useState } from "react";
-import Validator, { Rules } from "validatorjs";
 import { getCsrfToken, getProviders, signIn, useSession } from "next-auth/react";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
+import Validator, { Rules } from "validatorjs";
 import toastcomp from "@/components/toast";
-
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -118,21 +117,20 @@ export default function SignUp() {
 					console.log("Send verification email");
 				}, 100);
 
-				toastcomp("Successfully Registerd", "success")
+				toastcomp("Successfully Registerd", "success");
 				setTimeout(() => {
-				toastcomp("We Send Verification Email", "info")
-				}, 100)
-
+					toastcomp("We Send Verification Email", "info");
+				}, 100);
 			})
 			.catch((err) => {
 				console.log(err);
 				if (err.response.data.errors.non_field_errors) {
-					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"))
-					return false
+					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"));
+					return false;
 				}
 				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"))
-					return false
+					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+					return false;
 				}
 			});
 	}

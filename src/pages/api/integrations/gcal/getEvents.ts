@@ -31,6 +31,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const eventsList = await calendar.events.list({ calendarId: googleCalendarIntegration.calendar_id });
 
-	console.log({ eventsList: eventsList.data });
 	return res.json(eventsList.data);
 }
