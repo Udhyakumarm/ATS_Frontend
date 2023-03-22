@@ -1,5 +1,10 @@
 import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), {
+	ssr: false
+});
+import "react-quill/dist/quill.snow.css";
 
 export default function FormField({
 	label,
@@ -16,14 +21,15 @@ export default function FormField({
 	id,
 	placeholder,
 	clickevent,
-	disabled
+	disabled,
+	onSearch,
 }: {
 	label?: string;
 	required?: boolean;
 	readOnly?: boolean;
 	icon?: any;
 	inputType?: string;
-	fieldType?: "input" | "textarea" | "select" | "addItem";
+	fieldType?: "input" | "textarea" | "select" | "addItem" | "reactquill";
 	handleChange?: any;
 	error?: any;
 	value?: any;
@@ -33,6 +39,7 @@ export default function FormField({
 	placeholder?: string;
 	clickevent?: any;
 	disabled?: boolean;
+	onSearch?: any;
 }) {
 	const [typePass, setTypePass] = useState(false);
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
@@ -167,6 +174,7 @@ export default function FormField({
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
+							onSearch={onSearch}
 							closeOnSelect
 							showArrow={true}
 							placeholder={placeholder}
@@ -222,6 +230,33 @@ export default function FormField({
 					</div>
 				</div>
 				{errorMessage}
+			</>
+		);
+	}
+	if (fieldType === "reactquill") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+						) : (
+							<></>
+						)}
+						<ReactQuill
+							defaultValue={"\n\n\n\n\n"}
+							value={value}
+							onChange={(value: string) => handleChange({ target: { id, value } })}
+						/>
+					</div>
+					{errorMessage}
+				</div>
 			</>
 		);
 	}

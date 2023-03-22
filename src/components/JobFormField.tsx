@@ -27,7 +27,7 @@ export default function JobFormField({
 	if (fieldType === "input") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="">
 					<div>
 						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
 							{label}
@@ -50,12 +50,22 @@ export default function JobFormField({
 	if (fieldType === "textarea") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="">
 					<div>
-						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
-							{label}
-							{required ? <sup className="text-red-500">*</sup> : ""}
-						</label>
+						{
+							label
+							?
+							<>
+							<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							</>
+							:
+							<>
+							</>
+						}
+						
 						<ReactQuill
 							defaultValue={"\n\n\n\n\n"}
 							value={value}
@@ -70,12 +80,22 @@ export default function JobFormField({
 	if (fieldType === "select") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="">
 					<div>
-						<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
-							{label}
-							{required ? <sup className="text-red-500">*</sup> : ""}
-						</label>
+						{
+							label
+							?
+							<>
+							<label htmlFor={id} className="mb-1 inline-block font-light text-gray-700 dark:text-white">
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+							</>
+							:
+							<>
+							</>
+						}
+						
 
 						<Multiselect
 							options={options} // Options to display in the dropdown
