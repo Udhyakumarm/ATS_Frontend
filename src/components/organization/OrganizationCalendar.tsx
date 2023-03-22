@@ -4,35 +4,35 @@ import userImg from "/public/images/user-image.png";
 import { Fragment, useCallback, useEffect, useReducer, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import FormField from "../FormField";
+import Button from "../Button";
+import { axiosInstance } from "@/utils";
+import Validator, { Rules } from "validatorjs";
+import toastcomp from "@/components/toast";
 
 type DateAction = "setDate" | "nextMonth" | "previousMonth";
 
 type DateUpdate = { action?: DateAction; value?: Date };
-
-type Schedule = {
-	summary: string;
-	description: string;
-	start: Date;
-	end: Date;
-};
 
 function DaysOfMonth({
 	currentDay,
 	currentDate,
 	setCurrentDay,
 	pageDays,
-	handleDateUpdate
+	handleDateUpdate,
+	handleDaySelect
 }: {
 	currentDay: Date;
 	currentDate: Date;
 	setCurrentDay: (newDate: Date) => void;
 	pageDays: Array<Array<number>>;
 	handleDateUpdate: (update: DateUpdate) => void;
+	handleDaySelect: (update: Date) => void;
 }) {
 	const handleDayClick = (day: number, dayType: number) => {
 		//If the day is in the current month
 		if (dayType === 1) {
 			setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+			handleDaySelect(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
 			return;
 		}
 
@@ -316,7 +316,8 @@ function CreateNewCalendarEventModal({
 		</Transition.Root>
 	);
 }
-export default function OrganizationCalendar() {
+
+export default function OrganizationCalendar({ integration }: any) {
 	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 	const [currentDay, setCurrentDay] = useState<Date>(today);
@@ -338,18 +339,23 @@ export default function OrganizationCalendar() {
 
 	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
 
-	const updateSchedule = (prevScheduleDate: Schedule, newScheduleDate: Schedule) => {
-		return newScheduleDate;
-	};
-
-	const [newScheduleDate, handleNewScheduleDate] = useReducer(updateSchedule, {
-		summary: "",
-		description: "",
-		start: new Date(),
-		end: new Date()
-	});
-
 	const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
+
+	const [eventList, setEventList] = useState([]);
+
+	const saveNewCalendarEvent = async (newEvent: CalendarEvent) => {
+		//TODO Add support for other integrations
+
+		await axiosInstance.next_api
+			.post("/api/integrations/gcal/createEvent", {
+				googleCalendarIntegration: integration,
+				event: { ...newEvent, type: newEvent.type[0]?.name, platform: newEvent.platform[0]?.name }
+			})
+			.then(() => {
+				setCreateScheduleOpen(false);
+				toastcomp("Scheduled " + newEvent.type[0]?.name, "success");
+			});
+	};
 
 	const getDays = useCallback((selectedDate: Date) => {
 		const dayOffset = selectedDate.getDay();
@@ -369,12 +375,26 @@ export default function OrganizationCalendar() {
 		return [prevDaysList, currentMonthDays, nextMonthDays];
 	}, []);
 
+	//TODO Make this call agnostic
+	const getEventsList = useCallback(
+		async () =>
+			await axiosInstance.next_api
+				.post("/api/integrations/gcal/getEvents", {
+					googleCalendarIntegration: integration
+				})
+				.then((response) => response.data)
+				.then((data) => setEventList(data)),
+		[integration]
+	);
+
 	const [pageDays, setPageDays] = useState<Array<Array<number>>>(getDays(today));
 
 	useEffect(() => {
 		setPageDays(getDays(currentDate));
-	}, [currentDate, getDays]);
+		getEventsList();
+	}, [currentDate, getDays, getEventsList, integration]);
 
+	console.log(eventList);
 	return (
 		<div className="flex">
 			<div className="w-[75%] bg-white">
@@ -437,6 +457,7 @@ export default function OrganizationCalendar() {
 					setCurrentDay={setCurrentDay}
 					handleDateUpdate={handleDateUpdate}
 					pageDays={pageDays}
+					handleDaySelect={() => {}}
 				/>
 			</div>
 			<div className="w-[25%] bg-lightBlue">
@@ -475,7 +496,11 @@ export default function OrganizationCalendar() {
 					</div>
 				</div>
 			</div>
-			<CreateNewSchedule createScheduleOpen={createScheduleOpen} setCreateScheduleOpen={setCreateScheduleOpen} />
+			<CreateNewCalendarEventModal
+				createScheduleOpen={createScheduleOpen}
+				setCreateScheduleOpen={setCreateScheduleOpen}
+				handleSaveNewSchedule={saveNewCalendarEvent}
+			/>
 		</div>
 	);
 }
