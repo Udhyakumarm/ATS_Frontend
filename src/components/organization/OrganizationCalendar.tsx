@@ -4,35 +4,35 @@ import userImg from "/public/images/user-image.png";
 import { Fragment, useCallback, useEffect, useReducer, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import FormField from "../FormField";
+import Button from "../Button";
+import { axiosInstance } from "@/utils";
+import Validator, { Rules } from "validatorjs";
+import toastcomp from "@/components/toast";
 
 type DateAction = "setDate" | "nextMonth" | "previousMonth";
 
 type DateUpdate = { action?: DateAction; value?: Date };
 
-type Schedule = {
-	summary: string;
-	description: string;
-	start: Date;
-	end: Date;
-};
-
 function DaysOfMonth({
-	currentDay,
 	currentDate,
-	setCurrentDay,
 	pageDays,
-	handleDateUpdate
+	handleDateUpdate,
+	handleDaySelect
 }: {
-	currentDay: Date;
 	currentDate: Date;
-	setCurrentDay: (newDate: Date) => void;
 	pageDays: Array<Array<number>>;
 	handleDateUpdate: (update: DateUpdate) => void;
+	handleDaySelect: (update: Date) => void;
 }) {
+	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
+
+	const [currentDay, setCurrentDay] = useState<Date>(today);
+
 	const handleDayClick = (day: number, dayType: number) => {
 		//If the day is in the current month
 		if (dayType === 1) {
 			setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+			handleDaySelect(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
 			return;
 		}
 
@@ -61,7 +61,12 @@ function DaysOfMonth({
 				}
 				onClick={() => handleDayClick(day, dayType)}
 			>
-				{day}
+				{day > 50 && (
+					<div className="relative flex rounded-full ">
+						<div className={"absolute top-5 left-8 text-primary"}>•</div>
+					</div>
+				)}
+				{day > 50 ? day - 100 : day}
 			</div>
 		</div>
 	);
@@ -151,13 +156,46 @@ function EventCard({
 	);
 }
 
-function CreateNewSchedule({
+function CreateNewCalendarEventModal({
 	createScheduleOpen,
-	setCreateScheduleOpen
+	setCreateScheduleOpen,
+	handleSaveNewSchedule
 }: {
 	createScheduleOpen: boolean;
 	setCreateScheduleOpen: (open: boolean) => void;
+	handleSaveNewSchedule: (schedule: CalendarEvent) => void;
 }) {
+	const newScheduleRules: Rules = {
+		summary: "required",
+		type: "required",
+		start: "required",
+		end: "required"
+	};
+
+	const initialState: CalendarEvent = {
+		summary: "",
+		description: "",
+		type: [],
+		platform: [],
+		start: new Date(),
+		end: new Date()
+	};
+
+	const updateNewSchedule = (prevScheduleDate: CalendarEvent, { target: { id, value } }: any) => {
+		if (id === "reset") return initialState;
+
+		if (id === "start" && value.getTime() > prevScheduleDate.end.getTime())
+			return { ...prevScheduleDate, [id]: value, end: value };
+
+		if (id === "end" && value.getTime() < prevScheduleDate.start.getTime()) return prevScheduleDate;
+
+		return { ...prevScheduleDate, [id]: value };
+	};
+
+	const [newSchedule, handleNewSchedule] = useReducer(updateNewSchedule, initialState);
+
+	const validation = new Validator(newSchedule, newScheduleRules);
+
 	return (
 		<Transition.Root show={createScheduleOpen} as={Fragment}>
 			<Dialog as="div" className="relative z-40" onClose={() => setCreateScheduleOpen(false)}>
@@ -184,12 +222,97 @@ function CreateNewSchedule({
 							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 						>
-							<Dialog.Panel className="relative w-[50%] transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-								<div>
-									<div>Schedule an ...</div>
-									{/* <FormField label={"Start Date and Time"} type="date" />
-									<FormField label={"End Date and Time"} /> */}
+							<Dialog.Panel className="relative w-1/3 transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+								<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+									<h4 className="font-semibold leading-none">Schedule an Event</h4>
+									<button
+										type="button"
+										className="leading-none hover:text-gray-700"
+										onClick={() => setCreateScheduleOpen(false)}
+									>
+										<i className="fa-solid fa-xmark"></i>
+									</button>
 								</div>
+								<form
+									className="p-8"
+									onSubmit={(e) => {
+										e.preventDefault();
+										handleSaveNewSchedule(newSchedule);
+										handleNewSchedule({ target: { id: "reset" } });
+									}}
+								>
+									<FormField
+										id={"type"}
+										fieldType="select"
+										label="Choose type of meeting"
+										singleSelect
+										value={newSchedule.type}
+										handleChange={handleNewSchedule}
+										options={[{ name: "Interview" }, { name: "General Meeting" }]}
+										required
+									/>
+
+									<FormField
+										id={"start"}
+										fieldType="date"
+										label="Start Date"
+										singleSelect
+										value={newSchedule.start}
+										handleChange={handleNewSchedule}
+										showTimeSelect
+										required
+									/>
+									<FormField
+										id={"end"}
+										fieldType="date"
+										label="End Date"
+										singleSelect
+										value={newSchedule.end}
+										handleChange={handleNewSchedule}
+										showTimeSelect
+										required
+									/>
+									<FormField
+										id={"summary"}
+										fieldType="input"
+										label="Summary"
+										singleSelect
+										value={newSchedule.summary}
+										handleChange={handleNewSchedule}
+										required
+									/>
+									<FormField
+										id={"description"}
+										fieldType="input"
+										label="Description"
+										singleSelect
+										value={newSchedule.description}
+										handleChange={handleNewSchedule}
+									/>
+									<FormField
+										id={"platform"}
+										fieldType="select"
+										label="Platform"
+										singleSelect
+										value={newSchedule.platform}
+										handleChange={handleNewSchedule}
+										options={[{ name: "Google Meet" }, { name: "Telephonic" }]}
+									/>
+									{/* 
+									Add Participants
+									*/}
+									<FormField
+										id={"type"}
+										fieldType="select"
+										label="Add attendees"
+										value={""}
+										handleChange={() => {}}
+										options={[{ name: "Person 1" }, { name: "Person 2" }]}
+									/>
+									<div className="text-center">
+										<Button label="Save" disabled={!validation.passes()} btnType="submit" />
+									</div>
+								</form>
 							</Dialog.Panel>
 						</Transition.Child>
 					</div>
@@ -198,10 +321,9 @@ function CreateNewSchedule({
 		</Transition.Root>
 	);
 }
-export default function OrganizationCalendar() {
-	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
-	const [currentDay, setCurrentDay] = useState<Date>(today);
+export default function OrganizationCalendar({ integration }: any) {
+	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 	const updateDate = (prevDate: Date, { action, value }: DateUpdate) => {
 		if (action) {
@@ -220,36 +342,84 @@ export default function OrganizationCalendar() {
 
 	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
 
-	const updateSchedule = (prevScheduleDate: Schedule, newScheduleDate: Schedule) => {
-		return newScheduleDate;
-	};
-
-	const [newScheduleDate, handleNewScheduleDate] = useReducer(updateSchedule, {
-		summary: "",
-		description: "",
-		start: new Date(),
-		end: new Date()
-	});
-
 	const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
 
-	const getDays = useCallback((selectedDate: Date) => {
-		const dayOffset = selectedDate.getDay();
-		const daysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
-		const prevDaysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0).getDate();
+	const [eventList, setEventList] = useState<Array<any>>([]);
 
-		const prevDaysList = Array.from(Array(dayOffset).keys())
-			.map((i) => prevDaysOfMonth - i)
-			.reverse();
+	const saveNewCalendarEvent = async (newEvent: CalendarEvent) => {
+		//TODO Add support for other integrations
 
-		const nextMonthDays = Array.from(Array(7 - ((prevDaysList.length + daysOfMonth) % 7)).keys()).map((i) => i + 1);
+		await axiosInstance.next_api
+			.post("/api/integrations/gcal/createEvent", {
+				googleCalendarIntegration: integration,
+				event: { ...newEvent, type: newEvent.type[0]?.name, platform: newEvent.platform[0]?.name }
+			})
+			.then(() => {
+				setCreateScheduleOpen(false);
+				toastcomp("Scheduled " + newEvent.type[0]?.name, "success");
+			});
+	};
 
-		const currentMonthDays = Array.from(Array(daysOfMonth).keys()).map((i) => i + 1);
+	const getDays = useCallback(
+		(selectedDate: Date) => {
+			const dayOffset = selectedDate.getDay();
+			const daysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+			const prevDaysOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0).getDate();
 
-		// console.log({ dayOffset, daysOfMonth, prevDaysList, currentMonthDays, nextMonthDays });
+			const prevDaysList = Array.from(Array(dayOffset).keys())
+				.map((i) => {
+					for (let x = 0; x < eventList.length; x++) {
+						const eventDate = new Date(eventList[x]?.start.dateTime);
 
-		return [prevDaysList, currentMonthDays, nextMonthDays];
-	}, []);
+						// * Returning 101 + i to differentiate
+						if (
+							eventDate.getDate() == prevDaysOfMonth - i &&
+							(selectedDate.getMonth() - 1) % 11 == eventDate.getMonth()
+						)
+							return prevDaysOfMonth - i + 100;
+					}
+
+					return prevDaysOfMonth - i;
+				})
+				.reverse();
+
+			const nextMonthDays = Array.from(Array(7 - ((prevDaysList.length + daysOfMonth) % 7)).keys()).map((i) => {
+				for (let x = 0; x < eventList.length; x++) {
+					const eventDate = new Date(eventList[x]?.start.dateTime);
+
+					// * Returning 101 + i to differentiate
+					if (eventDate.getDate() == i + 1 && (selectedDate.getMonth() + 1) % 11 == eventDate.getMonth())
+						return i + 101;
+				}
+				return i + 1;
+			});
+
+			const currentMonthDays = Array.from(Array(daysOfMonth).keys()).map((i) => {
+				for (let x = 0; x < eventList.length; x++) {
+					const eventDate = new Date(eventList[x]?.start.dateTime);
+
+					// * Returning 101 + i to differentiate
+					if (eventDate.getDate() == i + 1 && selectedDate.getMonth() == eventDate.getMonth()) return i + 101;
+				}
+				return i + 1;
+			});
+
+			return [prevDaysList, currentMonthDays, nextMonthDays];
+		},
+		[eventList]
+	);
+
+	//TODO Make this call agnostic
+	const getEventsList = useCallback(
+		async () =>
+			await axiosInstance.next_api
+				.post("/api/integrations/gcal/getEvents", {
+					googleCalendarIntegration: integration
+				})
+				.then((response) => response.data)
+				.then((data) => setEventList(data.items)),
+		[integration]
+	);
 
 	const [pageDays, setPageDays] = useState<Array<Array<number>>>(getDays(today));
 
@@ -257,6 +427,11 @@ export default function OrganizationCalendar() {
 		setPageDays(getDays(currentDate));
 	}, [currentDate, getDays]);
 
+	useEffect(() => {
+		integration && getEventsList();
+	}, [getEventsList, integration]);
+
+	console.log(eventList);
 	return (
 		<div className="flex">
 			<div className="w-[75%] bg-white">
@@ -315,10 +490,9 @@ export default function OrganizationCalendar() {
 				</div>
 				<DaysOfMonth
 					currentDate={currentDate}
-					currentDay={currentDay}
-					setCurrentDay={setCurrentDay}
 					handleDateUpdate={handleDateUpdate}
 					pageDays={pageDays}
+					handleDaySelect={() => {}}
 				/>
 			</div>
 			<div className="w-[25%] bg-lightBlue">
@@ -357,7 +531,11 @@ export default function OrganizationCalendar() {
 					</div>
 				</div>
 			</div>
-			<CreateNewSchedule createScheduleOpen={createScheduleOpen} setCreateScheduleOpen={setCreateScheduleOpen} />
+			<CreateNewCalendarEventModal
+				createScheduleOpen={createScheduleOpen}
+				setCreateScheduleOpen={setCreateScheduleOpen}
+				handleSaveNewSchedule={saveNewCalendarEvent}
+			/>
 		</div>
 	);
 }

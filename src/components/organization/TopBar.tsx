@@ -1,15 +1,41 @@
 import ThemeChange from "../ThemeChange";
-import { signOut } from "next-auth/react";
-import { useState, Fragment, useRef } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { useState, Fragment, useRef, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
 import OrganizationCalendar from "./OrganizationCalendar";
+import { axiosInstance } from "@/utils";
+import { useRouter } from "next/router";
 
 export default function OrgTopBar() {
 	const cancelButtonRef = useRef(null);
+	const router = useRouter();
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+	const { data: session } = useSession();
+
+	const [integration, setIntegration] = useState([]);
+
+	useEffect(() => {
+		async function loadIntegrations() {
+			if (!session) return;
+
+			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+				.get("/api/integrations/calendar")
+				.then((response) => response.data)
+				.catch((err) => {
+					console.log(err);
+					return { data: { success: false } };
+				});
+
+			setIntegration(newIntegrations);
+		}
+
+		loadIntegrations();
+	}, [router, session]);
+
 	return (
 		<>
 			<div
@@ -66,7 +92,7 @@ export default function OrgTopBar() {
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-									<OrganizationCalendar />
+									<OrganizationCalendar integration={integration ? integration[0] : null} />
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>

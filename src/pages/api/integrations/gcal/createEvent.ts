@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { google } from "googleapis";
 import { Integration } from "@/utils/serverUtils";
-import axios from "axios";
+import crypto from "crypto";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const session = await getServerSession(req, res, authOptions);
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const googleCalendarOAuth2Client = Integration.googleCalendarOAuth2Client;
 
-	const { googleCalendarIntegration } = req.body;
+	const { googleCalendarIntegration, event: newEvent } = req.body;
 
 	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
 
@@ -24,17 +24,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		token_type: "Bearer"
 	});
 
-	const event = {
-		summary: "Somhako ATS Meeting",
-		// location: "800 Howard St., San Francisco, CA 94103",
-		description: "Meeting.",
+	google.options({
+		auth: googleCalendarOAuth2Client
+	});
+
+	const calendar = google.calendar({ version: "v3" });
+
+	let conferenceData = {};
+
+	if (newEvent.platform === "Google Meet") {
+		conferenceData = {
+			createRequest: {
+				requestId: crypto.randomBytes(20).toString("hex"),
+				conferenceSolutionKey: {
+					type: "hangoutsMeet"
+				}
+			}
+		};
+	}
+
+	const newGoogleEvent = {
+		summary: newEvent.summary,
+		description: newEvent.description + "\n" + "ATS:" + newEvent.type.toString(),
 		start: {
-			dateTime: new Date().toISOString(),
-			timeZone: "America/Los_Angeles"
+			dateTime: newEvent.start
 		},
 		end: {
-			dateTime: new Date().toISOString(),
-			timeZone: "America/Los_Angeles"
+			dateTime: newEvent.end
 		},
 		// recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
 		// attendees: [{ email: "lpage@example.com" }, { email: "sbrin@example.com" }],
@@ -44,16 +60,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				{ method: "email", minutes: 24 * 60 },
 				{ method: "popup", minutes: 10 }
 			]
-		}
+		},
+		conferenceData: conferenceData
 	};
 
-	google.options({
-		auth: googleCalendarOAuth2Client
+	const saveEvent = await calendar.events.insert({
+		calendarId: googleCalendarIntegration.calendar_id as string,
+		requestBody: newGoogleEvent,
+		conferenceDataVersion: 1
 	});
 
-	const calendar = google.calendar({ version: "v3" });
-
-	await calendar.events.insert({ calendarId: googleCalendarIntegration.calendar_id, requestBody: event });
-
-	return res.json(googleCalendarIntegration);
+	return res.json(saveEvent);
 }
