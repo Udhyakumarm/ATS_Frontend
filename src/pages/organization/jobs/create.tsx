@@ -336,7 +336,7 @@ export default function Home() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<Toaster />
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">

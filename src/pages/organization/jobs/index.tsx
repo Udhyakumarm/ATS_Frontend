@@ -44,11 +44,6 @@ export default function Home() {
 			name: "Closed Jobs",
 			icon: closedIcon,
 			link: "/organization/jobs/closed"
-		},
-		{
-			name: "Applicants",
-			icon: applicantsIcon,
-			link: "/organization/jobs/applicant"
 		}
 	];
 

@@ -107,7 +107,7 @@ export default function Home() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap">
 					<div className="flex flex-wrap items-center justify-between bg-white py-6 px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
 						<div className="mr-3">

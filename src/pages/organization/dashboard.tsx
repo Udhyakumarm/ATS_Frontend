@@ -11,7 +11,6 @@ import Button from "@/components/Button";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import userImg from "/public/images/user-image.png";
-import googleIcon from "/public/images/social/google-icon.png";
 import customizeApplicants from "/public/images/icons/customize_applicants.png";
 import customizeActivity from "/public/images/icons/customize_activity.png";
 import customizeAnalytics from "/public/images/icons/customize_analytics.png";
@@ -20,6 +19,7 @@ import customizeTodo from "/public/images/icons/customize_todo.png";
 import customizeUpcoming from "/public/images/icons/customize_upcoming.png";
 import { getProviders, useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
+import JobCard_1 from "@/components/JobCard-1";
 
 export default function Dashboard() {
 	const settings = {
@@ -110,7 +110,7 @@ export default function Dashboard() {
 				{session && <ChatAssistance accessToken={session.accessToken} /> }
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div id="dashboard" className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
@@ -264,26 +264,7 @@ export default function Dashboard() {
 											{Array(4).fill(
 												<>
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-														<div className="h-full rounded-normal border bg-gradient-to-b from-[#eeeeee] to-white py-2 px-3 dark:from-gray-700 dark:to-gray-900">
-															<div className="mb-4 flex items-center">
-																<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-[#eeeeee] dark:bg-gray-800">
-																	<Image src={googleIcon} alt={"Company"} width={25} height={25} />
-																</div>
-																<aside className="w-[calc(100%-60px)]">
-																	<h5 className="clamp_2 text-sm font-semibold">Ux Designer</h5>
-																	<p className="text-[12px]">Figma</p>
-																</aside>
-															</div>
-															<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-white">
-																<li className="mr-3">Full Time</li>
-																<li className="mr-3">Remote</li>
-																<li className="mr-3">Junior</li>
-															</ul>
-															<div className="flex flex-wrap items-center justify-between">
-																<p className="mr-4 text-[12px] font-bold text-darkGray dark:text-white">$80k-110k/year</p>
-																<Button btnStyle="outlined" label="View" loader={false} />
-															</div>
-														</div>
+														<JobCard_1 />
 													</div>
 												</>
 											)}

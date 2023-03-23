@@ -83,7 +83,7 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 	return (
 		<>
 			<div
-				className={`fixed left-0 top-0 z-[65] h-full w-full bg-[rgba(0,0,0,0.2)]` + " " + (click ? "block" : "hidden")}
+				className={`fixed left-0 top-0 z-[65] h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]` + " " + (click ? "block" : "hidden")}
 				onClick={handleClick}
 			></div>
 			<div
