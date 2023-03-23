@@ -68,12 +68,12 @@ export default function SignIn({ providers }: any) {
 			.catch((err) => {
 				console.log(err);
 				if (err.response.data.errors.non_field_errors) {
-					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"))
-					return false
+					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"));
+					return false;
 				}
 				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"))
-					return false
+					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+					return false;
 				}
 			});
 	};
@@ -155,3 +155,5 @@ export async function getServerSideProps(context: any) {
 		}
 	};
 }
+
+SignIn.noAuth = true;

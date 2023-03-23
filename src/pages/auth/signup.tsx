@@ -242,3 +242,5 @@ export default function SignUp() {
 		</>
 	);
 }
+
+SignUp.noAuth = true;

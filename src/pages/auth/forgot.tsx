@@ -42,3 +42,5 @@ export default function Forgot() {
 		</>
 	);
 }
+
+Forgot.noAuth = true;

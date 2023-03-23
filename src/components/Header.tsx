@@ -1,25 +1,18 @@
 import { useTheme } from "next-themes";
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useCarrierStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next";
 
 export default function Header() {
 	const router = useRouter();
-	const { data: session } = useSession();
+	const { data: session, status: sessionStatus } = useSession();
 	const { theme, setTheme } = useTheme();
-	useEffect(() => {
-		if (session?.error === "RefreshAccessTokenError" && !router.asPath.startsWith("/auth")) {
-			signIn(); // Force sign in to hopefully resolve error
-		}
-	}, [router.asPath, session]);
 
 	const [auth, setauth] = useState(false);
 
