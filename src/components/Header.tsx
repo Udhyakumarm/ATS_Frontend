@@ -1,4 +1,3 @@
-import { useTheme } from "next-themes";
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -14,7 +13,6 @@ import { getServerSession } from "next-auth/next";
 export default function Header() {
 	const router = useRouter();
 	const { data: session } = useSession();
-	const { theme, setTheme } = useTheme();
 	useEffect(() => {
 		if (session?.error === "RefreshAccessTokenError" && !router.asPath.startsWith("/auth")) {
 			signIn(); // Force sign in to hopefully resolve error
@@ -155,22 +153,7 @@ export default function Header() {
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
-							<button
-								aria-label="Toggle Dark Mode"
-								type="button"
-								className="mr-2 w-[35px] rounded px-2 py-1 text-black dark:text-white"
-								onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-							>
-								{theme === "dark" ? (
-									<>
-										<i className="fa-solid fa-moon"></i>
-									</>
-								) : (
-									<>
-										<i className="fa-solid fa-sun"></i>
-									</>
-								)}
-							</button>
+							<ThemeChange />
 							<button
 								type="button"
 								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"

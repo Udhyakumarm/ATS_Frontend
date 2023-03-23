@@ -93,14 +93,14 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 			>
 				<div
 					className={
-						`overflow-hidden rounded-normal bg-lightBlue shadow-normal` +
+						`overflow-hidden rounded-normal bg-lightBlue dark:bg-gray-600 shadow-normal` +
 						" " +
 						(click ? "block" : "hidden") +
 						" " +
 						(maximize ? "h-[calc(100vh-102px)] w-full" : "h-[70vh] w-[450px]")
 					}
 				>
-					<div className="flex items-center justify-between bg-white px-6 py-3">
+					<div className="flex items-center justify-between bg-white dark:bg-gray-700 px-6 py-3">
 						<aside className="flex items-center">
 							<div className="mr-4 flex h-[30px] w-[30px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
 								<Image src={favIcon} alt="Somhako" width={16} />
@@ -108,7 +108,7 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 							<h4 className="text-lg font-bold">Chat Assistance</h4>
 						</aside>
 						<aside>
-							<button type="button" className="text-darkGray" onClick={(e) => setMaximize(!maximize)}>
+							<button type="button" className="text-darkGray dark:text-gray-100" onClick={(e) => setMaximize(!maximize)}>
 								{maximize ? (
 									<>
 										<i className="fa-solid fa-down-left-and-up-right-to-center"></i>
@@ -128,16 +128,16 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 									<>
 										<div key={i}>
 											<li className="my-2 ml-auto max-w-[90%] text-right">
-												<div className="mb-1 inline-block rounded rounded-tl-normal rounded-br-normal bg-white py-2 px-4 text-left font-bold shadow">
+												<div className="mb-1 inline-block rounded rounded-tl-normal rounded-br-normal bg-white dark:bg-gray-700 py-2 px-4 text-left font-bold shadow">
 													{data["message"]}
 												</div>
-												<div className="text-[10px] text-darkGray">{moment(data["timestamp"]).fromNow()}</div>
+												<div className="text-[10px] text-darkGray dark:text-gray-100">{moment(data["timestamp"]).fromNow()}</div>
 											</li>
 											<li className="my-2 max-w-[90%]">
 												<div className="mb-1 inline-block rounded rounded-tr-normal rounded-bl-normal bg-gradDarkBlue py-2 px-4 text-white shadow">
 													{data["response"]}
 												</div>
-												<div className="text-[10px] text-darkGray">{moment(data["timestamp"]).fromNow()}</div>
+												<div className="text-[10px] text-darkGray dark:text-gray-100">{moment(data["timestamp"]).fromNow()}</div>
 											</li>
 										</div>
 									</>
@@ -251,15 +251,16 @@ export default function ChatAssistance(props: { accessToken?: any }) {
                             </li>
                         </ul> */}
 					</div>
-					<div className="bg-white p-3">
-						<div className="flex items-center rounded bg-lightBlue p-2">
-							<input
+					<div className="bg-white dark:bg-gray-700 p-3">
+						<div className="flex items-center rounded bg-lightBlue dark:bg-gray-800 p-2">
+							{/* <input
 								type="text"
 								placeholder="Type something..."
 								className="w-[calc(100%-50px)] border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
 								value={prompt}
 								onChange={(e) => setprompt(e.target.value)}
-							/>
+							/> */}
+							<textarea name="" id="" className="w-[calc(100%-50px)] border-0 bg-transparent  focus:border-0 focus:shadow-none focus:outline-none focus:ring-0 resize-none h-[40px]" placeholder="Type something..." value={prompt} onChange={(e) => setprompt(e.target.value)}></textarea>
 							<button
 								type="button"
 								className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"

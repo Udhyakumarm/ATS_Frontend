@@ -63,7 +63,7 @@ export default function Home() {
                 <Orgtopbar />
                 <div id="overlay" className="hidden bg-[rgba(0,0,0,0.2)] fixed left-0 top-0 z-[9] w-full h-full"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-					<div className="relative bg-white rounded-normal shadow-normal p-10">
+					<div className="relative bg-white dark:bg-gray-800 rounded-normal shadow-normal p-10">
 						<h1 className="font-bold text-2xl mb-6">Jobs</h1>
 						<div className="flex flex-wrap items-center -mx-4">
 							{quicklinks.map((links, i) => (
@@ -78,7 +78,7 @@ export default function Home() {
 											</div>
 											<span className="text-lg font-bold">{links.name}</span>
 										</div>
-										<span className="text-primary text-sm flex items-center">Go To <i className="fa-solid fa-arrow-right text-[12px] ml-2"></i></span>
+										<span className="text-primary dark:text-gray-300 text-sm flex items-center">Go To <i className="fa-solid fa-arrow-right text-[12px] ml-2"></i></span>
 									</Link>
 								</div>
 							))}

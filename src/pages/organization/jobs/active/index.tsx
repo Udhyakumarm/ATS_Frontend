@@ -1,19 +1,6 @@
 import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
-import dashboardIcon from "/public/images/icons/dashboard.png";
-import integrationIcon from "/public/images/icons/integration.png";
-import jobsIcon from "/public/images/icons/jobs.png";
-import analyticsIcon from "/public/images/icons/analytics.png";
-import vendorsIcon from "/public/images/icons/vendors.png";
-import applicantsIcon from "/public/images/icons/applicants.png";
-import collectionIcon from "/public/images/icons/collection.png";
-import Button from "@/components/Button";
 import { useRouter } from "next/router";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useEffect, useReducer, useState } from "react";
-import JobFormField from "@/components/JobFormField";
-import Validator, { Rules } from "validatorjs";
+import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils";
 import { useSession } from "next-auth/react";
 import HeaderBar from "@/components/HeaderBar";
@@ -55,23 +42,21 @@ export default function Home() {
                 <OrgTopBar />
                 <div id="overlay" className="hidden bg-[rgba(0,0,0,0.2)] fixed left-0 top-0 z-[9] w-full h-full"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-					<HeaderBar title="Active Jobs" icon={null} handleBack={() => router.back()} />
-					<div className="bg-white p-10 dark:bg-gray-800 ">
-						<div className="grid grid-cols-2 gap-x-8 gap-y-8">
-							{active &&
-								active.map(
-									(job: any, i) =>
-										job && (
-											<JobCard
-												key={i}
-												job={job}
-												handleView={() => {
-													router.push("/organization/jobs/active/" + job.refid);
-												}}
-											/>
-										)
-								)}
-						</div>
+					<div className="bg-white dark:bg-gray-800 rounded-normal">
+						<HeaderBar title="Active Jobs" handleBack={() => router.back()} />
+						{active &&
+							active.map(
+								(job: any, i) =>
+									job && (
+										<JobCard
+											key={i}
+											job={job}
+											handleView={() => {
+												router.push("/organization/jobs/active/" + job.refid);
+											}}
+										/>
+									)
+							)}
 					</div>
 				</div>
 			</main>

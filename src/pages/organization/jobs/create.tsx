@@ -23,7 +23,7 @@ const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
 		<button
 			onClick={handleClick}
-			className="mr-3 flex items-center justify-center rounded border border-gray-400 py-2 px-6 text-sm font-bold last:mr-0 hover:bg-lightBlue"
+			className="mr-3 flex items-center justify-center rounded border border-gray-400 py-2 px-6 text-sm font-bold last:mr-0 hover:bg-lightBlue dark:hover:text-black"
 			type="button"
 		>
 			<span className={"mr-2 block h-[20px] w-[20px] rounded-full text-[10px] text-white" + " " + iconBg}>{icon}</span>
@@ -365,7 +365,7 @@ export default function Home() {
 								</TabList>
 							</div>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Job Title and Department" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -439,7 +439,7 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Department Informatiom" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -451,7 +451,7 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Your Responsibilities" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -463,7 +463,7 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="What We're Looking For" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -475,7 +475,7 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Skills" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -489,7 +489,7 @@ export default function Home() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Employment Details" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -561,7 +561,7 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Annual Salary" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -593,7 +593,7 @@ export default function Home() {
 										</div>
 									</div>
 								</div>
-								<div className="relative rounded-normal bg-white shadow-normal">
+								<div className="relative rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Benefits" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -648,7 +648,7 @@ export default function Home() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Assessment" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
@@ -662,7 +662,7 @@ export default function Home() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Team Members" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mb-6 flex flex-wrap items-center justify-between">
@@ -761,7 +761,7 @@ export default function Home() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Vendors" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 									<div className="mb-6 flex flex-wrap items-center justify-between">
@@ -813,7 +813,7 @@ export default function Home() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Job Boards" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
