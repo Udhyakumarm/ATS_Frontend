@@ -11,12 +11,23 @@ import { useEffect, useState, Fragment } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
-import { Tab } from "@headlessui/react";
+import { Tab, Transition } from "@headlessui/react";
 import jobIcon from "/public/images/icons/jobs.png";
 import TeamMembers from "@/components/TeamMembers";
 import userImg from "/public/images/user-image.png";
 import moment from "moment";
 import CardLayout_1 from "@/components/CardLayout-1";
+import { Listbox } from '@headlessui/react'
+
+const people = [
+	{ id: 1, name: 'Shortlist', unavailable: false },
+	{ id: 2, name: 'Hire', unavailable: false },
+	{ id: 3, name: 'On Hold', unavailable: false },
+	{ id: 4, name: 'Offer Letter Prepration', unavailable: true },
+	{ id: 5, name: 'Offer Rolled Out', unavailable: false },
+	{ id: 6, name: 'Offer Accepted', unavailable: false },
+	{ id: 7, name: 'Offer Rejected', unavailable: false },
+  ]
 
 export default function Detail() {
 	const router = useRouter();
@@ -34,6 +45,8 @@ export default function Detail() {
 	const [token, settoken] = useState("");
 	const [refersh, setrefersh] = useState(1);
 	const [refersh1, setrefersh1] = useState(0);
+
+	const [selectedPerson, setSelectedPerson] = useState(people[0])
 
 	useEffect(() => {
 		if (session) {
@@ -107,6 +120,9 @@ export default function Detail() {
 	// useEffect(() => {
 	// 	console.log(applicantdetail)
 	// }, [applicantdetail]);
+
+	
+
 	return (
 		<>
 			<Head>
@@ -251,11 +267,53 @@ export default function Detail() {
 									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow">
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3" />
-											<h2 className="text-xl font-bold">
+											<h2 className="text-lg font-bold">
 												<span>Software Developer</span>
 											</h2>
 										</aside>
-										<aside className="flex grow justify-end">
+										<aside className="flex grow items-center justify-end">
+											<div className="mr-4">
+											<Listbox value={selectedPerson} onChange={setSelectedPerson}>
+												<Listbox.Button className={"text-sm font-bold border border-slate-300 rounded"}>
+													<span className="py-2 px-3">Move Applicant</span>
+													<i className="fa-solid fa-chevron-down ml-2 text-sm border-l py-2 px-3"></i>
+												</Listbox.Button>
+												<Transition
+													enter="transition duration-100 ease-out"
+													enterFrom="transform scale-95 opacity-0"
+													enterTo="transform scale-100 opacity-100"
+													leave="transition duration-75 ease-out"
+													leaveFrom="transform scale-100 opacity-100"
+													leaveTo="transform scale-95 opacity-0"
+												>
+													<Listbox.Options
+														className={
+															"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+														}
+													>
+														{people.map((person) => (
+														<Listbox.Option
+															key={person.id}
+															value={person}
+															disabled={person.unavailable}
+															className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														>
+															{({ selected }) => (
+																<>
+																	<span className={` ${selected ? "font-bold" : "font-normal"}`}>{person.name}</span>
+																	{selected ? (
+																		<span className="absolute left-3">
+																			<i className="fa-solid fa-check"></i>
+																		</span>
+																	) : null}
+																</>
+															)}
+														</Listbox.Option>
+														))}
+													</Listbox.Options>
+												</Transition>
+											</Listbox>
+											</div>
 											<TeamMembers />
 										</aside>
 									</div>
@@ -343,7 +401,65 @@ export default function Detail() {
 													</div>
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 3</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 4</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													<div className="relative before:content-[''] before:w-[1px] before:h-[100%] before:bg-slate-200 before:absolute before:top-0 before:left-[80px] max-h-[455px] overflow-y-auto">
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+													</div>
+												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</div>
