@@ -50,12 +50,12 @@ const jobFormRules: Rules = {
 	work_type: "required"
 };
 const people = [
-  { id: 1, name: 'Durward Reynolds', unavailable: false },
-  { id: 2, name: 'Kenton Towne', unavailable: false },
-  { id: 3, name: 'Therese Wunsch', unavailable: false },
-  { id: 4, name: 'Benedict Kessler', unavailable: true },
-  { id: 5, name: 'Katelyn Rohan', unavailable: false },
-]
+	{ id: 1, name: "Durward Reynolds", unavailable: false },
+	{ id: 2, name: "Kenton Towne", unavailable: false },
+	{ id: 3, name: "Therese Wunsch", unavailable: false },
+	{ id: 4, name: "Benedict Kessler", unavailable: true },
+	{ id: 5, name: "Katelyn Rohan", unavailable: false }
+];
 
 export default function Home() {
 	const router = useRouter();
@@ -73,7 +73,7 @@ export default function Home() {
 		Twitter: { access: null }
 	});
 
-	const [selectedPerson, setSelectedPerson] = useState(people[0])
+	const [selectedPerson, setSelectedPerson] = useState(people[0]);
 
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 
@@ -224,12 +224,18 @@ export default function Home() {
 		const cleanedData = cleanData(jobForm);
 		const validation = new Validator(cleanedData, jobFormRules);
 
-		if (validation.fails()) return;
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
 
 		const newJob = await axiosInstance.api
 			.post(
 				"/job/create-job/",
-				{ ...cleanedData, jobStatus: "Published", publish_date: new Date() },
+				{ ...cleanedData, jobStatus: "Active", publish_date: new Date() },
 				{
 					headers: {
 						authorization: "Bearer " + session?.accessToken
@@ -305,21 +311,21 @@ export default function Home() {
 
 	const TeamTableHead = [
 		{
-			title: 'User Name'
+			title: "User Name"
 		},
 		{
-			title: 'Department/Title'
+			title: "Department/Title"
 		},
 		{
-			title: 'Email'
+			title: "Email"
 		},
 		{
-			title: 'Access'
+			title: "Access"
 		},
 		{
-			title: ' '
-		},
-	]
+			title: " "
+		}
+	];
 
 	return (
 		<>
@@ -707,8 +713,8 @@ export default function Home() {
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 												<thead>
 													<tr>
-														{TeamTableHead.map((item, i)=>(
-															<th className="border-b py-2 px-3 text-left">
+														{TeamTableHead.map((item, i) => (
+															<th className="border-b py-2 px-3 text-left" key={i}>
 																{item.title}
 															</th>
 														))}
@@ -716,43 +722,37 @@ export default function Home() {
 												</thead>
 												<tbody>
 													{Array(6).fill(
-													<tr>
-														<td className="border-b py-2 px-3 text-sm">
-															Jane Cooper
-														</td>
-														<td className="border-b py-2 px-3 text-sm">
-															Recruiter
-														</td>
-														<td className="border-b py-2 px-3 text-sm">
-															jane@microsoft.com
-														</td>
-														<td className="border-b py-2 px-3 w-[250px]">
-															<div className="w-full">
-																<FormField
-																	fieldType="select"
-																	placeholder="Select"
-																	singleSelect={true}
-																	options={[
-																		{
-																			id: "recruiter",
-																			name: "Recruiter"
-																		},
-																		{
-																			id: "collaborator",
-																			name: "Collaborator"
-																		},
-																		{
-																			id: "hiringmanager",
-																			name: "Hiring Manager"
-																		}
-																	]}
-																/>
-															</div>
-														</td>
-														<td className="border-b py-2 px-3 text-right">
-															<input type="checkbox" />
-														</td>
-													</tr>
+														<tr>
+															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
+															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
+															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
+															<td className="w-[250px] border-b py-2 px-3">
+																<div className="w-full">
+																	<FormField
+																		fieldType="select"
+																		placeholder="Select"
+																		singleSelect={true}
+																		options={[
+																			{
+																				id: "recruiter",
+																				name: "Recruiter"
+																			},
+																			{
+																				id: "collaborator",
+																				name: "Collaborator"
+																			},
+																			{
+																				id: "hiringmanager",
+																				name: "Hiring Manager"
+																			}
+																		]}
+																	/>
+																</div>
+															</td>
+															<td className="border-b py-2 px-3 text-right">
+																<input type="checkbox" />
+															</td>
+														</tr>
 													)}
 												</tbody>
 											</table>
@@ -764,7 +764,7 @@ export default function Home() {
 								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
 									<StickyLabel label="Vendors" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-									<div className="mb-6 flex flex-wrap items-center justify-between">
+										<div className="mb-6 flex flex-wrap items-center justify-between">
 											<div className="w-[350px] pr-2">
 												<FormField
 													fieldType="input"
@@ -818,7 +818,7 @@ export default function Home() {
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
 											{Object.keys(integrationList).map((key: any) => (
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
 													<CardLayout_1
 														key={key}
 														label={key}
