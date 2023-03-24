@@ -264,9 +264,9 @@ export default function Detail() {
 							</div>
 							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
-									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow">
+									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow relative z-10">
 										<aside className="flex items-center">
-											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3" />
+											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
 												<span>Software Developer</span>
 											</h2>
@@ -400,7 +400,37 @@ export default function Detail() {
 														)}
 													</div>
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 3</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													<div className="relative">
+														<div className="flex items-center bg-lightBlue shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className="fa-solid fa-user-check text-sm text-darkGray group-hover:text-green-500"></i>
+																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-green-500">Hire</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className="fa-solid fa-circle-pause text-sm text-darkGray group-hover:text-yellow-400"></i>
+																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-yellow-400">On Hold</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className="fa-solid fa-thumbs-up text-sm text-darkGray group-hover:text-primary"></i>
+																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-primary">Shortlist</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className="fa-solid fa-thumbs-down text-sm text-darkGray group-hover:text-red-500"></i>
+																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-red-500">Shortlist</p>
+															</div>
+														</div>
+														<div className="border rounded-normal overflow-hidden">
+															<label htmlFor="addFeedback" className="bg-lightBlue py-2 px-4 block font-bold text-sm">
+																Add Feedback <sup className="text-red-500">*</sup>
+															</label>
+															<textarea name="addFeedback" id="addFeedback" className="py-2 px-4 border-0 resize-none w-full h-[200px] text-sm focus:ring-0" placeholder="Enter feedback here ..."></textarea>
+															<div className="px-4 bg-lightBlue">
+																<Button btnStyle="sm" label="Save" />
+															</div>
+														</div>
+													</div>
+												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
 													<div className="relative before:content-[''] before:w-[1px] before:h-[100%] before:bg-slate-200 before:absolute before:top-0 before:left-[80px] max-h-[455px] overflow-y-auto">
 														<div className="flex items-start">
