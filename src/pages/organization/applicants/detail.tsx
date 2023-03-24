@@ -277,46 +277,49 @@ export default function Detail() {
 										</aside>
 										<aside className="flex grow items-center justify-end">
 											<div className="mr-4">
-											<Listbox value={selectedPerson} onChange={setSelectedPerson}>
-												<Listbox.Button className={"text-sm font-bold border border-slate-300 rounded"}>
-													<span className="py-2 px-3">Move Applicant</span>
-													<i className="fa-solid fa-chevron-down ml-2 text-sm border-l py-2 px-3"></i>
-												</Listbox.Button>
-												<Transition
-													enter="transition duration-100 ease-out"
-													enterFrom="transform scale-95 opacity-0"
-													enterTo="transform scale-100 opacity-100"
-													leave="transition duration-75 ease-out"
-													leaveFrom="transform scale-100 opacity-100"
-													leaveTo="transform scale-95 opacity-0"
-												>
-													<Listbox.Options
-														className={
-															"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-														}
+												<Button btnType="button" btnStyle="iconLeftBtn" label="Schedule Interview" iconLeft={(<i className="fa-solid fa-calendar-plus"></i>)} handleClick={() => { router.push("/organization/applicants/schedule-interview")}} />
+											</div>
+											<div className="mr-4">
+												<Listbox value={selectedPerson} onChange={setSelectedPerson}>
+													<Listbox.Button className={"text-sm font-bold border border-slate-300 rounded"}>
+														<span className="py-2 px-3">Move Applicant</span>
+														<i className="fa-solid fa-chevron-down ml-2 text-sm border-l py-2 px-3"></i>
+													</Listbox.Button>
+													<Transition
+														enter="transition duration-100 ease-out"
+														enterFrom="transform scale-95 opacity-0"
+														enterTo="transform scale-100 opacity-100"
+														leave="transition duration-75 ease-out"
+														leaveFrom="transform scale-100 opacity-100"
+														leaveTo="transform scale-95 opacity-0"
 													>
-														{people.map((person) => (
-														<Listbox.Option
-															key={person.id}
-															value={person}
-															disabled={person.unavailable}
-															className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														<Listbox.Options
+															className={
+																"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+															}
 														>
-															{({ selected }) => (
-																<>
-																	<span className={` ${selected ? "font-bold" : "font-normal"}`}>{person.name}</span>
-																	{selected ? (
-																		<span className="absolute left-3">
-																			<i className="fa-solid fa-check"></i>
-																		</span>
-																	) : null}
-																</>
-															)}
-														</Listbox.Option>
-														))}
-													</Listbox.Options>
-												</Transition>
-											</Listbox>
+															{people.map((person) => (
+															<Listbox.Option
+																key={person.id}
+																value={person}
+																disabled={person.unavailable}
+																className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+															>
+																{({ selected }) => (
+																	<>
+																		<span className={` ${selected ? "font-bold" : "font-normal"}`}>{person.name}</span>
+																		{selected ? (
+																			<span className="absolute left-3">
+																				<i className="fa-solid fa-check"></i>
+																			</span>
+																		) : null}
+																	</>
+																)}
+															</Listbox.Option>
+															))}
+														</Listbox.Options>
+													</Transition>
+												</Listbox>
 											</div>
 											<TeamMembers />
 										</aside>
@@ -407,34 +410,34 @@ export default function Detail() {
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
 													{Array(2).fill(
 													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
-														<div className="flex items-center bg-lightBlue shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-green-500' : 'text-darkGray group-hover:text-green-500') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-white group-hover:text-green-500') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray group-hover:text-yellow-400') }></i>
+																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray dark:text-white group-hover:text-yellow-400') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-yellow-400') }>On Hold</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray group-hover:text-primary') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray dark:text-white group-hover:text-primary') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-primary') }>Shortlist</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray group-hover:text-red-500') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray dark:text-white group-hover:text-red-500') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-red-500') }>Reject</p>
 															</div>
 														</div>
-														<div className="border rounded-normal overflow-hidden">
-															<label htmlFor="addFeedback" className="bg-lightBlue py-2 px-4 block font-bold">
+														<div className="border dark:border-gray-500 rounded-normal overflow-hidden">
+															<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
 																{
 																	feedBack
 																	?
 																	<>
 																	<span className="flex items-center">
 																		Feedback
-																		<button type="button">
-																			<i className="fa-solid fa-pen-to-square ml-5 text-darkGray"></i>
+																		<button type="button" className="ml-5 text-darkGray dark:text-gray-400">
+																			<i className="fa-solid fa-pen-to-square"></i>
 																		</button>
 																	</span>
 																	</>
@@ -444,15 +447,15 @@ export default function Detail() {
 																	</>
 																}
 															</label>
-															<textarea name="addFeedback" id="addFeedback" className={'py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + (feedBack ? 'min-h-[100px]' : 'h-[200px]')} placeholder="Enter feedback here ..." readOnly={feedBack ? true : false}></textarea>
-															<div className="px-4 bg-lightBlue">
+															<textarea name="addFeedback" id="addFeedback" className={'align-middle dark:bg-gray-600 dark:text-white dark:placeholder py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + (feedBack ? 'min-h-[100px]' : 'h-[200px]')} placeholder="Enter feedback here ..." readOnly={feedBack ? true : false}></textarea>
+															<div className="px-4 bg-lightBlue dark:bg-gray-700">
 																{
 																	feedBack
 																	?
 																	<>
 																	<div className="py-2 flex items-center justify-between text-sm">
 																		<h6 className="font-bold">By - Steve Paul :  Collaborator</h6>
-																		<p className="text-darkGray text-[12px]">13 Feb 2023, 3:00 PM</p>
+																		<p className="text-darkGray dark:text-gray-400 text-[12px]">13 Feb 2023, 3:00 PM</p>
 																	</div>
 																	</>
 																	:
