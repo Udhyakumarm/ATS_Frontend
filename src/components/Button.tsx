@@ -1,4 +1,4 @@
-export default function Button({ btnStyle, btnType, label, loader, disabled, full, handleClick }: any) {
+export default function Button({ btnStyle, btnType, label, loader, disabled, full, handleClick, iconLeft }: any) {
 	if (btnStyle === "outlined") {
 		return (
 			<button
@@ -30,6 +30,25 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			>
 				{label}
 				{loader ? <i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> : ""}
+			</button>
+		)
+	}
+	if (btnStyle === "iconLeftBtn") {
+		return (
+			<button
+				type={btnType ? btnType : "button"}
+				className={
+					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-3 font-semibold text-white text-sm text-smdisabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400` +
+					" " +
+					(full ? "w-full" : "w-auto")
+				}
+				disabled={disabled}
+				onClick={btnType && handleClick}
+			>
+				<span className="mr-2">
+					{iconLeft}
+				</span>
+				{label}
 			</button>
 		)
 	}
