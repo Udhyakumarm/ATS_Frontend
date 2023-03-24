@@ -46,6 +46,10 @@ export default function Detail() {
 	const [refersh, setrefersh] = useState(1);
 	const [refersh1, setrefersh1] = useState(0);
 
+	const [selectedFeedBack, setSelectedFeedBack] = useState(false);
+	const [feedBack, setFeedBack] = useState(false);
+	const [updateFeedBack, setUpdateFeedBack] = useState(false);
+
 	const [selectedPerson, setSelectedPerson] = useState(people[0])
 
 	useEffect(() => {
@@ -401,35 +405,65 @@ export default function Detail() {
 													</div>
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
-													<div className="relative">
+													{Array(2).fill(
+													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
 														<div className="flex items-center bg-lightBlue shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className="fa-solid fa-user-check text-sm text-darkGray group-hover:text-green-500"></i>
-																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-green-500">Hire</p>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-green-500' : 'text-darkGray group-hover:text-green-500') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className="fa-solid fa-circle-pause text-sm text-darkGray group-hover:text-yellow-400"></i>
-																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-yellow-400">On Hold</p>
+																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray group-hover:text-yellow-400') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-yellow-400') }>On Hold</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className="fa-solid fa-thumbs-up text-sm text-darkGray group-hover:text-primary"></i>
-																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-primary">Shortlist</p>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray group-hover:text-primary') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-primary') }>Shortlist</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className="fa-solid fa-thumbs-down text-sm text-darkGray group-hover:text-red-500"></i>
-																<p className="whitespace-nowrap font-bold absolute left-[50%] translate-x-[-50%] bottom-[-25px] leading-normal hidden group-hover:block group-hover:text-red-500">Shortlist</p>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray group-hover:text-red-500') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-red-500') }>Reject</p>
 															</div>
 														</div>
 														<div className="border rounded-normal overflow-hidden">
-															<label htmlFor="addFeedback" className="bg-lightBlue py-2 px-4 block font-bold text-sm">
-																Add Feedback <sup className="text-red-500">*</sup>
+															<label htmlFor="addFeedback" className="bg-lightBlue py-2 px-4 block font-bold">
+																{
+																	feedBack
+																	?
+																	<>
+																	<span className="flex items-center">
+																		Feedback
+																		<button type="button">
+																			<i className="fa-solid fa-pen-to-square ml-5 text-darkGray"></i>
+																		</button>
+																	</span>
+																	</>
+																	:
+																	<>
+																	Add Feedback <sup className="text-red-500">*</sup>
+																	</>
+																}
 															</label>
-															<textarea name="addFeedback" id="addFeedback" className="py-2 px-4 border-0 resize-none w-full h-[200px] text-sm focus:ring-0" placeholder="Enter feedback here ..."></textarea>
+															<textarea name="addFeedback" id="addFeedback" className={'py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + (feedBack ? 'min-h-[100px]' : 'h-[200px]')} placeholder="Enter feedback here ..." readOnly={feedBack ? true : false}></textarea>
 															<div className="px-4 bg-lightBlue">
-																<Button btnStyle="sm" label="Save" />
+																{
+																	feedBack
+																	?
+																	<>
+																	<div className="py-2 flex items-center justify-between text-sm">
+																		<h6 className="font-bold">By - Steve Paul :  Collaborator</h6>
+																		<p className="text-darkGray text-[12px]">13 Feb 2023, 3:00 PM</p>
+																	</div>
+																	</>
+																	:
+																	<>
+																	<Button btnStyle="sm" label={updateFeedBack ? 'Update' : 'Save'} />
+																	</>
+																}
 															</div>
 														</div>
 													</div>
+													)}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
 													<div className="relative before:content-[''] before:w-[1px] before:h-[100%] before:bg-slate-200 before:absolute before:top-0 before:left-[80px] max-h-[455px] overflow-y-auto">
