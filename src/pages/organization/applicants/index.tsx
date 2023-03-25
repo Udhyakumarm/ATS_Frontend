@@ -19,6 +19,7 @@ import FormField from "@/components/FormField";
 import { Menu } from "@headlessui/react";
 import TeamMembers from "@/components/TeamMembers";
 import moment from "moment";
+import Canban from "@/components/organization/applicant/Canban";
 
 export default function Home() {
 	const router = useRouter();
@@ -40,7 +41,7 @@ export default function Home() {
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
-	const [refersh, setrefersh] = useState(0);
+	const [refersh, setrefersh] = useState(1);
 	const [joblist, setjoblist] = useState(0);
 	const [selectedJob, setSelectedJob] = useState(jobd[0]);
 
@@ -69,10 +70,10 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		if ((token.length > 0 && applicantlist.length <= 0) || refersh != 0) {
+		if (token.length > 0 && refersh > 0) {
 			loadApplicant();
 		}
-	}, [token, applicantlist, refersh]);
+	}, [token, refersh]);
 
 	useEffect(() => {
 		console.log("applicantdetail", applicantdetail);
@@ -163,8 +164,8 @@ export default function Home() {
 									<i className="fa-solid fa-plus"></i>
 								</button>
 							</div>
-							<TeamMembers />
-							<div className="flex items-center">
+							<TeamMembers  alen={applicantlist.length} />
+							{/* <div className="flex items-center">
 								<div className="-mr-4">
 									<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
 								</div>
@@ -216,10 +217,12 @@ export default function Home() {
 										</Menu.Items>
 									</Transition>
 								</Menu>
-							</div>
+							</div> */}
 						</aside>
 					</div>
-					<div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
+					{refersh == 0 && <Canban applicantlist={applicantlist} />}
+					
+					{/* <div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
 						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
 							<h5 className="mb-4 text-lg font-semibold">Sourced</h5>
 							{applicantlist &&
@@ -499,98 +502,11 @@ export default function Home() {
 										)
 								)}
 						</div>
+					</div> */}
 
-						{/* <div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
-							<h5 className="mb-4 text-lg font-semibold">Shortlist</h5>
-							{Array(10).fill(
-								<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
-									<div className="mb-2 flex items-center justify-between">
-										<aside className="flex items-center">
-											<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-											<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
-										</aside>
-										<aside>
-											<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-										</aside>
-									</div>
-									<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
-									<div className="flex items-center justify-between">
-										<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
-											<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-											<p>25 Dec 2023</p>
-										</aside>
-										<Button btnStyle="outlined" label="View" />
-									</div>
-								</div>
-							)}
-						</div>
-						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Interview</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
-								<div className="mb-2 flex items-center justify-between">
-									<aside className="flex items-center">
-										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
-									</aside>
-									<aside>
-										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-									</aside>
-								</div>
-								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
-								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
-										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-										<p>25 Dec 2023</p>
-									</aside>
-									<Button btnStyle="outlined" label="View" />
-								</div>
-							</div>
-						</div>
-						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Hired</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
-								<div className="mb-2 flex items-center justify-between">
-									<aside className="flex items-center">
-										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
-									</aside>
-									<aside>
-										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-									</aside>
-								</div>
-								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
-								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
-										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-										<p>25 Dec 2023</p>
-									</aside>
-									<Button btnStyle="outlined" label="View" />
-								</div>
-							</div>
-						</div>
-						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
-							<h5 className="mb-4 text-lg font-semibold text-darkGray dark:text-white">Offered Letter</h5>
-							<div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal dark:bg-gray-700">
-								<div className="mb-2 flex items-center justify-between">
-									<aside className="flex items-center">
-										<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-										<h5 className="pl-4 text-sm font-semibold">Anne Jacob</h5>
-									</aside>
-									<aside>
-										<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-									</aside>
-								</div>
-								<p className="mb-1 text-[12px] text-darkGray dark:text-white">ID - 301045</p>
-								<div className="flex items-center justify-between">
-									<aside className="flex items-center text-[12px] text-darkGray dark:text-white">
-										<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-										<p>25 Dec 2023</p>
-									</aside>
-									<Button btnStyle="outlined" label="View" />
-								</div>
-							</div>
-						</div> */}
-					</div>
+
+
+
 					{/* {applicantlist &&
 						applicantlist.map((data, i) => (
 							<ul
