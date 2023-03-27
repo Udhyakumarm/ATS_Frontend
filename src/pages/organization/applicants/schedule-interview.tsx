@@ -1,13 +1,18 @@
+import Button from "@/components/Button";
+import FormField from "@/components/FormField";
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import TeamMembers from "@/components/TeamMembers";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import jobIcon from "/public/images/icons/jobs.png";
+import userImg from "/public/images/user-image.png"
 
 export default function ScheduleInterview() {
     const router = useRouter();
+    const [durationSet, setDurationSet] = useState(false);
     return (
         <>
             <Head>
@@ -21,7 +26,7 @@ export default function ScheduleInterview() {
                 <div className="layoutWrap p-4 lg:p-8">
                     <div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b py-4">
-							<div className="mx-auto w-full max-w-[1100px] px-4 flex flex-wrap items-center justify-between">
+							<div className="mx-auto w-full max-w-[1150px] px-4 flex flex-wrap items-center justify-between">
 								<div className="flex flex-wrap items-center justify-start py-2">
 									<button
 										onClick={() => router.back()}
@@ -36,23 +41,112 @@ export default function ScheduleInterview() {
                                 <TeamMembers />
 							</div>
 						</div>
-                        <div className="mx-auto w-full max-w-[980px] px-4 py-8">
-                            <aside className="flex items-center mb-4">
+                        <div className="mx-auto w-full max-w-[1150px] px-4 py-8">
+                            <aside className="flex items-center mb-10">
                                 <Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
                                 <h2 className="text-lg font-bold mr-10">
                                     <span>Software Developer</span>
                                 </h2>
-                                <p className="text-darkGray">
+                                <p className="text-darkGray dark:text-gray-400">
                                     ID-301478
                                 </p>
                             </aside>
-                            <div className="flex flex-wrap items-center">
-                                <label htmlFor="manualSchedule" className="font-bold flex items-center ">
-                                    <div className="bg-white">   
-                                        <input type="checkbox" id="manualSchedule" />
+                            <div className="flex flex-wrap items-center mb-10">
+                                <label htmlFor="manualSchedule" className="font-bold flex items-center cursor-pointer bg-gray-50 dark:bg-gray-600 pr-4 mr-6 rounded overflow-hidden text-sm shadow-normal">
+                                    <div className="bg-white dark:bg-gray-700 w-[25px] h-[25px] flex items-center justify-center border-r dark:border-gray-500 rounded-l p-5 mr-4">   
+                                        <input type="radio" id="manualSchedule" name="setSchedule" />
                                     </div>
                                     Schedule Manually
                                 </label>
+                                <label htmlFor="chooseSchedule" className="font-bold flex items-center cursor-pointer bg-gray-50 dark:bg-gray-600 pr-4 mr-6 rounded overflow-hidden text-sm shadow-normal">
+                                    <div className="bg-white dark:bg-gray-700 w-[25px] h-[25px] flex items-center justify-center border-r dark:border-gray-500 rounded-l p-5 mr-4">   
+                                        <input type="radio" id="chooseSchedule" name="setSchedule" />
+                                    </div>
+                                    Let the invite choose from my availability
+                                </label>
+                            </div>
+                            <div className="border rounded-normal flex flex-wrap">
+                                <div className="w-full lg:max-w-[40%] border-r p-4">
+                                    <div className="border rounded-normal p-3 mb-4">
+                                        <h2 className="font-bold mb-3">Applicant</h2>
+                                        <div className="border rounded flex flex-wrap items-center p-2">
+                                            <div className="w-[70px]">
+                                                <Image src={userImg} alt="User" width={300} height={300} className="rounded-full object-cover w-[60px] h-[60px] mx-auto shadow-normal" />
+                                            </div>
+                                            <div className="my-1 pl-2">
+                                                <h5 className="font-semibold mb-1">Anne Jcob</h5>
+                                                <p className="text-darkGray dark:text-gray-400 text-[12px]">Product Manager - ID 541245</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="border rounded-normal p-3">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <h2 className="font-bold">Interviewer</h2>
+                                            <div className="mt-[-10px]">
+                                                <Button btnStyle="sm" label="Add" />
+                                            </div>
+                                        </div>
+                                        {Array(2).fill(
+                                            <div className="border rounded flex flex-wrap items-center p-2 overflow-hidden relative pr-[40px] mb-2">
+                                                <div className="w-[70px]">
+                                                    <Image src={userImg} alt="User" width={300} height={300} className="rounded-full object-cover w-[60px] h-[60px] mx-auto shadow-normal" />
+                                                </div>
+                                                <div className="my-1 pl-2">
+                                                    <h5 className="font-semibold mb-1">Steve Adam</h5>
+                                                    <p className="text-darkGray dark:text-gray-400 text-[12px]">Interviewer</p>
+                                                </div>
+                                                <button type="button" className="bg-gray-200 text-darkGray hover:bg-red-500 hover:text-white h-full w-[30px] absolute right-0 top-0">
+                                                    <i className="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="w-full lg:max-w-[60%] p-4">
+                                    <FormField fieldType="input" inputType="text" label="Interview Name" />
+                                    <FormField fieldType="input" inputType="text" label="Platform" />
+                                    <FormField fieldType="reactquill" label="Description" />
+                                    <div className="flex flex-wrap mx-[-10px]">
+                                        <div className="w-full md:max-w-[50%] px-[10px] mb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Interview Duration
+                                            </label>
+                                            <div className="relative border rounded-normal overflow-hidden flex w-[280px]">
+                                                <label htmlFor="min15" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                    15 min
+                                                    <input type="radio" name="interDuration" id="min15" className="hidden" />
+                                                </label>
+                                                <label htmlFor="min30" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (!durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                    30 min
+                                                    <input type="radio" name="interDuration" id="min30" className="hidden" />
+                                                </label>
+                                                <label htmlFor="min45" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                    45 min
+                                                    <input type="radio" name="interDuration" id="min45" className="hidden" />
+                                                </label>
+                                                <label htmlFor="min60" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                    60 min
+                                                    <input type="radio" name="interDuration" id="min60" className="hidden" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="w-full md:max-w-[50%] px-[10px] mb-4">
+                                            <FormField fieldType="input" inputType="text" label="Custom Duration" />
+                                        </div>
+                                        <div className="w-full md:max-w-[50%] px-[10px] mb-4">
+                                            <FormField fieldType="input" inputType="date" label="Date" />
+                                        </div>
+                                        <div className="w-full md:max-w-[50%] px-[10px] mb-4">
+                                            <FormField fieldType="input" inputType="text" label="Duration" />
+                                        </div>
+                                        <div className="w-full md:max-w-[50%] px-[10px] mb-4">
+                                            <FormField fieldType="input" inputType="time" label="Start Time" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Button label="Send Invitation" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
