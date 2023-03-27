@@ -73,9 +73,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
+	if (!integrations) return res.status(200).json({ validatedIntegrations: [] });
+
 	const validatedIntegrations = await Promise.all(
 		integrations.map(async (integration) => await validateIntegration(integration, req.headers.cookie))
 	);
 
-	res.status(200).json({ validatedIntegrations });
+	return res.status(200).json({ validatedIntegrations });
 }
