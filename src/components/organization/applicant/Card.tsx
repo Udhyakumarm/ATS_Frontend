@@ -29,33 +29,33 @@ export default function Card(props: any) {
                 <aside className="flex items-center">
                     <Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
                     <h5 className="pl-4 text-sm font-semibold">
-                        {props["applicantlist"][0]["user"]["first_name"]} {props["applicantlist"][0]["user"]["last_name"]}
+                        {props["data"]["user"]["first_name"]} {props["data"]["user"]["last_name"]}
                     </h5>
                 </aside>
                 <aside>
                     <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
                 </aside>
             </div>
-            <p className="mb-1 text-[12px] text-darkGray">ID - {props["applicantlist"][0]["user"]["erefid"]}</p>
+            <p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["user"]["erefid"]}</p>
             <div className="flex items-center justify-between">
                 <aside className="flex items-center text-[12px] text-darkGray dark:text-white">
                     <i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-                    <p>{moment(props["applicantlist"]["timestamp"]).format("Do MMM YYYY")}</p>
+                    <p>{moment(props["data"]["timestamp"]).format("Do MMM YYYY")}</p>
                 </aside>
                 <Button
                     btnStyle="outlined"
                     label="View"
                     btnType="button"
                     handleClick={() => {
-                        setjobid(props["applicantlist"][0]["job"]["refid"]);
-                        setcanid(props["applicantlist"][0]["user"]["erefid"]);
+                        setjobid(props["data"]["job"]["refid"]);
+                        setcanid(props["data"]["user"]["erefid"]);
                         router.push("applicants/detail");
                     }}
                 />
             </div>
         </div> 
         :
-        <div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">No Applicant (You Can Drag Here)</div>
+        <div className="mb-4 rounded-normal py-2 px-4 shadow-normal flex h-[calc(100vh-305px)] justify-center items-center ">No Applicant (You Can Drag Here)</div>
         }
         </div>
     )
