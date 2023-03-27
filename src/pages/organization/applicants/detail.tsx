@@ -186,7 +186,7 @@ export default function Detail() {
 										</div>
 										{applicantdetail["Link"] && <div className="flex flex-wrap items-center justify-center text-2xl">
 										{applicantdetail["Link"].map((data: any, i: React.Key) => (
-											<Link href={`${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
+											<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
 												<i className="fa-brands fa-behance"></i>
 											</Link>
 										))}
