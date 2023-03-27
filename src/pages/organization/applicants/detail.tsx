@@ -11,12 +11,23 @@ import { useEffect, useState, Fragment } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
-import { Tab } from "@headlessui/react";
+import { Tab, Transition } from "@headlessui/react";
 import jobIcon from "/public/images/icons/jobs.png";
 import TeamMembers from "@/components/TeamMembers";
 import userImg from "/public/images/user-image.png";
 import moment from "moment";
 import CardLayout_1 from "@/components/CardLayout-1";
+import { Listbox } from '@headlessui/react'
+
+const people = [
+	{ id: 1, name: 'Shortlist', unavailable: false },
+	{ id: 2, name: 'Hire', unavailable: false },
+	{ id: 3, name: 'On Hold', unavailable: false },
+	{ id: 4, name: 'Offer Letter Prepration', unavailable: true },
+	{ id: 5, name: 'Offer Rolled Out', unavailable: false },
+	{ id: 6, name: 'Offer Accepted', unavailable: false },
+	{ id: 7, name: 'Offer Rejected', unavailable: false },
+  ]
 
 export default function Detail() {
 	const router = useRouter();
@@ -34,6 +45,12 @@ export default function Detail() {
 	const [token, settoken] = useState("");
 	const [refersh, setrefersh] = useState(1);
 	const [refersh1, setrefersh1] = useState(0);
+
+	const [selectedFeedBack, setSelectedFeedBack] = useState(false);
+	const [feedBack, setFeedBack] = useState(false);
+	const [updateFeedBack, setUpdateFeedBack] = useState(false);
+
+	const [selectedPerson, setSelectedPerson] = useState(people[0])
 
 	useEffect(() => {
 		if (session) {
@@ -107,6 +124,9 @@ export default function Detail() {
 	// useEffect(() => {
 	// 	console.log(applicantdetail)
 	// }, [applicantdetail]);
+
+	
+
 	return (
 		<>
 			<Head>
@@ -116,7 +136,7 @@ export default function Detail() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<div className="flex flex-wrap">
@@ -166,7 +186,7 @@ export default function Detail() {
 										</div>
 										{applicantdetail["Link"] && <div className="flex flex-wrap items-center justify-center text-2xl">
 										{applicantdetail["Link"].map((data: any, i: React.Key) => (
-											<Link href={`${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
+											<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
 												<i className="fa-brands fa-behance"></i>
 											</Link>
 										))}
@@ -248,14 +268,59 @@ export default function Detail() {
 							</div>
 							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
-									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow">
+									<div className="jusitfy-between flex flex-wrap items-center p-5 shadow relative z-10">
 										<aside className="flex items-center">
-											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3" />
-											<h2 className="text-xl font-bold">
+											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
+											<h2 className="text-lg font-bold">
 												<span>Software Developer</span>
 											</h2>
 										</aside>
-										<aside className="flex grow justify-end">
+										<aside className="flex grow items-center justify-end">
+											<div className="mr-4">
+												<Button btnType="button" btnStyle="iconLeftBtn" label="Schedule Interview" iconLeft={(<i className="fa-solid fa-calendar-plus"></i>)} handleClick={() => { router.push("/organization/applicants/schedule-interview")}} />
+											</div>
+											<div className="mr-4">
+												<Listbox value={selectedPerson} onChange={setSelectedPerson}>
+													<Listbox.Button className={"text-sm font-bold border border-slate-300 rounded"}>
+														<span className="py-2 px-3">Move Applicant</span>
+														<i className="fa-solid fa-chevron-down ml-2 text-sm border-l py-2 px-3"></i>
+													</Listbox.Button>
+													<Transition
+														enter="transition duration-100 ease-out"
+														enterFrom="transform scale-95 opacity-0"
+														enterTo="transform scale-100 opacity-100"
+														leave="transition duration-75 ease-out"
+														leaveFrom="transform scale-100 opacity-100"
+														leaveTo="transform scale-95 opacity-0"
+													>
+														<Listbox.Options
+															className={
+																"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+															}
+														>
+															{people.map((person) => (
+															<Listbox.Option
+																key={person.id}
+																value={person}
+																disabled={person.unavailable}
+																className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+															>
+																{({ selected }) => (
+																	<>
+																		<span className={` ${selected ? "font-bold" : "font-normal"}`}>{person.name}</span>
+																		{selected ? (
+																			<span className="absolute left-3">
+																				<i className="fa-solid fa-check"></i>
+																			</span>
+																		) : null}
+																	</>
+																)}
+															</Listbox.Option>
+															))}
+														</Listbox.Options>
+													</Transition>
+												</Listbox>
+											</div>
 											<TeamMembers />
 										</aside>
 									</div>
@@ -342,8 +407,126 @@ export default function Detail() {
 														)}
 													</div>
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 3</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>Content 4</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													{Array(2).fill(
+													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
+														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-white group-hover:text-green-500') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray dark:text-white group-hover:text-yellow-400') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-yellow-400') }>On Hold</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray dark:text-white group-hover:text-primary') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-primary') }>Shortlist</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray dark:text-white group-hover:text-red-500') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-red-500') }>Reject</p>
+															</div>
+														</div>
+														<div className="border dark:border-gray-500 rounded-normal overflow-hidden">
+															<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
+																{
+																	feedBack
+																	?
+																	<>
+																	<span className="flex items-center">
+																		Feedback
+																		<button type="button" className="ml-5 text-darkGray dark:text-gray-400">
+																			<i className="fa-solid fa-pen-to-square"></i>
+																		</button>
+																	</span>
+																	</>
+																	:
+																	<>
+																	Add Feedback <sup className="text-red-500">*</sup>
+																	</>
+																}
+															</label>
+															<textarea name="addFeedback" id="addFeedback" className={'align-middle dark:bg-gray-600 dark:text-white dark:placeholder py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + (feedBack ? 'min-h-[100px]' : 'h-[200px]')} placeholder="Enter feedback here ..." readOnly={feedBack ? true : false}></textarea>
+															<div className="px-4 bg-lightBlue dark:bg-gray-700">
+																{
+																	feedBack
+																	?
+																	<>
+																	<div className="py-2 flex items-center justify-between text-sm">
+																		<h6 className="font-bold">By - Steve Paul :  Collaborator</h6>
+																		<p className="text-darkGray dark:text-gray-400 text-[12px]">13 Feb 2023, 3:00 PM</p>
+																	</div>
+																	</>
+																	:
+																	<>
+																	<Button btnStyle="sm" label={updateFeedBack ? 'Update' : 'Save'} />
+																	</>
+																}
+															</div>
+														</div>
+													</div>
+													)}
+												</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													<div className="relative before:content-[''] before:w-[1px] before:h-[100%] before:bg-slate-200 before:absolute before:top-0 before:left-[80px] max-h-[455px] overflow-y-auto">
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+														<div className="flex items-start">
+															<div className="w-[80px] px-2 py-4">
+																<p className="text-sm text-darkGray">
+																	8 Feb
+																	<br />
+																	<small>2:30 PM</small>
+																</p>
+															</div>
+															<div className="w-[calc(100%-80px)] pl-6">
+																<div className="border-b">
+																	<article className="py-4">
+																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
+																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																	</article>
+																</div>
+															</div>
+														</div>
+													</div>
+												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</div>

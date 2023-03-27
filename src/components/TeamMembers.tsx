@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Fragment } from "react";
 import userImg from "/public/images/user-image.png";
 
-export default function TeamMembers() {
+export default function TeamMembers(props) {
     return (
         <>
             <div className="flex items-center">
@@ -17,7 +17,7 @@ export default function TeamMembers() {
                     <Menu.Button className={"relative"}>
                         <Image src={userImg} alt="User" width={35} className="h-[35px] rounded-full object-cover" />
                         <span className="absolute left-0 top-0 block flex h-full w-full items-center justify-center rounded-full bg-[rgba(0,0,0,0.5)] text-sm text-white">
-                            +5
+                            +{props.alen ? props.alen : 0}
                         </span>
                     </Menu.Button>
                     <Transition

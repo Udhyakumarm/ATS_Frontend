@@ -1,4 +1,4 @@
-export default function HeaderBar({ icon, title, handleBack }: any) {
+export default function HeaderBar({ title, handleBack }: any) {
 	return (
 		<div className="bg-lightBlue dark:bg-gray-600 py-1 px-8">
 			<div className="mx-auto w-full max-w-[1100px]">

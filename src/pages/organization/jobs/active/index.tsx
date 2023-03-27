@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils";
 import { useSession } from "next-auth/react";
 import HeaderBar from "@/components/HeaderBar";
-import JobCard from "@/components/JobCard";
+import JobCard_2 from "@/components/JobCard-2";
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
+import Image from "next/image";
+import bulbIcon from "/public/images/icons/bulb.png";
 
 export default function Home() {
 	const router = useRouter();
@@ -40,24 +42,45 @@ export default function Home() {
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-					<HeaderBar title="Active Jobs" icon={null} handleBack={() => router.back()} />
-					<div className="bg-white p-10 dark:bg-gray-800 ">
-						<div className="grid grid-cols-2 gap-x-8 gap-y-8">
-							{active &&
-								active.map(
-									(job: any, i) =>
-										job && (
-											<JobCard
-												key={i}
-												job={job}
-												handleView={() => {
-													router.push("/organization/jobs/active/" + job.refid);
-												}}
-											/>
-										)
-								)}
+					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
+						<div className="border-b py-4">
+							<div className="mx-auto w-full max-w-[1100px] px-4">
+								<div className="flex flex-wrap items-center justify-start py-2">
+									<button
+										onClick={() => router.back()}
+										className="mr-10 justify-self-start text-darkGray dark:text-white"
+									>
+										<i className="fa-solid fa-arrow-left text-2xl"></i>
+									</button>
+									<h2 className="text-xl font-bold flex items-center">
+										<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+											<Image src={bulbIcon} alt='Active Job' height={20} />
+										</div>
+										<span>Active Jobs</span>
+									</h2>
+								</div>
+							</div>
+						</div>
+						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
+							<div className="mx-[-15px] flex flex-wrap">
+								<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+								{active &&
+									active.map(
+										(job: any, i) => job && (
+												<JobCard_2
+													key={i}
+													job={job}
+													handleView={() => {
+														router.push("/organization/jobs/active/" + job.refid);
+													}}
+												/>
+											)
+									)
+								}	
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

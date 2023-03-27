@@ -205,18 +205,32 @@ input[type=number] {
 .multiSelectContainer .searchWrapper input#search_input:focus {
   box-shadow: none;
 }
+.dark .multiSelectContainer .searchWrapper, 
+.dark .optionListContainer {
+  background-color: #374151;
+}
+.dark .multiSelectContainer .searchWrapper img.icon_cancel.icon_down_dir {
+  filter: invert(1);
+}
+.dark .ql-toolbar.ql-snow {
+  background-color: #fff;
+}
+.dark .ql-editor {
+  background: #374151;
+}
 .ql-editor {
   min-height: 180px;
 }
 .ql-toolbar.ql-snow {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-  border-color: #e5e7eb;
+  border-color: #e5e7eb !important;
 }
 .ql-container.ql-snow {
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  border-color: #e5e7eb;
+  border-color: #e5e7eb !important;
+  overflow: hidden;
 }
 
 @media (max-width: 1023px) {
