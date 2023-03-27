@@ -3,16 +3,33 @@ import FormField from "@/components/FormField";
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import TeamMembers from "@/components/TeamMembers";
+import { Dialog, Transition } from "@headlessui/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import jobIcon from "/public/images/icons/jobs.png";
 import userImg from "/public/images/user-image.png"
 
 export default function ScheduleInterview() {
     const router = useRouter();
     const [durationSet, setDurationSet] = useState(false);
+    const cancelButtonRef = useRef(null);
+    const [socialPopup, setSocialPopup] = useState(false);
+    const TeamTableHead = [
+		{
+			title: "User Name"
+		},
+		{
+			title: "Department/Title"
+		},
+		{
+			title: "Email"
+		},
+		{
+			title: " "
+		}
+	];
     return (
         <>
             <Head>
@@ -83,7 +100,7 @@ export default function ScheduleInterview() {
                                         <div className="flex items-start justify-between mb-2">
                                             <h2 className="font-bold">Interviewer</h2>
                                             <div className="mt-[-10px]">
-                                                <Button btnStyle="sm" label="Add" />
+                                                <Button btnStyle="sm" btnType="button" label="Add" handleClick={() => setSocialPopup(true)} />
                                             </div>
                                         </div>
                                         {Array(2).fill(
@@ -112,19 +129,19 @@ export default function ScheduleInterview() {
                                                 Interview Duration
                                             </label>
                                             <div className="relative border rounded-normal overflow-hidden flex w-[280px]">
-                                                <label htmlFor="min15" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                <label htmlFor="min15" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white dark:text-white' : '')}>
                                                     15 min
                                                     <input type="radio" name="interDuration" id="min15" className="hidden" />
                                                 </label>
-                                                <label htmlFor="min30" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (!durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                <label htmlFor="min30" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (!durationSet ? 'bg-gradDarkBlue text-white dark:text-white' : '')}>
                                                     30 min
                                                     <input type="radio" name="interDuration" id="min30" className="hidden" />
                                                 </label>
-                                                <label htmlFor="min45" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                <label htmlFor="min45" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white dark:text-white' : '')}>
                                                     45 min
                                                     <input type="radio" name="interDuration" id="min45" className="hidden" />
                                                 </label>
-                                                <label htmlFor="min60" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white' : '')}>
+                                                <label htmlFor="min60" className={'border-r last:border-r-0 text-sm text-darkGray dark:text-gray-400 py-3 px-3 cursor-pointer' + ' ' + (durationSet ? 'bg-gradDarkBlue text-white dark:text-white' : '')}>
                                                     60 min
                                                     <input type="radio" name="interDuration" id="min60" className="hidden" />
                                                 </label>
@@ -152,6 +169,88 @@ export default function ScheduleInterview() {
                     </div>
                 </div>
             </main>
+            <Transition.Root show={socialPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setSocialPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-4xl">
+                            <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                <h4 className="leading-none font-semibold">
+                                    Add interviewers to this interview
+                                </h4>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setSocialPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-8">
+                                <FormField
+                                    fieldType="input"
+                                    inputType="search"
+                                    placeholder="Search"
+                                    icon={<i className="fa-solid fa-magnifying-glass"></i>}
+                                />
+                                <div className="overflow-x-auto">
+                                    <table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+                                        <thead>
+                                            <tr>
+                                                {TeamTableHead.map((item, i) => (
+                                                    <th className="border-b py-2 px-3 text-left" key={i}>
+                                                        {item.title}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Array(6).fill(
+                                                <tr>
+                                                    <td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
+                                                    <td className="border-b py-2 px-3 text-sm">Recruiter</td>
+                                                    <td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
+                                                    <td className="border-b py-2 px-3 text-right">
+                                                        <input type="checkbox" />
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
         </>
     )
 }
