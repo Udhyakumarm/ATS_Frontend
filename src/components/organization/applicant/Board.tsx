@@ -15,16 +15,33 @@ export function Board({cards, columns, moveCard, applicantlist}: any) {
           {column.cardIds
             .map(cardId => cards.find(card => card.id === cardId))
             .map((card, index) => (
-              <DraggableCard
-                applicantlist={applicantlist}
-                key={card.id}
-                id={card.id}
-                columnId={column.id}
-                columnIndex={index}
-                title={card.title}
-                moveCard={moveCard}
-                space={0}
-              />
+
+              applicantlist.map((data,i)=>(
+                data["arefid"]==card.arefid &&
+                  <DraggableCard
+                    applicantlist={applicantlist}
+                    data={data}
+                    key={card.id}
+                    id={card.id}
+                    columnId={column.id}
+                    columnIndex={index}
+                    title={card.title}
+                    moveCard={moveCard}
+                    space={0}
+                  />
+                
+              ))
+
+            //   <DraggableCard
+            //     applicantlist={applicantlist}
+            //     key={card.id}
+            //     id={card.id}
+            //     columnId={column.id}
+            //     columnIndex={index}
+            //     title={card.title}
+            //     moveCard={moveCard}
+            //     space={0}
+            //   />
             ))}
           {column.cardIds.length === 0 && (
             <DraggableCard

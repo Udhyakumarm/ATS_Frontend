@@ -4,6 +4,8 @@ import React from 'react';
 import { Board } from "./Board";
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 function Canban(props: any) {
     const router = useRouter()
@@ -52,22 +54,25 @@ function Canban(props: any) {
       
     },[cards,columns])
 
+    const axiosInstanceAuth2 = axiosInstanceAuth(props.token);
+    async function chnageStatus(status: string | Blob, arefid: any) {
+      const fdata = new FormData();
+      fdata.append("status", status);
+      await axiosInstanceAuth2
+        .put(`/job/applicant/${arefid}/update/`, fdata)
+        .then((res) => {
+          toastcomp("Status Changed", "success")
+          // setrefersh1(1);
+        })
+        .catch((err) => {
+          console.log(err);
+          toastcomp("Status Not Change", "error")
+          // setrefersh1(1);
+        });
+    }
+
     const moveCard = (cardId, destColumnId, index) => {
-      // this.setState(state => ({
-      //   columns: state.columns.map(column => ({
-      //     ...column,
-      //     cardIds: _.flowRight(
-      //       // 2) If this is the destination column, insert the cardId.
-      //       ids =>
-      //         column.id === destColumnId
-      //           ? [...ids.slice(0, index), cardId, ...ids.slice(index)]
-      //           : ids,
-      //       // 1) Remove the cardId for all columns
-      //       ids => ids.filter(id => id !== cardId)
-      //     )(column.cardIds),
-      //   })),
-      // }));
-      console.log("*",cardId,destColumnId)
+      
       setcolumns(prevColumns => {
         const newColumns = prevColumns.map(column => ({
           ...column,
@@ -83,6 +88,28 @@ function Canban(props: any) {
         }));
         return newColumns;
       });
+
+      for(let i=0;i<columns.length;i++){
+        if(columns[i]["cardIds"].includes(cardId)){
+          if(columns[i]["id"] !== destColumnId){
+            for(let k=0;k<columns.length;k++){
+              if(columns[k]["id"] === destColumnId){
+              
+                for(let j=0;j<cards.length;j++){
+                  if(cards[j]["id"] === cardId){
+                    console.log("*","arefid",cards[j]["arefid"])
+                    chnageStatus(columns[k]["title"],cards[j]["arefid"])
+                  }
+                }
+              }
+            }
+            console.log("*","column change")
+          }
+          else{
+            console.log("*","column not change")
+          }
+        }
+      }
     };
 
     return (

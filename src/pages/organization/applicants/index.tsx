@@ -220,7 +220,7 @@ export default function Home() {
 							</div> */}
 						</aside>
 					</div>
-					{refersh == 0 && <Canban applicantlist={applicantlist} />}
+					{refersh == 0 && <Canban applicantlist={applicantlist} token={token} />}
 					
 					{/* <div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
 						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">

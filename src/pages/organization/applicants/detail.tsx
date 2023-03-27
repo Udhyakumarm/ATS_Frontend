@@ -18,15 +18,16 @@ import userImg from "/public/images/user-image.png";
 import moment from "moment";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Listbox } from '@headlessui/react'
+import toastcomp from "@/components/toast";
 
 const people = [
-	{ id: 1, name: 'Shortlist', unavailable: false },
-	{ id: 2, name: 'Hire', unavailable: false },
-	{ id: 3, name: 'On Hold', unavailable: false },
-	{ id: 4, name: 'Offer Letter Prepration', unavailable: true },
-	{ id: 5, name: 'Offer Rolled Out', unavailable: false },
-	{ id: 6, name: 'Offer Accepted', unavailable: false },
-	{ id: 7, name: 'Offer Rejected', unavailable: false },
+	{ id: 1, name: 'Sourced', unavailable: false },
+	{ id: 2, name: 'Applied', unavailable: false },
+	{ id: 3, name: 'Phone Screen', unavailable: false },
+	{ id: 4, name: 'Assement', unavailable: false },
+	{ id: 5, name: 'Interview', unavailable: false },
+	{ id: 6, name: 'Offered Letter', unavailable: false },
+	{ id: 7, name: 'Hired', unavailable: false },
   ]
 
 export default function Detail() {
@@ -45,12 +46,16 @@ export default function Detail() {
 	const [token, settoken] = useState("");
 	const [refersh, setrefersh] = useState(1);
 	const [refersh1, setrefersh1] = useState(0);
+	const [refersh2, setrefersh2] = useState(0);
+	const [jtitle, setjtitle] = useState("");
+	const [aid, setaid] = useState("");
+
 
 	const [selectedFeedBack, setSelectedFeedBack] = useState(false);
-	const [feedBack, setFeedBack] = useState(false);
+	const [feedBack, setFeedBack] = useState(true);
 	const [updateFeedBack, setUpdateFeedBack] = useState(false);
 
-	const [selectedPerson, setSelectedPerson] = useState(people[0])
+	const [selectedPerson, setSelectedPerson] = useState({})
 
 	useEffect(() => {
 		if (session) {
@@ -114,16 +119,40 @@ export default function Detail() {
 			.put(`/job/applicant/${arefid}/update/`, fdata)
 			.then((res) => {
 				setrefersh1(1);
+				toastcomp("Status Changed", "success")
 			})
 			.catch((err) => {
 				console.log(err);
+				toastcomp("Status Not Change", "error")
 				setrefersh1(1);
 			});
 	}
 
-	// useEffect(() => {
-	// 	console.log(applicantdetail)
-	// }, [applicantdetail]);
+	useEffect(() => {
+		if(applicantdetail && applicantlist && refersh2 <= 0){
+			for(let i=0;i<applicantlist.length;i++){
+				if(applicantlist[i]["user"]["erefid"] === applicantdetail["CandidateProfile"][0]["user"]["erefid"]){
+					console.log("*",applicantlist[i])
+					setjtitle(applicantlist[i]["job"]["job_title"])
+					for(let j=0;j<people.length;j++){
+						if(people[j]["name"] === applicantlist[i]["status"]){
+							setSelectedPerson(people[j])
+							setaid(applicantlist[i]["arefid"])
+							setrefersh2(1)
+						}
+					}
+				}
+			}
+		}
+		console.log(applicantdetail)
+	}, [applicantdetail,applicantlist,refersh2]);
+
+	useEffect(()=>{
+		if(refersh2 != 0 && aid.length > 0){
+			console.log("&","status change")
+			chnageStatus(selectedPerson["name"],aid)
+		}
+	},[selectedPerson])
 
 	
 
@@ -272,7 +301,7 @@ export default function Detail() {
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
-												<span>Software Developer</span>
+												<span>{jtitle}</span>
 											</h2>
 										</aside>
 										<aside className="flex grow items-center justify-end">
@@ -412,8 +441,8 @@ export default function Detail() {
 													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
 														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-white group-hover:text-green-500') }></i>
-																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (!selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-white group-hover:text-green-500') }></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (!selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
 																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray dark:text-white group-hover:text-yellow-400') }></i>
