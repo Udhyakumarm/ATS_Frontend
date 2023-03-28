@@ -10,7 +10,7 @@ import OrgTopBar from "@/components/organization/TopBar";
 import draftedIcon from "/public/images/icons/drafted.png";
 import Image from "next/image";
 
-export default function Home() {
+export default function JobsDrafted() {
 	const router = useRouter();
 
 	const { data: session } = useSession();
@@ -50,7 +50,7 @@ export default function Home() {
 								<div className="flex flex-wrap items-center justify-start py-2">
 									<button
 										onClick={() => router.back()}
-										className="mr-10 justify-self-start text-darkGray dark:text-white"
+										className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
 									>
 										<i className="fa-solid fa-arrow-left text-2xl"></i>
 									</button>

@@ -48,7 +48,7 @@ export default function TeamMembers(props) {
                                                 />
                                                 <aside className="pl-4 text-sm">
                                                     <h5 className="font-bold">Anne Jacob</h5>
-                                                    <p className="text-darkGray dark:text-white">Hiring Manager</p>
+                                                    <p className="text-darkGray dark:text-gray-400">Hiring Manager</p>
                                                 </aside>
                                             </div>
                                         )}

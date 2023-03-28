@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import Head from "next/head";
 import Link from "next/link";
 
-export default function CreatePassword() {
+export default function AuthCreatePassword() {
 	return (
 		<>
 			<Head>

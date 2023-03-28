@@ -9,7 +9,7 @@ import { useState, Fragment, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import toastcomp from "@/components/toast";
 
-export default function ApplyJob() {
+export default function CanCareerApplyJob() {
     const { data: session } = useSession();
     const cancelButtonRef = useRef(null)
     const [socialPopup, setSocialPopup] = useState(false)

@@ -52,7 +52,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Interviews',
-            url: '#',
+            url: '/organization/interviews',
             img: interviewsIcon,
             imgWhite: interviewsIconWhite
         },
@@ -70,7 +70,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Settings',
-            url: '#',
+            url: '/organization/settings',
             img: settingsIcon,
             imgWhite: settingsIconWhite
         }

@@ -9,7 +9,7 @@ import vendorsIcon from "/public/images/icons/vendors.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
 import collectionIcon from "/public/images/icons/collection.png";
 
-export default function Home() {
+export default function Organization() {
 	const quicklinks = [
 		{
 			name: "Dashboard",

@@ -24,7 +24,7 @@ export default function Card(props: any) {
         })}
         >
         {props.space === 0 ?
-        <div className="mb-4 rounded-normal bg-white py-2 px-4 shadow-normal">
+        <div className="mb-4 rounded-normal bg-white dark:bg-gray-800 py-2 px-4 shadow-normal">
             <div className="mb-2 flex items-center justify-between">
                 <aside className="flex items-center">
                     <Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
@@ -38,7 +38,7 @@ export default function Card(props: any) {
             </div>
             <p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["user"]["erefid"]}</p>
             <div className="flex items-center justify-between">
-                <aside className="flex items-center text-[12px] text-darkGray dark:text-white">
+                <aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
                     <i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
                     <p>{moment(props["data"]["timestamp"]).format("Do MMM YYYY")}</p>
                 </aside>
@@ -55,7 +55,9 @@ export default function Card(props: any) {
             </div>
         </div> 
         :
-        <div className="mb-4 rounded-normal py-2 px-4 shadow-normal flex h-[calc(100vh-305px)] justify-center items-center ">No Applicant (You Can Drag Here)</div>
+        <div className="mb-4 rounded-normal bg-white dark:bg-gray-800 py-2 px-4 shadow-normal text-center">
+          No Applicant <br /> <small><i>You Can Drag Here</i></small>
+        </div>
         }
         </div>
     )

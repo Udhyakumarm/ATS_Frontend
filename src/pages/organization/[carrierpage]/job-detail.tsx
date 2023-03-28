@@ -6,7 +6,7 @@ import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { useEffect } from "react";
 
-export default function SearchJobsDetail() {
+export default function CanCareerJobDetail() {
     const { data: session } = useSession();
     const cname = useCarrierStore((state) => state.cname)
     const cid = useCarrierStore((state) => state.cid)
@@ -72,7 +72,7 @@ export default function SearchJobsDetail() {
                             </div>
                             <div className="py-4 px-8">
                                 <h3 className="mb-4 font-bold text-lg">{jdata['job_title']} ({jdata['worktype']})</h3>
-                                <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-gray-400 font-semibold">
                                     {jdata['employment_type'] && <li className="mr-4">
                                         {jdata['employment_type']}
                                     </li> }
@@ -94,7 +94,7 @@ export default function SearchJobsDetail() {
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Department Information</h3>
-                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-gray-400 font-semibold">
                                         {jdata['department'] && <li className="mr-4">
                                             {jdata['department']} department
                                         </li>}
@@ -112,28 +112,28 @@ export default function SearchJobsDetail() {
                                 <hr className="my-4" />
                                 {jdata['description'] && <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Description</h3>
-                                    <article className="text-[12px] text-darkGray dark:text-white">
+                                    <article className="text-[12px] text-darkGray dark:text-gray-400">
                                     {jdata['description']}
                                     </article>
                                 </aside>}
                                 <hr className="my-4" />
                                 {jdata['responsibility'] && <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Your Responsibilities</h3>
-                                    <article className="text-[12px] text-darkGray dark:text-white">
+                                    <article className="text-[12px] text-darkGray dark:text-gray-400">
                                     {jdata['responsibility']}
                                     </article>
                                 </aside>}
                                 <hr className="my-4" />
                                 {jdata['looking_for'] && <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">What are we Looking For</h3>
-                                    <article className="text-[12px] text-darkGray dark:text-white">
+                                    <article className="text-[12px] text-darkGray dark:text-gray-400">
                                     {jdata['looking_for']}
                                     </article>
                                 </aside>}
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Skills</h3>
-                                    {jdata['jobSkill'] && <article className="text-[12px] text-darkGray dark:text-white">
+                                    {jdata['jobSkill'] && <article className="text-[12px] text-darkGray dark:text-gray-400">
                                         {
                                             jdata['jobSkill'].split(',').map((item,i) => <p key={i}>{item}</p>)
                                         }
@@ -142,7 +142,7 @@ export default function SearchJobsDetail() {
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Employment Details</h3>
-                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-gray-400 font-semibold">
                                         {jdata['employment_type'] && <li className="mr-4">
                                             {jdata['employment_type']}
                                         </li>}
@@ -160,7 +160,7 @@ export default function SearchJobsDetail() {
                                 <hr className="my-4" />
                                 <aside className="mb-4">
                                     <h3 className="mb-2 font-bold text-lg">Benefits</h3>
-                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                    <ul className="mb-3 list-disc list-inside flex flex-wrap items-center text-[12px] text-darkGray dark:text-gray-400 font-semibold">
                                         {jdata['relocation'] == "Yes" && <li className="mr-4">
                                             Paid Relocation
                                         </li>}
@@ -180,7 +180,7 @@ export default function SearchJobsDetail() {
                                 <div className="w-full md:max-w-[50%] px-[7px] mb-[15px]">
                                     <div className="h-full bg-white dark:bg-gray-800 rounded-[10px] shadow-normal p-5">
                                         <h4 className="font-bold text-lg mb-3">Software Engineer</h4>
-                                        <ul className="mb-3 flex flex-wrap items-center text-[12px] text-darkGray dark:text-white font-semibold">
+                                        <ul className="mb-3 flex flex-wrap items-center text-[12px] text-darkGray dark:text-gray-400 font-semibold">
                                             <li className="mr-8">
                                                 <i className="fa-solid fa-location-dot mr-2"></i>
                                                 Remote
@@ -198,7 +198,7 @@ export default function SearchJobsDetail() {
                                             <div className="mr-4">
                                                 <Button btnStyle="sm" label="View" loader={false} />
                                             </div>
-                                            <p className="font-bold text-darkGray dark:text-white text-[12px]">29 min ago</p>
+                                            <p className="font-bold text-darkGray dark:text-gray-400 text-[12px]">29 min ago</p>
                                         </div>
                                     </div>
                                 </div>

@@ -33,7 +33,7 @@ const AuthError = ({ error }: { error: any }) => {
 	return <div className="pb-4 text-red-600">{errorMessage}</div>;
 };
 
-export default function SignIn({ providers }: any) {
+export default function AuthSignIn({ providers }: any) {
 	const router = useRouter();
 	const updateLoginInfo = (
 		prevState: { email: string; password: string },
@@ -156,4 +156,4 @@ export async function getServerSideProps(context: any) {
 	};
 }
 
-SignIn.noAuth = true;
+AuthSignIn.noAuth = true;
