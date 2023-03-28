@@ -6,7 +6,7 @@ import { getProviders } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export default function SearchJobs() {
+export default function CanCareerSearchJobs() {
 	const router = useRouter();
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);

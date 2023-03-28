@@ -57,7 +57,7 @@ const people = [
 	{ id: 5, name: "Katelyn Rohan", unavailable: false }
 ];
 
-export default function Home() {
+export default function JobsCreate() {
 	const router = useRouter();
 
 	const { data: session } = useSession();

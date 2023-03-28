@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 
-export default function careerDashboard() {
+export default function CanCareerDashboard() {
     return (
         <>
             <main className="py-8">

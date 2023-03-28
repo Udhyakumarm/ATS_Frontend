@@ -6,7 +6,7 @@ import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { useEffect } from "react";
 
-export default function SearchJobsDetail() {
+export default function CanCareerJobDetail() {
     const { data: session } = useSession();
     const cname = useCarrierStore((state) => state.cname)
     const cid = useCarrierStore((state) => state.cid)

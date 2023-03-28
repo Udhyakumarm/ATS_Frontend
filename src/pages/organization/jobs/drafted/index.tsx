@@ -10,7 +10,7 @@ import OrgTopBar from "@/components/organization/TopBar";
 import draftedIcon from "/public/images/icons/drafted.png";
 import Image from "next/image";
 
-export default function Home() {
+export default function JobsDrafted() {
 	const router = useRouter();
 
 	const { data: session } = useSession();

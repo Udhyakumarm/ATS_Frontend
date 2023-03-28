@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 
-export default function Home() {
+export default function JobsDashboard() {
 	const router = useRouter();
 
 	const { data: session } = useSession();

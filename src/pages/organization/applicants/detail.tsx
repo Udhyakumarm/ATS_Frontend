@@ -30,7 +30,7 @@ const people = [
 	{ id: 7, name: 'Hired', unavailable: false },
   ]
 
-export default function Detail() {
+export default function ApplicantsDetail() {
 	const router = useRouter();
 
 	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);

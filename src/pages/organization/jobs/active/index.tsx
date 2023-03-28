@@ -10,7 +10,7 @@ import OrgTopBar from "@/components/organization/TopBar";
 import Image from "next/image";
 import bulbIcon from "/public/images/icons/bulb.png";
 
-export default function Home() {
+export default function JobsActive() {
 	const router = useRouter();
 
 	const { data: session } = useSession();

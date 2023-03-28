@@ -70,7 +70,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Settings',
-            url: '#',
+            url: '/organization/settings',
             img: settingsIcon,
             imgWhite: settingsIconWhite
         }

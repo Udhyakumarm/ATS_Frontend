@@ -21,7 +21,7 @@ import { getProviders, useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
 import JobCard_1 from "@/components/JobCard-1";
 
-export default function Dashboard() {
+export default function OrganizationDashboard() {
 	const settings = {
 		dots: false,
 		arrows: true,

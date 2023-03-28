@@ -21,7 +21,7 @@ import TeamMembers from "@/components/TeamMembers";
 import moment from "moment";
 import Canban from "@/components/organization/applicant/Canban";
 
-export default function Home() {
+export default function Applicants() {
 	const router = useRouter();
 
 	const cancelButtonRef = useRef(null);

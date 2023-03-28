@@ -11,7 +11,7 @@ import { useCarrierStore } from "@/utils/code";
 import { axiosInstance } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 
-export default function SignIn({ providers }: any) {
+export default function CanCareerSignIn({ providers }: any) {
 	const router = useRouter();
 	const updateLoginInfo = (
 		prevState: { email: string; password: string },

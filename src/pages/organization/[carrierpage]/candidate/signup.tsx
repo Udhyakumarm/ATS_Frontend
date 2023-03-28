@@ -21,7 +21,7 @@ const signUpInfoRules: Rules = {
 	org_id: "required"
 };
 
-export default function SignUp() {
+export default function CanCareerSignUp() {
 	const router = useRouter();
 
 	const [formError, setFormError] = useState({

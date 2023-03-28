@@ -37,7 +37,7 @@ const AuthError = ({ error }: { error: any }) => {
 	return <div className="pb-4 text-red-600">{errorMessage}</div>;
 };
 
-export default function SignUp() {
+export default function AuthSignUp() {
 	const router = useRouter();
 	const { error } = useRouter().query;
 
