@@ -345,7 +345,7 @@ export default function Home() {
 								<div className="flex flex-wrap items-center justify-between p-6">
 									<div className="flex flex-wrap items-center justify-start py-2">
 										<button
-											className="mr-5 justify-self-start text-darkGray dark:text-white"
+											className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
 											onClick={() => router.back()}
 										>
 											<i className="fa-solid fa-arrow-left text-2xl"></i>

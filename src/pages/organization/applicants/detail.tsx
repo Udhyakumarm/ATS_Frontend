@@ -171,7 +171,7 @@ export default function Detail() {
 						<div className="flex flex-wrap">
 							<div className="w-full lg:max-w-[400px]">
 								<div className="mb-4 flex items-center rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
-									<button className="mr-5 justify-self-start text-darkGray dark:text-white" onClick={()=>{router.back()}}>
+									<button className="mr-5 justify-self-start text-darkGray dark:text-gray-400" onClick={()=>{router.back()}}>
 										<i className="fa-solid fa-arrow-left text-2xl"></i>
 									</button>
 									<h2 className="text-xl font-bold">
@@ -441,19 +441,19 @@ export default function Detail() {
 													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
 														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (!selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-white group-hover:text-green-500') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (!selectedFeedBack ? 'text-green-500' : 'text-darkGray dark:text-gray-400 group-hover:text-green-500') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (!selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-green-500') }>Hire</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray dark:text-white group-hover:text-yellow-400') }></i>
+																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + (selectedFeedBack ? 'text-yellow-400' : 'text-darkGray dark:text-gray-400 group-hover:text-yellow-400') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-yellow-400') }>On Hold</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray dark:text-white group-hover:text-primary') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-primary' : 'text-darkGray dark:text-gray-400 group-hover:text-primary') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-primary') }>Shortlist</p>
 															</div>
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray dark:text-white group-hover:text-red-500') }></i>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + (selectedFeedBack ? 'text-red-500' : 'text-darkGray dark:text-gray-400 group-hover:text-red-500') }></i>
 																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + (selectedFeedBack ? 'block bg-gradDarkBlue text-white' : 'hidden group-hover:block group-hover:text-red-500') }>Reject</p>
 															</div>
 														</div>

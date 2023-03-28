@@ -63,7 +63,7 @@ export default function SearchJobs() {
 									<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
 										<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
 											<h4 className="mb-3 text-lg font-bold">{data["job_title"]}</h4>
-											<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-white">
+											<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
 												<li className="mr-8">
 													<i className="fa-solid fa-location-dot mr-2"></i>
 													{data["worktype"] ? data["worktype"] : <>N/A</>}
@@ -91,7 +91,7 @@ export default function SearchJobs() {
 														}}
 													/>
 												</div>
-												<p className="text-[12px] font-bold text-darkGray dark:text-white">
+												<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
 													{moment(data["publish_date"]).fromNow()}
 												</p>
 											</div>

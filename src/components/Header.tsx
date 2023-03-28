@@ -90,7 +90,7 @@ export default function Header() {
 								<>
 									<Popover className="relative mr-6">
 										<Popover.Button>
-											<button type="button" className="relative uppercase text-darkGray dark:text-white">
+											<button type="button" className="relative uppercase text-darkGray dark:text-gray-400">
 												<i className="fa-regular fa-bell text-[20px]"></i>
 												<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
 													99+
@@ -99,7 +99,7 @@ export default function Header() {
 										</Popover.Button>
 										<Popover.Panel className="absolute right-0 z-10 w-[280px] rounded bg-white p-4 shadow-normal dark:bg-gray-700">
 											<h4 className="mb-3 text-lg font-bold">Notifications</h4>
-											<ul className="max-h-[300px] list-disc overflow-y-auto px-4 text-sm font-semibold text-darkGray dark:text-white">
+											<ul className="max-h-[300px] list-disc overflow-y-auto px-4 text-sm font-semibold text-darkGray dark:text-gray-400">
 												<li className="py-2">You have applied For Job</li>
 												<li className="py-2">Your Profile has been Shortlisted for this Job</li>
 												<li className="py-2">Your Profile has been Rejected for this Job</li>

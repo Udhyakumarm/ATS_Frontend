@@ -15,13 +15,13 @@ export default function JobCard_1() {
                         <p className="text-[12px]">Figma</p>
                     </aside>
                 </div>
-                <ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-white">
+                <ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
                     <li className="mr-3">Full Time</li>
                     <li className="mr-3">Remote</li>
                     <li className="mr-3">Junior</li>
                 </ul>
                 <div className="flex flex-wrap items-center justify-between">
-                    <p className="mr-4 text-[12px] font-bold text-darkGray dark:text-white">$80k-110k/year</p>
+                    <p className="mr-4 text-[12px] font-bold text-darkGray dark:text-gray-400">$80k-110k/year</p>
                     <Button btnStyle="outlined" label="View" loader={false} />
                 </div>
             </div>

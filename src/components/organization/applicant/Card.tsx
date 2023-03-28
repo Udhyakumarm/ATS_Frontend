@@ -38,7 +38,7 @@ export default function Card(props: any) {
             </div>
             <p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["user"]["erefid"]}</p>
             <div className="flex items-center justify-between">
-                <aside className="flex items-center text-[12px] text-darkGray dark:text-white">
+                <aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
                     <i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
                     <p>{moment(props["data"]["timestamp"]).format("Do MMM YYYY")}</p>
                 </aside>

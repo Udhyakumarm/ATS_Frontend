@@ -32,7 +32,7 @@ export default function JobCard_2({ job, handleView }: any) {
 						leaveFrom="transform opacity-100 scale-100"
 						leaveTo="transform opacity-0 scale-95"
 						>
-							<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-white w-[200px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700'}>
+							<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700'}>
 								<Menu.Item>
 									<button type="button" className="w-full text-left relative cursor-pointer px-6 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900">
 										Edit Job
@@ -58,7 +58,7 @@ export default function JobCard_2({ job, handleView }: any) {
 					</Menu>
 				</div>
 			</div>
-			<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-white">
+			<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
 				<li className="mr-3">{job.worktype}</li>
 				<li className="mr-3">{job.employment_type}</li>
 			</ul>
