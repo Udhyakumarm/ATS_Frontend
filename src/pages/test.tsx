@@ -13,45 +13,66 @@ export default function SignIn({ providers }: any) {
 	const router = useRouter();
 	const { data: session } = useSession();
 
-	const [integration, setIntegration] = useState([]);
+	const [calendarIntegrations, setCalendarIntegration] = useState([]);
+	const [mailIntegration, setMailIntegration] = useState<any>();
 
 	useEffect(() => {
-		async function loadIntegrations() {
+		async function loadCalendarIntegrations() {
 			if (!session) return;
-			console.log(session);
-			const organization = await axiosInstance.api
-				.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => response.data[0])
-				.catch(async (err) => {
-					console.log(err.response);
-					if (err.response.status === 401) await router.push("/");
-					return { data: { success: false } };
-				});
-			const { integrations: newIntegrations } = await axiosInstance.api
-				.get("/organization/integrations/calendar/" + organization.unique_id + "/", {
-					headers: { authorization: "Bearer " + session?.accessToken }
-				})
+
+			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+				.get("/api/integrations/calendar")
 				.then((response) => response.data)
 				.catch((err) => {
 					console.log(err);
 					return { data: { success: false } };
 				});
 
-			setIntegration(newIntegrations);
+			setCalendarIntegration(newIntegrations);
 		}
 
-		loadIntegrations();
+		async function loadMailIntegrations() {
+			if (!session) return;
+
+			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+				.get("/api/integrations/mail")
+				.then((response) => response.data)
+				.catch((err) => {
+					console.log(err);
+					return { data: { success: false } };
+				});
+
+			setMailIntegration(newIntegrations);
+		}
+
+		loadCalendarIntegrations();
+		loadMailIntegrations();
 	}, [router, session]);
 
-	const [calData, setCalData] = useState(null);
+	const [to, setTo] = useState("");
+	const [subject, setSubject] = useState("");
+	const [content, setContent] = useState("");
 
-	useEffect(() => {}, [integration]);
+	useEffect(() => {}, [calendarIntegrations]);
 
-	const [value, onChange] = useState(new Date());
-
-	const handleSubmit = async (event: any) => {
+	const createCalendarAuth = async (event: any) => {
 		event.preventDefault();
 		await router.push("/api/integrations/gcal/create");
+	};
+	const createGmailAuth = async () => {
+		await router.push("/api/integrations/gmail/create");
+	};
+
+	const sendMail = async (event: any) => {
+		event.preventDefault();
+		await axiosInstance.next_api.post("/api/integrations/gmail/sendMail", {
+			gmailIntegration: mailIntegration[0],
+			message: {
+				to,
+				subject,
+				content
+			}
+		});
 	};
 	return (
 		<>
@@ -61,15 +82,22 @@ export default function SignIn({ providers }: any) {
 			</Head>
 			<Header />
 			<main className="py-8">
-				<form className="mx-auto w-full max-w-[550px] px-4" onSubmit={handleSubmit}>
+				<form className="mx-auto w-full max-w-[550px] px-4" onSubmit={sendMail}>
 					<div className="mb-4 text-center">
 						<Logo width={180} />
 					</div>
 					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
 						<div className="mb-4">
-							<Button btnType="submit" label="Get Google Auth" full={true} loader={false} disabled={false} />
+							<Button
+								btnType="button"
+								handleClick={async () => await createGmailAuth()}
+								label="Get Google Auth"
+								full={true}
+								loader={false}
+								disabled={false}
+							/>
 						</div>
-						<div>
+						{/* <div>
 							{integration?.map((integration: any, i) => (
 								<Button
 									btnType="button"
@@ -85,11 +113,37 @@ export default function SignIn({ providers }: any) {
 									}
 								/>
 							))}
+						</div> */}
+						<div className="mb-4">
+							<Button btnType="submit" full={true} loader={false} disabled={false} label={"Test"} />
+						</div>
+						<div className="mb-4">
+							<input
+								className="rounded-large bg-white shadow-normal dark:bg-gray-800 "
+								placeholder={"To"}
+								value={to}
+								onChange={(e) => setTo(e.target.value)}
+								required
+							/>
+							<input
+								className="rounded-large bg-white shadow-normal dark:bg-gray-800 "
+								placeholder={"Subject"}
+								value={subject}
+								onChange={(e) => setSubject(e.target.value)}
+								required
+							/>
+							<input
+								className="rounded-large bg-white shadow-normal dark:bg-gray-800 "
+								placeholder={"Content"}
+								value={content}
+								onChange={(e) => setContent(e.target.value)}
+								required
+							/>
 						</div>
 					</div>
 				</form>
 				<div className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-					<OrganizationCalendar />
+					{/* <OrganizationCalendar integration={integration[0]} /> */}
 				</div>
 			</main>
 		</>

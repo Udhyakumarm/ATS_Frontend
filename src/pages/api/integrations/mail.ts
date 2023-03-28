@@ -35,7 +35,7 @@ const validateIntegration = async (integration: Integration, cookie: string | un
 				.get(
 					(process.env.NODE_ENV === "production"
 						? process.env.NEXT_PUBLIC_PROD_FRONTEND
-						: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integrations/gcal/refresh",
+						: process.env.NEXT_PUBLIC_DEV_FRONTEND) + "/api/integrations/gmail/refresh",
 					{
 						headers: {
 							"Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 
 	const { integrations }: { integrations: Array<Integration> } = await axiosInstance.api
-		.get("/organization/integrations/calendar/" + unique_id + "/", {
+		.get("/organization/integrations/mail/" + unique_id + "/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
 		.then((response) => response.data)
