@@ -52,7 +52,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Interviews',
-            url: '#',
+            url: '/organization/interviews',
             img: interviewsIcon,
             imgWhite: interviewsIconWhite
         },

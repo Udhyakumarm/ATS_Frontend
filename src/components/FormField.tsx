@@ -1,5 +1,12 @@
 import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), {
+	ssr: false
+});
+import "react-quill/dist/quill.snow.css";
 
 export default function FormField({
 	label,
@@ -16,14 +23,16 @@ export default function FormField({
 	id,
 	placeholder,
 	clickevent,
-	disabled
+	showTimeSelect,
+	disabled,
+	onSearch
 }: {
 	label?: string;
 	required?: boolean;
 	readOnly?: boolean;
 	icon?: any;
 	inputType?: string;
-	fieldType?: "input" | "textarea" | "select" | "addItem";
+	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
 	handleChange?: any;
 	error?: any;
 	value?: any;
@@ -32,7 +41,9 @@ export default function FormField({
 	id?: string;
 	placeholder?: string;
 	clickevent?: any;
+	showTimeSelect?: boolean;
 	disabled?: boolean;
+	onSearch?: any;
 }) {
 	const [typePass, setTypePass] = useState(false);
 	const errorMessage = error ? <p className="mt-1 text-[12px] text-red-500">{error}</p> : <></>;
@@ -134,8 +145,7 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[120px] min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` +
-								" "
+								`min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "
 							}
 							value={value}
 							onChange={handleChange}
@@ -167,6 +177,7 @@ export default function FormField({
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
+							onSearch={onSearch}
 							closeOnSelect
 							showArrow={true}
 							placeholder={placeholder}
@@ -184,7 +195,34 @@ export default function FormField({
 			</>
 		);
 	}
-	if (fieldType === "addItem") {
+	if (fieldType === "reactquill") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+						) : (
+							<></>
+						)}
+						<ReactQuill
+							defaultValue={"\n\n\n\n\n"}
+							value={value}
+							onChange={(value: string) => handleChange({ target: { id, value } })}
+						/>
+					</div>
+					{errorMessage}
+				</div>
+			</>
+		);
+	}
+	if (fieldType === "date") {
 		return (
 			<>
 				<div className="mb-4 last:mb-0">
@@ -198,26 +236,11 @@ export default function FormField({
 							<></>
 						)}
 						<div className="relative">
-							<input
-								type={inputType}
-								id={id}
-								value={value}
-								onChange={handleChange}
-								placeholder={placeholder}
-								readOnly={readOnly}
-								className={
-									`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
-									" " +
-									(icon ? "pr-9" : "")
-								}
+							<DatePicker
+								selected={value}
+								onChange={(date) => handleChange({ target: { id, value: date } })}
+								showTimeSelect={showTimeSelect}
 							/>
-							<button
-								type="button"
-								className="absolute right-0 top-0 h-full w-[30px] rounded-r-[12px] bg-gradDarkBlue text-white"
-								onClick={clickevent}
-							>
-								{icon}
-							</button>
 						</div>
 					</div>
 				</div>

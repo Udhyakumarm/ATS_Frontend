@@ -11,7 +11,6 @@ import Button from "@/components/Button";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import userImg from "/public/images/user-image.png";
-import googleIcon from "/public/images/social/google-icon.png";
 import customizeApplicants from "/public/images/icons/customize_applicants.png";
 import customizeActivity from "/public/images/icons/customize_activity.png";
 import customizeAnalytics from "/public/images/icons/customize_analytics.png";
@@ -20,6 +19,7 @@ import customizeTodo from "/public/images/icons/customize_todo.png";
 import customizeUpcoming from "/public/images/icons/customize_upcoming.png";
 import { getProviders, useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
+import JobCard_1 from "@/components/JobCard-1";
 
 export default function Dashboard() {
 	const settings = {
@@ -110,7 +110,7 @@ export default function Dashboard() {
 				{session && <ChatAssistance accessToken={session.accessToken} /> }
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div id="dashboard" className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
@@ -119,7 +119,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Applicant Details</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -159,7 +159,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Hiring Analytics</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -172,7 +172,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Upcoming Interviews</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -219,7 +219,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">To do List</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -254,7 +254,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Recent Jobs</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -264,26 +264,7 @@ export default function Dashboard() {
 											{Array(4).fill(
 												<>
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-														<div className="h-full rounded-normal border bg-gradient-to-b from-[#eeeeee] to-white py-2 px-3 dark:from-gray-700 dark:to-gray-900">
-															<div className="mb-4 flex items-center">
-																<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-[#eeeeee] dark:bg-gray-800">
-																	<Image src={googleIcon} alt={"Company"} width={25} height={25} />
-																</div>
-																<aside className="w-[calc(100%-60px)]">
-																	<h5 className="clamp_2 text-sm font-semibold">Ux Designer</h5>
-																	<p className="text-[12px]">Figma</p>
-																</aside>
-															</div>
-															<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-white">
-																<li className="mr-3">Full Time</li>
-																<li className="mr-3">Remote</li>
-																<li className="mr-3">Junior</li>
-															</ul>
-															<div className="flex flex-wrap items-center justify-between">
-																<p className="mr-4 text-[12px] font-bold text-darkGray dark:text-white">$80k-110k/year</p>
-																<Button btnStyle="outlined" label="View" loader={false} />
-															</div>
-														</div>
+														<JobCard_1 />
 													</div>
 												</>
 											)}
@@ -296,7 +277,7 @@ export default function Dashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Activity Log</h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -343,12 +324,12 @@ export default function Dashboard() {
 								<Popover.Button className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}>
 									<i className="fa-solid fa-gauge"></i>
 								</Popover.Button>
-								<Popover.Overlay className="fixed inset-0 bg-black opacity-30" />
+								<Popover.Overlay className="fixed inset-0 bg-black opacity-30 dark:bg-white" />
 								<Popover.Panel className="absolute z-10 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
 									<div className="flex flex-wrap">
 										<label
 											htmlFor="cust_applicants"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_applicants" className="hidden" />
 											<Image src={customizeApplicants} alt="Applicants" className="mb-2" />
@@ -356,7 +337,7 @@ export default function Dashboard() {
 										</label>
 										<label
 											htmlFor="cust_todo"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_todo" className="hidden" />
 											<Image src={customizeTodo} alt="To Do List" className="mb-2" />
@@ -364,7 +345,7 @@ export default function Dashboard() {
 										</label>
 										<label
 											htmlFor="cust_hiring"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_hiring" className="hidden" />
 											<Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2" />
@@ -372,13 +353,13 @@ export default function Dashboard() {
 										</label>
 										<label
 											htmlFor="cust_recent"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_recent" className="hidden" />
 											<Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
 											<p className="text-[12px] font-bold">Recent Jobs</p>
 										</label>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center">
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white dark:bg-primary p-2 text-center">
 											<p className="text-[12px] font-bold">
 												Customize <br />
 												Your <br />
@@ -387,7 +368,7 @@ export default function Dashboard() {
 										</div>
 										<label
 											htmlFor="cust_upcoming"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_upcoming" className="hidden" />
 											<Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
@@ -395,14 +376,14 @@ export default function Dashboard() {
 										</label>
 										<label
 											htmlFor="cust_activity"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
 											<input type="checkbox" name="cust_dashboard" id="cust_activity" className="hidden" />
 											<Image src={customizeActivity} alt="Activity Log" className="mb-2" />
 											<p className="text-[12px] font-bold">Activity Log</p>
 										</label>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"></div>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center"></div>
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
 									</div>
 								</Popover.Panel>
 							</Popover>
