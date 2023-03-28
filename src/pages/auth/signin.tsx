@@ -156,4 +156,4 @@ export async function getServerSideProps(context: any) {
 	};
 }
 
-SignIn.noAuth = true;
+AuthSignIn.noAuth = true;
