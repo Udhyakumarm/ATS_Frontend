@@ -34,12 +34,12 @@ export default function FormField({
 	icon?: any;
 	inputType?: string;
 	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
-	handleChange?: any;
+	handleChange: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
 	error?: any;
 	value?: any;
 	options?: Array<any>;
 	singleSelect?: boolean;
-	id?: string;
+	id: string;
 	placeholder?: string;
 	clickevent?: any;
 	showTimeSelect?: boolean;
