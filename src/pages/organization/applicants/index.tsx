@@ -25,7 +25,7 @@ export default function Applicants() {
 	const router = useRouter();
 
 	const cancelButtonRef = useRef(null);
-	const [socialPopup, setSocialPopup] = useState(false);
+	const [createBoard, setCreateBoard] = useState(false);
 
 	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
 	const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
@@ -159,7 +159,7 @@ export default function Applicants() {
 								<button
 									type="button"
 									className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
-									onClick={() => setSocialPopup(true)}
+									onClick={() => setCreateBoard(true)}
 								>
 									<i className="fa-solid fa-plus"></i>
 								</button>
@@ -547,8 +547,8 @@ export default function Applicants() {
 						))} */}
 				</div>
 			</main>
-			<Transition.Root show={socialPopup} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setSocialPopup}>
+			<Transition.Root show={createBoard} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setCreateBoard}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -581,7 +581,7 @@ export default function Applicants() {
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
-											onClick={() => setSocialPopup(false)}
+											onClick={() => setCreateBoard(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
 										</button>

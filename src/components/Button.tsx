@@ -1,4 +1,4 @@
-export default function Button({ btnStyle, btnType, label, loader, disabled, full, handleClick, iconLeft }: any) {
+export default function Button({ btnStyle, btnType, label, loader, disabled, full, handleClick, iconLeft, iconRight }: any) {
 	if (btnStyle === "outlined") {
 		return (
 			<button
@@ -52,12 +52,31 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			</button>
 		)
 	}
+	if (btnStyle === "iconRightBtn") {
+		return (
+			<button
+				type={btnType ? btnType : "button"}
+				className={
+					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-3 font-semibold text-white text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					" " +
+					(full ? "w-full" : "w-auto")
+				}
+				disabled={disabled}
+				onClick={btnType && handleClick}
+			>
+				{label}
+				<span className="ml-2">
+					{iconRight}
+				</span>
+			</button>
+		)
+	}
 	if (btnStyle === "success") {
 		return (
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded text-green-600 bg-green-200 hover:bg-green-600 hover:text-white py-2 px-6 font-bold disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 rounded text-green-600 bg-green-200 hover:bg-green-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
@@ -74,7 +93,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded text-red-600 bg-red-200 hover:bg-red-600 hover:text-white py-2 px-6 font-bold disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 rounded text-red-600 bg-red-200 hover:bg-red-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
@@ -91,7 +110,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-6 font-bold text-white disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue py-2 px-6 font-semibold text-sm text-white disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
