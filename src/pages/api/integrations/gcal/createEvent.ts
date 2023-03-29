@@ -14,7 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const googleCalendarOAuth2Client = Integration.googleCalendarOAuth2Client;
 
-	const { googleCalendarIntegration, event: newEvent } = req.body;
+	const {
+		googleCalendarIntegration,
+		event: newEvent
+	}: { googleCalendarIntegration: CalendarIntegration; event: CalendarEvent } = req.body;
 
 	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
 
@@ -32,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	let conferenceData = {};
 
-	if (newEvent.platform === "Google Meet") {
+	if (newEvent.platform[0].name === "Google Meet") {
 		conferenceData = {
 			createRequest: {
 				requestId: crypto.randomBytes(20).toString("hex"),
@@ -47,13 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		summary: newEvent.summary,
 		description: newEvent.description + "\n" + "ATS:" + newEvent.type.toString(),
 		start: {
-			dateTime: newEvent.start
+			dateTime: newEvent.start.toString()
 		},
 		end: {
-			dateTime: newEvent.end
+			dateTime: newEvent.end.toString()
 		},
 		// recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
-		// attendees: [{ email: "lpage@example.com" }, { email: "sbrin@example.com" }],
+		attendees: newEvent.attendees,
 		reminders: {
 			useDefault: false,
 			overrides: [
@@ -65,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	};
 
 	const saveEvent = await calendar.events.insert({
-		calendarId: googleCalendarIntegration.calendar_id as string,
+		calendarId: googleCalendarIntegration.calendar_id,
 		requestBody: newGoogleEvent,
 		conferenceDataVersion: 1
 	});

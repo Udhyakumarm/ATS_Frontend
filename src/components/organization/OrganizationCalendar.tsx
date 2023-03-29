@@ -17,27 +17,28 @@ function DaysOfMonth({
 	currentDate,
 	pageDays,
 	handleDateUpdate,
-	handleDaySelect
+	getCurrentEvents
 }: {
 	currentDate: Date;
 	pageDays: Array<Array<number>>;
 	handleDateUpdate: (update: DateUpdate) => void;
-	handleDaySelect: (update: Date) => void;
+	getCurrentEvents: (update: Date | null) => void;
 }) {
 	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 	const [currentDay, setCurrentDay] = useState<Date>(today);
 
-	const handleDayClick = (day: number, dayType: number) => {
+	const handleDayClick = (day: number, dayType: number, hasEvent: boolean) => {
 		//If the day is in the current month
 		if (dayType === 1) {
 			setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
-			handleDaySelect(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+			getCurrentEvents(hasEvent ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day) : null);
 			return;
 		}
 
 		setCurrentDay(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1 * (dayType === 0 ? -1 : 1), day));
 		handleDateUpdate({ action: dayType === 0 ? "previousMonth" : "nextMonth" });
+		if (hasEvent) getCurrentEvents(hasEvent ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day) : null);
 	};
 
 	const CalendarDay = ({
@@ -46,7 +47,7 @@ function DaysOfMonth({
 		dayType,
 		day
 	}: {
-		handleDayClick: (selectedDay: number, dayType: number) => void;
+		handleDayClick: (selectedDay: number, dayType: number, hasEvent: boolean) => void;
 		selected: boolean;
 		dayType: number;
 		day: number;
@@ -59,7 +60,7 @@ function DaysOfMonth({
 						: "flex h-full w-full items-center justify-center rounded-[35px] p-2 text-lg font-semibold group-hover:bg-primary group-hover:text-white " +
 						  (selected ? "bg-gradDarkBlue text-white group-hover:bg-gradDarkBlue" : "")
 				}
-				onClick={() => handleDayClick(day, dayType)}
+				onClick={() => handleDayClick(day > 50 ? day - 100 : day, dayType, day > 50)}
 			>
 				{day > 50 && (
 					<div className="relative flex rounded-full ">
@@ -79,7 +80,7 @@ function DaysOfMonth({
 						handleDayClick={handleDayClick}
 						selected={
 							new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()).getTime() ==
-							new Date(currentDate.getFullYear(), currentDate.getMonth(), i).getTime()
+							new Date(currentDate.getFullYear(), currentDate.getMonth(), i > 50 ? i - 100 : i).getTime()
 						}
 						dayType={dayType}
 						day={i}
@@ -96,25 +97,31 @@ function EventCard({
 	jobId,
 	platform,
 	participants,
-	date,
-	meetingLink
+	start,
+	end,
+	meetingLink,
+	calendarLink
 }: {
 	jobTitle: string;
 	jobId: string;
 	platform: string;
 	participants: Array<any>;
-	date: Date;
+	start: Date;
+	end: Date;
 	meetingLink: string;
+	calendarLink: string;
 }) {
-	const participantCards = participants.map((person: { name: string; role: string; userImg: string }, i) => (
-		<div className="flex items-center py-3 last:border-b" key={i}>
-			<Image src={person.userImg} alt="User" width={40} height={40} className="h-[40px] rounded-full object-cover" />
-			<div className="w-[calc(100%-40px)] pl-3 text-sm">
-				<h6 className="font-semibold">{person.name}</h6>
-				<p className="text-darkGray">{person.role}</p>
+	const participantCards = participants.map(
+		(person: { name: string; role: string; userImg: string; email: string }, i) => (
+			<div className="flex items-center py-3 last:border-b" key={i}>
+				{/* <Image src={person.userImg} alt="User" width={40} height={40} className="h-[40px] rounded-full object-cover" /> */}
+				<div className="w-[calc(100%-40px)] pl-3 text-sm">
+					<h6 className="font-semibold">{person.email}</h6>
+					{/* <p className="text-darkGray">{person.role}</p> */}
+				</div>
 			</div>
-		</div>
-	));
+		)
+	);
 
 	const meetingIcon =
 		platform == "Google Meet" ? <i className="fa-solid fa-video"></i> : <i className="fa-solid fa-phone"></i>;
@@ -141,13 +148,21 @@ function EventCard({
 					</span>
 					<div className="w-[calc(100%-16px)] pl-2 text-darkGray">
 						<h6 className="font-semibold">{platform}</h6>
-						<p className="my-1 text-sm">{date.toDateString()}</p>
+						<p className="my-1 text-sm">{`${start.toDateString()}\n ${start.getHours()}:${start.getMinutes()}`}</p>
+						<p className="my-1 text-sm">{`Duration : ${(end.getTime() - start.getTime()) / 60 / 1000} minutes`}</p>
 						<Link
 							href={meetingLink}
 							target="_blank"
 							className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-white"
 						>
 							Meet
+						</Link>
+						<Link
+							href={calendarLink}
+							target="_blank"
+							className="inline-block rounded py-[3px] px-3 text-[12px] leading-normal text-gradDarkBlue"
+						>
+							Calendar
 						</Link>
 					</div>
 				</div>
@@ -342,9 +357,13 @@ export default function OrganizationCalendar({ integration }: any) {
 
 	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
 
-	const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
+	// const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
+
+	const [eventsLoading, setEventsLoading] = useState(false);
 
 	const [eventList, setEventList] = useState<Array<any>>([]);
+
+	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
 
 	const saveNewCalendarEvent = async (newEvent: CalendarEvent) => {
 		//TODO Add support for other integrations
@@ -355,7 +374,7 @@ export default function OrganizationCalendar({ integration }: any) {
 				event: { ...newEvent, type: newEvent.type[0]?.name, platform: newEvent.platform[0]?.name }
 			})
 			.then(() => {
-				setCreateScheduleOpen(false);
+				// setCreateScheduleOpen(false);
 				toastcomp("Scheduled " + newEvent.type[0]?.name, "success");
 			});
 	};
@@ -420,6 +439,15 @@ export default function OrganizationCalendar({ integration }: any) {
 				.then((data) => setEventList(data.items)),
 		[integration]
 	);
+
+	const getCurrentEvents = (currentDay: Date | null) => {
+		if (!currentDay) return setCurrentDayEvents([]);
+		const dayEvents = eventList.filter(
+			(event) => new Date(new Date(String(event.start.dateTime)).setHours(0, 0, 0, 0)).getTime() == currentDay.getTime()
+		);
+
+		setCurrentDayEvents(dayEvents);
+	};
 
 	const [pageDays, setPageDays] = useState<Array<Array<number>>>(getDays(today));
 
@@ -492,7 +520,7 @@ export default function OrganizationCalendar({ integration }: any) {
 					currentDate={currentDate}
 					handleDateUpdate={handleDateUpdate}
 					pageDays={pageDays}
-					handleDaySelect={() => {}}
+					getCurrentEvents={getCurrentEvents}
 				/>
 			</div>
 			<div className="w-[25%] bg-lightBlue">
@@ -500,15 +528,22 @@ export default function OrganizationCalendar({ integration }: any) {
 					<h6 className="font-bold">Events</h6>
 				</div>
 				<div className="h-[calc(100vh-100px)] overflow-y-auto p-4 pt-0">
-					<EventCard
-						jobTitle={"Software Developer"}
-						jobId={"ID-573219"}
-						platform={"Telephonic"}
-						participants={[{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg }]}
-						date={new Date(2023, 1, 20, 10)}
-						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
-					/>
-					<EventCard
+					{currentDayEvents.map((eventItem, i) => (
+						<EventCard
+							key={i}
+							jobTitle={"Software Developer"}
+							jobId={"ID-573219"}
+							platform={eventItem?.conferenceData?.conferenceSolution?.name}
+							participants={eventItem?.attendees.map((attendee) => ({ email: attendee.email }))}
+							start={new Date(eventItem.start.dateTime)}
+							end={new Date(eventItem.end.dateTime)}
+							meetingLink={
+								eventItem?.conferenceData?.entryPoints[0]?.uri ? eventItem?.conferenceData?.entryPoints[0]?.uri : ""
+							}
+							calendarLink={eventItem.htmlLink}
+						/>
+					))}
+					{/* <EventCard
 						jobTitle={"Software Developer"}
 						jobId={"ID-573219"}
 						platform={"Google Meet"}
@@ -518,24 +553,24 @@ export default function OrganizationCalendar({ integration }: any) {
 						]}
 						date={new Date(2023, 1, 20, 10)}
 						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
-					/>
-					<div className="mb-4 overflow-hidden rounded-[10px] shadow">
-						<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
-							<div className="flex w-full flex-row items-center justify-between pr-2">
-								<h5 className="text-sm font-semibold">Schedule Meeting</h5>
-								<button type="button" onClick={() => setCreateScheduleOpen(true)}>
+					/> */}
+					{currentDayEvents.length == 0 && (
+						<div className="mb-4 overflow-hidden rounded-[10px] shadow">
+							<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
+								<div className="flex w-full flex-row items-center justify-between pr-2">
+									<h5 className="text-sm font-semibold">No Events On This Day</h5>
 									<i className="fa-solid fa-calendar-plus"></i>
-								</button>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</div>
-			<CreateNewCalendarEventModal
+			{/* <CreateNewCalendarEventModal
 				createScheduleOpen={createScheduleOpen}
 				setCreateScheduleOpen={setCreateScheduleOpen}
 				handleSaveNewSchedule={saveNewCalendarEvent}
-			/>
+			/> */}
 		</div>
 	);
 }

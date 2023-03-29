@@ -25,7 +25,8 @@ export default function FormField({
 	clickevent,
 	showTimeSelect,
 	disabled,
-	onSearch
+	onSearch,
+	showHours
 }: {
 	label?: string;
 	required?: boolean;
@@ -33,16 +34,17 @@ export default function FormField({
 	icon?: any;
 	inputType?: string;
 	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
-	handleChange?: any;
+	handleChange: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
 	error?: any;
 	value?: any;
 	options?: Array<any>;
 	singleSelect?: boolean;
-	id?: string;
+	id: string;
 	placeholder?: string;
 	clickevent?: any;
 	showTimeSelect?: boolean;
 	disabled?: boolean;
+	showHours?: boolean;
 	onSearch?: any;
 }) {
 	const [typePass, setTypePass] = useState(false);
@@ -240,6 +242,7 @@ export default function FormField({
 								selected={value}
 								onChange={(date) => handleChange({ target: { id, value: date } })}
 								showTimeSelect={showTimeSelect}
+								dateFormat={showHours ? "MMMM d, yyyy h:mm aa" : "MMMM d, yyyy"}
 							/>
 						</div>
 					</div>
