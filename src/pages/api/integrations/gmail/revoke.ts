@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		.then((response) => response.data[0]);
 
 	const { integrations }: { integrations: Array<any> } = await axiosInstance.api
-		.get("/organization/integrations/calendar/" + unique_id + "/", {
+		.get("/organization/integrations/mail/" + unique_id + "/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
 		.then((response) => response.data)
@@ -26,37 +26,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	const googleCalendarIntegration = integrations.find(
-		(integration: { provider: string }) => integration.provider == "google"
-	);
+	const gmailIntegration = integrations.find((integration: { provider: string }) => integration.provider == "google");
 
-	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
+	const expiry_date = Number(gmailIntegration.expires_in) + Date.now();
 
-	Integration.googleCalendarOAuth2Client.setCredentials({
-		...googleCalendarIntegration,
+	Integration.gmailOAuth2Client.setCredentials({
+		...gmailIntegration,
 		expiry_date,
 		token_type: "Bearer"
 	});
 
 	google.options({
-		auth: Integration.googleCalendarOAuth2Client
+		auth: Integration.gmailOAuth2Client
 	});
 
-	const calendar = google.calendar({ version: "v3" });
+	const gmail = google.gmail({ version: "v1" });
 
-	if (googleCalendarIntegration.scope.match("https://www.googleapis.com/auth/calendar ")) {
-		await calendar.calendars
-			.delete({
-				calendarId: googleCalendarIntegration.calendar_id
-			})
-			.then((resp) => resp.data)
-			.catch((err) => err);
-	}
+	await gmail.users.labels
+		.delete({
+			id: gmailIntegration.label_id
+		})
+		.then((resp) => resp.data)
+		.catch((err) => err);
 
-	await Integration.googleCalendarOAuth2Client.revokeCredentials();
+	await Integration.gmailOAuth2Client.revokeCredentials();
 
 	const response = await axiosInstance.api
-		.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+		.post("/organization/delete_mail_integration/" + gmailIntegration.id + "/", {
 			headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
 		})
 		.then((res) => res.data)

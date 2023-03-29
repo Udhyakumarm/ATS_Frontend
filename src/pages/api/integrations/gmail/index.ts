@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { google } from "googleapis";
 import { Integration } from "@/utils/serverUtils";
+import crypto from "crypto";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const { code, error } = req.query;
@@ -34,32 +35,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const gmail = google.gmail({ version: "v1" });
 
-	const newLabel = await gmail.users.labels.create({
-		requestBody: { name: "Somhako ATS", id: "SomhakoATS" },
-		userId: "me"
-	});
-
-	// const calendar = google.calendar({ version: "v3" });
-
-	//Create new calendar
-	const somhakoCalendar = await calendar.calendars
-		.insert({
-			requestBody: { summary: "Somhako ATS Calendar" }
+	const newLabel = await gmail.users.labels
+		.create({
+			requestBody: { name: "Somhako ATS" },
+			userId: "me"
 		})
-		.then((resp) => resp.data);
+		.then((res) => res.data);
 
 	const expires_in = Number(tokens.expiry_date) - Date.now();
 
 	const response = await axiosInstance.api
 		.post(
-			"/organization/create_calendar_integration/" + unique_id + "/",
+			"/organization/create_mail_integration/" + unique_id + "/",
 			{
 				access_token: tokens.access_token,
 				refresh_token: tokens.refresh_token,
 				expires_in: expires_in,
 				scope: tokens.scope,
 				provider: "google",
-				calendar_id: somhakoCalendar.id
+				label_id: newLabel.id
 			},
 			{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
 		)
