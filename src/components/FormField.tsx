@@ -25,7 +25,8 @@ export default function FormField({
 	clickevent,
 	showTimeSelect,
 	disabled,
-	onSearch
+	onSearch,
+	showHours
 }: {
 	label?: string;
 	required?: boolean;
@@ -43,6 +44,7 @@ export default function FormField({
 	clickevent?: any;
 	showTimeSelect?: boolean;
 	disabled?: boolean;
+	showHours?: boolean;
 	onSearch?: any;
 }) {
 	const [typePass, setTypePass] = useState(false);
@@ -240,6 +242,7 @@ export default function FormField({
 								selected={value}
 								onChange={(date) => handleChange({ target: { id, value: date } })}
 								showTimeSelect={showTimeSelect}
+								dateFormat={showHours ? "MMMM d, yyyy h:mm aa" : "MMMM d, yyyy"}
 							/>
 						</div>
 					</div>
