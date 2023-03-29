@@ -13,6 +13,7 @@ import userImg from "/public/images/user-image.png";
 import { useApplicantStore } from "@/utils/code";
 import { useSession } from "next-auth/react";
 import { axiosInstance } from "@/utils";
+import toastcomp from "@/components/toast";
 
 export default function ScheduleInterview() {
 	const router = useRouter();
@@ -20,8 +21,15 @@ export default function ScheduleInterview() {
 	const { data: session } = useSession();
 
 	const cancelButtonRef = useRef(null);
+
+	const [interviewerSearch, setInterviewerSearch] = useState("");
+
 	const [socialPopup, setSocialPopup] = useState(false);
+
+	const [scheduleType, setScheduleType] = useState(0);
+
 	const [interDuration, setInterDuration] = useState("15");
+
 	const applicantDetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
 
 	const initialState: CalendarEvent = {
@@ -41,7 +49,6 @@ export default function ScheduleInterview() {
 
 			const newEnd = new Date(newStart.setMinutes(newStart.getMinutes() + Number(interDuration)));
 
-			console.log({ newStart, newEnd });
 			return { ...prevScheduleDate, [id]: value, end: newEnd };
 		}
 
@@ -51,7 +58,7 @@ export default function ScheduleInterview() {
 	};
 	const [newSchedule, handleNewSchedule] = useReducer(updateNewSchedule, initialState);
 
-	const [assignedInterviewerList, setAssignedInterviewerList] = useState([]);
+	const [assignedInterviewerList, setAssignedInterviewerList] = useState<Array<any>>([]);
 
 	const [interviewerList, setInterviewerList] = useState([]);
 
@@ -65,20 +72,75 @@ export default function ScheduleInterview() {
 
 	useEffect(() => {
 		async function loadApplicant() {
-			const data = await axiosInstance.api
-				.get("/organization/list_organization_account/", {
+			//* This endpoint lists all organization accounts and individual profiles
+			const { OrganizationAccounts, IndividualProfiles }: any = await axiosInstance.api
+				.get("/organization/list_organization_account_and_individual_profile/", {
 					headers: { authorization: "Bearer " + session?.accessToken }
 				})
 				.then((response) => response.data)
 				.catch((err) => {
 					console.log(err);
-					return { data: { success: false } };
+					return { OrganizationAccounts: [], IndividualProfiles: [] };
 				});
 
-			console.log({ data });
+			setInterviewerList(
+				OrganizationAccounts?.map(({ name, email, role, id }: any) => ({
+					name,
+					email,
+					role,
+					profile: IndividualProfiles.find((profile: any) => profile.user == id)?.profile
+				}))
+			);
 		}
 		loadApplicant();
 	}, [session?.accessToken]);
+
+	useEffect(() => {
+		handleNewSchedule({
+			target: {
+				id: "attendees",
+				value: [
+					...assignedInterviewerList.map(({ email }) => ({ email })),
+					{ email: applicantDetail.CandidateProfile[0].user.email }
+				]
+			}
+		});
+	}, [applicantDetail.CandidateProfile, assignedInterviewerList]);
+
+	const [calendarIntegrations, setCalendarIntegration] = useState([]);
+
+	useEffect(() => {
+		async function loadCalendarIntegrations() {
+			if (!session) return;
+
+			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+				.get("/api/integrations/calendar")
+				.then((response) => response.data)
+				.catch((err) => {
+					console.log(err);
+					return { validatedIntegrations: [] };
+				});
+
+			setCalendarIntegration(newIntegrations);
+		}
+
+		loadCalendarIntegrations();
+	}, [router, session]);
+
+	const createEvent = async (e: { preventDefault: () => void }) => {
+		e.preventDefault();
+
+		if (calendarIntegrations.length == 0) return;
+
+		await axiosInstance.next_api
+			.post("/api/integrations/gcal/createEvent", {
+				googleCalendarIntegration: calendarIntegrations[0],
+				event: newSchedule
+			})
+			.then(() => {
+				toastcomp("Interview Scheduled, Invitations Sent", "success");
+			});
+	};
 
 	const TeamTableHead = [
 		{
@@ -139,7 +201,13 @@ export default function ScheduleInterview() {
 									className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
 								>
 									<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
-										<input type="radio" id="manualSchedule" name="setSchedule" />
+										<input
+											type="radio"
+											id="manualSchedule"
+											name="setSchedule"
+											checked={scheduleType == 0}
+											onClick={() => setScheduleType(0)}
+										/>
 									</div>
 									Schedule Manually
 								</label>
@@ -148,12 +216,18 @@ export default function ScheduleInterview() {
 									className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
 								>
 									<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
-										<input type="radio" id="chooseSchedule" name="setSchedule" />
+										<input
+											type="radio"
+											id="chooseSchedule"
+											name="setSchedule"
+											checked={scheduleType == 1}
+											onClick={() => setScheduleType(1)}
+										/>
 									</div>
 									Let the invite choose from my availability
 								</label>
 							</div>
-							<div className="flex flex-wrap rounded-normal border">
+							<form className="flex flex-wrap rounded-normal border" onSubmit={createEvent}>
 								<div className="w-full border-r p-4 lg:max-w-[40%]">
 									<div className="mb-4 rounded-normal border p-3">
 										<h2 className="mb-3 font-bold">Applicant</h2>
@@ -190,11 +264,18 @@ export default function ScheduleInterview() {
 												<Button btnStyle="sm" btnType="button" label="Add" handleClick={() => setSocialPopup(true)} />
 											</div>
 										</div>
-										{Array(assignedInterviewerList.length).fill(
-											<div className="relative mb-2 flex flex-wrap items-center overflow-hidden rounded border p-2 pr-[40px]">
+										{assignedInterviewerList.map(({ email, name, role, profile }, i) => (
+											<div
+												className="relative mb-2 flex flex-wrap items-center overflow-hidden rounded border p-2 pr-[40px]"
+												key={i}
+											>
 												<div className="w-[70px]">
 													<Image
-														src={userImg}
+														src={
+															process.env.NODE_ENV === "production"
+																? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE
+																: process.env.NEXT_PUBLIC_DEV_BACKEND + profile
+														}
 														alt="User"
 														width={300}
 														height={300}
@@ -202,17 +283,22 @@ export default function ScheduleInterview() {
 													/>
 												</div>
 												<div className="my-1 pl-2">
-													<h5 className="mb-1 font-semibold">Steve Adam</h5>
-													<p className="text-[12px] text-darkGray dark:text-gray-400">Interviewer</p>
+													<h5 className="mb-1 font-semibold">{name}</h5>
+													<p className="text-[12px] text-darkGray dark:text-gray-400">{role}</p>
 												</div>
 												<button
 													type="button"
 													className="absolute right-0 top-0 h-full w-[30px] bg-gray-200 text-darkGray hover:bg-red-500 hover:text-white"
+													onClick={() =>
+														setAssignedInterviewerList((prevList) =>
+															prevList.filter(({ email: listEmail }) => listEmail != email)
+														)
+													}
 												>
 													<i className="fa-solid fa-trash-can"></i>
 												</button>
 											</div>
-										)}
+										))}
 									</div>
 								</div>
 								<div className="w-full p-4 lg:max-w-[60%]">
@@ -220,7 +306,6 @@ export default function ScheduleInterview() {
 										id={"summary"}
 										fieldType="input"
 										label="Summary"
-										singleSelect
 										value={newSchedule.summary}
 										handleChange={handleNewSchedule}
 										required
@@ -229,7 +314,6 @@ export default function ScheduleInterview() {
 										id={"description"}
 										fieldType="reactquill"
 										label="Description"
-										singleSelect
 										value={newSchedule.description}
 										handleChange={handleNewSchedule}
 									/>
@@ -242,13 +326,7 @@ export default function ScheduleInterview() {
 										handleChange={handleNewSchedule}
 										options={[{ name: "Google Meet" }, { name: "Telephonic" }]}
 									/>
-									{/* 
-									Add Participants
-									*/}
 
-									{/* <FormField fieldType="input" inputType="text" label="Interview Name" />
-									<FormField fieldType="input" inputType="text" label="Platform" /> */}
-									{/* <FormField fieldType="reactquill" label="Description" /> */}
 									<div className="mx-[-10px] flex flex-wrap">
 										<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
 											<label className="mb-1 inline-block font-bold">Interview Duration</label>
@@ -357,10 +435,10 @@ export default function ScheduleInterview() {
 										</div>
 									</div>
 									<div>
-										<Button label="Send Invitation" />
+										<Button label="Send Invitation" btnType={"submit"} />
 									</div>
 								</div>
-							</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -404,9 +482,11 @@ export default function ScheduleInterview() {
 									<div className="p-8">
 										<FormField
 											fieldType="input"
+											id={"search"}
 											inputType="search"
 											placeholder="Search"
 											icon={<i className="fa-solid fa-magnifying-glass"></i>}
+											handleChange={(e) => setInterviewerSearch(e.target.value)}
 										/>
 										<div className="overflow-x-auto">
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -420,16 +500,43 @@ export default function ScheduleInterview() {
 													</tr>
 												</thead>
 												<tbody>
-													{Array(6).fill(
-														<tr>
-															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
-															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
-															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
-															<td className="border-b py-2 px-3 text-right">
-																<input type="checkbox" />
-															</td>
-														</tr>
-													)}
+													{interviewerList
+														.filter(({ email, role, name }: any) => {
+															if (!email) return false;
+															return (
+																(email.toLowerCase().match(interviewerSearch) &&
+																	email.toLowerCase().match(interviewerSearch).length > 0) ||
+																(role &&
+																	role.toLowerCase().match(interviewerSearch) &&
+																	role.toLowerCase().match(interviewerSearch).length > 0) ||
+																(name &&
+																	name.toLowerCase().match(interviewerSearch) &&
+																	name.toLowerCase().match(interviewerSearch).length > 0)
+															);
+														})
+														.map(({ email, role, name, profile }, i) => (
+															<tr key={i}>
+																<td className="border-b py-2 px-3 text-sm">{name}</td>
+																<td className="border-b py-2 px-3 text-sm">{role}</td>
+																<td className="border-b py-2 px-3 text-sm">{email}</td>
+																<td className="border-b py-2 px-3 text-right">
+																	<input
+																		type="checkbox"
+																		checked={assignedInterviewerList?.find((interviewer) => interviewer.email == email)}
+																		onChange={(e) =>
+																			!e.target.checked
+																				? setAssignedInterviewerList((prevList) =>
+																						prevList.filter((interviewer) => interviewer.email !== email)
+																				  )
+																				: setAssignedInterviewerList((prevList) => [
+																						...prevList,
+																						{ email, role, name, profile }
+																				  ])
+																		}
+																	/>
+																</td>
+															</tr>
+														))}
 												</tbody>
 											</table>
 										</div>
