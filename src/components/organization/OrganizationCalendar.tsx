@@ -436,7 +436,8 @@ export default function OrganizationCalendar({ integration }: any) {
 					googleCalendarIntegration: integration
 				})
 				.then((response) => response.data)
-				.then((data) => setEventList(data.items)),
+				.then((data) => setEventList(data.items))
+				.then(() => setEventsLoading(false)),
 		[integration]
 	);
 
@@ -456,10 +457,20 @@ export default function OrganizationCalendar({ integration }: any) {
 	}, [currentDate, getDays]);
 
 	useEffect(() => {
+		setEventsLoading(true);
 		integration && getEventsList();
 	}, [getEventsList, integration]);
 
-	console.log(eventList);
+	useEffect(() => {
+		setCurrentDayEvents(
+			eventList.filter(
+				(event) =>
+					new Date(new Date(String(event.start.dateTime)).setHours(0, 0, 0, 0)).getTime() ==
+					new Date(currentDate.setHours(0, 0, 0, 0)).getTime()
+			)
+		);
+	}, [currentDate, eventList]);
+
 	return (
 		<div className="flex">
 			<div className="w-[75%] bg-white">
@@ -534,7 +545,7 @@ export default function OrganizationCalendar({ integration }: any) {
 							jobTitle={"Software Developer"}
 							jobId={"ID-573219"}
 							platform={eventItem?.conferenceData?.conferenceSolution?.name}
-							participants={eventItem?.attendees.map((attendee) => ({ email: attendee.email }))}
+							participants={eventItem?.attendees.map((attendee: any) => ({ email: attendee.email }))}
 							start={new Date(eventItem.start.dateTime)}
 							end={new Date(eventItem.end.dateTime)}
 							meetingLink={
@@ -564,6 +575,7 @@ export default function OrganizationCalendar({ integration }: any) {
 							</div>
 						</div>
 					)}
+					{eventsLoading ? <i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> : ""}
 				</div>
 			</div>
 			{/* <CreateNewCalendarEventModal
