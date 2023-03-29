@@ -362,7 +362,7 @@ export default function ApplicantsDetail() {
 															className={
 																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
 																" " +
-																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
 															Profile
@@ -375,7 +375,7 @@ export default function ApplicantsDetail() {
 															className={
 																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
 																" " +
-																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
 															Assessment
@@ -388,7 +388,7 @@ export default function ApplicantsDetail() {
 															className={
 																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
 																" " +
-																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
 															Feedback
@@ -401,7 +401,7 @@ export default function ApplicantsDetail() {
 															className={
 																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
 																" " +
-																(selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
 															Timeline

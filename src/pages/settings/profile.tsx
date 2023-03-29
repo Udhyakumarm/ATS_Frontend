@@ -4,13 +4,19 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Dialog, Tab, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import userIcon from "/public/images/icons/user.png";
 import UploadProfile from "@/components/UploadProfile";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import Link from "next/link";
-import boardIcon from "/public/images/board-icon.png";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
+import careerBanner from "/public/images/gall-4.png";
+import galleryUpload from "/public/images/gallery_upload.png";
+import gall_1 from "/public/images/gall-1.png";
+import gall_2 from "/public/images/gall-2.png";
+import gall_3 from "/public/images/gall-3.png";
+import gall_4 from "/public/images/gall-4.png";
 
 export default function Profile() {
     const router = useRouter();
@@ -18,6 +24,10 @@ export default function Profile() {
     const cancelButtonRef = useRef(null);
 	const [addSocial, setAddSocial] = useState(false);
     const [changePass, setChangePass] = useState(false);
+    const [addFounder, setAddFounder] = useState(false);
+    const [addWidget, setAddWidget] = useState(false);
+
+    const [gallUpload, setGallUpload] =  useState(false);
 
     const tabHeading_1 = [
         {
@@ -31,6 +41,38 @@ export default function Profile() {
         },
         {
             title: 'User Access'
+        }
+    ]
+    const tabHeading_2 = [
+        {
+            title: 'Summary',
+            icon: <i className="fa-solid fa-bars"></i>
+        },
+        {
+            title: 'Gallery',
+            icon: <i className="fa-solid fa-mountain-sun"></i>
+        },
+        {
+            title: 'Widget',
+            icon: <i className="fa-solid fa-gauge"></i>
+        },
+        // {
+        //     title: 'Custom Domain',
+        //     icon: <i className="fa-solid fa-desktop"></i>
+        // }
+    ]
+    const gallery = [
+        {
+            image: gall_1
+        },
+        {
+            image: gall_2
+        },
+        {
+            image: gall_3
+        },
+        {
+            image: gall_4
         }
     ]
     return(
@@ -62,15 +104,15 @@ export default function Profile() {
                             </div>
                             <Tab.Group>
                                 <div className={"border-b px-4"}>
-                                    <Tab.List className={"w-full max-w-[1030px] mx-auto"}>
+                                    <Tab.List className={"w-full max-w-[950px] mx-auto"}>
                                         {tabHeading_1.map((item, i)=> 
                                         <Tab key={i} as={Fragment}>
                                             {({ selected }) => (
                                                 <button
                                                     className={
-                                                        "border-b-4 py-3 mx-6 font-semibold focus:outline-none" +
+                                                        "border-b-4 py-2 mr-16 font-semibold focus:outline-none" +
                                                         " " +
-                                                        (selected ? "border-primary text-primary" : "border-transparent text-darkGray")
+                                                        (selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
                                                     }
                                                 >
                                                     {item.title}
@@ -80,8 +122,8 @@ export default function Profile() {
                                         )}
                                     </Tab.List>
                                 </div>
-                                <Tab.Panels>
-                                    <Tab.Panel className={"w-full max-w-[1030px] mx-auto px-4 py-8"}>
+                                <Tab.Panels className={"w-full max-w-[980px] mx-auto px-4 py-8"}>
+                                    <Tab.Panel>
                                         <div className="mb-4">
                                             <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
                                         </div>
@@ -147,7 +189,160 @@ export default function Profile() {
                                         </div>
                                     </Tab.Panel>
                                     <Tab.Panel>
-                                        jjjjj
+                                        <Tab.Group>
+                                            <Tab.List className={'border-b mb-6'}>
+                                                {tabHeading_2.map((item, i)=> 
+                                                    <Tab key={i} as={Fragment}>
+                                                        {({ selected }) => (
+                                                            <button
+                                                                className={
+                                                                    "border-b-4 py-2 px-4 mr-6 font-semibold focus:outline-none inline-flex items-center" +
+                                                                    " " +
+                                                                    (selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
+                                                                }
+                                                            >
+                                                                <div className="mr-2">
+                                                                    {item.icon}
+                                                                </div>
+                                                                {item.title}
+                                                            </button>
+                                                        )}
+                                                    </Tab>
+                                                )}
+                                            </Tab.List>
+                                            <Tab.Panels>
+                                                <Tab.Panel>
+                                                    <FormField fieldType="reactquill" label="About the organization" />
+                                                    <div className="mb-4">
+                                                        <h6 className="mb-3 font-bold">Founders Information</h6>
+                                                        <div className="flex flex-wrap -mx-4">
+                                                            {Array(2).fill(
+                                                            <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0">
+                                                                <div className="relative text-center p-4 shadow-normal rounded-normal w-full min-h-[180px] dark:bg-gray-700">
+                                                                    <UploadProfile />
+                                                                    <h5 className="font-semibold">Jhon Cerden</h5>
+                                                                    <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700">
+                                                                        <i className="fa-solid fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            )}
+                                                            <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0">
+                                                                <button type="button" className="border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700" onClick={() => setAddFounder(true)}>
+                                                                    <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <FormField fieldType="input" inputType="text" label="About Founder" />
+                                                    <div className="-mx-3 flex flex-wrap">
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Organization URL" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Organization Contact Number" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="select" label="Company Size" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="select" label="Workplace Type" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Headquarter Location" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Branch Office (Optional)" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Organization Benefits" />
+                                                        </div>
+                                                        <div className="mb-4 w-full px-3 md:max-w-[50%]">
+                                                            <FormField fieldType="input" inputType="text" label="Funding Detials" />
+                                                        </div>
+                                                    </div>
+                                                </Tab.Panel>
+                                                <Tab.Panel>
+                                                    <div className="mb-6">
+                                                        <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
+                                                    </div>
+                                                    <div className="mb-6">
+                                                        <h6 className="mb-3 font-bold">Banner Image</h6>
+                                                        <label htmlFor="uploadBanner" className="cursor-pointer border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700">
+                                                            <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
+                                                            <input type="file" hidden id="uploadBanner" />
+                                                        </label>
+                                                        <div className="block w-full relative rounded-normal border overflow-hidden"> 
+                                                            <Image src={careerBanner} alt='User' width={1200} className="object-cover w-full h-[200px]" />
+                                                            <div className="absolute top-[-1px] right-0 shadow-highlight rounded-bl overflow-hidden">
+                                                                <button type="button" className="bg-white hover:bg-red-200 text-red-500 w-6 h-6 leading-6 text-center text-[12px] border-b">
+                                                                    <i className={'fa-solid fa-trash'}></i>
+                                                                </button>
+                                                                <label htmlFor="editBanner" className="cursor-pointer block bg-white hover:bg-slate-200 text-slate-500 w-6 h-6 leading-6 text-center text-[12px]">
+                                                                    <i className={'fa-solid fa-edit'}></i>
+                                                                    <input type="file" id="editBanner" hidden />
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-6">
+                                                        <h6 className="mb-3 font-bold">Workplace Culture</h6>
+                                                        <div className="bg-white dark:bg-gray-700 shadow-highlight rounded-normal overflow-hidden">
+                                                            <div className="bg-lightBlue dark:bg-gray-600 p-3 flex items-center justify-between">
+                                                                <h4 className="font-semibold">Upload Images</h4>
+                                                                <Button btnStyle="sm" label="Add Images" />
+                                                            </div>
+                                                            <div className="p-6">
+                                                                {
+                                                                    gallUpload
+                                                                    ?
+                                                                    <>
+                                                                        <ResponsiveMasonry
+                                                                        columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
+                                                                        >
+                                                                            <Masonry className="masonary_grid">
+                                                                                {gallery.map((data, i) => (
+                                                                                    <Image key={i} src={data.image} alt="Gallery" className="w-full p-1" />
+                                                                                ))}
+                                                                            </Masonry>
+                                                                        </ResponsiveMasonry>
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div className="flex items-center justify-center min-h-[200px]">
+                                                                            <Image src={galleryUpload} alt="Upload" />
+                                                                        </div>
+                                                                    </>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-wrap -mx-3">
+                                                        <div className="w-full lg:max-w-[50%] px-3 mb-6">
+                                                            <h6 className="mb-3 font-bold">Choose from the Color Palates</h6>
+                                                            <div className="flex flex-wrap items-center">
+                                                                <input type="color" id="favcolor" name="favcolor" className="w-8 h-8 bg-white" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full lg:max-w-[50%] px-3">
+                                                            <h6 className="mb-3 font-bold">Connect with our team to customize</h6>
+                                                            <Button btnStyle="iconLeftBtn" label="Send Mail" iconLeft={(<i className="fa-solid fa-envelope"></i>)} />
+                                                        </div>
+                                                    </div>
+                                                </Tab.Panel>
+                                                <Tab.Panel>
+                                                    <h6 className="font-bold mb-1">Add Widget</h6>
+                                                    <div className="flex border rounded-normal">
+                                                        <div className="w-[80%] p-4 flex items-center">
+                                                            <p>All your Jobs will be posted on customized Career Page</p>
+                                                        </div>
+                                                        <div className="w-[20%] p-4 bg-lightBlue dark:bg-gray-600 rounded-normal text-center">
+                                                            <Button btnType="button" label="Add Here" handleClick={() => setAddWidget(true)} />
+                                                        </div>
+                                                    </div>
+                                                </Tab.Panel>
+                                            </Tab.Panels>
+                                        </Tab.Group>
                                     </Tab.Panel>
                                 </Tab.Panels>
                             </Tab.Group>
@@ -279,6 +474,149 @@ export default function Profile() {
                                         <div className="text-center">
                                             <Button label="Submit" />
                                         </div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={addFounder} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddFounder}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Add new founder
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddFounder(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+                                        <div className="mb-4 text-center">
+                                            <UploadProfile />
+                                        </div>
+                                        <FormField
+                                            fieldType="input"
+                                            inputType="text"
+                                            label="Founder Name"
+                                        />
+                                        <div className="text-center">
+                                            <Button label="Add" />
+                                        </div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={addWidget} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddWidget}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Create Page Widget
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddWidget(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+                                    <div className="bg-primary p-8">
+                                        <p className="text-sm text-white">The careers widget is a simple list of your jobs embedded on a dedicated page on your website, such as your careers page. All you’ll need is access to the Content Management System (CMS) of your website, then follow the easy and simple steps mentioned below:</p>
+                                    </div>
+									<div className="p-8">
+                                        <ul className="pl-4 list-disc text-sm">
+                                            <li className="mb-4">
+                                            Access the HTML on the webpage where you want the jobs to display.
+                                            </li>
+                                            <li className="mb-4">
+                                            Copy the script tag mentioned below and paste it into the head section of your website.
+                                                <div className="border rounded mt-2 flex">
+                                                    <div className="w-[calc(100%-50px)] p-2 border-r flex items-center">
+                                                        <p className="text-[12px]">
+                                                            &lt;script src="https://app.somhakoats.com/asset-objects/careers-page-integration.js"&gt;&lt;/script&gt;
+                                                        </p>
+                                                    </div>
+                                                    <button type="button" className="w-[50px] p-3">
+                                                        <i className="fa-solid fa-copy"></i>
+                                                    </button>
+                                                </div>
+                                            </li>
+                                            <li className="mb-4">
+                                            Copy the Somhako ATS jobs tag below and paste it within your HTML where you want the job list to display.
+                                                <div className="border rounded mt-2 flex">
+                                                    <div className="w-[calc(100%-50px)] p-2 border-r flex items-center">
+                                                        <p className="text-[12px]">
+                                                            &lt;somhakoats-jobs data-company-name="xyz" data-company-uuid="F0DADE07A7" data-careers-page="true"&gt; &lt;/somhakoats-jobs&gt;
+                                                        </p>
+                                                    </div>
+                                                    <button type="button" className="w-[50px] p-3">
+                                                        <i className="fa-solid fa-copy"></i>
+                                                    </button>
+                                                </div>
+                                            </li>
+                                            <li className="mb-4">
+                                            Preview the page and publish.
+                                            </li>
+                                            <li className="mb-4">
+                                            Done. Now all of your created jobs will reflect on the page where you added the widget.
+                                            </li>
+                                        </ul>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
