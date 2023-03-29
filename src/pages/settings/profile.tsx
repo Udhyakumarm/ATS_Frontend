@@ -26,6 +26,7 @@ export default function Profile() {
     const [changePass, setChangePass] = useState(false);
     const [addFounder, setAddFounder] = useState(false);
     const [addWidget, setAddWidget] = useState(false);
+    const [addGalImages, setAddGalImages] = useState(false);
 
     const [gallUpload, setGallUpload] =  useState(false);
 
@@ -290,7 +291,7 @@ export default function Profile() {
                                                         <div className="bg-white dark:bg-gray-700 shadow-highlight rounded-normal overflow-hidden">
                                                             <div className="bg-lightBlue dark:bg-gray-600 p-3 flex items-center justify-between">
                                                                 <h4 className="font-semibold">Upload Images</h4>
-                                                                <Button btnStyle="sm" label="Add Images" />
+                                                                <Button btnStyle="sm" btnType="submit" label="Add Images" handleClick={() => setAddGalImages(true)} />
                                                             </div>
                                                             <div className="p-6">
                                                                 {
@@ -302,7 +303,12 @@ export default function Profile() {
                                                                         >
                                                                             <Masonry className="masonary_grid">
                                                                                 {gallery.map((data, i) => (
-                                                                                    <Image key={i} src={data.image} alt="Gallery" className="w-full p-1" />
+                                                                                    <div key={i} className="relative">
+                                                                                        <Image src={data.image} alt="Gallery" className="w-full p-1" />
+                                                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm">
+                                                                                            <i className="fa-solid fa-trash"></i>
+                                                                                        </button>
+                                                                                    </div>
                                                                                 ))}
                                                                             </Masonry>
                                                                         </ResponsiveMasonry>
@@ -617,6 +623,73 @@ export default function Profile() {
                                             Done. Now all of your created jobs will reflect on the page where you added the widget.
                                             </li>
                                         </ul>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={addGalImages} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddGalImages}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Add Gallery Images
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddGalImages(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+                                        <label htmlFor="addGallery" className="cursor-pointer border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700 mb-4">
+                                            <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
+                                            <input type="file" hidden id="addGallery" />
+                                        </label>
+                                        <ResponsiveMasonry
+                                        columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
+                                        >
+                                            <Masonry>
+                                                {gallery.map((data, i) => (
+                                                    <div key={i} className="relative">
+                                                        <Image src={data.image} alt="Gallery" className="w-full p-1" />
+                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm">
+                                                            <i className="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </Masonry>
+                                        </ResponsiveMasonry>
+                                        <div className="text-center">
+                                            <Button label="Add" />
+                                        </div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
