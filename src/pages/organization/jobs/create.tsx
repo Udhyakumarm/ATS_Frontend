@@ -301,7 +301,7 @@ export default function JobsCreate() {
 				className={
 					"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
 					" " +
-					(tabIndex === currentIndex ? "border-primary text-primary" : "border-transparent text-darkGray")
+					(tabIndex === currentIndex ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
 				}
 			>
 				{tabTitles[tabIndex]}

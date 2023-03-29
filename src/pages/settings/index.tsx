@@ -3,14 +3,44 @@ import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import jobsIcon from "/public/images/icons/post-new-job.png";
+import userIcon from "/public/images/icons/user.png";
+import integrationIcon from "/public/images/icons/integration.png";
+import vendorsIcon from "/public/images/icons/vendors.png";
+import calendarIcon from "/public/images/icons/calendar.png";
+import teamUsersIcon from "/public/images/icons/team-users.png";
+import bellIcon from "/public/images/icons/bell.png";
 
-export default function OrgSettings() {
+export default function Settings() {
     const quicklinks = [
 		{
 			name: "Profile",
-			icon: jobsIcon,
-			link: "/organization/jobs/create"
+			icon: userIcon,
+			link: "/settings/profile"
+		},
+		{
+			name: "Integrations",
+			icon: integrationIcon,
+			link: "#"
+		},
+		{
+			name: "Vendors",
+			icon: vendorsIcon,
+			link: "#"
+		},
+		{
+			name: "Calendar",
+			icon: calendarIcon,
+			link: "#"
+		},
+		{
+			name: "Team Members",
+			icon: teamUsersIcon,
+			link: "#"
+		},
+		{
+			name: "Notifications",
+			icon: bellIcon,
+			link: "#"
 		}
 	];
     return (
@@ -35,7 +65,7 @@ export default function OrgSettings() {
 									>
 										<div className="flex w-full items-center mb-10">
 											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
-												<Image src={links.icon} alt={links.name} height={20} />
+												<Image src={links.icon} alt={links.name} width={100} />
 											</div>
 											<span className="text-lg font-bold">{links.name}</span>
 										</div>
