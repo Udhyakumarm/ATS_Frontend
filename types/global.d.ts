@@ -3,6 +3,7 @@ interface CalendarEvent {
 	description: string;
 	platform: Array<{ name: "Google Meet" | "Telephonic" | "" }>;
 	type: Array<{ name: "Interview" | "General Meeting" | "" }>;
+	attendees?: Array<{ email: string }>;
 	start: Date;
 	end: Date;
 }
