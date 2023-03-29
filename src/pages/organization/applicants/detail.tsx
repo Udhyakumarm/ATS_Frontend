@@ -6,7 +6,7 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useEffect, useState, Fragment } from "react";
 import { useApplicantStore } from "@/utils/code";
 import Button from "@/components/Button";
@@ -56,6 +56,14 @@ export default function ApplicantsDetail() {
 	const [updateFeedBack, setUpdateFeedBack] = useState(false);
 
 	const [selectedPerson, setSelectedPerson] = useState({})
+
+	//feedback
+	const [currentUser, setcurrentUser] = useState([])
+	const [feedbackList, setfeedbackList] = useState([])
+	const [editfeedback, seteditfeedback] = useState(false)
+	const [editfeedbackTA, seteditfeedbackTA] = useState("")
+	const [feedbackreload, setfeedbackreload] = useState(true)
+	const [currentUserFeedback, setcurrentUserFeedback] = useState(false)
 
 	useEffect(() => {
 		if (session) {
@@ -153,6 +161,85 @@ export default function ApplicantsDetail() {
 			chnageStatus(selectedPerson["name"],aid)
 		}
 	},[selectedPerson])
+
+	async function loadFeedback(arefid: any) {
+		await axiosInstance2
+			.get(`/job/listfeedback/${arefid}/`)
+			.then((res) => {
+				setfeedbackList(res.data)
+				console.log("@",res.data)
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function getcurrentUser() {
+		await axiosInstanceAuth2
+			.get(`/job/currentuser/`)
+			.then((res) => {
+				setcurrentUser(res.data)
+				console.log("@",res.data)
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function updateFeedback(pk) {
+		const fdata = new FormData();
+		fdata.append("feedback", editfeedbackTA);
+		await axiosInstanceAuth2
+			.put(`/job/feedback/${pk}/update/`, fdata)
+			.then((res) => {
+				toastcomp("Feedback Updated", "success")
+				seteditfeedback(false)
+				setfeedbackreload(true)
+			})
+			.catch((err) => {
+				toastcomp("Feedback Not Updated", "error")
+				seteditfeedback(false)
+				setfeedbackreload(true)
+			});
+	}
+
+	async function createFeedback(status) {
+		const fdata = new FormData();
+		fdata.append("status", status);
+		await axiosInstanceAuth2
+			.post(`/job/feedback/${aid}/create/`, fdata)
+			.then((res) => {
+				toastcomp("Feedback Created", "success")
+				seteditfeedback(false)
+				setfeedbackreload(true)
+			})
+			.catch((err) => {
+				toastcomp("Feedback Not Created", "error")
+				seteditfeedback(false)
+				setfeedbackreload(true)
+			});
+	}
+
+	useEffect(()=>{
+		if(aid.length > 0 && feedbackreload){
+			loadFeedback(aid)
+			getcurrentUser()
+			setfeedbackreload(false)
+		}
+	},[aid,feedbackreload])
+
+	useEffect(()=>{
+		if(feedbackList.length > 0 && currentUser.length > 0){
+
+			for(let i = 0;i< feedbackList.length;i++){
+				if(feedbackList[i]["user"]["email"] === currentUser[0]["email"]){
+					seteditfeedbackTA(feedbackList[i]["feedback"])
+					setcurrentUserFeedback(true)
+				}
+			}
+		}
+	},[feedbackList,currentUser])
+
 
 	
 
@@ -437,7 +524,190 @@ export default function ApplicantsDetail() {
 													</div>
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
-													{Array(2).fill(
+													
+													{!currentUserFeedback && 
+													
+													<>
+													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
+													<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Hire")}} >
+															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
+															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-green-500'}>Hire</p>
+														</div>
+														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("On Hold")}}>
+															<i className={'fa-solid fa-circle-pause text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-yellow-500'}></i>
+															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-yellow-500'}>On Hold</p>
+														</div>
+														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Shortlist")}}>
+															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-primary'}></i>
+															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-primary'}>Shortlist</p>
+														</div>
+														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Reject")}}>
+															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
+															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-red-500'}>Reject</p>
+														</div>
+													</div>
+													</div>
+													<hr />
+													</> 
+													}
+
+													{feedbackList && feedbackList.map((data,i)=>(
+														<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0" key={i}>
+															<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+																{data["status"] !== "Hire" ? 
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-green-500'}>Hire</p>
+																</div>
+																:
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-green-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>Hire</p>
+																</div>
+																}
+
+																{data["status"] !== "On Hold" ? 
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-normal group">
+																	<i className={'fa-solid fa-circle-pause text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-yellow-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-yellow-500'}>On Hold</p>
+																</div>
+																:
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																	<i className={'fa-solid fa-circle-pause text-sm' + ' ' + 'text-yellow-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>On Hold</p>
+																</div>
+																}
+
+																{data["status"] !== "Shortlist" ? 
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-normal group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-primary'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-primary'}>Shortlist</p>
+																</div>
+																:
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-primary'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>Shortlist</p>
+																</div>
+																}
+
+																{data["status"] !== "Reject" ? 
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-normal group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-red-500'}>Reject</p>
+																</div>
+																:
+																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
+																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-red-500'}></i>
+																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>Reject</p>
+																</div>
+																}
+
+															</div>
+															
+															{data["user"]["email"] === currentUser[0]["email"] ? 
+															<>
+															<div className="border dark:border-gray-500 rounded-normal overflow-hidden">
+																<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
+																	<span className="flex items-center">
+																			Feedback
+																			{!editfeedback &&
+																			<button type="button" className="ml-5 text-darkGray dark:text-gray-400" onClick={(e)=>{seteditfeedback(true)}}>
+																				<i className="fa-solid fa-pen-to-square"></i>
+																			</button>
+																			}
+																		</span>
+																</label>
+																<textarea name="addFeedback" id="addFeedback" className={'align-middle dark:bg-gray-600 dark:text-white dark:placeholder py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + 'min-h-[100px]' } placeholder="Enter feedback here ..." value={editfeedbackTA} onChange={(e)=>seteditfeedbackTA(e.target.value)} readOnly={!editfeedback}></textarea>
+																<div className="px-4 bg-lightBlue dark:bg-gray-700">
+																	{
+																		!editfeedback ?
+																		<>
+																		<div className="py-2 flex items-center justify-between text-sm">
+																			{/* <h6 className="font-bold">By - Steve Paul :  Collaborator</h6> */}
+																			<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																			<p className="text-darkGray dark:text-gray-400 text-[12px]">{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
+																		</div>
+																		</>
+																		:
+																		<>
+																		<Button btnStyle="sm" label={data["feedback"] && data["feedback"].length > 0 ? 'Update' : 'Add' } btnType={"button"} handleClick={(e)=>{
+																			updateFeedback(data["id"])
+																		}}  />
+																		</>
+																	}
+																</div>
+															</div>
+
+															</>
+															:
+															<>
+															<div className="border dark:border-gray-500 rounded-normal overflow-hidden">
+																<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
+																	<span className="flex items-center">
+																			Feedback
+																		</span>
+																</label>
+																<textarea name="addFeedback" id="addFeedback" className={'align-middle dark:bg-gray-600 dark:text-white dark:placeholder py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + 'min-h-[100px]' } placeholder="Enter feedback here ..." value={data["feedback"]} readOnly={true}></textarea>
+																<div className="px-4 bg-lightBlue dark:bg-gray-700">
+																	{
+																		<>
+																		<div className="py-2 flex items-center justify-between text-sm">
+																			{/* <h6 className="font-bold">By - Steve Paul :  Collaborator</h6> */}
+																			<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																			<p className="text-darkGray dark:text-gray-400 text-[12px]">{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
+																		</div>
+																		</>
+																	}
+																</div>
+															</div>
+
+															</>
+															}
+
+														</div>
+													))}
+															{/* <div className="border dark:border-gray-500 rounded-normal overflow-hidden">
+																<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
+																	{
+																		feedBack
+																		?
+																		<>
+																		<span className="flex items-center">
+																			Feedback
+																			<button type="button" className="ml-5 text-darkGray dark:text-gray-400">
+																				<i className="fa-solid fa-pen-to-square"></i>
+																			</button>
+																		</span>
+																		</>
+																		:
+																		<>
+																		Add Feedback <sup className="text-red-500">*</sup>
+																		</>
+																	}
+																</label>
+																<textarea name="addFeedback" id="addFeedback" className={'align-middle dark:bg-gray-600 dark:text-white dark:placeholder py-2 px-4 border-0 resize-none w-full text-sm focus:ring-0' + ' ' + (feedBack ? 'min-h-[100px]' : 'h-[200px]')} placeholder="Enter feedback here ..." readOnly={feedBack ? true : false}></textarea>
+																<div className="px-4 bg-lightBlue dark:bg-gray-700">
+																	{
+																		feedBack
+																		?
+																		<>
+																		<div className="py-2 flex items-center justify-between text-sm">
+																			<h6 className="font-bold">By - Steve Paul :  Collaborator</h6>
+																			<p className="text-darkGray dark:text-gray-400 text-[12px]">13 Feb 2023, 3:00 PM</p>
+																		</div>
+																		</>
+																		:
+																		<>
+																		<Button btnStyle="sm" label={updateFeedBack ? 'Update' : 'Save'} />
+																		</>
+																	}
+																</div>
+															</div> */}
+														
+
+
+													{/* {Array(2).fill(
 													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
 														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
@@ -495,7 +765,7 @@ export default function ApplicantsDetail() {
 															</div>
 														</div>
 													</div>
-													)}
+													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
 													<div className="relative before:content-[''] before:w-[1px] before:h-[100%] before:bg-slate-200 before:absolute before:top-0 before:left-[80px] max-h-[455px] overflow-y-auto">
