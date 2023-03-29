@@ -50,13 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		summary: newEvent.summary,
 		description: newEvent.description + "\n" + "ATS:" + newEvent.type.toString(),
 		start: {
-			dateTime: newEvent.start.toISOString()
+			dateTime: newEvent.start.toString()
 		},
 		end: {
-			dateTime: newEvent.end.toISOString()
+			dateTime: newEvent.end.toString()
 		},
 		// recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
-		// attendees: [{ email: "lpage@example.com" }, { email: "sbrin@example.com" }],
+		attendees: newEvent.attendees,
 		reminders: {
 			useDefault: false,
 			overrides: [
