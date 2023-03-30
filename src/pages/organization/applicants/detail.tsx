@@ -529,26 +529,25 @@ export default function ApplicantsDetail() {
 													
 													<>
 													<div className="relative border-t pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0">
-													<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
-														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Hire")}} >
-															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
-															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-green-500'}>Hire</p>
-														</div>
-														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("On Hold")}}>
-															<i className={'fa-solid fa-circle-pause text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-yellow-500'}></i>
-															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-yellow-500'}>On Hold</p>
-														</div>
-														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Shortlist")}}>
-															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-primary'}></i>
-															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-primary'}>Shortlist</p>
-														</div>
-														<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Reject")}}>
-															<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
-															<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-red-500'}>Reject</p>
+														<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Hire")}} >
+																<i className={'fa-solid fa-user text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-green-500'}>Hire</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("On Hold")}}>
+																<i className={'fa-solid fa-circle-pause text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-yellow-500'}></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-yellow-500'}>On Hold</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Shortlist")}}>
+																<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-primary'}></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-primary'}>Shortlist</p>
+															</div>
+															<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group" onClick={(e)=>{createFeedback("Reject")}}>
+																<i className={'fa-solid fa-thumbs-down text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
+																<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-red-500'}>Reject</p>
+															</div>
 														</div>
 													</div>
-													</div>
-													<hr />
 													</> 
 													}
 
@@ -557,12 +556,12 @@ export default function ApplicantsDetail() {
 															<div className="flex items-center bg-lightBlue dark:bg-gray-700 shadow-normal rounded-tr-[30px] rounded-br-[30px] mb-8 w-[280px]">
 																{data["status"] !== "Hire" ? 
 																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
+																	<i className={'fa-solid fa-user text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-green-500'}></i>
 																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-green-500'}>Hire</p>
 																</div>
 																:
 																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-green-500'}></i>
+																	<i className={'fa-solid fa-user text-sm' + ' ' + 'text-green-500'}></i>
 																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>Hire</p>
 																</div>
 																}
@@ -593,12 +592,12 @@ export default function ApplicantsDetail() {
 
 																{data["status"] !== "Reject" ? 
 																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-normal group">
-																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
+																	<i className={'fa-solid fa-thumbs-down text-sm' + ' ' + 'text-darkGray dark:text-gray-400 group-hover:text-red-500'}></i>
 																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'hidden group-hover:block group-hover:text-red-500'}>Reject</p>
 																</div>
 																:
 																<div className="relative text-[12px] text-center w-[70px] h-[40px] leading-[40px] cursor-pointer group">
-																	<i className={'fa-solid fa-thumbs-up text-sm' + ' ' + 'text-red-500'}></i>
+																	<i className={'fa-solid fa-thumbs-down text-sm' + ' ' + 'text-red-500'}></i>
 																	<p className={'whitespace-nowrap block w-full font-semibold absolute left-[50%] translate-x-[-50%] bottom-[-22px] px-2 py-[2px] rounded-b-[8px] leading-normal' + ' ' + 'block bg-gradDarkBlue text-white' }>Reject</p>
 																</div>
 																}
