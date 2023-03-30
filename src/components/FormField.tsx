@@ -75,7 +75,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -98,7 +98,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -113,7 +113,7 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className={`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "}
+									className={`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "}
 									value={value}
 									onChange={handleChange}
 									placeholder={placeholder}
@@ -147,7 +147,7 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "
+								`min-h-[45px] w-full resize-none rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "
 							}
 							value={value}
 							onChange={handleChange}
