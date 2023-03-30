@@ -15,7 +15,7 @@ export default function Settings() {
 		{
 			name: "Profile",
 			icon: userIcon,
-			link: "/settings/profile"
+			link: "/organization/settings/profile"
 		},
 		{
 			name: "Integrations",

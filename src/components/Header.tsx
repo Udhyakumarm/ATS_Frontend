@@ -29,28 +29,32 @@ export default function Header() {
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
-	if (
-		router.asPath === "/organization/" + cname ||
-		router.asPath === "/organization/" + cname + "/search-jobs" ||
-		router.asPath === "/organization/" + cname + "/dashboard" ||
-		router.asPath === "/organization/" + cname + "/job-detail" ||
-		router.asPath === "/organization/" + cname + "/job-apply"
-	) {
+	if(cname && cname.length > 0 && (
+		router.asPath == "/organization/" + cname ||
+		router.asPath == "/organization/" + cname + "/search-jobs" ||
+		router.asPath == "/organization/" + cname + "/dashboard" ||
+		router.asPath == "/organization/" + cname + "/job-detail" ||
+		router.asPath == "/organization/" + cname + "/job-apply"
+	))
+	{
 		return (
 			<>
-				<header className="bg-white shadow-normal dark:bg-gray-800">
+				<header className="bg-white shadow-normal dark:bg-gray-800 hello">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
-							<Image
-								src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]["logo"]}`}
-								alt={"Somhako"}
-								width={200}
-								height={200}
-								className="mr-8 max-h-[40px] w-auto"
-								onClick={() => {
-									router.push("/organization/" + cname);
-								}}
-							/>
+							{
+								orgdetail["OrgProfile"] &&
+								<Image
+									src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]["logo"]}`}
+									alt={"Somhako"}
+									width={200}
+									height={200}
+									className="mr-8 max-h-[40px] w-auto"
+									onClick={() => {
+										router.push("/organization/" + cname);
+									}}
+								/>
+							}
 							<ul className="flex text-sm font-semibold">
 								<li className="mx-3">
 									<Link
@@ -139,10 +143,10 @@ export default function Header() {
 				</header>
 			</>
 		);
-	} else if (router.asPath === "/organization") {
+	} else if (router.asPath == "/organization") {
 		return (
 			<>
-				<header className="bg-white shadow-normal dark:bg-gray-800">
+				<header className="bg-white shadow-normal dark:bg-gray-800 test">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
