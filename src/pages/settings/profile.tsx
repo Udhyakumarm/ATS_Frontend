@@ -17,6 +17,8 @@ import gall_1 from "/public/images/gall-1.png";
 import gall_2 from "/public/images/gall-2.png";
 import gall_3 from "/public/images/gall-3.png";
 import gall_4 from "/public/images/gall-4.png";
+import userImg from "/public/images/user-image.png";
+import { Switch } from '@headlessui/react'
 
 export default function Profile() {
     const router = useRouter();
@@ -27,6 +29,9 @@ export default function Profile() {
     const [addFounder, setAddFounder] = useState(false);
     const [addWidget, setAddWidget] = useState(false);
     const [addGalImages, setAddGalImages] = useState(false);
+    const [addGroups, setAddGroups] = useState(false);
+
+    const [enabled, setEnabled] = useState(false)
 
     const [gallUpload, setGallUpload] =  useState(false);
 
@@ -38,11 +43,11 @@ export default function Profile() {
             title: 'Organization Profile'
         },
         {
-            title: 'Groups'
+            title: 'Groups/Division'
         },
-        {
-            title: 'User Access'
-        }
+        // {
+        //     title: 'User Access'
+        // }
     ]
     const tabHeading_2 = [
         {
@@ -88,7 +93,7 @@ export default function Profile() {
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
-						<div className="border-b py-4">
+						<div className="py-4">
                             <div className="w-full max-w-[1100px] mx-auto mb-4 flex flex-wrap items-center justify-start py-2 px-4">
                                 <button
                                     onClick={() => router.back()}
@@ -259,7 +264,7 @@ export default function Profile() {
                                                             <FormField fieldType="input" inputType="text" label="Organization Benefits" />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Funding Detials" />
+                                                            <FormField fieldType="input" inputType="text" label="Funding Details" />
                                                         </div>
                                                     </div>
                                                 </Tab.Panel>
@@ -337,7 +342,7 @@ export default function Profile() {
                                                     </div>
                                                 </Tab.Panel>
                                                 <Tab.Panel>
-                                                    <h6 className="font-bold mb-1">Add Widget</h6>
+                                                    <h6 className="font-bold mb-2">Add Widget</h6>
                                                     <div className="flex border rounded-normal">
                                                         <div className="w-[80%] p-4 flex items-center">
                                                             <p>All your Jobs will be posted on customized Career Page</p>
@@ -349,6 +354,50 @@ export default function Profile() {
                                                 </Tab.Panel>
                                             </Tab.Panels>
                                         </Tab.Group>
+                                    </Tab.Panel>
+                                    <Tab.Panel>
+                                        <div className="flex flex-wrap items-center justify-between mb-6">
+                                            <h5 className="mb-2 font-bold">Add Groups to your Parent Organization</h5>
+                                            <Button btnStyle="iconRightBtn" label="Add Group" iconRight={(<i className="fa-solid fa-circle-plus"></i>)} btnType="button" handleClick={() => setAddGroups(true)} />
+                                        </div>
+                                        <div className="py-2">
+                                            <p className="text-darkGray dark:text-gray-400 text-center">No groups found</p>
+                                            <div className="flex flex-wrap mx-[-15px]">
+                                                {Array(5).fill(
+                                                <div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-4">
+                                                        <div className="flex items-start justify-between mb-2">
+                                                            <Image src={userImg} alt="Logo" width={100} className="rounded-full object-cover w-[50px] h-[50px]" />
+                                                            <button type="button" className="text-red-500 hover:text-red-700">
+                                                                <i className="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        <p className="text-darkGray dark:text-gray-400 text-sm flex items-center justify-between mb-2">
+                                                            <span>Bell Cosmetic</span>
+                                                            <span>ID - 45989</span>
+                                                        </p>
+                                                        <div className="flex items-center justify-between">
+                                                            <Switch
+                                                            checked={enabled}
+                                                            onChange={setEnabled}
+                                                            className={`${
+                                                                enabled ? 'bg-primary' : 'bg-gray-400'
+                                                            } relative inline-flex h-6 w-11 items-center rounded-full`}
+                                                            >
+                                                                <span className="sr-only">Enable notifications</span>
+                                                                <span
+                                                                    className={`${
+                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                                                                />
+                                                            </Switch>
+                                                            <Button btnStyle="outlined" label="Edit" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </Tab.Panel>
                                 </Tab.Panels>
                             </Tab.Group>
@@ -687,6 +736,60 @@ export default function Profile() {
                                                 ))}
                                             </Masonry>
                                         </ResponsiveMasonry>
+                                        <div className="text-center">
+                                            <Button label="Add" />
+                                        </div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={addGroups} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddGroups}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Add Group
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddGroups(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+                                        <div className="text-center">
+                                            <UploadProfile />
+                                        </div>
+                                        <FormField fieldType="input" inputType="text" label="Name of group" />
+                                        <FormField fieldType="input" inputType="text" label="Group (Parent Organization)" />
                                         <div className="text-center">
                                             <Button label="Add" />
                                         </div>
