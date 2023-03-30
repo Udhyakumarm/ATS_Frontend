@@ -499,17 +499,19 @@ export default function Profile() {
                                             </div>
                                             <div className="flex flex-wrap">
                                                 {ilink && ilink.map((data,i)=>(
-                                                    <Link href={data["title"]} className="mr-6 mb-4 w-[100px] rounded-normal shadow-highlight relative p-3 text-center bg-lightBlue dark:bg-gray-700" key={i}>
-                                                        <span className="block w-8 h-8 mx-auto mb-1 shadow-normal rounded p-1 bg-white dark:bg-gray-500">
-                                                            <i className={`${geticon(data["title"])}`}></i>
-                                                        </span>
-                                                        <p className="font-bold text-[12px] capitalize">
-                                                            {`${gettitle(data["title"])}`}
-                                                        </p>
+                                                    <div className="mr-6 mb-4 w-[100px] rounded-normal shadow-highlight relative p-3 text-center bg-lightBlue dark:bg-gray-700">
+                                                        <Link href={data["title"]} className="" key={i}>
+                                                            <span className="block w-8 h-8 mx-auto mb-1 shadow-normal rounded p-1 bg-white dark:bg-gray-500">
+                                                                <i className={`${geticon(data["title"])}`}></i>
+                                                            </span>
+                                                            <p className="font-bold text-[12px] capitalize">
+                                                                {`${gettitle(data["title"])}`}
+                                                            </p>
+                                                        </Link>
                                                         <button type="button" className="absolute top-[-10px] right-[-10px] text-center rounded-full text-[20px] font-bold text-red-500 dark:text-white" onClick={(e)=>delIndividualLink(data["id"])} >
                                                             <i className="fa-solid fa-circle-xmark"></i>
                                                         </button>
-                                                    </Link>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
@@ -552,8 +554,9 @@ export default function Profile() {
                                                             {Array(2).fill(
                                                             <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0">
                                                                 <div className="relative text-center p-4 shadow-normal rounded-normal w-full min-h-[180px] dark:bg-gray-700">
-                                                                    <UploadProfile />
+                                                                    <Image src={userImg} alt='User' width={300} className="rounded-full object-cover w-[100px] h-[100px] shadow-highlight mx-auto mb-3" />
                                                                     <h5 className="font-semibold">Jhon Cerden</h5>
+                                                                    <p className="text-darkGray dark:text-gray-400 text-sm italic">CEO</p>
                                                                     <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700">
                                                                         <i className="fa-solid fa-trash"></i>
                                                                     </button>
@@ -911,6 +914,11 @@ export default function Profile() {
                                             fieldType="input"
                                             inputType="text"
                                             label="Founder Name"
+                                        />
+                                        <FormField
+                                            fieldType="input"
+                                            inputType="text"
+                                            label="Founder Designation"
                                         />
                                         <div className="text-center">
                                             <Button label="Add" />
