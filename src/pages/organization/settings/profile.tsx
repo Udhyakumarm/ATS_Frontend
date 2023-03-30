@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Dialog, Tab, Transition } from "@headlessui/react";
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import userIcon from "/public/images/icons/user.png";
 import UploadProfile from "@/components/UploadProfile";
 import FormField from "@/components/FormField";
@@ -19,6 +19,9 @@ import gall_3 from "/public/images/gall-3.png";
 import gall_4 from "/public/images/gall-4.png";
 import userImg from "/public/images/user-image.png";
 import { Switch } from '@headlessui/react'
+import { useSession } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 export default function Profile() {
     const router = useRouter();
@@ -81,6 +84,339 @@ export default function Profile() {
             image: gall_4
         }
     ]
+
+    const { data: session } = useSession();
+	const [token, settoken] = useState("");
+    //Individual Profile
+	const [iprofile, setiprofile] = useState([]);
+	const [iuniqueid, setiuniqueid] = useState("");
+
+    const [profileimg, setProfileImg] = useState()
+    const [purl, setpurl] = useState("")
+    const [oname, setoname] = useState("")
+    const [fname, setfname] = useState("")
+    const [contact, setcontact] = useState("")
+    const [email, setemail] = useState("")
+    const [title, settitle] = useState("")
+    const [dept, setdept] = useState("")
+    //blur
+    const [bluroname, setbluroname] = useState("")
+    const [blurfname, setblurfname] = useState("")
+    const [blurcontact, setblurcontact] = useState("")
+    const [bluremail, setbluremail] = useState("")
+    const [blurtitle, setblurtitle] = useState("")
+    const [blurdept, setblurdept] = useState("")
+
+    //Individual Link
+	const [ilink, setilink] = useState([]);
+	const [iaddlink, setiaddlink] = useState("");
+
+    function verifyLinkPopup() {
+        return iaddlink.length > 0
+    }
+
+    //Individual Profile
+    const [oprofile, setoprofile] = useState([]);
+
+    const [oabout, setoabout] = useState("")
+    //blur
+    const [bluroabout, setbluroabout] = useState("")
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+    async function loadIndividualProfile() {
+        await axiosInstanceAuth2
+			.get(`/organization/listindividualprofile/`)
+			.then(async (res) => {
+				console.log("@","iprofile",res.data);
+				setiprofile(res.data);
+			})
+			.catch((err) => {
+				console.log("@","iprofile",err);
+			});
+    }
+
+    async function loadIndividualLink() {
+        await axiosInstanceAuth2
+			.get(`/organization/listindividuallink/${iuniqueid}/`)
+			.then(async (res) => {
+				console.log("@","Link",res.data);
+				setilink(res.data);
+			})
+			.catch((err) => {
+				console.log("@","Link",err);
+			});
+    }
+
+    
+    async function addIndividualLink() {
+        var formData = new FormData()
+        formData.append("title", iaddlink)
+        await axiosInstanceAuth2
+          .post(`/organization/individuallink/${iuniqueid}/`, formData)
+          .then(async res => {
+            toastcomp("Social Link Added", "success")
+            loadIndividualLink()
+            setiaddlink("")
+            setAddSocial(false)
+          })
+          .catch(err => {
+            toastcomp("Link Not Added", "error")
+            console.log(err)
+            loadIndividualLink()
+            setiaddlink("")
+            setAddSocial(false)
+          })
+      }
+
+    
+    async function delIndividualLink(val: any) {
+        await axiosInstanceAuth2
+          .delete(`/organization/individuallink/${iuniqueid}/${val}/delete/`)
+          .then(async res => {
+            toastcomp("Social Link Deleted", "success")
+            loadIndividualLink()
+            setiaddlink("")
+            setAddSocial(false)
+          })
+          .catch(err => {
+            toastcomp("Link Not Deleted", "error")
+            console.log(err)
+            loadIndividualLink()
+            setiaddlink("")
+            setAddSocial(false)
+          })
+      }
+
+    
+    async function loadOrganizationProfile() {
+        await axiosInstanceAuth2
+			.get(`/organization/listorganizationprofile/`)
+			.then(async (res) => {
+				console.log("@","oprofile",res.data);
+				setoprofile(res.data);
+			})
+			.catch((err) => {
+				console.log("@","oprofile",err);
+			});
+    }
+
+    useEffect(()=>{
+        if(token && token.length > 0){
+            loadIndividualProfile()
+            loadOrganizationProfile()
+        }
+    },[token])
+
+    useEffect(()=>{
+        if(iprofile && iprofile.length > 0){
+            for(let i=0;i<iprofile.length;i++){
+                if(iprofile[i]["profile"]){
+                    setpurl(iprofile[i]["profile"])
+                }
+                else{setpurl("")}
+
+                if(iprofile[i]["organization_Name"]){
+                    setoname(iprofile[i]["organization_Name"])
+                    setbluroname(iprofile[i]["organization_Name"])
+                }
+                else{setoname("")}
+
+                if(iprofile[i]["full_Name"]){
+                    setfname(iprofile[i]["full_Name"])
+                    setblurfname(iprofile[i]["full_Name"])
+                }
+                else{setfname("")}
+
+                if(iprofile[i]["contact_Number"]){
+                    setcontact(iprofile[i]["contact_Number"])
+                    setblurcontact(iprofile[i]["contact_Number"])
+                }
+                else{setcontact("")}
+
+                if(iprofile[i]["email"]){
+                    setemail(iprofile[i]["email"])
+                    setbluremail(iprofile[i]["email"])
+                }
+                else{setemail("")}
+
+                if(iprofile[i]["title"]){
+                    settitle(iprofile[i]["title"])
+                    setblurtitle(iprofile[i]["title"])
+                }
+                else{settitle("")}
+
+                if(iprofile[i]["department"]){
+                    setdept(iprofile[i]["department"])
+                    setblurdept(iprofile[i]["department"])
+                }
+                else{setdept("")}
+
+                setiuniqueid(iprofile[i]["unique_id"])
+            }
+        }
+    },[iprofile])
+
+    
+    useEffect(()=>{
+        if(oprofile && oprofile.length > 0){
+            for(let i=0;i<oprofile.length;i++){
+                if(oprofile[i]["about_org"]){
+                    setoabout(oprofile[i]["about_org"])
+                }
+                else{setoabout("")}
+
+                // if(iprofile[i]["organization_Name"]){
+                //     setoname(iprofile[i]["organization_Name"])
+                //     setbluroname(iprofile[i]["organization_Name"])
+                // }
+                // else{setoname("")}
+
+                // if(iprofile[i]["full_Name"]){
+                //     setfname(iprofile[i]["full_Name"])
+                //     setblurfname(iprofile[i]["full_Name"])
+                // }
+                // else{setfname("")}
+
+                // if(iprofile[i]["contact_Number"]){
+                //     setcontact(iprofile[i]["contact_Number"])
+                //     setblurcontact(iprofile[i]["contact_Number"])
+                // }
+                // else{setcontact("")}
+
+                // if(iprofile[i]["email"]){
+                //     setemail(iprofile[i]["email"])
+                //     setbluremail(iprofile[i]["email"])
+                // }
+                // else{setemail("")}
+
+                // if(iprofile[i]["title"]){
+                //     settitle(iprofile[i]["title"])
+                //     setblurtitle(iprofile[i]["title"])
+                // }
+                // else{settitle("")}
+
+                // if(iprofile[i]["department"]){
+                //     setdept(iprofile[i]["department"])
+                //     setblurdept(iprofile[i]["department"])
+                // }
+                // else{setdept("")}
+
+                // setiuniqueid(iprofile[i]["unique_id"])
+            }
+        }
+    },[oprofile])
+
+    useEffect(()=>{
+        if(iuniqueid && iuniqueid.length > 0){
+            loadIndividualLink()
+        }
+    },[iuniqueid])
+
+    async function saveIndividualProfile(formData: any) {
+        await axiosInstanceAuth2
+          .put(`/organization/individualprofile/update/`, formData)
+          .then(async res => {
+            toastcomp("Individual Profile Updated", "success")
+            loadIndividualProfile()
+          })
+          .catch(err => {
+            console.log(err)
+            if (err.message != "Request failed with status code 401") {
+                toastcomp("Individual Profile Not Updated", "error")
+            }
+          })
+    }
+
+
+    useEffect(()=>{
+       
+        if(iprofile && iprofile.length > 0){
+            var formData = new FormData()
+            if (iprofile[0]["organization_Name"] != bluroname) {
+                formData.append("organization_Name", bluroname)
+            }
+            if (iprofile[0]["full_Name"] != blurfname) {
+                formData.append("full_Name", blurfname)
+            }
+            if (iprofile[0]["contact_Number"] != blurcontact) {
+                formData.append("contact_Number", blurcontact)
+            }
+            if (iprofile[0]["email"] != bluremail) {
+                formData.append("email", bluremail)
+            }
+            if (iprofile[0]["title"] != blurtitle) {
+                formData.append("title", blurtitle)
+            }
+            if (iprofile[0]["department"] != blurdept) {
+                formData.append("department", blurdept)
+            }
+            if (profileimg) {
+                formData.append("profile", profileimg)
+            }
+
+            if (Array.from(formData.keys()).length > 0) {
+                saveIndividualProfile(formData)
+            }
+        }
+    },[bluroname,blurfname,blurcontact,bluremail,blurtitle,blurdept,profileimg])
+
+
+    
+  function geticon(param1: string) {
+    if (param1.toLowerCase().includes("facebook")) {
+      return "fa-brands fa-facebook"
+    } else if (param1.toLowerCase().includes("twitter")) {
+      return "fa-brands fa-twitter"
+    } else if (param1.toLowerCase().includes("instagram")) {
+      return "fa-brands fa-instagram"
+    } else if (param1.toLowerCase().includes("linkedin")) {
+      return "fa-brands fa-linkedin"
+    } else if (param1.toLowerCase().includes("github")) {
+      return "fa-brands fa-github"
+    } else if (param1.toLowerCase().includes("discord")) {
+      return "fa-brands fa-discord"
+    } else if (param1.toLowerCase().includes("youtube")) {
+      return "fa-brands fa-youtube"
+    } else if (param1.toLowerCase().includes("behance")) {
+      return "fa-brands fa-behance"
+    } else if (param1.toLowerCase().includes("behance")) {
+      return "fa-brands fa-behance"
+    } else {
+      return "fa-solid fa-link"
+    }
+  }
+
+  function gettitle(param1: string) {
+    if (param1.toLowerCase().includes("facebook")) {
+      return "facebook"
+    } else if (param1.toLowerCase().includes("twitter")) {
+      return "twitter"
+    } else if (param1.toLowerCase().includes("instagram")) {
+      return "instagram"
+    } else if (param1.toLowerCase().includes("linkedin")) {
+      return "linkedin"
+    } else if (param1.toLowerCase().includes("github")) {
+      return "github"
+    } else if (param1.toLowerCase().includes("discord")) {
+      return "discord"
+    } else if (param1.toLowerCase().includes("youtube")) {
+      return "youtube"
+    } else if (param1.toLowerCase().includes("behance")) {
+      return "behance"
+    } else {
+      return "link"
+    }
+  }
+
     return(
         <>
             <Head>
@@ -131,26 +467,26 @@ export default function Profile() {
                                 <Tab.Panels className={"w-full max-w-[980px] mx-auto px-4 py-8"}>
                                     <Tab.Panel>
                                         <div className="mb-4">
-                                            <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
+                                            <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" handleChange={(e)=>setProfileImg(e.target.files[0])} purl={purl} />
                                         </div>
                                         <div className="-mx-3 flex flex-wrap">
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Organization Name" />
+                                                <FormField fieldType="input" inputType="text" label="Organization Name" value={oname} handleChange={(e) => setoname(e.target.value)} handleChange2={(e) => setbluroname(e.target.value)} id={""}/>
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Full Name" />
+                                                <FormField fieldType="input" inputType="text" label="Full Name" value={fname} handleChange={(e) => setfname(e.target.value)} handleChange2={(e) => setblurfname(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="number" label="Contact Number" />
+                                                <FormField fieldType="input" inputType="number" label="Contact Number" value={contact} handleChange={(e) => setcontact(e.target.value)} handleChange2={(e) => setblurcontact(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="email" label="Email Address" required />
+                                                <FormField fieldType="input" inputType="email" label="Email Address" value={email} handleChange={(e) => setemail(e.target.value)} handleChange2={(e) => setbluremail(e.target.value)} required id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Title" />
+                                                <FormField fieldType="input" inputType="text" label="Title" value={title} handleChange={(e) => settitle(e.target.value)} handleChange2={(e) => setblurtitle(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Department" />
+                                                <FormField fieldType="input" inputType="text" label="Department" value={dept} handleChange={(e) => setdept(e.target.value)} handleChange2={(e) => setblurdept(e.target.value)} id={""} />
                                             </div>
                                         </div>
                                         <hr className="my-4" />
@@ -162,28 +498,19 @@ export default function Profile() {
                                                 <Button btnType="button" btnStyle="iconRightBtn" label="Add" iconRight={(<i className="fa-solid fa-circle-plus"></i>)} handleClick={() => setAddSocial(true)} />
                                             </div>
                                             <div className="flex flex-wrap">
-                                                <Link href="#" className="mr-6 mb-4 w-[100px] rounded-normal shadow-highlight relative p-3 text-center bg-lightBlue dark:bg-gray-700">
-                                                    <span className="block w-8 h-8 mx-auto mb-1 shadow-normal rounded p-1 bg-white dark:bg-gray-500">
-                                                        <i className="fa-brands fa-facebook"></i>
-                                                    </span>
-                                                    <p className="font-bold text-[12px]">
-                                                        Facebook
-                                                    </p>
-                                                    <button type="button" className="absolute top-[-10px] right-[-10px] text-center rounded-full text-[20px] font-bold text-red-500 dark:text-white">
-                                                        <i className="fa-solid fa-circle-xmark"></i>
-                                                    </button>
-                                                </Link>
-                                                <Link href="#" className="mr-6 mb-4 w-[100px] rounded-normal shadow-highlight relative p-3 text-center bg-lightBlue dark:bg-gray-700">
-                                                    <span className="block w-8 h-8 mx-auto mb-1 shadow-normal rounded p-1 bg-white dark:bg-gray-500">
-                                                        <i className="fa-brands fa-twitter"></i>
-                                                    </span>
-                                                    <p className="font-bold text-[12px]">
-                                                        Twitter
-                                                    </p>
-                                                    <button type="button" className="absolute top-[-10px] right-[-10px] text-center rounded-full text-[20px] font-bold text-red-500 dark:text-white">
-                                                        <i className="fa-solid fa-circle-xmark"></i>
-                                                    </button>
-                                                </Link>
+                                                {ilink && ilink.map((data,i)=>(
+                                                    <Link href={data["title"]} className="mr-6 mb-4 w-[100px] rounded-normal shadow-highlight relative p-3 text-center bg-lightBlue dark:bg-gray-700" key={i}>
+                                                        <span className="block w-8 h-8 mx-auto mb-1 shadow-normal rounded p-1 bg-white dark:bg-gray-500">
+                                                            <i className={`${geticon(data["title"])}`}></i>
+                                                        </span>
+                                                        <p className="font-bold text-[12px] capitalize">
+                                                            {`${gettitle(data["title"])}`}
+                                                        </p>
+                                                        <button type="button" className="absolute top-[-10px] right-[-10px] text-center rounded-full text-[20px] font-bold text-red-500 dark:text-white" onClick={(e)=>delIndividualLink(data["id"])} >
+                                                            <i className="fa-solid fa-circle-xmark"></i>
+                                                        </button>
+                                                    </Link>
+                                                ))}
                                             </div>
                                         </div>
                                         <hr className="my-4" />
@@ -218,7 +545,7 @@ export default function Profile() {
                                             </Tab.List>
                                             <Tab.Panels>
                                                 <Tab.Panel>
-                                                    <FormField fieldType="reactquill" label="About the organization" />
+                                                    <FormField fieldType="reactquill" label="About the organization" value={oabout} handleChange={setoabout} handleChange2={setbluroabout} />
                                                     <div className="mb-4">
                                                         <h6 className="mb-3 font-bold">Founders Information</h6>
                                                         <div className="flex flex-wrap -mx-4">
@@ -444,7 +771,7 @@ export default function Profile() {
 										</button>
 									</div>
 									<div className="p-8">
-                                        <FormField
+                                        {/* <FormField
                                             fieldType="select"
                                             inputType="text"
                                             label="Choose social media"
@@ -453,14 +780,16 @@ export default function Profile() {
                                                 { name: "Facebook" },
                                                 { name: "Twitter" }
                                             ]}
-                                        />
+                                        /> */}
                                         <FormField
                                             fieldType="input"
                                             inputType="text"
                                             label="Add URL"
+                                            value={iaddlink}
+                                            handleChange={(e)=>setiaddlink(e.target.value)}
                                         />
 										<div className="text-center">
-											<Button label="Add" />
+											<Button label="Add" disabled={!verifyLinkPopup()} btnType={"button"} handleClick={addIndividualLink} />
 										</div>
 									</div>
 								</Dialog.Panel>
