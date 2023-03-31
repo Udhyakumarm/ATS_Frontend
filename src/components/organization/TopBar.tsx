@@ -104,7 +104,7 @@ export default function OrgTopBar() {
 											<div className="my-2 min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-1 px-2 text-center text-lg font-bold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500">
 												{CalendarIntegrationOptions.map((integration, i) => (
 													<div key={i}>
-														<Link href={integration.link} target="_blank">{`Integrate ${integration.provider}`}</Link>
+														<Link href={integration.link}>{`Integrate ${integration.provider}`}</Link>
 													</div>
 												))}
 											</div>
