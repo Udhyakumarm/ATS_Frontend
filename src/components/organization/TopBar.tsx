@@ -9,6 +9,8 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 
+const CalendarIntegrationOptions = [{ provider: "Google Calendar", icon: null, link: "/api/integrations/gcal/create" }];
+
 export default function OrgTopBar() {
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -91,9 +93,24 @@ export default function OrgTopBar() {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-									<OrganizationCalendar integration={integration ? integration[0] : null} />
-								</Dialog.Panel>
+								{integration && integration.length > 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar integration={integration[0]} />
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<div className="flex-col items-center justify-center bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-10 px-8 py-3 text-white">
+											<h4 className="p-5 text-2xl font-semibold leading-none">No Calendar Integrations</h4>
+											<div className="my-2 min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-1 px-2 text-center text-lg font-bold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i}>
+														<Link href={integration.link}>{`Integrate ${integration.provider}`}</Link>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
 							</Transition.Child>
 						</div>
 					</div>

@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const { success } = response.data;
 
 	if (success) {
-		return res.redirect("/test");
+		return res.redirect("/organization/dashboard");
 	} else {
 		return res.redirect("/test?error=AuthFailed");
 	}

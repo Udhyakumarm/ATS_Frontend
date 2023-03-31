@@ -357,27 +357,11 @@ export default function OrganizationCalendar({ integration }: any) {
 
 	const [currentDate, handleDateUpdate] = useReducer(updateDate, today);
 
-	// const [createScheduleOpen, setCreateScheduleOpen] = useState(false);
-
 	const [eventsLoading, setEventsLoading] = useState(false);
 
 	const [eventList, setEventList] = useState<Array<any>>([]);
 
 	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
-
-	const saveNewCalendarEvent = async (newEvent: CalendarEvent) => {
-		//TODO Add support for other integrations
-
-		await axiosInstance.next_api
-			.post("/api/integrations/gcal/createEvent", {
-				googleCalendarIntegration: integration,
-				event: { ...newEvent, type: newEvent.type[0]?.name, platform: newEvent.platform[0]?.name }
-			})
-			.then(() => {
-				// setCreateScheduleOpen(false);
-				toastcomp("Scheduled " + newEvent.type[0]?.name, "success");
-			});
-	};
 
 	const getDays = useCallback(
 		(selectedDate: Date) => {
@@ -554,17 +538,7 @@ export default function OrganizationCalendar({ integration }: any) {
 							calendarLink={eventItem.htmlLink}
 						/>
 					))}
-					{/* <EventCard
-						jobTitle={"Software Developer"}
-						jobId={"ID-573219"}
-						platform={"Google Meet"}
-						participants={[
-							{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg },
-							{ name: "Bethany Jackson", role: "Interviewer", userImg: userImg }
-						]}
-						date={new Date(2023, 1, 20, 10)}
-						meetingLink={"https://meet.google.com/ytk-jphs-dug"}
-					/> */}
+
 					{currentDayEvents.length == 0 && (
 						<div className="mb-4 overflow-hidden rounded-[10px] shadow">
 							<div className="flex bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-3 text-white">
