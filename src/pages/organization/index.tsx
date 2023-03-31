@@ -7,7 +7,7 @@ import jobsIcon from "/public/images/icons/jobs.png";
 import analyticsIcon from "/public/images/icons/analytics.png";
 import vendorsIcon from "/public/images/icons/vendors.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
-import collectionIcon from "/public/images/icons/collection.png";
+import settingsIcon from "/public/images/icons/settings.png";
 
 export default function Organization() {
 	const quicklinks = [
@@ -42,9 +42,9 @@ export default function Organization() {
 			link: "/organization/applicants"
 		},
 		{
-			name: "Offer Management",
-			icon: collectionIcon,
-			link: "/dashboard"
+			name: "Settings",
+			icon: settingsIcon,
+			link: "/organization/settings"
 		}
 	];
 	return (

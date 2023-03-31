@@ -180,7 +180,7 @@ export default function Inbox() {
 																	(selected ? "text-primary" : "text-darkGray dark:text-gray-400")
 																}
 															>
-																Team
+																Internal Team
 															</button>
 														)}
 													</Tab>

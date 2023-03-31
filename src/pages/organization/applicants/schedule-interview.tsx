@@ -299,12 +299,19 @@ export default function ScheduleInterview() {
 												</button>
 											</div>
 										))}
+										{
+											assignedInterviewerList.length == 0 &&
+											<>
+												<p className="text-sm text-darkGray dark:text-gray-400">No Interviewer Added</p>
+											</>
+										}
 									</div>
 								</div>
 								<div className="w-full p-4 lg:max-w-[60%]">
 									<FormField
 										id={"summary"}
 										fieldType="input"
+										inputType="text"
 										label="Summary"
 										value={newSchedule.summary}
 										handleChange={handleNewSchedule}

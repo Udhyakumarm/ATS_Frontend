@@ -19,6 +19,7 @@ import moment from "moment";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Listbox } from '@headlessui/react'
 import toastcomp from "@/components/toast";
+import favIcon from "/public/favicon-white.ico";
 
 const people = [
 	{ id: 1, name: 'Sourced', unavailable: false },
@@ -495,6 +496,19 @@ export default function ApplicantsDetail() {
 														</button>
 													)}
 												</Tab>
+												<Tab as={Fragment}>
+													{({ selected }) => (
+														<button
+															className={
+																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																" " +
+																(selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
+															}
+														>
+															AI Generated Interview
+														</button>
+													)}
+												</Tab>
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
@@ -820,6 +834,36 @@ export default function ApplicantsDetail() {
 																		<h6 className="font-bold text-sm mb-2">Applicant has been shifted to new Job -Software Engineer</h6>
 																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
 																	</article>
+																</div>
+															</div>
+														</div>
+													</div>
+												</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+													<div>
+														<div className="h-[60px] w-[60px] mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
+															<Image src={favIcon} alt="Somhako" width={30} />
+														</div>
+														<p className="text-center text-darkGray dark:text-gray-400 mb-4">
+														Ask Questions Related to the Candidate
+														</p>
+														<div className="w-full max-w-[650px] mx-auto">
+															<div className="bg-lightBlue dark:bg-gray-600 rounded-normal shadow-normal">
+																<div className="py-4 px-10">
+																	{Array(10).fill(
+																	<div className="my-2 border rounded py-2 px-4 bg-white shadow-normal dark:border-gray-600 dark:bg-gray-700">
+																		<h5 className="text-darkGray dark:text-gray-400 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed ?</h5>
+																	</div>
+																	)}
+																</div>
+																<div className="border-t dark:border-t-gray-600 py-4 px-10">
+																	<button type="button" className="flex items-center justify-center border border-slate-300 rounded py-2 px-3 text-sm hover:bg-primary hover:text-white">
+																		<span className="block mr-2">
+																			<i className={'fa-solid fa-rotate'}></i>
+																			<i className={'fa-solid fa-rotate fa-spin'}></i>
+																		</span>
+																		Regenerate
+																	</button>
 																</div>
 															</div>
 														</div>

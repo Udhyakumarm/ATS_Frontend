@@ -232,6 +232,20 @@ input[type=number] {
   border-color: #e5e7eb !important;
   overflow: hidden;
 }
+.react-datepicker-popper {
+  width: 320px;
+}
+.react-datepicker__month-container {
+  width: calc(100% - 85px);
+  overflow: auto;
+}
+.react-datepicker__input-container input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #727272;
+}
 
 @media (max-width: 1023px) {
   .sidebarToggled #sidebar {
