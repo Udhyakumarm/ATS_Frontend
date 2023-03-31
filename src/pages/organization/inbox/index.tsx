@@ -413,7 +413,7 @@ export default function Inbox() {
 																<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-2 shadow-normal dark:bg-gray-700'}>
 																	<Menu.Item>
 																		<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={()=> setCreateGroup(true)}>
-																			Group Info
+																			Edit Group
 																		</button>
 																	</Menu.Item>
 																	<Menu.Item>
@@ -614,6 +614,7 @@ export default function Inbox() {
 									</div>
 									<div className="py-2">
 										<div className="max-h-[300px] overflow-y-auto px-8">
+											{Array(20).fill(
 											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
 												<div className="flex items-center grow pr-2">
 													<Image
@@ -625,41 +626,11 @@ export default function Inbox() {
 													<h6 className="font-semibold text-sm">Jacob Adam</h6>
 												</div>
 												<aside>
-													<button type="button" className="text-darkGray dark:text-gray-400 text-sm">Add</button>
+													<button type="button" className="text-darkGray dark:text-gray-400 text-sm">Chat</button>
 												</aside>
 											</div>
-											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
-												<div className="flex items-center grow pr-2">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight mr-4"
-													/>
-													<h6 className="font-semibold text-sm">Jacob Adam</h6>
-												</div>
-												<aside>
-													<button type="button" className="text-darkGray dark:text-gray-400 text-sm">Add</button>
-												</aside>
-											</div>
-											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
-												<div className="flex items-center grow pr-2">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight mr-4"
-													/>
-													<h6 className="font-semibold text-sm">Jacob Adam</h6>
-												</div>
-												<aside>
-													<button type="button" className="text-red-500 text-sm">Remove</button>
-												</aside>
-											</div>
+											)}
 										</div>
-                                        <div className="text-center">
-                                            <Button label="Done" />
-                                        </div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
