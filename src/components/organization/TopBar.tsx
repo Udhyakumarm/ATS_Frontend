@@ -8,8 +8,9 @@ import userImg from "/public/images/user-image.png";
 import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
+import googleIcon from '/public/images/social/google-icon.png'
 
-const CalendarIntegrationOptions = [{ provider: "Google Calendar", icon: null, link: "/api/integrations/gcal/create" }];
+const CalendarIntegrationOptions = [{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }];
 
 export default function OrgTopBar() {
 	const cancelButtonRef = useRef(null);
@@ -98,13 +99,27 @@ export default function OrgTopBar() {
 										<OrganizationCalendar integration={integration[0]} />
 									</Dialog.Panel>
 								) : (
-									<Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
-										<div className="flex-col items-center justify-center bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-10 px-8 py-3 text-white">
-											<h4 className="p-5 text-2xl font-semibold leading-none">No Calendar Integrations</h4>
-											<div className="my-2 min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-1 px-2 text-center text-lg font-bold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500">
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
 												{CalendarIntegrationOptions.map((integration, i) => (
-													<div key={i}>
-														<Link href={integration.link}>{`Integrate ${integration.provider}`}</Link>
+													<div key={i} className="my-2 w-full border rounded-normal overflow-hidden">
+														<Link href={integration.link} className="flex items-center justify-between w-full p-4 hover:bg-lightBlue">
+															<Image src={integration.icon} alt={integration.provider} width={150} className="max-h-[24px] mr-4 w-auto" />
+															<span className="min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</Link>
 													</div>
 												))}
 											</div>
