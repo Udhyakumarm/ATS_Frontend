@@ -64,13 +64,13 @@ export default function OrgSideBar() {
         },
         {
             title: 'Inboxes',
-            url: '#',
+            url: '/organization/inbox',
             img: inboxesIcon,
             imgWhite: inboxesIconWhite
         },
         {
             title: 'Settings',
-            url: '/settings',
+            url: '/organization/settings',
             img: settingsIcon,
             imgWhite: settingsIconWhite
         }

@@ -16,6 +16,7 @@ export default function FormField({
 	inputType,
 	fieldType,
 	handleChange,
+	handleChange2,
 	error,
 	value,
 	options,
@@ -35,6 +36,7 @@ export default function FormField({
 	inputType?: string;
 	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
 	handleChange: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
+	handleChange2: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
 	error?: any;
 	value?: any;
 	options?: Array<any>;
@@ -75,7 +77,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -98,7 +100,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -113,9 +115,10 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className={`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "}
+									className={`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "}
 									value={value}
 									onChange={handleChange}
+									onBlur={handleChange2}
 									placeholder={placeholder}
 									readOnly={readOnly}
 									disabled={disabled}
@@ -147,7 +150,7 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "
+								`min-h-[45px] w-full resize-none rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "
 							}
 							value={value}
 							onChange={handleChange}
@@ -216,7 +219,10 @@ export default function FormField({
 						<ReactQuill
 							defaultValue={"\n\n\n\n\n"}
 							value={value}
-							onChange={(value: string) => handleChange({ target: { id, value } })}
+							// onChange={(value: string) => handleChange({ target: { id, value } })}
+							// onBlur={(value: string) => handleChange2({ target: { id, value } })}
+							onChange={(content, delta, source, editor)=>handleChange(editor.getContents())}
+							onBlur={(previousRange, source, editor)=>handleChange2(editor.getContents())}
 						/>
 					</div>
 					{errorMessage}

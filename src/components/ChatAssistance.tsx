@@ -253,13 +253,6 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 					</div>
 					<div className="bg-white dark:bg-gray-700 p-3">
 						<div className="flex items-center rounded bg-lightBlue dark:bg-gray-800 p-2">
-							{/* <input
-								type="text"
-								placeholder="Type something..."
-								className="w-[calc(100%-50px)] border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
-								value={prompt}
-								onChange={(e) => setprompt(e.target.value)}
-							/> */}
 							<textarea name="" id="" className="w-[calc(100%-50px)] border-0 bg-transparent  focus:border-0 focus:shadow-none focus:outline-none focus:ring-0 resize-none h-[40px]" placeholder="Type something..." value={prompt} onChange={(e) => setprompt(e.target.value)}></textarea>
 							<button
 								type="button"
