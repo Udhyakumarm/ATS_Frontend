@@ -20,7 +20,7 @@ export default function Settings() {
 		{
 			name: "Integrations",
 			icon: integrationIcon,
-			link: "#"
+			link: "/organization/settings/integrations"
 		},
 		{
 			name: "Vendors",
