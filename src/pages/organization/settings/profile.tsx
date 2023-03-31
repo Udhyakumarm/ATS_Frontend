@@ -115,12 +115,72 @@ export default function Profile() {
         return iaddlink.length > 0
     }
 
-    //Individual Profile
+    //Org Profile
     const [oprofile, setoprofile] = useState([]);
 
     const [oabout, setoabout] = useState("")
+    const [oafounder, setoafounder] = useState("")
+    const [ourl, setourl] = useState("")
+    const [ocontact, setocontact] = useState("")
+    const [ocsize, setocsize] = useState("")
+    const [owplace, setowplace] = useState("")
+    const [ohlocation, setohlocation] = useState("")
+    const [oboffice, setoboffice] = useState("")
+    const [obenefits, setobenefits] = useState("")
+    const [ofund, setofund] = useState("")
+
+    const [ologo, setologo] = useState()
+    const [oulogo, setoulogo] = useState()
+    const [obanner, setobanner] = useState()
+    const [oubanner, setoubanner] = useState()
     //blur
     const [bluroabout, setbluroabout] = useState("")
+    const [bluroafounder, setbluroafounder] = useState("")
+    const [blurourl, setblurourl] = useState("")
+    const [blurocontact, setblurocontact] = useState("")
+    const [blurocsize, setblurocsize] = useState("")
+    const [blurowplace, setblurowplace] = useState("")
+    const [blurohlocation, setblurohlocation] = useState("")
+    const [bluroboffice, setbluroboffice] = useState("")
+    const [blurobenefits, setblurobenefits] = useState("")
+    const [blurofund, setblurofund] = useState("")
+
+    //Org Founder
+    const [ofounder, setofounder] = useState([]);
+
+    const [ofounderimg, setofounderimg] = useState();
+    const [ofoundername, setofoundername] = useState("");
+    const [ofounderdes, setofounderdes] = useState("");
+
+    function verifyFounderPopup() {
+        return ofounderimg && ofoundername.length > 0 && ofounderdes.length > 0
+    }
+
+    //Org Gallery
+    const [ogallery, setoGallery] = useState([])
+    const [ofile, setoFile] = useState([] as any)
+
+    function onImageChange(e: any) {
+        setoFile([...ofile, ...e.target.files])
+    }
+
+    
+    function deleteUImage(num: any) {
+        var myElement = document.getElementById(`gallerypopup${num}`).remove()
+        if (ofile.length == 1) {
+            setoFile([])
+        } else {
+            ofile.splice(num, 1)
+        }
+    }
+    
+    function verifyGalPopup() {
+        return ofile.length > 0
+    }
+
+
+
+
 
 	useEffect(() => {
 		if (session) {
@@ -144,6 +204,21 @@ export default function Profile() {
 			});
     }
 
+    async function saveIndividualProfile(formData: any) {
+        await axiosInstanceAuth2
+          .put(`/organization/individualprofile/update/`, formData)
+          .then(async res => {
+            toastcomp("Individual Profile Updated", "success")
+            loadIndividualProfile()
+          })
+          .catch(err => {
+            console.log(err)
+            if (err.message != "Request failed with status code 401") {
+                toastcomp("Individual Profile Not Updated", "error")
+            }
+          })
+    }
+
     async function loadIndividualLink() {
         await axiosInstanceAuth2
 			.get(`/organization/listindividuallink/${iuniqueid}/`)
@@ -156,7 +231,6 @@ export default function Profile() {
 			});
     }
 
-    
     async function addIndividualLink() {
         var formData = new FormData()
         formData.append("title", iaddlink)
@@ -175,9 +249,8 @@ export default function Profile() {
             setiaddlink("")
             setAddSocial(false)
           })
-      }
+    }
 
-    
     async function delIndividualLink(val: any) {
         await axiosInstanceAuth2
           .delete(`/organization/individuallink/${iuniqueid}/${val}/delete/`)
@@ -194,9 +267,8 @@ export default function Profile() {
             setiaddlink("")
             setAddSocial(false)
           })
-      }
+    }
 
-    
     async function loadOrganizationProfile() {
         await axiosInstanceAuth2
 			.get(`/organization/listorganizationprofile/`)
@@ -209,10 +281,142 @@ export default function Profile() {
 			});
     }
 
+    async function saveOrganizationProfile(formData: any) {
+        await axiosInstanceAuth2
+          .put(`/organization/organizationprofile/update/`, formData)
+          .then(async res => {
+            toastcomp("Organization Profile Updated", "success")
+            loadIndividualProfile()
+          })
+          .catch(err => {
+            console.log(err)
+            if (err.message != "Request failed with status code 401") {
+                toastcomp("Organization Profile Not Updated", "error")
+            }
+          })
+    }
+
+    async function loadOrganizationFounder() {
+        await axiosInstanceAuth2
+			.get(`/organization/listorganizationfounder/`)
+			.then(async (res) => {
+				console.log("@","founder",res.data);
+				setofounder(res.data);
+			})
+			.catch((err) => {
+				console.log("@","founder",err);
+			});
+    }
+
+    async function addOrganizationFounder() {
+        var formData = new FormData()
+        formData.append("name", ofoundername)
+        formData.append("designation", ofounderdes)
+        formData.append("image", ofounderimg)
+        await axiosInstanceAuth2
+          .post(`/organization/organizationfounder/`, formData)
+          .then(async res => {
+            toastcomp("Organization founder Added", "success")
+            loadOrganizationFounder()
+            setofounderdes("")
+            setofounderimg()
+            setofoundername("")
+            setAddFounder(false)
+          })
+          .catch(err => {
+            toastcomp("founder Not Added", "error")
+            console.log(err)
+            loadOrganizationFounder()
+            setofounderdes("")
+            setofounderimg()
+            setofoundername("")
+            setAddFounder(false)
+          })
+    }
+    
+    async function delOrganizationFounder(val: any) {
+        await axiosInstanceAuth2
+          .delete(`/organization/organizationfounder/${val}/delete/`)
+          .then(async res => {
+            toastcomp("Organization founder Deleted", "success")
+            loadOrganizationFounder()
+            setofounderdes("")
+            setofounderimg()
+            setofoundername("")
+            setAddFounder(false)
+          })
+          .catch(err => {
+            toastcomp("Founder Not Deleted", "error")
+            console.log(err)
+            loadOrganizationFounder()
+            setofounderdes("")
+            setofounderimg()
+            setofoundername("")
+            setAddFounder(false)
+          })
+    }
+
+    async function loadOrganizationGallery() {
+        await axiosInstanceAuth2
+			.get(`/organization/listorganizationgallery/`)
+			.then(async (res) => {
+				console.log("@","gallery",res.data);
+				setoGallery(res.data);
+			})
+			.catch((err) => {
+				console.log("@","gallery",err);
+			});
+    }
+
+    async function addOrganizationGallery(formdata) {
+        await axiosInstanceAuth2
+          .post("/organization/organizationgallery/",formdata)
+          .then(async res => {
+            toastcomp("Gallery Added", "success")
+            loadOrganizationGallery()
+            setoFile([])
+            setAddGalImages(false)
+          })
+          .catch(err => {
+            toastcomp("Gallery Not Added", "error")
+            console.log(err)
+            loadOrganizationGallery()
+            setoFile([])
+            setAddGalImages(false)
+        })
+    }
+
+    
+    function saveGallery() {
+        if (ofile.length > 0) {
+          for (let i = 0; i < ofile.length; i++) {
+            const formData = new FormData()
+            formData.append("image", ofile[i])
+            addOrganizationGallery(formData)
+          }
+        }
+    }
+    
+    async function delOrganizationGallery(val: any) {
+        await axiosInstanceAuth2
+          .delete(`/organization/organizationgallery/${val}/delete/`)
+          .then(async res => {
+            toastcomp("Organization Gallery Deleted", "success")
+            loadOrganizationGallery()
+          })
+          .catch(err => {
+            toastcomp("Gallery Not Deleted", "error")
+            console.log(err)
+            loadOrganizationGallery()
+          })
+    }
+
     useEffect(()=>{
         if(token && token.length > 0){
             loadIndividualProfile()
             loadOrganizationProfile()
+            loadOrganizationFounder()
+            loadOrganizationGallery()
         }
     },[token])
 
@@ -271,44 +475,75 @@ export default function Profile() {
             for(let i=0;i<oprofile.length;i++){
                 if(oprofile[i]["about_org"]){
                     setoabout(oprofile[i]["about_org"])
+                    setbluroabout(oprofile[i]["about_org"])
                 }
                 else{setoabout("")}
 
-                // if(iprofile[i]["organization_Name"]){
-                //     setoname(iprofile[i]["organization_Name"])
-                //     setbluroname(iprofile[i]["organization_Name"])
-                // }
-                // else{setoname("")}
+                if(oprofile[i]["about_founder"]){
+                    setoafounder(oprofile[i]["about_founder"])
+                    setbluroafounder(oprofile[i]["about_founder"])
+                }
+                else{setoafounder("")}
 
-                // if(iprofile[i]["full_Name"]){
-                //     setfname(iprofile[i]["full_Name"])
-                //     setblurfname(iprofile[i]["full_Name"])
-                // }
-                // else{setfname("")}
+                if(oprofile[i]["org_Url"]){
+                    setourl(oprofile[i]["org_Url"])
+                    setblurourl(oprofile[i]["org_Url"])
+                }
+                else{setourl("")}
 
-                // if(iprofile[i]["contact_Number"]){
-                //     setcontact(iprofile[i]["contact_Number"])
-                //     setblurcontact(iprofile[i]["contact_Number"])
-                // }
-                // else{setcontact("")}
+                if(oprofile[i]["contact_Number"]){
+                    setocontact(oprofile[i]["contact_Number"])
+                    setblurocontact(oprofile[i]["contact_Number"])
+                }
+                else{setocontact("")}
 
-                // if(iprofile[i]["email"]){
-                //     setemail(iprofile[i]["email"])
-                //     setbluremail(iprofile[i]["email"])
-                // }
-                // else{setemail("")}
+                if(oprofile[i]["company_Size"]){
+                    setocsize(oprofile[i]["company_Size"])
+                    setblurocsize(oprofile[i]["company_Size"])
+                }
+                else{setocsize("")}
 
-                // if(iprofile[i]["title"]){
-                //     settitle(iprofile[i]["title"])
-                //     setblurtitle(iprofile[i]["title"])
-                // }
-                // else{settitle("")}
+                if(oprofile[i]["workplace_Type"]){
+                    setowplace(oprofile[i]["workplace_Type"])
+                    setblurowplace(oprofile[i]["workplace_Type"])
+                }
+                else{setowplace("")}
 
-                // if(iprofile[i]["department"]){
-                //     setdept(iprofile[i]["department"])
-                //     setblurdept(iprofile[i]["department"])
-                // }
-                // else{setdept("")}
+                if(oprofile[i]["headquarter_Location"]){
+                    setohlocation(oprofile[i]["headquarter_Location"])
+                    setblurohlocation(oprofile[i]["headquarter_Location"])
+                }
+                else{setohlocation("")}
+
+                if(oprofile[i]["branch_Office"]){
+                    setoboffice(oprofile[i]["branch_Office"])
+                    setbluroboffice(oprofile[i]["branch_Office"])
+                }
+                else{setoboffice("")}
+
+                if(oprofile[i]["organization_Benefits"]){
+                    setobenefits(oprofile[i]["organization_Benefits"])
+                    setblurobenefits(oprofile[i]["organization_Benefits"])
+                }
+                else{setobenefits("")}
+
+                if(oprofile[i]["funding_Details"]){
+                    setofund(oprofile[i]["funding_Details"])
+                    setblurofund(oprofile[i]["funding_Details"])
+                }
+                else{setofund("")}
+
+                if(oprofile[i]["logo"]){
+                    setologo(oprofile[i]["logo"])
+                }
+                else{setologo("")}
+
+                if(oprofile[i]["banner"]){
+                    setobanner(oprofile[i]["banner"])
+                }
+                else{setobanner("")}
+
+                
 
                 // setiuniqueid(iprofile[i]["unique_id"])
             }
@@ -321,24 +556,9 @@ export default function Profile() {
         }
     },[iuniqueid])
 
-    async function saveIndividualProfile(formData: any) {
-        await axiosInstanceAuth2
-          .put(`/organization/individualprofile/update/`, formData)
-          .then(async res => {
-            toastcomp("Individual Profile Updated", "success")
-            loadIndividualProfile()
-          })
-          .catch(err => {
-            console.log(err)
-            if (err.message != "Request failed with status code 401") {
-                toastcomp("Individual Profile Not Updated", "error")
-            }
-          })
-    }
 
 
     useEffect(()=>{
-       
         if(iprofile && iprofile.length > 0){
             var formData = new FormData()
             if (iprofile[0]["organization_Name"] != bluroname) {
@@ -368,6 +588,56 @@ export default function Profile() {
             }
         }
     },[bluroname,blurfname,blurcontact,bluremail,blurtitle,blurdept,profileimg])
+
+    useEffect(()=>{
+        if(oprofile && oprofile.length > 0){
+            var formData = new FormData()
+            if (oprofile[0]["about_org"] != bluroabout) {
+                formData.append("about_org", bluroabout)
+            }
+            if (oprofile[0]["about_founder"] != bluroafounder) {
+                formData.append("about_founder", bluroafounder)
+            }
+            if (oprofile[0]["org_Url"] != blurourl) {
+                formData.append("org_Url", blurourl)
+            }
+            if (oprofile[0]["contact_Number"] != blurocontact) {
+                formData.append("contact_Number", blurocontact)
+            }
+            if (oprofile[0]["company_Size"] != ocsize) {
+                formData.append("company_Size", ocsize)
+            }
+            if (oprofile[0]["workplace_Type"] != owplace) {
+                formData.append("workplace_Type", owplace)
+            }
+            if (oprofile[0]["headquarter_Location"] != blurohlocation) {
+                formData.append("headquarter_Location", blurohlocation)
+            }
+            if (oprofile[0]["branch_Office"] != bluroboffice) {
+                formData.append("branch_Office", bluroboffice)
+            }
+            if (oprofile[0]["organization_Benefits"] != blurobenefits) {
+                formData.append("organization_Benefits", blurobenefits)
+            }
+            if (oprofile[0]["funding_Details"] != blurofund) {
+                formData.append("funding_Details", blurofund)
+            }
+            if (oulogo) {
+                formData.append("logo", oulogo)
+                setoulogo()
+            }
+            if (oubanner) {
+                formData.append("banner", oubanner)
+                setoubanner()
+            }
+
+            if (Array.from(formData.keys()).length > 0) {
+                saveOrganizationProfile(formData)
+            }
+        }
+    },[bluroabout,bluroafounder,blurourl,blurocontact,ocsize,owplace,blurohlocation,bluroboffice,blurobenefits,blurofund,oulogo,oubanner])
+
+
 
 
     
@@ -471,22 +741,22 @@ export default function Profile() {
                                         </div>
                                         <div className="-mx-3 flex flex-wrap">
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Organization Name" value={oname} handleChange={(e) => setoname(e.target.value)} handleChange2={(e) => setbluroname(e.target.value)} id={""}/>
+                                                <FormField fieldType="input" inputType="text" label="Organization Name" value={oname} handleChange={(e) => setoname(e.target.value)} handleOnBlur={(e) => setbluroname(e.target.value)} id={""}/>
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Full Name" value={fname} handleChange={(e) => setfname(e.target.value)} handleChange2={(e) => setblurfname(e.target.value)} id={""} />
+                                                <FormField fieldType="input" inputType="text" label="Full Name" value={fname} handleChange={(e) => setfname(e.target.value)} handleOnBlur={(e) => setblurfname(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="number" label="Contact Number" value={contact} handleChange={(e) => setcontact(e.target.value)} handleChange2={(e) => setblurcontact(e.target.value)} id={""} />
+                                                <FormField fieldType="input" inputType="number" label="Contact Number" value={contact} handleChange={(e) => setcontact(e.target.value)} handleOnBlur={(e) => setblurcontact(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="email" label="Email Address" value={email} handleChange={(e) => setemail(e.target.value)} handleChange2={(e) => setbluremail(e.target.value)} required id={""} />
+                                                <FormField fieldType="input" inputType="email" label="Email Address" value={email} handleChange={(e) => setemail(e.target.value)} handleOnBlur={(e) => setbluremail(e.target.value)} required id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Title" value={title} handleChange={(e) => settitle(e.target.value)} handleChange2={(e) => setblurtitle(e.target.value)} id={""} />
+                                                <FormField fieldType="input" inputType="text" label="Title" value={title} handleChange={(e) => settitle(e.target.value)} handleOnBlur={(e) => setblurtitle(e.target.value)} id={""} />
                                             </div>
                                             <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                <FormField fieldType="input" inputType="text" label="Department" value={dept} handleChange={(e) => setdept(e.target.value)} handleChange2={(e) => setblurdept(e.target.value)} id={""} />
+                                                <FormField fieldType="input" inputType="text" label="Department" value={dept} handleChange={(e) => setdept(e.target.value)} handleOnBlur={(e) => setblurdept(e.target.value)} id={""} />
                                             </div>
                                         </div>
                                         <hr className="my-4" />
@@ -547,22 +817,22 @@ export default function Profile() {
                                             </Tab.List>
                                             <Tab.Panels>
                                                 <Tab.Panel>
-                                                    <FormField fieldType="reactquill" label="About the organization" value={oabout} handleChange={setoabout} handleChange2={setbluroabout} />
+                                                    <FormField fieldType="reactquill" label="About the organization" value={oabout} handleChange={setoabout} handleOnBlur={setbluroabout} />
                                                     <div className="mb-4">
                                                         <h6 className="mb-3 font-bold">Founders Information</h6>
                                                         <div className="flex flex-wrap -mx-4">
-                                                            {Array(2).fill(
-                                                            <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0">
-                                                                <div className="relative text-center p-4 shadow-normal rounded-normal w-full min-h-[180px] dark:bg-gray-700">
-                                                                    <Image src={userImg} alt='User' width={300} className="rounded-full object-cover w-[100px] h-[100px] shadow-highlight mx-auto mb-3" />
-                                                                    <h5 className="font-semibold">Jhon Cerden</h5>
-                                                                    <p className="text-darkGray dark:text-gray-400 text-sm italic">CEO</p>
-                                                                    <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700">
-                                                                        <i className="fa-solid fa-trash"></i>
-                                                                    </button>
+                                                            {ofounder && ofounder.map((data,i)=>(
+                                                                <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0" key={i}>
+                                                                    <div className="relative text-center p-4 shadow-normal rounded-normal w-full min-h-[180px] dark:bg-gray-700">
+                                                                        <Image src={data["image"]} alt='User' width={300} height={300} className="rounded-full object-cover w-[100px] h-[100px] shadow-highlight mx-auto mb-3" />
+                                                                        <h5 className="font-semibold">{data["name"]}</h5>
+                                                                        <p className="text-darkGray dark:text-gray-400 text-sm italic">{data["designation"]}</p>
+                                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700" onClick={(e)=>delOrganizationFounder(data["id"])}>
+                                                                            <i className="fa-solid fa-trash"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            )}
+                                                            ))}
                                                             <div className="w-[50%] md:max-w-[33.3333%] lg:max-w-[25%] px-4 mb-4 last:mb-0">
                                                                 <button type="button" className="border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700" onClick={() => setAddFounder(true)}>
                                                                     <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
@@ -570,56 +840,75 @@ export default function Profile() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <FormField fieldType="input" inputType="text" label="About Founder" />
+                                                    <FormField fieldType="input" inputType="text" label="About Founder" value={oafounder} handleChange={(e) => setoafounder(e.target.value)} handleOnBlur={(e) => setbluroafounder(e.target.value)} />
                                                     <div className="-mx-3 flex flex-wrap">
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Organization URL" />
+                                                            <FormField fieldType="input" inputType="text" label="Organization URL" value={ourl} handleChange={(e) => setourl(e.target.value)} handleOnBlur={(e) => setblurourl(e.target.value)} />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Organization Contact Number" />
+                                                            <FormField fieldType="input" inputType="text" label="Organization Contact Number" value={ocontact} handleChange={(e) => setocontact(e.target.value)} handleOnBlur={(e) => setblurocontact(e.target.value)} />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="select" label="Company Size" />
+                                                            <FormField fieldType="select" label="Company Size" value={[{ name:  ocsize }]} 
+                                                            handleChange={setocsize} singleSelect options={
+                                                                [
+                                                                    { name: "1-10" },
+                                                                    { name: "10-50" },
+                                                                    { name: "50-100" },
+                                                                    { name: "100-500" },
+                                                                    { name: "500+" }
+                                                                ]
+                                                            } />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="select" label="Workplace Type" />
+                                                            <FormField fieldType="select" label="Workplace Type" value={[{ name: owplace }]} 
+                                                            handleChange={setowplace} singleSelect options={
+                                                                [
+                                                                    { name: "On-site" },
+                                                                    { name: "Remote" },
+                                                                    { name: "Hybrid" },
+                                                                ]
+                                                            }/>
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Headquarter Location" />
+                                                            <FormField fieldType="input" inputType="text" label="Headquarter Location" value={ohlocation} handleChange={(e) => setohlocation(e.target.value)} handleOnBlur={(e) => setblurohlocation(e.target.value)} />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Branch Office (Optional)" />
+                                                            <FormField fieldType="input" inputType="text" label="Branch Office (Optional)" value={oboffice} handleChange={(e) => setoboffice(e.target.value)} handleOnBlur={(e) => setbluroboffice(e.target.value)} />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Organization Benefits" />
+                                                            <FormField fieldType="input" inputType="text" label="Organization Benefits" value={obenefits} handleChange={(e) => setobenefits(e.target.value)} handleOnBlur={(e) => setblurobenefits(e.target.value)} />
                                                         </div>
                                                         <div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <FormField fieldType="input" inputType="text" label="Funding Details" />
+                                                            <FormField fieldType="input" inputType="text" label="Funding Details" value={ofund} handleChange={(e) => setofund(e.target.value)} handleOnBlur={(e) => setblurofund(e.target.value)} />
                                                         </div>
                                                     </div>
                                                 </Tab.Panel>
                                                 <Tab.Panel>
                                                     <div className="mb-6">
-                                                        <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
+                                                        <h6 className="mb-3 font-bold">Company Logo</h6>
+                                                        <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" handleChange={(e)=>setoulogo(e.target.files[0])} purl={ologo} />
                                                     </div>
                                                     <div className="mb-6">
                                                         <h6 className="mb-3 font-bold">Banner Image</h6>
-                                                        <label htmlFor="uploadBanner" className="cursor-pointer border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700">
+                                                        {obanner && obanner.legth <= 0 ? <label htmlFor="uploadBanner" className="cursor-pointer border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700">
                                                             <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-                                                            <input type="file" hidden id="uploadBanner" />
+                                                            <input type="file" hidden id="uploadBanner" onChange={(e)=>setoubanner(e.target.files[0])} />
                                                         </label>
+                                                        :
                                                         <div className="block w-full relative rounded-normal border overflow-hidden"> 
-                                                            <Image src={careerBanner} alt='User' width={1200} className="object-cover w-full h-[200px]" />
+                                                            <Image src={obanner} alt='User' width={1200} height={1200} className="object-cover w-full h-[200px]" />
                                                             <div className="absolute top-[-1px] right-0 shadow-highlight rounded-bl overflow-hidden">
-                                                                <button type="button" className="bg-white hover:bg-red-200 text-red-500 w-6 h-6 leading-6 text-center text-[12px] border-b">
+                                                                {/* <button type="button" className="bg-white hover:bg-red-200 text-red-500 w-6 h-6 leading-6 text-center text-[12px] border-b">
                                                                     <i className={'fa-solid fa-trash'}></i>
-                                                                </button>
+                                                                </button> */}
                                                                 <label htmlFor="editBanner" className="cursor-pointer block bg-white hover:bg-slate-200 text-slate-500 w-6 h-6 leading-6 text-center text-[12px]">
                                                                     <i className={'fa-solid fa-edit'}></i>
-                                                                    <input type="file" id="editBanner" hidden />
+                                                                    <input type="file" id="editBanner" onChange={(e)=>setoubanner(e.target.files[0])} hidden />
                                                                 </label>
                                                             </div>
                                                         </div>
+                                                        }
                                                     </div>
                                                     <div className="mb-6">
                                                         <h6 className="mb-3 font-bold">Workplace Culture</h6>
@@ -630,17 +919,17 @@ export default function Profile() {
                                                             </div>
                                                             <div className="p-6">
                                                                 {
-                                                                    gallUpload
+                                                                    ogallery && ogallery.length > 0
                                                                     ?
                                                                     <>
                                                                         <ResponsiveMasonry
                                                                         columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
                                                                         >
                                                                             <Masonry className="masonary_grid">
-                                                                                {gallery.map((data, i) => (
+                                                                                {ogallery.map((data, i) => (
                                                                                     <div key={i} className="relative">
-                                                                                        <Image src={data.image} alt="Gallery" className="w-full p-1" />
-                                                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm">
+                                                                                        <Image src={data["image"]} height={100} width={100} alt="Gallery" className="w-full p-1" />
+                                                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm" onClick={e => delOrganizationGallery(data["id"])}>
                                                                                             <i className="fa-solid fa-trash"></i>
                                                                                         </button>
                                                                                     </div>
@@ -650,8 +939,8 @@ export default function Profile() {
                                                                     </>
                                                                     :
                                                                     <>
-                                                                        <div className="flex items-center justify-center min-h-[200px]">
-                                                                            <Image src={galleryUpload} alt="Upload" />
+                                                                        <div className="flex items-center justify-center min-h-[200px] cursor-pointer"  onClick={()=>setAddGalImages(true)} >
+                                                                            <Image src={galleryUpload} alt="Upload"/>
                                                                         </div>
                                                                     </>
                                                                 }
@@ -908,20 +1197,24 @@ export default function Profile() {
 									</div>
 									<div className="p-8">
                                         <div className="mb-4 text-center">
-                                            <UploadProfile />
+                                            <UploadProfile handleChange={(e)=>setofounderimg(e.target.files[0])} />
                                         </div>
                                         <FormField
                                             fieldType="input"
                                             inputType="text"
                                             label="Founder Name"
+                                            value={ofoundername}
+                                            handleChange={(e)=>setofoundername(e.target.value)}
                                         />
                                         <FormField
                                             fieldType="input"
                                             inputType="text"
                                             label="Founder Designation"
+                                            value={ofounderdes}
+                                            handleChange={(e)=>setofounderdes(e.target.value)}
                                         />
                                         <div className="text-center">
-                                            <Button label="Add" />
+                                            <Button label="Add" disabled={!verifyFounderPopup()} btnType={"button"} handleClick={addOrganizationFounder} />
                                         </div>
 									</div>
 								</Dialog.Panel>
@@ -1057,24 +1350,30 @@ export default function Profile() {
 									<div className="p-8">
                                         <label htmlFor="addGallery" className="cursor-pointer border-2 border-dashed rounded-normal w-full min-h-[180px] flex items-center justify-center hover:bg-lightBlue dark:hover:bg-gray-700 mb-4">
                                             <i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-                                            <input type="file" hidden id="addGallery" />
+                                            <input type="file" hidden id="addGallery" accept="image/*"
+                                            onChange={onImageChange}
+                                            multiple />
                                         </label>
+                                        {ofile.length > 0 && 
                                         <ResponsiveMasonry
                                         columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
                                         >
                                             <Masonry>
-                                                {gallery.map((data, i) => (
-                                                    <div key={i} className="relative">
-                                                        <Image src={data.image} alt="Gallery" className="w-full p-1" />
-                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm">
+                                                {ofile.map((imageSrc, i) => (
+                                                    <div id={`gallerypopup${i}`}
+                                                    key={i} className="relative">
+                                                        <Image src={URL.createObjectURL(imageSrc)} height={100} width={100} alt="Gallery" className="w-full p-1" />
+                                                        <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm" onClick={() => deleteUImage(i)}>
                                                             <i className="fa-solid fa-trash"></i>
                                                         </button>
                                                     </div>
                                                 ))}
                                             </Masonry>
                                         </ResponsiveMasonry>
+                                        }
                                         <div className="text-center">
-                                            <Button label="Add" />
+                                            <Button 
+                                            label="Add" disabled={!verifyGalPopup()} btnType={"button"} handleClick={saveGallery} />
                                         </div>
 									</div>
 								</Dialog.Panel>

@@ -16,7 +16,7 @@ export default function FormField({
 	inputType,
 	fieldType,
 	handleChange,
-	handleChange2,
+	handleOnBlur,
 	error,
 	value,
 	options,
@@ -36,7 +36,7 @@ export default function FormField({
 	inputType?: string;
 	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
 	handleChange: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
-	handleChange2: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
+	handleOnBlur: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
 	error?: any;
 	value?: any;
 	options?: Array<any>;
@@ -118,7 +118,7 @@ export default function FormField({
 									className={`min-h-[45px] w-full rounded-normal border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "}
 									value={value}
 									onChange={handleChange}
-									onBlur={handleChange2}
+									onBlur={handleOnBlur}
 									placeholder={placeholder}
 									readOnly={readOnly}
 									disabled={disabled}
@@ -220,9 +220,9 @@ export default function FormField({
 							defaultValue={"\n\n\n\n\n"}
 							value={value}
 							// onChange={(value: string) => handleChange({ target: { id, value } })}
-							// onBlur={(value: string) => handleChange2({ target: { id, value } })}
-							onChange={(content, delta, source, editor)=>handleChange(editor.getContents())}
-							onBlur={(previousRange, source, editor)=>handleChange2(editor.getContents())}
+							// onBlur={(value: string) => handleOnBlur({ target: { id, value } })}
+							onChange={(content, delta, source, editor)=>handleChange(content)}
+							onBlur={(previousRange, source, editor)=>handleOnBlur(editor.getHTML())}
 						/>
 					</div>
 					{errorMessage}
