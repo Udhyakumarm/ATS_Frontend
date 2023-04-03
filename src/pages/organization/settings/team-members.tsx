@@ -5,9 +5,12 @@ import { Dialog, Listbox, Tab, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import usersIcon from "/public/images/icons/team-users.png";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
+import { useSession } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 const people = [
     { name: 'Recruiter' },
@@ -25,6 +28,100 @@ export default function TeamMembers() {
     const [addDivision, setAddDivision] = useState(false);
 
     const [accordionOpen, setAccordionOpen] = useState(false);
+
+
+    
+    const { data: session } = useSession();
+	const [token, settoken] = useState("");
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+
+    //Add TM
+    
+    const [name, setname] = useState("")
+    const [oemail, setoemail] = useState("")
+    const [dept, setdept] = useState("")
+    const [role, setrole] = useState(people[0])
+
+    
+    function verifyAddTeam() {
+        return name.length > 0 && oemail.length > 0 && dept.length > 0 && role
+    }
+
+    //Load TM
+    const [tm, settm] = useState([])
+
+    const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+    async function loadTeamMember() {
+        await axiosInstanceAuth2
+			.get(`/organization/listorguser/`)
+			.then(async (res) => {
+				console.log("@","listorguser",res.data);
+                settm(res.data)
+			})
+			.catch((err) => {
+				console.log("@","listorguser",err);
+                
+			});
+    }
+
+    async function addTeamMember() {
+        const fd = new FormData();
+        fd.append("name",name)
+        fd.append("email",oemail)
+        fd.append("role",role.name)
+        await axiosInstanceAuth2
+			.post(`/organization/create/org/user/`,fd)
+			.then(async (res) => {
+				console.log("@","iprofile",res.data);
+                toastcomp("New User Add","Success");
+                setAddTeam(false)
+                setname("")
+                setoemail("")
+                setdept("")
+                setrole(people[0])
+			})
+			.catch((err) => {
+				console.log("@","iprofile",err);
+                toastcomp("New User Not Add","error");
+                setAddTeam(false)
+                setname("")
+                setoemail("")
+                setdept("")
+                setrole(people[0])
+			});
+    }
+
+    async function saveTeamMember(role: string,pk: any) {
+        const fd = new FormData();
+        fd.append("role",role)
+        await axiosInstanceAuth2
+			.put(`/organization/updateorguser/${pk}/`,fd)
+			.then(async (res) => {
+				toastcomp("User Updated","Success");
+                loadTeamMember()
+			})
+			.catch((err) => {
+				console.log("@","iprofile",err);
+                toastcomp("User Not Updated","error");
+                loadTeamMember()
+			});
+    }
+
+    
+    useEffect(()=>{
+        if(token && token.length > 0){
+            loadTeamMember()
+        }
+    },[token])
 
     const tabHeading_1 = [
         {
@@ -158,7 +255,89 @@ export default function TeamMembers() {
 													</tr>
 												</thead>
 												<tbody>
-													{Array(6).fill(
+                                                    {tm && tm.map((data,i)=>(
+                                                        <tr key={i}>
+                                                            <td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
+                                                            <td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
+                                                            <td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
+                                                            <td className="border-b py-2 px-3 text-sm">{data["verified"] == false ? <>On Pending</> : <>Verified</>}</td>
+                                                            <td className="w-[250px] border-b py-2 px-3">
+                                                                <div className="w-full">
+                                                                <Listbox value={{name:data["role"]}} onChange={(selectedOption)=>{
+                                                                    saveTeamMember(selectedOption.name,data["id"])
+                                                                }}>
+                                                                    <Listbox.Button className={"w-full text-left text-sm font-bold border bg-white dark:bg-gray-700 dark:border-gray-600 rounded-normal min-h-[45px]"}>
+                                                                        <span className="py-2 px-3 w-[calc(100%-40px)] inline-block">{data["role"]}</span>
+                                                                        <span className="w-[40px] inline-block text-sm border-l dark:border-gray-600 py-2 px-3 text-center">
+                                                                            <i className="fa-solid fa-chevron-down"></i>
+                                                                        </span>
+                                                                    </Listbox.Button>
+                                                                    <Transition
+                                                                        enter="transition duration-100 ease-out"
+                                                                        enterFrom="transform scale-95 opacity-0"
+                                                                        enterTo="transform scale-100 opacity-100"
+                                                                        leave="transition duration-75 ease-out"
+                                                                        leaveFrom="transform scale-100 opacity-100"
+                                                                        leaveTo="transform scale-95 opacity-0"
+                                                                    >
+                                                                        <Listbox.Options
+                                                                            className={
+                                                                                "absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white overflow-hidden shadow-normal dark:bg-gray-700"
+                                                                            }
+                                                                        >
+                                                                            {people.map((person,i) => (
+                                                                            <Listbox.Option
+                                                                                key={i}
+                                                                                value={person}
+                                                                                className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+                                                                            >
+                                                                                {/* {({ selected }) => (
+                                                                                    <>
+                                                                                        <span className={` ${selected ? "font-bold" : "font-normal"}`}>{person.name}</span>
+                                                                                        {selected ? (
+                                                                                            <span className="absolute left-3">
+                                                                                                <i className="fa-solid fa-check"></i>
+                                                                                            </span>
+                                                                                        ) : null}
+                                                                                    </>
+                                                                                )} */}
+
+                                                                                    <>
+                                                                                        <span className={` ${person.name == data["role"] ? "font-bold" : "font-normal"}`}>{person.name}</span>
+                                                                                        {person.name == data["role"] ? (
+                                                                                            <span className="absolute left-3">
+                                                                                                <i className="fa-solid fa-check"></i>
+                                                                                            </span>
+                                                                                        ) : null}
+                                                                                    </>
+                                                                            </Listbox.Option>
+                                                                            ))}
+                                                                            <div className="border-t py-2 px-8 text-darkGray dark:text-gray-400 dark:border-gray-400 text-[12px]">
+                                                                                <p>Access of <b>{data["role"]}</b> to the following:-</p>
+                                                                                <p>
+                                                                                - Job Applications
+                                                                                </p>
+                                                                                <p>
+                                                                                - Analytics
+                                                                                </p>
+                                                                                <p>
+                                                                                - Offer Management
+                                                                                </p>
+                                                                                <p>
+                                                                                - Interviews
+                                                                                </p>
+                                                                            </div>
+                                                                        </Listbox.Options>
+                                                                    </Transition>
+                                                                </Listbox>
+                                                                </div>
+                                                            </td>
+                                                            <td className="border-b py-2 px-3 text-right">
+                                                                <input type="checkbox" />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+													{/* {Array(6).fill(
 														<tr>
 															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
 															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
@@ -228,7 +407,7 @@ export default function TeamMembers() {
 																<input type="checkbox" />
 															</td>
 														</tr>
-													)}
+													)} */}
 												</tbody>
 											</table>
 										</div>
@@ -344,18 +523,18 @@ export default function TeamMembers() {
 									<div className="p-8 overflow-auto min-h-[80vh]">
                                         <div className="flex flex-wrap -mx-3">
                                             <div className="w-full md:max-w-[50%] px-3 mb-4">
-                                                <FormField fieldType="input" inputType="text" label="Name" />
+                                                <FormField fieldType="input" inputType="text" label="Name" value={name} handleChange={(e)=>setname(e.target.value)} />
                                             </div>
                                             <div className="w-full md:max-w-[50%] px-3 mb-4">
-                                                <FormField fieldType="input" inputType="email" label="Organization Email" required />
+                                                <FormField fieldType="input" inputType="email" label="Organization Email" value={oemail} handleChange={(e)=>setoemail(e.target.value)} required />
                                             </div>
                                         </div>
-                                        <FormField fieldType="input" inputType="text" label="Department" />
+                                        <FormField fieldType="input" inputType="text" label="Department" value={dept} handleChange={(e)=>setdept(e.target.value)}/>
                                         <div className="mb-4">
                                             <h6 className="font-bold mb-1">Access</h6>
-                                            <Listbox value={access} onChange={setAccess}>
+                                            <Listbox value={role} onChange={setrole}>
                                                 <Listbox.Button className={"w-full text-left text-sm font-bold border bg-white dark:bg-gray-700 dark:border-gray-600 rounded-normal min-h-[45px]"}>
-                                                    <span className="py-2 px-3 w-[calc(100%-40px)] inline-block">{access.name}</span>
+                                                    <span className="py-2 px-3 w-[calc(100%-40px)] inline-block">{role.name}</span>
                                                     <span className="w-[40px] inline-block text-sm border-l dark:border-gray-600 py-2 px-3 text-center">
                                                         <i className="fa-solid fa-chevron-down"></i>
                                                     </span>
@@ -392,7 +571,7 @@ export default function TeamMembers() {
                                                         </Listbox.Option>
                                                         ))}
                                                         <div className="border-t py-2 px-8 text-darkGray dark:text-gray-400 dark:border-gray-400 text-[12px]">
-                                                            <p>Access of <b>{access.name}</b> to the following:-</p>
+                                                            <p>Access of <b>{role.name}</b> to the following:-</p>
                                                             <p>
                                                             - Job Applications
                                                             </p>
@@ -411,7 +590,7 @@ export default function TeamMembers() {
                                             </Listbox>
                                         </div>
                                         <div className="text-center">
-                                            <Button label="Add" />
+                                            <Button label="Add" disabled={!verifyAddTeam()} btnType={"button"} handleClick={addTeamMember} />
                                         </div>
 									</div>
 								</Dialog.Panel>
