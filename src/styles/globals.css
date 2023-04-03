@@ -208,6 +208,7 @@ input[type=number] {
 .dark .multiSelectContainer .searchWrapper, 
 .dark .optionListContainer {
   background-color: #374151;
+  border-color: #4b5563;
 }
 .dark .multiSelectContainer .searchWrapper img.icon_cancel.icon_down_dir {
   filter: invert(1);
@@ -215,7 +216,10 @@ input[type=number] {
 .dark .ql-toolbar.ql-snow {
   background-color: #fff;
 }
-.dark .ql-editor {
+.dark .ql-container.ql-snow, .dark .react-datepicker__input-container input {
+  border-color: #4b5563 !important;
+}
+.dark .ql-editor, .dark .react-datepicker__input-container input {
   background: #374151;
 }
 .ql-editor {

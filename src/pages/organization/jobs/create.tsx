@@ -701,7 +701,7 @@ export default function JobsCreate() {
 												<div className="w-[150px]">
 													<label
 														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
 													>
 														<span>Select All</span>
 														<input type="checkbox" id="teamSelectAll" />
@@ -726,29 +726,7 @@ export default function JobsCreate() {
 															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
 															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
 															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
-															<td className="w-[250px] border-b py-2 px-3">
-																<div className="w-full">
-																	<FormField
-																		fieldType="select"
-																		placeholder="Select"
-																		singleSelect={true}
-																		options={[
-																			{
-																				id: "recruiter",
-																				name: "Recruiter"
-																			},
-																			{
-																				id: "collaborator",
-																				name: "Collaborator"
-																			},
-																			{
-																				id: "hiringmanager",
-																				name: "Hiring Manager"
-																			}
-																		]}
-																	/>
-																</div>
-															</td>
+															<td className="border-b py-2 px-3 text-sm">Hiring Manager</td>
 															<td className="border-b py-2 px-3 text-right">
 																<input type="checkbox" />
 															</td>
@@ -794,7 +772,7 @@ export default function JobsCreate() {
 												<div className="w-[150px]">
 													<label
 														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
 													>
 														<span>Select All</span>
 														<input type="checkbox" id="teamSelectAll" />

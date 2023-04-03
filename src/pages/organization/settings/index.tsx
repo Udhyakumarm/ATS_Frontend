@@ -35,7 +35,7 @@ export default function Settings() {
 		{
 			name: "Team Members",
 			icon: teamUsersIcon,
-			link: "#"
+			link: "/organization/settings/team-members"
 		},
 		{
 			name: "Notifications",

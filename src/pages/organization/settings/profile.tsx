@@ -928,7 +928,7 @@ export default function Profile() {
                                                                             <Masonry className="masonary_grid">
                                                                                 {ogallery.map((data, i) => (
                                                                                     <div key={i} className="relative">
-                                                                                        <Image src={data["image"]} height={100} width={100} alt="Gallery" className="w-full p-1" />
+                                                                                        <Image src={data["image"]} height={800} width={1200} alt="Gallery" className="w-full p-1" />
                                                                                         <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm" onClick={e => delOrganizationGallery(data["id"])}>
                                                                                             <i className="fa-solid fa-trash"></i>
                                                                                         </button>
@@ -1362,7 +1362,7 @@ export default function Profile() {
                                                 {ofile.map((imageSrc, i) => (
                                                     <div id={`gallerypopup${i}`}
                                                     key={i} className="relative">
-                                                        <Image src={URL.createObjectURL(imageSrc)} height={100} width={100} alt="Gallery" className="w-full p-1" />
+                                                        <Image src={URL.createObjectURL(imageSrc)} height={800} width={1200} alt="Gallery" className="w-full p-1" />
                                                         <button type="button" className="absolute right-2 top-2 text-red-500 hover:text-red-700 w-7 h-7 bg-white rounded-full text-sm" onClick={() => deleteUImage(i)}>
                                                             <i className="fa-solid fa-trash"></i>
                                                         </button>

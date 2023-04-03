@@ -337,11 +337,11 @@ export default function ScheduleInterview() {
 									<div className="mx-[-10px] flex flex-wrap">
 										<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
 											<label className="mb-1 inline-block font-bold">Interview Duration</label>
-											<div className="relative flex w-[280px] overflow-hidden rounded-normal border">
+											<div className="relative flex w-[280px] overflow-hidden rounded-normal border dark:border-gray-600">
 												<label
 													htmlFor="min15"
 													className={
-														"cursor-pointer border-r py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
 														" " +
 														(interDuration == "15" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -359,7 +359,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min30"
 													className={
-														"cursor-pointer border-r py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
 														" " +
 														(interDuration == "30" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -377,7 +377,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min45"
 													className={
-														"cursor-pointer border-r py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
 														" " +
 														(interDuration == "45" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -395,7 +395,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min60"
 													className={
-														"cursor-pointer border-r py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
 														" " +
 														(interDuration == "60" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
