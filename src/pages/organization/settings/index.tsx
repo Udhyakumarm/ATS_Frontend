@@ -30,7 +30,7 @@ export default function Settings() {
 		{
 			name: "Calendar",
 			icon: calendarIcon,
-			link: "#"
+			link: "/organization/settings/calendar"
 		},
 		{
 			name: "Team Members",
@@ -40,7 +40,7 @@ export default function Settings() {
 		{
 			name: "Notifications",
 			icon: bellIcon,
-			link: "#"
+			link: "/organization/settings/notifications"
 		}
 	];
     return (

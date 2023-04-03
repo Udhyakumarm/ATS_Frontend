@@ -246,6 +246,7 @@ export default function FormField({
 						<div className="relative">
 							<DatePicker
 								selected={value}
+								placeholderText={placeholder}
 								onChange={(date) => handleChange({ target: { id, value: date } })}
 								showTimeSelect={showTimeSelect}
 								dateFormat={showHours ? "MMMM d, yyyy h:mm aa" : "MMMM d, yyyy"}
