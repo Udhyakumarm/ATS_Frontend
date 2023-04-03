@@ -21,7 +21,10 @@ export default function TeamMembers() {
     const [access, setAccess] = useState(people[0])
 
     const cancelButtonRef = useRef(null);
-    const [addGroups, setAddGroups] = useState(false);
+    const [addTeam, setAddTeam] = useState(false);
+    const [addDivision, setAddDivision] = useState(false);
+
+    const [accordionOpen, setAccordionOpen] = useState(false);
 
     const tabHeading_1 = [
         {
@@ -46,9 +49,6 @@ export default function TeamMembers() {
 		},
 		{
 			title: "Access"
-		},
-		{
-			title: " "
 		}
 	];
     return(
@@ -111,7 +111,7 @@ export default function TeamMembers() {
 											</div>
 											<div className="flex grow items-center justify-end">
                                                 <div className="mr-3">
-                                                    <button className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-2 px-4 rounded-normal text-white text-lg" onClick={() => setAddGroups(true)}>
+                                                    <button className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-2 px-4 rounded-normal text-white text-lg" onClick={() => setAddTeam(true)}>
                                                         <i className="fa-solid fa-plus"></i>
                                                     </button>
                                                 </div>
@@ -152,6 +152,9 @@ export default function TeamMembers() {
 																{item.title}
 															</th>
 														))}
+                                                        <th className="border-b py-2 px-3 text-left">
+                                                            
+                                                        </th>
 													</tr>
 												</thead>
 												<tbody>
@@ -231,7 +234,68 @@ export default function TeamMembers() {
 										</div>
                                     </Tab.Panel>
                                     <Tab.Panel>
-                                        a
+                                        <div className="flex flex-wrap items-center justify-between border dark:border-gray-600 p-3 rounded-normal mb-6">
+                                            <h2 className="font-bold text-lg">Add Division</h2>
+                                            <button className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-2 px-4 rounded-normal text-white text-lg" onClick={() => setAddDivision(true)}>
+                                                <i className="fa-solid fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <p className="text-darkGray dark:text-gray-400 text-center">No divions found</p>
+                                        <div>
+                                            {Array(4).fill(
+                                            <div className={'border rounded mb-3 text-sm' + ' ' + (accordionOpen ? 'border-slate-300' : '')}>
+                                                <div className="flex flex-wrap items-center px-4">
+                                                    <h6 className="grow py-3 font-bold">Software Developer</h6>
+                                                    <div className="py-3 text-right">
+                                                        <button type="button" className="text-red-500 hover:text-red-700 ml-2">
+                                                            <i className={'fa-solid fa-trash'}></i>
+                                                        </button>
+                                                        <button type="button" className="text-darkGray dark:text-gray-400 ml-4" onClick={() => setAccordionOpen(!accordionOpen)}>
+                                                            <i className={'fa-solid' + ' ' + (accordionOpen ? 'fa-chevron-up' : 'fa-chevron-down')}></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <Transition.Root show={accordionOpen} as={Fragment}>
+                                                    <Transition.Child
+                                                        as={Fragment}
+                                                        enter="ease-out duration-300"
+                                                        enterFrom="opacity-0"
+                                                        enterTo="opacity-100"
+                                                        leave="ease-in duration-200"
+                                                        leaveFrom="opacity-100"
+                                                        leaveTo="opacity-0"
+                                                    >
+                                                        <div className="border-t">
+                                                            <div className="overflow-x-auto">
+                                                                <table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            {TeamTableHead.map((item, i) => (
+                                                                                <th className="border-b py-2 px-4 text-left" key={i}>
+                                                                                    {item.title}
+                                                                                </th>
+                                                                            ))}
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {Array(6).fill(
+                                                                            <tr>
+                                                                                <td className="border-b py-2 px-4 text-sm">Jane Cooper</td>
+                                                                                <td className="border-b py-2 px-4 text-sm">Recruiter</td>
+                                                                                <td className="border-b py-2 px-4 text-sm">jane@microsoft.com</td>
+                                                                                <td className="border-b py-2 px-4 text-sm">On Pending</td>
+                                                                                <td className="border-b py-2 px-4 text-sm">Hiring Manager</td>
+                                                                            </tr>
+                                                                        )}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </Transition.Child>
+                                                </Transition.Root>
+                                            </div>
+                                            )}
+                                        </div>
                                     </Tab.Panel>
                                 </Tab.Panels>
                             </Tab.Group>
@@ -239,8 +303,8 @@ export default function TeamMembers() {
                     </div>
                 </div>
             </main>
-            <Transition.Root show={addGroups} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddGroups}>
+            <Transition.Root show={addTeam} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddTeam}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -272,7 +336,7 @@ export default function TeamMembers() {
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
-											onClick={() => setAddGroups(false)}
+											onClick={() => setAddTeam(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
 										</button>
@@ -346,6 +410,86 @@ export default function TeamMembers() {
                                                 </Transition>
                                             </Listbox>
                                         </div>
+                                        <div className="text-center">
+                                            <Button label="Add" />
+                                        </div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={addDivision} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddDivision}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Add Division
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddDivision(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+                                        <FormField fieldType="input" inputType="text" label="Division Title" />
+                                        <div className="overflow-x-auto">
+											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+												<thead>
+													<tr>
+														{TeamTableHead.map((item, i) => (
+															<th className="border-b py-2 px-3 text-left" key={i}>
+																{item.title}
+															</th>
+														))}
+                                                        <th className="border-b py-2 px-3 text-right">
+                                                            <input type="checkbox" />    
+                                                        </th>
+													</tr>
+												</thead>
+												<tbody>
+													{Array(6).fill(
+														<tr>
+															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
+															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
+															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
+                                                            <td className="border-b py-2 px-3 text-sm">On Pending</td>
+															<td className="border-b py-2 px-3 text-sm">Hiring Manager</td>
+															<td className="border-b py-2 px-3 text-right">
+																<input type="checkbox" />
+															</td>
+														</tr>
+													)}
+												</tbody>
+											</table>
+										</div>
                                         <div className="text-center">
                                             <Button label="Add" />
                                         </div>

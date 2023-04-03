@@ -260,7 +260,7 @@ export default function FormField({
 	return (
 		<>
 			<p className="rounded-normal bg-violet-200 p-2 text-sm">
-				Please choose some <b>type</b> to show field here.
+				Please choose <b>fieldType</b> to show field here.
 			</p>
 		</>
 	);
