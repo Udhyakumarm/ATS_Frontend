@@ -5,7 +5,7 @@ import Link from "next/link";
 import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
 
-export default function ChatAssistance(props: { accessToken?: any }) {
+export default function ChatAssistance(props: { accessToken?: any; notifyStatus?: boolean }) {
 	const [click, setClick] = useState(false);
 	const [maximize, setMaximize] = useState(false);
 	const messageEl: any = useRef(null);
@@ -266,9 +266,20 @@ export default function ChatAssistance(props: { accessToken?: any }) {
 				</div>
 				<button
 					type="button"
-					className="ml-auto mt-3 flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2 shadow-normal"
+					className="relative ml-auto mt-3 flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2 shadow-normal"
 					onClick={handleClick}
 				>
+					{
+						props.notifyStatus
+						?
+						<>
+						<span className="absolute left-0 top-0 bg-green-300 shadow-normal w-3 h-3 rounded-full"></span>
+						</>
+						:
+						<>
+						</>
+					}
+					
 					{click ? (
 						<>
 							<i className="fa-solid fa-xmark text-2xl text-white"></i>
