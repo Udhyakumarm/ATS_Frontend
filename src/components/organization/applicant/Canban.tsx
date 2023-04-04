@@ -21,6 +21,8 @@ function Canban(props: any) {
     const [cards,setcards] = useState([])
     const [r,setr] = useState(0)
     const {applicantlist} = props
+    const {setcardarefid} = props
+    const {setcardstatus} = props
 
     useEffect(()=>{
       let arr = cards
@@ -62,11 +64,15 @@ function Canban(props: any) {
         .put(`/job/applicant/${arefid}/update/`, fdata)
         .then((res) => {
           toastcomp("Status Changed", "success")
+          setcardarefid(arefid)
+          setcardstatus(status)
           // setrefersh1(1);
         })
         .catch((err) => {
           console.log(err);
           toastcomp("Status Not Change", "error")
+          setcardarefid("")
+          setcardstatus("")
           // setrefersh1(1);
         });
     }

@@ -5,11 +5,14 @@ import Link from "next/link";
 import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
 
-export default function ChatAssistance(props: { accessToken?: any; notifyStatus?: boolean }) {
+export default function ChatAssistance(props:any) {
 	const [click, setClick] = useState(false);
 	const [maximize, setMaximize] = useState(false);
 	const messageEl: any = useRef(null);
 	const accessToken = props.accessToken;
+	const setnotify = props.setnotify;
+	const freeslotdata = props.freeslotdata;
+	const setfreeslotdata = props.setfreeslotdata;
 	const [prompt, setprompt] = useState("");
 	const [msgs, setmsgs] = useState([]);
 	// const [msg,setmsg] = useState([]);
@@ -76,6 +79,23 @@ export default function ChatAssistance(props: { accessToken?: any; notifyStatus?
 
 	useEffect(() => {
 		if (click) {
+			if(props.notifyStatus){
+				
+				if(freeslotdata["message"] || freeslotdata["Message"]){
+					const formData2 = new FormData();
+					formData2.append("message", "Applicant Move In Interview / Phone Screen");
+					formData2.append("response", freeslotdata["Message"]);
+					addChat(formData2);
+				}
+				else{
+					const formData2 = new FormData();
+					formData2.append("message", "Applicant Move In Interview / Phone Screen");
+					formData2.append("response", "Interview has been Schedule at "+moment(freeslotdata["Simple Start Date"]).format('MMMM Do YYYY, h:mm a')+" to "+moment(freeslotdata["Simple End Date"]).format('h:mm a'));
+					addChat(formData2);
+				}
+				
+				setnotify(false)
+			}
 			loadChat();
 		}
 	}, [click]);
@@ -134,9 +154,23 @@ export default function ChatAssistance(props: { accessToken?: any; notifyStatus?
 												<div className="text-[10px] text-darkGray dark:text-gray-100">{moment(data["timestamp"]).fromNow()}</div>
 											</li>
 											<li className="my-2 max-w-[90%]">
+												{!data["response"].includes("Interview has been Schedule") ? 
 												<div className="mb-1 inline-block rounded rounded-tr-normal rounded-bl-normal bg-gradDarkBlue py-2 px-4 text-white shadow">
 													{data["response"]}
 												</div>
+												:
+												<div className="inline-block mb-1">
+													<div className="bg-gradDarkBlue text-white py-2 px-4 rounded rounded-tr-normal rounded-bl-normal shadow mb-2">
+														{data["response"]}
+													</div>
+													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 hover:bg-slate-800 hover:text-white">
+														Confirm
+													</button>
+													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 mx-1.5 hover:bg-slate-800 hover:text-white">
+														Change
+													</button>
+												</div>
+												}
 												<div className="text-[10px] text-darkGray dark:text-gray-100">{moment(data["timestamp"]).fromNow()}</div>
 											</li>
 										</div>

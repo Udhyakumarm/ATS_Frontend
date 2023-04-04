@@ -101,6 +101,53 @@ export default function Applicants() {
 		}
 	}, [applicantlist]);
 
+	
+	const [orgpro, setorgpro] = useState([]);
+	const [cardarefid, setcardarefid] = useState("");
+	const [cardstatus, setcardstatus] = useState("");
+	const [notify, setnotify] = useState(false);
+	const [freeslotdata, setfreeslotdata] = useState({});
+	
+	async function loadInd_OrgProfile() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorganizationprofile/`)
+			.then(async (res) => {
+				console.log("#",res.data);
+				setorgpro(res.data)
+				freeSlot(res.data[0]["unique_id"])
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+	
+	async function freeSlot(uid) {
+		await axiosInstanceAuth2
+			.get(`/organization/integrations/calendar_get_free_slots/${uid}/`)
+			.then(async (res) => {
+				console.log("#","freeslot",res.data);
+				setfreeslotdata(res.data)
+				setnotify(true)
+				// setorgpro(res.data)
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	useEffect(()=>{
+		if(cardstatus.length > 0){
+			if(cardstatus === "Phone Screen" || cardstatus === "Interview"){
+				// setnotify(true)
+				loadInd_OrgProfile()
+				// setTimeout(
+				// () => {setnotify(false)}, 
+				// 10000
+				// );
+			}
+		}
+	},[cardstatus])
+
 	return (
 		<>
 			<Head>
@@ -110,7 +157,7 @@ export default function Applicants() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{session && <ChatAssistance accessToken={session.accessToken} notifyStatus={false} /> }
+				{session && <ChatAssistance accessToken={session.accessToken} notifyStatus={notify} setnotify={setnotify} setfreeslotdata={setfreeslotdata} freeslotdata={freeslotdata} /> }
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap">
 					<div className="flex flex-wrap items-center justify-between bg-white py-4 px-4 shadow-normal dark:bg-gray-800 lg:px-8">
@@ -223,7 +270,7 @@ export default function Applicants() {
 							</div> */}
 						</aside>
 					</div>
-					{refersh == 0 && <Canban applicantlist={applicantlist} token={token} />}
+					{refersh == 0 && <Canban applicantlist={applicantlist} token={token} setcardarefid={setcardarefid} setcardstatus={setcardstatus}/>}
 					
 					{/* <div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
 						<div className="min-w-[300px] p-2 mx-1 border border-slate-200 bg-gray-50 dark:bg-gray-700 rounded-normal">
