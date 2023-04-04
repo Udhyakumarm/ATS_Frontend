@@ -9,6 +9,7 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from '/public/images/social/google-icon.png'
+import { useUserStore } from "@/utils/code";
 
 const CalendarIntegrationOptions = [{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }];
 
@@ -18,6 +19,10 @@ export default function OrgTopBar() {
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
 	const { data: session } = useSession();
+	
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
 	const [integration, setIntegration] = useState([]);
 
@@ -64,7 +69,14 @@ export default function OrgTopBar() {
 				<button
 					type="button"
 					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
-					onClick={() => signOut()}
+					onClick={() => {
+						signOut()
+						
+						settype("")
+						setrole("")
+						setuser([])
+				
+					}}
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
 				</button>

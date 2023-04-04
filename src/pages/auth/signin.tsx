@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import toastcomp from "@/components/toast";
 import ChatAssistance from "@/components/ChatAssistance";
+import { axiosInstance2 } from "../api/axiosApi";
+import { useUserStore } from "@/utils/code";
 const Toaster = dynamic(() => import("../../components/Toaster"), {
 	ssr: false
 });
@@ -42,6 +44,13 @@ export default function AuthSignIn({ providers }: any) {
 		return { ...prevState, [event.target.id]: event.target.value };
 	};
 
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+
 	const { error } = useRouter().query;
 
 	const [loginInfo, dispatch] = useReducer(updateLoginInfo, {
@@ -56,26 +65,51 @@ export default function AuthSignIn({ providers }: any) {
 				? process.env.NEXT_PUBLIC_PROD_FRONTEND
 				: process.env.NEXT_PUBLIC_DEV_FRONTEND
 		}`;
-		await signIn("credentials", {
+
+
+		await axiosInstance2
+		.post("/organization/login/", {
 			email: loginInfo.email,
-			password: loginInfo.password,
-			//For NextAuth
-			user_type: "organization",
-			callbackUrl: callback
+			password: loginInfo.password
 		})
-			.then(async (res) => console.log({ res }))
-			.then(async () => await router.push("/"))
-			.catch((err) => {
-				console.log(err);
-				if (err.response.data.errors.non_field_errors) {
-					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"));
-					return false;
-				}
-				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
-					return false;
-				}
-			});
+		.then(async (response) => {
+
+			console.log("@",response.data)
+			if(response.data.role){setrole(response.data.role)}
+			if(response.data.type){settype(response.data.type)}
+			if(response.data.userObj && response.data["userObj"].length > 0){setuser(response.data.userObj)}
+
+			await signIn("credentials", {
+				email: loginInfo.email,
+				password: loginInfo.password,
+				//For NextAuth
+				user_type: "organization",
+				callbackUrl: callback
+			})
+				.then(async (res) => console.log({ res }))
+				.then(async () => await router.push("/"))
+		})
+		.catch((err) => {
+			settype("")
+			setrole("")
+			setuser([])
+			console.log(err)
+			if (err.response.data.non_field_errors) {
+				err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"))
+				return false
+			}
+			if (err.response.data.detail) {
+				toastcomp(err.response.data.detail, "error")
+				return false
+			}
+			if (err.response.data.errors.email) {
+				err.response.data.errors.email.map((text: any) => toastcomp(text, "error"))
+				return false
+			}
+		});
+			
+
+		
 	};
 	return (
 		<>

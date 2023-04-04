@@ -1,6 +1,15 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+let userStore: any = (set: any) => ({
+	type: "",
+	role: "",
+	user: [],
+	settype: (id: any) => set(() => ({ type: id })),
+	setrole: (id: any) => set(() => ({ role: id })),
+	setuser: (id: any) => set(() => ({ user: id })),
+});
+
 let settingsStore: any = (set: any) => ({
 	dark: false,
 	toggleDarkMode: () => set((state: any) => ({ dark: !state.dark }))
@@ -33,6 +42,9 @@ let applicantStore: any = (set: any) => ({
 	setcanid: (id: any) => set(() => ({ canid: id }))
 });
 
+userStore = devtools(userStore);
+userStore = persist(userStore, { name: "userStore" });
+
 settingsStore = devtools(settingsStore);
 settingsStore = persist(settingsStore, { name: "user_settings" });
 
@@ -42,6 +54,7 @@ carrierStore = persist(carrierStore, { name: "carrier_settings" });
 applicantStore = devtools(applicantStore);
 applicantStore = persist(applicantStore, { name: "applicantStore" });
 
+export const useUserStore = create(userStore);
 export const useSettingsStore = create(settingsStore);
 export const useCarrierStore = create(carrierStore);
 export const useApplicantStore = create(applicantStore);

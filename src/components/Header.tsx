@@ -1,7 +1,7 @@
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { useCarrierStore } from "@/utils/code";
+import { useCarrierStore, useUserStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
@@ -13,6 +13,10 @@ export default function Header() {
 	const { data: session, status: sessionStatus } = useSession();
 
 	const [auth, setauth] = useState(false);
+	
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
 	useEffect(() => {
 		if (session) {
@@ -128,7 +132,14 @@ export default function Header() {
 													<button
 														type="button"
 														className="block w-full bg-red-500 py-2 py-1 px-4 text-left font-bold text-white hover:bg-red-600"
-														onClick={() => signOut({ callbackUrl: `/organization/${cname}` })}
+														onClick={() => {
+															signOut({ callbackUrl: `/organization/${cname}` })
+															
+															settype("")
+															setrole("")
+															setuser([])
+													
+														}}
 													>
 														<i className="fa-solid fa-right-from-bracket mr-3"></i> Logout
 													</button>
@@ -154,7 +165,15 @@ export default function Header() {
 							<button
 								type="button"
 								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
-								onClick={() => signOut()}
+								
+								onClick={() => {
+									signOut()
+									
+									settype("")
+									setrole("")
+									setuser([])
+							
+								}}
 							>
 								<i className="fa-solid fa-right-from-bracket"></i>
 							</button>
