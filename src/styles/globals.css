@@ -249,6 +249,7 @@ input[type=number] {
   border-radius: 12px;
   font-size: 14px;
   color: #727272;
+  min-height: 45px;
 }
 
 @media (max-width: 1023px) {

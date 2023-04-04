@@ -520,7 +520,7 @@ export default function TeamMembers() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									<div className="p-8 overflow-auto min-h-[80vh]">
+									<div className="p-8 overflow-auto">
                                         <div className="flex flex-wrap -mx-3">
                                             <div className="w-full md:max-w-[50%] px-3 mb-4">
                                                 <FormField fieldType="input" inputType="text" label="Name" value={name} handleChange={(e)=>setname(e.target.value)} />

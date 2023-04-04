@@ -431,7 +431,7 @@ export default function ScheduleInterview() {
 											<FormField
 												id={"end"}
 												fieldType="date"
-												label="End Date"
+												label="End Time"
 												singleSelect
 												value={newSchedule.end}
 												handleChange={handleNewSchedule}

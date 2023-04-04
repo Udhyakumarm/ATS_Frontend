@@ -243,4 +243,4 @@ export default function AuthSignUp() {
 	);
 }
 
-SignUp.noAuth = true;
+AuthSignUp.noAuth = true;

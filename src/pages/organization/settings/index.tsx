@@ -25,7 +25,7 @@ export default function Settings() {
 		{
 			name: "Vendors",
 			icon: vendorsIcon,
-			link: "#"
+			link: "/organization/settings/vendors"
 		},
 		{
 			name: "Calendar",

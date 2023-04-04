@@ -34,7 +34,7 @@ export default function Organization() {
 		{
 			name: "Vendors",
 			icon: vendorsIcon,
-			link: "/dashboard"
+			link: "/organization/settings/vendors"
 		},
 		{
 			name: "Applicants",
