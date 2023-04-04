@@ -2,17 +2,23 @@ import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
 import Image from "next/image";
-import { Dialog, Tab, Transition } from "@headlessui/react";
+import { Dialog, Menu, Tab, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import integrationIcon from "/public/images/icons/integration.png";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
+import { Switch } from '@headlessui/react'
 
 export default function Vendors() {
 	const router = useRouter();
+
     const cancelButtonRef = useRef(null);
-    const [addGroups, setAddGroups] = useState(false);
+    const [sentAgreement, setSentAgreement] = useState(false);
+	const [companyDetails, setCompanyDetails] = useState(false);
+
+	const [enabled, setEnabled] = useState(false)
+
 	const tabHeading_1 = [
 		{
 			title: "On Board"
@@ -189,21 +195,176 @@ export default function Vendors() {
                                                             </div>
 														</div>
 													</div>
-                                                    <Button label="Send Agreement" btnType="button" handleClick={() => setAddGroups(true)} />
+                                                    <Button label="Send Agreement" btnType="button" handleClick={() => setSentAgreement(true)} />
 												</Tab.Panel>
-												<Tab.Panel>BB</Tab.Panel>
+												<Tab.Panel>
+													<p className="text-darkGray dark:text-gray-400 text-center">No Vendors Found</p>
+													<div className="flex flex-wrap mx-[-15px]">
+														<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
+															<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
+																<div className="mb-2 flex items-start justify-between">
+																	<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
+																	<Menu as="div" className="relative">
+																		<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+																			<i className="fa-solid fa-ellipsis-vertical"></i>
+																		</Menu.Button>
+																		<Transition
+																		as={Fragment}
+																		enter="transition ease-out duration-100"
+																		enterFrom="transform opacity-0 scale-95"
+																		enterTo="transform opacity-100 scale-100"
+																		leave="transition ease-in duration-75"
+																		leaveFrom="transform opacity-100 scale-100"
+																		leaveTo="transform opacity-0 scale-95"
+																		>
+																			<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-1 shadow-normal dark:bg-gray-700'}>
+																				<Menu.Item>
+																					<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={() => setCompanyDetails(true)}>
+																						<i className="fa-solid fa-building mr-2"></i> Company Details
+																					</button>
+																				</Menu.Item>
+																			</Menu.Items>
+																		</Transition>
+																	</Menu>
+																</div>
+																<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
+																<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
+																<div className="flex items-center justify-between">
+																	<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
+																		<i className="fa-solid fa-circle-check text-green-500 mr-2"></i>
+																		Verified
+																	</p>
+																	<Button btnStyle="sm" label={'On Board'} />
+																</div>
+															</div>
+														</div>
+														{Array(5).fill(
+														<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
+															<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
+																<div className="mb-2 flex items-start justify-between">
+																	<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
+																	<Menu as="div" className="relative">
+																		<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+																			<i className="fa-solid fa-ellipsis-vertical"></i>
+																		</Menu.Button>
+																		<Transition
+																		as={Fragment}
+																		enter="transition ease-out duration-100"
+																		enterFrom="transform opacity-0 scale-95"
+																		enterTo="transform opacity-100 scale-100"
+																		leave="transition ease-in duration-75"
+																		leaveFrom="transform opacity-100 scale-100"
+																		leaveTo="transform opacity-0 scale-95"
+																		>
+																			<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-1 shadow-normal dark:bg-gray-700'}>
+																				<Menu.Item>
+																					<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center">
+																						<i className="fa-solid fa-building mr-2"></i> Company Details
+																					</button>
+																				</Menu.Item>
+																			</Menu.Items>
+																		</Transition>
+																	</Menu>
+																</div>
+																<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
+																<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
+																<div className="flex items-center justify-between">
+																	<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
+																		<i className="fa-solid fa-clock mr-2"></i>
+																		Pending
+																	</p>
+																	<Button btnStyle="sm" label={'On Board'} disabled />
+																</div>
+															</div>
+														</div>
+														)}
+													</div>
+												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</Tab.Panel>
-									<Tab.Panel>B</Tab.Panel>
+									<Tab.Panel>
+										<div className="mb-6 flex flex-wrap items-center justify-between">
+											<div className="w-[350px] pr-2">
+												<FormField
+													fieldType="input"
+													inputType="search"
+													placeholder="Search"
+													icon={<i className="fa-solid fa-magnifying-glass"></i>}
+												/>
+											</div>
+											<div className="flex grow items-center justify-end">
+                                                <div className="mr-3 w-[150px]">
+													<FormField
+														fieldType="select"
+														placeholder="Sort"
+														singleSelect={true}
+														options={[
+															{
+																id: "A-to-Z",
+																name: "A to Z"
+															},
+															{
+																id: "Z-to-A",
+																name: "Z to A"
+															}
+														]}
+													/>
+												</div>
+												<div className="w-[150px]">
+													<label
+														htmlFor="teamSelectAll"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
+													>
+														<span>Select All</span>
+														<input type="checkbox" id="teamSelectAll" />
+													</label>
+												</div>
+											</div>
+										</div>
+										<p className="text-darkGray dark:text-gray-400 text-center">No Vendors Found</p>
+										<div className="flex flex-wrap mx-[-15px]">
+											{Array(5).fill(
+											<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
+												<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
+													<div className="mb-2 flex items-start justify-between">
+														<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
+														<div>
+															<input type="checkbox" />
+														</div>
+													</div>
+													<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
+													<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
+													<div className="flex items-center justify-between">
+														<Switch
+														checked={enabled}
+														onChange={setEnabled}
+														className={`${
+															enabled ? 'bg-primary' : 'bg-gray-400'
+														} relative inline-flex h-5 w-10 items-center rounded-full`}
+														>
+															<span className="sr-only">Enable notifications</span>
+															<span
+																className={`${
+																enabled ? 'translate-x-6' : 'translate-x-1'
+																} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+															/>
+														</Switch>
+														<Button btnStyle="sm" label={'Company Details'} btnType="button" handleClick={() => setCompanyDetails(true)} />
+													</div>
+												</div>
+											</div>
+											)}
+										</div>
+									</Tab.Panel>
 								</Tab.Panels>
 							</Tab.Group>
 						</div>
 					</div>
 				</div>
 			</main>
-            <Transition.Root show={addGroups} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddGroups}>
+            <Transition.Root show={sentAgreement} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setSentAgreement}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -230,18 +391,146 @@ export default function Vendors() {
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 										<h4 className="flex items-center font-semibold leading-none">
-											Add Group
+											Agreement Sent
 										</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
-											onClick={() => setAddGroups(false)}
+											onClick={() => setSentAgreement(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8 w-full max-w-[500px] mx-auto text-center">
+										<i className="fa-solid fa-circle-check text-green-500 mb-2 text-[50px]"></i>
+                                        <h4 className="font-bold text-xl mb-6">Agreement Sent Successfully</h4>
+										<p className="text-darkGray dark:text-gray-400 mb-2 text-sm">Copy link to share this with vendor</p>
+										<div className="relative mb-6">
+											<input
+												type='text'
+												value={'https://www.somhako.com/copy-agreement-url/dajbdijok3123nk321'}
+												className="min-h-[45px] w-full p-3 pr-14 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700"
+											/>
+											<button type="button" className="absolute right-0 top-0 w-10 h-full rounded-r-normal bg-slate-300 hover:bg-slate-400">
+												<i className="fa-solid fa-copy"></i>
+											</button>
+										</div>
+										<Button label="Close" btnType="button" handleClick={() => setSentAgreement(false)} />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={companyDetails} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setCompanyDetails}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											Company Details
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setCompanyDetails(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
 									<div className="p-8">
-                                        hghgc
+										<div className="flex flex-wrap -mx-3">
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="Company Name" fieldType="input" inputType="text" />
+											</div>
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="Email ID" fieldType="input" inputType="email" required />
+											</div>
+										</div>
+										<FormField label="Agent Name" fieldType="input" inputType="text" />
+										<div className="flex flex-wrap -mx-3">
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="Contact Number" fieldType="input" inputType="number" />
+											</div>
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="Contact Number (Optional)" fieldType="input" inputType="number" />
+											</div>
+										</div>
+										<div className="flex flex-wrap -mx-3">
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="License Number" fieldType="input" inputType="text" />
+											</div>
+											<div className="w-full md:max-w-[50%] px-3 mb-4">
+												<FormField label="Headquarter Address" fieldType="input" inputType="text" />
+											</div>
+										</div>
+										<div className="-mx-3 flex flex-wrap items-start">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<h6 className="mb-1 font-bold">Agreement</h6>
+												<div className="flex my-2">
+													<div className="">
+														<i className="fa-solid fa-file-pdf text-[40px] text-red-500"></i>
+														{/* <i className="fa-solid fa-file-word text-[40px] text-indigo-800"></i> */}
+													</div>
+													<div className="grow pl-4 flex items-center">
+														<span className="grow pr-3 flex items-center text-[12px]"> 
+															<small className="clamp_1 mr-2">Agent Agreement</small>
+															(4.5MB)
+														</span>
+														<Button label="View" btnStyle="sm" />
+													</div>
+												</div>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%] flex flex-wrap">
+												<h6 className="mb-1 font-bold w-full">Agreement Validity</h6>
+												<div className="w-full md:max-w-[50%] pr-2">
+													<FormField
+														id={"start"}
+														fieldType="date"
+														placeholder="Start Time"
+														singleSelect
+														showTimeSelect
+														showHours
+														required
+													/>
+												</div>
+												<div className="w-full md:max-w-[50%] pl-2">
+													<FormField
+														id={"end"}
+														fieldType="date"
+														placeholder="End Time"
+														singleSelect
+														showTimeSelect
+														showHours
+														required
+													/>
+												</div>
+											</div>
+										</div>
+										<Button label="Close" btnType="button" handleClick={() => setCompanyDetails(false)} />
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
