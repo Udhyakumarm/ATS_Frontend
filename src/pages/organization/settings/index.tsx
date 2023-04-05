@@ -9,6 +9,7 @@ import vendorsIcon from "/public/images/icons/vendors.png";
 import calendarIcon from "/public/images/icons/calendar.png";
 import teamUsersIcon from "/public/images/icons/team-users.png";
 import bellIcon from "/public/images/icons/bell.png";
+import pricingIcon from '/public/images/icons/pricing.png'
 
 export default function Settings() {
     const quicklinks = [
@@ -41,6 +42,11 @@ export default function Settings() {
 			name: "Notifications",
 			icon: bellIcon,
 			link: "/organization/settings/notifications"
+		},
+		{
+			name: "Plans & Pricing",
+			icon: pricingIcon,
+			link: "/organization/settings/pricing"
 		}
 	];
     return (
