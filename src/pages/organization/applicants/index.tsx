@@ -27,7 +27,7 @@ export default function Applicants() {
 
 	const cancelButtonRef = useRef(null);
 	const [createBoard, setCreateBoard] = useState(false);
-	const [editSchdInter, setEditSchdInter] = useState(true);
+	const [editSchdInter, setEditSchdInter] = useState(false);
 
 	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
 	const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
@@ -107,6 +107,16 @@ export default function Applicants() {
 	const [cardstatus, setcardstatus] = useState("");
 	const [notify, setnotify] = useState(false);
 	const [freeslotdata, setfreeslotdata] = useState({});
+	const [intername, setintername] = useState("");
+	const [interdesc, setinterdesc] = useState("");
+	const [interdate, setinterdate] = useState("");
+	const [interstime, setinterstime] = useState("");
+	const [interetime, setinteretime] = useState("");
+	const [change, setchange] = useState(false);
+
+	function checkForm(){
+		return intername.length > 0 && interdesc.length > 0 && interdate.length > 0 && interstime.length > 0 && interetime.length > 0
+	}
 	
 	async function loadInd_OrgProfile() {
 		await axiosInstanceAuth2
@@ -157,7 +167,31 @@ export default function Applicants() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{session && <ChatAssistance accessToken={session.accessToken} notifyStatus={notify} setnotify={setnotify} setfreeslotdata={setfreeslotdata} freeslotdata={freeslotdata} /> }
+				{session && <ChatAssistance 
+				accessToken={session.accessToken} 
+				notifyStatus={notify} 
+				setnotify={setnotify} 
+				setfreeslotdata={setfreeslotdata} 
+				freeslotdata={freeslotdata} 
+				setEditSchdInter={setEditSchdInter} 
+				cardarefid={cardarefid} 
+				cardstatus={cardstatus} 
+				orgpro={orgpro} 
+
+				change={change}
+				setchange={setchange}
+
+				intername={intername}
+				interdesc={interdesc}
+				interdate={interdate}
+				interstime={interstime}
+				interetime={interetime}
+				setintername={setintername}
+				setinterdesc={setinterdesc}
+				setinterdate={setinterdate}
+				setinterstime={setinterstime}
+				setinteretime={setinteretime}
+				/> }
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap">
 					<div className="flex flex-wrap items-center justify-between bg-white py-4 px-4 shadow-normal dark:bg-gray-800 lg:px-8">
@@ -692,12 +726,47 @@ export default function Applicants() {
 										</button>
 									</div>
 									<div className="p-8">
-										<FormField label="Interview Name" fieldType="input" inputType="text" />
-										<FormField label="Date & Time" fieldType="date" singleSelect showTimeSelect showHours />
-										<FormField label="Platform" fieldType="select" />
-										<FormField label="Description" fieldType="textarea" />
-										<FormField label="Add Interviewer" fieldType="select" />
-										<Button label="Confirm" />
+										<FormField label="Interview Name" fieldType="input" inputType="text" value={intername} handleChange={(e)=>setintername(e.target.value)} />
+										{/* <FormField label="Date & Time" fieldType="date" singleSelect showTimeSelect showHours /> */}
+										{/* <FormField label="Platform" fieldType="select" /> */}
+										<FormField label="Description" fieldType="textarea" value={interdesc} handleChange={(e)=>setinterdesc(e.target.value)} />
+										{/* <FormField label="Add Interviewer" fieldType="select" /> */}
+
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+															{"Start Date"}
+												</label>
+												<div className="relative">
+													<input type="date" value={interdate} onChange={(e)=>setinterdate(e.target.value)}  />
+												</div>
+											</div>
+										</div>
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+															{"Start Time"}
+												</label>
+												<div className="relative">
+													<input type="time" value={interstime} onChange={(e)=>setinterstime(e.target.value)} />
+												</div>
+											</div>
+										</div>
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+															{"End Time"}
+												</label>
+												<div className="relative">
+													<input type="time" value={interetime} onChange={(e)=>setinteretime(e.target.value)}  />
+												</div>
+											</div>
+										</div>
+
+										<Button label="Confirm" disabled={!checkForm()} btnType={"button"} handleClick={()=>{
+											setEditSchdInter(false)
+											setchange(true)
+										}} />
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

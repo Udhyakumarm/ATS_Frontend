@@ -13,8 +13,29 @@ export default function ChatAssistance(props:any) {
 	const setnotify = props.setnotify;
 	const freeslotdata = props.freeslotdata;
 	const setfreeslotdata = props.setfreeslotdata;
+	const setEditSchdInter = props.setEditSchdInter;
+	const cardarefid = props.cardarefid;
+	const cardstatus = props.cardstatus;
+	const orgpro = props.orgpro;
+	const change = props.change;
+	const setchange = props.setchange;
+
+	const intername = props.intername;
+	const interdesc = props.interdesc;
+	const interdate = props.interdate;
+	const interstime = props.interstime;
+	const interetime = props.interetime;
+
+	const setintername = props.setintername;
+	const setinterdesc = props.setinterdesc;
+	const setinterdate = props.setinterdate;
+	const setinterstime = props.setinterstime;
+	const setinteretime = props.setinteretime;
+
 	const [prompt, setprompt] = useState("");
 	const [msgs, setmsgs] = useState([]);
+	const [lpk, setlpk] = useState("");
+	const [des, setdes] = useState(false);
 	// const [msg,setmsg] = useState([]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(accessToken);
@@ -28,9 +49,16 @@ export default function ChatAssistance(props:any) {
 		await axiosInstanceAuth2
 			.get(`/chatbot/listchat/`)
 			.then(async (res) => {
+				setdes(false)
 				console.log(res);
 				console.log(res.data);
 				setmsgs(res.data);
+				let a = res.data
+				for(let i=0;i<a.length;i++){
+					if(a[i]["response"].includes("I suggest Interview can been Schedule at")){
+						setdes(true)
+					}
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -68,6 +96,68 @@ export default function ChatAssistance(props:any) {
 			});
 	}
 
+	
+	async function updateChat(msg: string | Blob,pk: any,type: string) {
+		if(type === "confirm"){
+			const formData2 = new FormData();
+			formData2.append("stime", freeslotdata["Start Time"]);
+			formData2.append("etime", freeslotdata["End Time"]);
+			await axiosInstanceAuth2
+			.put(`/organization/integrations/calendar_automation/${orgpro[0]["unique_id"]}/${cardarefid}/`, formData2)
+			.then(async (res) => {
+				const formData2 = new FormData();
+				formData2.append("response", msg);
+				await axiosInstanceAuth2
+					.put(`/chatbot/updatechat/${pk}/`, formData2)
+					.then(async (res) => {
+						loadChat();
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		}
+		else if(type === "change"){
+			const formData2 = new FormData();
+			formData2.append("summary", intername);
+			formData2.append("desc", interdesc);
+			formData2.append("stime", moment(`${interdate} ${interstime}`).format());
+			formData2.append("etime", moment(`${interdate} ${interetime}`).format());
+			await axiosInstanceAuth2
+			.put(`/organization/integrations/calendar_automation/${orgpro[0]["unique_id"]}/${cardarefid}/`, formData2)
+			.then(async (res) => {
+				const formData2 = new FormData();
+				formData2.append("response", "Interview has been Schedule at " + moment(`${interdate} ${interstime}`).format('MMMM Do YYYY, h:mm a') + " to " + moment(`${interdate} ${interetime}`).format('h:mm a') );
+				await axiosInstanceAuth2
+					.put(`/chatbot/updatechat/${pk}/`, formData2)
+					.then(async (res) => {
+						loadChat();
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		}
+		else{
+			const formData2 = new FormData();
+			formData2.append("response", msg);
+			await axiosInstanceAuth2
+				.put(`/chatbot/updatechat/${pk}/`, formData2)
+				.then(async (res) => {
+					loadChat();
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
+
 	useEffect(() => {
 		if (messageEl) {
 			messageEl.current.addEventListener("DOMNodeInserted", (event: { currentTarget: any }) => {
@@ -77,6 +167,24 @@ export default function ChatAssistance(props:any) {
 		}
 	}, []);
 
+	useEffect(()=>{
+		if(change){
+			updateChat("Interview Scheduled",lpk,"change").then(()=>{
+				setintername("")
+				setinterdesc("")
+				setinterdate("")
+				setinterstime("")
+				setinteretime("")
+				setfreeslotdata({})
+				setlpk("")
+				setClick(change)
+				setMaximize(false)
+				setchange(false)
+			})
+			
+		}
+	},[change])
+
 	useEffect(() => {
 		if (click) {
 			if(props.notifyStatus){
@@ -84,13 +192,14 @@ export default function ChatAssistance(props:any) {
 				if(freeslotdata["message"] || freeslotdata["Message"]){
 					const formData2 = new FormData();
 					formData2.append("message", "Applicant Move In Interview / Phone Screen");
-					formData2.append("response", freeslotdata["Message"]);
+					if(freeslotdata["Message"])formData2.append("response", freeslotdata["Message"]);
+					if(freeslotdata["message"])formData2.append("response", freeslotdata["message"]);
 					addChat(formData2);
 				}
 				else{
 					const formData2 = new FormData();
 					formData2.append("message", "Applicant Move In Interview / Phone Screen");
-					formData2.append("response", "Interview has been Schedule at "+moment(freeslotdata["Simple Start Date"]).format('MMMM Do YYYY, h:mm a')+" to "+moment(freeslotdata["Simple End Date"]).format('h:mm a'));
+					formData2.append("response", "I suggest Interview can been Schedule at "+moment(freeslotdata["Simple Start Date"]).format('MMMM Do YYYY, h:mm a')+" to "+moment(freeslotdata["Simple End Date"]).format('h:mm a'));
 					addChat(formData2);
 				}
 				
@@ -154,7 +263,8 @@ export default function ChatAssistance(props:any) {
 												<div className="text-[10px] text-darkGray dark:text-gray-100">{moment(data["timestamp"]).fromNow()}</div>
 											</li>
 											<li className="my-2 max-w-[90%]">
-												{!data["response"].includes("Interview has been Schedule") ? 
+
+												{!data["response"].includes("I suggest Interview can been Schedule at") ? 
 												<div className="mb-1 inline-block rounded rounded-tr-normal rounded-bl-normal bg-gradDarkBlue py-2 px-4 text-white shadow">
 													{data["response"]}
 												</div>
@@ -163,11 +273,18 @@ export default function ChatAssistance(props:any) {
 													<div className="bg-gradDarkBlue text-white py-2 px-4 rounded rounded-tr-normal rounded-bl-normal shadow mb-2">
 														{data["response"]}
 													</div>
-													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 hover:bg-slate-800 hover:text-white">
+													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 hover:bg-slate-800 hover:text-white" onClick={()=>updateChat(data["response"].replace("I suggest Interview can been Schedule at", "Interview can been Schedule at"),data["id"],"confirm")} >
 														Confirm
 													</button>
-													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 mx-1.5 hover:bg-slate-800 hover:text-white">
+													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 mx-1.5 hover:bg-slate-800 hover:text-white" onClick={()=>{
+														setClick(!click)
+														setEditSchdInter(true)
+														setlpk(data["id"])
+														}}>
 														Change
+													</button>
+													<button type="button" className="rounded border border-slate-800 px-4 py-1.5 mx-1.5 hover:bg-slate-800 hover:text-white" onClick={()=>updateChat("Interview Process Deleted",data["id"],"cancel")}>
+														Cancel
 													</button>
 												</div>
 												}
@@ -287,11 +404,12 @@ export default function ChatAssistance(props:any) {
 					</div>
 					<div className="bg-white dark:bg-gray-700 p-3">
 						<div className="flex items-center rounded bg-lightBlue dark:bg-gray-800 p-2">
-							<textarea name="" id="" className="w-[calc(100%-50px)] border-0 bg-transparent  focus:border-0 focus:shadow-none focus:outline-none focus:ring-0 resize-none h-[40px]" placeholder="Type something..." value={prompt} onChange={(e) => setprompt(e.target.value)}></textarea>
+							<textarea name="" id="" className="w-[calc(100%-50px)] border-0 bg-transparent  focus:border-0 focus:shadow-none focus:outline-none focus:ring-0 resize-none h-[40px]" placeholder="Type something..." value={prompt} onChange={(e) => setprompt(e.target.value)} disabled={des}></textarea>
 							<button
 								type="button"
 								className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"
 								onClick={(e) => sendMsg()}
+								disabled={des}
 							>
 								<i className="fa-solid fa-paper-plane"></i>
 							</button>
