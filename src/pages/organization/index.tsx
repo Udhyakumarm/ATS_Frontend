@@ -29,7 +29,7 @@ export default function Organization() {
 		{
 			name: "Analytics",
 			icon: analyticsIcon,
-			link: "/dashboard"
+			link: "/organization/analytics"
 		},
 		{
 			name: "Vendors",

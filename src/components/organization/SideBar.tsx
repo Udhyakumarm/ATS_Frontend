@@ -58,7 +58,7 @@ export default function OrgSideBar() {
         },
         {
             title: 'Analytics',
-            url: '#',
+            url: '/organization/analytics',
             img: analyticsIcon,
             imgWhite: analyticsIconWhite
         },

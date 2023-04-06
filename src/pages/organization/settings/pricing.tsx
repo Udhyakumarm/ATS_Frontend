@@ -162,7 +162,7 @@ export default function Pricing() {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="text-sm font-semibold">
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Members
                                                             <Menu as="div" className="relative inline-block">
@@ -197,10 +197,10 @@ export default function Pricing() {
                                                             Unlimited
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Workspace roles
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -233,10 +233,10 @@ export default function Pricing() {
                                                             Lorem
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Guests
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -269,10 +269,10 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Live Collaboration
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -305,7 +305,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Integration of sub-brands
                                                             <Menu as="div" className="relative inline-block">
@@ -340,7 +340,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Access to standard templates
                                                             <Menu as="div" className="relative inline-block">
@@ -375,7 +375,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Access to pro templates
                                                             <Menu as="div" className="relative inline-block">
@@ -410,7 +410,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Custom designed templates
                                                             <Menu as="div" className="relative inline-block">
@@ -445,7 +445,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Asset library
                                                             <Menu as="div" className="relative inline-block">
@@ -575,7 +575,7 @@ export default function Pricing() {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="text-sm font-semibold">
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Members
                                                             <Menu as="div" className="relative inline-block">
@@ -610,10 +610,10 @@ export default function Pricing() {
                                                             Unlimited
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Workspace roles
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -646,10 +646,10 @@ export default function Pricing() {
                                                             Lorem
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Guests
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -682,10 +682,10 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Live Collaboration
-                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2">soon</span>
+                                                            <span className="inline-block border border-darkGray text-[10px] text-darkGray leading-normal rounded-full px-1 ml-2 dark:bg-gray-200">soon</span>
                                                             <Menu as="div" className="relative inline-block">
                                                                 <Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
                                                                     <i className="fa-solid fa-circle-question"></i>
@@ -718,7 +718,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Integration of sub-brands
                                                             <Menu as="div" className="relative inline-block">
@@ -753,7 +753,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Access to standard templates
                                                             <Menu as="div" className="relative inline-block">
@@ -788,7 +788,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Access to pro templates
                                                             <Menu as="div" className="relative inline-block">
@@ -823,7 +823,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Custom designed templates
                                                             <Menu as="div" className="relative inline-block">
@@ -858,7 +858,7 @@ export default function Pricing() {
                                                             <i className="fa-solid fa-check"></i>
                                                         </td>
                                                     </tr>
-                                                    <tr className="odd:bg-gray-100">
+                                                    <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
                                                         <td className="py-2 px-3 w-[300px]">
                                                             Asset library
                                                             <Menu as="div" className="relative inline-block">
