@@ -15,6 +15,7 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
 });
@@ -61,6 +62,37 @@ export default function JobsCreate() {
 	const router = useRouter();
 
 	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	//Load TM
+	const [tm, settm] = useState([]);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	async function loadTeamMember() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorguser/`)
+			.then(async (res) => {
+				console.log("@", "listorguser", res.data);
+				settm(res.data);
+			})
+			.catch((err) => {
+				console.log("@", "listorguser", err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			loadTeamMember();
+		}
+	}, [token]);
 
 	const [index, setIndex] = useState(0);
 	const [formErrors, setFormErrors] = useState<any>({});
@@ -301,7 +333,9 @@ export default function JobsCreate() {
 				className={
 					"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
 					" " +
-					(tabIndex === currentIndex ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
+					(tabIndex === currentIndex
+						? "border-primary text-primary"
+						: "border-transparent text-darkGray dark:text-gray-400")
 				}
 			>
 				{tabTitles[tabIndex]}
@@ -336,7 +370,10 @@ export default function JobsCreate() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
+				<div
+					id="overlay"
+					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+				></div>
 				<Toaster />
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
@@ -371,7 +408,7 @@ export default function JobsCreate() {
 								</TabList>
 							</div>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Job Title and Department" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -445,7 +482,7 @@ export default function JobsCreate() {
 										</div>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Department Informatiom" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -457,7 +494,7 @@ export default function JobsCreate() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Your Responsibilities" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -469,7 +506,7 @@ export default function JobsCreate() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="What We're Looking For" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -481,7 +518,7 @@ export default function JobsCreate() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Skills" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
@@ -495,7 +532,7 @@ export default function JobsCreate() {
 										/>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Employment Details" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -567,7 +604,7 @@ export default function JobsCreate() {
 										</div>
 									</div>
 								</div>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Annual Salary" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -599,7 +636,7 @@ export default function JobsCreate() {
 										</div>
 									</div>
 								</div>
-								<div className="relative rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Benefits" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="-mx-3 flex flex-wrap">
@@ -654,7 +691,7 @@ export default function JobsCreate() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Assessment" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
@@ -668,7 +705,7 @@ export default function JobsCreate() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Team Members" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mb-6 flex flex-wrap items-center justify-between">
@@ -701,7 +738,7 @@ export default function JobsCreate() {
 												<div className="w-[150px]">
 													<label
 														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 													>
 														<span>Select All</span>
 														<input type="checkbox" id="teamSelectAll" />
@@ -721,17 +758,21 @@ export default function JobsCreate() {
 													</tr>
 												</thead>
 												<tbody>
-													{Array(6).fill(
-														<tr>
-															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
-															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
-															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
-															<td className="border-b py-2 px-3 text-sm">Hiring Manager</td>
-															<td className="border-b py-2 px-3 text-right">
-																<input type="checkbox" />
-															</td>
-														</tr>
-													)}
+													{tm &&
+														tm.map(
+															(data, i) =>
+																data["verified"] !== false && (
+																	<tr key={i}>
+																		<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
+																		<td className="border-b py-2 px-3 text-right">
+																			<input type="checkbox" />
+																		</td>
+																	</tr>
+																)
+														)}
 												</tbody>
 											</table>
 										</div>
@@ -739,7 +780,7 @@ export default function JobsCreate() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Vendors" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mb-6 flex flex-wrap items-center justify-between">
@@ -772,7 +813,7 @@ export default function JobsCreate() {
 												<div className="w-[150px]">
 													<label
 														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 													>
 														<span>Select All</span>
 														<input type="checkbox" id="teamSelectAll" />
@@ -791,7 +832,7 @@ export default function JobsCreate() {
 								</div>
 							</TabPanel>
 							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white dark:bg-gray-800 shadow-normal">
+								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Job Boards" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
