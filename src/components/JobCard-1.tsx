@@ -16,7 +16,7 @@ export default function JobCard_1() {
                     </aside>
                 </div>
                 <ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-                    <li className="mr-3">Full Time</li>
+                    <li className="mr-3 list-none">Full Time</li>
                     <li className="mr-3">Remote</li>
                     <li className="mr-3">Junior</li>
                 </ul>

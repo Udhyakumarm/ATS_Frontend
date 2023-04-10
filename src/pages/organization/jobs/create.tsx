@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useEffect, useReducer, useState } from "react";
+import { Fragment, useEffect, useReducer, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Validator, { Rules } from "validatorjs";
 import { axiosInstance } from "@/utils";
@@ -13,7 +13,7 @@ import Image from "next/image";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
-import { Listbox, Transition } from "@headlessui/react";
+import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
 const Toaster = dynamic(() => import("@/components/Toaster"), {
 	ssr: false
@@ -64,6 +64,9 @@ export default function JobsCreate() {
 
 	const [index, setIndex] = useState(0);
 	const [formErrors, setFormErrors] = useState<any>({});
+
+	const cancelButtonRef = useRef(null)
+    const [previewPopup, setPreviewPopup] = useState(false)
 
 	const [integrationList, setIntegrationList] = useState({
 		LinkedIn: { access: null },
@@ -252,6 +255,7 @@ export default function JobsCreate() {
 	}
 
 	async function previewJob() {
+		setPreviewPopup(true);
 		return;
 		const cleanedData = cleanData(jobForm);
 		const validation = new Validator(cleanedData, jobFormRules);
@@ -815,6 +819,113 @@ export default function JobsCreate() {
 					</div>
 				</div>
 			</main>
+			<Transition.Root show={previewPopup} as={Fragment}>
+                <Dialog
+                as="div"
+                className="relative z-40"
+                initialFocus={cancelButtonRef}
+                onClose={setPreviewPopup}
+                >
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enterTo="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all w-full sm:max-w-full min-h-screen">
+                            <div className="flex items-center justify-between px-8 py-3 border-b dark:border-b-gray-600">
+								<aside>
+									<h4 className="leading-none font-bold text-xl">
+										Software Engineer
+									</h4>
+									<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
+										<li className="mr-3 list-none">Full Time</li>
+										<li className="mr-3">7.5 LPA INR</li>
+										<li className="mr-3">Vacancy - 50</li>
+									</ul>
+								</aside>
+                                <button
+                                    type="button"
+                                    className="leading-none hover:text-gray-700"
+                                    onClick={() => setPreviewPopup(false)}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="px-8">
+                                <div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Department Information</h5>
+									<article className="text-sm">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+									</article>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Your Responsibilities</h5>
+									<article className="text-sm">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+									</article>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">What We're Looking For</h5>
+									<article className="text-sm">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+									</article>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Skills</h5>
+									<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+										<li className="mr-3 list-none">PHP</li>
+										<li className="mr-3">ReactJs</li>
+										<li className="mr-3">HTML</li>
+									</ul>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Employment Details</h5>
+									<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+										<li className="mr-3 list-none">Full Time</li>
+										<li className="mr-3">Bachelor's Degree</li>
+										<li className="mr-3">English, Japan</li>
+										<li className="mr-3">2+ Years of experience</li>
+									</ul>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Annual Salary</h5>
+									<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+										<li className="mr-3 list-none">50000 INR</li>
+									</ul>
+								</div>
+								<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
+									<h5 className="font-bold mb-2">Benefits</h5>
+									<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+										<li className="mr-3 list-none">Paid Relocation</li>
+										<li className="mr-3">Visa Sposnership</li>
+										<li className="mr-3">Remote Working</li>
+									</ul>
+								</div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </Dialog>
+            </Transition.Root>
 		</>
 	);
 }
