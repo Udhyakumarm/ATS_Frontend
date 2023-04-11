@@ -21,6 +21,8 @@ import inboxesIconWhite from "/public/images/icons-white/inboxes.png";
 import applicantsIconWhite from "/public/images/icons-white/applicants.png";
 import settingsIconWhite from "/public/images/icons-white/settings.png";
 import upgradeBadge from '/public/images/upgrade-badge.png'
+import offerManageIcon from "/public/images/icons/offer-manage.png";
+import offerManageIconWhite from "/public/images/icons-white/offer-manage.png";
 
 export default function OrgSideBar() {
     const router = useRouter()
@@ -49,6 +51,12 @@ export default function OrgSideBar() {
             url: '/organization/applicants',
             img: applicantsIcon,
             imgWhite: applicantsIconWhite
+        },
+        {
+            title: 'Offer Management',
+            url: '/organization/offer-management',
+            img: offerManageIcon,
+            imgWhite: offerManageIconWhite
         },
         {
             title: 'Interviews',
@@ -104,7 +112,7 @@ export default function OrgSideBar() {
                                     ? "bg-lightBlue border-r-gradDarkBlue text-primary dark:bg-gray-900 dark:text-white"
                                     : "bg-transparent border-r-transparent") + ' ' + (show ? 'justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent' : 'py-2 px-4 border-r-[10px]') }>
                                     <span className={`w-[20px] h-[20px] inline-block` + ' ' + (show ? 'text-center' : 'mr-4')}>
-                                        <Image src={theme === "dark" ? menuItem.imgWhite : menuItem.img} alt={menuItem.title} height={20} className={show ? 'mx-auto' : ''} />
+                                        <Image src={theme === "dark" ? menuItem.imgWhite : menuItem.img} alt={menuItem.title} width={100} className={'w-auto max-h-[20px] mx-auto'} />
                                     </span>
                                     {
                                         show

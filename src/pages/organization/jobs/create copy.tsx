@@ -17,6 +17,9 @@ import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
+const Toaster = dynamic(() => import("@/components/Toaster"), {
+	ssr: false
+});
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -39,12 +42,64 @@ const StickyLabel = ({ label }: any) => (
 
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
+const jobFormRules: Rules = {
+	job_title: "required",
+	job_function: "required",
+	department: "required",
+	location: "required",
+	currency: "required",
+	employment_type: "required",
+	work_type: "required"
+};
+const people = [
+	{ id: 1, name: "Durward Reynolds", unavailable: false },
+	{ id: 2, name: "Kenton Towne", unavailable: false },
+	{ id: 3, name: "Therese Wunsch", unavailable: false },
+	{ id: 4, name: "Benedict Kessler", unavailable: true },
+	{ id: 5, name: "Katelyn Rohan", unavailable: false }
+];
+
 export default function JobsCreate() {
 	const router = useRouter();
+
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	//Load TM
+	const [tm, settm] = useState([]);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	async function loadTeamMember() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorguser/`)
+			.then(async (res) => {
+				console.log("@", "listorguser", res.data);
+				settm(res.data);
+			})
+			.catch((err) => {
+				console.log("@", "listorguser", err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			loadTeamMember();
+		}
+	}, [token]);
+
+	const [index, setIndex] = useState(0);
+	const [formErrors, setFormErrors] = useState<any>({});
+
 	const cancelButtonRef = useRef(null)
     const [previewPopup, setPreviewPopup] = useState(false)
-	const [index, setIndex] = useState(0);
-	const [skillOptions, setSkillOptions] = useState<any>([]);
 
 	const [integrationList, setIntegrationList] = useState({
 		LinkedIn: { access: null },
@@ -54,22 +109,223 @@ export default function JobsCreate() {
 		Twitter: { access: null }
 	});
 
+	const [selectedPerson, setSelectedPerson] = useState(people[0]);
+
+	const [skillOptions, setSkillOptions] = useState<any>([]);
+
+	const updateFormInfo = (prevForm: any, event: { target: { id: string; value: any } }) => {
+		const { id: key, value } = event.target;
+
+		if (key in Object.keys(jobFormRules)) {
+			const validation = new Validator(
+				{ [key]: value },
+				{ [key]: jobFormRules[key] },
+				{
+					required: "This field is required"
+				}
+			);
+
+			if (!validation.passes()) setFormErrors((prev: any) => ({ ...prev, [key]: validation.errors.first(key) }));
+			else setFormErrors((prev: any) => ({ ...prev, [key]: null }));
+		}
+
+		return { ...prevForm, [key]: value };
+	};
+
+	const [jobForm, dispatch] = useReducer(updateFormInfo, {
+		job_title: "",
+		job_function: "",
+		department: "",
+		industry: "",
+		group_or_division: "",
+		vacancy: "",
+		description: "",
+		responsibility: "",
+		looking_for: "",
+		employment_type: "",
+		experience: "",
+		education: "",
+		location: "",
+		skills: "",
+		currency: "",
+		salary: "",
+		relocation: "",
+		visa: "",
+		work_type: "",
+		deadline: "",
+		publish_date: ""
+	});
+
+	const cleanMuliField = (field: any) =>
+		Object.values(field)
+			.map((item: any) => item.name)
+			.join(", ");
+	const cleanData = (data: any) => ({
+		...data,
+		employment_type: cleanMuliField(data.employment_type),
+		skills: cleanMuliField(data.skills),
+		relocation: cleanMuliField(data.relocation),
+		worktype: cleanMuliField(data.work_type),
+		visa: cleanMuliField(data.visa)
+	});
+
+	async function searchSkill(value: string) {
+		await axiosInstance.marketplace_api
+			.get(`/job/load/skills/?search=${value}`)
+			.then(async (res) => {
+				let obj = res.data;
+				let arr = [];
+				for (const [key, value] of Object.entries(obj)) {
+					arr.push({ name: value });
+				}
+				setSkillOptions(arr);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	useEffect(() => {
+		async function loadIntegrations() {
+			console.log({ session });
+			if (!session) return;
+			console.log(session);
+			const organization = await axiosInstance.api
+				.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session?.accessToken } })
+				.then((response) => response.data[0]);
+			const { integrations: newIntegrations } = await axiosInstance.api
+				.get("/organization/integrations/" + organization.unique_id + "/", {
+					headers: { authorization: "Bearer " + session?.accessToken }
+				})
+				.then((response) => response.data);
+
+			setIntegrationList((prevList: any) => {
+				newIntegrations.forEach((integration: { access_token: any; provider: string }) => {
+					Object.keys(prevList).map((key) =>
+						key.toLowerCase() === integration.provider ? (prevList[key] = { access: integration.access_token }) : null
+					);
+				});
+				console.log(prevList);
+				return prevList;
+			});
+		}
+
+		loadIntegrations();
+	}, [session]);
+
+	const handleIntegrate = async (provider: string) =>
+		await router.push("/api/integration/" + provider.toLowerCase() + "/create");
+
+	const handleIntegrationPost = async (provider: any) => {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
+	};
+
+	async function draftJob() {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
+
+		const newJob = await axiosInstance.api
+			.post("/job/create-job/", cleanedData, {
+				headers: {
+					authorization: "Bearer " + session?.accessToken
+				}
+			})
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/organization/jobs/drafted/");
+	}
+
+	async function publishJob() {
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) {
+			console.log(validation.errors);
+			Object.keys(validation.errors.errors).forEach((key) =>
+				toast.error(validation.errors.errors[key as keyof typeof validation.errors] as unknown as string)
+			);
+			return;
+		}
+
+		const newJob = await axiosInstance.api
+			.post(
+				"/job/create-job/",
+				{ ...cleanedData, jobStatus: "Active", publish_date: new Date() },
+				{
+					headers: {
+						authorization: "Bearer " + session?.accessToken
+					}
+				}
+			)
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/organization/jobs/active/");
+	}
+
+	async function previewJob() {
+		setPreviewPopup(true);
+		return;
+		const cleanedData = cleanData(jobForm);
+		const validation = new Validator(cleanedData, jobFormRules);
+
+		if (validation.fails()) return;
+
+		const newJob = await axiosInstance.api
+			.post("/job/create-job/", cleanedData, {
+				headers: {
+					authorization: "Bearer " + session?.accessToken
+				}
+			})
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return null;
+			});
+
+		if (newJob) router.push("/organization/jobs/" + newJob.refid);
+	}
+
 	const jobActions = [
 		{
 			label: "Preview",
-			action: '',
+			action: previewJob,
 			icon: <i className="fa-solid fa-play" />,
 			iconBg: "bg-gradient-to-r from-[#FF930F] to-[#FFB45B]"
 		},
 		{
 			label: "Save as Draft",
-			action: '',
+			action: draftJob,
 			icon: <i className="fa-regular fa-bookmark"></i>,
 			iconBg: "bg-gradient-to-r from-gradLightBlue to-gradDarkBlue"
 		},
 		{
 			label: "Publish",
-			action: '',
+			action: publishJob,
 			icon: <i className="fa-solid fa-paper-plane"></i>,
 			iconBg: "bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]"
 		}
@@ -123,6 +379,7 @@ export default function JobsCreate() {
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
+				<Toaster />
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<Tabs onSelect={(i, l) => setIndex(i)}>
@@ -136,7 +393,7 @@ export default function JobsCreate() {
 											<i className="fa-solid fa-arrow-left text-2xl"></i>
 										</button>
 										<h2 className="text-xl font-bold">
-											<span>Job Title</span>
+											<span>{jobForm.job_title !== "" ? jobForm.job_title : "Job Title"}</span>
 										</h2>
 									</div>
 									<div className="flex flex-wrap items-center">
@@ -165,6 +422,9 @@ export default function JobsCreate() {
 											label="Job Title"
 											id="job_title"
 											required
+											value={jobForm.job_title}
+											error={formErrors?.job_title}
+											handleChange={dispatch}
 										/>
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -174,6 +434,9 @@ export default function JobsCreate() {
 													label="Job Function"
 													id="job_function"
 													required
+													value={jobForm.job_function}
+													error={formErrors?.job_function}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -183,6 +446,9 @@ export default function JobsCreate() {
 													label="Department"
 													id="department"
 													required
+													value={jobForm.department}
+													error={formErrors?.department}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -191,6 +457,9 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Industry"
 													id="industry"
+													value={jobForm.industry}
+													error={formErrors?.industry}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -199,6 +468,9 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Group or Division"
 													id="group_or_division"
+													value={jobForm.group_or_division}
+													error={formErrors?.group_or_division}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -207,6 +479,9 @@ export default function JobsCreate() {
 													inputType="number"
 													label="Vacancy"
 													id="vacancy"
+													value={jobForm.vacancy}
+													error={formErrors?.vacancy}
+													handleChange={dispatch}
 												/>
 											</div>
 										</div>
@@ -218,6 +493,9 @@ export default function JobsCreate() {
 										<FormField
 											fieldType="reactquill"
 											id="description"
+											value={jobForm.description}
+											error={formErrors?.description}
+											handleChange={dispatch}
 										/>
 									</div>
 								</div>
@@ -227,6 +505,9 @@ export default function JobsCreate() {
 										<FormField
 											fieldType="reactquill"
 											id="responsibility"
+											value={jobForm.responsibility}
+											error={formErrors?.responsibility}
+											handleChange={dispatch}
 										/>
 									</div>
 								</div>
@@ -236,6 +517,9 @@ export default function JobsCreate() {
 										<FormField
 											fieldType="reactquill"
 											id="looking_for"
+											value={jobForm.looking_for}
+											error={formErrors?.looking_for}
+											handleChange={dispatch}
 										/>
 									</div>
 								</div>
@@ -246,6 +530,10 @@ export default function JobsCreate() {
 											options={skillOptions}
 											fieldType="select"
 											id="skills"
+											onSearch={searchSkill}
+											value={jobForm.skills}
+											error={formErrors?.skills}
+											handleChange={dispatch}
 										/>
 									</div>
 								</div>
@@ -259,6 +547,9 @@ export default function JobsCreate() {
 													label="Employment Type"
 													id="employment_type"
 													singleSelect
+													value={jobForm.employment_type}
+													error={formErrors?.employment_type}
+													handleChange={dispatch}
 													options={[
 														{ name: "Full Time" },
 														{ name: "Part Time" },
@@ -274,6 +565,9 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Experience"
 													id="experience"
+													value={jobForm.experience}
+													error={formErrors?.experience}
+													handleChange={dispatch}
 												/>
 											</div>
 										</div>
@@ -284,6 +578,9 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Education"
 													id="education"
+													value={jobForm.education}
+													error={formErrors?.education}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -292,6 +589,9 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Language"
 													id="language"
+													value={jobForm.language}
+													error={formErrors?.language}
+													handleChange={dispatch}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -301,6 +601,9 @@ export default function JobsCreate() {
 													label="Job Location"
 													id="location"
 													required
+													value={jobForm.location}
+													error={formErrors?.location}
+													handleChange={dispatch}
 												/>
 											</div>
 										</div>
@@ -316,6 +619,9 @@ export default function JobsCreate() {
 													inputType="number"
 													label="Salary Starting From"
 													id="salary"
+													value={jobForm.salary}
+													error={formErrors?.salary}
+													handleChange={dispatch}
 													icon={<i className="fa-regular fa-money-bill-alt"></i>}
 												/>
 											</div>
@@ -326,6 +632,9 @@ export default function JobsCreate() {
 													label="Currency"
 													id="currency"
 													required
+													value={jobForm.currency}
+													error={formErrors?.currency}
+													handleChange={dispatch}
 													icon={<i className="fa-regular fa-money-bill-alt"></i>}
 												/>
 											</div>
@@ -341,6 +650,9 @@ export default function JobsCreate() {
 													fieldType="select"
 													label="Relocation"
 													id="relocation"
+													value={jobForm.relocation}
+													error={formErrors?.relocation}
+													handleChange={dispatch}
 													singleSelect
 													options={[
 														{ id: "yes", name: "Yes" },
@@ -353,6 +665,9 @@ export default function JobsCreate() {
 													fieldType="select"
 													label="Visa Sponsorship"
 													id="visa"
+													value={jobForm.visa}
+													error={formErrors?.visa}
+													handleChange={dispatch}
 													singleSelect
 													options={[
 														{ id: "yes", name: "Yes" },
@@ -365,6 +680,9 @@ export default function JobsCreate() {
 													fieldType="select"
 													label="Work Type"
 													id="work_type"
+													value={jobForm.work_type}
+													error={formErrors?.work_type}
+													handleChange={dispatch}
 													singleSelect
 													options={[
 														{ id: "remote", name: "Remote" },
@@ -445,17 +763,21 @@ export default function JobsCreate() {
 													</tr>
 												</thead>
 												<tbody>
-													{Array(6).fill(
-													<tr>
-														<td className="border-b py-2 px-3 text-sm">Name Here</td>
-														<td className="border-b py-2 px-3 text-sm">Department Here</td>
-														<td className="border-b py-2 px-3 text-sm">Email Here</td>
-														<td className="border-b py-2 px-3 text-sm">Role Here</td>
-														<td className="border-b py-2 px-3 text-right">
-															<input type="checkbox" />
-														</td>
-													</tr>
-													)}
+													{tm &&
+														tm.map(
+															(data, i) =>
+																data["verified"] !== false && (
+																	<tr key={i}>
+																		<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
+																		<td className="border-b py-2 px-3 text-right">
+																			<input type="checkbox" />
+																		</td>
+																	</tr>
+																)
+														)}
 												</tbody>
 											</table>
 										</div>
@@ -525,6 +847,8 @@ export default function JobsCreate() {
 														key={key}
 														label={key}
 														access={integrationList[key as keyof typeof integrationList].access}
+														handleIntegrate={() => handleIntegrate(key)}
+														handlePost={() => handleIntegrationPost(key)}
 														isBlank={false}
 													/>
 												</div>
