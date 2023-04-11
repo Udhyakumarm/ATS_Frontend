@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { Fragment, useEffect, useReducer, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Validator, { Rules } from "validatorjs";
 import { axiosInstance } from "@/utils";
@@ -17,6 +17,7 @@ import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
+import { debounce } from "lodash";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -41,8 +42,8 @@ const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job 
 
 export default function JobsCreate() {
 	const router = useRouter();
-	const cancelButtonRef = useRef(null)
-    const [previewPopup, setPreviewPopup] = useState(false)
+	const cancelButtonRef = useRef(null);
+	const [previewPopup, setPreviewPopup] = useState(false);
 	const [index, setIndex] = useState(0);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 
@@ -57,19 +58,19 @@ export default function JobsCreate() {
 	const jobActions = [
 		{
 			label: "Preview",
-			action: '',
+			action: previewJob,
 			icon: <i className="fa-solid fa-play" />,
 			iconBg: "bg-gradient-to-r from-[#FF930F] to-[#FFB45B]"
 		},
 		{
 			label: "Save as Draft",
-			action: '',
+			action: "",
 			icon: <i className="fa-regular fa-bookmark"></i>,
 			iconBg: "bg-gradient-to-r from-gradLightBlue to-gradDarkBlue"
 		},
 		{
 			label: "Publish",
-			action: '',
+			action: publishJob,
 			icon: <i className="fa-solid fa-paper-plane"></i>,
 			iconBg: "bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]"
 		}
@@ -110,6 +111,140 @@ export default function JobsCreate() {
 		}
 	];
 
+	//naman
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	//Load TM
+	const [tm, settm] = useState([]);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	async function loadTeamMember() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorguser/`)
+			.then(async (res) => {
+				console.log("@", "listorguser", res.data);
+				settm(res.data);
+			})
+			.catch((err) => {
+				console.log("@", "listorguser", err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			loadTeamMember();
+		}
+	}, [token]);
+
+	//job create state
+	const [jtitle, setjtitle] = useState("");
+	const [jfunction, setjfunction] = useState("");
+	const [jdept, setjdept] = useState("");
+	const [jind, setjind] = useState("");
+	const [jgrp, setjgrp] = useState("");
+	const [jvac, setjvac] = useState("");
+	const [jdeptinfo, setjdeptinfo] = useState("");
+	const [jres, setjres] = useState("");
+	const [jlooking, setjlooking] = useState("");
+	const [jskill, setjskill] = useState("");
+	const [jetype, setjetype] = useState("");
+	const [jexp, setjexp] = useState("");
+	const [jedu, setjedu] = useState("");
+	const [jlang, setjlang] = useState("");
+	const [jloc, setjloc] = useState("");
+	const [jsalary, setjsalary] = useState("");
+	const [jcurr, setjcurr] = useState("");
+	const [jreloc, setjreloc] = useState("");
+	const [jvisa, setjvisa] = useState("");
+	const [jwtype, setjwtype] = useState("");
+
+	function publishJob() {
+		console.log("jtitle", jtitle);
+		console.log("jfunction", jfunction);
+		console.log("jdept", jdept);
+		console.log("jind", jind);
+		console.log("jgrp", jgrp);
+		console.log("jvac", jvac);
+		console.log("jdeptinfo", jdeptinfo);
+		console.log("jres", jres);
+		console.log("jlooking", jlooking);
+		console.log("jskill", jskill);
+		console.log("jetype", jetype);
+		console.log("jexp", jexp);
+		console.log("jedu", jedu);
+		console.log("jlang", jlang);
+		console.log("jloc", jloc);
+		console.log("jsalary", jsalary);
+		console.log("jcurr", jcurr);
+		console.log("jreloc", jreloc);
+		console.log("jvisa", jvisa);
+		console.log("jwtype", jwtype);
+	}
+
+	function previewJob() {
+		setPreviewPopup(true);
+	}
+
+	//advance filter
+	const [locf, setLocf] = useState([]);
+	const [ski, setski] = useState([]);
+	const [load, setload] = useState(false);
+
+	const debouncedSearchResults = useMemo(() => {
+		return debounce(searchLoc, 300);
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			debouncedSearchResults.cancel();
+		};
+	}, [debouncedSearchResults]);
+
+	async function searchLoc(value) {
+		if (value === "") value = "a";
+		await axiosInstance.marketplace_api
+			.get(`/job/load/location/?search=${value}`)
+			.then(async (res) => {
+				let obj = res.data;
+				console.log(obj);
+				let arr = Object.values(obj);
+				// for (const [key, value] of Object.entries(obj)) {
+				//   arr.push(value)
+				// }
+				setLocf(arr);
+				setload(false);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function searchSkill(value) {
+		await axiosInstance.marketplace_api
+			.get(`/job/load/skills/?search=${value}`)
+			.then(async (res) => {
+				let obj = res.data;
+				let arr = [];
+				for (const [key, value] of Object.entries(obj)) {
+					arr.push(value);
+				}
+				setski(arr);
+				setload(false);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -136,7 +271,7 @@ export default function JobsCreate() {
 											<i className="fa-solid fa-arrow-left text-2xl"></i>
 										</button>
 										<h2 className="text-xl font-bold">
-											<span>Job Title</span>
+											<span>{jtitle && jtitle.length > 0 ? jtitle : <>Job Title</>}</span>
 										</h2>
 									</div>
 									<div className="flex flex-wrap items-center">
@@ -164,6 +299,8 @@ export default function JobsCreate() {
 											inputType="text"
 											label="Job Title"
 											id="job_title"
+											value={jtitle}
+											handleChange={(e) => setjtitle(e.target.value)}
 											required
 										/>
 										<div className="-mx-3 flex flex-wrap">
@@ -173,6 +310,8 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Job Function"
 													id="job_function"
+													value={jfunction}
+													handleChange={(e) => setjfunction(e.target.value)}
 													required
 												/>
 											</div>
@@ -181,6 +320,8 @@ export default function JobsCreate() {
 													fieldType="input"
 													inputType="text"
 													label="Department"
+													value={jdept}
+													handleChange={(e) => setjdept(e.target.value)}
 													id="department"
 													required
 												/>
@@ -190,6 +331,8 @@ export default function JobsCreate() {
 													fieldType="input"
 													inputType="text"
 													label="Industry"
+													value={jind}
+													handleChange={(e) => setjind(e.target.value)}
 													id="industry"
 												/>
 											</div>
@@ -199,12 +342,16 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Group or Division"
 													id="group_or_division"
+													value={jgrp}
+													handleChange={(e) => setjgrp(e.target.value)}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
 													fieldType="input"
 													inputType="number"
+													value={jvac}
+													handleChange={(e) => setjvac(e.target.value)}
 													label="Vacancy"
 													id="vacancy"
 												/>
@@ -215,37 +362,31 @@ export default function JobsCreate() {
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Department Informatiom" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											fieldType="reactquill"
-											id="description"
-										/>
+										<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Your Responsibilities" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											fieldType="reactquill"
-											id="responsibility"
-										/>
+										<FormField fieldType="reactquill" id="responsibility" value={jres} handleChange={setjres} />
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="What We're Looking For" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											fieldType="reactquill"
-											id="looking_for"
-										/>
+										<FormField fieldType="reactquill" id="looking_for" value={jlooking} handleChange={setjlooking} />
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Skills" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
-											options={skillOptions}
-											fieldType="select"
+											options={ski}
+											onSearch={searchSkill}
+											fieldType="select2"
 											id="skills"
+											handleChange={setjskill}
+											label="Skills"
 										/>
 									</div>
 								</div>
@@ -255,17 +396,13 @@ export default function JobsCreate() {
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													fieldType="select"
+													fieldType="select2"
 													label="Employment Type"
 													id="employment_type"
 													singleSelect
-													options={[
-														{ name: "Full Time" },
-														{ name: "Part Time" },
-														{ name: "Contract" },
-														{ name: "Temporary" },
-														{ name: "Internship" }
-													]}
+													options={["Full Time", "Part Time", "Contract", "Temporary", "Internship"]}
+													value={jetype}
+													handleChange={setjetype}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -273,6 +410,8 @@ export default function JobsCreate() {
 													fieldType="input"
 													inputType="text"
 													label="Experience"
+													value={jexp}
+													handleChange={(e) => setjexp(e.target.value)}
 													id="experience"
 												/>
 											</div>
@@ -283,6 +422,8 @@ export default function JobsCreate() {
 													fieldType="input"
 													inputType="text"
 													label="Education"
+													value={jedu}
+													handleChange={(e) => setjedu(e.target.value)}
 													id="education"
 												/>
 											</div>
@@ -291,19 +432,23 @@ export default function JobsCreate() {
 													fieldType="input"
 													inputType="text"
 													label="Language"
+													value={jlang}
+													handleChange={(e) => setjlang(e.target.value)}
 													id="language"
 												/>
 											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Job Location"
-													id="location"
-													required
-												/>
-											</div>
 										</div>
+									</div>
+
+									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+										<FormField
+											options={locf}
+											onSearch={searchLoc}
+											fieldType="select2"
+											id="location"
+											label="Location"
+											handleChange={setjloc}
+										/>
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
@@ -316,6 +461,8 @@ export default function JobsCreate() {
 													inputType="number"
 													label="Salary Starting From"
 													id="salary"
+													value={jsalary}
+													handleChange={(e) => setjsalary(e.target.value)}
 													icon={<i className="fa-regular fa-money-bill-alt"></i>}
 												/>
 											</div>
@@ -326,6 +473,8 @@ export default function JobsCreate() {
 													label="Currency"
 													id="currency"
 													required
+													value={jcurr}
+													handleChange={(e) => setjcurr(e.target.value)}
 													icon={<i className="fa-regular fa-money-bill-alt"></i>}
 												/>
 											</div>
@@ -338,39 +487,35 @@ export default function JobsCreate() {
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													fieldType="select"
+													fieldType="select2"
 													label="Relocation"
 													id="relocation"
 													singleSelect
-													options={[
-														{ id: "yes", name: "Yes" },
-														{ id: "no", name: "No" }
-													]}
+													options={["yes", "no"]}
+													value={jreloc}
+													handleChange={setjreloc}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													fieldType="select"
+													fieldType="select2"
 													label="Visa Sponsorship"
 													id="visa"
 													singleSelect
-													options={[
-														{ id: "yes", name: "Yes" },
-														{ id: "no", name: "No" }
-													]}
+													options={["yes", "no"]}
+													value={jvisa}
+													handleChange={setjvisa}
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													fieldType="select"
+													fieldType="select2"
 													label="Work Type"
 													id="work_type"
 													singleSelect
-													options={[
-														{ id: "remote", name: "Remote" },
-														{ id: "office", name: "Office" },
-														{ id: "hybrid", name: "Hybrid" }
-													]}
+													options={["remote", "office", "hybrid"]}
+													value={jwtype}
+													handleChange={setjwtype}
 												/>
 											</div>
 										</div>
@@ -445,17 +590,21 @@ export default function JobsCreate() {
 													</tr>
 												</thead>
 												<tbody>
-													{Array(6).fill(
-													<tr>
-														<td className="border-b py-2 px-3 text-sm">Name Here</td>
-														<td className="border-b py-2 px-3 text-sm">Department Here</td>
-														<td className="border-b py-2 px-3 text-sm">Email Here</td>
-														<td className="border-b py-2 px-3 text-sm">Role Here</td>
-														<td className="border-b py-2 px-3 text-right">
-															<input type="checkbox" />
-														</td>
-													</tr>
-													)}
+													{tm &&
+														tm.map(
+															(data, i) =>
+																data["verified"] !== false && (
+																	<tr key={i}>
+																		<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
+																		<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
+																		<td className="border-b py-2 px-3 text-right">
+																			<input type="checkbox" />
+																		</td>
+																	</tr>
+																)
+														)}
 												</tbody>
 											</table>
 										</div>
@@ -538,117 +687,169 @@ export default function JobsCreate() {
 				</div>
 			</main>
 			<Transition.Root show={previewPopup} as={Fragment}>
-                <Dialog
-                as="div"
-                className="relative z-40"
-                initialFocus={cancelButtonRef}
-                onClose={setPreviewPopup}
-                >
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                </Transition.Child>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setPreviewPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
 
-                <div className="fixed inset-0 z-10 overflow-y-auto">
-                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enterTo="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-[#FBF9FF] dark:bg-gray-800 text-black dark:text-white text-left shadow-xl transition-all w-full sm:max-w-full min-h-screen">
-                            <div className="flex items-center justify-between px-8 py-3 border-b dark:border-b-gray-600">
-								<aside>
-									<h4 className="leading-none font-bold text-xl">
-										Software Engineer
-									</h4>
-									<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
-										<li className="mr-3 list-none">Full Time</li>
-										<li className="mr-3">7.5 LPA INR</li>
-										<li className="mr-3">Vacancy - 50</li>
-									</ul>
-								</aside>
-                                <button
-                                    type="button"
-                                    className="leading-none hover:text-gray-700"
-                                    onClick={() => setPreviewPopup(false)}
-                                >
-                                    <i className="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
-                            <div className="px-8">
-								<div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Department Information</h5>
-										<article className="text-sm">
-										Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-										</article>
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
+									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
+										<aside>
+											<h4 className="text-xl font-bold leading-none">
+												{jtitle && jtitle.length > 0 ? jtitle : <>Job Title</>}
+											</h4>
+											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
+												<li className="mr-3 list-none">
+													{jetype && jetype.length > 0 ? jetype : <>Employment Type Not Disclosed</>}
+												</li>
+												<li className="mr-3">
+													{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+														<>
+															{jcurr} {jsalary}
+														</>
+													) : (
+														<>Salary Not Disclosed</>
+													)}
+												</li>
+												<li className="mr-3">Vacancy - {jvac && jvac.length > 0 ? jvac : <>Not Disclosed</>}</li>
+											</ul>
+										</aside>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setPreviewPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
 									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Your Responsibilities</h5>
-										<article className="text-sm">
-										Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-										</article>
+									<div className="px-8">
+										<div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Department Information</h5>
+												<article className="text-sm">
+													{jdeptinfo && jdeptinfo.length > 0 ? (
+														<>
+															<p dangerouslySetInnerHTML={{ __html: jdeptinfo }}></p>
+														</>
+													) : (
+														<>Not Filled</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Your Responsibilities</h5>
+												<article className="text-sm">
+													{jres && jres.length > 0 ? (
+														<>
+															<p dangerouslySetInnerHTML={{ __html: jres }}></p>
+														</>
+													) : (
+														<>Not Filled</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">What We're Looking For</h5>
+												<article className="text-sm">
+													{jlooking && jlooking.length > 0 ? (
+														<>
+															<p dangerouslySetInnerHTML={{ __html: jlooking }}></p>
+														</>
+													) : (
+														<>Not Filled</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Skills</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													{jskill && jskill.length > 0 ? (
+														jskill.split(",").map((data, i) =>
+															i === 0 ? (
+																<li className={`mr-3 list-none`} key={i}>
+																	{data}
+																</li>
+															) : (
+																<li className={`mr-3`} key={i}>
+																	{data}
+																</li>
+															)
+														)
+													) : (
+														<li className="mr-3 list-none">Not Filled</li>
+													)}
+
+													{/* <li className="mr-3">ReactJs</li>
+													<li className="mr-3">HTML</li> */}
+												</ul>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Employment Details</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">Full Time</li>
+													<li className="mr-3">Bachelor's Degree</li>
+													<li className="mr-3">English, Japan</li>
+													<li className="mr-3">2+ Years of experience</li>
+												</ul>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Annual Salary</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">
+														{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+															<>
+																{jcurr} {jsalary}
+															</>
+														) : (
+															<>Salary Not Disclosed</>
+														)}
+													</li>
+												</ul>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Benefits</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">
+														Paid Relocation : {jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														Visa Sposnership : {jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{jwtype && jwtype.length > 0 ? <>{jwtype} Working</> : <>Not Disclosed Work Type</>}
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div className="py-4">
+											<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
+										</div>
 									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">What We're Looking For</h5>
-										<article className="text-sm">
-										Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-										</article>
-									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Skills</h5>
-										<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-											<li className="mr-3 list-none">PHP</li>
-											<li className="mr-3">ReactJs</li>
-											<li className="mr-3">HTML</li>
-										</ul>
-									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Employment Details</h5>
-										<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-											<li className="mr-3 list-none">Full Time</li>
-											<li className="mr-3">Bachelor's Degree</li>
-											<li className="mr-3">English, Japan</li>
-											<li className="mr-3">2+ Years of experience</li>
-										</ul>
-									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Annual Salary</h5>
-										<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-											<li className="mr-3 list-none">50000 INR</li>
-										</ul>
-									</div>
-									<div className="border-b last:border-b-0 dark:border-b-gray-600 py-4">
-										<h5 className="font-bold mb-2">Benefits</h5>
-										<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-											<li className="mr-3 list-none">Paid Relocation</li>
-											<li className="mr-3">Visa Sposnership</li>
-											<li className="mr-3">Remote Working</li>
-										</ul>
-									</div>
-								</div>
-								<div className="py-4">
-									<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
-								</div>
-                            </div>
-                        </Dialog.Panel>
-                    </Transition.Child>
-                    </div>
-                </div>
-                </Dialog>
-            </Transition.Root>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }

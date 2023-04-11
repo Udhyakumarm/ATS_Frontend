@@ -77,7 +77,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full p-3 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -100,7 +100,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full p-3 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -115,7 +115,10 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className={`min-h-[45px] w-full p-3 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "}
+									className={
+										`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+										" "
+									}
 									value={value}
 									onChange={handleChange}
 									onBlur={handleOnBlur}
@@ -150,7 +153,8 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[45px] w-full resize-none p-3 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700` + " "
+								`min-h-[45px] w-full resize-none rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+								" "
 							}
 							value={value}
 							onChange={handleChange}
@@ -200,6 +204,62 @@ export default function FormField({
 			</>
 		);
 	}
+	if (fieldType === "select2") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+						) : (
+							<></>
+						)}
+						<Multiselect
+							options={options} // Options to display in the dropdown
+							selectedValues={value && value.split(",")} // Preselected value to persist in dropdown
+							singleSelect={singleSelect}
+							isObject={false}
+							onSearch={onSearch}
+							closeOnSelect
+							showArrow={true}
+							placeholder={placeholder}
+							onSelect={(selectedList, selectedItem) => {
+								if (singleSelect) {
+									handleChange(selectedItem);
+								} else {
+									if (id === "location") {
+										handleChange(selectedList.join("|"));
+									} else {
+										handleChange(selectedList.join(","));
+									}
+								}
+							}} // Function will trigger on select event
+							onRemove={(selectedList, selectedItem) => {
+								if (singleSelect) {
+									handleChange("");
+								} else {
+									if (id === "location") {
+										handleChange(selectedList.join("|"));
+									} else {
+										handleChange(selectedList.join(","));
+									}
+								}
+							}}
+							// onRemove={(selected) => handleChange({ target: { id, value: selected } })} // Function will trigger on remove event
+							displayValue="name" // Property name to display in the dropdown options
+						/>
+					</div>
+					{errorMessage}
+				</div>
+			</>
+		);
+	}
 	if (fieldType === "reactquill") {
 		return (
 			<>
@@ -221,8 +281,8 @@ export default function FormField({
 							value={value}
 							// onChange={(value: string) => handleChange({ target: { id, value } })}
 							// onBlur={(value: string) => handleOnBlur({ target: { id, value } })}
-							onChange={(content, delta, source, editor)=>handleChange(content)}
-							onBlur={(previousRange, source, editor)=>handleOnBlur(editor.getHTML())}
+							onChange={(content, delta, source, editor) => handleChange(content)}
+							onBlur={(previousRange, source, editor) => handleOnBlur(editor.getHTML())}
 						/>
 					</div>
 					{errorMessage}
