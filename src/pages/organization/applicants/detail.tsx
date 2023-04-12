@@ -1060,66 +1060,66 @@ export default function ApplicantsDetail() {
 													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
-													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:top-0 before:left-[80px] before:h-[100%] before:w-[1px] before:bg-slate-200 before:content-['']">
+													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:top-0 before:left-[80px] before:h-[100%] before:w-[1px] before:bg-slate-200 before:bg-gray-600 before:content-['']">
 														<div className="flex items-start">
 															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray">
+																<p className="text-sm text-darkGray dark:text-gray-400">
 																	8 Feb
 																	<br />
 																	<small>2:30 PM</small>
 																</p>
 															</div>
 															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b">
+																<div className="border-b dark:border-b-gray-600">
 																	<article className="py-4">
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
 																	</article>
 																</div>
 															</div>
 														</div>
 														<div className="flex items-start">
 															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray">
+																<p className="text-sm text-darkGray dark:text-gray-400">
 																	8 Feb
 																	<br />
 																	<small>2:30 PM</small>
 																</p>
 															</div>
 															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b">
+																<div className="border-b dark:border-b-gray-600">
 																	<article className="py-4">
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
 																	</article>
 																	<article className="py-4">
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
 																	</article>
 																</div>
 															</div>
 														</div>
 														<div className="flex items-start">
 															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray">
+																<p className="text-sm text-darkGray dark:text-gray-400">
 																	8 Feb
 																	<br />
 																	<small>2:30 PM</small>
 																</p>
 															</div>
 															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b">
+																<div className="border-b dark:border-b-gray-600">
 																	<article className="py-4">
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
 																	</article>
 																</div>
 															</div>

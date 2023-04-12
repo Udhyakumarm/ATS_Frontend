@@ -31,7 +31,7 @@ export default function TeamMembers(props) {
                     >
                         <Menu.Items
                             className={
-                                "absolute right-0 top-[100%] mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white dark:bg-gray-700 py-2 shadow-normal"
+                                "absolute right-0 top-[100%] z-20 mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white dark:bg-gray-700 py-2 shadow-normal"
                             }
                         >
                             <Menu.Item>

@@ -2,13 +2,15 @@ import Head from "next/head";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import TeamMembers from "@/components/TeamMembers";
-import { Listbox, Tab, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Dialog, Listbox, Tab, Transition } from "@headlessui/react";
+import { Fragment, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Image from "next/image";
 import userImg from 'public/images/user-image.png'
 import socialIcon from 'public/images/social/linkedin-icon.png'
 import Button from "@/components/Button";
+import Link from "next/link";
+import successGraphic from 'public/images/success-graphic.png'
 
 const people = [
     { id: 1, name: 'Durward Reynolds', unavailable: false },
@@ -20,6 +22,10 @@ const people = [
 
 export default function OfferManagement() {
     const [selectedPerson, setSelectedPerson] = useState(people[0])
+
+    const cancelButtonRef = useRef(null);
+	const [discussEmail, setDiscussEmail] = useState(false);
+
 	return (
 		<>
 			<Head>
@@ -31,7 +37,7 @@ export default function OfferManagement() {
 				<Orgtopbar />
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap">
-                    <div className="flex flex-wrap items-center justify-between bg-white py-4 px-4 shadow-normal dark:bg-gray-800 lg:px-8">
+                    <div className="relative z-[10] flex flex-wrap items-center justify-between bg-white py-4 px-4 shadow-normal dark:bg-gray-800 lg:px-8">
 						<div className="mr-3">
 							<Listbox value={selectedPerson} onChange={setSelectedPerson}>
 								<Listbox.Button className={"text-lg font-bold"}>
@@ -78,7 +84,7 @@ export default function OfferManagement() {
 							<TeamMembers alen={'5'} />
 						</aside>
 					</div>
-                    <div className="p-4 lg:p-8 flex flex-wrap">
+                    <div className="relative z-[9] p-4 lg:p-8 flex flex-wrap">
                         <div className="w-full lg:max-w-[280px]">
                             <FormField
                                 fieldType="input"
@@ -152,8 +158,56 @@ export default function OfferManagement() {
                                     </Tab.List>
                                     <Tab.Panels>
                                         <Tab.Panel>
-                                            <div className="px-10 py-6">
-                                                Steps
+                                            <div className="flex flex-wrap justify-center items-center border-b dark:border-b-gray-600 py-4 mb-4">
+                                                <div className="w-[150px] p-4 relative after:content[''] after:w-[150px] after:h-[0px] after:border-b-2 after:border-dashed after:block after:absolute after:left-[50%] after:top-[50px] last:after:hidden dark:after:border-gray-600">
+                                                    <div className="w-[70px] h-[70px] mx-auto relative z-10 rounded-full flex items-center justify-center bg-gradDarkBlue shadow-highlight mb-2 p-2">
+                                                        <span className="text-white text-[32px] font-bold"> 1 </span>
+                                                        <i className="fa-solid fa-check text-[32px] text-green-300"></i>
+                                                    </div>
+                                                    <p className="font-bold text-sm text-center relative z-10">Offer Prepration</p>
+                                                </div>
+                                                <div className="w-[150px] p-4 relative after:content[''] after:w-[150px] after:h-[0px] after:border-b-2 after:border-dashed after:block after:absolute after:left-[50%] after:top-[50px] last:after:hidden dark:after:border-gray-600">
+                                                    <div className="w-[70px] h-[70px] mx-auto relative z-10 rounded-full flex items-center justify-center bg-white dark:bg-gray-600 shadow-highlight mb-2 p-2">
+                                                        <span className="text-darkGray dark:text-gray-400 text-[32px] font-bold"> 2 </span>
+                                                    </div>
+                                                    <p className="font-bold text-sm text-center relative z-10 text-darkGray dark:text-gray-400">Offer Finalization</p>
+                                                </div>
+                                                <div className="w-[150px] p-4 relative after:content[''] after:w-[150px] after:h-[0px] after:border-b-2 after:border-dashed after:block after:absolute after:left-[50%] after:top-[50px] last:after:hidden dark:after:border-gray-600">
+                                                    <div className="w-[70px] h-[70px] mx-auto relative z-10 rounded-full flex items-center justify-center bg-white dark:bg-gray-600 shadow-highlight mb-2 p-2">
+                                                        <span className="text-darkGray dark:text-gray-400 text-[32px] font-bold"> 3 </span>
+                                                    </div>
+                                                    <p className="font-bold text-sm text-center relative z-10 text-darkGray dark:text-gray-400">Offer Discussion</p>
+                                                </div>
+                                                <div className="w-[150px] p-4 relative after:content[''] after:w-[150px] after:h-[0px] after:border-b-2 after:border-dashed after:block after:absolute after:left-[50%] after:top-[50px] last:after:hidden dark:after:border-gray-600">
+                                                    <div className="w-[70px] h-[70px] mx-auto relative z-10 rounded-full flex items-center justify-center bg-white dark:bg-gray-600 shadow-highlight mb-2 p-2">
+                                                        <span className="text-darkGray dark:text-gray-400 text-[32px] font-bold"> 4 </span>
+                                                    </div>
+                                                    <p className="font-bold text-sm text-center relative z-10 text-darkGray dark:text-gray-400">Offer Status</p>
+                                                </div>
+                                            </div>
+                                            <section className="px-10 py-6">
+                                                <div className="bg-red-100 py-4 px-6 rounded-normal mb-6">
+                                                    <div className="flex flex-wrap items-center justify-between font-bold">
+                                                        <p className="text-red-700 mb-1"><i className="fa-regular fa-face-frown"></i> Rejected (Hiring Manager)</p>
+                                                        <p className="text-[12px] text-darkGray">by Steve Paul on 22 Mar 2023</p>    
+                                                    </div>
+                                                    <h5 className="font-semibold mt-2 text-black">Feedback:</h5>
+                                                    <p className="text-sm text-darkGray mb-2">This lead is rejected due to the following reason. [reason mention here]</p>
+                                                    <small className="text-black"><b>Note:</b> Kindly please make correction then resend this lead.</small>
+                                                </div>
+                                                <div className="bg-green-100 py-4 px-6 rounded-normal mb-6">
+                                                    <div className="flex flex-wrap items-center justify-between font-bold">
+                                                        <p className="text-green-700 mb-1"><i className="fa-regular fa-face-smile"></i> Approved (Hiring Manager)</p>
+                                                        <p className="text-[12px] text-darkGray">by Steve Paul on 22 Mar 2023</p>    
+                                                    </div>
+                                                    <h5 className="font-semibold mt-2 text-black">Feedback:</h5>
+                                                    <p className="text-sm text-darkGray mb-2">Thank you! We are happy to serve you.</p>
+                                                </div>
+                                                <div className="bg-yellow-100 py-8 px-6 rounded-normal mb-6 text-center font-bold text-gray-700">
+                                                    <i className="fa-solid fa-magnifying-glass text-[40px] mb-2"></i>
+                                                    <p className="text-lg text-yellow-700">Offer Sent Successfully</p>
+                                                    <p className="text-sm">Under Review</p>
+                                                </div>
                                                 <div className="flex flex-wrap -mx-3">
                                                     <div className="w-full md:max-w-[50%] px-3 mb-4">
                                                         <FormField label="Designation" fieldType="input" inputType="text" />
@@ -195,10 +249,135 @@ export default function OfferManagement() {
                                                 <FormField label="Visa Sponsorship" fieldType="select" />
                                                 <FormField label="Approval Authorities" fieldType="select" />
                                                 <Button label="Send For Approval" />
-                                            </div>
+                                            </section>
+                                            <section className="px-10 py-6">
+                                                <div
+                                                    className="flex flex-wrap items-center justify-between bg-lightBlue dark:bg-gray-700 p-2 px-8 text-sm"
+                                                >
+                                                    <p className="my-2">FileName (Offer Letter)</p>
+                                                    <Link
+                                                        href={`#`}
+                                                        className="my-2 inline-block font-bold text-primary dark:text-gray-200 hover:underline"
+                                                        download
+                                                    >
+                                                        <i className="fa-solid fa-download mr-2"></i>
+                                                        Download
+                                                    </Link>
+                                                </div>
+                                                <div className="py-2">
+                                                    <p className="text-center py-4">Preview Here</p>
+                                                    <div className="flex flex-wrap items-center justify-between px-8 pt-4">
+                                                        <div className="my-1 mr-4 last:mr-0">
+                                                            <Button label="Confirm Details" />
+                                                        </div>
+                                                        <div className="my-1 mr-4 last:mr-0">
+                                                            <Button btnStyle="outlined" label="Edit Details" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                            <section className="px-10 py-6">
+                                                <div
+                                                    className="flex flex-wrap items-center justify-between bg-lightBlue dark:bg-gray-700 p-2 px-8 text-sm"
+                                                >
+                                                    <p className="my-2">FileName (Offer Letter)</p>
+                                                    <Link
+                                                        href={`#`}
+                                                        className="my-2 inline-block font-bold text-primary dark:text-gray-200 hover:underline"
+                                                        download
+                                                    >
+                                                        <i className="fa-solid fa-download mr-2"></i>
+                                                        Download
+                                                    </Link>
+                                                </div>
+                                                <div className="py-2">
+                                                    <p className="text-center py-4">Preview Here</p>
+                                                    <div className="text-center px-8 pt-4">
+                                                        <Button label="Send Email Template" btnType="button" handleClick={()=>setDiscussEmail(true)} />
+                                                    </div>
+                                                </div>
+                                            </section>
+                                            <section className="px-10 py-6">
+                                                <div className="bg-yellow-100 py-8 px-6 rounded-normal mb-6 text-center font-bold text-gray-700">
+                                                    <i className="fa-regular fa-clock text-[40px] mb-2"></i>
+                                                    <p className="text-lg">Offer Pending</p>
+                                                    <small className="font-semibold">Offer status by Applicant</small>
+                                                </div>
+                                                <div className="bg-green-100 py-8 px-6 rounded-normal mb-6 text-center font-bold text-gray-700">
+                                                    <i className="fa-solid fa-check-circle text-green-700 text-[40px] mb-2"></i>
+                                                    <p className="text-lg text-green-700 mb-2">Offer Accepted</p>
+                                                    <Link href='#' target="_blank" download className="text-[12px] font-semibold text-white bg-green-700 inline-block py-1 px-4 rounded">Download Offer Letter</Link>
+                                                </div>
+                                            </section>
                                         </Tab.Panel>
                                         <Tab.Panel>
-                                            B
+                                            <div className="px-10">
+                                                <div className="relative max-h-[455px] overflow-y-auto before:absolute before:top-0 before:left-[80px] before:h-[100%] before:w-[1px] before:bg-slate-200 before:bg-gray-600 before:content-['']">
+                                                    <div className="flex items-start">
+                                                        <div className="w-[80px] px-2 py-4">
+                                                            <p className="text-sm text-darkGray dark:text-gray-400">
+                                                                8 Feb
+                                                                <br />
+                                                                <small>2:30 PM</small>
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-[calc(100%-80px)] pl-6">
+                                                            <div className="border-b dark:border-b-gray-600">
+                                                                <article className="py-4">
+                                                                    <h6 className="mb-2 text-sm font-bold">
+                                                                        Applicant has been shifted to new Job -Software Engineer
+                                                                    </h6>
+                                                                    <p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start">
+                                                        <div className="w-[80px] px-2 py-4">
+                                                            <p className="text-sm text-darkGray dark:text-gray-400">
+                                                                8 Feb
+                                                                <br />
+                                                                <small>2:30 PM</small>
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-[calc(100%-80px)] pl-6">
+                                                            <div className="border-b dark:border-b-gray-600">
+                                                                <article className="py-4">
+                                                                    <h6 className="mb-2 text-sm font-bold">
+                                                                        Applicant has been shifted to new Job -Software Engineer
+                                                                    </h6>
+                                                                    <p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+                                                                </article>
+                                                                <article className="py-4">
+                                                                    <h6 className="mb-2 text-sm font-bold">
+                                                                        Applicant has been shifted to new Job -Software Engineer
+                                                                    </h6>
+                                                                    <p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start">
+                                                        <div className="w-[80px] px-2 py-4">
+                                                            <p className="text-sm text-darkGray dark:text-gray-400">
+                                                                8 Feb
+                                                                <br />
+                                                                <small>2:30 PM</small>
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-[calc(100%-80px)] pl-6">
+                                                            <div className="border-b dark:border-b-gray-600">
+                                                                <article className="py-4">
+                                                                    <h6 className="mb-2 text-sm font-bold">
+                                                                        Applicant has been shifted to new Job -Software Engineer
+                                                                    </h6>
+                                                                    <p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </Tab.Panel>
                                     </Tab.Panels>
                                 </Tab.Group>
@@ -207,6 +386,56 @@ export default function OfferManagement() {
                     </div>
 				</div>
 			</main>
+            <Transition.Root show={discussEmail} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setDiscussEmail}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="text-right px-8 py-2">
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setDiscussEmail(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8 pt-0 text-center">
+										<h4 className="font-bold text-3xl">Email has been sent</h4>
+                                        <Image src={successGraphic} alt="Success" width={300} className="w-[200px] mx-auto my-4" />
+                                        <hr className="mb-4" />
+                                        <div className="mb-2">
+                                            <Button label="Schedule a Call" />
+                                        </div>
+                                        <p className="text-sm text-darkGray w-full max-w-[320px] mx-auto">Schedule a Call with Applicant to Discuss Further Onboarding Steps</p>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }
