@@ -18,6 +18,7 @@ import CardLayout_2 from "@/components/CardLayout-2";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
+import toastcomp from "@/components/toast";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -167,27 +168,121 @@ export default function JobsCreate() {
 	const [jvisa, setjvisa] = useState("");
 	const [jwtype, setjwtype] = useState("");
 
+	const [jrecruiter, setjrecruiter] = useState(false);
+	const [jcollaborator, setjcollaborator] = useState(false);
+	const [jtm, setjtm] = useState([]);
+
+	async function addJob(formData) {
+		await axiosInstanceAuth2
+			.post(`/job/create-job/`, formData)
+			.then(async (res) => {
+				toastcomp("Job Created Successfully", "success");
+				router.push("active/");
+			})
+			.catch((err) => {
+				toastcomp("Job Not Created", "error");
+			});
+	}
+
 	function publishJob() {
-		console.log("jtitle", jtitle);
-		console.log("jfunction", jfunction);
-		console.log("jdept", jdept);
-		console.log("jind", jind);
-		console.log("jgrp", jgrp);
-		console.log("jvac", jvac);
-		console.log("jdeptinfo", jdeptinfo);
-		console.log("jres", jres);
-		console.log("jlooking", jlooking);
-		console.log("jskill", jskill);
-		console.log("jetype", jetype);
-		console.log("jexp", jexp);
-		console.log("jedu", jedu);
-		console.log("jlang", jlang);
-		console.log("jloc", jloc);
-		console.log("jsalary", jsalary);
-		console.log("jcurr", jcurr);
-		console.log("jreloc", jreloc);
-		console.log("jvisa", jvisa);
-		console.log("jwtype", jwtype);
+		if (jtitle.length <= 0 || jfunction.length <= 0 || jdept.length <= 0 || !jcollaborator || !jrecruiter) {
+			if (jtitle.length <= 0) {
+				toastcomp("Job Title Required", "error");
+			}
+			if (jfunction.length <= 0) {
+				toastcomp("Job Function Required", "error");
+			}
+			if (jdept.length <= 0) {
+				toastcomp("Job Department Required", "error");
+			}
+			if (!jcollaborator) {
+				toastcomp("One Collaborator Required", "error");
+			}
+			if (!jrecruiter) {
+				toastcomp("One Recruiter Required", "error");
+			}
+		} else {
+			const fd = new FormData();
+			if (jtitle.length > 0) {
+				fd.append("job_title", jtitle);
+			}
+			if (jfunction.length > 0) {
+				fd.append("job_function", jfunction);
+			}
+			if (jdept.length > 0) {
+				fd.append("department", jdept);
+			}
+			if (jind.length > 0) {
+				fd.append("industry", jind);
+			}
+			if (jgrp.length > 0) {
+				fd.append("group_or_division", jgrp);
+			}
+			if (jvac.length > 0) {
+				fd.append("vacancy", jvac);
+			}
+			if (jdeptinfo.length > 0) {
+				fd.append("description", jdeptinfo);
+			}
+			if (jlooking.length > 0) {
+				fd.append("looking_for", jlooking);
+			}
+			if (jskill.length > 0) {
+				fd.append("jobSkill", jskill);
+			}
+			if (jetype.length > 0) {
+				fd.append("employment_type", jetype);
+			}
+			if (jexp.length > 0) {
+				fd.append("experience", jexp);
+			}
+			if (jedu.length > 0) {
+				fd.append("education", jedu);
+			}
+			if (jloc.length > 0) {
+				fd.append("location", jloc);
+			}
+			if (jsalary.length > 0 && jcurr.length > 0) {
+				fd.append("currency", jcurr + jsalary);
+			}
+			if (jreloc.length > 0) {
+				fd.append("relocation", jreloc);
+			}
+			if (jvisa.length > 0) {
+				fd.append("visa", jvisa);
+			}
+			if (jwtype.length > 0) {
+				fd.append("worktype", jwtype);
+			}
+			// if(jtitle.length > 0){
+			// 	fd.append("deadline",jtitle);
+			// }
+			fd.append("jobStatus", "Active");
+			if (jtm.length > 0) {
+				fd.append("teamID", jtm.join("|"));
+			}
+			console.log("jtitle", jtitle);
+			console.log("jfunction", jfunction);
+			console.log("jdept", jdept);
+			console.log("jind", jind);
+			console.log("jgrp", jgrp);
+			console.log("jvac", jvac);
+			console.log("jdeptinfo", jdeptinfo);
+			console.log("jres", jres);
+			console.log("jlooking", jlooking);
+			console.log("jskill", jskill);
+			console.log("jetype", jetype);
+			console.log("jexp", jexp);
+			console.log("jedu", jedu);
+			console.log("jlang", jlang);
+			console.log("jloc", jloc);
+			console.log("jsalary", jsalary);
+			console.log("jcurr", jcurr);
+			console.log("jreloc", jreloc);
+			console.log("jvisa", jvisa);
+			console.log("jwtype", jwtype);
+			addJob(fd);
+		}
 	}
 
 	function previewJob() {
@@ -243,6 +338,41 @@ export default function JobsCreate() {
 			.catch((err) => {
 				console.log(err);
 			});
+	}
+
+	function onChnageCheck(e) {
+		let arr = jtm;
+		if (e.target.checked) {
+			if (e.target.dataset.id === "Collaborator") {
+				setjcollaborator(true);
+			}
+
+			if (e.target.dataset.id === "Recruiter") {
+				setjrecruiter(true);
+			}
+
+			let value = e.target.value;
+			let value2 = e.target.dataset.pk;
+
+			arr.push(value2);
+		} else {
+			if (e.target.dataset.id === "Collaborator") {
+				setjcollaborator(false);
+			}
+
+			if (e.target.dataset.id === "Recruiter") {
+				setjrecruiter(false);
+			}
+
+			let value = e.target.value;
+			let value2 = e.target.dataset.pk;
+
+			arr = arr.filter((item) => item !== value2);
+		}
+
+		console.log("!", arr);
+		console.log("!", e.target.dataset.pk);
+		setjtm(arr);
 	}
 
 	return (
@@ -472,7 +602,6 @@ export default function JobsCreate() {
 													inputType="text"
 													label="Currency"
 													id="currency"
-													required
 													value={jcurr}
 													handleChange={(e) => setjcurr(e.target.value)}
 													icon={<i className="fa-regular fa-money-bill-alt"></i>}
@@ -600,7 +729,13 @@ export default function JobsCreate() {
 																		<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
 																		<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
 																		<td className="border-b py-2 px-3 text-right">
-																			<input type="checkbox" />
+																			<input
+																				type="checkbox"
+																				value={data["email"]}
+																				data-id={data["role"]}
+																				data-pk={data["id"]}
+																				onChange={(e) => onChnageCheck(e)}
+																			/>
 																		</td>
 																	</tr>
 																)
@@ -805,10 +940,12 @@ export default function JobsCreate() {
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
 												<h5 className="mb-2 font-bold">Employment Details</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-													<li className="mr-3 list-none">Full Time</li>
-													<li className="mr-3">Bachelor's Degree</li>
-													<li className="mr-3">English, Japan</li>
-													<li className="mr-3">2+ Years of experience</li>
+													<li className="mr-3 list-none">
+														{jetype && jetype.length > 0 ? jetype : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">{jedu && jedu.length > 0 ? jedu : <>Not Disclosed</>}</li>
+													<li className="mr-3">{jloc && jloc.length > 0 ? jloc : <>Not Disclosed</>}</li>
+													<li className="mr-3">Exp : {jexp && jexp.length > 0 ? jexp : <>Not Disclosed</>}</li>
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
