@@ -271,7 +271,7 @@ export default function OfferManagement() {
                                                             <Button label="Confirm Details" />
                                                         </div>
                                                         <div className="my-1 mr-4 last:mr-0">
-                                                            <Button btnStyle="outlined" label="Edit Details" />
+                                                            <Button btnStyle="gray" label="Edit Details" />
                                                         </div>
                                                     </div>
                                                 </div>

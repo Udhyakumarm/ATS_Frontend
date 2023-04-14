@@ -43,4 +43,4 @@ export default function AuthForgot() {
 	);
 }
 
-Forgot.noAuth = true;
+AuthForgot.noAuth = true;

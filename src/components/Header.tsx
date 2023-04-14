@@ -182,6 +182,34 @@ export default function Header() {
 				</header>
 			</>
 		);
+	} else if (router.asPath == "/vendors/signup") {
+		return (
+			<>
+				<header className="bg-white shadow-normal dark:bg-gray-800 test">
+					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
+						<Logo url="/" width={205} />
+						<div className="flex items-center">
+							<ThemeChange />
+							<button
+								type="button"
+								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+								
+								onClick={() => {
+									signOut()
+									
+									settype("")
+									setrole("")
+									setuser([])
+							
+								}}
+							>
+								<i className="fa-solid fa-right-from-bracket"></i>
+							</button>
+						</div>
+					</div>
+				</header>
+			</>
+		)
 	}
 	return <></>;
 }

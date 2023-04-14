@@ -59,7 +59,7 @@ export default function JobCard_2({ job, handleView }: any) {
 				</div>
 			</div>
 			<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-				<li className="mr-3">{job.worktype}</li>
+				<li className="mr-3 list-none">{job.worktype}</li>
 				<li className="mr-3">{job.employment_type}</li>
 			</ul>
 			<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">

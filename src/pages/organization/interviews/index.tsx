@@ -102,7 +102,7 @@ export default function Interviews() {
                                             <div className="w-full">
                                                 <h6 className="font-bold">Interviewers</h6>
                                                 <ul className="mb-2 text-[12px] flex list-inside list-disc flex-wrap items-center font-semibold text-darkGray dark:text-gray-400">
-                                                    <li className="mr-3">Admin Smith</li>
+                                                    <li className="mr-3 list-none">Admin Smith</li>
                                                     <li className="mr-3">Evan Chris</li>
                                                 </ul>
                                             </div> 

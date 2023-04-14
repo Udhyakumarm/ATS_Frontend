@@ -1422,7 +1422,7 @@ export default function Profile() {
 									</div>
 									<div className="p-8">
                                         <div className="text-center">
-                                            <UploadProfile />
+                                            <UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
                                         </div>
                                         <FormField fieldType="input" inputType="text" label="Name of group" />
                                         <FormField fieldType="input" inputType="text" label="Group (Parent Organization)" />

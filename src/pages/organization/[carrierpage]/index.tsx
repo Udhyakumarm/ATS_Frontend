@@ -130,7 +130,7 @@ export default function CanCareer() {
 										)}
 										<ul className="mb-6 flex list-inside list-disc flex-wrap items-center font-semibold text-darkGray dark:text-gray-400">
 											{data["company_Size"] && data["company_Size"] != "" && (
-												<li className="mr-3">{data["company_Size"]} Employees</li>
+												<li className="mr-3 list-none">{data["company_Size"]} Employees</li>
 											)}
 											{data["headquarter_Location"] && data["headquarter_Location"] != "" && (
 												<li className="mr-3">{data["headquarter_Location"]}</li>
