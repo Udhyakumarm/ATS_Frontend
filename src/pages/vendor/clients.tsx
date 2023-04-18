@@ -23,6 +23,7 @@ const people = [
 export default function VendorClients() {
     const cancelButtonRef = useRef(null);
 	const [addCand, setAddCand] = useState(false);
+    const [viewApplicant, setViewApplicant] = useState(false);
     const [selected, setSelected] = useState(people[0])
     const [query, setQuery] = useState('')
     const filteredPeople =
@@ -325,9 +326,9 @@ export default function VendorClients() {
                                                                     28 Jan 2023
                                                                 </td>
                                                                 <td className="py-2 px-3 text-left">
-                                                                    <Link href="#" className="text-primary hover:underline">
+                                                                    <button type="button" className="text-primary hover:underline" onClick={()=> setViewApplicant(true)}>
                                                                         View
-                                                                    </Link>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                             )}
@@ -552,6 +553,166 @@ export default function VendorClients() {
                                         <FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
                                         <FormField fieldType="reactquill" label="Any Message to Recruiter" placeholder="Notice Period" />
                                         <Button label="Add" loader={false} btnType="button" />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+            <Transition.Root show={viewApplicant} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setViewApplicant}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+                                    <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
+                                        <h4 className="leading-none font-semibold">
+                                            Applicant Profile
+                                        </h4>
+                                        <button
+                                            type="button"
+                                            className="leading-none hover:text-gray-700"
+                                            onClick={() => setViewApplicant(false)}
+                                        >
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+									<div className="p-8">
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <p className="text-center w-full max-w-[600px] mx-auto">Preview Here</p>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <h2 className="font-bold mb-2 text-xl">Olivia Wilson</h2>
+                                            <ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+                                                <li className="mr-3 list-none">www.oliv9301@gmail.com</li>
+                                                <li className="mr-3">+91 9351042541</li>
+                                                <li className="mr-3">Notice Period -30 Days</li>
+                                                <li className="mr-3">Current Salary - 6.0 LPA</li>
+                                                <li className="mr-3">Expected Salary - 8.0 LPA</li>
+                                            </ul>
+                                            <div className="flex flex-wrap items-center text-2xl">
+                                                <Link href={'#'} target="_blank" className="m-3 mb-0">
+                                                    <i className="fa-brands fa-behance"></i>
+                                                </Link>
+                                                <Link href={'#'} target="_blank" className="m-3 mb-0">
+                                                    <i className="fa-brands fa-stack-overflow"></i>
+                                                </Link>
+                                                <Link href={'#'} target="_blank" className="m-3 mb-0">
+                                                    <i className="fa-brands fa-linkedin-in"></i>
+                                                </Link>
+                                                <Link href={'#'} target="_blank" className="m-3 mb-0">
+                                                    <i className="fa-brands fa-github"></i>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Summary
+                                            </label>
+                                            <article className="text-sm">
+                                                Lorem impsum is a dummy text editor.
+                                            </article>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Skills
+                                            </label>
+                                            <div className="py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                                <div className="text-sm">
+                                                    <p className="my-1">Skill 1</p>
+                                                    <p className="my-1">Skill 2</p>
+                                                    <p className="my-1">Skill 3</p>
+                                                    <p className="my-1">Skill 4</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Education
+                                            </label>
+                                            <div className="py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                                {Array(2).fill(
+                                                    <article className="border-b last:border-b-0">
+                                                        <div className="flex flex-wrap text-sm">
+                                                            <div className="w-[30%] my-2">
+                                                                <h4 className="font-bold">XYZ Group</h4>
+                                                            </div>
+                                                            <div className="w-[70%] pl-4 my-2">
+                                                                <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm mb-2">
+                                                            <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                        </p>
+                                                    </article>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Certifications
+                                            </label>
+                                            <div className="py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                                {Array(2).fill(
+                                                    <article className="border-b last:border-b-0">
+                                                        <div className="flex flex-wrap text-sm">
+                                                            <div className="w-[30%] my-2">
+                                                                <h4 className="font-bold">XYZ Group</h4>
+                                                            </div>
+                                                            <div className="w-[70%] pl-4 my-2">
+                                                                <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm mb-2">
+                                                            <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                        </p>
+                                                    </article>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="mb-4 border-b dark:border-b-gray-600 pb-4">
+                                            <label className="mb-1 inline-block font-bold">
+                                                Experience
+                                            </label>
+                                            <div className="py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                                {Array(2).fill(
+                                                    <article className="border-b last:border-b-0">
+                                                        <div className="flex flex-wrap text-sm">
+                                                            <div className="w-[30%] my-2">
+                                                                <h4 className="font-bold">XYZ Group</h4>
+                                                            </div>
+                                                            <div className="w-[70%] pl-4 my-2">
+                                                                <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm mb-2">
+                                                            <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+                                                        </p>
+                                                    </article>
+                                                )}
+                                            </div>
+                                        </div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
