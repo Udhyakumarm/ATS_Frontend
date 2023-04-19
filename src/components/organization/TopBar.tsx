@@ -57,12 +57,12 @@ export default function OrgTopBar() {
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setIsCalendarOpen(true)}>
 					<i className="fa-regular fa-calendar-days text-[20px]"></i>
 				</button>
-				<button type="button" className="relative mr-6 uppercase text-darkGray dark:text-gray-400">
+				<Link href={`/organization/notifications`} className="relative mr-6 uppercase text-darkGray dark:text-gray-400">
 					<i className="fa-regular fa-bell text-[20px]"></i>
 					<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
 						99+
 					</span>
-				</button>
+				</Link>
 				<button type="button" className="mr-6 font-semibold uppercase text-darkGray dark:text-gray-400">
 					Eng <i className="fa-solid fa-chevron-down text-[12px]"></i>
 				</button>
