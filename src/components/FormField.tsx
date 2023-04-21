@@ -222,7 +222,7 @@ export default function FormField({
 						)}
 						<Multiselect
 							options={options} // Options to display in the dropdown
-							selectedValues={value && value.split(",")} // Preselected value to persist in dropdown
+							selectedValues={id === "location" ? value && value.split("|") : value && value.split(",")} // Preselected value to persist in dropdown
 							singleSelect={singleSelect}
 							isObject={false}
 							onSearch={onSearch}

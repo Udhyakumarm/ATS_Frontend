@@ -41,12 +41,40 @@ const StickyLabel = ({ label }: any) => (
 
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
-export default function JobsCreate() {
+export default function JobsEdit() {
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
 	const [index, setIndex] = useState(0);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
+	const { editJob } = router.query;
+
+	//job create state
+	const [jtitle, setjtitle] = useState("");
+	const [jfunction, setjfunction] = useState("");
+	const [jdept, setjdept] = useState("");
+	const [jind, setjind] = useState("");
+	const [jgrp, setjgrp] = useState("");
+	const [jvac, setjvac] = useState("");
+	const [jdeptinfo, setjdeptinfo] = useState("");
+	const [jres, setjres] = useState("");
+	const [jlooking, setjlooking] = useState("");
+	const [jskill, setjskill] = useState("");
+	const [jetype, setjetype] = useState("");
+	const [jexp, setjexp] = useState("");
+	const [jedu, setjedu] = useState("");
+	const [jlang, setjlang] = useState("");
+	const [jloc, setjloc] = useState("");
+	const [jsalary, setjsalary] = useState("");
+	const [jcurr, setjcurr] = useState("");
+	const [jreloc, setjreloc] = useState("");
+	const [jvisa, setjvisa] = useState("");
+	const [jwtype, setjwtype] = useState("");
+
+	const [jrecruiter, setjrecruiter] = useState(false);
+	const [jcollaborator, setjcollaborator] = useState(false);
+	const [jtm, setjtm] = useState([]);
+	const [ujtm, setujtm] = useState([]);
 
 	const [integrationList, setIntegrationList] = useState({
 		LinkedIn: { access: null },
@@ -128,12 +156,87 @@ export default function JobsCreate() {
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
+	async function loadDetailJob(refid: string) {
+		await axiosInstanceAuth2
+			.get(`/job/detail-job/${refid}/`)
+			.then(async (res) => {
+				var data = res.data;
+				if (data.length > 0) {
+					toastcomp("Job Loaded Successfully", "success");
+					console.log("#", res.data);
+
+					setjtitle(data[0]["job_title"]);
+					setjfunction(data[0]["job_function"]);
+					setjdept(data[0]["department"]);
+					setjind(data[0]["industry"]);
+					setjgrp(data[0]["group_or_division"]);
+					setjvac(data[0]["vacancy"]);
+					setjdeptinfo(data[0]["description"]);
+					setjlooking(data[0]["looking_for"]);
+					setjskill(data[0]["jobSkill"]);
+					setjetype(data[0]["employment_type"]);
+					setjexp(data[0]["experience"]);
+					setjedu(data[0]["education"]);
+					setjloc(data[0]["location"]);
+					setjres(data[0]["responsibility"]);
+
+					if (data[0]["currency"] && data[0]["currency"].length > 0) {
+						var abc = data[0]["currency"].split("");
+						setjcurr(abc[0]);
+						abc.shift();
+						abc = abc.join().replaceAll(",", "");
+						abc = parseInt(abc);
+						setjsalary(abc);
+					}
+
+					var arr = [];
+					if (data[0]["team"] && data[0]["team"].length > 0) {
+						let abc2 = jtm;
+						for (let j = 0; j < data[0]["team"].length; j++) {
+							if (data[0]["team"][j]["verified"] !== false) {
+								arr.push(data[0]["team"][j]["id"]);
+								if (data[0]["team"][j]["role"] === "Collaborator") {
+									setjcollaborator(true);
+								}
+								if (data[0]["team"][j]["role"] === "Recruiter") {
+									setjrecruiter(true);
+								}
+								abc2.push(data[0]["team"][j]["id"].toString());
+							}
+						}
+						setjtm(abc2);
+					}
+					setujtm(arr);
+
+					setjreloc(data[0]["relocation"]);
+					setjvisa(data[0]["visa"]);
+					setjwtype(data[0]["worktype"]);
+				} else {
+					router.back();
+				}
+			})
+			.catch((err) => {
+				// toastcomp("Job Not Loaded", "error");
+				router.back();
+			});
+	}
+
+	useEffect(() => {
+		if (editJob && editJob.length > 0 && token && token.length > 0) {
+			loadDetailJob(editJob);
+		} else if (!session) {
+			router.back();
+		}
+	}, [editJob, token]);
+
 	async function loadTeamMember() {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
 				console.log("@", "listorguser", res.data);
+				console.log("#", "listorguser", res.data);
 				settm(res.data);
+				console.log("#", ujtm);
 			})
 			.catch((err) => {
 				console.log("@", "listorguser", err);
@@ -146,41 +249,15 @@ export default function JobsCreate() {
 		}
 	}, [token]);
 
-	//job create state
-	const [jtitle, setjtitle] = useState("");
-	const [jfunction, setjfunction] = useState("");
-	const [jdept, setjdept] = useState("");
-	const [jind, setjind] = useState("");
-	const [jgrp, setjgrp] = useState("");
-	const [jvac, setjvac] = useState("");
-	const [jdeptinfo, setjdeptinfo] = useState("");
-	const [jres, setjres] = useState("");
-	const [jlooking, setjlooking] = useState("");
-	const [jskill, setjskill] = useState("");
-	const [jetype, setjetype] = useState("");
-	const [jexp, setjexp] = useState("");
-	const [jedu, setjedu] = useState("");
-	const [jlang, setjlang] = useState("");
-	const [jloc, setjloc] = useState("");
-	const [jsalary, setjsalary] = useState("");
-	const [jcurr, setjcurr] = useState("");
-	const [jreloc, setjreloc] = useState("");
-	const [jvisa, setjvisa] = useState("");
-	const [jwtype, setjwtype] = useState("");
-
-	const [jrecruiter, setjrecruiter] = useState(false);
-	const [jcollaborator, setjcollaborator] = useState(false);
-	const [jtm, setjtm] = useState([]);
-
 	async function addJob(formData, type) {
 		await axiosInstanceAuth2
-			.post(`/job/create-job/`, formData)
+			.put(`/job/update-job/${editJob}/`, formData)
 			.then(async (res) => {
-				toastcomp("Job Created Successfully", "success");
-				router.push(`${type}/`);
+				toastcomp("Job Updated Successfully", "success");
+				router.push(`/organization/jobs/${type}/`);
 			})
 			.catch((err) => {
-				toastcomp("Job Not Created", "error");
+				toastcomp("Job Not Updated", "error");
 			});
 	}
 
@@ -203,55 +280,55 @@ export default function JobsCreate() {
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle.length > 0) {
+			if (jtitle && jtitle.length > 0) {
 				fd.append("job_title", jtitle);
 			}
-			if (jfunction.length > 0) {
+			if (jfunction && jfunction.length > 0) {
 				fd.append("job_function", jfunction);
 			}
-			if (jdept.length > 0) {
+			if (jdept && jdept.length > 0) {
 				fd.append("department", jdept);
 			}
-			if (jind.length > 0) {
+			if (jind && jind.length > 0) {
 				fd.append("industry", jind);
 			}
-			if (jgrp.length > 0) {
+			if (jgrp && jgrp.length > 0) {
 				fd.append("group_or_division", jgrp);
 			}
-			if (jvac.length > 0) {
+			if (jvac && jvac.length > 0) {
 				fd.append("vacancy", jvac);
 			}
-			if (jdeptinfo.length > 0) {
+			if (jdeptinfo && jdeptinfo.length > 0) {
 				fd.append("description", jdeptinfo);
 			}
-			if (jlooking.length > 0) {
+			if (jlooking && jlooking.length > 0) {
 				fd.append("looking_for", jlooking);
 			}
-			if (jskill.length > 0) {
+			if (jskill && jskill.length > 0) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype.length > 0) {
+			if (jetype && jetype.length > 0) {
 				fd.append("employment_type", jetype);
 			}
-			if (jexp.length > 0) {
+			if (jexp && jexp.length > 0) {
 				fd.append("experience", jexp);
 			}
-			if (jedu.length > 0) {
+			if (jedu && jedu.length > 0) {
 				fd.append("education", jedu);
 			}
-			if (jloc.length > 0) {
+			if (jloc && jloc.length > 0) {
 				fd.append("location", jloc);
 			}
-			if (jsalary.length > 0 && jcurr.length > 0) {
+			if (jsalary && jcurr && jsalary.length > 0 && jcurr.length > 0) {
 				fd.append("currency", jcurr + jsalary);
 			}
-			if (jreloc.length > 0) {
+			if (jreloc && jreloc.length > 0) {
 				fd.append("relocation", jreloc);
 			}
-			if (jvisa.length > 0) {
+			if (jvisa && jvisa.length > 0) {
 				fd.append("visa", jvisa);
 			}
-			if (jwtype.length > 0) {
+			if (jwtype && jwtype.length > 0) {
 				fd.append("worktype", jwtype);
 			}
 			// if(jtitle.length > 0){
@@ -298,55 +375,55 @@ export default function JobsCreate() {
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle.length > 0) {
+			if (jtitle && jtitle.length > 0) {
 				fd.append("job_title", jtitle);
 			}
-			if (jfunction.length > 0) {
+			if (jfunction && jfunction.length > 0) {
 				fd.append("job_function", jfunction);
 			}
-			if (jdept.length > 0) {
+			if (jdept && jdept.length > 0) {
 				fd.append("department", jdept);
 			}
-			if (jind.length > 0) {
+			if (jind && jind.length > 0) {
 				fd.append("industry", jind);
 			}
-			if (jgrp.length > 0) {
+			if (jgrp && jgrp.length > 0) {
 				fd.append("group_or_division", jgrp);
 			}
-			if (jvac.length > 0) {
+			if (jvac && jvac.length > 0) {
 				fd.append("vacancy", jvac);
 			}
-			if (jdeptinfo.length > 0) {
+			if (jdeptinfo && jdeptinfo.length > 0) {
 				fd.append("description", jdeptinfo);
 			}
-			if (jlooking.length > 0) {
+			if (jlooking && jlooking.length > 0) {
 				fd.append("looking_for", jlooking);
 			}
-			if (jskill.length > 0) {
+			if (jskill && jskill.length > 0) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype.length > 0) {
+			if (jetype && jetype.length > 0) {
 				fd.append("employment_type", jetype);
 			}
-			if (jexp.length > 0) {
+			if (jexp && jexp.length > 0) {
 				fd.append("experience", jexp);
 			}
-			if (jedu.length > 0) {
+			if (jedu && jedu.length > 0) {
 				fd.append("education", jedu);
 			}
-			if (jloc.length > 0) {
+			if (jloc && jloc.length > 0) {
 				fd.append("location", jloc);
 			}
-			if (jsalary.length > 0 && jcurr.length > 0) {
+			if (jsalary && jcurr && jsalary.length > 0 && jcurr.length > 0) {
 				fd.append("currency", jcurr + jsalary);
 			}
-			if (jreloc.length > 0) {
+			if (jreloc && jreloc.length > 0) {
 				fd.append("relocation", jreloc);
 			}
-			if (jvisa.length > 0) {
+			if (jvisa && jvisa.length > 0) {
 				fd.append("visa", jvisa);
 			}
-			if (jwtype.length > 0) {
+			if (jwtype && jwtype.length > 0) {
 				fd.append("worktype", jwtype);
 			}
 			// if(jtitle.length > 0){
@@ -437,6 +514,14 @@ export default function JobsCreate() {
 
 	function onChnageCheck(e) {
 		let arr = jtm;
+		let abcd = ujtm;
+		let value22 = parseInt(e.target.dataset.pk);
+		if (abcd.includes(value22)) {
+			abcd = abcd.filter((item) => item !== value22);
+		} else {
+			abcd.push(value22);
+		}
+		setujtm(abcd);
 		if (e.target.checked) {
 			if (e.target.dataset.id === "Collaborator") {
 				setjcollaborator(true);
@@ -467,13 +552,18 @@ export default function JobsCreate() {
 
 		console.log("!", arr);
 		console.log("!", e.target.dataset.pk);
+
 		setjtm(arr);
 	}
+
+	useEffect(() => {
+		console.log("#", router.query);
+	}, [router]);
 
 	return (
 		<>
 			<Head>
-				<title>Post New Job</title>
+				<title>Edit Job</title>
 				<meta name="description" content="Generated by create next app" />
 			</Head>
 			<main>
@@ -491,7 +581,7 @@ export default function JobsCreate() {
 									<div className="flex flex-wrap items-center justify-start py-2">
 										<button
 											className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
-											onClick={() => router.back()}
+											onClick={() => router.replace("/organization/jobs")}
 										>
 											<i className="fa-solid fa-arrow-left text-2xl"></i>
 										</button>
@@ -610,6 +700,7 @@ export default function JobsCreate() {
 											onSearch={searchSkill}
 											fieldType="select2"
 											id="skills"
+											value={jskill}
 											handleChange={setjskill}
 											label="Skills"
 										/>
@@ -672,6 +763,7 @@ export default function JobsCreate() {
 											fieldType="select2"
 											id="location"
 											label="Location"
+											value={jloc}
 											handleChange={setjloc}
 										/>
 									</div>
@@ -815,6 +907,7 @@ export default function JobsCreate() {
 												</thead>
 												<tbody>
 													{tm &&
+														ujtm &&
 														tm.map(
 															(data, i) =>
 																data["verified"] !== false && (
@@ -830,6 +923,7 @@ export default function JobsCreate() {
 																				data-id={data["role"]}
 																				data-pk={data["id"]}
 																				onChange={(e) => onChnageCheck(e)}
+																				checked={ujtm.includes(data["id"])}
 																			/>
 																		</td>
 																	</tr>
