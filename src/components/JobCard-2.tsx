@@ -3,6 +3,7 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import Button from "./Button";
 import { useRouter } from "next/router";
 import toastcomp from "./toast";
+import FormField from "./FormField";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2 }: any) {
 	const [starred, setStarred] = useState(false);
