@@ -13,7 +13,7 @@ export default function Header() {
 	const { data: session, status: sessionStatus } = useSession();
 
 	const [auth, setauth] = useState(false);
-	
+
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
@@ -33,21 +33,21 @@ export default function Header() {
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
-	if(cname && cname.length > 0 && (
-		router.asPath == "/organization/" + cname ||
-		router.asPath == "/organization/" + cname + "/search-jobs" ||
-		router.asPath == "/organization/" + cname + "/dashboard" ||
-		router.asPath == "/organization/" + cname + "/job-detail" ||
-		router.asPath == "/organization/" + cname + "/job-apply"
-	))
-	{
+	if (
+		cname &&
+		cname.length > 0 &&
+		(router.asPath == "/organization/" + cname ||
+			router.asPath == "/organization/" + cname + "/search-jobs" ||
+			router.asPath == "/organization/" + cname + "/dashboard" ||
+			router.asPath == "/organization/" + cname + "/job-detail" ||
+			router.asPath == "/organization/" + cname + "/job-apply")
+	) {
 		return (
 			<>
-				<header className="bg-white shadow-normal dark:bg-gray-800 hello">
+				<header className="hello bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<div className="flex items-center">
-							{
-								orgdetail["OrgProfile"] &&
+							{orgdetail["OrgProfile"] && (
 								<Image
 									src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]["logo"]}`}
 									alt={"Somhako"}
@@ -58,7 +58,7 @@ export default function Header() {
 										router.push("/organization/" + cname);
 									}}
 								/>
-							}
+							)}
 							<ul className="flex text-sm font-semibold">
 								<li className="mx-3">
 									<Link
@@ -133,12 +133,11 @@ export default function Header() {
 														type="button"
 														className="block w-full bg-red-500 py-2 py-1 px-4 text-left font-bold text-white hover:bg-red-600"
 														onClick={() => {
-															signOut({ callbackUrl: `/organization/${cname}` })
-															
-															settype("")
-															setrole("")
-															setuser([])
-													
+															signOut({ callbackUrl: `/organization/${cname}` });
+
+															settype("");
+															setrole("");
+															setuser([]);
 														}}
 													>
 														<i className="fa-solid fa-right-from-bracket mr-3"></i> Logout
@@ -157,7 +156,7 @@ export default function Header() {
 	} else if (router.asPath == "/organization") {
 		return (
 			<>
-				<header className="bg-white shadow-normal dark:bg-gray-800 test">
+				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
@@ -165,14 +164,12 @@ export default function Header() {
 							<button
 								type="button"
 								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
-								
 								onClick={() => {
-									signOut()
-									
-									settype("")
-									setrole("")
-									setuser([])
-							
+									signOut();
+
+									settype("");
+									setrole("");
+									setuser([]);
 								}}
 							>
 								<i className="fa-solid fa-right-from-bracket"></i>
@@ -185,7 +182,7 @@ export default function Header() {
 	} else if (router.asPath == "/vendors/signup") {
 		return (
 			<>
-				<header className="bg-white shadow-normal dark:bg-gray-800 test">
+				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
@@ -193,14 +190,12 @@ export default function Header() {
 							<button
 								type="button"
 								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
-								
 								onClick={() => {
-									signOut()
-									
-									settype("")
-									setrole("")
-									setuser([])
-							
+									signOut();
+
+									settype("");
+									setrole("");
+									setuser([]);
 								}}
 							>
 								<i className="fa-solid fa-right-from-bracket"></i>
@@ -209,7 +204,7 @@ export default function Header() {
 					</div>
 				</header>
 			</>
-		)
+		);
 	}
 	return <></>;
 }

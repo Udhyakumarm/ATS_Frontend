@@ -107,11 +107,4 @@ export default function CanCareerSearchJobs() {
 	);
 }
 
-export async function getServerSideProps(context: any) {
-	const providers = await getProviders();
-	return {
-		props: {
-			providers
-		}
-	};
-}
+CanCareerSearchJobs.noAuth = true;

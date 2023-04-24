@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 
 export default function CanCareer() {
 	const router = useRouter();
+	const { carrierpage } = router.query;
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
@@ -26,7 +27,7 @@ export default function CanCareer() {
 
 	useEffect(() => {
 		if (cname == "" || cname != window.location.href.toString().split("/").pop()) {
-			setcname(window.location.href.toString().split("/").pop());
+			setcname(carrierpage);
 			setcid("");
 		}
 	}, [cname, setcname]);
@@ -45,6 +46,7 @@ export default function CanCareer() {
 			.get(`/organization/get/organizationprofile/carrier/${carrierID}/`)
 			.then((res) => {
 				setorgdetail(res.data);
+				console.log("@", res.data);
 			})
 			.catch((err) => {
 				setorgdetail([]);
@@ -52,7 +54,7 @@ export default function CanCareer() {
 	}
 
 	useEffect(() => {
-		if (cname != "" || cid == "") {
+		if (cname == "" || cid == "") {
 			getcid(cname);
 		}
 	}, [cname, cid]);
@@ -141,7 +143,7 @@ export default function CanCareer() {
 										</ul>
 										<hr className="mb-6" />
 										{data["about_org"] && data["about_org"] != "" && (
-											<article className="mb-6">{data["about_org"]}</article>
+											<article className="mb-6" dangerouslySetInnerHTML={{ __html: data["about_org"] }}></article>
 										)}
 										<hr className="mb-6" />
 										{data["organization_Benefits"] && data["organization_Benefits"] != "" && (
@@ -245,3 +247,5 @@ export default function CanCareer() {
 		</>
 	);
 }
+
+CanCareer.noAuth = true;

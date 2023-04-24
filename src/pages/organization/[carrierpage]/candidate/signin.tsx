@@ -25,44 +25,40 @@ export default function CanCareerSignIn({ providers }: any) {
 		password: ""
 	});
 
-	const cid = useCarrierStore((state) => state.cid)
-	const cname = useCarrierStore((state) => state.cname)
+	const cid = useCarrierStore((state) => state.cid);
+	const cname = useCarrierStore((state) => state.cname);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
 
 		await axiosInstance
-        .post(`/candidate/candidatecheck/${loginInfo.email}/${cid}/`)
-        .then(async (res) => {
-			console.log(res.data)
-			if(res.data.success){
-				const callback = `${
-					process.env.NODE_ENV === "production"
-						? process.env.NEXT_PUBLIC_PROD_FRONTEND
-						: `http://localhost:3000/organization/${cname}`
-				}`;
-				await signIn("credentials", {
-					email: loginInfo.email,
-					password: loginInfo.password,
-					user_type: "candidate",
-					callbackUrl: callback
-				})
-					.then(async (res) => console.log({ res }))
-					.then(async () => await router.push(`/organization/${cname}`))
-					.catch((err) => {
-						console.log(err);
-					});
-			}
-			else if(res.data.error){
-				toastcomp(res.data.error, "error")
-			}
-        })
-		.catch((err) => {
-			console.log(err);
-		});
-
-		
-		
+			.post(`/candidate/candidatecheck/${loginInfo.email}/${cid}/`)
+			.then(async (res) => {
+				console.log(res.data);
+				if (res.data.success) {
+					const callback = `${
+						process.env.NODE_ENV === "production"
+							? process.env.NEXT_PUBLIC_PROD_FRONTEND
+							: `http://localhost:3000/organization/${cname}`
+					}`;
+					await signIn("credentials", {
+						email: loginInfo.email,
+						password: loginInfo.password,
+						user_type: "candidate",
+						callbackUrl: callback
+					})
+						.then(async (res) => console.log({ res }))
+						.then(async () => await router.push(`/organization/${cname}`))
+						.catch((err) => {
+							console.log(err);
+						});
+				} else if (res.data.error) {
+					toastcomp(res.data.error, "error");
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 	return (
 		<>
@@ -133,3 +129,5 @@ export async function getServerSideProps(context: any) {
 		}
 	};
 }
+
+CanCareerSignIn.noAuth = true;
