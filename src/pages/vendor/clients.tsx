@@ -428,26 +428,7 @@ export default function VendorClients() {
                                             </div>
                                         </div>
                                         <FormField fieldType="textarea" label="Summary" placeholder="Summary" />
-                                        <div className="mb-4">
-                                            <label className="mb-1 inline-block font-bold">
-                                                Skills
-                                            </label>
-                                            <div className="flex">
-                                                <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
-                                                    <div className="text-sm">
-                                                        <p className="my-1">Skill 1</p>
-                                                        <p className="my-1">Skill 2</p>
-                                                        <p className="my-1">Skill 3</p>
-                                                        <p className="my-1">Skill 4</p>
-                                                    </div>
-                                                </div>
-                                                <div className="w-[40px] text-right">
-                                                    <button type="button" className="bg-gradDarkBlue w-[30px] h-[30px] rounded text-sm text-white">
-                                                        <i className="fa-regular fa-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <FormField fieldType="select" label="Skills" options={[{ name: "Skill 1" }, { name: "Skill 2" }]} />
                                         <div className="mb-4">
                                             <label className="mb-1 inline-block font-bold">
                                                 Education
@@ -456,17 +437,20 @@ export default function VendorClients() {
                                                 <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
                                                     {Array(2).fill(
                                                         <article className="border-b last:border-b-0">
-                                                            <div className="flex flex-wrap text-sm">
+                                                            <div className="flex flex-wrap items-center text-sm">
                                                                 <div className="w-[30%] my-2">
-                                                                    <h4 className="font-bold">XYZ Group</h4>
+                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
                                                                 </div>
-                                                                <div className="w-[70%] pl-4 my-2">
-                                                                    <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                                <div className="w-[60%] pl-4 my-2">
+                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                </div>
+                                                                <div className="w-[10%] pl-4 my-2 text-right">
+                                                                    <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
+                                                                        <i className="fa-solid fa-trash"></i>
+                                                                    </button>
                                                                 </div>
                                                             </div>
-                                                            <p className="text-sm mb-2">
-                                                                <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
-                                                            </p>
+                                                            <textarea placeholder="Description" className="border border-borderColor rounded-normal text-sm w-full resize-none h-[120px]"></textarea>
                                                         </article>
                                                     )}
                                                 </div>
@@ -485,17 +469,20 @@ export default function VendorClients() {
                                                 <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
                                                     {Array(2).fill(
                                                         <article className="border-b last:border-b-0">
-                                                            <div className="flex flex-wrap text-sm">
+                                                            <div className="flex flex-wrap items-center text-sm">
                                                                 <div className="w-[30%] my-2">
-                                                                    <h4 className="font-bold">XYZ Group</h4>
+                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
                                                                 </div>
-                                                                <div className="w-[70%] pl-4 my-2">
-                                                                    <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                                <div className="w-[60%] pl-4 my-2">
+                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                </div>
+                                                                <div className="w-[10%] pl-4 my-2 text-right">
+                                                                    <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
+                                                                        <i className="fa-solid fa-trash"></i>
+                                                                    </button>
                                                                 </div>
                                                             </div>
-                                                            <p className="text-sm mb-2">
-                                                                <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
-                                                            </p>
+                                                            <textarea placeholder="Description" className="border border-borderColor rounded-normal text-sm w-full resize-none h-[120px]"></textarea>
                                                         </article>
                                                     )}
                                                 </div>
@@ -520,17 +507,20 @@ export default function VendorClients() {
                                                     <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
                                                         {Array(2).fill(
                                                             <article className="border-b last:border-b-0">
-                                                                <div className="flex flex-wrap text-sm">
+                                                                <div className="flex flex-wrap items-center text-sm">
                                                                     <div className="w-[30%] my-2">
-                                                                        <h4 className="font-bold">XYZ Group</h4>
+                                                                        <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
                                                                     </div>
-                                                                    <div className="w-[70%] pl-4 my-2">
-                                                                        <p className="font-semibold">2021 Sep - 2022 Nov</p>
+                                                                    <div className="w-[60%] pl-4 my-2">
+                                                                        <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                    </div>
+                                                                    <div className="w-[10%] pl-4 my-2 text-right">
+                                                                        <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
+                                                                            <i className="fa-solid fa-trash"></i>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
-                                                                <p className="text-sm mb-2">
-                                                                    <b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
-                                                                </p>
+                                                                <textarea placeholder="Description" className="border border-borderColor rounded-normal text-sm w-full resize-none h-[120px]"></textarea>
                                                             </article>
                                                         )}
                                                     </div>
