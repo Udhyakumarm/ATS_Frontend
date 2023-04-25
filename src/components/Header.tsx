@@ -18,6 +18,10 @@ export default function Header() {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
+
 	useEffect(() => {
 		if (session) {
 			setauth(true);
@@ -117,17 +121,17 @@ export default function Header() {
 									<Popover className="relative">
 										<Popover.Button>
 											<button type="button" className="h-[35px] w-[35px] rounded-full bg-darkGray text-white">
-												S
+												{role === "Candidate" ? user[0]["first_name"].charAt(0) : <>S</>}
 											</button>
 										</Popover.Button>
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
-												<li>
+												{/* <li>
 													<Link href="#" className="block w-full py-2 py-1 px-4 font-bold hover:bg-gray-200">
 														<i className="fa-solid fa-gear mr-3"></i>
 														Settings
 													</Link>
-												</li>
+												</li> */}
 												<li>
 													<button
 														type="button"
