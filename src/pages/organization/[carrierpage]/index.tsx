@@ -25,6 +25,8 @@ export default function CanCareer() {
 	const orgdetail = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
+	const [fload, setfload] = useState(false);
+
 	useEffect(() => {
 		if (cname == "" || cname != window.location.href.toString().split("/").pop()) {
 			setcname(carrierpage);
@@ -60,10 +62,11 @@ export default function CanCareer() {
 	}, [cname, cid]);
 
 	useEffect(() => {
-		if (cid && Object.keys(orgdetail).length === 0) {
+		if (cid && !fload) {
 			loadOrgDetail(cid);
+			setfload(true);
 		}
-	}, [cid, orgdetail]);
+	}, [cid, fload]);
 
 	return (
 		<>
@@ -142,8 +145,14 @@ export default function CanCareer() {
 											)}
 										</ul>
 										<hr className="mb-6" />
+										<h2 className="mb-3 text-lg font-bold">About Orgnaztion</h2>
 										{data["about_org"] && data["about_org"] != "" && (
 											<article className="mb-6" dangerouslySetInnerHTML={{ __html: data["about_org"] }}></article>
+										)}
+										<hr className="mb-6" />
+										<h2 className="mb-3 text-lg font-bold">About Founder</h2>
+										{data["about_founder"] && data["about_founder"] != "" && (
+											<p className="mb-6">{data["about_founder"]}</p>
 										)}
 										<hr className="mb-6" />
 										{data["organization_Benefits"] && data["organization_Benefits"] != "" && (

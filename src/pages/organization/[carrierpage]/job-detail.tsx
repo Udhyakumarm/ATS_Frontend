@@ -1,22 +1,26 @@
 import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useCarrierStore } from "@/utils/code";
 import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
-import { useEffect } from "react";
+import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useEffect, useState } from "react";
 
 export default function CanCareerJobDetail() {
 	const { data: session } = useSession();
-	const cname = useCarrierStore((state) => state.cname);
-	const cid = useCarrierStore((state) => state.cid);
-	const setcid = useCarrierStore((state) => state.setcid);
-	const orgdetail = useCarrierStore((state) => state.orgdetail);
-	const setorgdetail = useCarrierStore((state) => state.setorgdetail);
-	const jid = useCarrierStore((state) => state.jid);
-	const setjid = useCarrierStore((state) => state.setjid);
-	const jdata = useCarrierStore((state) => state.jdata);
-	const setjdata = useCarrierStore((state) => state.setjdata);
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
+	const orgdetail = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
+	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
+	const jid = useCarrierStore((state: { jid: any }) => state.jid);
+	const setjid = useCarrierStore((state: { setjid: any }) => state.setjid);
+	const jdata = useCarrierStore((state: { jdata: any }) => state.jdata);
+	const setjdata = useCarrierStore((state: { setjdata: any }) => state.setjdata);
+
+	const [token, settoken] = useState("");
+	const [btndis, setbtndis] = useState(false);
 
 	useEffect(() => {
 		if (
@@ -32,6 +36,37 @@ export default function CanCareerJobDetail() {
 	useEffect(() => {
 		if (jdata) console.log(jdata);
 	}, [jdata]);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	async function checkApplicant() {
+		const axiosInstanceAuth2 = axiosInstanceAuth(token);
+		await axiosInstanceAuth2
+			.get(`/job/applicant/check/${jid}/`)
+			.then(async (res) => {
+				console.log("!", res.data);
+				if (res.data["Message"] == 1) {
+					setbtndis(true);
+				} else {
+					setbtndis(false);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0 && jid && jid.length > 0) {
+			checkApplicant();
+		}
+	}, [token, jid]);
 
 	return (
 		<>
@@ -77,7 +112,7 @@ export default function CanCareerJobDetail() {
 									</ul>
 									<Button
 										btnStyle="sm"
-										label="Apply Here"
+										label={btndis ? "Already Applied" : "Apply Here"}
 										loader={false}
 										btnType="button"
 										handleClick={() => {
@@ -87,6 +122,7 @@ export default function CanCareerJobDetail() {
 												router.push(`/organization/${cname}/candidate/signin`);
 											}
 										}}
+										disabled={btndis}
 									/>
 									<hr className="my-4" />
 									<aside className="mb-4">
@@ -128,9 +164,24 @@ export default function CanCareerJobDetail() {
 										<h3 className="mb-2 text-lg font-bold">Skills</h3>
 										{jdata["jobSkill"] && (
 											<article className="text-[12px] text-darkGray dark:text-gray-400">
-												{jdata["jobSkill"].split(",").map((item, i) => (
-													<p key={i}>{item}</p>
-												))}
+												{jdata["jobSkill"]
+													.split(",")
+													.map(
+														(
+															item:
+																| string
+																| number
+																| boolean
+																| ReactElement<any, string | JSXElementConstructor<any>>
+																| ReactFragment
+																| ReactPortal
+																| null
+																| undefined,
+															i: Key | null | undefined
+														) => (
+															<p key={i}>{item}</p>
+														)
+													)}
 											</article>
 										)}
 									</aside>

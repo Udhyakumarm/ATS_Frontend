@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useReducer } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useCarrierStore } from "@/utils/code";
-import { axiosInstance } from "@/pages/api/axiosApi";
+import { useCarrierStore, useUserStore } from "@/utils/code";
+import { axiosInstance, axiosInstance2 } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 
 export default function CanCareerSignIn({ providers }: any) {
@@ -25,8 +25,15 @@ export default function CanCareerSignIn({ providers }: any) {
 		password: ""
 	});
 
-	const cid = useCarrierStore((state) => state.cid);
-	const cname = useCarrierStore((state) => state.cname);
+	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
@@ -34,29 +41,70 @@ export default function CanCareerSignIn({ providers }: any) {
 		await axiosInstance
 			.post(`/candidate/candidatecheck/${loginInfo.email}/${cid}/`)
 			.then(async (res) => {
-				console.log(res.data);
 				if (res.data.success) {
-					const callback = `${
-						process.env.NODE_ENV === "production"
-							? process.env.NEXT_PUBLIC_PROD_FRONTEND
-							: `http://localhost:3000/organization/${cname}`
-					}`;
-					await signIn("credentials", {
-						email: loginInfo.email,
-						password: loginInfo.password,
-						user_type: "candidate",
-						callbackUrl: callback
-					})
-						.then(async (res) => console.log({ res }))
-						.then(async () => await router.push(`/organization/${cname}`))
+					await axiosInstance2
+						.post("/candidate/candidatelogin/", {
+							email: loginInfo.email,
+							password: loginInfo.password
+						})
+						.then(async (response) => {
+							console.log("@", res.data);
+							if (response.data.role) {
+								setrole(response.data.role);
+							}
+							if (response.data.type) {
+								settype(response.data.type);
+							}
+							if (response.data.userObj && response.data["userObj"].length > 0) {
+								setuser(response.data.userObj);
+							}
+
+							const callback = `${
+								process.env.NODE_ENV === "production"
+									? process.env.NEXT_PUBLIC_PROD_FRONTEND
+									: `http://localhost:3000/organization/${cname}`
+							}`;
+							await signIn("credentials", {
+								email: loginInfo.email,
+								password: loginInfo.password,
+								user_type: "candidate",
+								callbackUrl: callback
+							})
+								.then(async (res) => console.log({ res }))
+								.then(async () => await router.push(`/organization/${cname}`))
+								.catch((err) => {
+									console.log(err);
+								});
+						})
 						.catch((err) => {
+							settype("");
+							setrole("");
+							setuser([]);
 							console.log(err);
+							if (err.response.data.non_field_errors) {
+								err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+								return false;
+							}
+							if (err.response.data.detail) {
+								toastcomp(err.response.data.detail, "error");
+								return false;
+							}
+							if (err.response.data.errors.email) {
+								err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+								return false;
+							}
 						});
 				} else if (res.data.error) {
+					settype("");
+					setrole("");
+					setuser([]);
 					toastcomp(res.data.error, "error");
 				}
 			})
 			.catch((err) => {
+				settype("");
+				setrole("");
+				setuser([]);
 				console.log(err);
 			});
 	};
