@@ -369,7 +369,7 @@ export default function VendorClients() {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
                                     <div className="flex items-center justify-between text-white bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3">
                                         <h4 className="leading-none font-semibold">
                                             Add Applicant
@@ -434,19 +434,19 @@ export default function VendorClients() {
                                                 Education
                                             </label>
                                             <div className="flex">
-                                                <div className="w-[calc(100%-40px)] py-1 px-3 border border-borderColor rounded-normal min-h-[45px]">
+                                                <div className="w-[calc(100%-40px)] min-h-[45px]">
                                                     {Array(2).fill(
-                                                        <article className="border-b last:border-b-0">
+                                                        <article className="border-b last:border-b-0 mb-2 pb-2">
                                                             <div className="flex flex-wrap items-center text-sm">
                                                                 <div className="w-[30%] my-2">
-                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                 </div>
                                                                 <div className="w-[60%] pl-4 my-2">
-                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                 </div>
                                                                 <div className="w-[10%] pl-4 my-2 text-right">
-                                                                    <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
-                                                                        <i className="fa-solid fa-trash"></i>
+                                                                    <button type="button" className="text-red-500 pr-4">
+                                                                        <i className="fa-solid fa-trash-can"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -471,14 +471,14 @@ export default function VendorClients() {
                                                         <article className="border-b last:border-b-0">
                                                             <div className="flex flex-wrap items-center text-sm">
                                                                 <div className="w-[30%] my-2">
-                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                    <input type="text" placeholder="Company Name" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                 </div>
                                                                 <div className="w-[60%] pl-4 my-2">
-                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                    <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                 </div>
                                                                 <div className="w-[10%] pl-4 my-2 text-right">
-                                                                    <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
-                                                                        <i className="fa-solid fa-trash"></i>
+                                                                    <button type="button" className="text-red-500 pr-4">
+                                                                        <i className="fa-solid fa-trash-can"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -509,14 +509,14 @@ export default function VendorClients() {
                                                             <article className="border-b last:border-b-0">
                                                                 <div className="flex flex-wrap items-center text-sm">
                                                                     <div className="w-[30%] my-2">
-                                                                        <input type="text" placeholder="Company Name" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                        <input type="text" placeholder="Company Name" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                     </div>
                                                                     <div className="w-[60%] pl-4 my-2">
-                                                                        <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-full text-sm w-full" />
+                                                                        <input type="text" placeholder="2021 Sep - 2022 Nov" className="border border-borderColor rounded-normal text-sm w-full" />
                                                                     </div>
                                                                     <div className="w-[10%] pl-4 my-2 text-right">
-                                                                        <button type="button" className="bg-red-500 text-white text-[12px] w-6 h-7 ml-auto flex items-center justify-center border rounded">
-                                                                            <i className="fa-solid fa-trash"></i>
+                                                                        <button type="button" className="text-red-500 pr-4">
+                                                                            <i className="fa-solid fa-trash-can"></i>
                                                                         </button>
                                                                     </div>
                                                                 </div>
