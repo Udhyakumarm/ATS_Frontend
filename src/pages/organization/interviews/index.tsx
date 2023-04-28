@@ -9,6 +9,7 @@ import { Fragment, useState } from "react";
 import userImg from "/public/images/user-image.png";
 import googleIcon from "/public/images/social/google-icon.png";
 import Link from "next/link";
+import noInterviewdata from "/public/images/no-data/iconGroup-3.png";
 
 export default function Interviews() {
     const [accordionOpen, setAccordionOpen] = useState(false);
@@ -212,6 +213,16 @@ export default function Interviews() {
                             </div>
                         </div>
                     </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-normal shadow-normal min-h-[calc(100vh-130px)] flex items-center justify-center">
+						<div className="text-center py-8 w-full max-w-[300px] mx-auto">
+							<div className="mb-6 p-2">
+								<Image src={noInterviewdata} alt="No Data" width={300} className="w-auto max-w-[200px] max-h-[200px] mx-auto" />
+							</div>
+							<h5 className="text-lg font-semibold mb-4">No Interviews</h5>
+							<p className="text-sm text-darkGray mb-2">There are no Interviews as of now , Post a New Job to schedule interview with applicants </p>
+							{/* <Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">Post a New Job</Link> */}
+						</div>
+					</div>
                 </div>
             </main>
         </>

@@ -10,6 +10,8 @@ import OrgTopBar from "@/components/organization/TopBar";
 import Image from "next/image";
 import bulbIcon from "/public/images/icons/bulb.png";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import noActivedata from "/public/images/no-data/iconGroup-1.png";
+import Link from "next/link";
 
 export default function JobsActive() {
 	const router = useRouter();
@@ -96,6 +98,14 @@ export default function JobsActive() {
 												</div>
 											)
 									)}
+							</div>
+							<div className="text-center py-8 w-full max-w-[300px] mx-auto">
+								<div className="mb-6 p-2">
+									<Image src={noActivedata} alt="No Data" width={300} className="w-auto max-w-[200px] max-h-[200px] mx-auto" />
+								</div>
+								<h5 className="text-lg font-semibold mb-4">No Active Jobs</h5>
+								<p className="text-sm text-darkGray mb-2">There are no Active Jobs , Post a New Job to manage active Jobs</p>
+								<Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">Post a New Job</Link>
 							</div>
 						</div>
 					</div>

@@ -8,6 +8,7 @@ import Image from "next/image";
 import userImg from "/public/images/user-image.png";
 import Button from "@/components/Button";
 import { Menu } from '@headlessui/react'
+import startNewChat from "/public/images/no-data/iconGroup-4.png";
 
 export default function Inbox() {
 	const cancelButtonRef = useRef(null);
@@ -439,6 +440,14 @@ export default function Inbox() {
 										</div>
 										<div className="h-[calc(100vh-280px)] overflow-y-auto">
 											<div className="mx-auto w-full max-w-[90%] px-4">
+												<div className="min-h-[400px] flex items-center justify-center">
+													<div className="text-center py-8 w-full max-w-[300px] mx-auto">
+														<div className="mb-6 p-2">
+															<Image src={startNewChat} alt="No Data" width={300} className="w-auto max-w-[150px] max-h-[150px] mx-auto" />
+														</div>
+														<h5 className="font-bold">Start New Chat</h5>
+													</div>
+												</div>
 												<div className="flex items-start py-4">
 													<Image
 														src={userImg}

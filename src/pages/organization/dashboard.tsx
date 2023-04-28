@@ -17,9 +17,16 @@ import customizeAnalytics from "/public/images/icons/customize_analytics.png";
 import customizeRecent from "/public/images/icons/customize_recent.png";
 import customizeTodo from "/public/images/icons/customize_todo.png";
 import customizeUpcoming from "/public/images/icons/customize_upcoming.png";
+import nodata_1 from "/public/images/no-data/icon-1.png";
+import nodata_2 from "/public/images/no-data/icon-2.png";
+import nodata_3 from "/public/images/no-data/icon-3.png";
+import nodata_4 from "/public/images/no-data/icon-4.png";
+import nodata_5 from "/public/images/no-data/icon-5.png";
+import nodata_6 from "/public/images/no-data/icon-6.png";
 import { getProviders, useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
 import JobCard_1 from "@/components/JobCard-1";
+import FormField from "@/components/FormField";
 
 export default function OrganizationDashboard() {
 	const settings = {
@@ -118,8 +125,11 @@ export default function OrganizationDashboard() {
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Applicant Details</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
+										<aside className="flex items-center justify-end">
+											<div className="w-[140px]">
+												<FormField fieldType="select" />
+											</div>
+											<button type="button" className="ml-4 h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -151,6 +161,12 @@ export default function OrganizationDashboard() {
 												</div>
 											))}
 										</Slider>
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_1} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">No Applicants</p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -164,7 +180,15 @@ export default function OrganizationDashboard() {
 											</button>
 										</aside>
 									</div>
-									<div className="p-6 pt-0">Body</div>
+									<div className="p-6 pt-0">
+										Body
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_2} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">No Hiring Analytics</p>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
@@ -211,13 +235,19 @@ export default function OrganizationDashboard() {
 												</>
 											)}
 										</div>
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_3} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">No Upcoming Interviews</p>
+										</div>
 									</div>
 								</div>
 							</div>
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">To do List</h2>
+										<h2 className="text-xl font-bold">To Do List</h2>
 										<aside>
 											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
 												<i className="fa-regular fa-hand"></i>
@@ -246,6 +276,12 @@ export default function OrganizationDashboard() {
 												</>
 											)}
 										</div>
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_4} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">Nothing In To Do List</p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -269,6 +305,24 @@ export default function OrganizationDashboard() {
 												</>
 											)}
 										</div>
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_5} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">No Job has been posted yet</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800 upgradePlan">
+									<div className="flex items-center justify-between p-6">
+										<h2 className="text-xl font-bold"></h2>
+										<aside>
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-white text-gray-300 cursor-grab">
+												<i className="fa-regular fa-hand"></i>
+											</button>
+										</aside>
 									</div>
 								</div>
 							</div>
@@ -314,6 +368,12 @@ export default function OrganizationDashboard() {
 													</div>
 												</>
 											)}
+										</div>
+										<div className="text-center py-8">
+											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
+												<Image src={nodata_6} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
+											</div>
+											<p className="text-sm text-darkGray">Nothing in the Activity Log</p>
 										</div>
 									</div>
 								</div>

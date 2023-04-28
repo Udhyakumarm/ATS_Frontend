@@ -252,6 +252,13 @@ input[type=number] {
   min-height: 45px;
 }
 
+.upgradePlan {
+  background-image: url("../../public/images/bigger_upgragePlan.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 300px;
+}
+
 @media (max-width: 1023px) {
   .sidebarToggled #sidebar {
     width: 48px;
