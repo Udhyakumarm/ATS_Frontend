@@ -10,6 +10,8 @@ import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import { sign } from "crypto";
 import toastcomp from "@/components/toast";
+import { useCarrierStore } from "@/utils/code";
+import { axiosInstance as axiosInstance22 } from "@/pages/api/axiosApi";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -17,12 +19,43 @@ const signUpInfoRules: Rules = {
 	passwordConfirm: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"],
 	first_name: "required",
 	last_name: "required",
-	phone_number: "required",
-	org_id: "required"
+	phone_number: "required"
+	// org_id: "required"
 };
 
 export default function CanCareerSignUp() {
 	const router = useRouter();
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
+
+	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
+
+	const { carrierpage } = router.query;
+
+	useEffect(() => {
+		if ((carrierpage && cname == "") || cname != carrierpage) {
+			console.log("@", 1);
+			console.log("@", carrierpage);
+			setcname(carrierpage);
+			setcid("");
+		}
+	}, [cname, setcname, carrierpage]);
+
+	async function getcid(cname: any) {
+		await axiosInstance22.get(`/organization/get/organizationprofilecid/carrier/${cname}/`).then((res) => {
+			console.log(res.data);
+			console.log(res.data["OrgProfile"]);
+			console.log(res.data["OrgProfile"][0]["unique_id"]);
+			setcid(res.data["OrgProfile"][0]["unique_id"]);
+		});
+	}
+
+	useEffect(() => {
+		if (cname != "" && cname && cname.length > 0 && cid == "") {
+			getcid(cname);
+		}
+	}, [cname, cid]);
 
 	const [formError, setFormError] = useState({
 		first_name: null,
@@ -30,8 +63,8 @@ export default function CanCareerSignUp() {
 		email: null,
 		phone_number: null,
 		password: null,
-		passwordConfirm: "",
-		org_id: ""
+		passwordConfirm: ""
+		// org_id: ""
 	});
 	const updateSignUpInfo = (
 		prevState: {
@@ -41,7 +74,7 @@ export default function CanCareerSignUp() {
 			first_name: string;
 			last_name: string;
 			phone_number: string;
-			org_id: string;
+			// org_id: string;
 		},
 		event: { target: { id: string; value: any } }
 	) => {
@@ -69,8 +102,8 @@ export default function CanCareerSignUp() {
 		email: "",
 		phone_number: "",
 		password: "",
-		passwordConfirm: "",
-		org_id: ""
+		passwordConfirm: ""
+		// org_id: ""
 	});
 
 	useEffect(() => {
@@ -88,7 +121,7 @@ export default function CanCareerSignUp() {
 
 		event.preventDefault();
 		await axiosInstance.api
-			.post("/candidate/candidate-email-registration/" + signUpInfo.org_id + "/", {
+			.post("/candidate/candidate-email-registration/" + cid + "/", {
 				email: signUpInfo.email,
 				first_name: signUpInfo.first_name,
 				last_name: signUpInfo.last_name,
@@ -98,7 +131,7 @@ export default function CanCareerSignUp() {
 			})
 			.then((response) => {
 				console.log(response);
-				router.push("/auth/candidate/signin");
+				router.push(`/organization/${cname}/`);
 				setTimeout(() => {
 					console.log("Send verification email");
 				}, 100);
@@ -181,7 +214,7 @@ export default function CanCareerSignUp() {
 							error={formError.phone_number}
 							required
 						/>
-						<div className="mb-4 w-full md:max-w-[50%]">
+						{/* <div className="mb-4 w-full md:max-w-[50%]">
 							<FormField
 								fieldType="input"
 								inputType="text"
@@ -192,7 +225,7 @@ export default function CanCareerSignUp() {
 								handleChange={dispatch}
 								required
 							/>
-						</div>
+						</div> */}
 						<div className="-mx-3 flex flex-wrap">
 							<div className="mb-4 w-full px-3 md:max-w-[50%]">
 								<FormField

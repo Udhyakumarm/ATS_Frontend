@@ -318,6 +318,42 @@ export default function FormField({
 			</>
 		);
 	}
+	// if (fieldType === "") {
+	// 	return (
+	// 		<>
+	// 			<div className="mb-4 last:mb-0">
+	// 				<div>
+	// 					{label ? (
+	// 						<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
+	// 							{label}
+	// 							{required ? <sup className="text-red-500">*</sup> : ""}
+	// 						</label>
+	// 					) : (
+	// 						<></>
+	// 					)}
+
+	// 					<>
+	// 						<input
+	// 							type={inputType}
+	// 							id={id}
+	// 							className={
+	// 								`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+	// 								" "
+	// 							}
+	// 							value={value}
+	// 							onChange={handleChange}
+	// 							onBlur={handleOnBlur}
+	// 							placeholder={placeholder}
+	// 							readOnly={readOnly}
+	// 							disabled={disabled}
+	// 						/>
+	// 					</>
+	// 				</div>
+	// 				{errorMessage}
+	// 			</div>
+	// 		</>
+	// 	);
+	// }
 	return (
 		<>
 			<p className="rounded-normal bg-violet-200 p-2 text-sm">

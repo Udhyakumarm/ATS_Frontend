@@ -67,11 +67,13 @@ export default function CanCareerSignIn({ providers }: any) {
 							await signIn("credentials", {
 								email: loginInfo.email,
 								password: loginInfo.password,
-								user_type: "candidate",
-								callbackUrl: callback
+								user_type: "candidate"
+								// callbackUrl: callback
 							})
-								.then(async (res) => console.log({ res }))
-								.then(async () => await router.push(`/organization/${cname}`))
+								.then(async (res) => {
+									console.log({ res });
+									router.push(`/organization/${cname}`);
+								})
 								.catch((err) => {
 									console.log(err);
 								});
@@ -158,7 +160,7 @@ export default function CanCareerSignIn({ providers }: any) {
 						</div>
 						<p className="text-center text-darkGray">
 							Not sign up yet ?{" "}
-							<Link href={"/auth/candidate/signup"} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline">
 								Create Account
 							</Link>
 						</p>

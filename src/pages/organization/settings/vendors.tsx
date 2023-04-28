@@ -3,21 +3,36 @@ import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
 import Image from "next/image";
 import { Dialog, Menu, Tab, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import integrationIcon from "/public/images/icons/integration.png";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
-import { Switch } from '@headlessui/react'
+import { Switch } from "@headlessui/react";
+import { useSession } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 export default function Vendors() {
 	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
 
-    const cancelButtonRef = useRef(null);
-    const [sentAgreement, setSentAgreement] = useState(false);
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	const cancelButtonRef = useRef(null);
+	const [sentAgreement, setSentAgreement] = useState(false);
 	const [companyDetails, setCompanyDetails] = useState(false);
 
-	const [enabled, setEnabled] = useState(false)
+	const [enabled, setEnabled] = useState(false);
 
 	const tabHeading_1 = [
 		{
@@ -37,6 +52,129 @@ export default function Vendors() {
 			icon: <i className="fa-solid fa-clock"></i>
 		}
 	];
+
+	//new vendor state & fun
+	const [cname, setcname] = useState("");
+	const [email, setemail] = useState("");
+	const [phone, setphone] = useState("");
+	const [aname, setaname] = useState("");
+	const [msg, setmsg] = useState("");
+	const [agreement, setagreement] = useState<File | null>(null);
+	const [file, setfile] = useState(false);
+	const [asdate, setasdate] = useState("");
+	const [aedate, setaedate] = useState("");
+
+	function checkFormNewVendor() {
+		return (
+			cname.length > 0 &&
+			email.length > 0 &&
+			phone.length > 0 &&
+			aname.length > 0 &&
+			msg.length > 0 &&
+			asdate.length > 0 &&
+			aedate.length > 0 &&
+			file
+		);
+	}
+
+	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files && event.target.files[0];
+		setagreement(file);
+		setfile(true);
+	}
+
+	async function addAgreement() {
+		var formData = new FormData();
+		formData.append("company_name", cname);
+		formData.append("email", email);
+		formData.append("contact_number", phone);
+		formData.append("agent_name", aname);
+		formData.append("message", msg);
+		formData.append("agreement", agreement);
+		formData.append("agreement_valid_start_date", asdate);
+		formData.append("agreement_valid_end_date", aedate);
+		await axiosInstanceAuth2
+			.post(`/vendors/new_vendor/`, formData)
+			.then(async (res) => {
+				toastcomp("New Agreement Send", "success");
+				setagreement(null);
+				setcname("");
+				setemail("");
+				setphone("");
+				setaname("");
+				setmsg("");
+				setasdate("");
+				setaedate("");
+				setfile(false);
+				setSentAgreement(true);
+				console.log("!", res);
+				loadVendors();
+			})
+			.catch((err) => {
+				toastcomp("New Agreement Not Send", "error");
+				console.log(err);
+				setagreement(null);
+				setcname("");
+				setemail("");
+				setphone("");
+				setaname("");
+				setmsg("");
+				setasdate("");
+				setaedate("");
+				setfile(false);
+				console.log("!", err);
+				loadVendors();
+			});
+	}
+
+	//pending vendor state & fun
+	const [vendors, setvendors] = useState([]);
+	const [pvendors, setpvendors] = useState([]);
+	const [fvendors, setfvendors] = useState([]);
+
+	async function loadVendors() {
+		await axiosInstanceAuth2
+			.get(`/vendors/list_vendors/`)
+			.then(async (res) => {
+				console.log("!", res.data);
+				setvendors(res.data);
+				const data = res.data;
+				var arr = [];
+				var arr2 = [];
+				for (let i = 0; i < data.length; i++) {
+					if (!data[i]["onboard"]) {
+						arr.push(data[i]);
+					} else {
+						arr2.push(data[i]);
+					}
+				}
+				setpvendors(arr);
+				setfvendors(arr2);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) loadVendors();
+	}, [token]);
+
+	async function onBoardVendor(vid: string) {
+		await axiosInstanceAuth2
+			.post(`/vendors/onboard_vendors/${vid}/`)
+			.then(async (res) => {
+				console.log("!", res.data);
+				toastcomp(res.data.message, "success");
+				loadVendors();
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Server Error", "error");
+				loadVendors();
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -116,169 +254,302 @@ export default function Vendors() {
 												<Tab.Panel>
 													<div className="-mx-3 flex flex-wrap">
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-															<FormField label="Company Name" fieldType="input" inputType="text" />
+															<FormField
+																label="Company Name"
+																fieldType="input"
+																inputType="text"
+																value={cname}
+																handleChange={(e) => setcname(e.target.value)}
+																required
+															/>
 														</div>
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-															<FormField label="Email ID" fieldType="input" inputType="email" required />
+															<FormField
+																label="Email ID"
+																fieldType="input"
+																inputType="email"
+																value={email}
+																handleChange={(e) => setemail(e.target.value)}
+																required
+															/>
 														</div>
 													</div>
 													<div className="-mx-3 flex flex-wrap">
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-															<FormField label="Contact Number" fieldType="input" inputType="text" />
+															<FormField
+																label="Contact Number"
+																fieldType="input"
+																inputType="text"
+																value={phone}
+																handleChange={(e) => setphone(e.target.value)}
+																required
+															/>
 														</div>
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-															<FormField label="Agent Name" fieldType="input" inputType="text" />
+															<FormField
+																label="Agent Name"
+																fieldType="input"
+																inputType="text"
+																value={aname}
+																handleChange={(e) => setaname(e.target.value)}
+																required
+															/>
 														</div>
 													</div>
-													<FormField label="Message" fieldType="textarea" />
+													<FormField
+														label="Message"
+														fieldType="textarea"
+														value={msg}
+														handleChange={(e) => setmsg(e.target.value)}
+														required
+													/>
 													<div className="-mx-3 flex flex-wrap items-start">
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-                                                            <h6 className="mb-1 font-bold">Agreement</h6>
-                                                            <div className="min-h-[45px] relative w-full p-3 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700 focus:bg-red-500 pr-9">
-                                                                <input type="file" className="cursor-pointer absolute w-full h-full left-0 top-0 opacity-0 z-10" />
-                                                                <span className="absolute right-3 top-[12px] text-lightGray">
-                                                                    <i className="fa-solid fa-paperclip"></i>
-                                                                </span>
-                                                                <span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">Pdf, Docx etc...</span>
-                                                            </div>
-                                                            <div className="flex my-2">
-                                                                <div className="">
-                                                                    <i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
-                                                                    {/* <i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i> */}
-                                                                </div>
-                                                                <div className="grow pl-4 flex flex-col justify-between">
-                                                                    <div className="flex items-center justify-between text-[12px]">
-                                                                        <span className="w-[50%] flex items-center"> 
-                                                                            <small className="clamp_1 mr-2">Agent Agreement</small>
-                                                                            (4.5MB)
-                                                                        </span>
-                                                                        <aside>
-                                                                            <button type="button" className="text-primary hover:text-underline" title="View">
-                                                                                <i className="fa-solid fa-eye"></i>
-                                                                            </button>
-                                                                            <button type="button" className="text-red-500 hover:text-underline ml-4" title="Delete">
-                                                                                <i className="fa-solid fa-trash"></i>
-                                                                            </button>
-                                                                        </aside>
-                                                                    </div>
-                                                                    <div className="relative pt-4">
-                                                                        <div className="bg-gray-100 w-full h-2 rounded border relative overflow-hidden">
-                                                                            <span className="absolute left-0 top-0 w-full h-full bg-primary transition-all" style={{width: '60%'}}></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+															<h6 className="mb-1 font-bold">
+																Agreement<sup className="text-red-500">*</sup>
+															</h6>
+															{!file ? (
+																<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+																	<input
+																		type="file"
+																		className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+																		accept=".pdf,.doc,.docx"
+																		onChange={handleFileInputChange}
+																	/>
+																	<span className="absolute right-3 top-[12px] text-lightGray">
+																		<i className="fa-solid fa-paperclip"></i>
+																	</span>
+																	<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+																		Pdf, Docx etc...
+																	</span>
+																</div>
+															) : (
+																<div className="my-2 flex">
+																	<div className="">
+																		{agreement.type === "application/pdf" && (
+																			<i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
+																		)}
+																		{agreement.type === "application/msword" ||
+																			(agreement.type ===
+																				"application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+																				<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
+																			))}
+																	</div>
+																	<div className="flex grow flex-col justify-between pl-4">
+																		<div className="flex items-center justify-between text-[12px]">
+																			<span className="flex w-[50%] items-center">
+																				<small className="clamp_1 mr-2">{agreement.name && agreement.name}</small>(
+																				{agreement.size && <>{(agreement.size / (1024 * 1024)).toFixed(2)} MB</>})
+																			</span>
+																			<aside>
+																				<button
+																					type="button"
+																					className="hover:text-underline text-primary"
+																					title="View"
+																					onClick={() => {
+																						if (agreement) {
+																							const fileUrl = URL.createObjectURL(agreement);
+																							window.open(fileUrl, "_blank");
+																						}
+																					}}
+																				>
+																					<i className="fa-solid fa-eye"></i>
+																				</button>
+																				<button
+																					type="button"
+																					className="hover:text-underline ml-4 text-red-500"
+																					title="Delete"
+																					onClick={() => {
+																						setfile(false);
+																						setagreement(null);
+																					}}
+																				>
+																					<i className="fa-solid fa-trash"></i>
+																				</button>
+																			</aside>
+																		</div>
+																		<div className="relative pt-4">
+																			<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
+																				<span
+																					className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
+																					style={{ width: "99%" }}
+																				></span>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															)}
 														</div>
-														<div className="mb-4 w-full px-3 md:max-w-[50%] flex flex-wrap">
-                                                            <h6 className="mb-1 font-bold w-full">Agreement Validity</h6>
-															<div className="w-full md:max-w-[50%] pr-2">
-                                                                <FormField
-                                                                    id={"start"}
-                                                                    fieldType="date"
-                                                                    placeholder="Start Time"
-                                                                    singleSelect
-                                                                    showTimeSelect
-                                                                    showHours
-                                                                    required
-                                                                />
-                                                            </div>
-                                                            <div className="w-full md:max-w-[50%] pl-2">
-                                                                <FormField
-                                                                    id={"end"}
-                                                                    fieldType="date"
-                                                                    placeholder="End Time"
-                                                                    singleSelect
-                                                                    showTimeSelect
-                                                                    showHours
-                                                                    required
-                                                                />
-                                                            </div>
+														<div className="mb-4 flex w-full flex-wrap px-3 md:max-w-[50%]">
+															{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
+															<div className="w-full pr-2 md:max-w-[50%]">
+																<FormField
+																	label="Agreement Start Date"
+																	fieldType="input"
+																	inputType="date"
+																	value={asdate}
+																	handleChange={(e) => {
+																		setasdate(e.target.value);
+																	}}
+																	required
+																/>
+																{/* <FormField
+																	id={"start"}
+																	fieldType="date"
+																	placeholder="Start Time"
+																	singleSelect
+																	showTimeSelect
+																	showHours
+																	required
+																/> */}
+															</div>
+															<div className="w-full pl-2 md:max-w-[50%]">
+																<FormField
+																	label="Agreement End Date"
+																	fieldType="input"
+																	inputType="date"
+																	value={aedate}
+																	handleChange={(e) => setaedate(e.target.value)}
+																	required
+																/>
+																{/* <FormField
+																	id={"end"}
+																	fieldType="date"
+																	placeholder="End Time"
+																	singleSelect
+																	showTimeSelect
+																	showHours
+																	required
+																/> */}
+															</div>
 														</div>
 													</div>
-                                                    <Button label="Send Agreement" btnType="button" handleClick={() => setSentAgreement(true)} />
+													<Button
+														label="Send Agreement"
+														btnType="button"
+														handleClick={addAgreement}
+														disabled={!checkFormNewVendor()}
+													/>
 												</Tab.Panel>
 												<Tab.Panel>
-													<p className="text-darkGray dark:text-gray-400 text-center">No Vendors Found</p>
-													<div className="flex flex-wrap mx-[-15px]">
-														<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
-															<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
-																<div className="mb-2 flex items-start justify-between">
-																	<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
-																	<Menu as="div" className="relative">
-																		<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-																			<i className="fa-solid fa-ellipsis-vertical"></i>
-																		</Menu.Button>
-																		<Transition
-																		as={Fragment}
-																		enter="transition ease-out duration-100"
-																		enterFrom="transform opacity-0 scale-95"
-																		enterTo="transform opacity-100 scale-100"
-																		leave="transition ease-in duration-75"
-																		leaveFrom="transform opacity-100 scale-100"
-																		leaveTo="transform opacity-0 scale-95"
-																		>
-																			<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-1 shadow-normal dark:bg-gray-700'}>
-																				<Menu.Item>
-																					<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={() => setCompanyDetails(true)}>
-																						<i className="fa-solid fa-building mr-2"></i> Company Details
-																					</button>
-																				</Menu.Item>
-																			</Menu.Items>
-																		</Transition>
-																	</Menu>
-																</div>
-																<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
-																<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
-																<div className="flex items-center justify-between">
-																	<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
-																		<i className="fa-solid fa-circle-check text-green-500 mr-2"></i>
-																		Verified
-																	</p>
-																	<Button btnStyle="sm" label={'On Board'} />
-																</div>
-															</div>
+													{pvendors && pvendors.length <= 0 ? (
+														<p className="text-center text-darkGray dark:text-gray-400">No Vendors Found</p>
+													) : (
+														<div className="mx-[-15px] flex flex-wrap">
+															{pvendors.map((data, i) =>
+																data["verified"] ? (
+																	<div
+																		className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]"
+																		key={i}
+																	>
+																		<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
+																			<div className="mb-2 flex items-start justify-between">
+																				<h4 className="my-1 mr-2 text-lg font-semibold">{data["company_name"]}</h4>
+																				<Menu as="div" className="relative">
+																					<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+																						<i className="fa-solid fa-ellipsis-vertical"></i>
+																					</Menu.Button>
+																					<Transition
+																						as={Fragment}
+																						enter="transition ease-out duration-100"
+																						enterFrom="transform opacity-0 scale-95"
+																						enterTo="transform opacity-100 scale-100"
+																						leave="transition ease-in duration-75"
+																						leaveFrom="transform opacity-100 scale-100"
+																						leaveTo="transform opacity-0 scale-95"
+																					>
+																						<Menu.Items
+																							className={
+																								"absolute right-0 top-[100%] w-[200px] rounded bg-white py-1 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
+																							}
+																						>
+																							<Menu.Item>
+																								<button
+																									type="button"
+																									className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
+																									onClick={() => setCompanyDetails(true)}
+																								>
+																									<i className="fa-solid fa-building mr-2"></i> Company Details
+																								</button>
+																							</Menu.Item>
+																						</Menu.Items>
+																					</Transition>
+																				</Menu>
+																			</div>
+																			<p className="font-semibold text-darkGray dark:text-gray-300">
+																				{data["agent_name"]}
+																			</p>
+																			<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{data["email"]}</p>
+																			<div className="flex items-center justify-between">
+																				<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
+																					<i className="fa-solid fa-circle-check mr-2 text-green-500"></i>
+																					Verified
+																				</p>
+																				<Button
+																					btnStyle="sm"
+																					label={"On Board"}
+																					btnType={"button"}
+																					handleClick={(e) => onBoardVendor(data["vrefid"])}
+																				/>
+																			</div>
+																		</div>
+																	</div>
+																) : (
+																	<div
+																		className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]"
+																		key={i}
+																	>
+																		<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
+																			<div className="mb-2 flex items-start justify-between">
+																				<h4 className="my-1 mr-2 text-lg font-semibold">{data["company_name"]}</h4>
+																				{/* <Menu as="div" className="relative">
+																					<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+																						<i className="fa-solid fa-ellipsis-vertical"></i>
+																					</Menu.Button>
+																					<Transition
+																						as={Fragment}
+																						enter="transition ease-out duration-100"
+																						enterFrom="transform opacity-0 scale-95"
+																						enterTo="transform opacity-100 scale-100"
+																						leave="transition ease-in duration-75"
+																						leaveFrom="transform opacity-100 scale-100"
+																						leaveTo="transform opacity-0 scale-95"
+																					>
+																						<Menu.Items
+																							className={
+																								"absolute right-0 top-[100%] w-[200px] rounded bg-white py-1 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
+																							}
+																						>
+																							<Menu.Item>
+																								<button
+																									type="button"
+																									className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
+																									disabled={true}
+																								>
+																									<i className="fa-solid fa-building mr-2"></i> Company Details
+																								</button>
+																							</Menu.Item>
+																						</Menu.Items>
+																					</Transition>
+																				</Menu> */}
+																			</div>
+																			<p className="font-semibold text-darkGray dark:text-gray-300">
+																				{data["agent_name"]}
+																			</p>
+																			<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{data["email"]}</p>
+																			<div className="flex items-center justify-between">
+																				<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
+																					<i className="fa-solid fa-clock mr-2"></i>
+																					Pending
+																				</p>
+																				<Button btnStyle="sm" label={"On Board"} disabled />
+																			</div>
+																		</div>
+																	</div>
+																)
+															)}
 														</div>
-														{Array(5).fill(
-														<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
-															<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
-																<div className="mb-2 flex items-start justify-between">
-																	<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
-																	<Menu as="div" className="relative">
-																		<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-																			<i className="fa-solid fa-ellipsis-vertical"></i>
-																		</Menu.Button>
-																		<Transition
-																		as={Fragment}
-																		enter="transition ease-out duration-100"
-																		enterFrom="transform opacity-0 scale-95"
-																		enterTo="transform opacity-100 scale-100"
-																		leave="transition ease-in duration-75"
-																		leaveFrom="transform opacity-100 scale-100"
-																		leaveTo="transform opacity-0 scale-95"
-																		>
-																			<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-1 shadow-normal dark:bg-gray-700'}>
-																				<Menu.Item>
-																					<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center">
-																						<i className="fa-solid fa-building mr-2"></i> Company Details
-																					</button>
-																				</Menu.Item>
-																			</Menu.Items>
-																		</Transition>
-																	</Menu>
-																</div>
-																<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
-																<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
-																<div className="flex items-center justify-between">
-																	<p className="flex items-center text-sm text-darkGray dark:text-gray-400">
-																		<i className="fa-solid fa-clock mr-2"></i>
-																		Pending
-																	</p>
-																	<Button btnStyle="sm" label={'On Board'} disabled />
-																</div>
-															</div>
-														</div>
-														)}
-													</div>
+													)}
 												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
@@ -294,7 +565,7 @@ export default function Vendors() {
 												/>
 											</div>
 											<div className="flex grow items-center justify-end">
-                                                <div className="mr-3 w-[150px]">
+												<div className="mr-3 w-[150px]">
 													<FormField
 														fieldType="select"
 														placeholder="Sort"
@@ -314,7 +585,7 @@ export default function Vendors() {
 												<div className="w-[150px]">
 													<label
 														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:bg-gray-700 dark:border-gray-600"
+														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 													>
 														<span>Select All</span>
 														<input type="checkbox" id="teamSelectAll" />
@@ -322,40 +593,48 @@ export default function Vendors() {
 												</div>
 											</div>
 										</div>
-										<p className="text-darkGray dark:text-gray-400 text-center">No Vendors Found</p>
-										<div className="flex flex-wrap mx-[-15px]">
-											{Array(5).fill(
-											<div className="mb-[30px] px-[15px] w-full md:max-w-[50%] lg:max-w-[33.3333%]">
-												<div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-4 shadow-lg">
-													<div className="mb-2 flex items-start justify-between">
-														<h4 className="text-lg font-semibold my-1 mr-2">Company Name</h4>
-														<div>
-															<input type="checkbox" />
+										{fvendors && fvendors.length <= 0 ? (
+											<p className="text-center text-darkGray dark:text-gray-400">No Vendors Found</p>
+										) : (
+											<div className="mx-[-15px] flex flex-wrap">
+												{fvendors.map((data, i) => (
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
+														<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
+															<div className="mb-2 flex items-start justify-between">
+																<h4 className="my-1 mr-2 text-lg font-semibold">{data["company_name"]}</h4>
+																<div>
+																	<input type="checkbox" />
+																</div>
+															</div>
+															<p className="font-semibold text-darkGray dark:text-gray-300">{data["agent_name"]}</p>
+															<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{data["email"]}</p>
+															<div className="flex items-center justify-between">
+																<Switch
+																	checked={enabled}
+																	onChange={setEnabled}
+																	className={`${
+																		enabled ? "bg-primary" : "bg-gray-400"
+																	} relative inline-flex h-5 w-10 items-center rounded-full`}
+																>
+																	<span className="sr-only">Enable notifications</span>
+																	<span
+																		className={`${
+																			enabled ? "translate-x-6" : "translate-x-1"
+																		} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+																	/>
+																</Switch>
+																<Button
+																	btnStyle="sm"
+																	label={"Company Details"}
+																	btnType="button"
+																	handleClick={() => setCompanyDetails(true)}
+																/>
+															</div>
 														</div>
 													</div>
-													<p className="text-darkGray dark:text-gray-300 font-semibold">Jane Cooper</p>
-													<p className="text-darkGray dark:text-gray-300 text-sm mb-4">jane@xyzemail.com</p>
-													<div className="flex items-center justify-between">
-														<Switch
-														checked={enabled}
-														onChange={setEnabled}
-														className={`${
-															enabled ? 'bg-primary' : 'bg-gray-400'
-														} relative inline-flex h-5 w-10 items-center rounded-full`}
-														>
-															<span className="sr-only">Enable notifications</span>
-															<span
-																className={`${
-																enabled ? 'translate-x-6' : 'translate-x-1'
-																} inline-block h-3 w-3 transform rounded-full bg-white transition`}
-															/>
-														</Switch>
-														<Button btnStyle="sm" label={'Company Details'} btnType="button" handleClick={() => setCompanyDetails(true)} />
-													</div>
-												</div>
+												))}
 											</div>
-											)}
-										</div>
+										)}
 									</Tab.Panel>
 								</Tab.Panels>
 							</Tab.Group>
@@ -363,7 +642,7 @@ export default function Vendors() {
 					</div>
 				</div>
 			</main>
-            <Transition.Root show={sentAgreement} as={Fragment}>
+			<Transition.Root show={sentAgreement} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setSentAgreement}>
 					<Transition.Child
 						as={Fragment}
@@ -390,9 +669,7 @@ export default function Vendors() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Agreement Sent
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Agreement Sent</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -401,17 +678,20 @@ export default function Vendors() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									<div className="p-8 w-full max-w-[500px] mx-auto text-center">
-										<i className="fa-solid fa-circle-check text-green-500 mb-2 text-[50px]"></i>
-                                        <h4 className="font-bold text-xl mb-6">Agreement Sent Successfully</h4>
-										<p className="text-darkGray dark:text-gray-400 mb-2 text-sm">Copy link to share this with vendor</p>
+									<div className="mx-auto w-full max-w-[500px] p-8 text-center">
+										<i className="fa-solid fa-circle-check mb-2 text-[50px] text-green-500"></i>
+										<h4 className="mb-6 text-xl font-bold">Agreement Sent Successfully</h4>
+										<p className="mb-2 text-sm text-darkGray dark:text-gray-400">Copy link to share this with vendor</p>
 										<div className="relative mb-6">
 											<input
-												type='text'
-												value={'https://www.somhako.com/copy-agreement-url/dajbdijok3123nk321'}
-												className="min-h-[45px] w-full p-3 pr-14 rounded-normal border border-borderColor dark:border-gray-600 text-sm dark:bg-gray-700"
+												type="text"
+												value={"https://www.somhako.com/copy-agreement-url/dajbdijok3123nk321"}
+												className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-14 text-sm dark:border-gray-600 dark:bg-gray-700"
 											/>
-											<button type="button" className="absolute right-0 top-0 w-10 h-full rounded-r-normal bg-slate-300 hover:bg-slate-400">
+											<button
+												type="button"
+												className="absolute right-0 top-0 h-full w-10 rounded-r-normal bg-slate-300 hover:bg-slate-400"
+											>
 												<i className="fa-solid fa-copy"></i>
 											</button>
 										</div>
@@ -450,9 +730,7 @@ export default function Vendors() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Company Details
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Company Details</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -462,41 +740,41 @@ export default function Vendors() {
 										</button>
 									</div>
 									<div className="p-8">
-										<div className="flex flex-wrap -mx-3">
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="Company Name" fieldType="input" inputType="text" />
 											</div>
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="Email ID" fieldType="input" inputType="email" required />
 											</div>
 										</div>
 										<FormField label="Agent Name" fieldType="input" inputType="text" />
-										<div className="flex flex-wrap -mx-3">
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="Contact Number" fieldType="input" inputType="number" />
 											</div>
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="Contact Number (Optional)" fieldType="input" inputType="number" />
 											</div>
 										</div>
-										<div className="flex flex-wrap -mx-3">
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="License Number" fieldType="input" inputType="text" />
 											</div>
-											<div className="w-full md:max-w-[50%] px-3 mb-4">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField label="Headquarter Address" fieldType="input" inputType="text" />
 											</div>
 										</div>
 										<div className="-mx-3 flex flex-wrap items-start">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<h6 className="mb-1 font-bold">Agreement</h6>
-												<div className="flex my-2">
+												<div className="my-2 flex">
 													<div className="">
 														<i className="fa-solid fa-file-pdf text-[40px] text-red-500"></i>
 														{/* <i className="fa-solid fa-file-word text-[40px] text-indigo-800"></i> */}
 													</div>
-													<div className="grow pl-4 flex items-center">
-														<span className="grow pr-3 flex items-center text-[12px]"> 
+													<div className="flex grow items-center pl-4">
+														<span className="flex grow items-center pr-3 text-[12px]">
 															<small className="clamp_1 mr-2">Agent Agreement</small>
 															(4.5MB)
 														</span>
@@ -504,10 +782,11 @@ export default function Vendors() {
 													</div>
 												</div>
 											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%] flex flex-wrap">
-												<h6 className="mb-1 font-bold w-full">Agreement Validity</h6>
-												<div className="w-full md:max-w-[50%] pr-2">
-													<FormField
+											<div className="mb-4 flex w-full flex-wrap px-3 md:max-w-[50%]">
+												{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
+												<div className="w-full pr-2 md:max-w-[50%]">
+													<FormField label="Agreement Start " fieldType="input" inputType="date" />
+													{/* <FormField
 														id={"start"}
 														fieldType="date"
 														placeholder="Start Time"
@@ -515,10 +794,11 @@ export default function Vendors() {
 														showTimeSelect
 														showHours
 														required
-													/>
+													/> */}
 												</div>
-												<div className="w-full md:max-w-[50%] pl-2">
-													<FormField
+												<div className="w-full pl-2 md:max-w-[50%]">
+													<FormField label="Agreement End " fieldType="input" inputType="date" />
+													{/* <FormField
 														id={"end"}
 														fieldType="date"
 														placeholder="End Time"
@@ -526,7 +806,7 @@ export default function Vendors() {
 														showTimeSelect
 														showHours
 														required
-													/>
+													/> */}
 												</div>
 											</div>
 										</div>
