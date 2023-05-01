@@ -1215,7 +1215,7 @@ export default function Profile() {
 																	checked={enabled}
 																	onChange={setEnabled}
 																	className={`${
-																		enabled ? "bg-primary" : "bg-gray-400"
+																		enabled ? "bg-green-500" : "bg-gray-400"
 																	} relative inline-flex h-6 w-11 items-center rounded-full`}
 																>
 																	<span className="sr-only">Enable notifications</span>

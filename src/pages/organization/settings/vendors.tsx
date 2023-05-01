@@ -613,7 +613,7 @@ export default function Vendors() {
 																	checked={enabled}
 																	onChange={setEnabled}
 																	className={`${
-																		enabled ? "bg-primary" : "bg-gray-400"
+																		enabled ? "bg-green-500" : "bg-gray-400"
 																	} relative inline-flex h-5 w-10 items-center rounded-full`}
 																>
 																	<span className="sr-only">Enable notifications</span>
