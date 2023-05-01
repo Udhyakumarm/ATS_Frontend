@@ -76,10 +76,17 @@ export const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				const userObj = await axiosInstance.api
-					.post(credentials?.user_type === "candidate" ? "/candidate/candidatelogin/" : "/organization/login/", {
-						email: credentials?.email,
-						password: credentials?.password
-					})
+					.post(
+						credentials?.user_type === "candidate"
+							? "/candidate/candidatelogin/"
+							: credentials?.user_type === "vendor"
+							? "/vendors/vendor_login/"
+							: "/organization/login/",
+						{
+							email: credentials?.email,
+							password: credentials?.password
+						}
+					)
 					.then((response) => {
 						console.log({ response: response.data.userObj });
 						return response;

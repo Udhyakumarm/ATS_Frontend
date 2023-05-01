@@ -7,7 +7,7 @@ let userStore: any = (set: any) => ({
 	user: [],
 	settype: (id: any) => set(() => ({ type: id })),
 	setrole: (id: any) => set(() => ({ role: id })),
-	setuser: (id: any) => set(() => ({ user: id })),
+	setuser: (id: any) => set(() => ({ user: id }))
 });
 
 let settingsStore: any = (set: any) => ({
@@ -19,6 +19,7 @@ let carrierStore: any = (set: any) => ({
 	// auth: false, // Candiate Auth
 	cname: "", //Company Name
 	cid: "", // Carrier Page ID / Org Profile ID
+	vid: "", // Carrier Page ID / Org Profile ID
 	orgdetail: [], //Carrier Page Org Detail
 	jid: "", //Job ID
 	jdata: {}, //Particular Job Data
@@ -26,6 +27,7 @@ let carrierStore: any = (set: any) => ({
 	// setauth: (id) => set((state) => ({ auth: id })),
 	setcname: (id: any) => set(() => ({ cname: id })),
 	setcid: (id: any) => set(() => ({ cid: id })),
+	setvid: (id: any) => set(() => ({ vid: id })),
 	setorgdetail: (id: any) => set(() => ({ orgdetail: id })),
 	setjid: (id: any) => set(() => ({ jid: id })),
 	setjdata: (id: any) => set(() => ({ jdata: id }))

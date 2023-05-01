@@ -1,6 +1,12 @@
+import { useCarrierStore, useUserStore } from "@/utils/code";
 import ThemeChange from "../ThemeChange";
+import { signOut } from "next-auth/react";
 
 export default function VendorTopBar() {
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+	const vid = useCarrierStore((state: { vid: any }) => state.vid);
 	return (
 		<>
 			<div
@@ -20,6 +26,13 @@ export default function VendorTopBar() {
 				<button
 					type="button"
 					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+					onClick={() => {
+						signOut({ callbackUrl: `/vendor/${vid}/signin` });
+
+						settype("");
+						setrole("");
+						setuser([]);
+					}}
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
 				</button>
