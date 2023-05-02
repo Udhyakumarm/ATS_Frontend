@@ -14,6 +14,7 @@ import noActivedata from "/public/images/no-data/iconGroup-1.png";
 import Link from "next/link";
 
 export default function JobsActive() {
+	const [sklLoad] = useState(true)
 	const router = useRouter();
 
 	const { data: session } = useSession();
@@ -82,22 +83,30 @@ export default function JobsActive() {
 						</div>
 						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
 							<div className="mx-[-15px] flex flex-wrap">
-								{active &&
-									active.map(
-										(job: any, i) =>
-											job && (
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
-													<JobCard_2
-														key={i}
-														job={job}
-														// handleView={() => {
-														// 	router.push("/organization/jobs/active/" + job.refid);
-														// }}
-														axiosInstanceAuth2={axiosInstanceAuth2}
-													/>
-												</div>
-											)
-									)}
+								{
+									sklLoad
+									?
+									active && active.map(
+										(job: any, i) => job && (
+											<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+												<JobCard_2
+													key={i}
+													job={job}
+													// handleView={() => {
+													// 	router.push("/organization/jobs/active/" + job.refid);
+													// }}
+													axiosInstanceAuth2={axiosInstanceAuth2}
+												/>
+											</div>
+										)
+									)
+									:
+									Array(4).fill(
+										<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+											<JobCard_2 sklLoad={true} />
+										</div>
+									)
+								}
 							</div>
 							<div className="text-center py-8 w-full max-w-[300px] mx-auto">
 								<div className="mb-6 p-2">

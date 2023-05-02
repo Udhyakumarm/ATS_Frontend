@@ -194,6 +194,7 @@ input[type=number] {
   padding: 2px 5px;
   font-size: 14px;
   vertical-align: -webkit-baseline-middle;
+  max-width: 100%;
 }
 .multiSelectContainer ul li.option, .multiSelectContainer ul .notFound {
   font-size: 12px;

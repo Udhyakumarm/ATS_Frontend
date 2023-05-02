@@ -1,6 +1,8 @@
 import Head from "next/head";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -29,6 +31,7 @@ import JobCard_1 from "@/components/JobCard-1";
 import FormField from "@/components/FormField";
 
 export default function OrganizationDashboard() {
+	const [sklLoad] = useState(true)
 	const settings = {
 		dots: false,
 		arrows: true,
@@ -50,9 +53,9 @@ export default function OrganizationDashboard() {
 	};
 	const aplc_status = [
 		{
-			percentage: 10,
+			percentage: '',
 			title: "Total Pipelines",
-			number: 99,
+			number: '',
 			color: "#58E700",
 			icon: <i className="fa-solid fa-timeline"></i>
 		},
@@ -126,10 +129,10 @@ export default function OrganizationDashboard() {
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold">Applicant Details</h2>
 										<aside className="flex items-center justify-end">
-											<div className="w-[140px]">
+											<div className="w-[140px] mr-4">
 												<FormField fieldType="select" />
 											</div>
-											<button type="button" className="ml-4 h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
+											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab relative z-[1]">
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
@@ -141,16 +144,26 @@ export default function OrganizationDashboard() {
 													<div className="py-3 px-2">
 														<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
 															<div className="mb-2 flex items-center justify-between">
-																<h4 className="text-2xl font-extrabold">{item.number}</h4>
+																<h4 className="text-2xl font-extrabold grow pr-4">
+																	{item.number || <Skeleton width={40}/>}
+																</h4>
 																<div className="rounded bg-lightGray py-1 px-2 text-[12px] text-white">{item.icon}</div>
 															</div>
 															<p className="mb-2 text-sm">{item.title}</p>
 															<div style={{ width: 40, height: 40 }}>
-																<CircularProgressbar
-																	value={item.percentage}
-																	text={`${item.percentage}`}
-																	styles={buildStyles({ pathColor: item.color, textSize: "26px", textColor: "#727272" })}
-																/>
+																{
+																	item.percentage
+																	?
+																	<>
+																	<CircularProgressbar
+																		value={item.percentage}
+																		text={`${item.percentage}`}
+																		styles={buildStyles({ pathColor: item.color, textSize: "26px", textColor: "#727272" })}
+																	/>
+																	</>
+																	:
+																	<Skeleton circle width={40} height={40}/>
+																}
 															</div>
 															<div
 																className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
@@ -203,8 +216,10 @@ export default function OrganizationDashboard() {
 									</div>
 									<div className="p-6 pt-0">
 										<div className="max-h-[330px] overflow-y-auto">
-											{Array(6).fill(
-												<>
+											{
+												sklLoad
+												?
+												Array(6).fill(
 													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-2 px-3">
 														<div className="flex w-[45%] items-center pr-2">
 															<Image
@@ -214,14 +229,22 @@ export default function OrganizationDashboard() {
 																width={30}
 																height={30}
 															/>
-															<div className="pl-2">
-																<h5 className="text-sm font-bold">Bethany Jackson</h5>
-																<p className="text-[12px] text-darkGray">Software Developer</p>
+															<div className="pl-2 grow">
+																<h5 className="text-sm font-bold">
+																	Bethany Jackson
+																</h5>
+																<p className="text-[12px] text-darkGray">
+																	Software Developer
+																</p>
 															</div>
 														</div>
 														<div className="w-[30%] pr-2">
-															<h5 className="text-sm font-bold">20 Nov 2023</h5>
-															<p className="text-[12px] text-darkGray">10:40 AM</p>
+															<h5 className="text-sm font-bold">
+																20 Nov 2023
+															</h5>
+															<p className="text-[12px] text-darkGray">
+																10:40 AM
+															</p>
 														</div>
 														<div className="w-[20%]">
 															<Button btnStyle="outlined" label="View Profile" loader={false} />
@@ -232,8 +255,38 @@ export default function OrganizationDashboard() {
 															</button>
 														</div>
 													</div>
-												</>
-											)}
+												)
+												:
+												Array(6).fill(
+													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-2 px-3">
+														<div className="flex w-[45%] items-center pr-2">
+															<Skeleton circle width={30} height={30} />
+															<div className="pl-2 grow">
+																<h5 className="text-sm font-bold">
+																	<Skeleton width={100} />
+																</h5>
+																<p className="text-[12px] text-darkGray">
+																	<Skeleton width={60} />
+																</p>
+															</div>
+														</div>
+														<div className="w-[30%] pr-2">
+															<h5 className="text-sm font-bold">
+																<Skeleton width={100} />
+															</h5>
+															<p className="text-[12px] text-darkGray">
+																<Skeleton width={50} />
+															</p>
+														</div>
+														<div className="w-[20%]">
+															<Skeleton height={28} />
+														</div>
+														<div className="w-[5%] text-center">
+															<Skeleton width={6} height={20} />
+														</div>
+													</div>
+												)
+											}
 										</div>
 										<div className="text-center py-8">
 											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
@@ -256,8 +309,10 @@ export default function OrganizationDashboard() {
 									</div>
 									<div className="p-6 pt-0">
 										<div className="max-h-[330px] overflow-y-auto">
-											{Array(6).fill(
-												<>
+											{
+												sklLoad
+												?
+												Array(6).fill(
 													<div className="mb-3 flex flex-wrap rounded-[10px] border">
 														<div className="flex w-[65%] items-center py-2 px-3">
 															<p className="clamp_2 text-sm">
@@ -273,8 +328,22 @@ export default function OrganizationDashboard() {
 															<h5 className="font-bold">20 Nov 2023</h5>
 														</div>
 													</div>
-												</>
-											)}
+												)
+												:
+												Array(6).fill(
+													<div className="mb-3 flex flex-wrap rounded-[10px] border">
+														<div className="flex w-[65%] items-center py-2 px-3">
+															<Skeleton containerClassName="grow" count={2} />
+														</div>
+														<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+															<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																<i className="fa-regular fa-square-check"></i>
+															</span>
+															<h5 className="font-bold grow"><Skeleton height={12} /></h5>
+														</div>
+													</div>
+												)
+											}
 										</div>
 										<div className="text-center py-8">
 											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
@@ -297,13 +366,21 @@ export default function OrganizationDashboard() {
 									</div>
 									<div className="p-6 pt-0">
 										<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
-											{Array(4).fill(
-												<>
+											{
+												sklLoad
+												?
+												Array(5).fill(
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
 														<JobCard_1 />
 													</div>
-												</>
-											)}
+												)
+												:
+												Array(5).fill(
+													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+														<JobCard_1 sklLoad={true} />
+													</div>
+												)
+											}
 										</div>
 										<div className="text-center py-8">
 											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
@@ -338,8 +415,10 @@ export default function OrganizationDashboard() {
 									</div>
 									<div className="p-6 pt-0">
 										<div className="max-h-[330px] overflow-y-auto">
-											{Array(2).fill(
-												<>
+											{
+												sklLoad
+												?
+												Array(2).fill(
 													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
 														<div className="flex items-center justify-center p-3">
 															<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
@@ -351,8 +430,20 @@ export default function OrganizationDashboard() {
 															</p>
 														</div>
 													</div>
-												</>
-											)}
+												)
+												:
+												Array(2).fill(
+													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
+														<div className="flex items-center justify-center p-3">
+															<Skeleton circle width={40} height={40} />
+															<p className="w-[calc(100%-40px)] pl-4">
+																<Skeleton width={200} />
+																<Skeleton width={100} />
+															</p>
+														</div>
+													</div>
+												)
+											}
 											{Array(2).fill(
 												<>
 													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">

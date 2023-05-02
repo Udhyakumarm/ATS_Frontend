@@ -4,8 +4,10 @@ import Button from "./Button";
 import { useRouter } from "next/router";
 import toastcomp from "./toast";
 import FormField from "./FormField";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
-export default function JobCard_2({ job, handleView, axiosInstanceAuth2 }: any) {
+export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad }: any) {
 	const [starred, setStarred] = useState(false);
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
@@ -24,6 +26,47 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2 }: any) 
 			.catch((err) => {
 				toastcomp(`${status} Not Successfully`, "error");
 			});
+	}
+
+	if(sklLoad === true) {
+		return(
+			<div className="h-full rounded-normal bg-white py-2 px-5 shadow-normal dark:bg-gray-700">
+				<div className="mb-2 flex flex-wrap items-center justify-between">
+					<div className="my-2 flex items-center">
+						<h4 className="font-bold capitalize">
+							<Skeleton width={160} />
+						</h4>
+					</div>
+					<div className="text-right text-gray-400 flex">
+						<div>
+							<Skeleton width={10} height={20} />
+						</div>
+						<div className="ml-4">
+							<Skeleton width={10} height={20} />
+						</div>
+					</div>
+				</div>
+				<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+					<li className="mr-3 list-none capitalize"><Skeleton width={40} /></li>
+					<li className="mr-3 capitalize"><Skeleton width={40} /></li>
+				</ul>
+				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
+					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total Candidates</h5>
+						<h6 className="text-lg font-semibold"><Skeleton width={40} height={16} /></h6>
+					</div>
+					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active Candidates</h5>
+						<h6 className="text-lg font-semibold"><Skeleton width={40} height={16} /></h6>
+					</div>
+					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job ID</h5>
+						<h6 className="text-lg font-semibold break-all clamp_1"><Skeleton width={40} height={16} /></h6>
+					</div>
+				</div>
+				<Skeleton width={80} height={28} />
+			</div>
+		)
 	}
 
 	return (
@@ -213,17 +256,17 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2 }: any) 
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="mr-[15px] grow border-r pl-[15px]">
+					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total Candidates</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="mr-[15px] grow border-r pl-[15px]">
+					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active Candidates</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="grow pl-[15px]">
+					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job ID</h5>
-						<h6 className="text-lg font-semibold">{job.refid}</h6>
+						<h6 className="text-lg font-semibold break-all clamp_1">{job.refid}</h6>
 					</div>
 				</div>
 				<Button btnStyle="outlined" btnType="button" label="View Job" handleClick={() => setPreviewPopup(true)} />

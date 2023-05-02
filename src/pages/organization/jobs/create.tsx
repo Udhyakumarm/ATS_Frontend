@@ -42,6 +42,7 @@ const StickyLabel = ({ label }: any) => (
 const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
 
 export default function JobsCreate() {
+	const [sklLoad] = useState(true)
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
@@ -751,11 +752,21 @@ export default function JobsCreate() {
 									<StickyLabel label="Assessment" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
-											{Array(6).fill(
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-													<CardLayout_1 isBlank={true} />
-												</div>
-											)}
+											{
+												sklLoad
+												?
+												Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_1 isBlank={true} />
+													</div>
+												)
+												:
+												Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_1 sklLoad={true} />
+													</div>
+												)
+											}
 										</div>
 									</div>
 								</div>
@@ -884,11 +895,21 @@ export default function JobsCreate() {
 											</div>
 										</div>
 										<div className="mx-[-15px] flex flex-wrap">
-											{Array(6).fill(
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-													<CardLayout_2 />
-												</div>
-											)}
+											{
+												sklLoad
+												?
+												Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_2 />
+													</div>
+												)
+												:
+												Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_2 sklLoad={true} />
+													</div>
+												)
+											}
 										</div>
 									</div>
 								</div>
@@ -898,16 +919,26 @@ export default function JobsCreate() {
 									<StickyLabel label="Job Boards" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<div className="mx-[-15px] flex flex-wrap">
-											{Object.keys(integrationList).map((key: any) => (
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
-													<CardLayout_1
-														key={key}
-														label={key}
-														access={integrationList[key as keyof typeof integrationList].access}
-														isBlank={false}
-													/>
-												</div>
-											))}
+											{
+												sklLoad
+												?
+												Object.keys(integrationList).map((key: any) => (
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
+														<CardLayout_1
+															key={key}
+															label={key}
+															access={integrationList[key as keyof typeof integrationList].access}
+															isBlank={false}
+														/>
+													</div>
+												))
+												:
+												Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_1 sklLoad={true} />
+													</div>
+												)
+											}
 										</div>
 									</div>
 								</div>
