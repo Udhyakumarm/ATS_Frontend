@@ -1,5 +1,5 @@
 import { Dialog, Menu, Switch, Tab, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "../FormField";
 import Button from "../Button";
 
@@ -7,12 +7,82 @@ export default function VCard(props: any) {
 	const cancelButtonRef = useRef(null);
 	const [companyDetails, setCompanyDetails] = useState(false);
 	const [enabled, setEnabled] = useState(false);
+	useEffect(() => {
+		if (props.data["verified"] === true && props.data["onboard"] === true && props.data["activate"] === true) {
+			setEnabled(true);
+		}
+	}, [props]);
+
+	const [cname, setcname] = useState("");
+	const [email, setemail] = useState("");
+	const [phone, setphone] = useState("");
+	const [aname, setaname] = useState("");
+	const [phone2, setphone2] = useState("");
+	const [lno, setlno] = useState("");
+	const [add, setadd] = useState("");
+	const [agreement, setagreement] = useState("");
+	const [file, setfile] = useState(false);
+	const [asdate, setasdate] = useState("");
+	const [aedate, setaedate] = useState("");
+
+	const axiosInstanceAuth2 = props.axiosInstanceAuth2;
+
+	async function loadVendorRegData(vid: string) {
+		await axiosInstanceAuth2
+			.get(`/vendors/vendor_data2/${vid}/`)
+			.then(async (res) => {
+				if (res.data.length > 0) {
+					setemail(res.data[0]["email"]);
+					setcname(res.data[0]["vendor"]["company_name"]);
+					setaname(res.data[0]["vendor"]["agent_name"]);
+					setphone(res.data[0]["vendor"]["contact_number"]);
+					setphone2(res.data[0]["contact_2"]);
+					setlno(res.data[0]["license_number"]);
+					setadd(res.data[0]["headquater_address"]);
+					setagreement(res.data[0]["vendor"]["agreement"]);
+					setasdate(res.data[0]["vendor"]["agreement_valid_start_date"]);
+					setaedate(res.data[0]["vendor"]["agreement_valid_end_date"]);
+				} else {
+					setemail("");
+					setcname("");
+					setaname("");
+					setphone("");
+					setphone2("");
+					setlno("");
+					setadd("");
+					setagreement("");
+					setasdate("");
+					setaedate("");
+				}
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setemail("");
+				setcname("");
+				setaname("");
+				setphone("");
+				setphone2("");
+				setlno("");
+				setadd("");
+				setagreement("");
+				setasdate("");
+				setaedate("");
+			});
+	}
+
+	useEffect(() => {
+		console.log("!", companyDetails);
+		if (companyDetails) {
+			loadVendorRegData(props.data["vrefid"]);
+		}
+	}, [companyDetails]);
+
 	return (
 		<>
 			{props.fvendor ? (
 				props.data["verified"] === true &&
 				props.data["onboard"] === true && (
-					<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={props.key}>
+					<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 						<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
 							<div className="mb-2 flex items-start justify-between">
 								<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["company_name"]}</h4>
@@ -25,7 +95,10 @@ export default function VCard(props: any) {
 							<div className="flex items-center justify-between">
 								<Switch
 									checked={enabled}
-									onChange={setEnabled}
+									onChange={(e) => {
+										props.activateVendor(props.data["vrefid"], !enabled);
+										setEnabled(!enabled);
+									}}
 									className={`${
 										enabled ? "bg-green-500" : "bg-gray-400"
 									} relative inline-flex h-5 w-10 items-center rounded-full`}
@@ -50,7 +123,7 @@ export default function VCard(props: any) {
 			) : (
 				<>
 					{props.data["verified"] === true && props.data["onboard"] === false && (
-						<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={props.key}>
+						<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 							<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
 								<div className="mb-2 flex items-start justify-between">
 									<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["company_name"]}</h4>
@@ -104,7 +177,7 @@ export default function VCard(props: any) {
 					)}
 
 					{props.data["verified"] === false && props.data["onboard"] === false && (
-						<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={props.key}>
+						<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 							<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
 								<div className="mb-2 flex items-start justify-between">
 									<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["company_name"]}</h4>
@@ -163,27 +236,46 @@ export default function VCard(props: any) {
 									<div className="p-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Company Name" fieldType="input" inputType="text" />
+												<FormField label="Company Name" fieldType="input" inputType="text" value={cname} readOnly />
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Email ID" fieldType="input" inputType="email" required />
-											</div>
-										</div>
-										<FormField label="Agent Name" fieldType="input" inputType="text" />
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Contact Number" fieldType="input" inputType="number" />
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Contact Number (Optional)" fieldType="input" inputType="number" />
+												<FormField
+													label="Email ID"
+													fieldType="input"
+													inputType="email"
+													required
+													value={email}
+													readOnly
+												/>
 											</div>
 										</div>
+										<FormField label="Agent Name" fieldType="input" inputType="text" value={aname} readOnly />
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="License Number" fieldType="input" inputType="text" />
+												<FormField label="Contact Number" fieldType="input" inputType="number" value={phone} readOnly />
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Headquarter Address" fieldType="input" inputType="text" />
+												<FormField
+													label="Contact Number (Optional)"
+													fieldType="input"
+													inputType="number"
+													value={phone2}
+													readOnly
+												/>
+											</div>
+										</div>
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField label="License Number" fieldType="input" inputType="text" value={lno} readOnly />
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Headquarter Address"
+													fieldType="input"
+													inputType="text"
+													value={add}
+													readOnly
+												/>
 											</div>
 										</div>
 										<div className="-mx-3 flex flex-wrap items-start">
@@ -196,17 +288,30 @@ export default function VCard(props: any) {
 													</div>
 													<div className="flex grow items-center pl-4">
 														<span className="flex grow items-center pr-3 text-[12px]">
-															<small className="clamp_1 mr-2">Agent Agreement</small>
-															(4.5MB)
+															{/* <small className="clamp_1 mr-2">Agent Agreement</small> */}
+															{agreement.split("/").pop()}
 														</span>
-														<Button label="View" btnStyle="sm" />
+														<Button
+															label="View"
+															btnStyle="sm"
+															btnType="button"
+															handleClick={() => {
+																window.open(agreement, "_blank");
+															}}
+														/>
 													</div>
 												</div>
 											</div>
 											<div className="mb-4 flex w-full flex-wrap px-3 md:max-w-[50%]">
 												{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
 												<div className="w-full pr-2 md:max-w-[50%]">
-													<FormField label="Agreement Start " fieldType="input" inputType="date" />
+													<FormField
+														label="Agreement Start "
+														fieldType="input"
+														inputType="date"
+														value={asdate}
+														readOnly
+													/>
 													{/* <FormField
 														id={"start"}
 														fieldType="date"
@@ -218,7 +323,13 @@ export default function VCard(props: any) {
 													/> */}
 												</div>
 												<div className="w-full pl-2 md:max-w-[50%]">
-													<FormField label="Agreement End " fieldType="input" inputType="date" />
+													<FormField
+														label="Agreement End "
+														fieldType="input"
+														inputType="date"
+														value={aedate}
+														readOnly
+													/>
 													{/* <FormField
 														id={"end"}
 														fieldType="date"

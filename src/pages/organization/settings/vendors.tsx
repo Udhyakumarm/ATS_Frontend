@@ -195,6 +195,23 @@ export default function Vendors() {
 			});
 	}
 
+	async function activateVendor(vid: string, activate: any) {
+		const fd = new FormData();
+		fd.append("activate", activate);
+		await axiosInstanceAuth2
+			.post(`/vendors/activate_vendors/${vid}/`, fd)
+			.then(async (res) => {
+				console.log("!", res.data);
+				toastcomp(res.data.message, "success");
+				loadVendors();
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Server Error", "error");
+				loadVendors();
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -457,7 +474,12 @@ export default function Vendors() {
 													) : (
 														<div className="mx-[-15px] flex flex-wrap">
 															{pvendors.map((data, i) => (
-																<VCard data={data} onBoardVendor={onBoardVendor} key={i} />
+																<VCard
+																	data={data}
+																	onBoardVendor={onBoardVendor}
+																	key={i}
+																	axiosInstanceAuth2={axiosInstanceAuth2}
+																/>
 															))}
 														</div>
 													)}
@@ -509,7 +531,14 @@ export default function Vendors() {
 										) : (
 											<div className="mx-[-15px] flex flex-wrap">
 												{vendors.map((data, i) => (
-													<VCard data={data} onBoardVendor={onBoardVendor} key={i} fvendor={true} />
+													<VCard
+														data={data}
+														onBoardVendor={onBoardVendor}
+														key={i}
+														fvendor={true}
+														activateVendor={activateVendor}
+														axiosInstanceAuth2={axiosInstanceAuth2}
+													/>
 												))}
 											</div>
 										)}
