@@ -4,6 +4,8 @@ import Head from "next/head";
 import { Dialog, Tab, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import FormField from "@/components/FormField";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Image from "next/image";
 import userImg from "/public/images/user-image.png";
 import Button from "@/components/Button";
@@ -11,6 +13,7 @@ import { Menu } from '@headlessui/react'
 import startNewChat from "/public/images/no-data/iconGroup-4.png";
 
 export default function Inbox() {
+	const [sklLoad] = useState(true);
 	const cancelButtonRef = useRef(null);
     const [addMembers, setAddMembers] = useState(false);
 	const [createGroup, setCreateGroup] = useState(false);
@@ -25,7 +28,29 @@ export default function Inbox() {
 		setTogglePages(false);
 	}
 
-	const MessageCards = () => {
+	const MessageCards = ({sklLoad}:any) => {
+		if(sklLoad === true) {
+			return (
+				<>
+					<div
+						className={
+							"flex border border-transparent border-b-slate-200 px-3 py-4 last:border-b-0 dark:border-b-gray-600"
+						}
+					>
+						<Skeleton circle width={50} height={50} />
+						<div className="w-[calc(100%-50px)] pt-1 pl-3">
+							<div className="mb-2 flex justify-between">
+								<h5 className="text-sm font-semibold">
+									<Skeleton width={100} />
+								</h5>
+								<Skeleton width={50} />
+							</div>
+							<Skeleton count={2} />
+						</div>
+					</div>
+				</>
+			)
+		}
 		return (
 			<>
 				<div
@@ -150,7 +175,13 @@ export default function Inbox() {
 															/>
 														</div>
 														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{Array(5).fill(<MessageCards />)}
+															{
+																sklLoad
+																?
+																Array(5).fill(<MessageCards />)
+																:
+																Array(5).fill(<MessageCards sklLoad={true} />)
+															}
 														</div>
 													</Tab.Panel>
 													<Tab.Panel>
@@ -163,7 +194,13 @@ export default function Inbox() {
 															/>
 														</div>
 														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{Array(5).fill(<MessageCards />)}
+															{
+																sklLoad
+																?
+																Array(5).fill(<MessageCards />)
+																:
+																Array(5).fill(<MessageCards sklLoad={true} />)
+															}
 														</div>
 													</Tab.Panel>
 												</Tab.Panels>
@@ -237,7 +274,13 @@ export default function Inbox() {
 															</Menu>
 														</div>
 														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{Array(5).fill(<MessageCards />)}
+															{
+																sklLoad
+																?
+																Array(5).fill(<MessageCards />)
+																:
+																Array(5).fill(<MessageCards sklLoad={true} />)
+															}
 														</div>
 													</Tab.Panel>
 													<Tab.Panel>
@@ -255,7 +298,13 @@ export default function Inbox() {
 															</button>
 														</div>
 														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{Array(5).fill(<MessageCards />)}
+															{
+																sklLoad
+																?
+																Array(5).fill(<MessageCards />)
+																:
+																Array(5).fill(<MessageCards sklLoad={true} />)
+															}
 														</div>
 													</Tab.Panel>
 												</Tab.Panels>
@@ -269,121 +318,152 @@ export default function Inbox() {
 							<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
 								{togglePages ? (
 									<>
-										<div className="h-[calc(100vh-212px)] overflow-y-auto">
-											<div className="group">
-												<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
-													<div className="mx-auto w-full max-w-[90%]">
-														<div className="mb-4 flex items-center justify-between">
-															<Image
-																src={userImg}
-																alt="User"
-																width={150}
-																className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-															/>
-															<p className="text-right text-[12px] text-darkGray dark:text-gray-400">
-																10 Feb 2023
-																<br />
-																3:30 PM
-															</p>
-														</div>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-															been the industry's standard dummy text ever since the 1500s, when an unknown printer took
-															a galley of type and scrambled it to make a type specimen book. It has survived not only
-															five centuries, but also the leap into electronic typesetting, remaining essentially
-															unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-															Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-															PageMaker including versions of Lorem Ipsum.
-														</article>
-													</div>
-												</div>
-											</div>
-											<div className="group">
-												<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
-													<div className="mx-auto w-full max-w-[90%]">
-														<div className="overflow-hidden rounded-large border dark:border-gray-500">
-															<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-center text-white">
-																<h3 className="mb-2 text-xl">Interview has been Scheduled</h3>
-																<p>You can find the details below</p>
-															</div>
-															<div className="py-6 px-10">
-																<h2 className="mb-4 text-lg font-bold">Hi Recruiter Name,</h2>
-																<p className="mb-6 text-sm text-darkGray dark:text-gray-400">
-																	Your Interview has been scheduled for Software Developer Job at Organization Name
-																</p>
-																<div className="mb-2 flex flex-wrap">
-																	<div className="w-full md:max-w-[75%]">
-																		<ul>
-																			<li className="mb-6 flex items-start">
-																				<span className="w-30px mr-4 inline-block">
-																					<i className="fa-solid fa-user text-[14px]"></i>
-																				</span>
-																				<aside className="grow">
-																					<h5 className="font-bold">Interviewer</h5>
-																					<p className="text-sm text-darkGray dark:text-gray-400">Adam Smith</p>
-																				</aside>
-																			</li>
-																			<li className="mb-6 flex items-start">
-																				<span className="w-30px mr-4 inline-block">
-																					<i className="fa-solid fa-street-view text-[14px]"></i>
-																				</span>
-																				<aside className="grow">
-																					<h5 className="font-bold">Interview Name</h5>
-																					<p className="text-sm text-darkGray dark:text-gray-400">Software Developer</p>
-																				</aside>
-																			</li>
-																			<li className="mb-6 flex items-start">
-																				<span className="w-30px mr-4 inline-block">
-																					<i className="fa-solid fa-clock text-[14px]"></i>
-																				</span>
-																				<aside className="grow">
-																					<h5 className="font-bold">Event Duration</h5>
-																					<p className="text-sm text-darkGray dark:text-gray-400">30 min</p>
-																				</aside>
-																			</li>
-																		</ul>
-																	</div>
-																	<div className="w-full md:max-w-[25%]">
-																		<aside className="mb-6 flex items-center">
-																			<h5 className="mr-4 font-bold">Date:</h5>
-																			<p className="text-sm text-darkGray dark:text-gray-400">05 Dec 2022</p>
-																		</aside>
-																		<aside className="mb-4 flex items-center">
-																			<h5 className="mr-4 font-bold">Time:</h5>
-																			<p className="text-sm text-darkGray dark:text-gray-400">02:00 PM</p>
-																		</aside>
-																	</div>
+										{
+											sklLoad
+											?
+											<>
+												<div className="h-[calc(100vh-212px)] overflow-y-auto">
+													<div className="group">
+														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
+															<div className="mx-auto w-full max-w-[90%]">
+																<div className="mb-4 flex items-center justify-between">
+																	<Image
+																		src={userImg}
+																		alt="User"
+																		width={150}
+																		className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
+																	/>
+																	<p className="text-right text-[12px] text-darkGray dark:text-gray-400">
+																		10 Feb 2023
+																		<br />
+																		3:30 PM
+																	</p>
 																</div>
-																<div className="flex flex-wrap">
-																	<div className="my-1 mr-4 last:mr-0">
-																		<Button btnStyle="success" label="Reschedule" />
-																	</div>
-																	<div className="my-1 mr-4 last:mr-0">
-																		<Button btnStyle="danger" label="Cancel" />
-																	</div>
-																</div>
+																<article className="text-sm text-darkGray dark:text-gray-400">
+																	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+																	been the industry's standard dummy text ever since the 1500s, when an unknown printer took
+																	a galley of type and scrambled it to make a type specimen book. It has survived not only
+																	five centuries, but also the leap into electronic typesetting, remaining essentially
+																	unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+																	Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
+																	PageMaker including versions of Lorem Ipsum.
+																</article>
 															</div>
 														</div>
 													</div>
+													<div className="group">
+														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
+															<div className="mx-auto w-full max-w-[90%]">
+																<div className="overflow-hidden rounded-large border dark:border-gray-500">
+																	<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-center text-white">
+																		<h3 className="mb-2 text-xl">Interview has been Scheduled</h3>
+																		<p>You can find the details below</p>
+																	</div>
+																	<div className="py-6 px-10">
+																		<h2 className="mb-4 text-lg font-bold">Hi Recruiter Name,</h2>
+																		<p className="mb-6 text-sm text-darkGray dark:text-gray-400">
+																			Your Interview has been scheduled for Software Developer Job at Organization Name
+																		</p>
+																		<div className="mb-2 flex flex-wrap">
+																			<div className="w-full md:max-w-[75%]">
+																				<ul>
+																					<li className="mb-6 flex items-start">
+																						<span className="w-30px mr-4 inline-block">
+																							<i className="fa-solid fa-user text-[14px]"></i>
+																						</span>
+																						<aside className="grow">
+																							<h5 className="font-bold">Interviewer</h5>
+																							<p className="text-sm text-darkGray dark:text-gray-400">Adam Smith</p>
+																						</aside>
+																					</li>
+																					<li className="mb-6 flex items-start">
+																						<span className="w-30px mr-4 inline-block">
+																							<i className="fa-solid fa-street-view text-[14px]"></i>
+																						</span>
+																						<aside className="grow">
+																							<h5 className="font-bold">Interview Name</h5>
+																							<p className="text-sm text-darkGray dark:text-gray-400">Software Developer</p>
+																						</aside>
+																					</li>
+																					<li className="mb-6 flex items-start">
+																						<span className="w-30px mr-4 inline-block">
+																							<i className="fa-solid fa-clock text-[14px]"></i>
+																						</span>
+																						<aside className="grow">
+																							<h5 className="font-bold">Event Duration</h5>
+																							<p className="text-sm text-darkGray dark:text-gray-400">30 min</p>
+																						</aside>
+																					</li>
+																				</ul>
+																			</div>
+																			<div className="w-full md:max-w-[25%]">
+																				<aside className="mb-6 flex items-center">
+																					<h5 className="mr-4 font-bold">Date:</h5>
+																					<p className="text-sm text-darkGray dark:text-gray-400">05 Dec 2022</p>
+																				</aside>
+																				<aside className="mb-4 flex items-center">
+																					<h5 className="mr-4 font-bold">Time:</h5>
+																					<p className="text-sm text-darkGray dark:text-gray-400">02:00 PM</p>
+																				</aside>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap">
+																			<div className="my-1 mr-4 last:mr-0">
+																				<Button btnStyle="success" label="Reschedule" />
+																			</div>
+																			<div className="my-1 mr-4 last:mr-0">
+																				<Button btnStyle="danger" label="Cancel" />
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
 												</div>
-											</div>
-										</div>
-										<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
-											<div className="flex items-center rounded bg-white p-2 shadow-normal dark:bg-gray-800">
-												<textarea
-													name=""
-													id=""
-													className="h-[40px] w-[calc(100%-50px)] resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
-													placeholder="Type something..."
-												></textarea>
-												<button
-													type="button"
-													className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"
-												>
-													<i className="fa-solid fa-paper-plane"></i>
-												</button>
-											</div>
-										</div>
+												<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
+													<div className="flex items-center rounded bg-white p-2 shadow-normal dark:bg-gray-800">
+														<textarea
+															name=""
+															id=""
+															className="h-[40px] w-[calc(100%-50px)] resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
+															placeholder="Type something..."
+														></textarea>
+														<button
+															type="button"
+															className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"
+														>
+															<i className="fa-solid fa-paper-plane"></i>
+														</button>
+													</div>
+												</div>
+											</>
+											:
+											<>
+												<div className="h-[calc(100vh-212px)] overflow-y-auto">
+													{Array(3).fill(
+													<div className="group">
+														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
+															<div className="mx-auto w-full max-w-[90%]">
+																<div className="mb-4 flex items-center justify-between">
+																	<Skeleton circle width={50} height={50} />
+																	<p className="text-right text-[12px] text-darkGray dark:text-gray-400">
+																		<Skeleton width={100} />
+																		<Skeleton width={50} />
+																	</p>
+																</div>
+																<Skeleton count={6} />
+																<Skeleton width={40 + '%'} />
+															</div>
+														</div>
+													</div>
+													)}
+												</div>
+												<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
+													<Skeleton height={50} />
+												</div>
+											</>
+										}
 									</>
 								) : (
 									<>

@@ -260,6 +260,10 @@ input[type=number] {
   min-height: 300px;
 }
 
+.dark span.react-loading-skeleton {
+  background-color: #d7dee8;
+}
+
 @media (max-width: 1023px) {
   .sidebarToggled #sidebar {
     width: 48px;

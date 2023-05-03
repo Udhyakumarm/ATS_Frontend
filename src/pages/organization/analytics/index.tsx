@@ -3,7 +3,9 @@ import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import postedJobsIcon from '/public/images/icons/post-new-job.png'
 import bulbIcon from '/public/images/icons/bulb.png'
 import folderIcon from '/public/images/icons/folder.png'
@@ -17,6 +19,7 @@ import linkedInIcon from '/public/images/social/linkedin-icon.png'
 
 
 export default function Analytics() {
+    const [sklLoad] = useState(true);
     const tabHeading_1 = [
         {
             title: 'Overview'
@@ -29,7 +32,7 @@ export default function Analytics() {
 		{
 			name: (<>Jobs <br/> Posted</>),
 			icon: postedJobsIcon,
-            count: '50'
+            count: ''
 		},
         {
 			name: (<>Active <br/> Jobs</>),
@@ -106,7 +109,7 @@ export default function Analytics() {
                                                     </div>
                                                     <aside>
                                                         <span className="font-semibold text-darkGray dark:text-gray-400 mb-4 block">{item.name}</span>
-                                                        <h4 className="font-bold text-3xl">{item.count}</h4>
+                                                        <h4 className="font-bold text-3xl">{item.count || <Skeleton height={25} />}</h4>
                                                     </aside>
                                                 </div>
                                             </div>
@@ -190,22 +193,43 @@ export default function Analytics() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="text-sm font-semibold">
-                                                        {Array(10).fill(
-                                                        <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-                                                            <td className="py-2 px-3 text-left">
-                                                                <Image src={bambooHrIcon} alt="BambooHR" width={150} className="max-h-[25px] w-auto" />
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                                100
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                               40
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                                61.4%
-                                                            </td>
-                                                        </tr>
-                                                        )}
+                                                        {
+                                                            sklLoad
+                                                            ?
+                                                            Array(10).fill(
+                                                                <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Image src={bambooHrIcon} alt="BambooHR" width={150} className="max-h-[25px] w-auto" />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        100
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                    40
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        61.4%
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                            :
+                                                            Array(6).fill(
+                                                                <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -247,22 +271,43 @@ export default function Analytics() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="text-sm font-semibold">
-                                                        {Array(10).fill(
-                                                        <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-                                                            <td className="py-2 px-3 text-left">
-                                                                <Image src={linkedInIcon} alt="LinkedIn" width={150} className="max-h-[25px] w-auto" />
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                                100
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                               40
-                                                            </td>
-                                                            <td className="py-2 px-3 text-left">
-                                                                61.4%
-                                                            </td>
-                                                        </tr>
-                                                        )}
+                                                        {
+                                                            sklLoad
+                                                            ?
+                                                            Array(10).fill(
+                                                                <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Image src={linkedInIcon} alt="LinkedIn" width={150} className="max-h-[25px] w-auto" />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        100
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                    40
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        61.4%
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                            :
+                                                            Array(6).fill(
+                                                                <tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                    <td className="py-2 px-3 text-left">
+                                                                        <Skeleton width={100} height={25} />
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
                                                     </tbody>
                                                 </table>
                                             </div>

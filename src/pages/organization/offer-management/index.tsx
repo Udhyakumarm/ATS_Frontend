@@ -5,6 +5,8 @@ import TeamMembers from "@/components/TeamMembers";
 import { Dialog, Listbox, Tab, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import FormField from "@/components/FormField";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Image from "next/image";
 import userImg from 'public/images/user-image.png'
 import socialIcon from 'public/images/social/linkedin-icon.png'
@@ -21,6 +23,7 @@ const people = [
 ]
 
 export default function OfferManagement() {
+    const [sklLoad] = useState(true)
     const [selectedPerson, setSelectedPerson] = useState(people[0])
 
     const cancelButtonRef = useRef(null);
@@ -93,31 +96,62 @@ export default function OfferManagement() {
                                 icon={<i className="fa-solid fa-magnifying-glass"></i>}
                             />
                             <div>
-                                {Array(10).fill(
-                                <div className="mb-4 last:mb-0 rounded-normal bg-white dark:bg-gray-800 py-2 px-4 shadow-normal">
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <aside className="flex items-center">
-                                            <Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-                                            <h5 className="pl-4 text-sm font-semibold">
-                                                Anne Jacobe
-                                            </h5>
-                                        </aside>
-                                        <aside>
-                                            <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-                                        </aside>
-                                    </div>
-                                    <p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">ID - 451295</p>
-                                    <div className="flex items-center justify-between">
-                                        <aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
-                                            <i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-                                            <p>20 Jan 2021</p>
-                                        </aside>
-                                        <span className="text-darkGray dark:text-gray-400 text-[10px]">
-                                            3:32 PM
-                                        </span>
-                                    </div>
-                                </div> 
-                                )}
+                                {
+                                    sklLoad
+                                    ?
+                                    Array(10).fill(
+                                        <div className="mb-4 last:mb-0 rounded-normal bg-white dark:bg-gray-800 py-2 px-4 shadow-normal">
+                                            <div className="mb-2 flex items-center justify-between">
+                                                <aside className="flex items-center">
+                                                    <Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+                                                    <h5 className="pl-4 text-sm font-semibold">
+                                                        Anne Jacobe
+                                                    </h5>
+                                                </aside>
+                                                <aside>
+                                                    <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+                                                </aside>
+                                            </div>
+                                            <p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">ID - 451295</p>
+                                            <div className="flex items-center justify-between">
+                                                <aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
+                                                    <i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+                                                    <p>20 Jan 2021</p>
+                                                </aside>
+                                                <span className="text-darkGray dark:text-gray-400 text-[10px]">
+                                                    3:32 PM
+                                                </span>
+                                            </div>
+                                        </div> 
+                                    )
+                                    :
+                                    Array(5).fill(
+                                        <div className="mb-4 last:mb-0 rounded-normal bg-white dark:bg-gray-800 py-2 px-4 shadow-normal">
+                                            <div className="mb-2 flex items-center justify-between">
+                                                <aside className="flex items-center">
+                                                    <Skeleton circle width={30} height={30} />
+                                                    <h5 className="pl-4 text-sm font-semibold grow">
+                                                    <Skeleton width={100} />
+                                                    </h5>
+                                                </aside>
+                                                <aside>
+                                                    <Skeleton width={16} height={16} />
+                                                </aside>
+                                            </div>
+                                            <p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">
+                                                <Skeleton width={100} />
+                                            </p>
+                                            <div className="flex items-center justify-between">
+                                                <aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
+                                                    <Skeleton width={130} />
+                                                </aside>
+                                                <span className="text-darkGray dark:text-gray-400 text-[10px]">
+                                                    <Skeleton width={50} />
+                                                </span>
+                                            </div>
+                                        </div> 
+                                    )
+                                }
                             </div>
                         </div>
                         <div className="w-full lg:max-w-[calc(100%-280px)] pl-6">
@@ -313,6 +347,26 @@ export default function OfferManagement() {
                                         <Tab.Panel>
                                             <div className="px-10">
                                                 <div className="relative max-h-[455px] overflow-y-auto before:absolute before:top-0 before:left-[80px] before:h-[100%] before:w-[1px] before:bg-slate-200 before:bg-gray-600 before:content-['']">
+                                                    {Array(2).fill(
+                                                        <div className="flex items-start">
+                                                            <div className="w-[80px] px-2 py-4">
+                                                                <p className="text-sm text-darkGray dark:text-gray-400">
+                                                                    <Skeleton width={30} />
+                                                                    <Skeleton width={55} />
+                                                                </p>
+                                                            </div>
+                                                            <div className="w-[calc(100%-80px)] pl-6">
+                                                                <div className="border-b dark:border-b-gray-600">
+                                                                    <article className="py-4">
+                                                                        <h6 className="text-sm font-bold">
+                                                                            <Skeleton width={70 + '%'} />
+                                                                        </h6>
+                                                                        <p className="text-[12px] text-darkGray dark:text-gray-400"><Skeleton width={20 + '%'} /></p>
+                                                                    </article>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     <div className="flex items-start">
                                                         <div className="w-[80px] px-2 py-4">
                                                             <p className="text-sm text-darkGray dark:text-gray-400">

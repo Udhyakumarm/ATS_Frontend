@@ -3,6 +3,8 @@ import FormField from "@/components/FormField";
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import { Transition } from "@headlessui/react";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Head from "next/head";
 import Image from "next/image";
 import { Fragment, useState } from "react";
@@ -12,6 +14,7 @@ import Link from "next/link";
 import noInterviewdata from "/public/images/no-data/iconGroup-3.png";
 
 export default function Interviews() {
+    const [sklLoad] = useState(true);
     const [accordionOpen, setAccordionOpen] = useState(false);
     const [upcomingInterview, setUpcomingInterview] = useState(true);
     const [pastInterview, setPastInterview] = useState(false);
@@ -23,7 +26,42 @@ export default function Interviews() {
         setPastInterview(true);
         setUpcomingInterview(false);
     }
-    const Interviews = () => {
+    const Interviews = ({sklLoad}:any) => {
+        if(sklLoad === true) {
+            return (
+                <>
+                <div className="border-b last:border-b-0 py-6">
+                    <h6 className="text-darkGray dark:text-gray-400 mb-2">
+                        <Skeleton width={120} />
+                    </h6>
+                    {Array(4).fill(
+                    <div className='border rounded mb-3 text-sm'>
+                        <div className="flex flex-wrap items-center px-4">
+                            <div className="w-full lg:max-w-[25%] py-3 px-2">
+                                <Skeleton width={80} />
+                                <Skeleton width={120} />
+                            </div>
+                            <div className="w-full lg:max-w-[25%] py-3 px-2">
+                                <Skeleton width={80} />
+                                <Skeleton width={120} />
+                            </div>
+                            <div className="w-full lg:max-w-[25%] py-3 px-2">
+                                <Skeleton width={80} />
+                                <Skeleton width={120} />
+                            </div>
+                            <div className="w-full lg:max-w-[10%] py-3">
+                                <Skeleton width={80} height={25} />
+                            </div>
+                            <div className="w-full lg:max-w-[15%] py-3 text-right">
+                                <Skeleton width={80} height={25} />
+                            </div>
+                        </div>
+                    </div>
+                    )}
+                </div>
+                </>
+            )
+        }
         return (
          <>
          <div className="border-b last:border-b-0 py-6">
@@ -200,13 +238,23 @@ export default function Interviews() {
                                         upcomingInterview
                                         ?
                                         <>
-                                        {Array(2).fill(
-                                            <Interviews />
-                                        )}
+                                        {
+                                            !sklLoad
+                                            ?
+                                            Array(2).fill(
+                                                <Interviews />
+                                            )
+                                            :
+                                            Array(2).fill(
+                                                <Interviews sklLoad={true} />
+                                            )
+                                        }
                                         </>
                                         :
                                         <>
-                                        Same component use as upcoming interviews
+                                        {Array(2).fill(
+                                            <Interviews />
+                                        )}
                                         </>
                                     }
                                 </div>
