@@ -56,7 +56,7 @@ export default function CanCareer() {
 	}
 
 	useEffect(() => {
-		if (cname != "" && cid == "") {
+		if (cname && cname != "" && cid == "") {
 			getcid(cname);
 		}
 	}, [cname, cid]);

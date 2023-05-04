@@ -3,11 +3,14 @@ import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useCarrierStore } from "@/utils/code";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { getProviders, useSession } from "next-auth/react";
 import router from "next/router";
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useEffect, useState } from "react";
 
 export default function CanCareerJobDetail() {
+	const [sklLoad] = useState(true)
 	const { data: session } = useSession();
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
@@ -103,12 +106,12 @@ export default function CanCareerJobDetail() {
 								</div>
 								<div className="py-4 px-8">
 									<h3 className="mb-4 text-lg font-bold">
-										{jdata["job_title"]} ({jdata["worktype"]})
+										{jdata["job_title"] || <Skeleton width={100} />} ({jdata["worktype"] || <Skeleton width={60} />})
 									</h3>
 									<ul className="mb-3 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-										{jdata["employment_type"] && <li className="mr-4">{jdata["employment_type"]}</li>}
-										{jdata["currency"] && <li className="mr-4">{jdata["currency"]}</li>}
-										{jdata["vacancy"] && <li className="mr-4">Vacancy - {jdata["vacancy"]}</li>}
+										{jdata["employment_type"] && <li className="mr-4">{jdata["employment_type"] || <Skeleton width={40} />}</li>}
+										{jdata["currency"] && <li className="mr-4">{jdata["currency"] || <Skeleton width={40} />}</li>}
+										{jdata["vacancy"] && <li className="mr-4">Vacancy - {jdata["vacancy"] || <Skeleton width={40} />}</li>}
 									</ul>
 									<Button
 										btnStyle="sm"
@@ -128,11 +131,11 @@ export default function CanCareerJobDetail() {
 									<aside className="mb-4">
 										<h3 className="mb-2 text-lg font-bold">Department Information</h3>
 										<ul className="mb-3 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-											{jdata["department"] && <li className="mr-4">{jdata["department"]} department</li>}
-											{jdata["job_function"] && <li className="mr-4">{jdata["job_function"]} function</li>}
-											{jdata["industry"] && <li className="mr-4">{jdata["industry"]} Industry</li>}
+											{jdata["department"] && <li className="mr-4">{jdata["department"] || <Skeleton width={20} />} department</li>}
+											{jdata["job_function"] && <li className="mr-4">{jdata["job_function"] || <Skeleton width={20} />} function</li>}
+											{jdata["industry"] && <li className="mr-4">{jdata["industry"] || <Skeleton width={20} />} Industry</li>}
 											{jdata["group_or_division"] && (
-												<li className="mr-4">{jdata["group_or_division"]} group_or_division</li>
+												<li className="mr-4">{jdata["group_or_division"] || <Skeleton width={20} />} Group/Division</li>
 											)}
 										</ul>
 									</aside>
@@ -140,7 +143,7 @@ export default function CanCareerJobDetail() {
 									{jdata["description"] && (
 										<aside className="mb-4">
 											<h3 className="mb-2 text-lg font-bold">Description</h3>
-											<article className="text-[12px] text-darkGray dark:text-gray-400">{jdata["description"]}</article>
+											<article className="text-[12px] text-darkGray dark:text-gray-400">{jdata["description"] || <Skeleton count={3} />}</article>
 										</aside>
 									)}
 									<hr className="my-4" />
@@ -148,7 +151,7 @@ export default function CanCareerJobDetail() {
 										<aside className="mb-4">
 											<h3 className="mb-2 text-lg font-bold">Your Responsibilities</h3>
 											<article className="text-[12px] text-darkGray dark:text-gray-400">
-												{jdata["responsibility"]}
+												{jdata["responsibility"] || <Skeleton count={3} />}
 											</article>
 										</aside>
 									)}
@@ -156,7 +159,7 @@ export default function CanCareerJobDetail() {
 									{jdata["looking_for"] && (
 										<aside className="mb-4">
 											<h3 className="mb-2 text-lg font-bold">What are we Looking For</h3>
-											<article className="text-[12px] text-darkGray dark:text-gray-400">{jdata["looking_for"]}</article>
+											<article className="text-[12px] text-darkGray dark:text-gray-400">{jdata["looking_for"] || <Skeleton count={3} />}</article>
 										</aside>
 									)}
 									<hr className="my-4" />
@@ -179,7 +182,7 @@ export default function CanCareerJobDetail() {
 																| undefined,
 															i: Key | null | undefined
 														) => (
-															<p key={i}>{item}</p>
+															<p key={i}>{item || <Skeleton width={40} />}</p>
 														)
 													)}
 											</article>
@@ -189,10 +192,10 @@ export default function CanCareerJobDetail() {
 									<aside className="mb-4">
 										<h3 className="mb-2 text-lg font-bold">Employment Details</h3>
 										<ul className="mb-3 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-											{jdata["employment_type"] && <li className="mr-4">{jdata["employment_type"]}</li>}
-											{jdata["education"] && <li className="mr-4">{jdata["education"]}</li>}
-											{jdata["location"] && <li className="mr-4">{jdata["location"]}</li>}
-											{jdata["experience"] && <li className="mr-4">{jdata["experience"]} of Experience</li>}
+											{jdata["employment_type"] && <li className="mr-4">{jdata["employment_type"] || <Skeleton width={40} />}</li>}
+											{jdata["education"] && <li className="mr-4">{jdata["education"] || <Skeleton width={40} />}</li>}
+											{jdata["location"] && <li className="mr-4">{jdata["location"] || <Skeleton width={40} />}</li>}
+											{jdata["experience"] && <li className="mr-4">{jdata["experience"] || <Skeleton width={40} />} of Experience</li>}
 										</ul>
 									</aside>
 									<hr className="my-4" />
@@ -208,33 +211,66 @@ export default function CanCareerJobDetail() {
 							</div>
 							<h3 className="mb-6 text-xl font-bold">Similar Jobs</h3>
 							<div className="mx-[-7px] flex flex-wrap">
-								{Array(4).fill(
-									<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-										<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
-											<h4 className="mb-3 text-lg font-bold">Software Engineer</h4>
-											<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-												<li className="mr-8">
-													<i className="fa-solid fa-location-dot mr-2"></i>
-													Remote
-												</li>
-												<li className="mr-8">
-													<i className="fa-regular fa-clock mr-2"></i>
-													Full Time
-												</li>
-												<li>
-													<i className="fa-solid fa-dollar-sign mr-2"></i>
-													50-55k
-												</li>
-											</ul>
-											<div className="flex flex-wrap items-center justify-between">
-												<div className="mr-4">
-													<Button btnStyle="sm" label="View" loader={false} />
+								{
+									sklLoad
+									?
+									Array(4).fill(
+										<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+											<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
+												<h4 className="mb-3 text-lg font-bold">Software Engineer</h4>
+												<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+													<li className="mr-8">
+														<i className="fa-solid fa-location-dot mr-2"></i>
+														Remote
+													</li>
+													<li className="mr-8">
+														<i className="fa-regular fa-clock mr-2"></i>
+														Full Time
+													</li>
+													<li>
+														<i className="fa-solid fa-dollar-sign mr-2"></i>
+														50-55k
+													</li>
+												</ul>
+												<div className="flex flex-wrap items-center justify-between">
+													<div className="mr-4">
+														<Button btnStyle="sm" label="View" loader={false} />
+													</div>
+													<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">29 min ago</p>
 												</div>
-												<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">29 min ago</p>
 											</div>
 										</div>
-									</div>
-								)}
+									)
+									:
+									Array(4).fill(
+										<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+											<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
+												<h4 className="mb-3 text-lg font-bold">
+													<Skeleton width={160} />
+												</h4>
+												<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+													<li className="mr-8">
+														<Skeleton width={40} />
+													</li>
+													<li className="mr-8">
+														<Skeleton width={40} />
+													</li>
+													<li>
+														<Skeleton width={40} />
+													</li>
+												</ul>
+												<div className="flex flex-wrap items-center justify-between">
+													<div className="mr-4">
+														<Skeleton width={80} height={25} />
+													</div>
+													<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
+														<Skeleton width={60} />
+													</p>
+												</div>
+											</div>
+										</div>
+									)
+								}
 							</div>
 						</div>
 					)}

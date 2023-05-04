@@ -1,12 +1,15 @@
 import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import { useCarrierStore } from "@/utils/code";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import moment from "moment";
 import { getProviders } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function CanCareerSearchJobs() {
+	const [sklLoad] = useState(true)
 	const router = useRouter();
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
@@ -56,48 +59,91 @@ export default function CanCareerSearchJobs() {
 					{orgdetail["Job"] && (
 						<div className="w-[calc(100%-300px)] pl-8">
 							<h3 className="mb-6 text-xl font-bold">
-								{orgdetail["Job"].length} {orgdetail["Job"].length > 1 ? <>Jobs</> : <>Job</>}
+								{
+									sklLoad
+									?
+									<>
+									{
+										orgdetail["Job"].length} {orgdetail["Job"].length > 1 ? <>Jobs</> : <>Job</>
+									}
+									</>
+									:
+									<Skeleton width={100} />
+								}
 							</h3>
 							<div className="mx-[-7px] flex flex-wrap">
-								{orgdetail["Job"].map((data: any, i: React.Key) => (
-									<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
-										<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
-											<h4 className="mb-3 text-lg font-bold">{data["job_title"]}</h4>
-											<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-												<li className="mr-8">
-													<i className="fa-solid fa-location-dot mr-2"></i>
-													{data["worktype"] ? data["worktype"] : <>N/A</>}
-												</li>
-												<li className="mr-8">
-													<i className="fa-regular fa-clock mr-2"></i>
-													{data["employment_type"] ? data["employment_type"] : <>N/A</>}
-												</li>
-												<li>
-													<i className="fa-solid fa-dollar-sign mr-2"></i>
-													{data["currency"] ? data["currency"] : <>N/A</>}
-												</li>
-											</ul>
-											<div className="flex flex-wrap items-center justify-between">
-												<div className="mr-4">
-													<Button
-														btnStyle="sm"
-														label="View"
-														loader={false}
-														btnType="button"
-														handleClick={() => {
-															setjid(data["refid"]);
-															setjdata(data);
-															router.push(`/organization/${cname}/job-detail`);
-														}}
-													/>
+								{
+									sklLoad
+									?
+									orgdetail["Job"].map((data: any, i: React.Key) => (
+										<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
+											<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
+												<h4 className="mb-3 text-lg font-bold">{data["job_title"]}</h4>
+												<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+													<li className="mr-8">
+														<i className="fa-solid fa-location-dot mr-2"></i>
+														{data["worktype"] ? data["worktype"] : <>N/A</>}
+													</li>
+													<li className="mr-8">
+														<i className="fa-regular fa-clock mr-2"></i>
+														{data["employment_type"] ? data["employment_type"] : <>N/A</>}
+													</li>
+													<li>
+														<i className="fa-solid fa-dollar-sign mr-2"></i>
+														{data["currency"] ? data["currency"] : <>N/A</>}
+													</li>
+												</ul>
+												<div className="flex flex-wrap items-center justify-between">
+													<div className="mr-4">
+														<Button
+															btnStyle="sm"
+															label="View"
+															loader={false}
+															btnType="button"
+															handleClick={() => {
+																setjid(data["refid"]);
+																setjdata(data);
+																router.push(`/organization/${cname}/job-detail`);
+															}}
+														/>
+													</div>
+													<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
+														{moment(data["publish_date"]).fromNow()}
+													</p>
 												</div>
-												<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
-													{moment(data["publish_date"]).fromNow()}
-												</p>
 											</div>
 										</div>
-									</div>
-								))}
+									))
+									:
+									Array(5).fill(
+										<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+											<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
+												<h4 className="mb-3 text-lg font-bold">
+													<Skeleton width={160} />
+												</h4>
+												<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+													<li className="mr-8">
+														<Skeleton width={40} />
+													</li>
+													<li className="mr-8">
+														<Skeleton width={40} />
+													</li>
+													<li>
+														<Skeleton width={40} />
+													</li>
+												</ul>
+												<div className="flex flex-wrap items-center justify-between">
+													<div className="mr-4">
+														<Skeleton width={80} height={25} />
+													</div>
+													<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
+														<Skeleton width={60} />
+													</p>
+												</div>
+											</div>
+										</div>
+									)
+								}
 							</div>
 						</div>
 					)}
