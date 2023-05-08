@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import toastcomp from "@/components/toast";
-import { axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { axiosInstance, axiosInstance2 } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -18,13 +18,13 @@ export default function VendorSignup() {
 	const [token, settoken] = useState("");
 	const [vdata, setvdata] = useState({});
 
-	useEffect(() => {
-		if (session) {
-			settoken(session.accessToken as string);
-		} else if (!session) {
-			settoken("");
-		}
-	}, [session]);
+	// useEffect(() => {
+	// 	if (session) {
+	// 		settoken(session.accessToken as string);
+	// 	} else if (!session) {
+	// 		settoken("");
+	// 	}
+	// }, [session]);
 
 	//steps state
 	const [email, setemail] = useState("");
@@ -44,10 +44,10 @@ export default function VendorSignup() {
 	const [check1, setcheck1] = useState(false);
 	const [file, setfile] = useState(false);
 
-	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	// const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadVendorData(id: string) {
-		await axiosInstanceAuth2
+		await axiosInstance
 			.get(`/vendors/vendor_data/${id}/`)
 			.then(async (res) => {
 				console.log("!", res.data);
@@ -87,10 +87,10 @@ export default function VendorSignup() {
 	}
 
 	useEffect(() => {
-		if (vrefid && vrefid.length > 0 && token && token.length > 0) {
+		if (vrefid && vrefid.length > 0) {
 			loadVendorData(vrefid);
 		}
-	}, [vrefid, token]);
+	}, [vrefid]);
 
 	const [step, setstep] = useState(1);
 
@@ -116,7 +116,7 @@ export default function VendorSignup() {
 		fd.append("signature", sign);
 		fd.append("password", pass1);
 		fd.append("password2", pass2);
-		await axiosInstanceAuth2
+		await axiosInstance2
 			.post(`/vendors/vendor_registration/${vrefid}/`, fd)
 			.then(async (res) => {
 				console.log("!", res.data);
