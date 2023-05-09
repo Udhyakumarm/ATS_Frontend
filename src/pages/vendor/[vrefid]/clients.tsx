@@ -33,6 +33,7 @@ export default function VendorClients() {
 	const [vdata, setvdata] = useState({});
 
 	const [vjdata, setvjdata] = useState([]);
+	const [addSocial, setAddSocial] = useState(false);
 	const [vjobclick, setvjobclick] = useState(-1);
 
 	useEffect(() => {
@@ -554,22 +555,29 @@ export default function VendorClients() {
 											</div>
 										</div>
 										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Social Links</label>
-											<div className="flex items-center">
-												<div className="flex min-h-[45px] w-[calc(100%-40px)] items-center rounded-normal border border-borderColor py-1 px-3">
-													<div className="text-lg">
-														<i className="fa-brands fa-behance mr-5"></i>
-														<i className="fa-brands fa-stack-overflow mr-5"></i>
-														<i className="fa-brands fa-linkedin-in mr-5"></i>
-														<i className="fa-brands fa-github mr-5"></i>
-													</div>
-												</div>
-												<div className="w-[40px] text-right">
+											<div className="mb-2 flex flex-wrap items-center justify-between">
+												<label className="mb-1 inline-block font-bold">Social Links</label>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+													onClick={() => setAddSocial(true)}
+												>
+													<i className="fa-regular fa-plus"></i>
+												</button>
+											</div>
+											<div className="flex flex-wrap">
+												<div className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700">
+													<Link href={'#'} className="">
+														<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
+															<i className={`fa-brand fa-facebook`}></i>
+														</span>
+														<p className="text-[12px] font-bold capitalize">Facebook</p>
+													</Link>
 													<button
 														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+														className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
 													>
-														<i className="fa-regular fa-plus"></i>
+														<i className="fa-solid fa-circle-xmark"></i>
 													</button>
 												</div>
 											</div>
@@ -890,6 +898,71 @@ export default function VendorClients() {
 													</article>
 												)}
 											</div>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={addSocial} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddSocial}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Add Social Login</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddSocial(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{/* <FormField
+                                            fieldType="select"
+                                            inputType="text"
+                                            label="Choose social media"
+                                            singleSelect
+                                            options={[
+                                                { name: "Facebook" },
+                                                { name: "Twitter" }
+                                            ]}
+                                        /> */}
+										<FormField
+											fieldType="input"
+											inputType="text"
+											label="Add URL"
+										/>
+										<div className="text-center">
+											<Button
+												label="Add"
+												btnType={"button"}
+											/>
 										</div>
 									</div>
 								</Dialog.Panel>
