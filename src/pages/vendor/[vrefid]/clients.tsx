@@ -1,7 +1,7 @@
 import VendorSideBar from "@/components/vendor/Sidebar";
 import VendorTopBar from "@/components/vendor/TopBar";
 import Head from "next/head";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useRef, useState, useMemo } from "react";
 import { Combobox, Dialog, Tab, Transition } from "@headlessui/react";
 import Button from "@/components/Button";
 import Link from "next/link";
@@ -13,6 +13,9 @@ import gall2 from "public/images/gall-2.png";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
+import { debounce } from "lodash";
+import { axiosInstance as axis } from "@/utils";
 
 const people = [
 	{ id: 1, name: "Wade Cooper" },
@@ -69,6 +72,8 @@ export default function VendorClients() {
 	const [viewApplicant, setViewApplicant] = useState(false);
 	const [selected, setSelected] = useState(people[0]);
 	const [query, setQuery] = useState("");
+
+	const [popuprefid, setpopuprefid] = useState("");
 	const filteredPeople =
 		query === ""
 			? people
@@ -106,6 +111,122 @@ export default function VendorClients() {
 			loadOrgDetail(vjdata[vjobclick]["user"]);
 		}
 	}, [vjobclick]);
+
+	useEffect(() => {
+		if (!addCand) {
+			setpopuprefid("");
+		}
+	}, [addCand]);
+
+	//add applicant state
+	const [resume, setresume] = useState<File | null>(null);
+	const [fname, setfname] = useState("");
+	const [lname, setlname] = useState("");
+	const [email, setemail] = useState("");
+	const [phone, setphone] = useState("");
+
+	//link
+	const [links, setlinks] = useState([]);
+	const [link, setlink] = useState("");
+
+	function deleteLink(id: any) {
+		var arr = links;
+		arr = arr.splice(1, parseInt(id));
+		setlinks(arr);
+		setlink("");
+	}
+
+	function verifylink() {
+		return link.length > 0;
+	}
+
+	function addlink() {
+		let arr = links;
+		arr.push(link);
+		setlinks(arr);
+		setAddSocial(false);
+		setlink("");
+	}
+
+	const [summary, setsummary] = useState("");
+	const [csalary, setcsalary] = useState("");
+	const [esalary, setesalary] = useState("");
+	const [notice, setnotice] = useState("");
+	const [msg, setmsg] = useState("");
+	const [skill, setskill] = useState("");
+
+	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files && event.target.files[0];
+			setresume(file);
+		} else {
+			setresume(null);
+		}
+	}
+
+	const [ski, setski] = useState([]);
+	// const [load, setload] = useState(false);
+
+	const debouncedSearchResults = useMemo(() => {
+		return debounce(searchSkill, 300);
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			debouncedSearchResults.cancel();
+		};
+	}, [debouncedSearchResults]);
+
+	async function searchSkill(value) {
+		await axis.marketplace_api
+			.get(`/job/load/skills/?search=${value}`)
+			.then(async (res) => {
+				let obj = res.data;
+				let arr = [];
+				for (const [key, value] of Object.entries(obj)) {
+					arr.push(value);
+				}
+				setski(arr);
+				setload(false);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function addVendorCandidateProfile(vrefid: any, refid: any) {
+		const fd = new FormData();
+		fd.append("first_name", fname);
+		fd.append("last_name", lname);
+		fd.append("email", email);
+		fd.append("mobile", phone);
+		fd.append("resume", resume);
+		fd.append("summary", summary);
+		fd.append("current_salary", csalary);
+		fd.append("expected_salary", esalary);
+		fd.append("notice_period", notice);
+		fd.append("recuriter_message", msg);
+		fd.append("skills", skill);
+
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-candidate/${refid}/${vrefid}/`, fd)
+			.then((res) => {
+				toastcomp("Vendor Candidate Profile Created", "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Profile Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
+	function addApp(vrefid: any, refid: any) {
+		// const name = document.getElementById("name")!.value;
+		// console.log("%", "submit");
+		// console.log("%", name);
+		// e.preventDefault();
+		console.log("click");
+		addVendorCandidateProfile(vrefid, refid);
+	}
 
 	return (
 		<>
@@ -241,7 +362,14 @@ export default function VendorClients() {
 												</li>
 											</ul>
 										</aside>
-										<Button label="Add Candidate" btnType="button" handleClick={() => setAddCand(true)} />
+										<Button
+											label="Add Candidate"
+											btnType="button"
+											handleClick={() => {
+												setAddCand(true);
+												setpopuprefid(vjdata[vjobclick]["refid"]);
+											}}
+										/>
 									</div>
 									<Tab.Group>
 										<div className="border-b dark:border-b-gray-600">
@@ -531,19 +659,40 @@ export default function VendorClients() {
 												Or <span className="font-semibold text-primary">Click Here To Upload</span>
 											</p>
 											<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-											<input type="file" className="hidden" id="uploadCV" />
+											<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
 										</label>
 										<div className="mx-[-10px] flex flex-wrap">
 											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="text" label="First Name" placeholder="First Name" />
+												<FormField
+													fieldType="input"
+													inputType="text"
+													label="First Name"
+													value={fname}
+													handleChange={(e) => setfname(e.target.value)}
+													placeholder="First Name"
+												/>
 											</div>
 											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="text" label="Last Name" placeholder="Last Name" />
+												<FormField
+													fieldType="input"
+													inputType="text"
+													label="Last Name"
+													placeholder="Last Name"
+													value={lname}
+													handleChange={(e) => setlname(e.target.value)}
+												/>
 											</div>
 										</div>
 										<div className="mx-[-10px] flex flex-wrap">
 											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="email" label="Email" placeholder="Email" required />
+												<FormField
+													fieldType="input"
+													inputType="email"
+													label="Email"
+													placeholder="Email"
+													value={email}
+													handleChange={(e) => setemail(e.target.value)}
+												/>
 											</div>
 											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 												<FormField
@@ -551,6 +700,8 @@ export default function VendorClients() {
 													inputType="number"
 													label="Phone Number"
 													placeholder="Phone Number"
+													value={phone}
+													handleChange={(e) => setphone(e.target.value)}
 												/>
 											</div>
 										</div>
@@ -566,24 +717,44 @@ export default function VendorClients() {
 												</button>
 											</div>
 											<div className="flex flex-wrap">
-												<div className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700">
-													<Link href={'#'} className="">
-														<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
-															<i className={`fa-brand fa-facebook`}></i>
-														</span>
-														<p className="text-[12px] font-bold capitalize">Facebook</p>
-													</Link>
-													<button
-														type="button"
-														className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
-													>
-														<i className="fa-solid fa-circle-xmark"></i>
-													</button>
-												</div>
+												{links &&
+													links.map((data, i) => (
+														<div
+															className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
+															key={i}
+														>
+															<Link href={data} target="_blank" className="">
+																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
+																	<i className={`fa-brand fa-link`}></i>
+																</span>
+																<p className="text-[12px] font-bold capitalize">Link {i}</p>
+															</Link>
+															<button
+																type="button"
+																className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
+																onClick={() => deleteLink(i)}
+															>
+																<i className="fa-solid fa-circle-xmark"></i>
+															</button>
+														</div>
+													))}
 											</div>
 										</div>
-										<FormField fieldType="textarea" label="Summary" placeholder="Summary" />
-										<FormField fieldType="select" label="Skills" options={[{ name: "Skill 1" }, { name: "Skill 2" }]} />
+										<FormField
+											fieldType="textarea"
+											label="Summary"
+											placeholder="Summary"
+											value={summary}
+											handleChange={(e) => setsummary(e.target.value)}
+										/>
+										<FormField
+											options={ski}
+											onSearch={searchSkill}
+											fieldType="select2"
+											id="skills"
+											handleChange={setskill}
+											label="Skills"
+										/>
 										<div className="mb-4">
 											<label className="mb-1 inline-block font-bold">Education</label>
 											<div className="flex">
@@ -730,6 +901,8 @@ export default function VendorClients() {
 													inputType="text"
 													label="Current Salary"
 													placeholder="Current Salary"
+													value={csalary}
+													handleChange={(e) => setcsalary(e.target.value)}
 												/>
 											</div>
 											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
@@ -738,12 +911,33 @@ export default function VendorClients() {
 													inputType="text"
 													label="Expected Salary"
 													placeholder="Expected Salary"
+													value={esalary}
+													handleChange={(e) => setesalary(e.target.value)}
 												/>
 											</div>
 										</div>
-										<FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
-										<FormField fieldType="reactquill" label="Any Message to Recruiter" placeholder="Notice Period" />
-										<Button label="Add" loader={false} btnType="button" />
+										<FormField
+											fieldType="input"
+											inputType="text"
+											label="Notice Period"
+											placeholder="Notice Period"
+											value={notice}
+											handleChange={(e) => setnotice(e.target.value)}
+										/>
+										<FormField
+											fieldType="reactquill"
+											label="Any Message to Recruiter"
+											placeholder="Notice Period"
+											value={msg}
+											handleChange={setmsg}
+											handleOnBlur={setmsg}
+										/>
+										<Button
+											label="Add"
+											loader={false}
+											btnType="btnType"
+											handleClick={() => addApp(vrefid, popuprefid)}
+										/>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
@@ -957,12 +1151,11 @@ export default function VendorClients() {
 											fieldType="input"
 											inputType="text"
 											label="Add URL"
+											value={link}
+											handleChange={(e) => setlink(e.target.value)}
 										/>
 										<div className="text-center">
-											<Button
-												label="Add"
-												btnType={"button"}
-											/>
+											<Button label="Add" btnType={"button"} disabled={!verifylink()} handleClick={addlink} />
 										</div>
 									</div>
 								</Dialog.Panel>
