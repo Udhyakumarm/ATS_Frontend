@@ -177,6 +177,17 @@ export default function VendorClients() {
 		};
 	}, [debouncedSearchResults]);
 
+	//exp
+	const [newgre, setnewgre] = useState(false);
+	const [expcount, setexpcount] = useState(1);
+	const [expid, setexpid] = useState(["expBlock1"]);
+
+	const [educount, seteducount] = useState(0);
+	const [eduid, seteduid] = useState([]);
+
+	const [certcount, setcertcount] = useState(0);
+	const [certid, setcertid] = useState([]);
+
 	async function searchSkill(value) {
 		await axis.marketplace_api
 			.get(`/job/load/skills/?search=${value}`)
@@ -194,6 +205,69 @@ export default function VendorClients() {
 			});
 	}
 
+	async function addVendorCandidateApplicant(refid: any, vrefid: any, vcrefid: any) {
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-applicant-apply/${refid}/${vrefid}/${vcrefid}/`)
+			.then((res) => {
+				toastcomp(res.data.Message, "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Applicant Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
+	async function addVendorCandidateCert(vrefid: any, refid: any, fd: any) {
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-candidate-cretificate/${refid}/${vrefid}/`, fd)
+			.then((res) => {
+				toastcomp("Vendor Candidate Cert Created", "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Cert Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
+	async function addVendorCandidateEdu(vrefid: any, refid: any, fd: any) {
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-candidate-education/${refid}/${vrefid}/`, fd)
+			.then((res) => {
+				toastcomp("Vendor Candidate Edu Created", "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Edu Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
+	async function addVendorCandidateExp(vrefid: any, refid: any, fd: any) {
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-candidate-experience/${refid}/${vrefid}/`, fd)
+			.then((res) => {
+				toastcomp("Vendor Candidate Exp Created", "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Exp Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
+	async function addVendorCandidateLink(vrefid: any, refid: any, title: any) {
+		const fd = new FormData();
+		fd.append("title", title);
+
+		await axiosInstanceAuth2
+			.post(`/vendors/vendor-candidate-social/${refid}/${vrefid}/`, fd)
+			.then((res) => {
+				toastcomp("Vendor Candidate Link Created", "success");
+			})
+			.catch((err) => {
+				toastcomp("Vendor Candidate Link Not Created", "error");
+				console.log("@", err);
+			});
+	}
+
 	async function addVendorCandidateProfile(vrefid: any, refid: any) {
 		const fd = new FormData();
 		fd.append("first_name", fname);
@@ -204,28 +278,130 @@ export default function VendorClients() {
 		fd.append("summary", summary);
 		fd.append("current_salary", csalary);
 		fd.append("expected_salary", esalary);
-		fd.append("notice_period", notice);
+		if (!newgre) fd.append("notice_period", notice);
 		fd.append("recuriter_message", msg);
 		fd.append("skills", skill);
 
 		await axiosInstanceAuth2
 			.post(`/vendors/vendor-candidate/${refid}/${vrefid}/`, fd)
-			.then((res) => {
+			.then(async (res) => {
+				console.log(res.data);
+				let vcrefid = res.data.data[0]["vcrefid"];
 				toastcomp("Vendor Candidate Profile Created", "success");
+				if (vcrefid && vcrefid.length > 0) {
+					for (let i = 0; i < links.length; i++) {
+						addVendorCandidateLink(vcrefid, refid, links[i]);
+					}
+
+					if (!newgre) {
+						for (let i = 0; i < expid.length; i++) {
+							var fd1 = new FormData();
+							fd.append("title", document.getElementById(`title${expid[i]}`).value);
+							fd.append("company", document.getElementById(`cname${expid[i]}`).value);
+							fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
+							fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
+							fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
+							fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
+							addVendorCandidateExp(vcrefid, refid, fd1);
+						}
+					}
+
+					for (let i = 0; i < eduid.length; i++) {
+						var fd1 = new FormData();
+						fd.append("title", document.getElementById(`title${eduid[i]}`).value);
+						fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
+						fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
+						fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
+						fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
+						addVendorCandidateEdu(vcrefid, refid, fd1);
+					}
+
+					for (let i = 0; i < certid.length; i++) {
+						var fd1 = new FormData();
+						fd.append("title", document.getElementById(`title${certid[i]}`).value);
+						fd.append("company", document.getElementById(`cname${certid[i]}`).value);
+						fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
+						fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
+						fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
+						fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
+						addVendorCandidateCert(vcrefid, refid, fd1);
+					}
+
+					addVendorCandidateApplicant(refid, vrefid, vcrefid);
+				}
 			})
 			.catch((err) => {
 				toastcomp("Vendor Candidate Profile Not Created", "error");
-				console.log("@", err);
+				console.log(err);
 			});
 	}
 
-	function addApp(vrefid: any, refid: any) {
-		// const name = document.getElementById("name")!.value;
-		// console.log("%", "submit");
-		// console.log("%", name);
-		// e.preventDefault();
-		console.log("click");
-		addVendorCandidateProfile(vrefid, refid);
+	function addApp(event: FormEvent<HTMLFormElement>, vrefid: any, refid: any) {
+		event.preventDefault();
+
+		var check = 0;
+		if (!newgre) {
+			for (let i = 0; i < expid.length; i++) {
+				if (
+					!document.getElementById(`title${expid[i]}`).value ||
+					!document.getElementById(`cname${expid[i]}`).value ||
+					!document.getElementById(`jtype${expid[i]}`).value ||
+					!document.getElementById(`sdate${expid[i]}`).value ||
+					!document.getElementById(`edate${expid[i]}`).value ||
+					!document.getElementById(`desc${expid[i]}`).value ||
+					document.getElementById(`title${expid[i]}`).value.length <= 0 ||
+					document.getElementById(`cname${expid[i]}`).value.length <= 0 ||
+					document.getElementById(`jtype${expid[i]}`).value.length <= 0 ||
+					document.getElementById(`sdate${expid[i]}`).value.length <= 0 ||
+					document.getElementById(`edate${expid[i]}`).value.length <= 0 ||
+					document.getElementById(`desc${expid[i]}`).value.length <= 0
+				) {
+					check = 1;
+				}
+			}
+		}
+
+		for (let i = 0; i < eduid.length; i++) {
+			if (
+				!document.getElementById(`title${eduid[i]}`).value ||
+				!document.getElementById(`cname${eduid[i]}`).value ||
+				!document.getElementById(`sdate${eduid[i]}`).value ||
+				!document.getElementById(`edate${eduid[i]}`).value ||
+				!document.getElementById(`desc${eduid[i]}`).value ||
+				document.getElementById(`title${eduid[i]}`).value.length <= 0 ||
+				document.getElementById(`cname${eduid[i]}`).value.length <= 0 ||
+				document.getElementById(`sdate${eduid[i]}`).value.length <= 0 ||
+				document.getElementById(`edate${eduid[i]}`).value.length <= 0 ||
+				document.getElementById(`desc${eduid[i]}`).value.length <= 0
+			) {
+				check = 2;
+			}
+		}
+
+		for (let i = 0; i < certid.length; i++) {
+			if (
+				!document.getElementById(`title${certid[i]}`).value ||
+				!document.getElementById(`cname${certid[i]}`).value ||
+				!document.getElementById(`sdate${certid[i]}`).value ||
+				!document.getElementById(`edate${certid[i]}`).value ||
+				!document.getElementById(`cid${certid[i]}`).value ||
+				!document.getElementById(`curl${certid[i]}`).value ||
+				document.getElementById(`title${certid[i]}`).value.length <= 0 ||
+				document.getElementById(`cname${certid[i]}`).value.length <= 0 ||
+				document.getElementById(`sdate${certid[i]}`).value.length <= 0 ||
+				document.getElementById(`edate${certid[i]}`).value.length <= 0 ||
+				document.getElementById(`cid${certid[i]}`).value.length <= 0 ||
+				document.getElementById(`curl${certid[i]}`).value.length <= 0
+			) {
+				check = 3;
+			}
+		}
+
+		console.log(check);
+		if (check === 0) addVendorCandidateProfile(vrefid, refid);
+		else if (check === 1) toastcomp("Fill Up Exp", "error");
+		else if (check === 2) toastcomp("Fill Up Edu", "error");
+		else if (check === 3) toastcomp("Fill Up Cert", "error");
 	}
 
 	return (
@@ -649,208 +825,456 @@ export default function VendorClients() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									<div className="p-8">
-										<label
-											htmlFor="uploadCV"
-											className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
-										>
-											<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
-											<p className="mb-2 text-sm">
-												Or <span className="font-semibold text-primary">Click Here To Upload</span>
-											</p>
-											<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-											<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
-										</label>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="First Name"
-													value={fname}
-													handleChange={(e) => setfname(e.target.value)}
-													placeholder="First Name"
-												/>
+									<form
+										action=""
+										method="post"
+										onSubmit={(e) => {
+											addApp(e, vrefid, popuprefid);
+										}}
+									>
+										<div className="p-8">
+											<label
+												htmlFor="uploadCV"
+												className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+											>
+												<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
+												<p className="mb-2 text-sm">
+													Or <span className="font-semibold text-primary">Click Here To Upload</span>
+												</p>
+												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+												<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
+											</label>
+											<div className="mx-[-10px] flex flex-wrap">
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="First Name"
+														value={fname}
+														handleChange={(e) => setfname(e.target.value)}
+														placeholder="First Name"
+													/>
+												</div>
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Last Name"
+														placeholder="Last Name"
+														value={lname}
+														handleChange={(e) => setlname(e.target.value)}
+													/>
+												</div>
 											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Last Name"
-													placeholder="Last Name"
-													value={lname}
-													handleChange={(e) => setlname(e.target.value)}
-												/>
+											<div className="mx-[-10px] flex flex-wrap">
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="email"
+														label="Email"
+														placeholder="Email"
+														value={email}
+														handleChange={(e) => setemail(e.target.value)}
+													/>
+												</div>
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="number"
+														label="Phone Number"
+														placeholder="Phone Number"
+														value={phone}
+														handleChange={(e) => setphone(e.target.value)}
+													/>
+												</div>
 											</div>
-										</div>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="email"
-													label="Email"
-													placeholder="Email"
-													value={email}
-													handleChange={(e) => setemail(e.target.value)}
-												/>
+											<div className="mb-4">
+												<div className="mb-2 flex flex-wrap items-center justify-between">
+													<label className="mb-1 inline-block font-bold">Social Links</label>
+													<button
+														type="button"
+														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+														onClick={() => setAddSocial(true)}
+													>
+														<i className="fa-regular fa-plus"></i>
+													</button>
+												</div>
+												<div className="flex flex-wrap">
+													{links &&
+														links.map((data, i) => (
+															<div
+																className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
+																key={i}
+															>
+																<Link href={data} target="_blank" className="">
+																	<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
+																		<i className={`fa-brand fa-link`}></i>
+																	</span>
+																	<p className="text-[12px] font-bold capitalize">Link {i}</p>
+																</Link>
+																<button
+																	type="button"
+																	className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
+																	onClick={() => deleteLink(i)}
+																>
+																	<i className="fa-solid fa-circle-xmark"></i>
+																</button>
+															</div>
+														))}
+												</div>
 											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="number"
-													label="Phone Number"
-													placeholder="Phone Number"
-													value={phone}
-													handleChange={(e) => setphone(e.target.value)}
-												/>
-											</div>
-										</div>
-										<div className="mb-4">
-											<div className="mb-2 flex flex-wrap items-center justify-between">
-												<label className="mb-1 inline-block font-bold">Social Links</label>
-												<button
-													type="button"
-													className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													onClick={() => setAddSocial(true)}
-												>
-													<i className="fa-regular fa-plus"></i>
-												</button>
-											</div>
-											<div className="flex flex-wrap">
-												{links &&
-													links.map((data, i) => (
-														<div
-															className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
-															key={i}
-														>
-															<Link href={data} target="_blank" className="">
-																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
-																	<i className={`fa-brand fa-link`}></i>
-																</span>
-																<p className="text-[12px] font-bold capitalize">Link {i}</p>
-															</Link>
+											<FormField
+												fieldType="textarea"
+												label="Summary"
+												placeholder="Summary"
+												value={summary}
+												handleChange={(e) => setsummary(e.target.value)}
+											/>
+											<FormField
+												options={ski}
+												onSearch={searchSkill}
+												fieldType="select2"
+												id="skills"
+												handleChange={setskill}
+												label="Skills"
+											/>
+
+											{/* exp */}
+											<hr className="mt-8 mb-4" />
+											<div className="relative mb-4">
+												<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
+													<input
+														type="checkbox"
+														id="newGraduate"
+														name="newGraduate"
+														className="mr-2 mb-[3px]"
+														checked={newgre}
+														onChange={(e) => setnewgre(e.target.checked)}
+													/>
+													New Graduate
+												</label>
+												<div className="mb-0">
+													<label className="mb-1 inline-block font-bold">Experience</label>
+													<div className="flex" style={{ display: newgre === true ? "none" : "flex" }}>
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+															{expid &&
+																expid.map((data, i) => (
+																	<article className="border-b last:border-b-0" key={i} id={data}>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[90%]">
+																				<input
+																					type="text"
+																					placeholder="Title"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`title${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[10%] pl-4 text-right">
+																				<button
+																					type="button"
+																					className="pr-4 text-red-500"
+																					disabled={expid.length === 1}
+																					onClick={() => {
+																						setexpcount(expcount - 1);
+																						const newExpid = expid.filter((id) => id !== data);
+																						setexpid(newExpid);
+																					}}
+																				>
+																					<i className="fa-solid fa-trash-can"></i>
+																				</button>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[50%]">
+																				<input
+																					type="text"
+																					placeholder="Company Name"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`cname${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[50%] pl-4">
+																				<input
+																					type="text"
+																					placeholder="Job Type"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`jtype${data}`}
+																				/>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[50%]">
+																				<input
+																					type="date"
+																					placeholder="Start Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`sdate${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[50%] pl-4">
+																				<input
+																					type="date"
+																					placeholder="End Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`edate${data}`}
+																				/>
+																			</div>
+																		</div>
+																		<textarea
+																			placeholder="Description"
+																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			id={`desc${data}`}
+																		></textarea>
+																	</article>
+																))}
+														</div>
+														<div className="w-[40px] text-right">
 															<button
 																type="button"
-																className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
-																onClick={() => deleteLink(i)}
+																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+																onClick={() => {
+																	setexpid([...expid, `expBlock${expcount + 1}`]);
+																	setexpcount(expcount + 1);
+																}}
+																disabled={newgre}
 															>
-																<i className="fa-solid fa-circle-xmark"></i>
+																<i className="fa-regular fa-plus"></i>
 															</button>
 														</div>
-													))}
-											</div>
-										</div>
-										<FormField
-											fieldType="textarea"
-											label="Summary"
-											placeholder="Summary"
-											value={summary}
-											handleChange={(e) => setsummary(e.target.value)}
-										/>
-										<FormField
-											options={ski}
-											onSearch={searchSkill}
-											fieldType="select2"
-											id="skills"
-											handleChange={setskill}
-											label="Skills"
-										/>
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Education</label>
-											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)]">
-													{Array(2).fill(
-														<article className="mb-2 border-b pb-2 last:border-b-0">
-															<div className="flex flex-wrap items-center text-sm">
-																<div className="my-2 w-[30%]">
-																	<input
-																		type="text"
-																		placeholder="Company Name"
-																		className="w-full rounded-normal border border-borderColor text-sm"
-																	/>
-																</div>
-																<div className="my-2 w-[60%] pl-4">
-																	<input
-																		type="text"
-																		placeholder="2021 Sep - 2022 Nov"
-																		className="w-full rounded-normal border border-borderColor text-sm"
-																	/>
-																</div>
-																<div className="my-2 w-[10%] pl-4 text-right">
-																	<button type="button" className="pr-4 text-red-500">
-																		<i className="fa-solid fa-trash-can"></i>
-																	</button>
-																</div>
-															</div>
-															<textarea
-																placeholder="Description"
-																className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-															></textarea>
-														</article>
-													)}
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
+													</div>
 												</div>
 											</div>
-										</div>
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Certifications</label>
-											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
-													{Array(2).fill(
-														<article className="border-b last:border-b-0">
-															<div className="flex flex-wrap items-center text-sm">
-																<div className="my-2 w-[30%]">
-																	<input
-																		type="text"
-																		placeholder="Company Name"
-																		className="w-full rounded-normal border border-borderColor text-sm"
-																	/>
-																</div>
-																<div className="my-2 w-[60%] pl-4">
-																	<input
-																		type="text"
-																		placeholder="2021 Sep - 2022 Nov"
-																		className="w-full rounded-normal border border-borderColor text-sm"
-																	/>
-																</div>
-																<div className="my-2 w-[10%] pl-4 text-right">
-																	<button type="button" className="pr-4 text-red-500">
-																		<i className="fa-solid fa-trash-can"></i>
-																	</button>
-																</div>
-															</div>
-															<textarea
-																placeholder="Description"
-																className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-															></textarea>
-														</article>
-													)}
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
+
+											{/* edu */}
+											<hr className="mt-8 mb-4" />
+											<div className="relative mb-4">
+												<div className="mb-0">
+													<label className="mb-1 inline-block font-bold">Education</label>
+													<div className="flex">
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+															{eduid &&
+																eduid.map((data, i) => (
+																	<article className="border-b last:border-b-0" key={i} id={data}>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[90%]">
+																				<input
+																					type="text"
+																					placeholder="Degree Title"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`title${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[10%] pl-4 text-right">
+																				<button
+																					type="button"
+																					className="pr-4 text-red-500"
+																					// disabled={expid.length === 1}
+																					onClick={() => {
+																						seteducount(educount - 1);
+																						const neweduid = eduid.filter((id) => id !== data);
+																						seteduid(neweduid);
+																					}}
+																				>
+																					<i className="fa-solid fa-trash-can"></i>
+																				</button>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[33%]">
+																				<input
+																					type="text"
+																					placeholder="College Name"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`cname${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[33%] pl-4">
+																				<input
+																					type="date"
+																					placeholder="Start Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`sdate${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[33%] pl-4">
+																				<input
+																					type="date"
+																					placeholder="End Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`edate${data}`}
+																				/>
+																			</div>
+																		</div>
+																		<textarea
+																			placeholder="Description"
+																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			id={`desc${data}`}
+																		></textarea>
+																	</article>
+																))}
+														</div>
+														<div className="w-[40px] text-right">
+															<button
+																type="button"
+																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+																onClick={() => {
+																	seteduid([...eduid, `eduBlock${educount + 1}`]);
+																	seteducount(educount + 1);
+																}}
+															>
+																<i className="fa-regular fa-plus"></i>
+															</button>
+														</div>
+													</div>
 												</div>
 											</div>
-										</div>
-										<hr className="mt-8 mb-4" />
-										<div className="relative mb-4">
-											<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
-												<input type="checkbox" id="newGraduate" name="newGraduate" className="mr-2 mb-[3px]" />
-												New Graduate
-											</label>
-											<div className="mb-0">
+
+											{/* cer */}
+											<hr className="mt-8 mb-4" />
+											<div className="relative mb-4">
+												<div className="mb-0">
+													<label className="mb-1 inline-block font-bold">Certificate</label>
+													<div className="flex">
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+															{certid &&
+																certid.map((data, i) => (
+																	<article className="border-b last:border-b-0" key={i} id={data}>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[90%]">
+																				<input
+																					type="text"
+																					placeholder="Title"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`title${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[10%] pl-4 text-right">
+																				<button
+																					type="button"
+																					className="pr-4 text-red-500"
+																					// disabled={expid.length === 1}
+																					onClick={() => {
+																						setcertcount(certcount - 1);
+																						const newcertid = certid.filter((id) => id !== data);
+																						setcertid(newcertid);
+																					}}
+																				>
+																					<i className="fa-solid fa-trash-can"></i>
+																				</button>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[33%]">
+																				<input
+																					type="text"
+																					placeholder="Company Issued Name"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`cname${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[33%] pl-4">
+																				<input
+																					type="date"
+																					placeholder="Start Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`sdate${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[33%] pl-4">
+																				<input
+																					type="date"
+																					placeholder="End Date"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`edate${data}`}
+																				/>
+																			</div>
+																		</div>
+																		<div className="flex flex-wrap items-center text-sm">
+																			<div className="my-2 w-[50%]">
+																				<input
+																					type="text"
+																					placeholder="Creditanls ID"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`cid${data}`}
+																				/>
+																			</div>
+																			<div className="my-2 w-[50%] pl-4">
+																				<input
+																					type="text"
+																					placeholder="Creditanls URL"
+																					className="w-full rounded-normal border border-borderColor text-sm"
+																					id={`curl${data}`}
+																				/>
+																			</div>
+																		</div>
+																	</article>
+																))}
+														</div>
+														<div className="w-[40px] text-right">
+															<button
+																type="button"
+																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+																onClick={() => {
+																	setcertid([...certid, `certBlock${certcount + 1}`]);
+																	setcertcount(certcount + 1);
+																}}
+															>
+																<i className="fa-regular fa-plus"></i>
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											{/* edu */}
+											{/* <hr className="mt-8 mb-4" />
+											<div className="mb-4">
 												<label className="mb-1 inline-block font-bold">Education</label>
+												<div className="flex">
+													<div className="min-h-[45px] w-[calc(100%-40px)]">
+														{Array(2).fill(
+															<article className="mb-2 border-b pb-2 last:border-b-0">
+																<div className="flex flex-wrap items-center text-sm">
+																	<div className="my-2 w-[30%]">
+																		<input
+																			type="text"
+																			placeholder="Company Name"
+																			className="w-full rounded-normal border border-borderColor text-sm"
+																		/>
+																	</div>
+																	<div className="my-2 w-[60%] pl-4">
+																		<input
+																			type="text"
+																			placeholder="2021 Sep - 2022 Nov"
+																			className="w-full rounded-normal border border-borderColor text-sm"
+																		/>
+																	</div>
+																	<div className="my-2 w-[10%] pl-4 text-right">
+																		<button type="button" className="pr-4 text-red-500">
+																			<i className="fa-solid fa-trash-can"></i>
+																		</button>
+																	</div>
+																</div>
+																<textarea
+																	placeholder="Description"
+																	className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																></textarea>
+															</article>
+														)}
+													</div>
+													<div className="w-[40px] text-right">
+														<button
+															type="button"
+															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
+														>
+															<i className="fa-regular fa-plus"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+
+											<div className="mb-4">
+												<label className="mb-1 inline-block font-bold">Certifications</label>
 												<div className="flex">
 													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
 														{Array(2).fill(
@@ -892,53 +1316,50 @@ export default function VendorClients() {
 														</button>
 													</div>
 												</div>
+											</div> */}
+
+											<div className="mx-[-10px] flex flex-wrap">
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Current Salary"
+														placeholder="Current Salary"
+														value={csalary}
+														handleChange={(e) => setcsalary(e.target.value)}
+													/>
+												</div>
+												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Expected Salary"
+														placeholder="Expected Salary"
+														value={esalary}
+														handleChange={(e) => setesalary(e.target.value)}
+													/>
+												</div>
 											</div>
+											<FormField
+												fieldType="input"
+												inputType="text"
+												label="Notice Period"
+												placeholder="Notice Period"
+												value={notice}
+												handleChange={(e) => setnotice(e.target.value)}
+												readOnly={newgre}
+											/>
+											<FormField
+												fieldType="reactquill"
+												label="Any Message to Recruiter"
+												placeholder="Notice Period"
+												value={msg}
+												handleChange={setmsg}
+												handleOnBlur={setmsg}
+											/>
+											<Button label="Add" loader={false} btnType={"submit"} />
 										</div>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Current Salary"
-													placeholder="Current Salary"
-													value={csalary}
-													handleChange={(e) => setcsalary(e.target.value)}
-												/>
-											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Expected Salary"
-													placeholder="Expected Salary"
-													value={esalary}
-													handleChange={(e) => setesalary(e.target.value)}
-												/>
-											</div>
-										</div>
-										<FormField
-											fieldType="input"
-											inputType="text"
-											label="Notice Period"
-											placeholder="Notice Period"
-											value={notice}
-											handleChange={(e) => setnotice(e.target.value)}
-										/>
-										<FormField
-											fieldType="reactquill"
-											label="Any Message to Recruiter"
-											placeholder="Notice Period"
-											value={msg}
-											handleChange={setmsg}
-											handleOnBlur={setmsg}
-										/>
-										<Button
-											label="Add"
-											loader={false}
-											btnType="btnType"
-											handleClick={() => addApp(vrefid, popuprefid)}
-										/>
-									</div>
+									</form>
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
