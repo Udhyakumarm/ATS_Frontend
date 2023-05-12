@@ -16,6 +16,7 @@ import { axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { debounce } from "lodash";
 import { axiosInstance as axis } from "@/utils";
+import moment from "moment";
 
 const people = [
 	{ id: 1, name: "Wade Cooper" },
@@ -74,6 +75,7 @@ export default function VendorClients() {
 	const [query, setQuery] = useState("");
 
 	const [popuprefid, setpopuprefid] = useState("");
+	const [popupvcrefid, setpopupvcrefid] = useState("");
 	const filteredPeople =
 		query === ""
 			? people
@@ -94,6 +96,10 @@ export default function VendorClients() {
 	];
 
 	const [orgdetail, setorgdetail] = useState({});
+	const [venapp, setvenapp] = useState([]);
+
+	const [venappdetail, setvenappdetail] = useState({});
+
 	async function loadOrgDetail(pk: any) {
 		await axiosInstance
 			.get(`/organization/get/organizationprofile/vendor/${pk.toString()}/`)
@@ -106,9 +112,36 @@ export default function VendorClients() {
 			});
 	}
 
+	async function loadVendorAppDetail(refid: any, vrefid: any) {
+		await axiosInstance
+			.get(`/vendors/vendor-list/${refid}/${vrefid}/`)
+			.then((res) => {
+				setvenapp(res.data);
+				console.log("&", res.data);
+			})
+			.catch((err) => {
+				setvenapp([]);
+				console.log("&", err);
+			});
+	}
+
+	async function loadVendorSingleAppDetail(refid: any, vcrefid: any) {
+		await axiosInstance
+			.get(`/vendors/vendoruser/${refid}/${vcrefid}/`)
+			.then((res) => {
+				setvenappdetail(res.data);
+				console.log("&", res.data);
+			})
+			.catch((err) => {
+				setvenappdetail({});
+				console.log("&", err);
+			});
+	}
+
 	useEffect(() => {
 		if (vjobclick != -1) {
 			loadOrgDetail(vjdata[vjobclick]["user"]);
+			loadVendorAppDetail(vjdata[vjobclick]["refid"], vrefid);
 		}
 	}, [vjobclick]);
 
@@ -117,6 +150,13 @@ export default function VendorClients() {
 			setpopuprefid("");
 		}
 	}, [addCand]);
+
+	useEffect(() => {
+		if (viewApplicant) {
+			console.log("NA");
+			loadVendorSingleAppDetail(vjdata[vjobclick]["refid"], popupvcrefid);
+		}
+	}, [viewApplicant]);
 
 	//add applicant state
 	const [resume, setresume] = useState<File | null>(null);
@@ -215,6 +255,8 @@ export default function VendorClients() {
 				toastcomp("Vendor Candidate Applicant Not Created", "error");
 				console.log("@", err);
 			});
+
+		setAddCand(false);
 	}
 
 	async function addVendorCandidateCert(vrefid: any, refid: any, fd: any) {
@@ -273,66 +315,70 @@ export default function VendorClients() {
 		fd.append("first_name", fname);
 		fd.append("last_name", lname);
 		fd.append("email", email);
-		fd.append("mobile", phone);
 		fd.append("resume", resume);
-		fd.append("summary", summary);
-		fd.append("current_salary", csalary);
-		fd.append("expected_salary", esalary);
-		if (!newgre) fd.append("notice_period", notice);
-		fd.append("recuriter_message", msg);
 		fd.append("skills", skill);
+		if (!newgre) fd.append("current_salary", csalary);
+		if (!newgre) fd.append("notice_period", notice);
+		if (phone && phone.length > 0) fd.append("mobile", phone);
+		if (summary && summary.length > 0) fd.append("summary", summary);
+		if (esalary && esalary.length > 0) fd.append("expected_salary", esalary);
+		if (msg && msg.length > 0) fd.append("recuriter_message", msg);
 
 		await axiosInstanceAuth2
 			.post(`/vendors/vendor-candidate/${refid}/${vrefid}/`, fd)
 			.then(async (res) => {
-				console.log(res.data);
-				let vcrefid = res.data.data[0]["vcrefid"];
-				toastcomp("Vendor Candidate Profile Created", "success");
-				if (vcrefid && vcrefid.length > 0) {
-					for (let i = 0; i < links.length; i++) {
-						addVendorCandidateLink(vcrefid, refid, links[i]);
-					}
-
-					if (!newgre) {
-						for (let i = 0; i < expid.length; i++) {
-							var fd1 = new FormData();
-							fd.append("title", document.getElementById(`title${expid[i]}`).value);
-							fd.append("company", document.getElementById(`cname${expid[i]}`).value);
-							fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
-							fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
-							fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
-							fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
-							addVendorCandidateExp(vcrefid, refid, fd1);
+				if (res.data["msg"] && res.data["msg"].length > 0) {
+					toastcomp(res.data["msg"], "error");
+				} else {
+					let vcrefid = res.data.data[0]["vcrefid"];
+					toastcomp("Vendor Candidate Profile Created", "success");
+					if (vcrefid && vcrefid.length > 0) {
+						for (let i = 0; i < links.length; i++) {
+							addVendorCandidateLink(vcrefid, refid, links[i]);
 						}
-					}
 
-					for (let i = 0; i < eduid.length; i++) {
-						var fd1 = new FormData();
-						fd.append("title", document.getElementById(`title${eduid[i]}`).value);
-						fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
-						fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
-						fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
-						fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
-						addVendorCandidateEdu(vcrefid, refid, fd1);
-					}
+						if (!newgre) {
+							for (let i = 0; i < expid.length; i++) {
+								var fd1 = new FormData();
+								fd.append("title", document.getElementById(`title${expid[i]}`).value);
+								fd.append("company", document.getElementById(`cname${expid[i]}`).value);
+								fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
+								fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
+								fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
+								fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
+								addVendorCandidateExp(vcrefid, refid, fd1);
+							}
+						}
 
-					for (let i = 0; i < certid.length; i++) {
-						var fd1 = new FormData();
-						fd.append("title", document.getElementById(`title${certid[i]}`).value);
-						fd.append("company", document.getElementById(`cname${certid[i]}`).value);
-						fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
-						fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
-						fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
-						fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
-						addVendorCandidateCert(vcrefid, refid, fd1);
-					}
+						for (let i = 0; i < eduid.length; i++) {
+							var fd1 = new FormData();
+							fd.append("title", document.getElementById(`title${eduid[i]}`).value);
+							fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
+							fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
+							fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
+							fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
+							addVendorCandidateEdu(vcrefid, refid, fd1);
+						}
 
-					addVendorCandidateApplicant(refid, vrefid, vcrefid);
+						for (let i = 0; i < certid.length; i++) {
+							var fd1 = new FormData();
+							fd.append("title", document.getElementById(`title${certid[i]}`).value);
+							fd.append("company", document.getElementById(`cname${certid[i]}`).value);
+							fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
+							fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
+							fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
+							fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
+							addVendorCandidateCert(vcrefid, refid, fd1);
+						}
+
+						addVendorCandidateApplicant(refid, vrefid, vcrefid);
+					}
 				}
 			})
 			.catch((err) => {
-				toastcomp("Vendor Candidate Profile Not Created", "error");
-				console.log(err);
+				// toastcomp("Vendor Candidate Profile Not Created", "error");
+				toastcomp("Email ALreday Exist", "error");
+				console.log("error:", err);
 			});
 	}
 
@@ -340,7 +386,10 @@ export default function VendorClients() {
 		event.preventDefault();
 
 		var check = 0;
-		if (!newgre) {
+
+		if (fname.length <= 0 || lname.length <= 0 || email.length <= 0 || skill.length <= 0 || resume === null) {
+			check = 4;
+		} else if (!newgre) {
 			for (let i = 0; i < expid.length; i++) {
 				if (
 					!document.getElementById(`title${expid[i]}`).value ||
@@ -399,6 +448,7 @@ export default function VendorClients() {
 
 		console.log(check);
 		if (check === 0) addVendorCandidateProfile(vrefid, refid);
+		else if (check === 4) toastcomp("Fill Up Required Fields", "error");
 		else if (check === 1) toastcomp("Fill Up Exp", "error");
 		else if (check === 2) toastcomp("Fill Up Edu", "error");
 		else if (check === 3) toastcomp("Fill Up Cert", "error");
@@ -421,7 +471,7 @@ export default function VendorClients() {
 					<div className="flex flex-wrap p-4 lg:p-8">
 						<div className="w-full lg:max-w-[300px]">
 							<div className="rounded-normal border bg-white p-4 dark:border-gray-600 dark:bg-gray-800">
-								<Combobox value={selected} onChange={setSelected}>
+								{/* <Combobox value={selected} onChange={setSelected}>
 									<div className="relative mb-6">
 										<div className="relative w-full cursor-default overflow-hidden rounded-[6px] border dark:border-gray-600">
 											<Combobox.Input
@@ -470,7 +520,7 @@ export default function VendorClients() {
 											</Combobox.Options>
 										</Transition>
 									</div>
-								</Combobox>
+								</Combobox> */}
 								<h4 className="mb-2 font-bold">Jobs</h4>
 								<div>
 									{vjdata &&
@@ -760,22 +810,28 @@ export default function VendorClients() {
 																</tr>
 															</thead>
 															<tbody className="text-sm font-semibold">
-																{Array(10).fill(
-																	<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-																		<td className="py-2 px-3 text-left">Jane Cooper</td>
-																		<td className="py-2 px-3 text-left">Shortlisted</td>
-																		<td className="py-2 px-3 text-left">28 Jan 2023</td>
-																		<td className="py-2 px-3 text-left">
-																			<button
-																				type="button"
-																				className="text-primary hover:underline"
-																				onClick={() => setViewApplicant(true)}
-																			>
-																				View
-																			</button>
-																		</td>
-																	</tr>
-																)}
+																{venapp &&
+																	venapp.map((data, i) => (
+																		<tr
+																			className="cursor-pointer odd:bg-gray-100 dark:odd:bg-gray-600"
+																			key={i}
+																			onClick={() => {
+																				setpopupvcrefid(data["applicant"]["vcrefid"]);
+																				setViewApplicant(true);
+																			}}
+																		>
+																			<td className="py-2 px-3 text-left">
+																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
+																			</td>
+																			<td className="py-2 px-3 text-left">{data["status"]}</td>
+																			<td className="py-2 px-3 text-left">{moment(data["timestamp"]).fromNow()}</td>
+																			<td className="py-2 px-3 text-left">
+																				<button type="button" className="text-primary hover:underline">
+																					View
+																				</button>
+																			</td>
+																		</tr>
+																	))}
 															</tbody>
 														</table>
 													</div>
@@ -853,6 +909,7 @@ export default function VendorClients() {
 														value={fname}
 														handleChange={(e) => setfname(e.target.value)}
 														placeholder="First Name"
+														required
 													/>
 												</div>
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
@@ -863,6 +920,7 @@ export default function VendorClients() {
 														placeholder="Last Name"
 														value={lname}
 														handleChange={(e) => setlname(e.target.value)}
+														required
 													/>
 												</div>
 											</div>
@@ -875,6 +933,7 @@ export default function VendorClients() {
 														placeholder="Email"
 														value={email}
 														handleChange={(e) => setemail(e.target.value)}
+														required
 													/>
 												</div>
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
@@ -937,6 +996,7 @@ export default function VendorClients() {
 												id="skills"
 												handleChange={setskill}
 												label="Skills"
+												required
 											/>
 
 											{/* exp */}
@@ -954,7 +1014,9 @@ export default function VendorClients() {
 													New Graduate
 												</label>
 												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">Experience</label>
+													<label className="mb-1 inline-block font-bold">
+														Experience <sup className="text-red-500">*</sup>
+													</label>
 													<div className="flex" style={{ display: newgre === true ? "none" : "flex" }}>
 														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
 															{expid &&
@@ -1327,6 +1389,7 @@ export default function VendorClients() {
 														placeholder="Current Salary"
 														value={csalary}
 														handleChange={(e) => setcsalary(e.target.value)}
+														disabled={newgre}
 													/>
 												</div>
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
@@ -1402,119 +1465,156 @@ export default function VendorClients() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									<div className="p-8">
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<p className="mx-auto w-full max-w-[600px] text-center">Preview Here</p>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<h2 className="mb-2 text-xl font-bold">Olivia Wilson</h2>
-											<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-												<li className="mr-3 list-none">www.oliv9301@gmail.com</li>
-												<li className="mr-3">+91 9351042541</li>
-												<li className="mr-3">Notice Period -30 Days</li>
-												<li className="mr-3">Current Salary - 6.0 LPA</li>
-												<li className="mr-3">Expected Salary - 8.0 LPA</li>
-											</ul>
-											<div className="flex flex-wrap items-center text-2xl">
-												<Link href={"#"} target="_blank" className="m-3 mb-0">
-													<i className="fa-brands fa-behance"></i>
-												</Link>
-												<Link href={"#"} target="_blank" className="m-3 mb-0">
-													<i className="fa-brands fa-stack-overflow"></i>
-												</Link>
-												<Link href={"#"} target="_blank" className="m-3 mb-0">
-													<i className="fa-brands fa-linkedin-in"></i>
-												</Link>
-												<Link href={"#"} target="_blank" className="m-3 mb-0">
-													<i className="fa-brands fa-github"></i>
-												</Link>
-											</div>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<label className="mb-1 inline-block font-bold">Summary</label>
-											<article className="text-sm">Lorem impsum is a dummy text editor.</article>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<label className="mb-1 inline-block font-bold">Skills</label>
-											<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
-												<div className="text-sm">
-													<p className="my-1">Skill 1</p>
-													<p className="my-1">Skill 2</p>
-													<p className="my-1">Skill 3</p>
-													<p className="my-1">Skill 4</p>
+									{venappdetail["VendorCandidateProfile"] &&
+										venappdetail["VendorCandidateProfile"].length > 0 &&
+										venappdetail["VendorCandidateProfile"].map((data, i) => (
+											<div className="p-8" key={i}>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<p className="mx-auto w-full max-w-[600px] text-center">
+														<iframe
+															src={`http://127.0.0.1:8000${data["resume"]}`}
+															className="h-[100vh] w-[100%]"
+														></iframe>
+													</p>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<h2 className="mb-2 text-xl font-bold">
+														{data["first_name"]}&nbsp;{data["last_name"]}
+													</h2>
+													<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+														<li className="mr-3 list-none">{data["email"]}</li>
+														{data["mobile"] && data["mobile"].length > 0 && <li className="mr-3">{data["mobile"]}</li>}
+														<li className="mr-3">
+															Notice Period -{" "}
+															{data["notice_period"] && data["notice_period"].length > 0 ? (
+																data["notice_period"]
+															) : (
+																<>N/A</>
+															)}
+														</li>
+														<li className="mr-3">
+															Current Salary -{" "}
+															{data["current_salary"] && data["current_salary"].length > 0 ? (
+																data["current_salary"]
+															) : (
+																<>N/A</>
+															)}
+														</li>
+														<li className="mr-3">
+															Expected Salary -{" "}
+															{data["expected_salary"] && data["expected_salary"].length > 0 ? (
+																data["expected_salary"]
+															) : (
+																<>N/A</>
+															)}
+														</li>
+													</ul>
+													<div className="flex flex-wrap items-center text-2xl">
+														{venappdetail["Link"] &&
+															venappdetail["Link"].length > 0 &&
+															venappdetail["Link"].map((data, i) => (
+																<Link href={data["title"]} target="_blank" className="m-3 mb-0" key={i}>
+																	<i className="fa-brands fa-behance"></i>
+																</Link>
+															))}
+													</div>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Summary</label>
+													<article className="text-sm">
+														{data["summary"] && data["summary"].length > 0 ? data["summary"] : <>N/A</>}
+													</article>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Skills</label>
+													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+														<div className="text-sm">
+															{data["skills"] &&
+																data["skills"].length > 0 &&
+																data["skills"].split(",").map((data, i) => (
+																	<p className="my-1" key={i}>
+																		{data}
+																	</p>
+																))}
+														</div>
+													</div>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Experience</label>
+													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+														{venappdetail["Experience"] &&
+															venappdetail["Experience"].length > 0 &&
+															venappdetail["Experience"].map((data, i) => (
+																<article className="border-b last:border-b-0">
+																	<div className="flex flex-wrap text-sm">
+																		<div className="my-2 w-[70%]">
+																			<h4 className="font-bold">
+																				{data["title"]}&nbsp;({data["company"]})&nbsp;({data["type"]})
+																			</h4>
+																		</div>
+																		<div className="my-2 w-[30%] pl-4 text-right">
+																			<p className="font-semibold">
+																				{data["year_of_join"]}&nbsp;-&nbsp;{data["year_of_end"]}
+																			</p>
+																		</div>
+																	</div>
+																	<p className="mb-2 text-sm">{data["expbody"]}</p>
+																</article>
+															))}
+													</div>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Education</label>
+													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+														{venappdetail["Education"] &&
+															venappdetail["Education"].length > 0 &&
+															venappdetail["Education"].map((data, i) => (
+																<article className="border-b last:border-b-0" key={i}>
+																	<div className="flex flex-wrap text-sm">
+																		<div className="my-2 w-[70%]">
+																			<h4 className="font-bold">
+																				{data["title"]}&nbsp;({data["college"]})
+																			</h4>
+																		</div>
+																		<div className="my-2 w-[30%] pl-4 text-right">
+																			<p className="font-semibold">
+																				{data["yearofjoin"]}&nbsp;-&nbsp;{data["yearofend"]}{" "}
+																			</p>
+																		</div>
+																	</div>
+																	<p className="mb-2 text-sm">{data["edubody"]}</p>
+																</article>
+															))}
+													</div>
+												</div>
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Certifications</label>
+													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+														{venappdetail["Certification"] &&
+															venappdetail["Certification"].length > 0 &&
+															venappdetail["Certification"].map((data, i) => (
+																<article className="border-b last:border-b-0">
+																	<div className="flex flex-wrap text-sm">
+																		<div className="my-2 w-[70%]">
+																			<h4 className="font-bold">
+																				{data["title"]}&nbsp;({data["company"]})
+																			</h4>
+																		</div>
+																		<div className="my-2 w-[30%] pl-4 text-right">
+																			<p className="font-semibold">
+																				{data["yearofissue"]}&nbsp;-&nbsp;{data["yearofexp"]}
+																			</p>
+																		</div>
+																	</div>
+																	<p className="mb-2 text-sm">
+																		{data["creid"]}&nbsp;{data["creurl"]}
+																	</p>
+																</article>
+															))}
+													</div>
 												</div>
 											</div>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<label className="mb-1 inline-block font-bold">Education</label>
-											<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
-												{Array(2).fill(
-													<article className="border-b last:border-b-0">
-														<div className="flex flex-wrap text-sm">
-															<div className="my-2 w-[30%]">
-																<h4 className="font-bold">XYZ Group</h4>
-															</div>
-															<div className="my-2 w-[70%] pl-4">
-																<p className="font-semibold">2021 Sep - 2022 Nov</p>
-															</div>
-														</div>
-														<p className="mb-2 text-sm">
-															<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-															eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-															nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-															irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-														</p>
-													</article>
-												)}
-											</div>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<label className="mb-1 inline-block font-bold">Certifications</label>
-											<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
-												{Array(2).fill(
-													<article className="border-b last:border-b-0">
-														<div className="flex flex-wrap text-sm">
-															<div className="my-2 w-[30%]">
-																<h4 className="font-bold">XYZ Group</h4>
-															</div>
-															<div className="my-2 w-[70%] pl-4">
-																<p className="font-semibold">2021 Sep - 2022 Nov</p>
-															</div>
-														</div>
-														<p className="mb-2 text-sm">
-															<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-															eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-															nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-															irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-														</p>
-													</article>
-												)}
-											</div>
-										</div>
-										<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-											<label className="mb-1 inline-block font-bold">Experience</label>
-											<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
-												{Array(2).fill(
-													<article className="border-b last:border-b-0">
-														<div className="flex flex-wrap text-sm">
-															<div className="my-2 w-[30%]">
-																<h4 className="font-bold">XYZ Group</h4>
-															</div>
-															<div className="my-2 w-[70%] pl-4">
-																<p className="font-semibold">2021 Sep - 2022 Nov</p>
-															</div>
-														</div>
-														<p className="mb-2 text-sm">
-															<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-															eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-															nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-															irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-														</p>
-													</article>
-												)}
-											</div>
-										</div>
-									</div>
+										))}
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
