@@ -30,7 +30,7 @@ export default function VCard(props: any) {
 	async function loadVendorRegData(vid: string) {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data2/${vid}/`)
-			.then(async (res) => {
+			.then(async (res: any) => {
 				if (res.data.length > 0) {
 					setemail(res.data[0]["email"]);
 					setcname(res.data[0]["vendor"]["company_name"]);
@@ -55,7 +55,7 @@ export default function VCard(props: any) {
 					setaedate("");
 				}
 			})
-			.catch((err) => {
+			.catch((err: any) => {
 				console.log("!", err);
 				setemail("");
 				setcname("");
@@ -169,7 +169,7 @@ export default function VCard(props: any) {
 										btnStyle="sm"
 										label={"On Board"}
 										btnType={"button"}
-										handleClick={(e) => props.onBoardVendor(props.data["vrefid"])}
+										handleClick={(e: any) => props.onBoardVendor(props.data["vrefid"])}
 									/>
 								</div>
 							</div>

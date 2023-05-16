@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import Head from "next/head";
 import Link from "next/link";
 
-export default function AuthCreatePassword() {
+export default function CreatePassword() {
 	return (
 		<>
 			<Head>
@@ -16,7 +16,7 @@ export default function AuthCreatePassword() {
 					<div className="mb-4 text-center">
 						<Logo width={180} />
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
+					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						<h1 className="mb-6 text-3xl font-bold">
 							Create <span className="text-primary">Password</span>
 						</h1>
