@@ -684,8 +684,8 @@ export default function VendorClients() {
 											<Tab.Panel>
 												{orgdetail &&
 													orgdetail["OrgProfile"] &&
-													orgdetail["OrgProfile"].map((data: any, i: React.Key) => (
-														<div className="mx-auto w-full max-w-[800px] px-4 py-4">
+													orgdetail["OrgProfile"].map((data: any, j: React.Key | null | undefined) => (
+														<div className="mx-auto w-full max-w-[800px] px-4 py-4" key={j}>
 															<div className="mb-3 flex flex-wrap rounded-normal border p-4 pb-0">
 																{orgdetail["Founder"].map(
 																	(
@@ -1545,7 +1545,7 @@ export default function VendorClients() {
 														{venappdetail["Experience"] &&
 															venappdetail["Experience"].length > 0 &&
 															venappdetail["Experience"].map((data, i) => (
-																<article className="border-b last:border-b-0">
+																<article className="border-b last:border-b-0" key={i}>
 																	<div className="flex flex-wrap text-sm">
 																		<div className="my-2 w-[70%]">
 																			<h4 className="font-bold">
