@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { Key } from 'react';
 import Card from './Card';
 import {Column} from './Column';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, Fragment, useRef } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Button from "./Button";

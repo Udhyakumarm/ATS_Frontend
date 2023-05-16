@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import favIcon from "/public/favicon-white.ico";

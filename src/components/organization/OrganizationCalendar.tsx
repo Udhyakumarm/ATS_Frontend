@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";

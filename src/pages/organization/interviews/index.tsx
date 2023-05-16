@@ -239,7 +239,7 @@ export default function Interviews() {
                                         ?
                                         <>
                                         {
-                                            !sklLoad
+                                            sklLoad
                                             ?
                                             Array(2).fill(
                                                 <Interviews />

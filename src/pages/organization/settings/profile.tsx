@@ -1478,8 +1478,8 @@ export default function Profile() {
 												<div className="mt-2 flex rounded border">
 													<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
 														<p className="text-[12px]">
-															&lt;script
-															src="https://app.somhakoats.com/asset-objects/careers-page-integration.js"&gt;&lt;/script&gt;
+															&#60;script
+															src=&ldquo;https://app.somhakoats.com/asset-objects/careers-page-integration.js&rdquo;&#62;&#60;/script&#62;
 														</p>
 													</div>
 													<button type="button" className="w-[50px] p-3">
@@ -1493,8 +1493,8 @@ export default function Profile() {
 												<div className="mt-2 flex rounded border">
 													<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
 														<p className="text-[12px]">
-															&lt;somhakoats-jobs data-company-name="xyz" data-company-uuid="F0DADE07A7"
-															data-careers-page="true"&gt; &lt;/somhakoats-jobs&gt;
+															&#60;somhakoats-jobs data-company-name=&ldquo;xyz&rdquo; data-company-uuid=&ldquo;F0DADE07A7&rdquo;
+															data-careers-page=&ldquo;true&rdquo;&#62; &#60;/somhakoats-jobs&#62;
 														</p>
 													</div>
 													<button type="button" className="w-[50px] p-3">

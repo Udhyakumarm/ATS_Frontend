@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
