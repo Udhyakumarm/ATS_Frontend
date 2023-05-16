@@ -637,7 +637,7 @@ export default function VendorClients() {
 														></article>
 													</div>
 													<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-														<h5 className="mb-2 font-bold">What We're Looking For</h5>
+														<h5 className="mb-2 font-bold">What We are Looking For</h5>
 														<article
 															className="text-sm"
 															dangerouslySetInnerHTML={{ __html: vjdata[vjobclick]["looking_for"] }}
@@ -781,7 +781,7 @@ export default function VendorClients() {
 																			<Masonry>
 																				{orgdetail["Gallery"].map(
 																					(data: { image: any }, i: React.Key | null | undefined) => (
-																						<img
+																						<Image
 																							src={`http://127.0.0.1:8000${data.image}`}
 																							alt="Office"
 																							className="w-full rounded-normal p-2"
@@ -1593,7 +1593,7 @@ export default function VendorClients() {
 														{venappdetail["Certification"] &&
 															venappdetail["Certification"].length > 0 &&
 															venappdetail["Certification"].map((data, i) => (
-																<article className="border-b last:border-b-0">
+																<article className="border-b last:border-b-0" key={i}>
 																	<div className="flex flex-wrap text-sm">
 																		<div className="my-2 w-[70%]">
 																			<h4 className="font-bold">

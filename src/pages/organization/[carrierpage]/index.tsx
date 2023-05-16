@@ -180,7 +180,7 @@ export default function CanCareer() {
 													<ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
 														<Masonry>
 															{orgdetail["Gallery"].map((data: { image: any }, i: React.Key | null | undefined) => (
-																<img
+																<Image
 																	src={`http://127.0.0.1:8000${data.image}`}
 																	alt="Office"
 																	className="w-full rounded-normal p-2"

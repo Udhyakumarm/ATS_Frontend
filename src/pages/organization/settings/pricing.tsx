@@ -49,7 +49,7 @@ export default function Pricing() {
                         <div className="w-full max-w-[980px] mx-auto px-4 py-6">
                             <div className="w-full max-w-[800px] mx-auto lg:mb-[-40px]">
                                 <p className="text-darkGray dark:text-gray-400 font-semibold text-sm w-[60%]">
-                                Whether your time-saving automation needs are large or small, we're here to help you scale.
+                                Whether your time-saving automation needs are large or small, we are here to help you scale.
                                 </p>
                             </div>
                             <Tab.Group>

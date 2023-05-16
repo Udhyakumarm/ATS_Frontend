@@ -849,7 +849,7 @@ export default function Profile() {
 											<div className="flex flex-wrap">
 												{ilink &&
 													ilink.map((data, i) => (
-														<div className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700">
+														<div className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700" key={i}>
 															<Link href={data["title"]} className="" key={i}>
 																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
 																	<i className={`${geticon(data["title"])}`}></i>

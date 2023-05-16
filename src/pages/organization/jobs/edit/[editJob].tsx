@@ -1092,7 +1092,7 @@ export default function JobsEdit() {
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">What We're Looking For</h5>
+												<h5 className="mb-2 font-bold">What We are Looking For</h5>
 												<article className="text-sm">
 													{jlooking && jlooking.length > 0 ? (
 														<>
