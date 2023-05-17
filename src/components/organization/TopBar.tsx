@@ -8,10 +8,12 @@ import userImg from "/public/images/user-image.png";
 import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
-import googleIcon from '/public/images/social/google-icon.png'
+import googleIcon from "/public/images/social/google-icon.png";
 import { useUserStore } from "@/utils/code";
 
-const CalendarIntegrationOptions = [{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }];
+const CalendarIntegrationOptions = [
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+];
 
 export default function OrgTopBar() {
 	const cancelButtonRef = useRef(null);
@@ -19,10 +21,14 @@ export default function OrgTopBar() {
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
 	const { data: session } = useSession();
-	
+
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
 
 	const [integration, setIntegration] = useState([]);
 
@@ -48,8 +54,11 @@ export default function OrgTopBar() {
 		<>
 			<div
 				id="topbar"
-				className="fixed top-0 left-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white py-3 px-6 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
+				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
+				<p className="bg-blue-500 p-1 text-white">
+					{type}&nbsp;{role}
+				</p>
 				<ThemeChange />
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400">
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
@@ -70,12 +79,11 @@ export default function OrgTopBar() {
 					type="button"
 					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
 					onClick={() => {
-						signOut()
-						
-						settype("")
-						setrole("")
-						setuser([])
-				
+						signOut();
+
+						settype("");
+						setrole("");
+						setuser([]);
 					}}
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
@@ -125,10 +133,18 @@ export default function OrgTopBar() {
 										<div className="p-8">
 											<div className="flex flex-wrap">
 												{CalendarIntegrationOptions.map((integration, i) => (
-													<div key={i} className="my-2 w-full border rounded-normal overflow-hidden">
-														<Link href={integration.link} className="flex items-center justify-between w-full p-4 hover:bg-lightBlue">
-															<Image src={integration.icon} alt={integration.provider} width={150} className="max-h-[24px] mr-4 w-auto" />
-															<span className="min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">
+													<div key={i} className="my-2 w-full overflow-hidden rounded-normal border">
+														<Link
+															href={integration.link}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
 																{`Integrate ${integration.provider}`}
 															</span>
 														</Link>

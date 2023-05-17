@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "../Logo";
@@ -28,23 +28,30 @@ export default function VendorSideBar() {
 	const menu = [
 		{
 			title: "Clients",
-			url: `/vendor/${vid}/clients`,
+			url: `/vendor/[vrefid]/clients`,
+			url2: `/vendor/${vid}/clients`,
 			img: clientsIcon,
 			imgWhite: clientsIconWhite
 		},
 		{
 			title: "Inboxes",
-			url: `/vendor/${vid}/inbox`,
+			url: `/vendor/[vrefid]/inbox`,
+			url2: `/vendor/${vid}/inbox`,
 			img: inboxesIcon,
 			imgWhite: inboxesIconWhite
 		},
 		{
 			title: "Settings",
-			url: `/vendor/${vid}/settings`,
+			url: `/vendor/[vrefid]/settings`,
+			url2: `/vendor/${vid}/settings`,
 			img: settingsIcon,
 			imgWhite: settingsIconWhite
 		}
 	];
+
+	useEffect(() => {
+		console.log(router.pathname);
+	});
 
 	return (
 		<>
@@ -61,9 +68,9 @@ export default function VendorSideBar() {
 						<button
 							type="button"
 							className={
-								`absolute top-[50%] right-[-16px] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
+								`absolute right-[-16px] top-[50%] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
 								" " +
-								(show ? "right-[-31px] rounded-[6px] rounded-tl-[0] rounded-bl-[0]" : <></>)
+								(show ? "right-[-31px] rounded-[6px] rounded-bl-[0] rounded-tl-[0]" : <></>)
 							}
 							onClick={toggleSidebar}
 						>
@@ -84,7 +91,7 @@ export default function VendorSideBar() {
 							{menu.map((menuItem, i) => (
 								<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
 									<Link
-										href={menuItem.url}
+										href={menuItem.url2}
 										className={
 											`flex items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
 											" " +
@@ -94,7 +101,7 @@ export default function VendorSideBar() {
 											" " +
 											(show
 												? "justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
-												: "border-r-[10px] py-2 px-4")
+												: "border-r-[10px] px-4 py-2")
 										}
 									>
 										<span className={`inline-block h-[20px] w-[20px]` + " " + (show ? "text-center" : "mr-4")}>

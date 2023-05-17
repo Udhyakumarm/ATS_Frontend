@@ -33,6 +33,7 @@ export default function Header() {
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
+	const vid = useCarrierStore((state: { vid: any }) => state.vid);
 	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
@@ -49,7 +50,7 @@ export default function Header() {
 		return (
 			<>
 				<header className="hello bg-white shadow-normal dark:bg-gray-800">
-					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
+					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<div className="flex items-center">
 							{orgdetail["OrgProfile"] && (
 								<Image
@@ -97,7 +98,24 @@ export default function Header() {
 							</ul>
 						</div>
 						<div className="flex items-center">
+							<p className="bg-blue-500 p-1 text-white">
+								{type}&nbsp;{role}
+							</p>
 							<ThemeChange />
+							{!auth && (
+								<Link
+									href={"/organization/" + cname + "/candidate/signin"}
+									className={
+										`inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
+										" " +
+										(router.pathname == "/organization/" + cname + "/candidate/signin"
+											? "border-b-primary text-primary"
+											: "border-b-transparent")
+									}
+								>
+									Sign In
+								</Link>
+							)}
 							{auth && (
 								<>
 									<Popover className="relative mr-6">
@@ -135,7 +153,7 @@ export default function Header() {
 												<li>
 													<button
 														type="button"
-														className="block w-full bg-red-500 py-2 py-1 px-4 text-left font-bold text-white hover:bg-red-600"
+														className="block w-full bg-red-500 px-4 py-1 py-2 text-left font-bold text-white hover:bg-red-600"
 														onClick={() => {
 															signOut({ callbackUrl: `/organization/${cname}` });
 
@@ -161,9 +179,12 @@ export default function Header() {
 		return (
 			<>
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
-					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
+					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
+							<p className="bg-blue-500 p-1 text-white">
+								{type}&nbsp;{role}
+							</p>
 							<ThemeChange />
 							<button
 								type="button"
@@ -183,13 +204,24 @@ export default function Header() {
 				</header>
 			</>
 		);
-	} else if (router.asPath == "/vendors/signup") {
+	} else if (
+		vid &&
+		vid.length > 0 &&
+		(router.asPath == "/vendor/" + vid + "/signup" ||
+			router.asPath == "/vendor/" + vid + "/clients" ||
+			router.asPath == "/vendor/" + vid + "/inbox" ||
+			router.asPath == "/vendor/" + vid + "/settings" ||
+			router.asPath == "/vendor/" + vid + "/signin")
+	) {
 		return (
 			<>
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
-					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between py-3 px-4 md:px-10 lg:px-14">
+					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
+							<p className="bg-blue-500 p-1 text-white">
+								{type}&nbsp;{role}
+							</p>
 							<ThemeChange />
 							<button
 								type="button"

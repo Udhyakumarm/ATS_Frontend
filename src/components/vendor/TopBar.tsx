@@ -7,12 +7,18 @@ export default function VendorTopBar() {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const vid = useCarrierStore((state: { vid: any }) => state.vid);
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
 	return (
 		<>
 			<div
 				id="topbar"
-				className="fixed top-0 left-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white py-3 px-6 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
+				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
+				<p className="bg-blue-500 p-1 text-white">
+					{type}&nbsp;{role}
+				</p>
 				<ThemeChange />
 				<button type="button" className="relative mr-6 uppercase text-darkGray dark:text-gray-400">
 					<i className="fa-regular fa-bell text-[20px]"></i>
