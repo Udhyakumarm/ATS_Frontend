@@ -230,6 +230,7 @@ export default function FormField({
 							closeOnSelect
 							showArrow={true}
 							placeholder={placeholder}
+							disable={readOnly}
 							onSelect={(selectedList, selectedItem) => {
 								if (singleSelect) {
 									handleChange(selectedItem);

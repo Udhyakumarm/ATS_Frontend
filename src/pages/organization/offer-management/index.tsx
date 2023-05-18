@@ -17,6 +17,8 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
+import toastcomp from "@/components/toast";
+import { useUserStore } from "@/utils/code";
 
 const people = [
 	{ id: 1, name: "Durward Reynolds", unavailable: false },
@@ -29,6 +31,7 @@ const people = [
 export default function OfferManagement() {
 	const [sklLoad] = useState(true);
 	const [selectedPerson, setSelectedPerson] = useState(people[0]);
+	const role = useUserStore((state: { role: any }) => state.role);
 
 	const cancelButtonRef = useRef(null);
 	const [discussEmail, setDiscussEmail] = useState(false);
@@ -57,6 +60,7 @@ export default function OfferManagement() {
 	const [userID, setuserID] = useState(0);
 	const [newoffer, setnewoffer] = useState(true);
 	const [oldofferID, setoldofferID] = useState(0);
+	const [omf, setomf] = useState([]);
 	//step1
 	const [designation, setdesignation] = useState("");
 	const [dept, setdept] = useState("");
@@ -73,18 +77,22 @@ export default function OfferManagement() {
 	const [relocation, setrelocation] = useState("");
 	const [approval, setapproval] = useState("");
 	const [hmanage, sethmanage] = useState([]);
+	const [hmanageID, sethmanageID] = useState([]);
+	//feedback hm	
+	const [feedback, setfeedback] = useState("");
+	const [omrefid, setomrefid] = useState("");
 
 
 	async function loadApplicant() {
 		await axiosInstanceAuth2
 			.get(`/job/listapplicant/`)
 			.then(async (res) => {
-				console.log("@", "Applicant Load", res.data);
+				// console.log("@", "Applicant Load", res.data);
 				setapplicantlist(res.data);
 				setrefersh(0);
 			})
 			.catch((err) => {
-				console.log("@", "Applicant Load", err);
+				// console.log("@", "Applicant Load", err);
 				setapplicantlist([]);
 				setrefersh(0);
 			});
@@ -94,19 +102,22 @@ export default function OfferManagement() {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				console.log("@", "listorguser", res.data);
+				// console.log("@", "listorguser", res.data);
 				settm(res.data);
 				let arr = []
+				let arr2 = []
 				var data = res.data
 				for(let i=0;i<data.length;i++){
 					if(data[i]["role"] === "Hiring Manager" && data[i]["verified"] === true){
 						arr.push(data[i]["email"])
+						arr2.push(data[i]["id"])
 					}
 				}
 				sethmanage(arr)
+				sethmanageID(arr2)
 			})
 			.catch((err) => {
-				console.log("@", "listorguser", err);
+				// console.log("@", "listorguser", err);
 			});
 	}
 
@@ -114,16 +125,38 @@ export default function OfferManagement() {
 		await axiosInstanceAuth2
 			.get(`/job/list-offer/`)
 			.then(async (res) => {
-				console.log("@", "list-offer", res.data);
+				// console.log("@", "list-offer", res.data);
 				setom(res.data);
 			})
 			.catch((err) => {
 				setom([]);
-				console.log("@", "list-offer", err);
+				// console.log("@", "list-offer", err);
 			});
 	}
 
-	function checkOfferExist(arefid) {
+	const [feedreject,setfeedreject] = useState(false)
+
+	async function loadOfferFeedback(omrefid:string) {
+		await axiosInstanceAuth2
+			.get(`/job/list-offerfeedback/${omrefid}/`)
+			.then(async (res) => {
+				console.log("@", "list-offer-feedback", res.data);
+				setomf(res.data);
+				setfeedreject(false)
+				var data = res.data
+				for(let i =0;i< data.length;i++){
+					if(data[i]["status"] === "Reject"){setfeedreject(true)}
+				}
+			})
+			.catch((err) => {
+				setomf([]);
+				console.log("@", "list-offer-feedback", err);
+			});
+	}
+
+	function checkOfferExist(arefid:string) {
+		loadOffer()
+		loadTeamMember()
 		setnewoffer(true);
 		setdesignation("")
 		setdept("")
@@ -145,6 +178,7 @@ export default function OfferManagement() {
 				setnewoffer(false);
 				setoldofferID(i);
 				console.log("@",om[i])		
+				console.log("@","approval_authorities",om[i]["approval_authorities"])		
 				if(om[i]["designation"] && om[i]["designation"].length > 0){setdesignation(om[i]["designation"])}
 				if(om[i]["department"] && om[i]["department"].length > 0){setdept(om[i]["department"])}
 				if(om[i]["section"] && om[i]["section"].length > 0){setsection(om[i]["section"])}
@@ -158,9 +192,107 @@ export default function OfferManagement() {
 				if(om[i]["candidate_type"] && om[i]["candidate_type"].length > 0){setctype(om[i]["candidate_type"])}
 				if(om[i]["visa_sponsorship"] && om[i]["visa_sponsorship"].length > 0){setvisa(om[i]["visa_sponsorship"])}
 				if(om[i]["paid_relocation"] && om[i]["paid_relocation"].length > 0){setrelocation(om[i]["paid_relocation"])}
+				
+				if(om[i]["approval_authorities"] && om[i]["approval_authorities"].length > 0){
+					let fstring = []
+					let fautharr = om[i]["approval_authorities"]
+					for(let i=0;i<fautharr.length;i++){
+						const searchString = fautharr[i];
+						const index = hmanageID.indexOf(searchString);
+						if (index !== -1) {
+							fstring.push(hmanage[index])
+						}
+					}
+					setapproval(fstring.join(","))
+				}
+				setomrefid(om[i]["omrefid"])
+				loadOfferFeedback(om[i]["omrefid"])
 			}
 		}
-		console.log("@", "New Offer ?", newoffer);
+
+		// console.log("@", "New Offer ?", newoffer);
+	}
+
+	function checkBtnOffer(){
+		return designation.length > 0 && dept.length > 0 && section.length > 0 && div.length > 0 && grade.length > 0 && location.length > 0 && curr.length > 0 && type.length > 0 && from.length > 0 && to.length > 0 && ctype.length > 0 && visa.length > 0 && relocation.length > 0 && approval.length > 0;
+	}
+
+	async function newOffer(arefid:string) {
+		const fd = new FormData();
+		fd.append("designation",designation);
+		fd.append("department",dept);
+		fd.append("section",section);
+		fd.append("divsion",div);
+		fd.append("grade",grade);
+		fd.append("location",location);
+		fd.append("currency",curr);
+		fd.append("salary_type",type);
+		fd.append("salary_from",from);
+		fd.append("salary_to",to);
+		fd.append("candidate_type",ctype);
+		fd.append("visa_sponsorship",visa);
+		fd.append("paid_relocation",relocation);
+
+		let fstring: never[] = [];
+		let fautharr = approval.split(",")
+		for(let i=0;i<fautharr.length;i++){
+			const searchString = fautharr[i];
+			const index = hmanage.indexOf(searchString);
+			if (index !== -1) {
+				fstring.push(hmanageID[index])
+			}
+		}
+
+		fd.append("authority",fstring.join("|"));
+		
+		if(newoffer){
+
+			await axiosInstanceAuth2
+				.post(`/job/create-offer/${arefid}/`,fd)
+				.then(async (res) => {
+					toastcomp("offer Sent","success")
+					// console.log("@", "Offer Sent", res.data);
+					// setom(res.data);
+				})
+				.catch((err) => {
+					toastcomp("offer Not Sent","error")
+					// setom([]);
+					// console.log("@", "Offer Not Sent", err);
+				});
+		}
+		else{
+			await axiosInstanceAuth2
+				.put(`/job/update-offer/${omrefid}/`,fd)
+				.then(async (res) => {
+					toastcomp("offer Updated","success")
+					// console.log("@", "Offer Updated", res.data);
+					// setom(res.data);
+				})
+				.catch((err) => {
+					toastcomp("offer Not Updated","error")
+					// setom([]);
+					// console.log("@", "Offer Not Updated", err);
+				});
+		}
+
+		checkOfferExist(arefid)
+	}
+	
+	function rejectVerify(){return feedback.length > 0;}
+
+	async function newOfferFeedback(status:string) {
+		const fd = new FormData();
+		if(feedback && feedback.length > 0){fd.append("feedback",feedback);}
+		fd.append("status",status);
+
+		await axiosInstanceAuth2
+			.post(`/job/create-offerfeedback/${omrefid}/`,fd)
+			.then(async (res) => {
+				toastcomp("offer feedback created","success")
+			})
+			.catch((err) => {
+				toastcomp("offer feedback not created","error")
+			});
 	}
 
 	useEffect(() => {
@@ -242,6 +374,7 @@ export default function OfferManagement() {
 							<div>
 								{applicantlist
 									? applicantlist.map((data, i) => (
+										data["status"] === "Offer" && 
 											<div
 												className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800"
 												key={i}
@@ -273,6 +406,7 @@ export default function OfferManagement() {
 													</span>
 												</div>
 											</div>
+
 									  ))
 									: Array(5).fill(
 											<div className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800">
@@ -346,122 +480,323 @@ export default function OfferManagement() {
 										</Tab.List>
 										<Tab.Panels>
 											<Tab.Panel>
+												{role != "Hiring Manager" && 
 												<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
-													<div
-														className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-														onClick={() => setstep(1)}
-													>
-														{step === 1 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 1 </span>
+														<div
+															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+															onClick={() => setstep(1)}
+														>
+															{step === 1 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 1 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Prepration</p>
+																</>
+															) : (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 1 </span>
+																		<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Prepration</p>
+																</>
+															)}
+														</div>
+														<div
+															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+															onClick={() => setstep(2)}
+														>
+															{step === 2 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 2 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Finalization</p>
+																</>
+															) : step > 2 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 2 </span>
+																		<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Finalization</p>
+																</>
+															) : (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																		<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 2 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																		Offer Finalization
+																	</p>
+																</>
+															)}
+														</div>
+														<div
+															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+															onClick={() => setstep(3)}
+														>
+															{step === 3 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 3 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Discussion</p>
+																</>
+															) : step > 3 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 3 </span>
+																		<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Discussion</p>
+																</>
+															) : (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																		<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 3 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																		Offer Discussion
+																	</p>
+																</>
+															)}
+														</div>
+														<div
+															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+															onClick={() => setstep(4)}
+														>
+															{step === 4 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 4 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Status</p>
+																</>
+															) : step > 4 ? (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																		<span className="text-[32px] font-bold text-white"> 4 </span>
+																		<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold">Offer Status</p>
+																</>
+															) : (
+																<>
+																	<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																		<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 4 </span>
+																	</div>
+																	<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																		Offer Status
+																	</p>
+																</>
+															)}
+														</div>
+												</div>}
+
+												{role === "Hiring Manager" ? 
+													<section className="px-10 py-6">
+														
+														{!newoffer ? <>
+														<div className="-mx-3 flex flex-wrap">
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Designation" fieldType="input" inputType="text" value={designation} handleChange={(e)=>setdesignation(e.target.value)} required readOnly />
+															</div>
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Department" fieldType="input" inputType="text" value={dept} handleChange={(e)=>setdept(e.target.value)} required readOnly />
+															</div>
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Section" fieldType="input" inputType="text" value={section} handleChange={(e)=>setsection(e.target.value)} required readOnly />
+															</div>
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Division" fieldType="input" inputType="text" value={div} handleChange={(e)=>setdiv(e.target.value)} required readOnly />
+															</div>
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Grade" fieldType="input" inputType="text"  value={grade} handleChange={(e)=>setgrade(e.target.value)} required readOnly/>
+															</div>
+															<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																<FormField label="Location" fieldType="input" inputType="text"  value={location} handleChange={(e)=>setlocation(e.target.value)} required readOnly/>
+															</div>
+														</div>
+														<div className="mb-4">
+															<h4 className="mb-2 font-bold">Salary Range<sup className="text-red-500">*</sup></h4>
+															<div className="flex flex-wrap">
+																<div className="w-[170px] pr-6 last:pr-0">
+																	<FormField placeholder="Currency" fieldType="select2" 
+																	singleSelect value={curr} readOnly
+																	handleChange={setcurr}  options={[
+																		"USD $",
+																		"CAD CA$",
+																		"EUR €",
+																		"AED AED",
+																		"AFN Af",
+																		"ALL ALL",
+																		"AMD AMD",
+																		"ARS AR$",
+																		"AUD AU$",
+																		"AZN man.",
+																		"BAM KM",
+																		"BDT Tk",
+																		"BGN BGN",
+																		"BHD BD",
+																		"BIF FBu",
+																		"BND BN$",
+																		"BOB Bs",
+																		"BRL R$",
+																		"BWP BWP",
+																		"BYN Br",
+																		"BZD BZ$",
+																		"CDF CDF",
+																		"CHF CHF",
+																		"CLP CL$",
+																		"CNY CN¥",
+																		"COP CO$",
+																		"CRC ₡",
+																		"CVE CV$",
+																		"CZK Kč",
+																		"DJF Fdj",
+																		"DKK Dkr",
+																		"DOP RD$",
+																		"DZD DA",
+																		"EEK Ekr",
+																		"EGP EGP",
+																		"ERN Nfk",
+																		"ETB Br",
+																		"GBP £",
+																		"GEL GEL",
+																		"GHS GH₵",
+																		"GNF FG",
+																		"GTQ GTQ",
+																		"HKD HK$",
+																		"HNL HNL",
+																		"HRK kn",
+																		"HUF Ft",
+																		"IDR Rp",
+																		"ILS ₪",
+																		"INR ₹",
+																		"IQD IQD",
+																		"IRR IRR",
+																		"ISK Ikr",
+																		"JMD J$",
+																		"JOD JD",
+																		"JPY ¥",
+																		"KES Ksh",
+																		"KHR KHR",
+																		"KMF CF",
+																		"KRW ₩",
+																		"KWD KD",
+																		"KZT KZT",
+																		"LBP L.L.",
+																		"LKR SLRs",
+																		"LTL Lt",
+																		"LVL Ls",
+																		"LYD LD",
+																		"MAD MAD",
+																		"MDL MDL",
+																		"MGA MGA",
+																		"MKD MKD",
+																		"MMK MMK",
+																		"MOP MOP$",
+																		"MUR MURs",
+																		"MXN MX$",
+																		"MYR RM",
+																		"MZN MTn",
+																		"NAD N$",
+																		"NGN ₦",
+																		"NIO C$",
+																		"NOK Nkr",
+																		"NPR NPRs",
+																		"NZD NZ$",
+																		"OMR OMR",
+																		"PAB B/.",
+																		"PEN S/.",
+																		"PHP ₱",
+																		"PKR PKRs",
+																		"PLN zł",
+																		"PYG ₲",
+																		"QAR QR",
+																		"RON RON",
+																		"RSD din.",
+																		"RUB RUB",
+																		"RWF RWF",
+																		"SAR SR",
+																		"SDG SDG",
+																		"SEK Skr",
+																		"SGD S$",
+																		"SOS Ssh",
+																		"SYP SY£",
+																		"THB ฿",
+																		"TND DT",
+																		"TOP T$",
+																		"TRY TL",
+																		"TTD TT$",
+																		"TWD NT$",
+																		"TZS TSh",
+																		"UAH ₴",
+																		"UGX USh",
+																		"UYU $U",
+																		"UZS UZS",
+																		"VEF Bs.F.",
+																		"VND ₫",
+																		"XAF FCFA",
+																		"XOF CFA",
+																		"YER YR",
+																		"ZAR R",
+																		"ZMK ZK",
+																		"ZWL ZWL$",
+																	]} />
 																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Prepration</p>
-															</>
-														) : (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 1 </span>
-																	<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																<div className="w-[170px] pr-6 last:pr-0">
+																	<FormField placeholder="Type" singleSelect fieldType="select2" options={['Monthly','Yearly']} value={type} handleChange={settype}  readOnly/>
 																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Prepration</p>
-															</>
-														)}
-													</div>
-													<div
-														className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-														onClick={() => setstep(2)}
-													>
-														{step === 2 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 2 </span>
+																<div className="grow pr-6 last:pr-0">
+																	<FormField placeholder="From" fieldType="input" inputType="number" value={from} handleChange={(e)=>setfrom(e.target.value)} readOnly />
 																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Finalization</p>
-															</>
-														) : step > 2 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 2 </span>
-																	<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																<div className="grow pr-6 last:pr-0">
+																	<FormField placeholder="To" fieldType="input" inputType="number" value={to} handleChange={(e)=>setto(e.target.value)} readOnly />
 																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Finalization</p>
-															</>
-														) : (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																	<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 2 </span>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																	Offer Finalization
-																</p>
-															</>
-														)}
-													</div>
-													<div
-														className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-														onClick={() => setstep(3)}
-													>
-														{step === 3 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 3 </span>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Discussion</p>
-															</>
-														) : step > 3 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 3 </span>
-																	<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Discussion</p>
-															</>
-														) : (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																	<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 3 </span>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																	Offer Discussion
-																</p>
-															</>
-														)}
-													</div>
-													<div
-														className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-														onClick={() => setstep(4)}
-													>
-														{step === 4 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 4 </span>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Status</p>
-															</>
-														) : step > 4 ? (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																	<span className="text-[32px] font-bold text-white"> 4 </span>
-																	<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold">Offer Status</p>
-															</>
-														) : (
-															<>
-																<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																	<span className="text-[32px] font-bold text-darkGray dark:text-gray-400"> 4 </span>
-																</div>
-																<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																	Offer Status
-																</p>
-															</>
-														)}
-													</div>
-												</div>
+															</div>
+														</div>
+														<FormField label="Candidate Type" singleSelect fieldType="select2" options={['Full Time','Part TIme', 'Internship']} value={ctype} handleChange={setctype} required readOnly />
+														<div className="flex flex-wrap">
+															<div className="grow pr-6 last:pr-0">
+															<FormField label="Visa Sponsorship" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={visa} handleChange={setvisa} required readOnly />
+															</div>
+															<div className="grow pr-6 last:pr-0">
+															<FormField label="Paid Relocation" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={relocation} handleChange={setrelocation} required readOnly/>
+															</div>
+														</div>
+														<FormField label="Approval Authorities" fieldType="select2" options={hmanage} value={approval} handleChange={setapproval} required readOnly />
+														
+														<hr />
+														
+														<h4 className="mb-2 font-bold mt-6">Feedback</h4>
+														<FormField placeholder="Write Feedback" fieldType="textarea" value={feedback} handleChange={(e)=>setfeedback(e.target.value)} />
+														
+														<div className="flex flex-wrap gap-2">
+														<Button label={"Approve"} btnStyle="success" btnType={"button"} handleClick={()=>newOfferFeedback("Approve")} />
+
+														{/* disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} */}
+
+														<Button label={"Reject"} btnType={"button"} btnStyle="danger" disabled={!rejectVerify()} handleClick={()=>newOfferFeedback("Reject")}/>
+														</div>
+														</>
+														:
+															
+														<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+															<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+															<p className="text-lg text-yellow-700">Offer Not Yet Created</p>
+															<p className="text-sm">Under Development</p>
+														</div>
+														}
+													</section>
+												:
+												<>
 												{step === 1 && (
 													<section className="px-10 py-6">
-														<div className="mb-6 rounded-normal bg-red-100 px-6 py-4">
+														{/* feedback */}
+														{/* <div className="mb-6 rounded-normal bg-red-100 px-6 py-4">
 															<div className="flex flex-wrap items-center justify-between font-bold">
 																<p className="mb-1 text-red-700">
 																	<i className="fa-regular fa-face-frown"></i> Rejected (Hiring Manager)
@@ -490,154 +825,188 @@ export default function OfferManagement() {
 															<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
 															<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
 															<p className="text-sm">Under Review</p>
-														</div>
+														</div> */}
+														{newoffer || feedreject ? <>
+
+															{omf && omf.length > 0 &&
+															omf.map((data,i)=>(
+																data["status"] === "Reject" ? 
+																<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
+																	<div className="flex flex-wrap items-center justify-between font-bold">
+																		<p className="mb-1 text-red-700">
+																			<i className="fa-regular fa-face-frown"></i> Rejected ({data["organization"]["email"]})
+																		</p>
+																		<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																	</div>
+																	<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																	<p className="mb-2 text-sm text-darkGray">
+																		{data["feedback"]}
+																	</p>
+																</div>
+																:
+																<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																	<div className="flex flex-wrap items-center justify-between font-bold">
+																		<p className="mb-1 text-green-700">
+																			<i className="fa-regular fa-face-smile"></i> Approved ({data["organization"]["email"]})
+																		</p>
+																		<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																	</div>
+																	<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																	<p className="mb-2 text-sm text-darkGray">
+																		{data["feedback"]}
+																	</p>
+																</div>
+							
+															))}
+
+
 														<div className="-mx-3 flex flex-wrap">
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Designation" fieldType="input" inputType="text" value={designation} handleChange={(e)=>setdesignation(e.target.value)} />
+																<FormField label="Designation" fieldType="input" inputType="text" value={designation} handleChange={(e)=>setdesignation(e.target.value)} required />
 															</div>
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Department" fieldType="input" inputType="text" value={dept} handleChange={(e)=>setdept(e.target.value)} />
+																<FormField label="Department" fieldType="input" inputType="text" value={dept} handleChange={(e)=>setdept(e.target.value)} required />
 															</div>
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Section" fieldType="input" inputType="text" value={section} handleChange={(e)=>setsection(e.target.value)} />
+																<FormField label="Section" fieldType="input" inputType="text" value={section} handleChange={(e)=>setsection(e.target.value)} required />
 															</div>
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Division" fieldType="input" inputType="text" value={div} handleChange={(e)=>setdiv(e.target.value)} />
+																<FormField label="Division" fieldType="input" inputType="text" value={div} handleChange={(e)=>setdiv(e.target.value)} required />
 															</div>
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Grade" fieldType="input" inputType="text"  value={grade} handleChange={(e)=>setgrade(e.target.value)}/>
+																<FormField label="Grade" fieldType="input" inputType="text"  value={grade} handleChange={(e)=>setgrade(e.target.value)} required/>
 															</div>
 															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Location" fieldType="input" inputType="text"  value={location} handleChange={(e)=>setlocation(e.target.value)}/>
+																<FormField label="Location" fieldType="input" inputType="text"  value={location} handleChange={(e)=>setlocation(e.target.value)} required/>
 															</div>
 														</div>
 														<div className="mb-4">
-															<h4 className="mb-2 font-bold">Salary Range</h4>
+															<h4 className="mb-2 font-bold">Salary Range<sup className="text-red-500">*</sup></h4>
 															<div className="flex flex-wrap">
 																<div className="w-[170px] pr-6 last:pr-0">
 																	<FormField placeholder="Currency" fieldType="select2" 
-													singleSelect value={curr}
-													handleChange={setcurr}  options={[
-                                "USD $",
-                                "CAD CA$",
-                                "EUR €",
-                                "AED AED",
-                                "AFN Af",
-                                "ALL ALL",
-                                "AMD AMD",
-                                "ARS AR$",
-                                "AUD AU$",
-                                "AZN man.",
-                                "BAM KM",
-                                "BDT Tk",
-                                "BGN BGN",
-                                "BHD BD",
-                                "BIF FBu",
-                                "BND BN$",
-                                "BOB Bs",
-                                "BRL R$",
-                                "BWP BWP",
-                                "BYN Br",
-                                "BZD BZ$",
-                                "CDF CDF",
-                                "CHF CHF",
-                                "CLP CL$",
-                                "CNY CN¥",
-                                "COP CO$",
-                                "CRC ₡",
-                                "CVE CV$",
-                                "CZK Kč",
-                                "DJF Fdj",
-                                "DKK Dkr",
-                                "DOP RD$",
-                                "DZD DA",
-                                "EEK Ekr",
-                                "EGP EGP",
-                                "ERN Nfk",
-                                "ETB Br",
-                                "GBP £",
-                                "GEL GEL",
-                                "GHS GH₵",
-                                "GNF FG",
-                                "GTQ GTQ",
-                                "HKD HK$",
-                                "HNL HNL",
-                                "HRK kn",
-                                "HUF Ft",
-                                "IDR Rp",
-                                "ILS ₪",
-                                "INR ₹",
-                                "IQD IQD",
-                                "IRR IRR",
-                                "ISK Ikr",
-                                "JMD J$",
-                                "JOD JD",
-                                "JPY ¥",
-                                "KES Ksh",
-                                "KHR KHR",
-                                "KMF CF",
-                                "KRW ₩",
-                                "KWD KD",
-                                "KZT KZT",
-                                "LBP L.L.",
-                                "LKR SLRs",
-                                "LTL Lt",
-                                "LVL Ls",
-                                "LYD LD",
-                                "MAD MAD",
-                                "MDL MDL",
-                                "MGA MGA",
-                                "MKD MKD",
-                                "MMK MMK",
-                                "MOP MOP$",
-                                "MUR MURs",
-                                "MXN MX$",
-                                "MYR RM",
-                                "MZN MTn",
-                                "NAD N$",
-                                "NGN ₦",
-                                "NIO C$",
-                                "NOK Nkr",
-                                "NPR NPRs",
-                                "NZD NZ$",
-                                "OMR OMR",
-                                "PAB B/.",
-                                "PEN S/.",
-                                "PHP ₱",
-                                "PKR PKRs",
-                                "PLN zł",
-                                "PYG ₲",
-                                "QAR QR",
-                                "RON RON",
-                                "RSD din.",
-                                "RUB RUB",
-                                "RWF RWF",
-                                "SAR SR",
-                                "SDG SDG",
-                                "SEK Skr",
-                                "SGD S$",
-                                "SOS Ssh",
-                                "SYP SY£",
-                                "THB ฿",
-                                "TND DT",
-                                "TOP T$",
-                                "TRY TL",
-                                "TTD TT$",
-                                "TWD NT$",
-                                "TZS TSh",
-                                "UAH ₴",
-                                "UGX USh",
-                                "UYU $U",
-                                "UZS UZS",
-                                "VEF Bs.F.",
-                                "VND ₫",
-                                "XAF FCFA",
-                                "XOF CFA",
-                                "YER YR",
-                                "ZAR R",
-                                "ZMK ZK",
-                                "ZWL ZWL$",
-                              ]} />
+																	singleSelect value={curr}
+																	handleChange={setcurr}  options={[
+																		"USD $",
+																		"CAD CA$",
+																		"EUR €",
+																		"AED AED",
+																		"AFN Af",
+																		"ALL ALL",
+																		"AMD AMD",
+																		"ARS AR$",
+																		"AUD AU$",
+																		"AZN man.",
+																		"BAM KM",
+																		"BDT Tk",
+																		"BGN BGN",
+																		"BHD BD",
+																		"BIF FBu",
+																		"BND BN$",
+																		"BOB Bs",
+																		"BRL R$",
+																		"BWP BWP",
+																		"BYN Br",
+																		"BZD BZ$",
+																		"CDF CDF",
+																		"CHF CHF",
+																		"CLP CL$",
+																		"CNY CN¥",
+																		"COP CO$",
+																		"CRC ₡",
+																		"CVE CV$",
+																		"CZK Kč",
+																		"DJF Fdj",
+																		"DKK Dkr",
+																		"DOP RD$",
+																		"DZD DA",
+																		"EEK Ekr",
+																		"EGP EGP",
+																		"ERN Nfk",
+																		"ETB Br",
+																		"GBP £",
+																		"GEL GEL",
+																		"GHS GH₵",
+																		"GNF FG",
+																		"GTQ GTQ",
+																		"HKD HK$",
+																		"HNL HNL",
+																		"HRK kn",
+																		"HUF Ft",
+																		"IDR Rp",
+																		"ILS ₪",
+																		"INR ₹",
+																		"IQD IQD",
+																		"IRR IRR",
+																		"ISK Ikr",
+																		"JMD J$",
+																		"JOD JD",
+																		"JPY ¥",
+																		"KES Ksh",
+																		"KHR KHR",
+																		"KMF CF",
+																		"KRW ₩",
+																		"KWD KD",
+																		"KZT KZT",
+																		"LBP L.L.",
+																		"LKR SLRs",
+																		"LTL Lt",
+																		"LVL Ls",
+																		"LYD LD",
+																		"MAD MAD",
+																		"MDL MDL",
+																		"MGA MGA",
+																		"MKD MKD",
+																		"MMK MMK",
+																		"MOP MOP$",
+																		"MUR MURs",
+																		"MXN MX$",
+																		"MYR RM",
+																		"MZN MTn",
+																		"NAD N$",
+																		"NGN ₦",
+																		"NIO C$",
+																		"NOK Nkr",
+																		"NPR NPRs",
+																		"NZD NZ$",
+																		"OMR OMR",
+																		"PAB B/.",
+																		"PEN S/.",
+																		"PHP ₱",
+																		"PKR PKRs",
+																		"PLN zł",
+																		"PYG ₲",
+																		"QAR QR",
+																		"RON RON",
+																		"RSD din.",
+																		"RUB RUB",
+																		"RWF RWF",
+																		"SAR SR",
+																		"SDG SDG",
+																		"SEK Skr",
+																		"SGD S$",
+																		"SOS Ssh",
+																		"SYP SY£",
+																		"THB ฿",
+																		"TND DT",
+																		"TOP T$",
+																		"TRY TL",
+																		"TTD TT$",
+																		"TWD NT$",
+																		"TZS TSh",
+																		"UAH ₴",
+																		"UGX USh",
+																		"UYU $U",
+																		"UZS UZS",
+																		"VEF Bs.F.",
+																		"VND ₫",
+																		"XAF FCFA",
+																		"XOF CFA",
+																		"YER YR",
+																		"ZAR R",
+																		"ZMK ZK",
+																		"ZWL ZWL$",
+																	]} />
 																</div>
 																<div className="w-[170px] pr-6 last:pr-0">
 																	<FormField placeholder="Type" singleSelect fieldType="select2" options={['Monthly','Yearly']} value={type} handleChange={settype} />
@@ -650,17 +1019,61 @@ export default function OfferManagement() {
 																</div>
 															</div>
 														</div>
-														<FormField label="Candidate Type" singleSelect fieldType="select2" options={['Full Time','Part TIme', 'Internship']} value={ctype} handleChange={setctype} />
+														<FormField label="Candidate Type" singleSelect fieldType="select2" options={['Full Time','Part TIme', 'Internship']} value={ctype} handleChange={setctype} required />
 														<div className="flex flex-wrap">
 															<div className="grow pr-6 last:pr-0">
-															<FormField label="Visa Sponsorship" singleSelect fieldType="select2" options={['Yes','No']} value={visa} handleChange={setvisa} />
+															<FormField label="Visa Sponsorship" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={visa} handleChange={setvisa} required />
 															</div>
 															<div className="grow pr-6 last:pr-0">
-															<FormField label="Paid Relocation" singleSelect fieldType="select2" options={['Yes','No']} value={relocation} handleChange={setrelocation} />
+															<FormField label="Paid Relocation" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={relocation} handleChange={setrelocation} required/>
 															</div>
 														</div>
-														<FormField label="Approval Authorities" fieldType="select2" options={hmanage} value={approval} handleChange={setapproval} />
-														<Button label="Send For Approval" />
+														<FormField label="Approval Authorities" fieldType="select2" options={hmanage} value={approval} handleChange={setapproval} required />
+														
+														<Button label={newoffer?"Send For Approval":"Re-Send For Approval"} btnType={"button"} disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} />
+														</>
+														:
+														omf && omf.length > 0 ?  
+														<>
+														{omf.map((data,i)=>(
+															data["status"] === "Reject" ? 
+															<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
+																<div className="flex flex-wrap items-center justify-between font-bold">
+																	<p className="mb-1 text-red-700">
+																		<i className="fa-regular fa-face-frown"></i> Rejected ({data["organization"]["email"]})
+																	</p>
+																	<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																</div>
+																<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																<p className="mb-2 text-sm text-darkGray">
+																	{data["feedback"]}
+																</p>
+															</div>
+															:
+															<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																<div className="flex flex-wrap items-center justify-between font-bold">
+																	<p className="mb-1 text-green-700">
+																		<i className="fa-regular fa-face-smile"></i> Approved ({data["organization"]["email"]})
+																	</p>
+																	<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																</div>
+																<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																<p className="mb-2 text-sm text-darkGray">
+																	{data["feedback"]}
+																</p>
+															</div>
+						
+														))}
+														
+														<Button label={"Next Step"} btnType={"button"} disabled={!rejectVerify} handleClick={()=>setstep(2)} />
+														</>
+														:
+														<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+															<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+															<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
+															<p className="text-sm">Under Review</p>
+														</div>
+														}
 													</section>
 												)}
 
@@ -738,6 +1151,8 @@ export default function OfferManagement() {
 														</div>
 													</section>
 												)}
+												</>
+												}
 											</Tab.Panel>
 											<Tab.Panel>
 												<div className="px-10">
