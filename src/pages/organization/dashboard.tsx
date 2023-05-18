@@ -29,6 +29,8 @@ import { getProviders, useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
 import JobCard_1 from "@/components/JobCard-1";
 import FormField from "@/components/FormField";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
 export default function OrganizationDashboard() {
 	const [sklLoad] = useState(true)
@@ -110,6 +112,19 @@ export default function OrganizationDashboard() {
 		}
 	];
 	const { data: session } = useSession();
+	const options = {
+		chart: {
+		  type: 'spline'
+		},
+		title: {
+		  text: ''
+		},
+		series: [
+		  {
+			data: [1, 2, 1, 4, 3, 6]
+		  }
+		]
+	};
 	return (
 		<>
 			<Head>
@@ -194,7 +209,7 @@ export default function OrganizationDashboard() {
 										</aside>
 									</div>
 									<div className="p-6 pt-0">
-										Body
+										<HighchartsReact highcharts={Highcharts} options={options} />
 										<div className="text-center py-8">
 											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
 												<Image src={nodata_2} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
