@@ -86,12 +86,139 @@ export default function OfferManagement() {
 	//feedback hm
 	const [feedback, setfeedback] = useState("");
 	const [omrefid, setomrefid] = useState("");
+	const [ostatus, setostatus] = useState("");
 
 	//step 2
 	const [word, setword] = useState<ArrayBuffer | null>(null);
+	const [wordpath, setwordpath] = useState("");
 	const [value, setvalue] = useState("");
 	const [bvalue, setbvalue] = useState("");
 	const htmlRef = useRef<HTMLDivElement>(null);
+
+	async function loadOrganizationProfile() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorganizationprofile/`)
+			.then(async (res) => {
+				console.log("@", "oprofile", res.data);
+				let data = res.data;
+				if (data && data.length > 0) {
+					for (let i = 0; i < data.length; i++) {
+						if (data[i]["offer"]) {
+							setwordpath(data[i]["offer"]);
+						} else {
+							setwordpath("");
+						}
+					}
+				}
+			})
+			.catch((err) => {
+				console.log("@", "oprofile", err);
+			});
+	}
+
+	const convertDocxToArrayBuffer = async (filePath) => {
+		try {
+			const response = await fetch(filePath);
+			const fileBuffer = await response.arrayBuffer();
+			return fileBuffer;
+		} catch (error) {
+			console.error("Error converting DOCX to ArrayBuffer:", error);
+			throw error;
+		}
+	};
+
+	useEffect(() => {
+		if (wordpath && wordpath.length > 0) {
+			// console.log(wordpath);
+			convertDocxToArrayBuffer(wordpath)
+				.then((arrayBuffer) => {
+					// Use the arrayBuffer as needed
+					setword(arrayBuffer);
+					mammoth
+						.convertToHtml(
+							{ arrayBuffer: arrayBuffer },
+							{
+								ignoreEmptyParagraphs: false,
+								includeDefaultStyleMap: false,
+								includeEmbeddedStyleMap: false,
+								styleMap: ["p[style-name='Section Title'] => h1:fresh", "p[style-name='Subsection Title'] => h2:fresh"]
+							}
+						)
+						.then(function (result) {
+							var html = result.value; // The generated HTML
+							var messages = result.messages; // Any messages, such as warnings during conversion
+							// console.log("@", html);
+							// console.log("@", messages);
+							html = html.replaceAll("<p></p>", "<br/>");
+							html = html + "<br/><br/>";
+							setbvalue(html);
+
+							if (
+								applicantlist[userID]["user"]["last_name"] &&
+								applicantlist[userID]["user"]["last_name"].length > 0 &&
+								applicantlist[userID]["user"]["first_name"] &&
+								applicantlist[userID]["user"]["first_name"].length > 0
+							) {
+								html = html.replaceAll(
+									"[Candidate's Name]",
+									`${applicantlist[userID]["user"]["first_name"]}&nbsp;${applicantlist[userID]["user"]["last_name"]}`
+								);
+							}
+							if (designation && designation.length > 0) {
+								html = html.replaceAll("[Designation]", designation);
+							}
+							if (dept && dept.length > 0) {
+								html = html.replaceAll("[Department]", dept);
+							}
+							if (section && section.length > 0) {
+								html = html.replaceAll("[Section]", section);
+							}
+							if (div && div.length > 0) {
+								html = html.replaceAll("[Division]", div);
+							}
+							if (grade && grade.length > 0) {
+								html = html.replaceAll("[Grade]", grade);
+							}
+							if (location && location.length > 0) {
+								html = html.replaceAll("[Location]", location);
+							}
+							if (curr && curr.length > 0) {
+								html = html.replaceAll("[Currency]", curr);
+							}
+							if (from && from.length > 0) {
+								html = html.replaceAll("[Salary Range From]", from);
+							}
+							if (to && to.length > 0) {
+								html = html.replaceAll("[Salary Range To]", to);
+							}
+							if (type && type.length > 0) {
+								html = html.replaceAll("[Monthly/Yearly]", type);
+							}
+							if (ctype && ctype.length > 0) {
+								html = html.replaceAll("[Candidate Type]", ctype);
+							}
+							if (visa && visa.length > 0) {
+								html = html.replaceAll("[Visa Sponsorship]", visa);
+							}
+							if (relocation && relocation.length > 0) {
+								html = html.replaceAll("[Paid Relocation]", relocation);
+							}
+							setvalue(html);
+						})
+						.catch(function (error) {
+							console.log("@", error);
+							setword(null);
+							toastcomp("This Word Does Not Support Use .docx Only", "error");
+						});
+				})
+				.catch((error) => {
+					// Handle any errors
+					console.error(error);
+					setword(null);
+					toastcomp("Not Convert2", "error");
+				});
+		}
+	}, [wordpath]);
 
 	async function loadApplicant() {
 		await axiosInstanceAuth2
@@ -186,6 +313,7 @@ export default function OfferManagement() {
 		setapproval("");
 		setomf([]);
 		setomrefid("");
+		setostatus("");
 
 		for (let i = 0; i < om.length; i++) {
 			if (om[i]["applicant"]["arefid"] === arefid) {
@@ -247,11 +375,22 @@ export default function OfferManagement() {
 				}
 				setomrefid(om[i]["omrefid"]);
 				loadOfferFeedback(om[i]["omrefid"]);
+				if (om[i]["status"] && om[i]["status"].length > 0) {
+					setostatus(om[i]["status"]);
+				}
 			}
 		}
 
 		console.log("@", "New Offer ?", newoffer);
 	}
+
+	useEffect(() => {
+		if (ostatus && ostatus === "stpe3") {
+			setstep(3);
+		} else {
+			setstep(1);
+		}
+	}, [ostatus]);
 
 	function checkBtnOffer() {
 		return (
@@ -372,9 +511,9 @@ export default function OfferManagement() {
 
 	useEffect(() => {
 		if (token.length > 0 && refersh > 0) {
+			loadOffer();
 			loadApplicant();
 			loadTeamMember();
-			loadOffer();
 		}
 	}, [token, refersh]);
 
@@ -517,6 +656,58 @@ export default function OfferManagement() {
 			// Save the PDF document
 			pdf.save("download.pdf");
 		});
+	};
+
+	async function updateOfferStep2(arefid: string) {
+		html2canvas(document.getElementById("contentABC")).then(async function (canvas) {
+			const pdf = new jspdf();
+
+			pdf.setFontSize(12);
+			pdf.setFont("times", "normal", "normal");
+			// Add the canvas to the PDF document
+			pdf.addImage(canvas.toDataURL("image/png"), "JPEG", 5, 5);
+
+			const pdfContent = pdf.output("arraybuffer");
+
+			const blob = new Blob([pdfContent], { type: "application/pdf" });
+
+			const fd = new FormData();
+			fd.append("designation", designation);
+			fd.append("department", dept);
+			fd.append("section", section);
+			fd.append("divsion", div);
+			fd.append("grade", grade);
+			fd.append("location", location);
+			fd.append("currency", curr);
+			fd.append("salary_type", type);
+			fd.append("salary_from", from);
+			fd.append("salary_to", to);
+			fd.append("candidate_type", ctype);
+			fd.append("visa_sponsorship", visa);
+			fd.append("paid_relocation", relocation);
+			fd.append("status", "stpe3");
+			fd.append("offerLetter", blob, "converted.pdf");
+
+			await axiosInstanceAuth2
+				.put(`/job/update-offer-step2/${omrefid}/`, fd)
+				.then(async (res) => {
+					toastcomp("offer Updated", "success");
+					console.log("@", "Offer Updated", res.data);
+					// setom(res.data);
+				})
+				.catch((err) => {
+					toastcomp("offer Not Updated", "error");
+					// setom([]);
+					console.log("@", "Offer Not Updated", err);
+				});
+
+			checkOfferExist(arefid);
+			setstep(3);
+		});
+	}
+
+	const handleUpdateOffer = () => {
+		// Convert the HTML to a canvas
 	};
 
 	function updateOffer() {
@@ -1586,7 +1777,10 @@ export default function OfferManagement() {
 																			label={"Next Step"}
 																			btnType={"button"}
 																			disabled={!nextstepVerify()}
-																			handleClick={() => setstep(2)}
+																			handleClick={() => {
+																				loadOrganizationProfile();
+																				setstep(2);
+																			}}
 																		/>
 																	</>
 																) : (
@@ -1601,50 +1795,58 @@ export default function OfferManagement() {
 
 														{step === 2 && (
 															<section className="px-10 py-6">
-																<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																	<p className="my-2">
+																{wordpath === "" ? (
+																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																		<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																		<p className="text-lg">Offer Letter Fomrat Pending</p>
+																		<small className="font-semibold">Kindly Contact Your Org Super Admin of ATS</small>
+																	</div>
+																) : (
+																	<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																		<p className="my-2">
+																			{word != null ? (
+																				<>FileName (Offer Letter)</>
+																			) : (
+																				<>Select Offer Letter (Offer Letter)</>
+																			)}
+																		</p>
 																		{word != null ? (
-																			<>FileName (Offer Letter)</>
-																		) : (
-																			<>Select Offer Letter (Offer Letter)</>
-																		)}
-																	</p>
-																	{word != null ? (
-																		<div>
-																			<button
-																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																				onClick={handleDownload}
-																			>
-																				<i className="fa-solid fa-download mr-2"></i>
-																				Download
-																			</button>
-																			&nbsp;|&nbsp;
-																			<button
-																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																				onClick={() => setword(null)}
-																			>
-																				Reset
-																			</button>
-																		</div>
-																	) : (
-																		<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
-																			<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
-																				<input
-																					type="file"
-																					className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
-																					accept=".docx"
-																					onChange={handleFileInputChange}
-																				/>
-																				<span className="absolute right-3 top-[12px] text-lightGray">
-																					<i className="fa-solid fa-paperclip"></i>
-																				</span>
-																				<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
-																					Docx etc...
-																				</span>
+																			<div>
+																				{/* <button
+																					className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																					onClick={handleDownload}
+																				>
+																					<i className="fa-solid fa-download mr-2"></i>
+																					Download
+																				</button>
+																				&nbsp;|&nbsp;
+																				<button
+																					className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																					onClick={() => setword(null)}
+																				>
+																					Reset
+																				</button> */}
 																			</div>
-																		</div>
-																	)}
-																</div>
+																		) : (
+																			<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
+																				<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+																					<input
+																						type="file"
+																						className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+																						accept=".docx"
+																						onChange={handleFileInputChange}
+																					/>
+																					<span className="absolute right-3 top-[12px] text-lightGray">
+																						<i className="fa-solid fa-paperclip"></i>
+																					</span>
+																					<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+																						Docx etc...
+																					</span>
+																				</div>
+																			</div>
+																		)}
+																	</div>
+																)}
 																{value && value.length > 0 && word != null && (
 																	<>
 																		<div className="border py-2">
@@ -1657,7 +1859,11 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="flex flex-wrap items-center justify-between px-8 pt-4">
 																			<div className="my-1 mr-4 last:mr-0">
-																				<Button label="Confirm Details" />
+																				<Button
+																					label="Confirm Details"
+																					btnType="button"
+																					handleClick={() => updateOfferStep2(applicantlist[userID]["arefid"])}
+																				/>
 																			</div>
 																			<div className="my-1 mr-4 last:mr-0">
 																				<Button

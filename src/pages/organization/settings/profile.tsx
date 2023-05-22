@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Dialog, Tab, Transition } from "@headlessui/react";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import userIcon from "/public/images/icons/user.png";
 import UploadProfile from "@/components/UploadProfile";
 import FormField from "@/components/FormField";
@@ -22,6 +22,10 @@ import { Switch } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
+import mammoth from "mammoth";
+// import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import jspdf from "jspdf";
 
 export default function Profile() {
 	const router = useRouter();
@@ -47,10 +51,10 @@ export default function Profile() {
 		},
 		{
 			title: "Groups/Division"
+		},
+		{
+			title: "Offer Letter Format"
 		}
-		// {
-		//     title: 'User Access'
-		// }
 	];
 	const tabHeading_2 = [
 		{
@@ -159,6 +163,148 @@ export default function Profile() {
 	//Org Gallery
 	const [ogallery, setoGallery] = useState([]);
 	const [ofile, setoFile] = useState([] as any);
+
+	//Offer Letter
+	const [word, setword] = useState<ArrayBuffer | null>(null);
+	const [wordpath, setwordpath] = useState("");
+	const [wordfile, setwordfile] = useState<File | null>(null);
+	const [value, setvalue] = useState("");
+	const [bvalue, setbvalue] = useState("");
+	const htmlRef = useRef<HTMLDivElement>(null);
+
+	const readFileAsArrayBuffer = (file: File): Promise<ArrayBuffer> => {
+		return new Promise<ArrayBuffer>((resolve, reject) => {
+			const fileReader = new FileReader();
+
+			fileReader.onload = () => {
+				const arrayBuffer = fileReader.result as ArrayBuffer;
+				resolve(arrayBuffer);
+			};
+
+			fileReader.onerror = () => {
+				reject(new Error("Failed to read file."));
+			};
+
+			fileReader.readAsArrayBuffer(file);
+		});
+	};
+
+	async function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files?.[0];
+
+		if (file) {
+			setwordfile(file);
+			const arrayBuffer = await readFileAsArrayBuffer(file);
+			setword(arrayBuffer);
+			const fd = new FormData();
+			fd.append("offer", file);
+			saveOrganizationProfile(fd);
+
+			mammoth
+				.convertToHtml(
+					{ arrayBuffer: arrayBuffer },
+					{
+						ignoreEmptyParagraphs: false,
+						includeDefaultStyleMap: false,
+						includeEmbeddedStyleMap: false,
+						styleMap: ["p[style-name='Section Title'] => h1:fresh", "p[style-name='Subsection Title'] => h2:fresh"]
+					}
+				)
+				.then(function (result) {
+					var html = result.value; // The generated HTML
+					var messages = result.messages; // Any messages, such as warnings during conversion
+					console.log("@", html);
+					console.log("@", messages);
+					html = html.replaceAll("<p></p>", "<br/>");
+					html = html + "<br/><br/>";
+					setbvalue(html);
+					setvalue(html);
+				})
+				.catch(function (error) {
+					console.log("@", error);
+					setword(null);
+					setwordfile(null);
+					toastcomp("This Word Does Not Support Use .docx Only", "error");
+				});
+		}
+	}
+
+	const convertDocxToArrayBuffer = async (filePath) => {
+		try {
+			const response = await fetch(filePath);
+			const fileBuffer = await response.arrayBuffer();
+			return fileBuffer;
+		} catch (error) {
+			console.error("Error converting DOCX to ArrayBuffer:", error);
+			throw error;
+		}
+	};
+
+	useEffect(() => {
+		if (wordpath && wordpath.length > 0) {
+			console.log(wordpath);
+			convertDocxToArrayBuffer(wordpath)
+				.then((arrayBuffer) => {
+					// Use the arrayBuffer as needed
+
+					mammoth
+						.convertToHtml(
+							{ arrayBuffer: arrayBuffer },
+							{
+								ignoreEmptyParagraphs: false,
+								includeDefaultStyleMap: false,
+								includeEmbeddedStyleMap: false,
+								styleMap: ["p[style-name='Section Title'] => h1:fresh", "p[style-name='Subsection Title'] => h2:fresh"]
+							}
+						)
+						.then(function (result) {
+							var html = result.value; // The generated HTML
+							var messages = result.messages; // Any messages, such as warnings during conversion
+							console.log("@", html);
+							console.log("@", messages);
+							html = html.replaceAll("<p></p>", "<br/>");
+							html = html + "<br/><br/>";
+							setbvalue(html);
+							setvalue(html);
+						})
+						.catch(function (error) {
+							console.log("@", error);
+							setword(null);
+							setwordfile(null);
+							toastcomp("Not Convert", "error");
+						});
+				})
+				.catch((error) => {
+					// Handle any errors
+					console.error(error);
+					toastcomp("Not Convert2", "error");
+				});
+		}
+	}, [wordpath]);
+
+	function resetOL() {
+		setword(null);
+		setwordfile(null);
+		setwordpath("");
+		const fd = new FormData();
+		fd.append("offer", "");
+		saveOrganizationProfile(fd);
+	}
+
+	const handleDownload = () => {
+		// Convert the HTML to a canvas
+		html2canvas(document.getElementById("contentABC")).then(function (canvas) {
+			const pdf = new jspdf();
+
+			pdf.setFontSize(12);
+			pdf.setFont("times", "normal", "normal");
+			// Add the canvas to the PDF document
+			pdf.addImage(canvas.toDataURL("image/png"), "JPEG", 5, 5);
+
+			// Save the PDF document
+			pdf.save("download.pdf");
+		});
+	};
 
 	function onImageChange(e: any) {
 		setoFile([...ofile, ...e.target.files]);
@@ -281,7 +427,7 @@ export default function Profile() {
 			.put(`/organization/organizationprofile/update/`, formData)
 			.then(async (res) => {
 				toastcomp("Organization Profile Updated", "success");
-				loadIndividualProfile();
+				loadOrganizationProfile();
 			})
 			.catch((err) => {
 				console.log(err);
@@ -555,6 +701,12 @@ export default function Profile() {
 					setobanner("");
 				}
 
+				if (oprofile[i]["offer"]) {
+					setwordpath(oprofile[i]["offer"]);
+				} else {
+					setwordpath("");
+				}
+
 				// setiuniqueid(iprofile[i]["unique_id"])
 			}
 		}
@@ -720,7 +872,7 @@ export default function Profile() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
-							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start py-2 px-4">
+							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
 								<button
 									onClick={() => router.back()}
 									className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
@@ -849,7 +1001,10 @@ export default function Profile() {
 											<div className="flex flex-wrap">
 												{ilink &&
 													ilink.map((data, i) => (
-														<div className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700" key={i}>
+														<div
+															className="relative mb-4 mr-6 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
+															key={i}
+														>
 															<Link href={data["title"]} className="" key={i}>
 																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
 																	<i className={`${geticon(data["title"])}`}></i>
@@ -858,7 +1013,7 @@ export default function Profile() {
 															</Link>
 															<button
 																type="button"
-																className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
+																className="absolute right-[-10px] top-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
 																onClick={(e) => delIndividualLink(data["id"])}
 															>
 																<i className="fa-solid fa-circle-xmark"></i>
@@ -881,7 +1036,7 @@ export default function Profile() {
 														{({ selected }) => (
 															<button
 																className={
-																	"mr-6 inline-flex items-center border-b-4 py-2 px-4 font-semibold focus:outline-none" +
+																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
 																		? "border-primary text-primary"
@@ -1076,7 +1231,7 @@ export default function Profile() {
 																	height={1200}
 																	className="h-[200px] w-full object-cover"
 																/>
-																<div className="absolute top-[-1px] right-0 overflow-hidden rounded-bl shadow-highlight">
+																<div className="absolute right-0 top-[-1px] overflow-hidden rounded-bl shadow-highlight">
 																	{/* <button type="button" className="bg-white hover:bg-red-200 text-red-500 w-6 h-6 leading-6 text-center text-[12px] border-b">
                                                                     <i className={'fa-solid fa-trash'}></i>
                                                                 </button> */}
@@ -1232,6 +1387,66 @@ export default function Profile() {
 												)}
 											</div>
 										</div>
+									</Tab.Panel>
+									<Tab.Panel>
+										<section className="px-10 py-6">
+											<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+												<p className="my-2">
+													{word != null || wordpath != "" ? (
+														<>FileName (Offer Letter)</>
+													) : (
+														<>Select Offer Letter (Offer Letter)</>
+													)}
+												</p>
+												{word != null || wordpath != "" ? (
+													<div>
+														<button
+															className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+															onClick={handleDownload}
+														>
+															<i className="fa-solid fa-download mr-2"></i>
+															Download
+														</button>
+														&nbsp;|&nbsp;
+														<button
+															className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+															onClick={() => resetOL()}
+														>
+															Reset
+														</button>
+													</div>
+												) : (
+													<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
+														<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+															<input
+																type="file"
+																className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+																accept=".docx"
+																onChange={handleFileInputChange}
+															/>
+															<span className="absolute right-3 top-[12px] text-lightGray">
+																<i className="fa-solid fa-paperclip"></i>
+															</span>
+															<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+																Docx etc...
+															</span>
+														</div>
+													</div>
+												)}
+											</div>
+											{value && value.length > 0 && (word != null || wordpath != "") && (
+												<>
+													<div className="border py-2">
+														<article
+															className="m-6"
+															ref={htmlRef}
+															id="contentABC"
+															dangerouslySetInnerHTML={{ __html: value }}
+														></article>
+													</div>
+												</>
+											)}
+										</section>
 									</Tab.Panel>
 								</Tab.Panels>
 							</Tab.Group>
@@ -1493,8 +1708,9 @@ export default function Profile() {
 												<div className="mt-2 flex rounded border">
 													<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
 														<p className="text-[12px]">
-															&#60;somhakoats-jobs data-company-name=&ldquo;xyz&rdquo; data-company-uuid=&ldquo;F0DADE07A7&rdquo;
-															data-careers-page=&ldquo;true&rdquo;&#62; &#60;/somhakoats-jobs&#62;
+															&#60;somhakoats-jobs data-company-name=&ldquo;xyz&rdquo;
+															data-company-uuid=&ldquo;F0DADE07A7&rdquo; data-careers-page=&ldquo;true&rdquo;&#62;
+															&#60;/somhakoats-jobs&#62;
 														</p>
 													</div>
 													<button type="button" className="w-[50px] p-3">
