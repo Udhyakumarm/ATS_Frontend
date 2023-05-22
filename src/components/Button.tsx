@@ -76,7 +76,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded text-green-600 bg-green-200 hover:bg-green-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 min-w-[100px] rounded text-green-600 bg-green-200 hover:bg-green-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
@@ -93,7 +93,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded text-red-600 bg-red-200 hover:bg-red-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 min-w-[100px] rounded text-red-600 bg-red-200 hover:bg-red-600 hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}
@@ -110,7 +110,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 rounded text-white bg-gray-500 hover:bg-gray-600 py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					`my-2 min-w-[100px] rounded text-white bg-gray-500 hover:bg-gray-600 py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}

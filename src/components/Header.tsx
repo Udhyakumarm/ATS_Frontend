@@ -144,12 +144,12 @@ export default function Header() {
 										</Popover.Button>
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
-												{/* <li>
+												<li>
 													<Link href="#" className="block w-full py-2 py-1 px-4 font-bold hover:bg-gray-200">
 														<i className="fa-solid fa-gear mr-3"></i>
 														Settings
 													</Link>
-												</li> */}
+												</li>
 												<li>
 													<button
 														type="button"
