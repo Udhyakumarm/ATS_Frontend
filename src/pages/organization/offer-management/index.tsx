@@ -40,6 +40,7 @@ export default function OfferManagement() {
 	const cancelButtonRef = useRef(null);
 	const [discussEmail, setDiscussEmail] = useState(false);
 	const [editDetails, seteditDetails] = useState(false);
+	const [editSchdInter, setEditSchdInter] = useState(false);
 
 	const router = useRouter();
 
@@ -87,6 +88,8 @@ export default function OfferManagement() {
 	const [feedback, setfeedback] = useState("");
 	const [omrefid, setomrefid] = useState("");
 	const [ostatus, setostatus] = useState("");
+	const [ocstatus, setocstatus] = useState("");
+	const [ouid, setouid] = useState("");
 
 	//step 2
 	const [word, setword] = useState<ArrayBuffer | null>(null);
@@ -94,6 +97,25 @@ export default function OfferManagement() {
 	const [value, setvalue] = useState("");
 	const [bvalue, setbvalue] = useState("");
 	const htmlRef = useRef<HTMLDivElement>(null);
+
+	//step 3
+
+	const [intername, setintername] = useState("");
+	const [interdesc, setinterdesc] = useState("");
+	const [interdate, setinterdate] = useState("");
+	const [interstime, setinterstime] = useState("");
+	const [interetime, setinteretime] = useState("");
+	const [change, setchange] = useState(false);
+
+	function checkForm() {
+		return (
+			intername.length > 0 &&
+			interdesc.length > 0 &&
+			interdate.length > 0 &&
+			interstime.length > 0 &&
+			interetime.length > 0
+		);
+	}
 
 	async function loadOrganizationProfile() {
 		await axiosInstanceAuth2
@@ -108,6 +130,7 @@ export default function OfferManagement() {
 						} else {
 							setwordpath("");
 						}
+						setouid(data[i]["unique_id"]);
 					}
 				}
 			})
@@ -314,6 +337,8 @@ export default function OfferManagement() {
 		setomf([]);
 		setomrefid("");
 		setostatus("");
+		setocstatus("");
+		loadOrganizationProfile();
 
 		for (let i = 0; i < om.length; i++) {
 			if (om[i]["applicant"]["arefid"] === arefid) {
@@ -378,6 +403,9 @@ export default function OfferManagement() {
 				if (om[i]["status"] && om[i]["status"].length > 0) {
 					setostatus(om[i]["status"]);
 				}
+				if (om[i]["candidate_status"] && om[i]["candidate_status"].length > 0) {
+					setocstatus(om[i]["candidate_status"]);
+				}
 			}
 		}
 
@@ -385,8 +413,10 @@ export default function OfferManagement() {
 	}
 
 	useEffect(() => {
-		if (ostatus && ostatus === "stpe3") {
+		if (ostatus && ostatus === "step3") {
 			setstep(3);
+		} else if (ostatus && ostatus === "step4") {
+			setstep(4);
 		} else {
 			setstep(1);
 		}
@@ -645,7 +675,7 @@ export default function OfferManagement() {
 
 	const handleDownload = () => {
 		// Convert the HTML to a canvas
-		html2canvas(document.getElementById("contentABC")).then(function (canvas) {
+		html2canvas(document.getElementById("contentABCD")).then(function (canvas) {
 			const pdf = new jspdf();
 
 			pdf.setFontSize(12);
@@ -706,9 +736,41 @@ export default function OfferManagement() {
 		});
 	}
 
-	const handleUpdateOffer = () => {
-		// Convert the HTML to a canvas
-	};
+	async function handleStep3() {
+		await axiosInstanceAuth2
+			.post(`/job/send-email-offer/${omrefid}/`)
+			.then(async (res) => {
+				toastcomp(res.data.msg, "success");
+				setDiscussEmail(true);
+			})
+			.catch((err) => {
+				toastcomp("Email Templated not sent", "error");
+			});
+	}
+
+	async function handleStep32() {
+		const formData2 = new FormData();
+		formData2.append("summary", intername);
+		formData2.append("desc", interdesc);
+		formData2.append("stime", moment(`${interdate} ${interstime}`).format());
+		formData2.append("etime", moment(`${interdate} ${interetime}`).format());
+
+		await axiosInstanceAuth2
+			.post(`/job/offer-schedule-call/${ouid}/${omrefid}/`, formData2)
+			.then(async (res) => {
+				if (res.data.Message && res.data.Message.length > 0) {
+					toastcomp(res.data.Message, "error");
+				} else {
+					toastcomp("Call Schedule", "success");
+				}
+				setEditSchdInter(false);
+			})
+			.catch((err) => {
+				toastcomp("Call Not Schedule", "error");
+				setEditSchdInter(false);
+			});
+		checkOfferExist(applicantlist[userID]["arefid"]);
+	}
 
 	function updateOffer() {
 		let html = bvalue;
@@ -1881,49 +1943,61 @@ export default function OfferManagement() {
 
 														{step === 3 && (
 															<section className="px-10 py-6">
-																<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																	<p className="my-2">FileName (Offer Letter)</p>
-																	<Link
-																		href={`#`}
-																		className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																		download
-																	>
-																		<i className="fa-solid fa-download mr-2"></i>
-																		Download
-																	</Link>
-																</div>
-																<div className="py-2">
-																	<p className="py-4 text-center">Preview Here</p>
-																	<div className="px-8 pt-4 text-center">
-																		<Button
-																			label="Send Email Template"
-																			btnType="button"
-																			handleClick={() => setDiscussEmail(true)}
-																		/>
+																{word != null && (
+																	<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																		<p className="my-2">FileName (Offer Letter)</p>
+																		<button
+																			className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																			onClick={handleDownload}
+																		>
+																			<i className="fa-solid fa-download mr-2"></i>
+																			Download
+																		</button>
 																	</div>
-																</div>
+																)}
+																{value && value.length > 0 && word != null && (
+																	<>
+																		<div className="border py-2">
+																			<article
+																				className="m-6"
+																				ref={htmlRef}
+																				id="contentABCD"
+																				dangerouslySetInnerHTML={{ __html: value }}
+																			></article>
+																		</div>
+																		<div className="px-8 pt-4 text-center">
+																			<Button
+																				label="Send Email Template"
+																				btnType="button"
+																				handleClick={() => handleStep3()}
+																			/>
+																		</div>
+																	</>
+																)}
 															</section>
 														)}
 
 														{step === 4 && (
 															<section className="px-10 py-6">
-																<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																	<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																	<p className="text-lg">Offer Pending</p>
-																	<small className="font-semibold">Offer status by Applicant</small>
-																</div>
-																<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
-																	<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
-																	<p className="mb-2 text-lg text-green-700">Offer Accepted</p>
-																	<Link
-																		href="#"
-																		target="_blank"
-																		download
-																		className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-																	>
-																		Download Offer Letter
-																	</Link>
-																</div>
+																{ocstatus === "Pending" && (
+																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																		<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																		<p className="text-lg">Offer Pending</p>
+																		<small className="font-semibold">Offer status by Applicant</small>
+																	</div>
+																)}
+																{ocstatus === "Accepted" && (
+																	<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																		<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																		<p className="mb-2 text-lg text-green-700">Offer Accepted</p>
+																		<button
+																			onClick={() => handleDownload()}
+																			className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																		>
+																			Download Offer Letter
+																		</button>
+																	</div>
+																)}
 															</section>
 														)}
 													</>
@@ -2076,7 +2150,14 @@ export default function OfferManagement() {
 										<Image src={successGraphic} alt="Success" width={300} className="mx-auto my-4 w-[200px]" />
 										<hr className="mb-4" />
 										<div className="mb-2">
-											<Button label="Schedule a Call" />
+											<Button
+												label="Schedule a Call"
+												btnType="button"
+												handleClick={() => {
+													setDiscussEmail(false);
+													setEditSchdInter(true);
+												}}
+											/>
 										</div>
 										<p className="mx-auto w-full max-w-[320px] text-sm text-darkGray">
 											Schedule a Call with Applicant to Discuss Further Onboarding Steps
@@ -2393,6 +2474,105 @@ export default function OfferManagement() {
 											btnType={"button"}
 											disabled={!checkBtnOffer1()}
 											handleClick={() => updateOffer()}
+										/>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={editSchdInter} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setEditSchdInter}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Schedule Interview</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setEditSchdInter(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<FormField
+											label="Interview Name"
+											fieldType="input"
+											inputType="text"
+											value={intername}
+											handleChange={(e) => setintername(e.target.value)}
+										/>
+										{/* <FormField label="Date & Time" fieldType="date" singleSelect showTimeSelect showHours /> */}
+										{/* <FormField label="Platform" fieldType="select" /> */}
+										<FormField
+											label="Description"
+											fieldType="textarea"
+											value={interdesc}
+											handleChange={(e) => setinterdesc(e.target.value)}
+										/>
+										{/* <FormField label="Add Interviewer" fieldType="select" /> */}
+
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+													{"Start Date"}
+												</label>
+												<div className="relative">
+													<input type="date" value={interdate} onChange={(e) => setinterdate(e.target.value)} />
+												</div>
+											</div>
+										</div>
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+													{"Start Time"}
+												</label>
+												<div className="relative">
+													<input type="time" value={interstime} onChange={(e) => setinterstime(e.target.value)} />
+												</div>
+											</div>
+										</div>
+										<div className="mb-4 last:mb-0">
+											<div>
+												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
+													{"End Time"}
+												</label>
+												<div className="relative">
+													<input type="time" value={interetime} onChange={(e) => setinteretime(e.target.value)} />
+												</div>
+											</div>
+										</div>
+
+										<Button
+											label="Confirm"
+											disabled={!checkForm()}
+											btnType={"button"}
+											handleClick={() => handleStep32()}
 										/>
 									</div>
 								</Dialog.Panel>
