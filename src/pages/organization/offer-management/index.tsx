@@ -3,7 +3,7 @@ import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import TeamMembers from "@/components/TeamMembers";
 import { Dialog, Listbox, Tab, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState, useEffect } from "react";
+import { ChangeEvent, Fragment, useRef, useState, useEffect } from "react";
 import FormField from "@/components/FormField";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -19,6 +19,10 @@ import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
 import toastcomp from "@/components/toast";
 import { useUserStore } from "@/utils/code";
+import mammoth from "mammoth";
+// import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import jspdf from "jspdf";
 
 const people = [
 	{ id: 1, name: "Durward Reynolds", unavailable: false },
@@ -35,6 +39,7 @@ export default function OfferManagement() {
 
 	const cancelButtonRef = useRef(null);
 	const [discussEmail, setDiscussEmail] = useState(false);
+	const [editDetails, seteditDetails] = useState(false);
 
 	const router = useRouter();
 
@@ -57,7 +62,7 @@ export default function OfferManagement() {
 	const [om, setom] = useState([]);
 	const [step, setstep] = useState(1);
 	const [showOffer, setshowOffer] = useState(false);
-	const [userID, setuserID] = useState(0);
+	const [userID, setuserID] = useState(-1);
 	const [newoffer, setnewoffer] = useState(true);
 	const [oldofferID, setoldofferID] = useState(0);
 	const [omf, setomf] = useState([]);
@@ -78,21 +83,26 @@ export default function OfferManagement() {
 	const [approval, setapproval] = useState("");
 	const [hmanage, sethmanage] = useState([]);
 	const [hmanageID, sethmanageID] = useState([]);
-	//feedback hm	
+	//feedback hm
 	const [feedback, setfeedback] = useState("");
 	const [omrefid, setomrefid] = useState("");
 
+	//step 2
+	const [word, setword] = useState<ArrayBuffer | null>(null);
+	const [value, setvalue] = useState("");
+	const [bvalue, setbvalue] = useState("");
+	const htmlRef = useRef<HTMLDivElement>(null);
 
 	async function loadApplicant() {
 		await axiosInstanceAuth2
 			.get(`/job/listapplicant/`)
 			.then(async (res) => {
-				// console.log("@", "Applicant Load", res.data);
+				console.log("@", "Applicant Load", res.data);
 				setapplicantlist(res.data);
 				setrefersh(0);
 			})
 			.catch((err) => {
-				// console.log("@", "Applicant Load", err);
+				console.log("@", "Applicant Load", err);
 				setapplicantlist([]);
 				setrefersh(0);
 			});
@@ -102,22 +112,22 @@ export default function OfferManagement() {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				// console.log("@", "listorguser", res.data);
+				console.log("@", "listorguser", res.data);
 				settm(res.data);
-				let arr = []
-				let arr2 = []
-				var data = res.data
-				for(let i=0;i<data.length;i++){
-					if(data[i]["role"] === "Hiring Manager" && data[i]["verified"] === true){
-						arr.push(data[i]["email"])
-						arr2.push(data[i]["id"])
-					}
-				}
-				sethmanage(arr)
-				sethmanageID(arr2)
+				// let arr = []
+				// let arr2 = []
+				// var data = res.data
+				// for(let i=0;i<data.length;i++){
+				// 	if(data[i]["role"] === "Hiring Manager" && data[i]["verified"] === true){
+				// 		arr.push(data[i]["email"])
+				// 		arr2.push(data[i]["id"])
+				// 	}
+				// }
+				// sethmanage(arr)
+				// sethmanageID(arr2)
 			})
 			.catch((err) => {
-				// console.log("@", "listorguser", err);
+				console.log("@", "listorguser", err);
 			});
 	}
 
@@ -125,27 +135,29 @@ export default function OfferManagement() {
 		await axiosInstanceAuth2
 			.get(`/job/list-offer/`)
 			.then(async (res) => {
-				// console.log("@", "list-offer", res.data);
+				console.log("@", "list-offer", res.data);
 				setom(res.data);
 			})
 			.catch((err) => {
 				setom([]);
-				// console.log("@", "list-offer", err);
+				console.log("@", "list-offer", err);
 			});
 	}
 
-	const [feedreject,setfeedreject] = useState(false)
+	const [feedreject, setfeedreject] = useState(false);
 
-	async function loadOfferFeedback(omrefid:string) {
+	async function loadOfferFeedback(omrefid: string) {
 		await axiosInstanceAuth2
 			.get(`/job/list-offerfeedback/${omrefid}/`)
 			.then(async (res) => {
 				console.log("@", "list-offer-feedback", res.data);
 				setomf(res.data);
-				setfeedreject(false)
-				var data = res.data
-				for(let i =0;i< data.length;i++){
-					if(data[i]["status"] === "Reject"){setfeedreject(true)}
+				setfeedreject(false);
+				var data = res.data;
+				for (let i = 0; i < data.length; i++) {
+					if (data[i]["status"] === "Reject") {
+						setfeedreject(true);
+					}
 				}
 			})
 			.catch((err) => {
@@ -154,144 +166,207 @@ export default function OfferManagement() {
 			});
 	}
 
-	function checkOfferExist(arefid:string) {
-		loadOffer()
-		loadTeamMember()
+	function checkOfferExist(arefid: string) {
+		loadOffer();
+		loadTeamMember();
 		setnewoffer(true);
-		setdesignation("")
-		setdept("")
-		setsection("")
-		setdiv("")
-		setgrade("")
-		setlocation("")
-		setcurr("")
-		settype("")
-		setfrom("")
-		setto("")
-		setctype("")
-		setvisa("")
-		setrelocation("")
-		setapproval("")
-		
+		setdesignation("");
+		setdept("");
+		setsection("");
+		setdiv("");
+		setgrade("");
+		setlocation("");
+		setcurr("");
+		settype("");
+		setfrom("");
+		setto("");
+		setctype("");
+		setvisa("");
+		setrelocation("");
+		setapproval("");
+		setomf([]);
+		setomrefid("");
+
 		for (let i = 0; i < om.length; i++) {
 			if (om[i]["applicant"]["arefid"] === arefid) {
 				setnewoffer(false);
 				setoldofferID(i);
-				console.log("@",om[i])		
-				console.log("@","approval_authorities",om[i]["approval_authorities"])		
-				if(om[i]["designation"] && om[i]["designation"].length > 0){setdesignation(om[i]["designation"])}
-				if(om[i]["department"] && om[i]["department"].length > 0){setdept(om[i]["department"])}
-				if(om[i]["section"] && om[i]["section"].length > 0){setsection(om[i]["section"])}
-				if(om[i]["divsion"] && om[i]["divsion"].length > 0){setdiv(om[i]["divsion"])}
-				if(om[i]["grade"] && om[i]["grade"].length > 0){setgrade(om[i]["grade"])}
-				if(om[i]["location"] && om[i]["location"].length > 0){setlocation(om[i]["location"])}
-				if(om[i]["currency"] && om[i]["currency"].length > 0){setcurr(om[i]["currency"])}
-				if(om[i]["salary_type"] && om[i]["salary_type"].length > 0){settype(om[i]["salary_type"])}
-				if(om[i]["salary_from"] && om[i]["salary_from"].length > 0){setfrom(om[i]["salary_from"])}
-				if(om[i]["salary_to"] && om[i]["salary_to"].length > 0){setto(om[i]["salary_to"])}
-				if(om[i]["candidate_type"] && om[i]["candidate_type"].length > 0){setctype(om[i]["candidate_type"])}
-				if(om[i]["visa_sponsorship"] && om[i]["visa_sponsorship"].length > 0){setvisa(om[i]["visa_sponsorship"])}
-				if(om[i]["paid_relocation"] && om[i]["paid_relocation"].length > 0){setrelocation(om[i]["paid_relocation"])}
-				
-				if(om[i]["approval_authorities"] && om[i]["approval_authorities"].length > 0){
-					let fstring = []
-					let fautharr = om[i]["approval_authorities"]
-					for(let i=0;i<fautharr.length;i++){
+				console.log("@", om[i]);
+				console.log("@", "approval_authorities", om[i]["approval_authorities"]);
+				if (om[i]["designation"] && om[i]["designation"].length > 0) {
+					setdesignation(om[i]["designation"]);
+				}
+				if (om[i]["department"] && om[i]["department"].length > 0) {
+					setdept(om[i]["department"]);
+				}
+				if (om[i]["section"] && om[i]["section"].length > 0) {
+					setsection(om[i]["section"]);
+				}
+				if (om[i]["divsion"] && om[i]["divsion"].length > 0) {
+					setdiv(om[i]["divsion"]);
+				}
+				if (om[i]["grade"] && om[i]["grade"].length > 0) {
+					setgrade(om[i]["grade"]);
+				}
+				if (om[i]["location"] && om[i]["location"].length > 0) {
+					setlocation(om[i]["location"]);
+				}
+				if (om[i]["currency"] && om[i]["currency"].length > 0) {
+					setcurr(om[i]["currency"]);
+				}
+				if (om[i]["salary_type"] && om[i]["salary_type"].length > 0) {
+					settype(om[i]["salary_type"]);
+				}
+				if (om[i]["salary_from"] && om[i]["salary_from"].length > 0) {
+					setfrom(om[i]["salary_from"]);
+				}
+				if (om[i]["salary_to"] && om[i]["salary_to"].length > 0) {
+					setto(om[i]["salary_to"]);
+				}
+				if (om[i]["candidate_type"] && om[i]["candidate_type"].length > 0) {
+					setctype(om[i]["candidate_type"]);
+				}
+				if (om[i]["visa_sponsorship"] && om[i]["visa_sponsorship"].length > 0) {
+					setvisa(om[i]["visa_sponsorship"]);
+				}
+				if (om[i]["paid_relocation"] && om[i]["paid_relocation"].length > 0) {
+					setrelocation(om[i]["paid_relocation"]);
+				}
+
+				if (om[i]["approval_authorities"] && om[i]["approval_authorities"].length > 0) {
+					let fstring = [];
+					let fautharr = om[i]["approval_authorities"];
+					for (let i = 0; i < fautharr.length; i++) {
 						const searchString = fautharr[i];
 						const index = hmanageID.indexOf(searchString);
 						if (index !== -1) {
-							fstring.push(hmanage[index])
+							fstring.push(hmanage[index]);
 						}
 					}
-					setapproval(fstring.join(","))
+					setapproval(fstring.join(","));
 				}
-				setomrefid(om[i]["omrefid"])
-				loadOfferFeedback(om[i]["omrefid"])
+				setomrefid(om[i]["omrefid"]);
+				loadOfferFeedback(om[i]["omrefid"]);
 			}
 		}
 
-		// console.log("@", "New Offer ?", newoffer);
+		console.log("@", "New Offer ?", newoffer);
 	}
 
-	function checkBtnOffer(){
-		return designation.length > 0 && dept.length > 0 && section.length > 0 && div.length > 0 && grade.length > 0 && location.length > 0 && curr.length > 0 && type.length > 0 && from.length > 0 && to.length > 0 && ctype.length > 0 && visa.length > 0 && relocation.length > 0 && approval.length > 0;
+	function checkBtnOffer() {
+		return (
+			designation.length > 0 &&
+			dept.length > 0 &&
+			section.length > 0 &&
+			div.length > 0 &&
+			grade.length > 0 &&
+			location.length > 0 &&
+			curr.length > 0 &&
+			type.length > 0 &&
+			from.length > 0 &&
+			to.length > 0 &&
+			ctype.length > 0 &&
+			visa.length > 0 &&
+			relocation.length > 0 &&
+			approval.length > 0
+		);
 	}
 
-	async function newOffer(arefid:string) {
+	function checkBtnOffer1() {
+		return (
+			designation.length > 0 &&
+			dept.length > 0 &&
+			section.length > 0 &&
+			div.length > 0 &&
+			grade.length > 0 &&
+			location.length > 0 &&
+			curr.length > 0 &&
+			type.length > 0 &&
+			from.length > 0 &&
+			to.length > 0 &&
+			ctype.length > 0 &&
+			visa.length > 0 &&
+			relocation.length > 0
+		);
+	}
+
+	async function newOffer(arefid: string) {
 		const fd = new FormData();
-		fd.append("designation",designation);
-		fd.append("department",dept);
-		fd.append("section",section);
-		fd.append("divsion",div);
-		fd.append("grade",grade);
-		fd.append("location",location);
-		fd.append("currency",curr);
-		fd.append("salary_type",type);
-		fd.append("salary_from",from);
-		fd.append("salary_to",to);
-		fd.append("candidate_type",ctype);
-		fd.append("visa_sponsorship",visa);
-		fd.append("paid_relocation",relocation);
+		fd.append("designation", designation);
+		fd.append("department", dept);
+		fd.append("section", section);
+		fd.append("divsion", div);
+		fd.append("grade", grade);
+		fd.append("location", location);
+		fd.append("currency", curr);
+		fd.append("salary_type", type);
+		fd.append("salary_from", from);
+		fd.append("salary_to", to);
+		fd.append("candidate_type", ctype);
+		fd.append("visa_sponsorship", visa);
+		fd.append("paid_relocation", relocation);
 
 		let fstring: never[] = [];
-		let fautharr = approval.split(",")
-		for(let i=0;i<fautharr.length;i++){
+		let fautharr = approval.split(",");
+		for (let i = 0; i < fautharr.length; i++) {
 			const searchString = fautharr[i];
 			const index = hmanage.indexOf(searchString);
 			if (index !== -1) {
-				fstring.push(hmanageID[index])
+				fstring.push(hmanageID[index]);
 			}
 		}
 
-		fd.append("authority",fstring.join("|"));
-		
-		if(newoffer){
+		fd.append("authority", fstring.join("|"));
 
+		if (newoffer) {
 			await axiosInstanceAuth2
-				.post(`/job/create-offer/${arefid}/`,fd)
+				.post(`/job/create-offer/${arefid}/`, fd)
 				.then(async (res) => {
-					toastcomp("offer Sent","success")
-					// console.log("@", "Offer Sent", res.data);
+					toastcomp("offer Sent", "success");
+					console.log("@", "Offer Sent", res.data);
 					// setom(res.data);
 				})
 				.catch((err) => {
-					toastcomp("offer Not Sent","error")
+					toastcomp("offer Not Sent", "error");
 					// setom([]);
-					// console.log("@", "Offer Not Sent", err);
+					console.log("@", "Offer Not Sent", err);
 				});
-		}
-		else{
+		} else {
 			await axiosInstanceAuth2
-				.put(`/job/update-offer/${omrefid}/`,fd)
+				.put(`/job/update-offer/${omrefid}/`, fd)
 				.then(async (res) => {
-					toastcomp("offer Updated","success")
-					// console.log("@", "Offer Updated", res.data);
+					toastcomp("offer Updated", "success");
+					console.log("@", "Offer Updated", res.data);
 					// setom(res.data);
 				})
 				.catch((err) => {
-					toastcomp("offer Not Updated","error")
+					toastcomp("offer Not Updated", "error");
 					// setom([]);
-					// console.log("@", "Offer Not Updated", err);
+					console.log("@", "Offer Not Updated", err);
 				});
 		}
 
-		checkOfferExist(arefid)
+		checkOfferExist(arefid);
 	}
-	
-	function rejectVerify(){return feedback.length > 0;}
 
-	async function newOfferFeedback(status:string) {
+	function rejectVerify() {
+		return feedback.length > 0;
+	}
+
+	async function newOfferFeedback(status: string) {
 		const fd = new FormData();
-		if(feedback && feedback.length > 0){fd.append("feedback",feedback);}
-		fd.append("status",status);
+		if (feedback && feedback.length > 0) {
+			fd.append("feedback", feedback);
+		}
+		fd.append("status", status);
 
 		await axiosInstanceAuth2
-			.post(`/job/create-offerfeedback/${omrefid}/`,fd)
+			.post(`/job/create-offerfeedback/${omrefid}/`, fd)
 			.then(async (res) => {
-				toastcomp("offer feedback created","success")
+				toastcomp("offer feedback created", "success");
 			})
 			.catch((err) => {
-				toastcomp("offer feedback not created","error")
+				toastcomp("offer feedback not created", "error");
 			});
 	}
 
@@ -302,6 +377,203 @@ export default function OfferManagement() {
 			loadOffer();
 		}
 	}, [token, refersh]);
+
+	useEffect(() => {
+		if (showOffer && userID != -1) {
+			var data = applicantlist[userID]["job"]["team"];
+			let arr = [];
+			let arr2 = [];
+			for (let i = 0; i < data.length; i++) {
+				if (
+					(data[i]["role"] === "Hiring Manager" || data[i]["role"] === "Collaborator") &&
+					data[i]["verified"] === true
+				) {
+					arr.push(data[i]["email"]);
+					arr2.push(data[i]["id"]);
+				}
+			}
+			sethmanage(arr);
+			sethmanageID(arr2);
+		}
+	}, [userID, showOffer]);
+
+	function nextstepVerify() {
+		return omf.length > 0 && hmanage.length > 0 && omf.length === hmanage.length;
+	}
+
+	const readFileAsArrayBuffer = (file: File): Promise<ArrayBuffer> => {
+		return new Promise<ArrayBuffer>((resolve, reject) => {
+			const fileReader = new FileReader();
+
+			fileReader.onload = () => {
+				const arrayBuffer = fileReader.result as ArrayBuffer;
+				resolve(arrayBuffer);
+			};
+
+			fileReader.onerror = () => {
+				reject(new Error("Failed to read file."));
+			};
+
+			fileReader.readAsArrayBuffer(file);
+		});
+	};
+
+	async function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files?.[0];
+
+		if (file) {
+			const arrayBuffer = await readFileAsArrayBuffer(file);
+			setword(arrayBuffer);
+
+			mammoth
+				.convertToHtml(
+					{ arrayBuffer: arrayBuffer },
+					{
+						ignoreEmptyParagraphs: false,
+						includeDefaultStyleMap: false,
+						includeEmbeddedStyleMap: false,
+						styleMap: ["p[style-name='Section Title'] => h1:fresh", "p[style-name='Subsection Title'] => h2:fresh"]
+					}
+				)
+				.then(function (result) {
+					var html = result.value; // The generated HTML
+					var messages = result.messages; // Any messages, such as warnings during conversion
+					console.log("@", html);
+					console.log("@", messages);
+					html = html.replaceAll("<p></p>", "<br/>");
+					html = html + "<br/><br/>";
+					setbvalue(html);
+
+					if (
+						applicantlist[userID]["user"]["last_name"] &&
+						applicantlist[userID]["user"]["last_name"].length > 0 &&
+						applicantlist[userID]["user"]["first_name"] &&
+						applicantlist[userID]["user"]["first_name"].length > 0
+					) {
+						html = html.replaceAll(
+							"[Candidate's Name]",
+							`${applicantlist[userID]["user"]["first_name"]}&nbsp;${applicantlist[userID]["user"]["last_name"]}`
+						);
+					}
+					if (designation && designation.length > 0) {
+						html = html.replaceAll("[Designation]", designation);
+					}
+					if (dept && dept.length > 0) {
+						html = html.replaceAll("[Department]", dept);
+					}
+					if (section && section.length > 0) {
+						html = html.replaceAll("[Section]", section);
+					}
+					if (div && div.length > 0) {
+						html = html.replaceAll("[Division]", div);
+					}
+					if (grade && grade.length > 0) {
+						html = html.replaceAll("[Grade]", grade);
+					}
+					if (location && location.length > 0) {
+						html = html.replaceAll("[Location]", location);
+					}
+					if (curr && curr.length > 0) {
+						html = html.replaceAll("[Currency]", curr);
+					}
+					if (from && from.length > 0) {
+						html = html.replaceAll("[Salary Range From]", from);
+					}
+					if (to && to.length > 0) {
+						html = html.replaceAll("[Salary Range To]", to);
+					}
+					if (type && type.length > 0) {
+						html = html.replaceAll("[Monthly/Yearly]", type);
+					}
+					if (ctype && ctype.length > 0) {
+						html = html.replaceAll("[Candidate Type]", ctype);
+					}
+					if (visa && visa.length > 0) {
+						html = html.replaceAll("[Visa Sponsorship]", visa);
+					}
+					if (relocation && relocation.length > 0) {
+						html = html.replaceAll("[Paid Relocation]", relocation);
+					}
+					setvalue(html);
+				})
+				.catch(function (error) {
+					console.log("@", error);
+					setword(null);
+					toastcomp("This Word Does Not Support Use .docx Only", "error");
+				});
+		}
+	}
+
+	const handleDownload = () => {
+		// Convert the HTML to a canvas
+		html2canvas(document.getElementById("contentABC")).then(function (canvas) {
+			const pdf = new jspdf();
+
+			pdf.setFontSize(12);
+			pdf.setFont("times", "normal", "normal");
+			// Add the canvas to the PDF document
+			pdf.addImage(canvas.toDataURL("image/png"), "JPEG", 5, 5);
+
+			// Save the PDF document
+			pdf.save("download.pdf");
+		});
+	};
+
+	function updateOffer() {
+		let html = bvalue;
+		if (
+			applicantlist[userID]["user"]["last_name"] &&
+			applicantlist[userID]["user"]["last_name"].length > 0 &&
+			applicantlist[userID]["user"]["first_name"] &&
+			applicantlist[userID]["user"]["first_name"].length > 0
+		) {
+			html = html.replaceAll(
+				"[Candidate's Name]",
+				`${applicantlist[userID]["user"]["first_name"]}&nbsp;${applicantlist[userID]["user"]["last_name"]}`
+			);
+		}
+		if (designation && designation.length > 0) {
+			html = html.replaceAll("[Designation]", designation);
+		}
+		if (dept && dept.length > 0) {
+			html = html.replaceAll("[Department]", dept);
+		}
+		if (section && section.length > 0) {
+			html = html.replaceAll("[Section]", section);
+		}
+		if (div && div.length > 0) {
+			html = html.replaceAll("[Division]", div);
+		}
+		if (grade && grade.length > 0) {
+			html = html.replaceAll("[Grade]", grade);
+		}
+		if (location && location.length > 0) {
+			html = html.replaceAll("[Location]", location);
+		}
+		if (curr && curr.length > 0) {
+			html = html.replaceAll("[Currency]", curr);
+		}
+		if (from && from.length > 0) {
+			html = html.replaceAll("[Salary Range From]", from);
+		}
+		if (to && to.length > 0) {
+			html = html.replaceAll("[Salary Range To]", to);
+		}
+		if (type && type.length > 0) {
+			html = html.replaceAll("[Monthly/Yearly]", type);
+		}
+		if (ctype && ctype.length > 0) {
+			html = html.replaceAll("[Candidate Type]", ctype);
+		}
+		if (visa && visa.length > 0) {
+			html = html.replaceAll("[Visa Sponsorship]", visa);
+		}
+		if (relocation && relocation.length > 0) {
+			html = html.replaceAll("[Paid Relocation]", relocation);
+		}
+		setvalue(html);
+		seteditDetails(false);
+	}
 
 	return (
 		<>
@@ -372,68 +644,77 @@ export default function OfferManagement() {
 								icon={<i className="fa-solid fa-magnifying-glass"></i>}
 							/>
 							<div>
-								{applicantlist
-									? applicantlist.map((data, i) => (
-										data["status"] === "Offer" && 
-											<div
-												className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800"
-												key={i}
-												onClick={() => {
-													setshowOffer(true);
-													setuserID(i);
-													checkOfferExist(data["arefid"]);
-												}}
-											>
-												<div className="mb-2 flex items-center justify-between">
-													<aside className="flex items-center">
-														<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
-														<h5 className="pl-4 text-sm font-semibold">
-															{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
-														</h5>
-													</aside>
-													<aside>
-														<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
-													</aside>
+								{applicantlist ? (
+									applicantlist.map(
+										(data, i) =>
+											data["status"] === "Offer" && (
+												<div
+													className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800"
+													key={i}
+													onClick={() => {
+														setshowOffer(true);
+														setuserID(i);
+														checkOfferExist(data["arefid"]);
+													}}
+												>
+													<div className="mb-2 flex items-center justify-between">
+														<aside className="flex items-center">
+															<Image
+																src={userImg}
+																alt="User"
+																width={30}
+																className="h-[30px] rounded-full object-cover"
+															/>
+															<h5 className="pl-4 text-sm font-semibold">
+																{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
+															</h5>
+														</aside>
+														<aside>
+															<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+														</aside>
+													</div>
+													<p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">ID - {data["arefid"]}</p>
+													<div className="flex items-center justify-between">
+														<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+															<p>{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
+														</aside>
+														<span className="text-[10px] text-darkGray dark:text-gray-400">
+															{moment(data["timestamp"]).format("h:mm a")}
+														</span>
+													</div>
 												</div>
-												<p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">ID - {data["arefid"]}</p>
-												<div className="flex items-center justify-between">
-													<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
-														<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-														<p>{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
-													</aside>
-													<span className="text-[10px] text-darkGray dark:text-gray-400">
-														{moment(data["timestamp"]).format("h:mm a")}
-													</span>
-												</div>
-											</div>
-
-									  ))
-									: Array(5).fill(
-											<div className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800">
-												<div className="mb-2 flex items-center justify-between">
-													<aside className="flex items-center">
-														<Skeleton circle width={30} height={30} />
-														<h5 className="grow pl-4 text-sm font-semibold">
-															<Skeleton width={100} />
-														</h5>
-													</aside>
-													<aside>
-														<Skeleton width={16} height={16} />
-													</aside>
-												</div>
-												<p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">
-													<Skeleton width={100} />
-												</p>
-												<div className="flex items-center justify-between">
-													<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
-														<Skeleton width={130} />
-													</aside>
-													<span className="text-[10px] text-darkGray dark:text-gray-400">
-														<Skeleton width={50} />
-													</span>
-												</div>
-											</div>
-									  )}
+											)
+									)
+								) : (
+									<></>
+								)}
+								{/*  : Array(5).fill(
+									 		<div className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800">
+									// 			<div className="mb-2 flex items-center justify-between">
+									// 				<aside className="flex items-center">
+									// 					<Skeleton circle width={30} height={30} />
+									// 					<h5 className="grow pl-4 text-sm font-semibold">
+									// 						<Skeleton width={100} />
+									// 					</h5>
+									// 				</aside>
+									// 				<aside>
+									// 					<Skeleton width={16} height={16} />
+									// 				</aside>
+									// 			</div>
+									// 			<p className="mb-2 text-[12px] text-darkGray dark:text-gray-400">
+									// 				<Skeleton width={100} />
+									// 			</p>
+									// 			<div className="flex items-center justify-between">
+									// 				<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
+									// 					<Skeleton width={130} />
+									// 				</aside>
+									// 				<span className="text-[10px] text-darkGray dark:text-gray-400">
+									// 					<Skeleton width={50} />
+									// 				</span>
+									// 			</div>
+									 		</div>
+									   )} */}
 							</div>
 						</div>
 						{showOffer && (
@@ -480,8 +761,8 @@ export default function OfferManagement() {
 										</Tab.List>
 										<Tab.Panels>
 											<Tab.Panel>
-												{role != "Hiring Manager" && 
-												<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
+												{role != "Hiring Manager" && (
+													<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
 														<div
 															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
 															onClick={() => setstep(1)}
@@ -593,210 +874,339 @@ export default function OfferManagement() {
 																</>
 															)}
 														</div>
-												</div>}
+													</div>
+												)}
 
-												{role === "Hiring Manager" ? 
+												{role === "Hiring Manager" ? (
 													<section className="px-10 py-6">
-														
-														{!newoffer ? <>
-														<div className="-mx-3 flex flex-wrap">
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Designation" fieldType="input" inputType="text" value={designation} handleChange={(e)=>setdesignation(e.target.value)} required readOnly />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Department" fieldType="input" inputType="text" value={dept} handleChange={(e)=>setdept(e.target.value)} required readOnly />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Section" fieldType="input" inputType="text" value={section} handleChange={(e)=>setsection(e.target.value)} required readOnly />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Division" fieldType="input" inputType="text" value={div} handleChange={(e)=>setdiv(e.target.value)} required readOnly />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Grade" fieldType="input" inputType="text"  value={grade} handleChange={(e)=>setgrade(e.target.value)} required readOnly/>
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Location" fieldType="input" inputType="text"  value={location} handleChange={(e)=>setlocation(e.target.value)} required readOnly/>
-															</div>
-														</div>
-														<div className="mb-4">
-															<h4 className="mb-2 font-bold">Salary Range<sup className="text-red-500">*</sup></h4>
-															<div className="flex flex-wrap">
-																<div className="w-[170px] pr-6 last:pr-0">
-																	<FormField placeholder="Currency" fieldType="select2" 
-																	singleSelect value={curr} readOnly
-																	handleChange={setcurr}  options={[
-																		"USD $",
-																		"CAD CA$",
-																		"EUR €",
-																		"AED AED",
-																		"AFN Af",
-																		"ALL ALL",
-																		"AMD AMD",
-																		"ARS AR$",
-																		"AUD AU$",
-																		"AZN man.",
-																		"BAM KM",
-																		"BDT Tk",
-																		"BGN BGN",
-																		"BHD BD",
-																		"BIF FBu",
-																		"BND BN$",
-																		"BOB Bs",
-																		"BRL R$",
-																		"BWP BWP",
-																		"BYN Br",
-																		"BZD BZ$",
-																		"CDF CDF",
-																		"CHF CHF",
-																		"CLP CL$",
-																		"CNY CN¥",
-																		"COP CO$",
-																		"CRC ₡",
-																		"CVE CV$",
-																		"CZK Kč",
-																		"DJF Fdj",
-																		"DKK Dkr",
-																		"DOP RD$",
-																		"DZD DA",
-																		"EEK Ekr",
-																		"EGP EGP",
-																		"ERN Nfk",
-																		"ETB Br",
-																		"GBP £",
-																		"GEL GEL",
-																		"GHS GH₵",
-																		"GNF FG",
-																		"GTQ GTQ",
-																		"HKD HK$",
-																		"HNL HNL",
-																		"HRK kn",
-																		"HUF Ft",
-																		"IDR Rp",
-																		"ILS ₪",
-																		"INR ₹",
-																		"IQD IQD",
-																		"IRR IRR",
-																		"ISK Ikr",
-																		"JMD J$",
-																		"JOD JD",
-																		"JPY ¥",
-																		"KES Ksh",
-																		"KHR KHR",
-																		"KMF CF",
-																		"KRW ₩",
-																		"KWD KD",
-																		"KZT KZT",
-																		"LBP L.L.",
-																		"LKR SLRs",
-																		"LTL Lt",
-																		"LVL Ls",
-																		"LYD LD",
-																		"MAD MAD",
-																		"MDL MDL",
-																		"MGA MGA",
-																		"MKD MKD",
-																		"MMK MMK",
-																		"MOP MOP$",
-																		"MUR MURs",
-																		"MXN MX$",
-																		"MYR RM",
-																		"MZN MTn",
-																		"NAD N$",
-																		"NGN ₦",
-																		"NIO C$",
-																		"NOK Nkr",
-																		"NPR NPRs",
-																		"NZD NZ$",
-																		"OMR OMR",
-																		"PAB B/.",
-																		"PEN S/.",
-																		"PHP ₱",
-																		"PKR PKRs",
-																		"PLN zł",
-																		"PYG ₲",
-																		"QAR QR",
-																		"RON RON",
-																		"RSD din.",
-																		"RUB RUB",
-																		"RWF RWF",
-																		"SAR SR",
-																		"SDG SDG",
-																		"SEK Skr",
-																		"SGD S$",
-																		"SOS Ssh",
-																		"SYP SY£",
-																		"THB ฿",
-																		"TND DT",
-																		"TOP T$",
-																		"TRY TL",
-																		"TTD TT$",
-																		"TWD NT$",
-																		"TZS TSh",
-																		"UAH ₴",
-																		"UGX USh",
-																		"UYU $U",
-																		"UZS UZS",
-																		"VEF Bs.F.",
-																		"VND ₫",
-																		"XAF FCFA",
-																		"XOF CFA",
-																		"YER YR",
-																		"ZAR R",
-																		"ZMK ZK",
-																		"ZWL ZWL$",
-																	]} />
+														{!newoffer ? (
+															<>
+																<div className="-mx-3 flex flex-wrap">
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Designation"
+																			fieldType="input"
+																			inputType="text"
+																			value={designation}
+																			handleChange={(e) => setdesignation(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Department"
+																			fieldType="input"
+																			inputType="text"
+																			value={dept}
+																			handleChange={(e) => setdept(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Section"
+																			fieldType="input"
+																			inputType="text"
+																			value={section}
+																			handleChange={(e) => setsection(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Division"
+																			fieldType="input"
+																			inputType="text"
+																			value={div}
+																			handleChange={(e) => setdiv(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Grade"
+																			fieldType="input"
+																			inputType="text"
+																			value={grade}
+																			handleChange={(e) => setgrade(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																		<FormField
+																			label="Location"
+																			fieldType="input"
+																			inputType="text"
+																			value={location}
+																			handleChange={(e) => setlocation(e.target.value)}
+																			required
+																			readOnly
+																		/>
+																	</div>
 																</div>
-																<div className="w-[170px] pr-6 last:pr-0">
-																	<FormField placeholder="Type" singleSelect fieldType="select2" options={['Monthly','Yearly']} value={type} handleChange={settype}  readOnly/>
+																<div className="mb-4">
+																	<h4 className="mb-2 font-bold">
+																		Salary Range<sup className="text-red-500">*</sup>
+																	</h4>
+																	<div className="flex flex-wrap">
+																		<div className="w-[170px] pr-6 last:pr-0">
+																			<FormField
+																				placeholder="Currency"
+																				fieldType="select2"
+																				singleSelect
+																				value={curr}
+																				readOnly
+																				handleChange={setcurr}
+																				options={[
+																					"USD $",
+																					"CAD CA$",
+																					"EUR €",
+																					"AED AED",
+																					"AFN Af",
+																					"ALL ALL",
+																					"AMD AMD",
+																					"ARS AR$",
+																					"AUD AU$",
+																					"AZN man.",
+																					"BAM KM",
+																					"BDT Tk",
+																					"BGN BGN",
+																					"BHD BD",
+																					"BIF FBu",
+																					"BND BN$",
+																					"BOB Bs",
+																					"BRL R$",
+																					"BWP BWP",
+																					"BYN Br",
+																					"BZD BZ$",
+																					"CDF CDF",
+																					"CHF CHF",
+																					"CLP CL$",
+																					"CNY CN¥",
+																					"COP CO$",
+																					"CRC ₡",
+																					"CVE CV$",
+																					"CZK Kč",
+																					"DJF Fdj",
+																					"DKK Dkr",
+																					"DOP RD$",
+																					"DZD DA",
+																					"EEK Ekr",
+																					"EGP EGP",
+																					"ERN Nfk",
+																					"ETB Br",
+																					"GBP £",
+																					"GEL GEL",
+																					"GHS GH₵",
+																					"GNF FG",
+																					"GTQ GTQ",
+																					"HKD HK$",
+																					"HNL HNL",
+																					"HRK kn",
+																					"HUF Ft",
+																					"IDR Rp",
+																					"ILS ₪",
+																					"INR ₹",
+																					"IQD IQD",
+																					"IRR IRR",
+																					"ISK Ikr",
+																					"JMD J$",
+																					"JOD JD",
+																					"JPY ¥",
+																					"KES Ksh",
+																					"KHR KHR",
+																					"KMF CF",
+																					"KRW ₩",
+																					"KWD KD",
+																					"KZT KZT",
+																					"LBP L.L.",
+																					"LKR SLRs",
+																					"LTL Lt",
+																					"LVL Ls",
+																					"LYD LD",
+																					"MAD MAD",
+																					"MDL MDL",
+																					"MGA MGA",
+																					"MKD MKD",
+																					"MMK MMK",
+																					"MOP MOP$",
+																					"MUR MURs",
+																					"MXN MX$",
+																					"MYR RM",
+																					"MZN MTn",
+																					"NAD N$",
+																					"NGN ₦",
+																					"NIO C$",
+																					"NOK Nkr",
+																					"NPR NPRs",
+																					"NZD NZ$",
+																					"OMR OMR",
+																					"PAB B/.",
+																					"PEN S/.",
+																					"PHP ₱",
+																					"PKR PKRs",
+																					"PLN zł",
+																					"PYG ₲",
+																					"QAR QR",
+																					"RON RON",
+																					"RSD din.",
+																					"RUB RUB",
+																					"RWF RWF",
+																					"SAR SR",
+																					"SDG SDG",
+																					"SEK Skr",
+																					"SGD S$",
+																					"SOS Ssh",
+																					"SYP SY£",
+																					"THB ฿",
+																					"TND DT",
+																					"TOP T$",
+																					"TRY TL",
+																					"TTD TT$",
+																					"TWD NT$",
+																					"TZS TSh",
+																					"UAH ₴",
+																					"UGX USh",
+																					"UYU $U",
+																					"UZS UZS",
+																					"VEF Bs.F.",
+																					"VND ₫",
+																					"XAF FCFA",
+																					"XOF CFA",
+																					"YER YR",
+																					"ZAR R",
+																					"ZMK ZK",
+																					"ZWL ZWL$"
+																				]}
+																			/>
+																		</div>
+																		<div className="w-[170px] pr-6 last:pr-0">
+																			<FormField
+																				placeholder="Type"
+																				singleSelect
+																				fieldType="select2"
+																				options={["Monthly", "Yearly"]}
+																				value={type}
+																				handleChange={settype}
+																				readOnly
+																			/>
+																		</div>
+																		<div className="grow pr-6 last:pr-0">
+																			<FormField
+																				placeholder="From"
+																				fieldType="input"
+																				inputType="number"
+																				value={from}
+																				handleChange={(e) => setfrom(e.target.value)}
+																				readOnly
+																			/>
+																		</div>
+																		<div className="grow pr-6 last:pr-0">
+																			<FormField
+																				placeholder="To"
+																				fieldType="input"
+																				inputType="number"
+																				value={to}
+																				handleChange={(e) => setto(e.target.value)}
+																				readOnly
+																			/>
+																		</div>
+																	</div>
 																</div>
-																<div className="grow pr-6 last:pr-0">
-																	<FormField placeholder="From" fieldType="input" inputType="number" value={from} handleChange={(e)=>setfrom(e.target.value)} readOnly />
+																<FormField
+																	label="Candidate Type"
+																	singleSelect
+																	fieldType="select2"
+																	options={["Full Time", "Part TIme", "Internship"]}
+																	value={ctype}
+																	handleChange={setctype}
+																	required
+																	readOnly
+																/>
+																<div className="flex flex-wrap">
+																	<div className="grow pr-6 last:pr-0">
+																		<FormField
+																			label="Visa Sponsorship"
+																			singleSelect
+																			fieldType="select2"
+																			options={["Yes", "No", "N/A"]}
+																			value={visa}
+																			handleChange={setvisa}
+																			required
+																			readOnly
+																		/>
+																	</div>
+																	<div className="grow pr-6 last:pr-0">
+																		<FormField
+																			label="Paid Relocation"
+																			singleSelect
+																			fieldType="select2"
+																			options={["Yes", "No", "N/A"]}
+																			value={relocation}
+																			handleChange={setrelocation}
+																			required
+																			readOnly
+																		/>
+																	</div>
 																</div>
-																<div className="grow pr-6 last:pr-0">
-																	<FormField placeholder="To" fieldType="input" inputType="number" value={to} handleChange={(e)=>setto(e.target.value)} readOnly />
-																</div>
-															</div>
-														</div>
-														<FormField label="Candidate Type" singleSelect fieldType="select2" options={['Full Time','Part TIme', 'Internship']} value={ctype} handleChange={setctype} required readOnly />
-														<div className="flex flex-wrap">
-															<div className="grow pr-6 last:pr-0">
-															<FormField label="Visa Sponsorship" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={visa} handleChange={setvisa} required readOnly />
-															</div>
-															<div className="grow pr-6 last:pr-0">
-															<FormField label="Paid Relocation" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={relocation} handleChange={setrelocation} required readOnly/>
-															</div>
-														</div>
-														<FormField label="Approval Authorities" fieldType="select2" options={hmanage} value={approval} handleChange={setapproval} required readOnly />
-														
-														<hr />
-														
-														<h4 className="mb-2 font-bold mt-6">Feedback</h4>
-														<FormField placeholder="Write Feedback" fieldType="textarea" value={feedback} handleChange={(e)=>setfeedback(e.target.value)} />
-														
-														<div className="flex flex-wrap gap-2">
-														<Button label={"Approve"} btnStyle="success" btnType={"button"} handleClick={()=>newOfferFeedback("Approve")} />
+																<FormField
+																	label="Approval Authorities"
+																	fieldType="select2"
+																	options={hmanage}
+																	value={approval}
+																	handleChange={setapproval}
+																	required
+																	readOnly
+																/>
 
-														{/* disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} */}
+																<hr />
 
-														<Button label={"Reject"} btnType={"button"} btnStyle="danger" disabled={!rejectVerify()} handleClick={()=>newOfferFeedback("Reject")}/>
-														</div>
-														</>
-														:
-															
-														<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-															<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-															<p className="text-lg text-yellow-700">Offer Not Yet Created</p>
-															<p className="text-sm">Under Development</p>
-														</div>
-														}
+																<h4 className="mb-2 mt-6 font-bold">Feedback</h4>
+																<FormField
+																	placeholder="Write Feedback"
+																	fieldType="textarea"
+																	value={feedback}
+																	handleChange={(e) => setfeedback(e.target.value)}
+																/>
+
+																<div className="flex flex-wrap gap-2">
+																	<Button
+																		label={"Approve"}
+																		btnStyle="success"
+																		btnType={"button"}
+																		handleClick={() => newOfferFeedback("Approve")}
+																	/>
+
+																	{/* disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} */}
+
+																	<Button
+																		label={"Reject"}
+																		btnType={"button"}
+																		btnStyle="danger"
+																		disabled={!rejectVerify()}
+																		handleClick={() => newOfferFeedback("Reject")}
+																	/>
+																</div>
+															</>
+														) : (
+															<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+																<p className="text-lg text-yellow-700">Offer Not Yet Created</p>
+																<p className="text-sm">Under Development</p>
+															</div>
+														)}
 													</section>
-												:
-												<>
-												{step === 1 && (
-													<section className="px-10 py-6">
-														{/* feedback */}
-														{/* <div className="mb-6 rounded-normal bg-red-100 px-6 py-4">
+												) : (
+													<>
+														{step === 1 && (
+															<section className="px-10 py-6">
+																{/* feedback */}
+																{/* <div className="mb-6 rounded-normal bg-red-100 px-6 py-4">
 															<div className="flex flex-wrap items-center justify-between font-bold">
 																<p className="mb-1 text-red-700">
 																	<i className="fa-regular fa-face-frown"></i> Rejected (Hiring Manager)
@@ -826,333 +1236,492 @@ export default function OfferManagement() {
 															<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
 															<p className="text-sm">Under Review</p>
 														</div> */}
-														{newoffer || feedreject ? <>
+																{newoffer || feedreject ? (
+																	<>
+																		{omf &&
+																			omf.length > 0 &&
+																			omf.map((data, i) =>
+																				data["status"] === "Reject" ? (
+																					<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
+																						<div className="flex flex-wrap items-center justify-between font-bold">
+																							<p className="mb-1 text-red-700">
+																								<i className="fa-regular fa-face-frown"></i> Rejected (
+																								{data["organization"]["email"]})
+																							</p>
+																							<p className="text-[12px] text-darkGray">
+																								{moment(data["timestamp"]).fromNow()}
+																							</p>
+																						</div>
+																						<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																						<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																					</div>
+																				) : (
+																					<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																						<div className="flex flex-wrap items-center justify-between font-bold">
+																							<p className="mb-1 text-green-700">
+																								<i className="fa-regular fa-face-smile"></i> Approved (
+																								{data["organization"]["email"]})
+																							</p>
+																							<p className="text-[12px] text-darkGray">
+																								{moment(data["timestamp"]).fromNow()}
+																							</p>
+																						</div>
+																						<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																						<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																					</div>
+																				)
+																			)}
 
-															{omf && omf.length > 0 &&
-															omf.map((data,i)=>(
-																data["status"] === "Reject" ? 
-																<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
-																	<div className="flex flex-wrap items-center justify-between font-bold">
-																		<p className="mb-1 text-red-700">
-																			<i className="fa-regular fa-face-frown"></i> Rejected ({data["organization"]["email"]})
-																		</p>
-																		<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																		<div className="-mx-3 flex flex-wrap">
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Designation"
+																					fieldType="input"
+																					inputType="text"
+																					value={designation}
+																					handleChange={(e) => setdesignation(e.target.value)}
+																					required
+																				/>
+																			</div>
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Department"
+																					fieldType="input"
+																					inputType="text"
+																					value={dept}
+																					handleChange={(e) => setdept(e.target.value)}
+																					required
+																				/>
+																			</div>
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Section"
+																					fieldType="input"
+																					inputType="text"
+																					value={section}
+																					handleChange={(e) => setsection(e.target.value)}
+																					required
+																				/>
+																			</div>
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Division"
+																					fieldType="input"
+																					inputType="text"
+																					value={div}
+																					handleChange={(e) => setdiv(e.target.value)}
+																					required
+																				/>
+																			</div>
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Grade"
+																					fieldType="input"
+																					inputType="text"
+																					value={grade}
+																					handleChange={(e) => setgrade(e.target.value)}
+																					required
+																				/>
+																			</div>
+																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																				<FormField
+																					label="Location"
+																					fieldType="input"
+																					inputType="text"
+																					value={location}
+																					handleChange={(e) => setlocation(e.target.value)}
+																					required
+																				/>
+																			</div>
+																		</div>
+																		<div className="mb-4">
+																			<h4 className="mb-2 font-bold">
+																				Salary Range<sup className="text-red-500">*</sup>
+																			</h4>
+																			<div className="flex flex-wrap">
+																				<div className="w-[170px] pr-6 last:pr-0">
+																					<FormField
+																						placeholder="Currency"
+																						fieldType="select2"
+																						singleSelect
+																						value={curr}
+																						handleChange={setcurr}
+																						options={[
+																							"USD $",
+																							"CAD CA$",
+																							"EUR €",
+																							"AED AED",
+																							"AFN Af",
+																							"ALL ALL",
+																							"AMD AMD",
+																							"ARS AR$",
+																							"AUD AU$",
+																							"AZN man.",
+																							"BAM KM",
+																							"BDT Tk",
+																							"BGN BGN",
+																							"BHD BD",
+																							"BIF FBu",
+																							"BND BN$",
+																							"BOB Bs",
+																							"BRL R$",
+																							"BWP BWP",
+																							"BYN Br",
+																							"BZD BZ$",
+																							"CDF CDF",
+																							"CHF CHF",
+																							"CLP CL$",
+																							"CNY CN¥",
+																							"COP CO$",
+																							"CRC ₡",
+																							"CVE CV$",
+																							"CZK Kč",
+																							"DJF Fdj",
+																							"DKK Dkr",
+																							"DOP RD$",
+																							"DZD DA",
+																							"EEK Ekr",
+																							"EGP EGP",
+																							"ERN Nfk",
+																							"ETB Br",
+																							"GBP £",
+																							"GEL GEL",
+																							"GHS GH₵",
+																							"GNF FG",
+																							"GTQ GTQ",
+																							"HKD HK$",
+																							"HNL HNL",
+																							"HRK kn",
+																							"HUF Ft",
+																							"IDR Rp",
+																							"ILS ₪",
+																							"INR ₹",
+																							"IQD IQD",
+																							"IRR IRR",
+																							"ISK Ikr",
+																							"JMD J$",
+																							"JOD JD",
+																							"JPY ¥",
+																							"KES Ksh",
+																							"KHR KHR",
+																							"KMF CF",
+																							"KRW ₩",
+																							"KWD KD",
+																							"KZT KZT",
+																							"LBP L.L.",
+																							"LKR SLRs",
+																							"LTL Lt",
+																							"LVL Ls",
+																							"LYD LD",
+																							"MAD MAD",
+																							"MDL MDL",
+																							"MGA MGA",
+																							"MKD MKD",
+																							"MMK MMK",
+																							"MOP MOP$",
+																							"MUR MURs",
+																							"MXN MX$",
+																							"MYR RM",
+																							"MZN MTn",
+																							"NAD N$",
+																							"NGN ₦",
+																							"NIO C$",
+																							"NOK Nkr",
+																							"NPR NPRs",
+																							"NZD NZ$",
+																							"OMR OMR",
+																							"PAB B/.",
+																							"PEN S/.",
+																							"PHP ₱",
+																							"PKR PKRs",
+																							"PLN zł",
+																							"PYG ₲",
+																							"QAR QR",
+																							"RON RON",
+																							"RSD din.",
+																							"RUB RUB",
+																							"RWF RWF",
+																							"SAR SR",
+																							"SDG SDG",
+																							"SEK Skr",
+																							"SGD S$",
+																							"SOS Ssh",
+																							"SYP SY£",
+																							"THB ฿",
+																							"TND DT",
+																							"TOP T$",
+																							"TRY TL",
+																							"TTD TT$",
+																							"TWD NT$",
+																							"TZS TSh",
+																							"UAH ₴",
+																							"UGX USh",
+																							"UYU $U",
+																							"UZS UZS",
+																							"VEF Bs.F.",
+																							"VND ₫",
+																							"XAF FCFA",
+																							"XOF CFA",
+																							"YER YR",
+																							"ZAR R",
+																							"ZMK ZK",
+																							"ZWL ZWL$"
+																						]}
+																					/>
+																				</div>
+																				<div className="w-[170px] pr-6 last:pr-0">
+																					<FormField
+																						placeholder="Type"
+																						singleSelect
+																						fieldType="select2"
+																						options={["Monthly", "Yearly"]}
+																						value={type}
+																						handleChange={settype}
+																					/>
+																				</div>
+																				<div className="grow pr-6 last:pr-0">
+																					<FormField
+																						placeholder="From"
+																						fieldType="input"
+																						inputType="number"
+																						value={from}
+																						handleChange={(e) => setfrom(e.target.value)}
+																					/>
+																				</div>
+																				<div className="grow pr-6 last:pr-0">
+																					<FormField
+																						placeholder="To"
+																						fieldType="input"
+																						inputType="number"
+																						value={to}
+																						handleChange={(e) => setto(e.target.value)}
+																					/>
+																				</div>
+																			</div>
+																		</div>
+																		<FormField
+																			label="Candidate Type"
+																			singleSelect
+																			fieldType="select2"
+																			options={["Full Time", "Part TIme", "Internship"]}
+																			value={ctype}
+																			handleChange={setctype}
+																			required
+																		/>
+																		<div className="flex flex-wrap">
+																			<div className="grow pr-6 last:pr-0">
+																				<FormField
+																					label="Visa Sponsorship"
+																					singleSelect
+																					fieldType="select2"
+																					options={["Yes", "No", "N/A"]}
+																					value={visa}
+																					handleChange={setvisa}
+																					required
+																				/>
+																			</div>
+																			<div className="grow pr-6 last:pr-0">
+																				<FormField
+																					label="Paid Relocation"
+																					singleSelect
+																					fieldType="select2"
+																					options={["Yes", "No", "N/A"]}
+																					value={relocation}
+																					handleChange={setrelocation}
+																					required
+																				/>
+																			</div>
+																		</div>
+																		<FormField
+																			label="Approval Authorities"
+																			fieldType="select2"
+																			options={hmanage}
+																			value={approval}
+																			handleChange={setapproval}
+																			required
+																		/>
+
+																		<Button
+																			label={newoffer ? "Send For Approval" : "Re-Send For Approval"}
+																			btnType={"button"}
+																			disabled={!checkBtnOffer()}
+																			handleClick={() => newOffer(applicantlist[userID]["arefid"])}
+																		/>
+																	</>
+																) : omf && omf.length > 0 ? (
+																	<>
+																		{omf.map((data, i) =>
+																			data["status"] === "Reject" ? (
+																				<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
+																					<div className="flex flex-wrap items-center justify-between font-bold">
+																						<p className="mb-1 text-red-700">
+																							<i className="fa-regular fa-face-frown"></i> Rejected (
+																							{data["organization"]["email"]})
+																						</p>
+																						<p className="text-[12px] text-darkGray">
+																							{moment(data["timestamp"]).fromNow()}
+																						</p>
+																					</div>
+																					<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																					<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																				</div>
+																			) : (
+																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																					<div className="flex flex-wrap items-center justify-between font-bold">
+																						<p className="mb-1 text-green-700">
+																							<i className="fa-regular fa-face-smile"></i> Approved (
+																							{data["organization"]["email"]})
+																						</p>
+																						<p className="text-[12px] text-darkGray">
+																							{moment(data["timestamp"]).fromNow()}
+																						</p>
+																					</div>
+																					<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																					<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																				</div>
+																			)
+																		)}
+
+																		<Button
+																			label={"Next Step"}
+																			btnType={"button"}
+																			disabled={!nextstepVerify()}
+																			handleClick={() => setstep(2)}
+																		/>
+																	</>
+																) : (
+																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																		<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+																		<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
+																		<p className="text-sm">Under Review</p>
 																	</div>
-																	<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
-																	<p className="mb-2 text-sm text-darkGray">
-																		{data["feedback"]}
+																)}
+															</section>
+														)}
+
+														{step === 2 && (
+															<section className="px-10 py-6">
+																<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																	<p className="my-2">
+																		{word != null ? (
+																			<>FileName (Offer Letter)</>
+																		) : (
+																			<>Select Offer Letter (Offer Letter)</>
+																		)}
 																	</p>
+																	{word != null ? (
+																		<div>
+																			<button
+																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																				onClick={handleDownload}
+																			>
+																				<i className="fa-solid fa-download mr-2"></i>
+																				Download
+																			</button>
+																			&nbsp;|&nbsp;
+																			<button
+																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																				onClick={() => setword(null)}
+																			>
+																				Reset
+																			</button>
+																		</div>
+																	) : (
+																		<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
+																			<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+																				<input
+																					type="file"
+																					className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+																					accept=".docx"
+																					onChange={handleFileInputChange}
+																				/>
+																				<span className="absolute right-3 top-[12px] text-lightGray">
+																					<i className="fa-solid fa-paperclip"></i>
+																				</span>
+																				<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+																					Docx etc...
+																				</span>
+																			</div>
+																		</div>
+																	)}
 																</div>
-																:
-																<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
-																	<div className="flex flex-wrap items-center justify-between font-bold">
-																		<p className="mb-1 text-green-700">
-																			<i className="fa-regular fa-face-smile"></i> Approved ({data["organization"]["email"]})
-																		</p>
-																		<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
+																{value && value.length > 0 && word != null && (
+																	<>
+																		<div className="border py-2">
+																			<article
+																				className="m-6"
+																				ref={htmlRef}
+																				id="contentABC"
+																				dangerouslySetInnerHTML={{ __html: value }}
+																			></article>
+																		</div>
+																		<div className="flex flex-wrap items-center justify-between px-8 pt-4">
+																			<div className="my-1 mr-4 last:mr-0">
+																				<Button label="Confirm Details" />
+																			</div>
+																			<div className="my-1 mr-4 last:mr-0">
+																				<Button
+																					btnStyle="gray"
+																					label="Edit Details"
+																					btnType="button"
+																					handleClick={() => seteditDetails(true)}
+																				/>
+																			</div>
+																		</div>
+																	</>
+																)}
+															</section>
+														)}
+
+														{step === 3 && (
+															<section className="px-10 py-6">
+																<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																	<p className="my-2">FileName (Offer Letter)</p>
+																	<Link
+																		href={`#`}
+																		className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																		download
+																	>
+																		<i className="fa-solid fa-download mr-2"></i>
+																		Download
+																	</Link>
+																</div>
+																<div className="py-2">
+																	<p className="py-4 text-center">Preview Here</p>
+																	<div className="px-8 pt-4 text-center">
+																		<Button
+																			label="Send Email Template"
+																			btnType="button"
+																			handleClick={() => setDiscussEmail(true)}
+																		/>
 																	</div>
-																	<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
-																	<p className="mb-2 text-sm text-darkGray">
-																		{data["feedback"]}
-																	</p>
 																</div>
-							
-															))}
+															</section>
+														)}
 
-
-														<div className="-mx-3 flex flex-wrap">
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Designation" fieldType="input" inputType="text" value={designation} handleChange={(e)=>setdesignation(e.target.value)} required />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Department" fieldType="input" inputType="text" value={dept} handleChange={(e)=>setdept(e.target.value)} required />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Section" fieldType="input" inputType="text" value={section} handleChange={(e)=>setsection(e.target.value)} required />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Division" fieldType="input" inputType="text" value={div} handleChange={(e)=>setdiv(e.target.value)} required />
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Grade" fieldType="input" inputType="text"  value={grade} handleChange={(e)=>setgrade(e.target.value)} required/>
-															</div>
-															<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																<FormField label="Location" fieldType="input" inputType="text"  value={location} handleChange={(e)=>setlocation(e.target.value)} required/>
-															</div>
-														</div>
-														<div className="mb-4">
-															<h4 className="mb-2 font-bold">Salary Range<sup className="text-red-500">*</sup></h4>
-															<div className="flex flex-wrap">
-																<div className="w-[170px] pr-6 last:pr-0">
-																	<FormField placeholder="Currency" fieldType="select2" 
-																	singleSelect value={curr}
-																	handleChange={setcurr}  options={[
-																		"USD $",
-																		"CAD CA$",
-																		"EUR €",
-																		"AED AED",
-																		"AFN Af",
-																		"ALL ALL",
-																		"AMD AMD",
-																		"ARS AR$",
-																		"AUD AU$",
-																		"AZN man.",
-																		"BAM KM",
-																		"BDT Tk",
-																		"BGN BGN",
-																		"BHD BD",
-																		"BIF FBu",
-																		"BND BN$",
-																		"BOB Bs",
-																		"BRL R$",
-																		"BWP BWP",
-																		"BYN Br",
-																		"BZD BZ$",
-																		"CDF CDF",
-																		"CHF CHF",
-																		"CLP CL$",
-																		"CNY CN¥",
-																		"COP CO$",
-																		"CRC ₡",
-																		"CVE CV$",
-																		"CZK Kč",
-																		"DJF Fdj",
-																		"DKK Dkr",
-																		"DOP RD$",
-																		"DZD DA",
-																		"EEK Ekr",
-																		"EGP EGP",
-																		"ERN Nfk",
-																		"ETB Br",
-																		"GBP £",
-																		"GEL GEL",
-																		"GHS GH₵",
-																		"GNF FG",
-																		"GTQ GTQ",
-																		"HKD HK$",
-																		"HNL HNL",
-																		"HRK kn",
-																		"HUF Ft",
-																		"IDR Rp",
-																		"ILS ₪",
-																		"INR ₹",
-																		"IQD IQD",
-																		"IRR IRR",
-																		"ISK Ikr",
-																		"JMD J$",
-																		"JOD JD",
-																		"JPY ¥",
-																		"KES Ksh",
-																		"KHR KHR",
-																		"KMF CF",
-																		"KRW ₩",
-																		"KWD KD",
-																		"KZT KZT",
-																		"LBP L.L.",
-																		"LKR SLRs",
-																		"LTL Lt",
-																		"LVL Ls",
-																		"LYD LD",
-																		"MAD MAD",
-																		"MDL MDL",
-																		"MGA MGA",
-																		"MKD MKD",
-																		"MMK MMK",
-																		"MOP MOP$",
-																		"MUR MURs",
-																		"MXN MX$",
-																		"MYR RM",
-																		"MZN MTn",
-																		"NAD N$",
-																		"NGN ₦",
-																		"NIO C$",
-																		"NOK Nkr",
-																		"NPR NPRs",
-																		"NZD NZ$",
-																		"OMR OMR",
-																		"PAB B/.",
-																		"PEN S/.",
-																		"PHP ₱",
-																		"PKR PKRs",
-																		"PLN zł",
-																		"PYG ₲",
-																		"QAR QR",
-																		"RON RON",
-																		"RSD din.",
-																		"RUB RUB",
-																		"RWF RWF",
-																		"SAR SR",
-																		"SDG SDG",
-																		"SEK Skr",
-																		"SGD S$",
-																		"SOS Ssh",
-																		"SYP SY£",
-																		"THB ฿",
-																		"TND DT",
-																		"TOP T$",
-																		"TRY TL",
-																		"TTD TT$",
-																		"TWD NT$",
-																		"TZS TSh",
-																		"UAH ₴",
-																		"UGX USh",
-																		"UYU $U",
-																		"UZS UZS",
-																		"VEF Bs.F.",
-																		"VND ₫",
-																		"XAF FCFA",
-																		"XOF CFA",
-																		"YER YR",
-																		"ZAR R",
-																		"ZMK ZK",
-																		"ZWL ZWL$",
-																	]} />
+														{step === 4 && (
+															<section className="px-10 py-6">
+																<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																	<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																	<p className="text-lg">Offer Pending</p>
+																	<small className="font-semibold">Offer status by Applicant</small>
 																</div>
-																<div className="w-[170px] pr-6 last:pr-0">
-																	<FormField placeholder="Type" singleSelect fieldType="select2" options={['Monthly','Yearly']} value={type} handleChange={settype} />
+																<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																	<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																	<p className="mb-2 text-lg text-green-700">Offer Accepted</p>
+																	<Link
+																		href="#"
+																		target="_blank"
+																		download
+																		className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																	>
+																		Download Offer Letter
+																	</Link>
 																</div>
-																<div className="grow pr-6 last:pr-0">
-																	<FormField placeholder="From" fieldType="input" inputType="number" value={from} handleChange={(e)=>setfrom(e.target.value)} />
-																</div>
-																<div className="grow pr-6 last:pr-0">
-																	<FormField placeholder="To" fieldType="input" inputType="number" value={to} handleChange={(e)=>setto(e.target.value)} />
-																</div>
-															</div>
-														</div>
-														<FormField label="Candidate Type" singleSelect fieldType="select2" options={['Full Time','Part TIme', 'Internship']} value={ctype} handleChange={setctype} required />
-														<div className="flex flex-wrap">
-															<div className="grow pr-6 last:pr-0">
-															<FormField label="Visa Sponsorship" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={visa} handleChange={setvisa} required />
-															</div>
-															<div className="grow pr-6 last:pr-0">
-															<FormField label="Paid Relocation" singleSelect fieldType="select2" options={['Yes','No','N/A']} value={relocation} handleChange={setrelocation} required/>
-															</div>
-														</div>
-														<FormField label="Approval Authorities" fieldType="select2" options={hmanage} value={approval} handleChange={setapproval} required />
-														
-														<Button label={newoffer?"Send For Approval":"Re-Send For Approval"} btnType={"button"} disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} />
-														</>
-														:
-														omf && omf.length > 0 ?  
-														<>
-														{omf.map((data,i)=>(
-															data["status"] === "Reject" ? 
-															<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
-																<div className="flex flex-wrap items-center justify-between font-bold">
-																	<p className="mb-1 text-red-700">
-																		<i className="fa-regular fa-face-frown"></i> Rejected ({data["organization"]["email"]})
-																	</p>
-																	<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
-																</div>
-																<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
-																<p className="mb-2 text-sm text-darkGray">
-																	{data["feedback"]}
-																</p>
-															</div>
-															:
-															<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
-																<div className="flex flex-wrap items-center justify-between font-bold">
-																	<p className="mb-1 text-green-700">
-																		<i className="fa-regular fa-face-smile"></i> Approved ({data["organization"]["email"]})
-																	</p>
-																	<p className="text-[12px] text-darkGray">{moment(data["timestamp"]).fromNow()}</p>
-																</div>
-																<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
-																<p className="mb-2 text-sm text-darkGray">
-																	{data["feedback"]}
-																</p>
-															</div>
-						
-														))}
-														
-														<Button label={"Next Step"} btnType={"button"} disabled={!rejectVerify} handleClick={()=>setstep(2)} />
-														</>
-														:
-														<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-															<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-															<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
-															<p className="text-sm">Under Review</p>
-														</div>
-														}
-													</section>
+															</section>
+														)}
+													</>
 												)}
-
-												{step === 2 && (
-													<section className="px-10 py-6">
-														<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-															<p className="my-2">FileName (Offer Letter)</p>
-															<Link
-																href={`#`}
-																className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																download
-															>
-																<i className="fa-solid fa-download mr-2"></i>
-																Download
-															</Link>
-														</div>
-														<div className="py-2">
-															<p className="py-4 text-center">Preview Here</p>
-															<div className="flex flex-wrap items-center justify-between px-8 pt-4">
-																<div className="my-1 mr-4 last:mr-0">
-																	<Button label="Confirm Details" />
-																</div>
-																<div className="my-1 mr-4 last:mr-0">
-																	<Button btnStyle="gray" label="Edit Details" />
-																</div>
-															</div>
-														</div>
-													</section>
-												)}
-
-												{step === 3 && (
-													<section className="px-10 py-6">
-														<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-															<p className="my-2">FileName (Offer Letter)</p>
-															<Link
-																href={`#`}
-																className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																download
-															>
-																<i className="fa-solid fa-download mr-2"></i>
-																Download
-															</Link>
-														</div>
-														<div className="py-2">
-															<p className="py-4 text-center">Preview Here</p>
-															<div className="px-8 pt-4 text-center">
-																<Button
-																	label="Send Email Template"
-																	btnType="button"
-																	handleClick={() => setDiscussEmail(true)}
-																/>
-															</div>
-														</div>
-													</section>
-												)}
-
-												{step === 4 && (
-													<section className="px-10 py-6">
-														<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-															<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-															<p className="text-lg">Offer Pending</p>
-															<small className="font-semibold">Offer status by Applicant</small>
-														</div>
-														<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
-															<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
-															<p className="mb-2 text-lg text-green-700">Offer Accepted</p>
-															<Link
-																href="#"
-																target="_blank"
-																download
-																className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-															>
-																Download Offer Letter
-															</Link>
-														</div>
-													</section>
-												)}
-												</>
-												}
 											</Tab.Panel>
 											<Tab.Panel>
 												<div className="px-10">
@@ -1306,6 +1875,319 @@ export default function OfferManagement() {
 										<p className="mx-auto w-full max-w-[320px] text-sm text-darkGray">
 											Schedule a Call with Applicant to Discuss Further Onboarding Steps
 										</p>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={editDetails} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seteditDetails}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="px-8 py-2 text-right">
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => seteditDetails(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8 pt-0">
+										<h4 className="text-3xl font-bold">Edit Offer Details</h4>
+										<hr className="mb-4" />
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Designation"
+													fieldType="input"
+													inputType="text"
+													value={designation}
+													handleChange={(e) => setdesignation(e.target.value)}
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Department"
+													fieldType="input"
+													inputType="text"
+													value={dept}
+													handleChange={(e) => setdept(e.target.value)}
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Section"
+													fieldType="input"
+													inputType="text"
+													value={section}
+													handleChange={(e) => setsection(e.target.value)}
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Division"
+													fieldType="input"
+													inputType="text"
+													value={div}
+													handleChange={(e) => setdiv(e.target.value)}
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Grade"
+													fieldType="input"
+													inputType="text"
+													value={grade}
+													handleChange={(e) => setgrade(e.target.value)}
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													label="Location"
+													fieldType="input"
+													inputType="text"
+													value={location}
+													handleChange={(e) => setlocation(e.target.value)}
+													required
+												/>
+											</div>
+										</div>
+										<div className="mb-4">
+											<h4 className="mb-2 font-bold">
+												Salary Range<sup className="text-red-500">*</sup>
+											</h4>
+											<div className="flex flex-wrap">
+												<div className="w-[170px] pr-6 last:pr-0">
+													<FormField
+														placeholder="Currency"
+														fieldType="select2"
+														singleSelect
+														value={curr}
+														handleChange={setcurr}
+														options={[
+															"USD $",
+															"CAD CA$",
+															"EUR €",
+															"AED AED",
+															"AFN Af",
+															"ALL ALL",
+															"AMD AMD",
+															"ARS AR$",
+															"AUD AU$",
+															"AZN man.",
+															"BAM KM",
+															"BDT Tk",
+															"BGN BGN",
+															"BHD BD",
+															"BIF FBu",
+															"BND BN$",
+															"BOB Bs",
+															"BRL R$",
+															"BWP BWP",
+															"BYN Br",
+															"BZD BZ$",
+															"CDF CDF",
+															"CHF CHF",
+															"CLP CL$",
+															"CNY CN¥",
+															"COP CO$",
+															"CRC ₡",
+															"CVE CV$",
+															"CZK Kč",
+															"DJF Fdj",
+															"DKK Dkr",
+															"DOP RD$",
+															"DZD DA",
+															"EEK Ekr",
+															"EGP EGP",
+															"ERN Nfk",
+															"ETB Br",
+															"GBP £",
+															"GEL GEL",
+															"GHS GH₵",
+															"GNF FG",
+															"GTQ GTQ",
+															"HKD HK$",
+															"HNL HNL",
+															"HRK kn",
+															"HUF Ft",
+															"IDR Rp",
+															"ILS ₪",
+															"INR ₹",
+															"IQD IQD",
+															"IRR IRR",
+															"ISK Ikr",
+															"JMD J$",
+															"JOD JD",
+															"JPY ¥",
+															"KES Ksh",
+															"KHR KHR",
+															"KMF CF",
+															"KRW ₩",
+															"KWD KD",
+															"KZT KZT",
+															"LBP L.L.",
+															"LKR SLRs",
+															"LTL Lt",
+															"LVL Ls",
+															"LYD LD",
+															"MAD MAD",
+															"MDL MDL",
+															"MGA MGA",
+															"MKD MKD",
+															"MMK MMK",
+															"MOP MOP$",
+															"MUR MURs",
+															"MXN MX$",
+															"MYR RM",
+															"MZN MTn",
+															"NAD N$",
+															"NGN ₦",
+															"NIO C$",
+															"NOK Nkr",
+															"NPR NPRs",
+															"NZD NZ$",
+															"OMR OMR",
+															"PAB B/.",
+															"PEN S/.",
+															"PHP ₱",
+															"PKR PKRs",
+															"PLN zł",
+															"PYG ₲",
+															"QAR QR",
+															"RON RON",
+															"RSD din.",
+															"RUB RUB",
+															"RWF RWF",
+															"SAR SR",
+															"SDG SDG",
+															"SEK Skr",
+															"SGD S$",
+															"SOS Ssh",
+															"SYP SY£",
+															"THB ฿",
+															"TND DT",
+															"TOP T$",
+															"TRY TL",
+															"TTD TT$",
+															"TWD NT$",
+															"TZS TSh",
+															"UAH ₴",
+															"UGX USh",
+															"UYU $U",
+															"UZS UZS",
+															"VEF Bs.F.",
+															"VND ₫",
+															"XAF FCFA",
+															"XOF CFA",
+															"YER YR",
+															"ZAR R",
+															"ZMK ZK",
+															"ZWL ZWL$"
+														]}
+													/>
+												</div>
+												<div className="w-[170px] pr-6 last:pr-0">
+													<FormField
+														placeholder="Type"
+														singleSelect
+														fieldType="select2"
+														options={["Monthly", "Yearly"]}
+														value={type}
+														handleChange={settype}
+													/>
+												</div>
+												<div className="grow pr-6 last:pr-0">
+													<FormField
+														placeholder="From"
+														fieldType="input"
+														inputType="number"
+														value={from}
+														handleChange={(e) => setfrom(e.target.value)}
+													/>
+												</div>
+												<div className="grow pr-6 last:pr-0">
+													<FormField
+														placeholder="To"
+														fieldType="input"
+														inputType="number"
+														value={to}
+														handleChange={(e) => setto(e.target.value)}
+													/>
+												</div>
+											</div>
+										</div>
+										<FormField
+											label="Candidate Type"
+											singleSelect
+											fieldType="select2"
+											options={["Full Time", "Part TIme", "Internship"]}
+											value={ctype}
+											handleChange={setctype}
+											required
+										/>
+										<div className="flex flex-wrap">
+											<div className="grow pr-6 last:pr-0">
+												<FormField
+													label="Visa Sponsorship"
+													singleSelect
+													fieldType="select2"
+													options={["Yes", "No", "N/A"]}
+													value={visa}
+													handleChange={setvisa}
+													required
+												/>
+											</div>
+											<div className="grow pr-6 last:pr-0">
+												<FormField
+													label="Paid Relocation"
+													singleSelect
+													fieldType="select2"
+													options={["Yes", "No", "N/A"]}
+													value={relocation}
+													handleChange={setrelocation}
+													required
+												/>
+											</div>
+										</div>
+										<hr className="mb-5 mt-5" />
+										<Button
+											label={"Update"}
+											btnType={"button"}
+											disabled={!checkBtnOffer1()}
+											handleClick={() => updateOffer()}
+										/>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
