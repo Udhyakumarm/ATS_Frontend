@@ -464,7 +464,7 @@ export default function Analytics() {
                                         <div className="flex flex-wrap -mx-3">
                                             {quicklinks.map((item, i) => (
                                             <div className="w-full md:max-w-[33.3333%] lg:max-w-[25%] px-3 mb-6" key={i}>
-                                                <div className="h-full border dark:border-gray-400 rounded-normal p-6 flex items-start">
+                                                <div className="h-full border dark:border-gray-400 shadow-normal rounded-normal p-6 flex items-start">
                                                     <div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
                                                         <Image src={item.icon} alt={'Icon'} width={30} height={30} />
                                                     </div>
@@ -479,7 +479,7 @@ export default function Analytics() {
                                     </div>
                                     <div className="flex flex-wrap -mx-3">
                                         <div className="w-full md:max-w-[50%] px-3 mb-6">
-                                            <div className="h-full border dark:border-gray-400 rounded-normal">
+                                            <div className="h-full border dark:border-gray-400 rounded-normal shadow-normal">
                                                 <div className="border-b dark:border-gray-400 p-4 flex items-center">
                                                     <h2 className="font-bold grow">Applicant Pipeline</h2>
                                                     <div className="w-[180px]">
@@ -492,7 +492,7 @@ export default function Analytics() {
                                             </div>
                                         </div>
                                         <div className="w-full md:max-w-[50%] px-3 mb-6">
-                                            <div className="h-full border dark:border-gray-400 rounded-normal">
+                                            <div className="h-full border dark:border-gray-400 rounded-normal shadow-normal">
                                                 <div className="border-b dark:border-gray-400 p-4 flex items-center">
                                                     <h2 className="font-bold grow">Hiring Analytics</h2>
                                                     <div className="w-[180px]">
@@ -505,7 +505,7 @@ export default function Analytics() {
                                             </div>
                                         </div>
                                         <div className="w-full md:max-w-[50%] px-3 mb-6">
-                                            <div className="h-full border dark:border-gray-400 rounded-normal">
+                                            <div className="h-full border dark:border-gray-400 rounded-normal shadow-normal">
                                                 <div className="border-b dark:border-gray-400 p-4 flex items-center">
                                                     <h2 className="font-bold grow">Average Source of Candidate</h2>
                                                 </div>
@@ -515,7 +515,7 @@ export default function Analytics() {
                                             </div>
                                         </div>
                                         <div className="w-full md:max-w-[50%] px-3 mb-6">
-                                            <div className="h-full border dark:border-gray-400 rounded-normal">
+                                            <div className="h-full border dark:border-gray-400 rounded-normal shadow-normal">
                                                 <div className="border-b dark:border-gray-400 p-4 flex items-center">
                                                     <h2 className="font-bold grow">Average Interviews Schedule</h2>
                                                     <div className="w-[180px]">

@@ -188,7 +188,7 @@ export default function CanCareer() {
 											</div>
 										)}
 									</div>
-									{orgdetail["Job"] && (
+									{/* {orgdetail["Job"] && (
 										<div>
 											<h2 className="mb-3 text-xl font-bold">Similar Jobs</h2>
 											<div className="mx-[-7px] flex flex-wrap">
@@ -242,7 +242,7 @@ export default function CanCareer() {
 												}}
 											/>
 										</div>
-									)}
+									)} */}
 								</div>
 							</div>
 						</>

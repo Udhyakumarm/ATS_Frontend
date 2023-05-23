@@ -607,7 +607,7 @@ export default function JobsCreate() {
 													inputType="number"
 													value={jvac}
 													handleChange={(e) => setjvac(e.target.value)}
-													label="Vacancy"
+													label="Number of vacancy"
 													id="vacancy"
 												/>
 											</div>
@@ -615,7 +615,7 @@ export default function JobsCreate() {
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Department Informatiom" />
+									<StickyLabel label="Department Information" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
 									</div>
@@ -647,7 +647,7 @@ export default function JobsCreate() {
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 									<StickyLabel label="Employment Details" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 pt-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
@@ -694,14 +694,13 @@ export default function JobsCreate() {
 											</div>
 										</div>
 									</div>
-
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+									<div className="mx-auto w-full max-w-[1055px] px-4 pb-8">
 										<FormField
 											options={locf}
 											onSearch={searchLoc}
 											fieldType="select2"
 											id="location"
-											label="Location"
+											label="Job Location"
 											handleChange={setjloc}
 										/>
 									</div>
@@ -742,10 +741,10 @@ export default function JobsCreate() {
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
 													fieldType="select2"
-													label="Relocation"
+													label="Paid Relocation"
 													id="relocation"
 													singleSelect
-													options={["yes", "no"]}
+													options={["Yes", "No"]}
 													value={jreloc}
 													handleChange={setjreloc}
 												/>
@@ -756,7 +755,7 @@ export default function JobsCreate() {
 													label="Visa Sponsorship"
 													id="visa"
 													singleSelect
-													options={["yes", "no"]}
+													options={["Yes", "No"]}
 													value={jvisa}
 													handleChange={setjvisa}
 												/>
@@ -764,10 +763,10 @@ export default function JobsCreate() {
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
 													fieldType="select2"
-													label="Work Type"
+													label="Workplace Type"
 													id="work_type"
 													singleSelect
-													options={["remote", "office", "hybrid"]}
+													options={["Remote", "Office", "Hybrid"]}
 													value={jwtype}
 													handleChange={setjwtype}
 												/>

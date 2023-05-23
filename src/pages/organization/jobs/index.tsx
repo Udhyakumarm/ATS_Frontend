@@ -31,7 +31,7 @@ export default function JobsDashboard() {
 			link: "/organization/jobs/active"
 		},
 		{
-			name: "Drafted Jobs",
+			name: "Draft Jobs",
 			icon: draftedIcon,
 			link: "/organization/jobs/draft"
 		},

@@ -25,7 +25,7 @@ const people = [
 	{ id: 1, name: "Sourced", unavailable: false },
 	{ id: 2, name: "Applied", unavailable: false },
 	{ id: 3, name: "Phone Screen", unavailable: false },
-	{ id: 4, name: "Assement", unavailable: false },
+	{ id: 4, name: "Assessment", unavailable: false },
 	{ id: 5, name: "Interview", unavailable: false },
 	{ id: 6, name: "Offered Letter", unavailable: false },
 	{ id: 7, name: "Hired", unavailable: false }
@@ -1236,11 +1236,11 @@ export default function ApplicantsDetail() {
 														}}
 													/>
 													<Button
-														label="Assement"
+														label="Assessment"
 														loader={false}
 														btnType="button"
 														handleClick={() => {
-															chnageStatus("Assement", data["arefid"]);
+															chnageStatus("Assessment", data["arefid"]);
 														}}
 													/>
 													<Button

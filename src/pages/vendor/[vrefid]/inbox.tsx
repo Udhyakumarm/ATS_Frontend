@@ -67,36 +67,13 @@ export default function VendorInbox() {
 					<div className="flex flex-wrap">
 						<div className="w-full md:max-w-[32%]">
 							<div className="rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
-								<div className="px-6 pt-6 mb-3">
+								<div className="px-6 pt-6 mb-6">
 									<FormField
 										fieldType="input"
 										inputType="search"
 										placeholder="Search applicants, jobs ..."
 										icon={<i className="fa-solid fa-magnifying-glass"></i>}
 									/>
-									<Menu as="div" className="relative inline-block">
-										<Menu.Button className="ml-2 w-6 py-2 text-sm flex items-center font-bold">
-											Recent
-											<i className="fa-solid fa-chevron-down pl-2 text-[10px]"></i>
-										</Menu.Button>
-										<Transition
-										as={Fragment}
-										enter="transition ease-out duration-100"
-										enterFrom="transform opacity-0 scale-95"
-										enterTo="transform opacity-100 scale-100"
-										leave="transition ease-in duration-75"
-										leaveFrom="transform opacity-100 scale-100"
-										leaveTo="transform opacity-0 scale-95"
-										>
-											<Menu.Items className={'absolute left-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-2 shadow-normal dark:bg-gray-700'}>
-												<Menu.Item>
-													<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={()=> setCreateGroup(true)}>
-														<i className="fa-solid fa-users mr-2"></i> Create Group
-													</button>
-												</Menu.Item>
-											</Menu.Items>
-										</Transition>
-									</Menu>
 								</div>
 								<div className="h-[calc(100vh-265px)] overflow-y-auto p-6 pt-0">
 									{Array(5).fill(<MessageCards />)}

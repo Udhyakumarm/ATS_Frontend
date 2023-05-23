@@ -113,20 +113,36 @@ export default function CanCareerJobDetail() {
 										{jdata["currency"] && <li className="mr-4">{jdata["currency"] || <Skeleton width={40} />}</li>}
 										{jdata["vacancy"] && <li className="mr-4">Vacancy - {jdata["vacancy"] || <Skeleton width={40} />}</li>}
 									</ul>
-									<Button
-										btnStyle="sm"
-										label={btndis ? "Already Applied" : "Apply Here"}
-										loader={false}
-										btnType="button"
-										handleClick={() => {
-											if (session) {
-												router.push(`/organization/${cname}/job-apply`);
-											} else {
-												router.push(`/organization/${cname}/candidate/signin`);
-											}
-										}}
-										disabled={btndis}
-									/>
+									{
+										btndis
+										?
+										<>
+										<div className="flex flex-wrap">
+											<p className="text-[12px] text-darkGray dark:text-gray-400 mr-4">Already Applied on 28 Jan 2023</p>
+											<ul className="flex list-inside list-disc text-[12px] text-darkGray dark:text-gray-400">
+												<li>In Review</li>
+											</ul>
+										</div>
+										</>
+										:
+										<>
+										<Button
+											btnStyle="sm"
+											label={"Apply Here"}
+											loader={false}
+											btnType="button"
+											handleClick={() => {
+												if (session) {
+													router.push(`/organization/${cname}/job-apply`);
+												} else {
+													router.push(`/organization/${cname}/candidate/signin`);
+												}
+											}}
+											disabled={btndis}
+										/>
+										</>
+									}
+									
 									<hr className="my-4" />
 									<aside className="mb-4">
 										<h3 className="mb-2 text-lg font-bold">Department Information</h3>

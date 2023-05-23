@@ -248,7 +248,7 @@ export default function Inbox() {
 																/>
 															</div>
 															<button type="button" className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400" onClick={() => setAddMembers(true)}>
-																<i className="fa-solid fa-plus"></i>
+																<i className="fa-solid fa-user-plus"></i>
 															</button>
 															<Menu as="div" className="relative">
 																<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
@@ -294,7 +294,7 @@ export default function Inbox() {
 																/>
 															</div>
 															<button type="button" className="ml-2 w-6 text-darkGray dark:text-gray-400" onClick={() => setAddMembers(true)}>
-																<i className="fa-solid fa-plus"></i>
+																<i className="fa-solid fa-user-plus"></i>
 															</button>
 														</div>
 														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">

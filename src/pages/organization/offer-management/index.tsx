@@ -25,11 +25,11 @@ import html2canvas from "html2canvas";
 import jspdf from "jspdf";
 
 const people = [
-	{ id: 1, name: "Durward Reynolds", unavailable: false },
-	{ id: 2, name: "Kenton Towne", unavailable: false },
-	{ id: 3, name: "Therese Wunsch", unavailable: false },
-	{ id: 4, name: "Benedict Kessler", unavailable: true },
-	{ id: 5, name: "Katelyn Rohan", unavailable: false }
+	{ id: 1, name: "All", unavailable: false },
+	{ id: 2, name: "Software Developer", unavailable: false },
+	{ id: 3, name: "PHP Developer", unavailable: false },
+	{ id: 4, name: "ReactJS Developer", unavailable: true },
+	{ id: 5, name: "Web Designer", unavailable: false }
 ];
 
 export default function OfferManagement() {
@@ -977,7 +977,7 @@ export default function OfferManagement() {
 										<span>
 											{applicantlist[userID]["user"]["first_name"]}&nbsp;{applicantlist[userID]["user"]["last_name"]}
 										</span>
-										<span>{applicantlist[userID]["job"]["job_title"]}</span>
+										{/* <span>{applicantlist[userID]["job"]["job_title"]}</span> */}
 									</h2>
 									<Tab.Group>
 										<Tab.List className={"border-b px-10 dark:border-b-gray-600"}>
@@ -1762,7 +1762,7 @@ export default function OfferManagement() {
 																			required
 																		/>
 																		<div className="flex flex-wrap">
-																			<div className="grow pr-6 last:pr-0">
+																			<div className="grow pr-6 last:pr-0 mb-4">
 																				<FormField
 																					label="Visa Sponsorship"
 																					singleSelect
@@ -1773,7 +1773,7 @@ export default function OfferManagement() {
 																					required
 																				/>
 																			</div>
-																			<div className="grow pr-6 last:pr-0">
+																			<div className="grow pr-6 last:pr-0 mb-4">
 																				<FormField
 																					label="Paid Relocation"
 																					singleSelect
@@ -2195,7 +2195,7 @@ export default function OfferManagement() {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-6xl">
 									<div className="px-8 py-2 text-right">
 										<button
 											type="button"

@@ -675,7 +675,7 @@ export default function JobsEdit() {
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Department Informatiom" />
+									<StickyLabel label="Department Information" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
 									</div>

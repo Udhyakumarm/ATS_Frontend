@@ -12,7 +12,7 @@ function Canban(props: any) {
 	const router = useRouter();
 	let _columnId = 0;
 	let _cardId = 0;
-	var initialColumns = ["Sourced", "Applied", "Phone Screen", "Assement", "Interview", "Offer", "Hired"].map(
+	var initialColumns = ["Sourced", "Applied", "Phone Screen", "Assessment", "Interview", "Offer", "Hired"].map(
 		(title, i) => ({
 			id: _columnId++,
 			title,
