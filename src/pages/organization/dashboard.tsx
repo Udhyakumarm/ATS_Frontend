@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -34,6 +34,12 @@ import HighchartsReact from 'highcharts-react-official';
 
 export default function OrganizationDashboard() {
 	const [sklLoad] = useState(true)
+	const [customizer1, setCustomizer1] = useState(true);
+	const [customizer2, setCustomizer2] = useState(true);
+	const [customizer3, setCustomizer3] = useState(true);
+	const [customizer4, setCustomizer4] = useState(true);
+	const [customizer5, setCustomizer5] = useState(true);
+	const [customizer6, setCustomizer6] = useState(true);
 	const settings = {
 		dots: false,
 		arrows: true,
@@ -125,6 +131,27 @@ export default function OrganizationDashboard() {
 		  }
 		]
 	};
+	function handleCustomizer1() {
+		setCustomizer1(!customizer1)
+	}
+	function handleCustomizer2() {
+		setCustomizer2(!customizer2)
+	}
+	function handleCustomizer3() {
+		setCustomizer3(!customizer3)
+	}
+	function handleCustomizer4() {
+		setCustomizer4(!customizer4)
+	}
+	function handleCustomizer5() {
+		setCustomizer5(!customizer5)
+	}
+	function handleCustomizer6() {
+		setCustomizer6(!customizer6)
+	}
+	// function handleGaugeBtn() {
+	// 	document.querySelector("html").classList.add('overflow-hidden')
+	// }
 	return (
 		<>
 			<Head>
@@ -139,6 +166,9 @@ export default function OrganizationDashboard() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div id="dashboard" className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
+							{
+							customizer1 
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -198,6 +228,12 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
+							{
+							customizer2
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -219,6 +255,12 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
+							{
+							customizer3
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -312,6 +354,12 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
+							{
+							customizer4
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -369,6 +417,12 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
+							{
+							customizer5
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -406,6 +460,9 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800 upgradePlan">
 									<div className="flex items-center justify-between p-6">
@@ -418,6 +475,9 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							{
+							customizer6
+							?
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
@@ -484,46 +544,53 @@ export default function OrganizationDashboard() {
 									</div>
 								</div>
 							</div>
+							:
+							<></>
+							}
 						</div>
 						<aside className="absolute left-0 top-0 rounded-tl-normal rounded-br-normal bg-lightBlue p-3 dark:bg-gray-700">
 							<Popover className="relative">
 								<Popover.Button className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}>
 									<i className="fa-solid fa-gauge"></i>
 								</Popover.Button>
-								<Popover.Overlay className="fixed inset-0 bg-black opacity-30 dark:bg-white" />
-								<Popover.Panel className="absolute z-10 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
+								<Popover.Overlay className="fixed left-0 top-0 w-full h-full z-30 inset-0 bg-black opacity-30 dark:bg-white" />
+								<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
 									<div className="flex flex-wrap">
 										<label
 											htmlFor="cust_applicants"
 											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_applicants" className="hidden" />
+											<input type="checkbox" name="cust_dashboard" id="cust_applicants" className="hidden" onClick={handleCustomizer1} />
 											<Image src={customizeApplicants} alt="Applicants" className="mb-2" />
 											<p className="text-[12px] font-bold">Applicant Details</p>
-										</label>
-										<label
-											htmlFor="cust_todo"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
-										>
-											<input type="checkbox" name="cust_dashboard" id="cust_todo" className="hidden" />
-											<Image src={customizeTodo} alt="To Do List" className="mb-2" />
-											<p className="text-[12px] font-bold">To Do List</p>
+											<i className={`fa-solid ${customizer1 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
 										</label>
 										<label
 											htmlFor="cust_hiring"
 											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_hiring" className="hidden" />
+											<input type="checkbox" name="cust_dashboard" id="cust_hiring" className="hidden" onChange={handleCustomizer2} />
 											<Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2" />
 											<p className="text-[12px] font-bold">Hiring Analytics</p>
+											<i className={`fa-solid ${customizer2 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
 										</label>
 										<label
-											htmlFor="cust_recent"
+											htmlFor="cust_upcoming"
 											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_recent" className="hidden" />
-											<Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
-											<p className="text-[12px] font-bold">Recent Jobs</p>
+											<input type="checkbox" name="cust_dashboard" id="cust_upcoming" className="hidden" onChange={handleCustomizer3} />
+											<Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
+											<p className="text-[12px] font-bold">Upcoming Interviews</p>
+											<i className={`fa-solid ${customizer3 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+										</label>
+										<label
+											htmlFor="cust_todo"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
+										>
+											<input type="checkbox" name="cust_dashboard" id="cust_todo" className="hidden" onChange={handleCustomizer4} />
+											<Image src={customizeTodo} alt="To Do List" className="mb-2" />
+											<p className="text-[12px] font-bold">To Do List</p>
+											<i className={`fa-solid ${customizer4 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
 										</label>
 										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white dark:bg-primary p-2 text-center">
 											<p className="text-[12px] font-bold">
@@ -533,20 +600,22 @@ export default function OrganizationDashboard() {
 											</p>
 										</div>
 										<label
-											htmlFor="cust_upcoming"
+											htmlFor="cust_recent"
 											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_upcoming" className="hidden" />
-											<Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
-											<p className="text-[12px] font-bold">Upcoming Interviews</p>
+											<input type="checkbox" name="cust_dashboard" id="cust_recent" className="hidden" onChange={handleCustomizer5} />
+											<Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
+											<p className="text-[12px] font-bold">Recent Jobs</p>
+											<i className={`fa-solid ${customizer5 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
 										</label>
 										<label
 											htmlFor="cust_activity"
 											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_activity" className="hidden" />
+											<input type="checkbox" name="cust_dashboard" id="cust_activity" className="hidden" onChange={handleCustomizer6} />
 											<Image src={customizeActivity} alt="Activity Log" className="mb-2" />
 											<p className="text-[12px] font-bold">Activity Log</p>
+											<i className={`fa-solid ${customizer6 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
 										</label>
 										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
 										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
