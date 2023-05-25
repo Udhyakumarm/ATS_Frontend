@@ -12,6 +12,7 @@ import bulbIcon from "/public/images/icons/bulb.png";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import noActivedata from "/public/images/no-data/iconGroup-1.png";
 import Link from "next/link";
+import FormField from "@/components/FormField";
 
 export default function JobsActive() {
 	const [sklLoad] = useState(true)
@@ -82,6 +83,9 @@ export default function JobsActive() {
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
+							<div className="mb-6">
+								<FormField fieldType="input" inputType="search" placeholder="Search by job title" icon={(<i className="fa-solid fa-search"></i>)} />
+							</div>
 							<div className="mx-[-15px] flex flex-wrap">
 								{
 									sklLoad

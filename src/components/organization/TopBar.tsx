@@ -72,9 +72,6 @@ export default function OrgTopBar() {
 						99+
 					</span>
 				</Link>
-				<button type="button" className="mr-6 font-semibold uppercase text-darkGray dark:text-gray-400">
-					Eng <i className="fa-solid fa-chevron-down text-[12px]"></i>
-				</button>
 				<button
 					type="button"
 					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"

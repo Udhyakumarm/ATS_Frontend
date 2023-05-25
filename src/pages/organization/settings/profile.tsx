@@ -1001,19 +1001,15 @@ export default function Profile() {
 											<div className="flex flex-wrap">
 												{ilink &&
 													ilink.map((data, i) => (
-														<div
-															className="relative mb-4 mr-6 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
-															key={i}
-														>
-															<Link href={data["title"]} className="" key={i}>
+														<div className="relative mr-6 mb-4 p-1" key={i}>
+															<Link href={data["title"]} className="text-center">
 																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
 																	<i className={`${geticon(data["title"])}`}></i>
 																</span>
-																<p className="text-[12px] font-bold capitalize">{`${gettitle(data["title"])}`}</p>
 															</Link>
 															<button
 																type="button"
-																className="absolute right-[-10px] top-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
+																className="absolute top-[-5px] right-[0px] rounded-full text-center text-[12px] font-bold text-red-500 dark:text-white"
 																onClick={(e) => delIndividualLink(data["id"])}
 															>
 																<i className="fa-solid fa-circle-xmark"></i>

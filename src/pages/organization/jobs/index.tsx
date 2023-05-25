@@ -23,27 +23,32 @@ export default function JobsDashboard() {
 		{
 			name: "Post New Job",
 			icon: jobsIcon,
-			link: "/organization/jobs/create"
+			link: "/organization/jobs/create",
+			color: '#B2E3FF'
 		},
 		{
 			name: "Active Jobs",
 			icon: bulbIcon,
-			link: "/organization/jobs/active"
+			link: "/organization/jobs/active",
+			color: '#FFCA7B'
 		},
 		{
 			name: "Draft Jobs",
 			icon: draftedIcon,
-			link: "/organization/jobs/draft"
+			link: "/organization/jobs/draft",
+			color: '#FFF2B1'
 		},
 		{
 			name: "Archived Jobs",
 			icon: folderIcon,
-			link: "/organization/jobs/archived"
+			link: "/organization/jobs/archived",
+			color: '#B1FFF6'
 		},
 		{
 			name: "Closed Jobs",
 			icon: closedIcon,
-			link: "/organization/jobs/closed"
+			link: "/organization/jobs/closed",
+			color: '#FFBBB2'
 		}
 	];
 
@@ -58,7 +63,7 @@ export default function JobsDashboard() {
 				<Orgtopbar />
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-					<div className="relative rounded-normal bg-white p-10 shadow-normal dark:bg-gray-800">
+					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
 						<h1 className="mb-6 text-2xl font-bold">Jobs</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
 							{quicklinks.map((links, i) => (
@@ -68,7 +73,7 @@ export default function JobsDashboard() {
 										className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 									>
 										<div className="mb-10 flex w-full items-center">
-											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+											<div className={`mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3`} style={{backgroundColor: links.color}}>
 												<Image src={links.icon} alt={links.name} height={20} />
 											</div>
 											<span className="text-lg font-bold">{links.name}</span>

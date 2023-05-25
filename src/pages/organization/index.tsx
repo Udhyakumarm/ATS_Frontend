@@ -2,12 +2,13 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import dashboardIcon from "/public/images/icons/dashboard.png";
-import integrationIcon from "/public/images/icons/integration.png";
 import jobsIcon from "/public/images/icons/jobs.png";
 import analyticsIcon from "/public/images/icons/analytics.png";
 import vendorsIcon from "/public/images/icons/vendors.png";
 import applicantsIcon from "/public/images/icons/applicants.png";
 import settingsIcon from "/public/images/icons/settings.png";
+import offerManageIcon from "/public/images/icons/offer-manage.png";
+import interviewsIcon from "/public/images/icons/interviews.png";
 
 export default function Organization() {
 	const quicklinks = [
@@ -17,14 +18,24 @@ export default function Organization() {
 			link: "/organization/dashboard"
 		},
 		{
-			name: "Integration",
-			icon: integrationIcon,
-			link: "/dashboard"
-		},
-		{
 			name: "Jobs",
 			icon: jobsIcon,
 			link: "/organization/jobs"
+		},
+		{
+			name: "Applicants",
+			icon: applicantsIcon,
+			link: "/organization/applicants"
+		},
+		{
+			name: "Offer Management",
+			icon: offerManageIcon,
+			link: "/organization/offer-management"
+		},
+		{
+			name: "Interviews",
+			icon: interviewsIcon,
+			link: "/organization/interviews"
 		},
 		{
 			name: "Analytics",
@@ -35,11 +46,6 @@ export default function Organization() {
 			name: "Vendors",
 			icon: vendorsIcon,
 			link: "/organization/settings/vendors"
-		},
-		{
-			name: "Applicants",
-			icon: applicantsIcon,
-			link: "/organization/applicants"
 		},
 		{
 			name: "Settings",
@@ -55,7 +61,7 @@ export default function Organization() {
 			</Head>
 			<main className="py-8">
 				<div className="md:px-26 mx-auto w-full max-w-[1920px] px-4 lg:px-40">
-					<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
+					<div className="rounded-normal bg-white p-6 dark:bg-gray-800">
 						<div className="mx-auto w-full max-w-[1100px]">
 							<div className="-mx-4 flex flex-wrap items-center">
 								{quicklinks.map((links, i) => (

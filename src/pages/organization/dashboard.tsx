@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { useRef, Fragment, useState } from "react";
 import Image from "next/image";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { Popover } from "@headlessui/react";
+import { Dialog, Popover, Transition } from "@headlessui/react";
 import Button from "@/components/Button";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
@@ -31,9 +31,14 @@ import JobCard_1 from "@/components/JobCard-1";
 import FormField from "@/components/FormField";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import Link from "next/link";
+import googleIcon from "/public/images/social/google-icon.png"
+import PreviewJob from "@/components/organization/PreviewJob";
 
 export default function OrganizationDashboard() {
 	const [sklLoad] = useState(true)
+	const cancelButtonRef = useRef(null);
+	const [previewPopup, setPreviewPopup] = useState(false);
 	const [customizer1, setCustomizer1] = useState(true);
 	const [customizer2, setCustomizer2] = useState(true);
 	const [customizer3, setCustomizer3] = useState(true);
@@ -272,7 +277,7 @@ export default function OrganizationDashboard() {
 										</aside>
 									</div>
 									<div className="p-6 pt-0">
-										<div className="max-h-[330px] overflow-y-auto">
+										<div className="">
 											{
 												sklLoad
 												?
@@ -282,9 +287,9 @@ export default function OrganizationDashboard() {
 															<Image
 																src={userImg}
 																alt="User"
-																className="rounded-full object-cover"
-																width={30}
-																height={30}
+																className="rounded-full object-cover w-[30px] h-[30px]"
+																width={100}
+																height={100}
 															/>
 															<div className="pl-2 grow">
 																<h5 className="text-sm font-bold">
@@ -307,9 +312,59 @@ export default function OrganizationDashboard() {
 															<Button btnStyle="outlined" label="View Profile" loader={false} />
 														</div>
 														<div className="w-[5%] text-center">
-															<button type="button" className="text-lightGray">
-																<i className="fa-solid fa-ellipsis-vertical"></i>
-															</button>
+															<Popover className="relative">
+																<Popover.Button className={`text-lightGray`}>
+																	<i className="fa-solid fa-ellipsis-vertical"></i>
+																</Popover.Button>
+																<Popover.Overlay className="fixed left-0 top-0 w-full h-full z-30 inset-0 bg-black opacity-30 dark:bg-white" />
+																<Popover.Panel className="absolute right-0 z-40 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal text-left p-4">
+																	<h6 className="font-bold mb-4">Software Engineer</h6>
+																	<div className="mb-4 max-h-[200px] overflow-auto">
+																		{Array(2).fill(
+																			<div className="flex items-center py-2">
+																				<Image
+																					src={userImg}
+																					alt="User"
+																					className="rounded-full object-cover w-[50px] h-[50px]"
+																					width={100}
+																					height={100}
+																				/>
+																				<div className="pl-2 grow">
+																					<h5 className="text-sm font-bold">
+																						Alison Macroy
+																					</h5>
+																					<p className="text-[12px] text-darkGray">
+																						Interviewer
+																					</p>
+																				</div>
+																			</div>
+																		)}
+																	</div>
+																	<div className="border rounded-normal p-3">
+																		<h6 className="font-bold text-sm">Platform</h6>
+																		<div className="flex items-center py-2">
+																			<Image
+																				src={googleIcon}
+																				alt="Meet"
+																				className="rounded-full object-cover w-[35px] h-[35px]"
+																				width={100}
+																				height={100}
+																			/>
+																			<div className="pl-2 grow">
+																				<p className="text-[12px] text-darkGray font-bold leading-1">
+																					Google Meet
+																				</p>
+																				<Link href='#' className="text-[12px] inline-block text-primary hover:underline">
+																					www.google.meet.com
+																				</Link>
+																				<p className="text-[10px] text-darkGray leading-1">
+																					20 Nov 2023 - 10:40PM
+																				</p>
+																			</div>
+																		</div>
+																	</div>
+																</Popover.Panel>
+															</Popover>
 														</div>
 													</div>
 												)
@@ -440,7 +495,7 @@ export default function OrganizationDashboard() {
 												?
 												Array(5).fill(
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-														<JobCard_1 />
+														<JobCard_1 handleClick={()=> setPreviewPopup(true)} />
 													</div>
 												)
 												:
@@ -626,6 +681,51 @@ export default function OrganizationDashboard() {
 					</div>
 				</div>
 			</main>
+			<Transition.Root show={previewPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setPreviewPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto capitalize">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
+									<div className="py-3 px-6 text-right">
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setPreviewPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<PreviewJob />
+									<div className="py-4 px-8">
+										<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }

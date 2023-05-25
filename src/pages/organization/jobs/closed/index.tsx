@@ -10,6 +10,7 @@ import OrgTopBar from "@/components/organization/TopBar";
 import draftedIcon from "/public/images/icons/closed.png";
 import Image from "next/image";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import FormField from "@/components/FormField";
 
 export default function JobsDrafted() {
 	const router = useRouter();
@@ -79,6 +80,9 @@ export default function JobsDrafted() {
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
+							<div className="mb-6">
+								<FormField fieldType="input" inputType="search" placeholder="Search by job title" icon={(<i className="fa-solid fa-search"></i>)} />
+							</div>
 							<div className="mx-[-15px] flex flex-wrap">
 								{draftedJobs &&
 									draftedJobs.map(

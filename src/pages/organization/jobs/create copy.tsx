@@ -512,7 +512,7 @@ export default function JobsCreate() {
 									</div>
 								</div>
 								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="What We're Looking For" />
+									<StickyLabel label="What We are Looking For" />
 									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 										<FormField
 											fieldType="reactquill"

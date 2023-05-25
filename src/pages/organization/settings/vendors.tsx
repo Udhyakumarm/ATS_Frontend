@@ -472,75 +472,82 @@ export default function Vendors() {
 													{pvendors && pvendors.length <= 0 ? (
 														<p className="text-center text-darkGray dark:text-gray-400">No Vendors Found</p>
 													) : (
-														<div className="mx-[-15px] flex flex-wrap">
-															{pvendors.map((data, i) => (
-																<VCard
-																	data={data}
-																	onBoardVendor={onBoardVendor}
-																	key={i}
-																	axiosInstanceAuth2={axiosInstanceAuth2}
-																/>
-															))}
-														</div>
+														<>
+															<div className="mb-6">
+																<FormField fieldType="input" inputType="search" placeholder="Search vendors..." icon={(<i className="fa-solid fa-search"></i>)} />
+															</div>
+															<div className="mx-[-15px] flex flex-wrap">
+																{pvendors.map((data, i) => (
+																	<VCard
+																		data={data}
+																		onBoardVendor={onBoardVendor}
+																		key={i}
+																		axiosInstanceAuth2={axiosInstanceAuth2}
+																	/>
+																))}
+															</div>
+														</>
 													)}
 												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</Tab.Panel>
 									<Tab.Panel>
-										<div className="mb-6 flex flex-wrap items-center justify-between">
-											<div className="w-[350px] pr-2">
-												<FormField
-													fieldType="input"
-													inputType="search"
-													placeholder="Search"
-													icon={<i className="fa-solid fa-magnifying-glass"></i>}
-												/>
-											</div>
-											<div className="flex grow items-center justify-end">
-												<div className="mr-3 w-[150px]">
-													<FormField
-														fieldType="select"
-														placeholder="Sort"
-														singleSelect={true}
-														options={[
-															{
-																id: "A-to-Z",
-																name: "A to Z"
-															},
-															{
-																id: "Z-to-A",
-																name: "Z to A"
-															}
-														]}
-													/>
-												</div>
-												<div className="w-[150px]">
-													<label
-														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-													>
-														<span>Select All</span>
-														<input type="checkbox" id="teamSelectAll" />
-													</label>
-												</div>
-											</div>
-										</div>
 										{fvendors && fvendors.length <= 0 ? (
 											<p className="text-center text-darkGray dark:text-gray-400">No Vendors Found</p>
 										) : (
-											<div className="mx-[-15px] flex flex-wrap">
-												{vendors.map((data, i) => (
-													<VCard
-														data={data}
-														onBoardVendor={onBoardVendor}
-														key={i}
-														fvendor={true}
-														activateVendor={activateVendor}
-														axiosInstanceAuth2={axiosInstanceAuth2}
-													/>
-												))}
-											</div>
+											<>
+												<div className="mb-6 flex flex-wrap items-center justify-between">
+													<div className="w-[350px] pr-2">
+														<FormField
+															fieldType="input"
+															inputType="search"
+															placeholder="Search"
+															icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														/>
+													</div>
+													<div className="flex grow items-center justify-end">
+														<div className="mr-3 w-[150px]">
+															<FormField
+																fieldType="select"
+																placeholder="Sort"
+																singleSelect={true}
+																options={[
+																	{
+																		id: "A-to-Z",
+																		name: "A to Z"
+																	},
+																	{
+																		id: "Z-to-A",
+																		name: "Z to A"
+																	}
+																]}
+															/>
+														</div>
+														<div className="w-[150px]">
+															<label
+																htmlFor="teamSelectAll"
+																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+															>
+																<span>Select All</span>
+																<input type="checkbox" id="teamSelectAll" />
+															</label>
+														</div>
+													</div>
+												</div>
+												<div className="mx-[-15px] flex flex-wrap">
+													{vendors.map((data, i) => (
+														<VCard
+															data={data}
+															onBoardVendor={onBoardVendor}
+															key={i}
+															fvendor={true}
+															activateVendor={activateVendor}
+															axiosInstanceAuth2={axiosInstanceAuth2}
+														/>
+													))}
+												</div>
+											</>
 										)}
 									</Tab.Panel>
 								</Tab.Panels>

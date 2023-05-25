@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import googleIcon from "/public/images/social/google-icon.png";
 
-export default function JobCard_1({sklLoad} : any) {
+export default function JobCard_1({sklLoad, handleClick} : any) {
     if(sklLoad === true) {
         return(
             <>
@@ -50,7 +50,7 @@ export default function JobCard_1({sklLoad} : any) {
                 </ul>
                 <div className="flex flex-wrap items-center justify-between">
                     <p className="mr-4 text-[12px] font-bold text-darkGray dark:text-gray-400">$80k-110k/year</p>
-                    <Button btnStyle="outlined" label="View" loader={false} />
+                    <Button btnStyle="outlined" btnType="submit" handleClick={handleClick} label="View" loader={false} />
                 </div>
             </div>
         </>

@@ -16,37 +16,44 @@ export default function Settings() {
 		{
 			name: "Profile",
 			icon: userIcon,
-			link: "/organization/settings/profile"
+			link: "/organization/settings/profile",
+			color: '#B2E3FF'
 		},
 		{
 			name: "Integrations",
 			icon: integrationIcon,
-			link: "/organization/settings/integrations"
+			link: "/organization/settings/integrations",
+			color: '#D7C9FF'
 		},
 		{
 			name: "Vendors",
 			icon: vendorsIcon,
-			link: "/organization/settings/vendors"
+			link: "/organization/settings/vendors",
+			color: '#90DEFF'
 		},
 		{
 			name: "Calendar",
 			icon: calendarIcon,
-			link: "/organization/settings/calendar"
+			link: "/organization/settings/calendar",
+			color: '#FFC0D3'
 		},
 		{
 			name: "Team Members",
 			icon: teamUsersIcon,
-			link: "/organization/settings/team-members"
+			link: "/organization/settings/team-members",
+			color: '#C0D1FF'
 		},
 		{
 			name: "Notifications",
 			icon: bellIcon,
-			link: "/organization/settings/notifications"
+			link: "/organization/settings/notifications",
+			color: '#FFC0C0'
 		},
 		{
 			name: "Plans & Pricing",
 			icon: pricingIcon,
-			link: "/organization/settings/pricing"
+			link: "/organization/settings/pricing",
+			color: '#FFC0E9'
 		}
 	];
     return (
@@ -60,7 +67,7 @@ export default function Settings() {
 				<OrgTopBar />
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
-                    <div className="relative bg-white dark:bg-gray-800 rounded-normal shadow-normal p-10">
+                    <div className="relative bg-white dark:bg-gray-800 rounded-normal p-10">
 						<h1 className="font-bold text-2xl mb-6">Settings</h1>
 						<div className="flex flex-wrap items-center -mx-4">
 							{quicklinks.map((links, i) => (
@@ -70,7 +77,7 @@ export default function Settings() {
 										className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 									>
 										<div className="flex w-full items-center mb-10">
-											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3" style={{backgroundColor: links.color}}>
 												<Image src={links.icon} alt={links.name} width={100} />
 											</div>
 											<span className="text-lg font-bold">{links.name}</span>
