@@ -1,8 +1,8 @@
 import Head from "next/head";
-import React, { useRef, Fragment, useState } from "react";
+import React, { useRef, Fragment, useState, useEffect } from "react";
 import Image from "next/image";
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -25,26 +25,24 @@ import nodata_3 from "/public/images/no-data/icon-3.png";
 import nodata_4 from "/public/images/no-data/icon-4.png";
 import nodata_5 from "/public/images/no-data/icon-5.png";
 import nodata_6 from "/public/images/no-data/icon-6.png";
-import { getProviders, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import ChatAssistance from "@/components/ChatAssistance";
 import JobCard_1 from "@/components/JobCard-1";
 import FormField from "@/components/FormField";
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 import Link from "next/link";
-import googleIcon from "/public/images/social/google-icon.png"
+import googleIcon from "/public/images/social/google-icon.png";
 import PreviewJob from "@/components/organization/PreviewJob";
+import { useRouter } from "next/router";
+import { axiosInstanceAuth } from "../api/axiosApi";
+import moment from "moment";
+import { useDashboardStore } from "@/utils/code";
 
 export default function OrganizationDashboard() {
-	const [sklLoad] = useState(true)
+	const [sklLoad] = useState(true);
+
 	const cancelButtonRef = useRef(null);
-	const [previewPopup, setPreviewPopup] = useState(false);
-	const [customizer1, setCustomizer1] = useState(true);
-	const [customizer2, setCustomizer2] = useState(true);
-	const [customizer3, setCustomizer3] = useState(true);
-	const [customizer4, setCustomizer4] = useState(true);
-	const [customizer5, setCustomizer5] = useState(true);
-	const [customizer6, setCustomizer6] = useState(true);
 	const settings = {
 		dots: false,
 		arrows: true,
@@ -66,9 +64,9 @@ export default function OrganizationDashboard() {
 	};
 	const aplc_status = [
 		{
-			percentage: '',
+			percentage: "",
 			title: "Total Pipelines",
-			number: '',
+			number: "",
 			color: "#58E700",
 			icon: <i className="fa-solid fa-timeline"></i>
 		},
@@ -122,41 +120,78 @@ export default function OrganizationDashboard() {
 			icon: <i className="fa-solid fa-user-group"></i>
 		}
 	];
-	const { data: session } = useSession();
 	const options = {
 		chart: {
-		  type: 'spline'
+			type: "spline"
 		},
 		title: {
-		  text: ''
+			text: ""
 		},
 		series: [
-		  {
-			data: [1, 2, 1, 4, 3, 6]
-		  }
+			{
+				data: [1, 2, 1, 4, 3, 6]
+			}
 		]
 	};
-	function handleCustomizer1() {
-		setCustomizer1(!customizer1)
-	}
-	function handleCustomizer2() {
-		setCustomizer2(!customizer2)
-	}
-	function handleCustomizer3() {
-		setCustomizer3(!customizer3)
-	}
-	function handleCustomizer4() {
-		setCustomizer4(!customizer4)
-	}
-	function handleCustomizer5() {
-		setCustomizer5(!customizer5)
-	}
-	function handleCustomizer6() {
-		setCustomizer6(!customizer6)
-	}
+
 	// function handleGaugeBtn() {
 	// 	document.querySelector("html").classList.add('overflow-hidden')
 	// }
+
+	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	const [previewPopup, setPreviewPopup] = useState(false);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	const check1 = useDashboardStore((state: { check1: any }) => state.check1);
+	const check2 = useDashboardStore((state: { check2: any }) => state.check2);
+	const check3 = useDashboardStore((state: { check3: any }) => state.check3);
+	const check4 = useDashboardStore((state: { check4: any }) => state.check4);
+	const check5 = useDashboardStore((state: { check5: any }) => state.check5);
+	const check6 = useDashboardStore((state: { check6: any }) => state.check6);
+
+	const setcheck1 = useDashboardStore((state: { setcheck1: any }) => state.setcheck1);
+	const setcheck2 = useDashboardStore((state: { setcheck2: any }) => state.setcheck2);
+	const setcheck3 = useDashboardStore((state: { setcheck3: any }) => state.setcheck3);
+	const setcheck4 = useDashboardStore((state: { setcheck4: any }) => state.setcheck4);
+	const setcheck5 = useDashboardStore((state: { setcheck5: any }) => state.setcheck5);
+	const setcheck6 = useDashboardStore((state: { setcheck6: any }) => state.setcheck6);
+
+	const [applicantDetail, setapplicantDetail] = useState([]);
+	const [hiringAnalytics, sethiringAnalytics] = useState([]);
+	const [upcomingInterview, setupcomingInterview] = useState([]);
+	const [todoList, settodoList] = useState([]);
+	const [recentJob, setrecentJob] = useState([]);
+	const [activityLog, setactivityLog] = useState([]);
+
+	async function loadActivityLog() {
+		await axiosInstanceAuth2
+			.get(`/organization/list-activity-log/`)
+			.then(async (res) => {
+				console.log("!", res.data);
+				setactivityLog(res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			loadActivityLog();
+		}
+	}, [token]);
+
 	return (
 		<>
 			<Head>
@@ -164,490 +199,546 @@ export default function OrganizationDashboard() {
 				<meta name="description" content="Generated by create next app" />
 			</Head>
 			<main>
-				{session && <ChatAssistance accessToken={session.accessToken} /> }
+				{session && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
 				<Orgtopbar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
+				<div
+					id="overlay"
+					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+				></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div id="dashboard" className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
-							{
-							customizer1 
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">Applicant Details</h2>
-										<aside className="flex items-center justify-end">
-											<div className="w-[140px] mr-4">
-												<FormField fieldType="select" />
-											</div>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab relative z-[1]">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="dashboardSlider p-6 pt-0">
-										<Slider {...settings}>
-											{aplc_status.map((item, i) => (
-												<div key={i}>
-													<div className="py-3 px-2">
-														<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
-															<div className="mb-2 flex items-center justify-between">
-																<h4 className="text-2xl font-extrabold grow pr-4">
-																	{item.number || <Skeleton width={40}/>}
-																</h4>
-																<div className="rounded bg-lightGray py-1 px-2 text-[12px] text-white">{item.icon}</div>
-															</div>
-															<p className="mb-2 text-sm">{item.title}</p>
-															<div style={{ width: 40, height: 40 }}>
-																{
-																	item.percentage
-																	?
-																	<>
-																	<CircularProgressbar
-																		value={item.percentage}
-																		text={`${item.percentage}`}
-																		styles={buildStyles({ pathColor: item.color, textSize: "26px", textColor: "#727272" })}
-																	/>
-																	</>
-																	:
-																	<Skeleton circle width={40} height={40}/>
-																}
-															</div>
-															<div
-																className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
-																style={{ borderRightColor: item.color }}
-															></div>
-														</div>
-													</div>
-												</div>
-											))}
-										</Slider>
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_1} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">No Applicants</p>
+							{check1 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">Applicant Details</h2>
+											<aside className="flex items-center justify-end">
+												{/* <div className="mr-4 w-[140px]">
+													<FormField fieldType="select" />
+												</div> */}
+												<button
+													type="button"
+													className="relative z-[1] h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
 										</div>
-									</div>
-								</div>
-							</div>
-							:
-							<></>
-							}
-							{
-							customizer2
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">Hiring Analytics</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="p-6 pt-0">
-										<HighchartsReact highcharts={Highcharts} options={options} />
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_2} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">No Hiring Analytics</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							:
-							<></>
-							}
-							{
-							customizer3
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">Upcoming Interviews</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="p-6 pt-0">
-										<div className="">
-											{
-												sklLoad
-												?
-												Array(6).fill(
-													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-2 px-3">
-														<div className="flex w-[45%] items-center pr-2">
-															<Image
-																src={userImg}
-																alt="User"
-																className="rounded-full object-cover w-[30px] h-[30px]"
-																width={100}
-																height={100}
-															/>
-															<div className="pl-2 grow">
-																<h5 className="text-sm font-bold">
-																	Bethany Jackson
-																</h5>
-																<p className="text-[12px] text-darkGray">
-																	Software Developer
-																</p>
-															</div>
-														</div>
-														<div className="w-[30%] pr-2">
-															<h5 className="text-sm font-bold">
-																20 Nov 2023
-															</h5>
-															<p className="text-[12px] text-darkGray">
-																10:40 AM
-															</p>
-														</div>
-														<div className="w-[20%]">
-															<Button btnStyle="outlined" label="View Profile" loader={false} />
-														</div>
-														<div className="w-[5%] text-center">
-															<Popover className="relative">
-																<Popover.Button className={`text-lightGray`}>
-																	<i className="fa-solid fa-ellipsis-vertical"></i>
-																</Popover.Button>
-																<Popover.Overlay className="fixed left-0 top-0 w-full h-full z-30 inset-0 bg-black opacity-30 dark:bg-white" />
-																<Popover.Panel className="absolute right-0 z-40 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal text-left p-4">
-																	<h6 className="font-bold mb-4">Software Engineer</h6>
-																	<div className="mb-4 max-h-[200px] overflow-auto">
-																		{Array(2).fill(
-																			<div className="flex items-center py-2">
-																				<Image
-																					src={userImg}
-																					alt="User"
-																					className="rounded-full object-cover w-[50px] h-[50px]"
-																					width={100}
-																					height={100}
-																				/>
-																				<div className="pl-2 grow">
-																					<h5 className="text-sm font-bold">
-																						Alison Macroy
-																					</h5>
-																					<p className="text-[12px] text-darkGray">
-																						Interviewer
-																					</p>
-																				</div>
-																			</div>
-																		)}
-																	</div>
-																	<div className="border rounded-normal p-3">
-																		<h6 className="font-bold text-sm">Platform</h6>
-																		<div className="flex items-center py-2">
-																			<Image
-																				src={googleIcon}
-																				alt="Meet"
-																				className="rounded-full object-cover w-[35px] h-[35px]"
-																				width={100}
-																				height={100}
-																			/>
-																			<div className="pl-2 grow">
-																				<p className="text-[12px] text-darkGray font-bold leading-1">
-																					Google Meet
-																				</p>
-																				<Link href='#' className="text-[12px] inline-block text-primary hover:underline">
-																					www.google.meet.com
-																				</Link>
-																				<p className="text-[10px] text-darkGray leading-1">
-																					20 Nov 2023 - 10:40PM
-																				</p>
-																			</div>
+										<div className="dashboardSlider p-6 pt-0">
+											{applicantDetail && applicantDetail.length > 0 ? (
+												<Slider {...settings}>
+													{aplc_status.map((item, i) => (
+														<div key={i}>
+															<div className="px-2 py-3">
+																<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
+																	<div className="mb-2 flex items-center justify-between">
+																		<h4 className="grow pr-4 text-2xl font-extrabold">
+																			{item.number || <Skeleton width={40} />}
+																		</h4>
+																		<div className="rounded bg-lightGray px-2 py-1 text-[12px] text-white">
+																			{item.icon}
 																		</div>
 																	</div>
-																</Popover.Panel>
-															</Popover>
-														</div>
-													</div>
-												)
-												:
-												Array(6).fill(
-													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-2 px-3">
-														<div className="flex w-[45%] items-center pr-2">
-															<Skeleton circle width={30} height={30} />
-															<div className="pl-2 grow">
-																<h5 className="text-sm font-bold">
-																	<Skeleton width={100} />
-																</h5>
-																<p className="text-[12px] text-darkGray">
-																	<Skeleton width={60} />
-																</p>
+																	<p className="mb-2 text-sm">{item.title}</p>
+																	<div style={{ width: 40, height: 40 }}>
+																		{item.percentage ? (
+																			<>
+																				<CircularProgressbar
+																					value={item.percentage}
+																					text={`${item.percentage}`}
+																					styles={buildStyles({
+																						pathColor: item.color,
+																						textSize: "26px",
+																						textColor: "#727272"
+																					})}
+																				/>
+																			</>
+																		) : (
+																			<Skeleton circle width={40} height={40} />
+																		)}
+																	</div>
+																	<div
+																		className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
+																		style={{ borderRightColor: item.color }}
+																	></div>
+																</div>
 															</div>
 														</div>
-														<div className="w-[30%] pr-2">
-															<h5 className="text-sm font-bold">
-																<Skeleton width={100} />
-															</h5>
-															<p className="text-[12px] text-darkGray">
-																<Skeleton width={50} />
-															</p>
-														</div>
-														<div className="w-[20%]">
-															<Skeleton height={28} />
-														</div>
-														<div className="w-[5%] text-center">
-															<Skeleton width={6} height={20} />
-														</div>
+													))}
+												</Slider>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_1}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
 													</div>
-												)
-											}
-										</div>
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_3} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">No Upcoming Interviews</p>
+													<p className="text-sm text-darkGray">No Applicants</p>
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
-							</div>
-							:
-							<></>
-							}
-							{
-							customizer4
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">To Do List</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="p-6 pt-0">
-										<div className="max-h-[330px] overflow-y-auto">
-											{
-												sklLoad
-												?
-												Array(6).fill(
-													<div className="mb-3 flex flex-wrap rounded-[10px] border">
-														<div className="flex w-[65%] items-center py-2 px-3">
-															<p className="clamp_2 text-sm">
-																Being able to rename and edit users lorem rename and edit users Being able to rename and
-																edit users lorem rename and edit users Being able to rename and edit users lorem rename
-																and edit users
-															</p>
-														</div>
-														<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-															<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
-																<i className="fa-regular fa-square-check"></i>
-															</span>
-															<h5 className="font-bold">20 Nov 2023</h5>
-														</div>
-													</div>
-												)
-												:
-												Array(6).fill(
-													<div className="mb-3 flex flex-wrap rounded-[10px] border">
-														<div className="flex w-[65%] items-center py-2 px-3">
-															<Skeleton containerClassName="grow" count={2} />
-														</div>
-														<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-															<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
-																<i className="fa-regular fa-square-check"></i>
-															</span>
-															<h5 className="font-bold grow"><Skeleton height={12} /></h5>
-														</div>
-													</div>
-												)
-											}
+							) : (
+								<></>
+							)}
+							{check2 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">Hiring Analytics</h2>
+											<aside>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
 										</div>
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_4} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">Nothing In To Do List</p>
+										<div className="p-6 pt-0">
+											{hiringAnalytics && hiringAnalytics.length > 0 ? (
+												<HighchartsReact highcharts={Highcharts} options={options} />
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_2}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
+													</div>
+													<p className="text-sm text-darkGray">No Hiring Analytics</p>
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
-							</div>
-							:
-							<></>
-							}
-							{
-							customizer5
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">Recent Jobs</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="p-6 pt-0">
-										<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
-											{
-												sklLoad
-												?
-												Array(5).fill(
-													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-														<JobCard_1 handleClick={()=> setPreviewPopup(true)} />
-													</div>
-												)
-												:
-												Array(5).fill(
-													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
-														<JobCard_1 sklLoad={true} />
-													</div>
-												)
-											}
+							) : (
+								<></>
+							)}
+							{check3 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">Upcoming Interviews</h2>
+											<aside>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
 										</div>
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_5} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">No Job has been posted yet</p>
+										<div className="p-6 pt-0">
+											{upcomingInterview && upcomingInterview.length > 0 ? (
+												<div className="max-h-[330px] overflow-y-auto">
+													{sklLoad
+														? Array(6).fill(
+																<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2">
+																	<div className="flex w-[45%] items-center pr-2">
+																		<Image
+																			src={userImg}
+																			alt="User"
+																			className="rounded-full object-cover"
+																			width={30}
+																			height={30}
+																		/>
+																		<div className="grow pl-2">
+																			<h5 className="text-sm font-bold">Bethany Jackson</h5>
+																			<p className="text-[12px] text-darkGray">Software Developer</p>
+																		</div>
+																	</div>
+																	<div className="w-[30%] pr-2">
+																		<h5 className="text-sm font-bold">20 Nov 2023</h5>
+																		<p className="text-[12px] text-darkGray">10:40 AM</p>
+																	</div>
+																	<div className="w-[20%]">
+																		<Button btnStyle="outlined" label="View Profile" loader={false} />
+																	</div>
+																	<div className="w-[5%] text-center">
+																		<button type="button" className="text-lightGray">
+																			<i className="fa-solid fa-ellipsis-vertical"></i>
+																		</button>
+																	</div>
+																</div>
+														  )
+														: Array(6).fill(
+																<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2">
+																	<div className="flex w-[45%] items-center pr-2">
+																		<Skeleton circle width={30} height={30} />
+																		<div className="grow pl-2">
+																			<h5 className="text-sm font-bold">
+																				<Skeleton width={100} />
+																			</h5>
+																			<p className="text-[12px] text-darkGray">
+																				<Skeleton width={60} />
+																			</p>
+																		</div>
+																	</div>
+																	<div className="w-[30%] pr-2">
+																		<h5 className="text-sm font-bold">
+																			<Skeleton width={100} />
+																		</h5>
+																		<p className="text-[12px] text-darkGray">
+																			<Skeleton width={50} />
+																		</p>
+																	</div>
+																	<div className="w-[20%]">
+																		<Skeleton height={28} />
+																	</div>
+																	<div className="w-[5%] text-center">
+																		<Skeleton width={6} height={20} />
+																	</div>
+																</div>
+														  )}
+												</div>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_3}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
+													</div>
+													<p className="text-sm text-darkGray">No Upcoming Interviews</p>
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
-							</div>
-							:
-							<></>
-							}
+							) : (
+								<></>
+							)}
+							{check4 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">To Do List</h2>
+											<aside>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
+										</div>
+										<div className="p-6 pt-0">
+											{todoList && todoList.length > 0 ? (
+												<div className="max-h-[330px] overflow-y-auto">
+													{sklLoad
+														? Array(6).fill(
+																<div className="mb-3 flex flex-wrap rounded-[10px] border">
+																	<div className="flex w-[65%] items-center px-3 py-2">
+																		<p className="clamp_2 text-sm">
+																			Being able to rename and edit users lorem rename and edit users Being able to
+																			rename and edit users lorem rename and edit users Being able to rename and edit
+																			users lorem rename and edit users
+																		</p>
+																	</div>
+																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold">20 Nov 2023</h5>
+																	</div>
+																</div>
+														  )
+														: Array(6).fill(
+																<div className="mb-3 flex flex-wrap rounded-[10px] border">
+																	<div className="flex w-[65%] items-center px-3 py-2">
+																		<Skeleton containerClassName="grow" count={2} />
+																	</div>
+																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="grow font-bold">
+																			<Skeleton height={12} />
+																		</h5>
+																	</div>
+																</div>
+														  )}
+												</div>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_4}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
+													</div>
+													<p className="text-sm text-darkGray">Nothing In To Do List</p>
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
+							) : (
+								<></>
+							)}
+							{check5 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">Recent Jobs</h2>
+											<aside>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
+										</div>
+										<div className="p-6 pt-0">
+											{recentJob && recentJob.length > 0 ? (
+												<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
+													{sklLoad
+														? Array(5).fill(
+																<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+																	<JobCard_1 />
+																</div>
+														  )
+														: Array(5).fill(
+																<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+																	<JobCard_1 sklLoad={true} />
+																</div>
+														  )}
+												</div>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_5}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
+													</div>
+													<p className="text-sm text-darkGray">No Job has been posted yet</p>
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
+							) : (
+								<></>
+							)}
 							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800 upgradePlan">
+								<div className="upgradePlan h-full rounded-normal bg-white shadow dark:bg-gray-800">
 									<div className="flex items-center justify-between p-6">
 										<h2 className="text-xl font-bold"></h2>
 										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-white text-gray-300 cursor-grab">
+											<button
+												type="button"
+												className="h-[30px] w-[30px] cursor-grab rounded-full bg-white text-gray-300"
+											>
 												<i className="fa-regular fa-hand"></i>
 											</button>
 										</aside>
 									</div>
 								</div>
 							</div>
-							{
-							customizer6
-							?
-							<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-								<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-									<div className="flex items-center justify-between p-6">
-										<h2 className="text-xl font-bold">Activity Log</h2>
-										<aside>
-											<button type="button" className="h-[30px] w-[30px] rounded-full bg-darkGray text-gray-300 cursor-grab">
-												<i className="fa-regular fa-hand"></i>
-											</button>
-										</aside>
-									</div>
-									<div className="p-6 pt-0">
-										<div className="max-h-[330px] overflow-y-auto">
-											{
-												sklLoad
-												?
-												Array(2).fill(
-													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
-														<div className="flex items-center justify-center p-3">
-															<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
-																<i className="fa-solid fa-briefcase"></i>
-															</span>
-															<p className="w-[calc(100%-40px)]">
-																<b>Product Manager </b>
-																Job has been posted by the Adam Smith
-															</p>
-														</div>
-													</div>
-												)
-												:
-												Array(2).fill(
-													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
-														<div className="flex items-center justify-center p-3">
-															<Skeleton circle width={40} height={40} />
-															<p className="w-[calc(100%-40px)] pl-4">
-																<Skeleton width={200} />
-																<Skeleton width={100} />
-															</p>
-														</div>
-													</div>
-												)
-											}
-											{Array(2).fill(
-												<>
-													<div className="mb-3 flex flex-wrap items-center rounded-[10px] border py-1 px-2">
-														<div className="flex items-center justify-center p-3">
-															<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
-																<i className="fa-solid fa-star"></i>
+							{check6 ? (
+								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="flex items-center justify-between p-6">
+											<h2 className="text-xl font-bold">Activity Log</h2>
+											<aside>
+												<button
+													type="button"
+													className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+												>
+													<i className="fa-regular fa-hand"></i>
+												</button>
+											</aside>
+										</div>
+										<div className="p-6 pt-0">
+											{activityLog && activityLog.length > 0 ? (
+												<div className="max-h-[330px] overflow-y-auto">
+													{activityLog.slice(0, 5).map((data, i) =>
+														i % 2 == 0 ? (
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1" key={i}>
+																<div className="flex items-center justify-center p-3">
+																	<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																		<i className="fa-solid fa-briefcase"></i>
+																	</span>
+																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																</div>
 															</div>
-															<p className="w-[calc(100%-40px)]">
-																<b>New User - Alison Will </b>
-																has logged in as an <b>Admin</b>
-															</p>
+														) : (
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
+																<div className="flex items-center justify-center p-3">
+																	<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																		<i className="fa-solid fa-star"></i>
+																	</div>
+																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																</div>
+															</div>
+														)
+													)}
+
+													{/* {sklLoad
+													? Array(2).fill(
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
+																<div className="flex items-center justify-center p-3">
+																	<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																		<i className="fa-solid fa-briefcase"></i>
+																	</span>
+																	<p className="w-[calc(100%-40px)]">
+																		<b>Product Manager </b>
+																		Job has been posted by the Adam Smith
+																	</p>
+																</div>
+															</div>
+													  )
+													: Array(2).fill(
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
+																<div className="flex items-center justify-center p-3">
+																	<Skeleton circle width={40} height={40} />
+																	<p className="w-[calc(100%-40px)] pl-4">
+																		<Skeleton width={200} />
+																		<Skeleton width={100} />
+																	</p>
+																</div>
+															</div>
+													  )}
+												{Array(2).fill(
+													<>
+														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
+															<div className="flex items-center justify-center p-3">
+																<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																	<i className="fa-solid fa-star"></i>
+																</div>
+																<p className="w-[calc(100%-40px)]">
+																	<b>New User - Alison Will </b>
+																	has logged in as an <b>Admin</b>
+																</p>
+															</div>
 														</div>
+													</>
+												)} */}
+												</div>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_6}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
 													</div>
-												</>
+													<p className="text-sm text-darkGray">Nothing in the Activity Log</p>
+												</div>
 											)}
 										</div>
-										<div className="text-center py-8">
-											<div className="bg-gray-200 w-[100px] h-[100px] flex items-center justify-center mx-auto rounded-full mb-2 p-2">
-												<Image src={nodata_6} alt="No Data" width={300} className="w-auto max-w-[60px] max-h-[60px]" />
-											</div>
-											<p className="text-sm text-darkGray">Nothing in the Activity Log</p>
-										</div>
 									</div>
 								</div>
-							</div>
-							:
-							<></>
-							}
+							) : (
+								<></>
+							)}
 						</div>
-						<aside className="absolute left-0 top-0 rounded-tl-normal rounded-br-normal bg-lightBlue p-3 dark:bg-gray-700">
+						<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
 							<Popover className="relative">
-								<Popover.Button className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}>
+								<Popover.Button
+									className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
+								>
 									<i className="fa-solid fa-gauge"></i>
 								</Popover.Button>
-								<Popover.Overlay className="fixed left-0 top-0 w-full h-full z-30 inset-0 bg-black opacity-30 dark:bg-white" />
+								<Popover.Overlay className="fixed inset-0 left-0 top-0 z-30 h-full w-full bg-black opacity-30 dark:bg-white" />
 								<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
 									<div className="flex flex-wrap">
 										<label
 											htmlFor="cust_applicants"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_applicants" className="hidden" onClick={handleCustomizer1} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_applicants"
+												className="hidden"
+												onClick={() => setcheck1(!check1)}
+											/>
 											<Image src={customizeApplicants} alt="Applicants" className="mb-2" />
 											<p className="text-[12px] font-bold">Applicant Details</p>
-											<i className={`fa-solid ${customizer1 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check1 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
 										<label
 											htmlFor="cust_hiring"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_hiring" className="hidden" onChange={handleCustomizer2} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_hiring"
+												className="hidden"
+												onChange={() => setcheck2(!check2)}
+											/>
 											<Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2" />
 											<p className="text-[12px] font-bold">Hiring Analytics</p>
-											<i className={`fa-solid ${customizer2 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check2 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
 										<label
 											htmlFor="cust_upcoming"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center dark:from-gradDarkBlue dark:to-gradLightBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_upcoming" className="hidden" onChange={handleCustomizer3} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_upcoming"
+												className="hidden"
+												onChange={() => setcheck3(!check3)}
+											/>
 											<Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
 											<p className="text-[12px] font-bold">Upcoming Interviews</p>
-											<i className={`fa-solid ${customizer3 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check3 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
 										<label
 											htmlFor="cust_todo"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_todo" className="hidden" onChange={handleCustomizer4} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_todo"
+												className="hidden"
+												onChange={() => setcheck4(!check4)}
+											/>
 											<Image src={customizeTodo} alt="To Do List" className="mb-2" />
 											<p className="text-[12px] font-bold">To Do List</p>
-											<i className={`fa-solid ${customizer4 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check4 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white dark:bg-primary p-2 text-center">
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center dark:bg-primary">
 											<p className="text-[12px] font-bold">
 												Customize <br />
 												Your <br />
@@ -656,24 +747,44 @@ export default function OrganizationDashboard() {
 										</div>
 										<label
 											htmlFor="cust_recent"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] dark:from-gradDarkBlue dark:to-gradLightBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center dark:from-gradDarkBlue dark:to-gradLightBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_recent" className="hidden" onChange={handleCustomizer5} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_recent"
+												className="hidden"
+												onChange={() => setcheck5(!check5)}
+											/>
 											<Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
 											<p className="text-[12px] font-bold">Recent Jobs</p>
-											<i className={`fa-solid ${customizer5 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check5 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
 										<label
 											htmlFor="cust_activity"
-											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"
+											className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
 										>
-											<input type="checkbox" name="cust_dashboard" id="cust_activity" className="hidden" onChange={handleCustomizer6} />
+											<input
+												type="checkbox"
+												name="cust_dashboard"
+												id="cust_activity"
+												className="hidden"
+												onChange={() => setcheck6(!check6)}
+											/>
 											<Image src={customizeActivity} alt="Activity Log" className="mb-2" />
 											<p className="text-[12px] font-bold">Activity Log</p>
-											<i className={`fa-solid ${customizer6 ? 'fa-eye' : 'fa-eye-slash'} text-[12px] flex items-center justify-center absolute left-1 top-2 rounded-full w-6 h-4 leading-[1px]`}></i>
+											<i
+												className={`fa-solid ${
+													check6 ? "fa-eye" : "fa-eye-slash"
+												} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+											></i>
 										</label>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
-										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] dark:from-gradLightBlue dark:to-gradDarkBlue p-2 text-center"></div>
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"></div>
+										<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"></div>
 									</div>
 								</Popover.Panel>
 							</Popover>
@@ -707,7 +818,7 @@ export default function OrganizationDashboard() {
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
 								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
-									<div className="py-3 px-6 text-right">
+									<div className="px-6 py-3 text-right">
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -717,7 +828,7 @@ export default function OrganizationDashboard() {
 										</button>
 									</div>
 									<PreviewJob />
-									<div className="py-4 px-8">
+									<div className="px-8 py-4">
 										<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
 									</div>
 								</Dialog.Panel>
@@ -728,13 +839,4 @@ export default function OrganizationDashboard() {
 			</Transition.Root>
 		</>
 	);
-}
-
-export async function getServerSideProps(context: any) {
-	const providers = await getProviders();
-	return {
-		props: {
-			providers
-		}
-	};
 }

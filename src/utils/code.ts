@@ -10,6 +10,21 @@ let userStore: any = (set: any) => ({
 	setuser: (id: any) => set(() => ({ user: id }))
 });
 
+let dashboardStore: any = (set: any) => ({
+	check1: true,
+	check2: true,
+	check3: true,
+	check4: true,
+	check5: true,
+	check6: true,
+	setcheck1: (id: any) => set(() => ({ check1: id })),
+	setcheck2: (id: any) => set(() => ({ check2: id })),
+	setcheck3: (id: any) => set(() => ({ check3: id })),
+	setcheck4: (id: any) => set(() => ({ check4: id })),
+	setcheck5: (id: any) => set(() => ({ check5: id })),
+	setcheck6: (id: any) => set(() => ({ check6: id }))
+});
+
 let settingsStore: any = (set: any) => ({
 	dark: false,
 	toggleDarkMode: () => set((state: any) => ({ dark: !state.dark }))
@@ -47,6 +62,9 @@ let applicantStore: any = (set: any) => ({
 userStore = devtools(userStore);
 userStore = persist(userStore, { name: "userStore" });
 
+dashboardStore = devtools(dashboardStore);
+dashboardStore = persist(dashboardStore, { name: "dashboardStore" });
+
 settingsStore = devtools(settingsStore);
 settingsStore = persist(settingsStore, { name: "user_settings" });
 
@@ -57,6 +75,7 @@ applicantStore = devtools(applicantStore);
 applicantStore = persist(applicantStore, { name: "applicantStore" });
 
 export const useUserStore = create(userStore);
+export const useDashboardStore = create(dashboardStore);
 export const useSettingsStore = create(settingsStore);
 export const useCarrierStore = create(carrierStore);
 export const useApplicantStore = create(applicantStore);

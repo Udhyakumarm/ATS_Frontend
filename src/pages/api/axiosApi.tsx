@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import toastcomp from "@/components/toast";
 
 export const axiosInstance = axios.create({
 	baseURL:
@@ -50,4 +51,17 @@ export function axiosInstanceAuth22(accessToken: string) {
 			"Content-Type": "multipart/form-data"
 		}
 	});
+}
+
+export async function addActivityLog(axiosInstanceAuth2: any, aname: any) {
+	const fd = new FormData();
+	fd.append("aname", aname);
+	await axiosInstanceAuth2
+		.post(`/organization/activity-log/`, fd)
+		.then((res: any) => {
+			toastcomp("Log Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("Log Not Add", "error");
+		});
 }

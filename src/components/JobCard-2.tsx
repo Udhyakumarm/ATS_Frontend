@@ -1,12 +1,14 @@
-// @ts-nocheck
 import { useState, Fragment, useRef } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Button from "./Button";
 import { useRouter } from "next/router";
 import toastcomp from "./toast";
 import FormField from "./FormField";
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useUserStore } from "@/utils/code";
+import moment from "moment";
+import { addActivityLog } from "@/pages/api/axiosApi";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad }: any) {
 	const [starred, setStarred] = useState(false);
@@ -15,6 +17,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const [addCand, setAddCand] = useState(false);
 	const router = useRouter();
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
 	async function statusUpdate(status: string, refid: string) {
 		const formData = new FormData();
 		formData.append("jobStatus", status);
@@ -22,6 +26,13 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			.put(`/job/update-job/${refid}/`, formData)
 			.then((res) => {
 				toastcomp(`${status} Successfully`, "success");
+
+				let aname = `${job.job_title} Job is now ${status} by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				router.push(`/organization/jobs/${status.toLowerCase()}/`);
 			})
 			.catch((err) => {
@@ -29,16 +40,16 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			});
 	}
 
-	if(sklLoad === true) {
-		return(
-			<div className="h-full rounded-normal bg-white py-2 px-5 shadow-normal dark:bg-gray-700">
+	if (sklLoad === true) {
+		return (
+			<div className="h-full rounded-normal bg-white px-5 py-2 shadow-normal dark:bg-gray-700">
 				<div className="mb-2 flex flex-wrap items-center justify-between">
 					<div className="my-2 flex items-center">
 						<h4 className="font-bold capitalize">
 							<Skeleton width={160} />
 						</h4>
 					</div>
-					<div className="text-right text-gray-400 flex">
+					<div className="flex text-right text-gray-400">
 						<div>
 							<Skeleton width={10} height={20} />
 						</div>
@@ -48,31 +59,41 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 				</div>
 				<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-					<li className="mr-3 list-none capitalize"><Skeleton width={40} /></li>
-					<li className="mr-3 capitalize"><Skeleton width={40} /></li>
+					<li className="mr-3 list-none capitalize">
+						<Skeleton width={40} />
+					</li>
+					<li className="mr-3 capitalize">
+						<Skeleton width={40} />
+					</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total Candidates</h5>
-						<h6 className="text-lg font-semibold"><Skeleton width={40} height={16} /></h6>
+						<h6 className="text-lg font-semibold">
+							<Skeleton width={40} height={16} />
+						</h6>
 					</div>
-					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active Candidates</h5>
-						<h6 className="text-lg font-semibold"><Skeleton width={40} height={16} /></h6>
+						<h6 className="text-lg font-semibold">
+							<Skeleton width={40} height={16} />
+						</h6>
 					</div>
 					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job ID</h5>
-						<h6 className="text-lg font-semibold break-all clamp_1"><Skeleton width={40} height={16} /></h6>
+						<h6 className="clamp_1 break-all text-lg font-semibold">
+							<Skeleton width={40} height={16} />
+						</h6>
 					</div>
 				</div>
 				<Skeleton width={80} height={28} />
 			</div>
-		)
+		);
 	}
 
 	return (
 		<>
-			<div className="h-full rounded-normal bg-white py-2 px-5 shadow-normal dark:bg-gray-700">
+			<div className="h-full rounded-normal bg-white px-5 py-2 shadow-normal dark:bg-gray-700">
 				<div className="mb-2 flex flex-wrap items-center justify-between">
 					<div className="my-2 flex items-center">
 						<button type="button" onClick={() => setStarred((prev) => !prev)}>
@@ -257,17 +278,17 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total Candidates</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="w-full max-w-[calc(100%/3)] px-[15px] border-r">
+					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active Candidates</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
 					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job ID</h5>
-						<h6 className="text-lg font-semibold break-all clamp_1">{job.refid}</h6>
+						<h6 className="clamp_1 break-all text-lg font-semibold">{job.refid}</h6>
 					</div>
 				</div>
 				<Button btnStyle="outlined" btnType="button" label="View Job" handleClick={() => setPreviewPopup(true)} />
@@ -521,7 +542,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<div className="mb-4">
 											<label className="mb-1 inline-block font-bold">Social Links</label>
 											<div className="flex items-center">
-												<div className="flex min-h-[45px] w-[calc(100%-40px)] items-center rounded-normal border border-borderColor py-1 px-3">
+												<div className="flex min-h-[45px] w-[calc(100%-40px)] items-center rounded-normal border border-borderColor px-3 py-1">
 													<div className="text-lg">
 														<i className="fa-brands fa-behance mr-5"></i>
 														<i className="fa-brands fa-stack-overflow mr-5"></i>
@@ -543,7 +564,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<div className="mb-4">
 											<label className="mb-1 inline-block font-bold">Skills</label>
 											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 													<div className="text-sm">
 														<p className="my-1">Skill 1</p>
 														<p className="my-1">Skill 2</p>
@@ -564,7 +585,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<div className="mb-4">
 											<label className="mb-1 inline-block font-bold">Education</label>
 											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 													{Array(2).fill(
 														<article className="border-b last:border-b-0">
 															<div className="flex flex-wrap text-sm">
@@ -597,7 +618,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<div className="mb-4">
 											<label className="mb-1 inline-block font-bold">Certifications</label>
 											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 													{Array(2).fill(
 														<article className="border-b last:border-b-0">
 															<div className="flex flex-wrap text-sm">
@@ -627,16 +648,16 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 												</div>
 											</div>
 										</div>
-										<hr className="mt-8 mb-4" />
+										<hr className="mb-4 mt-8" />
 										<div className="relative mb-4">
 											<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
-												<input type="checkbox" id="newGraduate" name="newGraduate" className="mr-2 mb-[3px]" />
+												<input type="checkbox" id="newGraduate" name="newGraduate" className="mb-[3px] mr-2" />
 												New Graduate
 											</label>
 											<div className="mb-0">
 												<label className="mb-1 inline-block font-bold">Education</label>
 												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 														{Array(2).fill(
 															<article className="border-b last:border-b-0">
 																<div className="flex flex-wrap text-sm">

@@ -9,9 +9,11 @@ import integrationIcon from "/public/images/icons/integration.png";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import { useSession } from "next-auth/react";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import VCard from "@/components/vendor/vcard";
+import { useUserStore } from "@/utils/code";
+import moment from "moment";
 
 export default function Vendors() {
 	const router = useRouter();
@@ -27,6 +29,8 @@ export default function Vendors() {
 	}, [session]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	const userState = useUserStore((state: { user: any }) => state.user);
 
 	const cancelButtonRef = useRef(null);
 	const [sentAgreement, setSentAgreement] = useState(false);
@@ -117,6 +121,13 @@ export default function Vendors() {
 			.post(`/vendors/new_vendor/`, formData)
 			.then(async (res) => {
 				toastcomp("New Agreement Send", "success");
+
+				let aname2 = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname2);
+
 				setagreement(null);
 				setcname("");
 				// setemail("");
@@ -185,6 +196,15 @@ export default function Vendors() {
 			.post(`/vendors/onboard_vendors/${vid}/`)
 			.then(async (res) => {
 				console.log("!", res.data);
+
+				if (res.data.message === "Update Successfully") {
+					let aname2 = `Vendor ${vid} Onboard by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+					addActivityLog(axiosInstanceAuth2, aname2);
+				}
+
 				toastcomp(res.data.message, "success");
 				loadVendors();
 			})
@@ -202,6 +222,23 @@ export default function Vendors() {
 			.post(`/vendors/activate_vendors/${vid}/`, fd)
 			.then(async (res) => {
 				console.log("!", res.data);
+
+				if (res.data.message === "Update Successfully" && activate) {
+					let aname2 = `Vendor ${vid} Activate by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+					addActivityLog(axiosInstanceAuth2, aname2);
+				}
+
+				if (res.data.message === "Update Successfully" && !activate) {
+					let aname2 = `Vendor ${vid} Deactivate by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+					addActivityLog(axiosInstanceAuth2, aname2);
+				}
+
 				toastcomp(res.data.message, "success");
 				loadVendors();
 			})
@@ -228,7 +265,7 @@ export default function Vendors() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
-							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start py-2 px-4">
+							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
 								<button
 									onClick={() => router.back()}
 									className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
@@ -273,7 +310,7 @@ export default function Vendors() {
 														{({ selected }) => (
 															<button
 																className={
-																	"mr-6 inline-flex items-center border-b-4 py-2 px-4 font-semibold focus:outline-none" +
+																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
 																		? "border-primary text-primary"

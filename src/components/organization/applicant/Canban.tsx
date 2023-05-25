@@ -1,12 +1,13 @@
-// @ts-nocheck
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import React from "react";
 import { Board } from "./Board";
 import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
+import { useUserStore } from "@/utils/code";
+import moment from "moment";
 
 function Canban(props: any) {
 	const router = useRouter();
@@ -57,6 +58,8 @@ function Canban(props: any) {
 		console.log("columns", columns);
 	}, [cards, columns]);
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
 	const axiosInstanceAuth2 = axiosInstanceAuth(props.token);
 	async function chnageStatus(status: string | Blob, arefid: any) {
 		const fdata = new FormData();
@@ -65,6 +68,12 @@ function Canban(props: any) {
 			.put(`/job/applicant/${arefid}/update/`, fdata)
 			.then((res) => {
 				toastcomp("Status Changed", "success");
+				let aname = `Applicant ${arefid} status is change to ${status} by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				setcardarefid(arefid);
 				setcardstatus(status);
 				// setrefersh1(1);

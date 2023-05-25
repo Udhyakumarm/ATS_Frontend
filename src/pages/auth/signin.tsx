@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import toastcomp from "@/components/toast";
 import { axiosInstance2 } from "../api/axiosApi";
 import { useUserStore } from "@/utils/code";
+import moment from "moment";
 const Toaster = dynamic(() => import("../../components/Toaster"), {
 	ssr: false
 });
@@ -65,50 +66,71 @@ export default function AuthSignIn({ providers }: any) {
 				: process.env.NEXT_PUBLIC_DEV_FRONTEND
 		}`;
 
-
 		await axiosInstance2
-		.post("/organization/login/", {
-			email: loginInfo.email,
-			password: loginInfo.password
-		})
-		.then(async (response) => {
-
-			console.log("@",response.data)
-			if(response.data.role){setrole(response.data.role)}
-			if(response.data.type){settype(response.data.type)}
-			if(response.data.userObj && response.data["userObj"].length > 0){setuser(response.data.userObj)}
-
-			await signIn("credentials", {
+			.post("/organization/login/", {
 				email: loginInfo.email,
-				password: loginInfo.password,
-				//For NextAuth
-				user_type: "organization",
-				callbackUrl: callback
+				password: loginInfo.password
 			})
-				.then(async (res) => console.log({ res }))
-				.then(async () => await router.push("/"))
-		})
-		.catch((err) => {
-			settype("")
-			setrole("")
-			setuser([])
-			console.log(err)
-			if (err.response.data.non_field_errors) {
-				err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"))
-				return false
-			}
-			if (err.response.data.detail) {
-				toastcomp(err.response.data.detail, "error")
-				return false
-			}
-			if (err.response.data.errors.email) {
-				err.response.data.errors.email.map((text: any) => toastcomp(text, "error"))
-				return false
-			}
-		});
-			
+			.then(async (response) => {
+				console.log("@", response.data);
+				if (response.data.role) {
+					setrole(response.data.role);
+				}
+				if (response.data.type) {
+					settype(response.data.type);
+				}
+				if (response.data.userObj && response.data["userObj"].length > 0) {
+					setuser(response.data.userObj);
+				}
+				let aname = "";
+				try {
+					aname = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${
+						response.data.role
+					} at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
-		
+					await axiosInstance2
+						.post("/organization/activity-log/unauth/", {
+							email: loginInfo.email,
+							aname: aname
+						})
+						.then((res) => {
+							toastcomp("Log Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Log Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Log Not Add", "error");
+				}
+
+				await signIn("credentials", {
+					email: loginInfo.email,
+					password: loginInfo.password,
+					//For NextAuth
+					user_type: "organization",
+					callbackUrl: callback
+				})
+					.then(async (res) => console.log({ res }))
+					.then(async () => await router.push("/"));
+			})
+			.catch((err) => {
+				settype("");
+				setrole("");
+				setuser([]);
+				console.log(err);
+				if (err.response.data.non_field_errors) {
+					err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+					return false;
+				}
+				if (err.response.data.detail) {
+					toastcomp(err.response.data.detail, "error");
+					return false;
+				}
+				if (err.response.data.errors.email) {
+					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+					return false;
+				}
+			});
 	};
 	return (
 		<>
@@ -122,7 +144,7 @@ export default function AuthSignIn({ providers }: any) {
 					<div className="mb-4 text-center">
 						<Logo width={180} />
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
+					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						<h1 className="mb-6 text-3xl font-bold">
 							Sign <span className="text-primary">In</span>
 						</h1>
@@ -153,7 +175,7 @@ export default function AuthSignIn({ providers }: any) {
 									<input
 										type="checkbox"
 										id="rememberMe"
-										className="mr-2 mb-1 rounded border-lightGray"
+										className="mb-1 mr-2 rounded border-lightGray"
 										defaultChecked
 									/>
 									Remember Me

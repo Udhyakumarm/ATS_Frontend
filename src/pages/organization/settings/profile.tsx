@@ -20,12 +20,14 @@ import gall_4 from "/public/images/gall-4.png";
 import userImg from "/public/images/user-image.png";
 import { Switch } from "@headlessui/react";
 import { useSession } from "next-auth/react";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import mammoth from "mammoth";
 // import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import jspdf from "jspdf";
+import { useUserStore } from "@/utils/code";
+import moment from "moment";
 
 export default function Profile() {
 	const router = useRouter();
@@ -198,7 +200,12 @@ export default function Profile() {
 			setword(arrayBuffer);
 			const fd = new FormData();
 			fd.append("offer", file);
-			saveOrganizationProfile(fd);
+			saveOrganizationProfile2(fd);
+			let aname = `Organization Offer Letter Added by ${userState[0]["name"]} (${
+				userState[0]["email"]
+			}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+			addActivityLog(axiosInstanceAuth2, aname);
 
 			mammoth
 				.convertToHtml(
@@ -288,7 +295,12 @@ export default function Profile() {
 		setwordpath("");
 		const fd = new FormData();
 		fd.append("offer", "");
-		saveOrganizationProfile(fd);
+		saveOrganizationProfile2(fd);
+		let aname = `Organization Offer Letter Deleted by ${userState[0]["name"]} (${
+			userState[0]["email"]
+		}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+		addActivityLog(axiosInstanceAuth2, aname);
 	}
 
 	const handleDownload = () => {
@@ -345,11 +357,20 @@ export default function Profile() {
 			});
 	}
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
 	async function saveIndividualProfile(formData: any) {
 		await axiosInstanceAuth2
 			.put(`/organization/individualprofile/update/`, formData)
 			.then(async (res) => {
 				toastcomp("Individual Profile Updated", "success");
+
+				let aname = `Individual Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadIndividualProfile();
 			})
 			.catch((err) => {
@@ -379,6 +400,13 @@ export default function Profile() {
 			.post(`/organization/individuallink/${iuniqueid}/`, formData)
 			.then(async (res) => {
 				toastcomp("Social Link Added", "success");
+
+				let aname = `Individual Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadIndividualLink();
 				setiaddlink("");
 				setAddSocial(false);
@@ -397,6 +425,13 @@ export default function Profile() {
 			.delete(`/organization/individuallink/${iuniqueid}/${val}/delete/`)
 			.then(async (res) => {
 				toastcomp("Social Link Deleted", "success");
+
+				let aname = `Individual Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadIndividualLink();
 				setiaddlink("");
 				setAddSocial(false);
@@ -427,6 +462,28 @@ export default function Profile() {
 			.put(`/organization/organizationprofile/update/`, formData)
 			.then(async (res) => {
 				toastcomp("Organization Profile Updated", "success");
+
+				let aname = `Organization Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
+				loadOrganizationProfile();
+			})
+			.catch((err) => {
+				console.log(err);
+				if (err.message != "Request failed with status code 401") {
+					toastcomp("Organization Profile Not Updated", "error");
+				}
+			});
+	}
+
+	async function saveOrganizationProfile2(formData: any) {
+		await axiosInstanceAuth2
+			.put(`/organization/organizationprofile/update/`, formData)
+			.then(async (res) => {
+				toastcomp("Organization Offer Letter Updated", "success");
 				loadOrganizationProfile();
 			})
 			.catch((err) => {
@@ -458,6 +515,13 @@ export default function Profile() {
 			.post(`/organization/organizationfounder/`, formData)
 			.then(async (res) => {
 				toastcomp("Organization founder Added", "success");
+
+				let aname = `Organization Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadOrganizationFounder();
 				setofounderdes("");
 				setofounderimg();
@@ -480,6 +544,13 @@ export default function Profile() {
 			.delete(`/organization/organizationfounder/${val}/delete/`)
 			.then(async (res) => {
 				toastcomp("Organization founder Deleted", "success");
+
+				let aname = `Organization Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadOrganizationFounder();
 				setofounderdes("");
 				setofounderimg();
@@ -514,6 +585,13 @@ export default function Profile() {
 			.post("/organization/organizationgallery/", formdata)
 			.then(async (res) => {
 				toastcomp("Gallery Added", "success");
+
+				let aname = `Organization Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadOrganizationGallery();
 				setoFile([]);
 				setAddGalImages(false);
@@ -542,6 +620,13 @@ export default function Profile() {
 			.delete(`/organization/organizationgallery/${val}/delete/`)
 			.then(async (res) => {
 				toastcomp("Organization Gallery Deleted", "success");
+
+				let aname = `Organization Profile Updated by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadOrganizationGallery();
 			})
 			.catch((err) => {

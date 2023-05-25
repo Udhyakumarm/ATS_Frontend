@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Tab } from '@headlessui/react'
+import { Tab } from "@headlessui/react";
 // import { Tab, Tabs, TabList, Tab.Panel } from "react-tabs";
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import FormField from "@/components/FormField";
@@ -16,18 +16,20 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import successGraphic from "public/images/success-graphic.png";
 import Link from "next/link";
+import moment from "moment";
+import { useUserStore } from "@/utils/code";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
 		<button
 			onClick={handleClick}
-			className="mr-3 flex items-center justify-center rounded border border-gray-400 py-2 px-6 text-sm font-bold last:mr-0 hover:bg-lightBlue dark:hover:text-black"
+			className="mr-3 flex items-center justify-center rounded border border-gray-400 px-6 py-2 text-sm font-bold last:mr-0 hover:bg-lightBlue dark:hover:text-black"
 			type="button"
 		>
 			<span className={"mr-2 block h-[20px] w-[20px] rounded-full text-[10px] text-white" + " " + iconBg}>{icon}</span>
@@ -37,7 +39,7 @@ const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 };
 
 const StickyLabel = ({ label }: any) => (
-	<h2 className="inline-block min-w-[250px] rounded-tl-normal rounded-br-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-4 px-8 text-center font-semibold text-white shadow-lg">
+	<h2 className="inline-block min-w-[250px] rounded-br-normal rounded-tl-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-4 text-center font-semibold text-white shadow-lg">
 		{label}
 	</h2>
 );
@@ -87,7 +89,7 @@ export default function JobsCreate() {
 			<button
 				type="button"
 				className={
-					"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
+					"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
 					" " +
 					(tabIndex === currentIndex
 						? "border-primary text-primary"
@@ -116,6 +118,8 @@ export default function JobsCreate() {
 			title: " "
 		}
 	];
+
+	const userState = useUserStore((state: { user: any }) => state.user);
 
 	//naman
 	const { data: session } = useSession();
@@ -211,6 +215,20 @@ export default function JobsCreate() {
 			.post(`/job/create-job/`, formData)
 			.then(async (res) => {
 				toastcomp("Job Created Successfully", "success");
+				let aname = "";
+				if (type === "active") {
+					aname = `${jtitle} Job is created & published by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				}
+
+				if (type === "draft") {
+					aname = `${jtitle} Job is created & drafted by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				}
+
+				addActivityLog(axiosInstanceAuth2, aname);
 				router.push(`${type}/`);
 			})
 			.catch((err) => {
@@ -503,7 +521,7 @@ export default function JobsCreate() {
 		console.log("!", e.target.dataset.pk);
 		setjtm(arr);
 	}
-	
+
 	const tabHeading_1 = [
 		{
 			title: "Job Details"
@@ -579,7 +597,7 @@ export default function JobsCreate() {
 											{({ selected }) => (
 												<button
 													className={
-														"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
+														"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
 														" " +
 														(selected
 															? "border-primary text-primary"
@@ -666,7 +684,12 @@ export default function JobsCreate() {
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Department Information" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
+											<FormField
+												fieldType="reactquill"
+												id="description"
+												value={jdeptinfo}
+												handleChange={setjdeptinfo}
+											/>
 										</div>
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
@@ -834,12 +857,12 @@ export default function JobsCreate() {
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 																<CardLayout_1 isBlank={true} />
 															</div>
-													)
+													  )
 													: Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 																<CardLayout_1 sklLoad={true} />
 															</div>
-													)}
+													  )}
 											</div>
 										</div>
 									</div>
@@ -849,23 +872,23 @@ export default function JobsCreate() {
 										<StickyLabel label="Team Members" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<Tab.Group>
-												<Tab.List className={"mb-6 border-b flex"}>
+												<Tab.List className={"mb-6 flex border-b"}>
 													{tabHeading_2.map((item, i) => (
 														<Tab key={i} as={Fragment}>
 															{({ selected }) => (
-															<button
-																type="button"
-																className={
-																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
-																	" " +
-																	(selected
-																		? "border-primary text-primary"
-																		: "border-transparent text-darkGray dark:text-gray-400")
-																}
-															>
-																<div className="mr-2">{item.icon}</div>
-																{item.title}
-															</button>
+																<button
+																	type="button"
+																	className={
+																		"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary"
+																			: "border-transparent text-darkGray dark:text-gray-400")
+																	}
+																>
+																	<div className="mr-2">{item.icon}</div>
+																	{item.title}
+																</button>
 															)}
 														</Tab>
 													))}
@@ -915,7 +938,7 @@ export default function JobsCreate() {
 																<thead>
 																	<tr>
 																		{TeamTableHead.map((item, i) => (
-																			<th className="border-b py-2 px-3 text-left" key={i}>
+																			<th className="border-b px-3 py-2 text-left" key={i}>
 																				{item.title}
 																			</th>
 																		))}
@@ -927,11 +950,11 @@ export default function JobsCreate() {
 																			(data, i) =>
 																				data["verified"] !== false && (
 																					<tr key={i}>
-																						<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
-																						<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
-																						<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
-																						<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
-																						<td className="border-b py-2 px-3 text-right">
+																						<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																						<td className="border-b px-3 py-2 text-right">
 																							<input
 																								type="checkbox"
 																								value={data["email"]}
@@ -948,68 +971,74 @@ export default function JobsCreate() {
 														</div>
 													</Tab.Panel>
 													<Tab.Panel>
-													<div>
-														{Array(4).fill(
-															<label 
-																htmlFor="checkDivison"
-																className={"mb-3 rounded border block text-sm" + " " + (accordionOpen ? "border-slate-300" : "")}
-															>
-																<div className="flex flex-wrap items-center px-4">
-																	<h6 className="grow py-3 font-bold">Software Developer</h6>
-																	<div className="py-3 text-right">
-																		<input type="checkbox" id="checkDivison" />
-																		<button
-																			type="button"
-																			className="ml-4 text-darkGray dark:text-gray-400"
-																			onClick={() => setAccordionOpen(!accordionOpen)}
-																		>
-																			<i
-																				className={"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")}
-																			></i>
-																		</button>
-																	</div>
-																</div>
-																<Transition.Root show={accordionOpen} as={Fragment}>
-																	<Transition.Child
-																		as={Fragment}
-																		enter="ease-out duration-300"
-																		enterFrom="opacity-0"
-																		enterTo="opacity-100"
-																		leave="ease-in duration-200"
-																		leaveFrom="opacity-100"
-																		leaveTo="opacity-0"
-																	>
-																		<div className="border-t">
-																			<div className="overflow-x-auto">
-																				<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																					<thead>
-																						<tr>
-																							{TeamTableHead.map((item, i) => (
-																								<th className="border-b py-2 px-4 text-left" key={i}>
-																									{item.title}
-																								</th>
-																							))}
-																						</tr>
-																					</thead>
-																					<tbody>
-																						{Array(6).fill(
-																							<tr>
-																								<td className="border-b py-2 px-4 text-sm">Jane Cooper</td>
-																								<td className="border-b py-2 px-4 text-sm">Recruiter</td>
-																								<td className="border-b py-2 px-4 text-sm">jane@microsoft.com</td>
-																								<td className="border-b py-2 px-4 text-sm">On Pending</td>
-																								<td className="border-b py-2 px-4 text-sm">Hiring Manager</td>
-																							</tr>
-																						)}
-																					</tbody>
-																				</table>
-																			</div>
+														<div>
+															{Array(4).fill(
+																<label
+																	htmlFor="checkDivison"
+																	className={
+																		"mb-3 block rounded border text-sm" +
+																		" " +
+																		(accordionOpen ? "border-slate-300" : "")
+																	}
+																>
+																	<div className="flex flex-wrap items-center px-4">
+																		<h6 className="grow py-3 font-bold">Software Developer</h6>
+																		<div className="py-3 text-right">
+																			<input type="checkbox" id="checkDivison" />
+																			<button
+																				type="button"
+																				className="ml-4 text-darkGray dark:text-gray-400"
+																				onClick={() => setAccordionOpen(!accordionOpen)}
+																			>
+																				<i
+																					className={
+																						"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
+																					}
+																				></i>
+																			</button>
 																		</div>
-																	</Transition.Child>
-																</Transition.Root>
-															</label>
-														)}
-													</div>
+																	</div>
+																	<Transition.Root show={accordionOpen} as={Fragment}>
+																		<Transition.Child
+																			as={Fragment}
+																			enter="ease-out duration-300"
+																			enterFrom="opacity-0"
+																			enterTo="opacity-100"
+																			leave="ease-in duration-200"
+																			leaveFrom="opacity-100"
+																			leaveTo="opacity-0"
+																		>
+																			<div className="border-t">
+																				<div className="overflow-x-auto">
+																					<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																						<thead>
+																							<tr>
+																								{TeamTableHead.map((item, i) => (
+																									<th className="border-b px-4 py-2 text-left" key={i}>
+																										{item.title}
+																									</th>
+																								))}
+																							</tr>
+																						</thead>
+																						<tbody>
+																							{Array(6).fill(
+																								<tr>
+																									<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																									<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																									<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																									<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																									<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
+																								</tr>
+																							)}
+																						</tbody>
+																					</table>
+																				</div>
+																			</div>
+																		</Transition.Child>
+																	</Transition.Root>
+																</label>
+															)}
+														</div>
 													</Tab.Panel>
 												</Tab.Panels>
 											</Tab.Group>
@@ -1061,16 +1090,16 @@ export default function JobsCreate() {
 											<div className="mx-[-15px] flex flex-wrap">
 												{sklLoad
 													? fvendors &&
-													fvendors.map((data, i) => (
+													  fvendors.map((data, i) => (
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
 																<CardLayout_2 data={data} />
 															</div>
-													))
+													  ))
 													: Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 																<CardLayout_2 sklLoad={true} />
 															</div>
-													)}
+													  )}
 											</div>
 										</div>
 									</div>
@@ -1090,12 +1119,12 @@ export default function JobsCreate() {
 																	isBlank={false}
 																/>
 															</div>
-													))
+													  ))
 													: Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
 																<CardLayout_1 sklLoad={true} />
 															</div>
-													)}
+													  )}
 											</div>
 										</div>
 									</div>
@@ -1309,7 +1338,17 @@ export default function JobsCreate() {
 									<div className="p-8 pt-0 text-center">
 										<i className="fa-solid fa-circle-check mb-4 text-[50px] text-green-500"></i>
 										<h4 className="mb-2 text-xl font-bold">Job has been Published</h4>
-										<p className="text-sm">Go To <Link href="/organization/jobs/active" onClick={() => setPublishThanks(false)} className="text-primary hover:underline font-bold">Active Jobs</Link> to Manage your Jobs</p>
+										<p className="text-sm">
+											Go To{" "}
+											<Link
+												href="/organization/jobs/active"
+												onClick={() => setPublishThanks(false)}
+												className="font-bold text-primary hover:underline"
+											>
+												Active Jobs
+											</Link>{" "}
+											to Manage your Jobs
+										</p>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

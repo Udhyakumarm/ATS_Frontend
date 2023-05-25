@@ -9,8 +9,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import { useSession } from "next-auth/react";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
+import moment from "moment";
+import { useUserStore } from "@/utils/code";
 
 const people = [{ name: "Recruiter" }, { name: "Collaborator" }, { name: "Hiring Manager" }];
 
@@ -50,6 +52,8 @@ export default function TeamMembers() {
 	//Load TM
 	const [tm, settm] = useState([]);
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadTeamMember() {
@@ -75,6 +79,13 @@ export default function TeamMembers() {
 			.then(async (res) => {
 				console.log("@", "iprofile", res.data);
 				toastcomp("New User Add", "Success");
+
+				let aname = `New User ${name} (${oemail}) as ${role["name"]} joined in our Organization by ${
+					userState[0]["name"]
+				} (${userState[0]["email"]}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				setAddTeam(false);
 				setname("");
 				setoemail("");
@@ -101,6 +112,14 @@ export default function TeamMembers() {
 			.put(`/organization/updateorguser/${pk}/`, fd)
 			.then(async (res) => {
 				toastcomp("User Updated", "Success");
+				console.log("@", res.data);
+
+				let aname = `Organization User role Updated to ${res.data["role"]} by ${userState[0]["name"]} (${
+					userState[0]["email"]
+				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+				addActivityLog(axiosInstanceAuth2, aname);
+
 				loadTeamMember();
 			})
 			.catch((err) => {
@@ -157,7 +176,7 @@ export default function TeamMembers() {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
-							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start py-2 px-4">
+							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
 								<button
 									onClick={() => router.back()}
 									className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
@@ -207,7 +226,7 @@ export default function TeamMembers() {
 											<div className="flex grow items-center justify-end">
 												<div className="mr-3">
 													<button
-														className="rounded-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-2 px-4 text-lg text-white"
+														className="rounded-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-4 py-2 text-lg text-white"
 														onClick={() => setAddTeam(true)}
 													>
 														<i className="fa-solid fa-plus"></i>
@@ -246,24 +265,24 @@ export default function TeamMembers() {
 												<thead>
 													<tr>
 														{TeamTableHead.map((item, i) => (
-															<th className="border-b py-2 px-3 text-left" key={i}>
+															<th className="border-b px-3 py-2 text-left" key={i}>
 																{item.title}
 															</th>
 														))}
-														<th className="border-b py-2 px-3 text-left"></th>
+														<th className="border-b px-3 py-2 text-left"></th>
 													</tr>
 												</thead>
 												<tbody>
 													{tm &&
 														tm.map((data, i) => (
 															<tr key={i}>
-																<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
-																<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
-																<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
-																<td className="border-b py-2 px-3 text-sm">
+																<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																<td className="border-b px-3 py-2 text-sm">
 																	{data["verified"] == false ? <>On Pending</> : <>Verified</>}
 																</td>
-																<td className="w-[250px] border-b py-2 px-3">
+																<td className="w-[250px] border-b px-3 py-2">
 																	<div className="w-full">
 																		<Listbox
 																			value={{ name: data["role"] }}
@@ -276,10 +295,10 @@ export default function TeamMembers() {
 																					"min-h-[45px] w-full rounded-normal border bg-white text-left text-sm font-bold dark:border-gray-600 dark:bg-gray-700"
 																				}
 																			>
-																				<span className="inline-block w-[calc(100%-40px)] py-2 px-3">
+																				<span className="inline-block w-[calc(100%-40px)] px-3 py-2">
 																					{data["role"]}
 																				</span>
-																				<span className="inline-block w-[40px] border-l py-2 px-3 text-center text-sm dark:border-gray-600">
+																				<span className="inline-block w-[40px] border-l px-3 py-2 text-center text-sm dark:border-gray-600">
 																					<i className="fa-solid fa-chevron-down"></i>
 																				</span>
 																			</Listbox.Button>
@@ -329,7 +348,7 @@ export default function TeamMembers() {
 																							</>
 																						</Listbox.Option>
 																					))}
-																					<div className="border-t py-2 px-8 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
+																					<div className="border-t px-8 py-2 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
 																						<p>
 																							Access of <b>{data["role"]}</b> to the following:-
 																						</p>
@@ -343,7 +362,7 @@ export default function TeamMembers() {
 																		</Listbox>
 																	</div>
 																</td>
-																<td className="border-b py-2 px-3 text-right">
+																<td className="border-b px-3 py-2 text-right">
 																	<input type="checkbox" />
 																</td>
 															</tr>
@@ -356,7 +375,7 @@ export default function TeamMembers() {
 										<div className="mb-6 flex flex-wrap items-center justify-between rounded-normal border p-3 dark:border-gray-600">
 											<h2 className="text-lg font-bold">Add Division</h2>
 											<button
-												className="rounded-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-2 px-4 text-lg text-white"
+												className="rounded-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-4 py-2 text-lg text-white"
 												onClick={() => setAddDivision(true)}
 											>
 												<i className="fa-solid fa-plus"></i>
@@ -401,7 +420,7 @@ export default function TeamMembers() {
 																		<thead>
 																			<tr>
 																				{TeamTableHead.map((item, i) => (
-																					<th className="border-b py-2 px-4 text-left" key={i}>
+																					<th className="border-b px-4 py-2 text-left" key={i}>
 																						{item.title}
 																					</th>
 																				))}
@@ -410,11 +429,11 @@ export default function TeamMembers() {
 																		<tbody>
 																			{Array(6).fill(
 																				<tr>
-																					<td className="border-b py-2 px-4 text-sm">Jane Cooper</td>
-																					<td className="border-b py-2 px-4 text-sm">Recruiter</td>
-																					<td className="border-b py-2 px-4 text-sm">jane@microsoft.com</td>
-																					<td className="border-b py-2 px-4 text-sm">On Pending</td>
-																					<td className="border-b py-2 px-4 text-sm">Hiring Manager</td>
+																					<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																					<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																					<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																					<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																					<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
 																				</tr>
 																			)}
 																		</tbody>
@@ -506,8 +525,8 @@ export default function TeamMembers() {
 														"min-h-[45px] w-full rounded-normal border bg-white text-left text-sm font-bold dark:border-gray-600 dark:bg-gray-700"
 													}
 												>
-													<span className="inline-block w-[calc(100%-40px)] py-2 px-3">{role.name}</span>
-													<span className="inline-block w-[40px] border-l py-2 px-3 text-center text-sm dark:border-gray-600">
+													<span className="inline-block w-[calc(100%-40px)] px-3 py-2">{role.name}</span>
+													<span className="inline-block w-[40px] border-l px-3 py-2 text-center text-sm dark:border-gray-600">
 														<i className="fa-solid fa-chevron-down"></i>
 													</span>
 												</Listbox.Button>
@@ -542,7 +561,7 @@ export default function TeamMembers() {
 																)}
 															</Listbox.Option>
 														))}
-														<div className="border-t py-2 px-8 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
+														<div className="border-t px-8 py-2 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
 															<p>
 																Access of <b>{role.name}</b> to the following:-
 															</p>
@@ -608,11 +627,11 @@ export default function TeamMembers() {
 												<thead>
 													<tr>
 														{TeamTableHead.map((item, i) => (
-															<th className="border-b py-2 px-3 text-left" key={i}>
+															<th className="border-b px-3 py-2 text-left" key={i}>
 																{item.title}
 															</th>
 														))}
-														<th className="border-b py-2 px-3 text-right">
+														<th className="border-b px-3 py-2 text-right">
 															<input type="checkbox" />
 														</th>
 													</tr>
@@ -620,12 +639,12 @@ export default function TeamMembers() {
 												<tbody>
 													{Array(6).fill(
 														<tr>
-															<td className="border-b py-2 px-3 text-sm">Jane Cooper</td>
-															<td className="border-b py-2 px-3 text-sm">Recruiter</td>
-															<td className="border-b py-2 px-3 text-sm">jane@microsoft.com</td>
-															<td className="border-b py-2 px-3 text-sm">On Pending</td>
-															<td className="border-b py-2 px-3 text-sm">Hiring Manager</td>
-															<td className="border-b py-2 px-3 text-right">
+															<td className="border-b px-3 py-2 text-sm">Jane Cooper</td>
+															<td className="border-b px-3 py-2 text-sm">Recruiter</td>
+															<td className="border-b px-3 py-2 text-sm">jane@microsoft.com</td>
+															<td className="border-b px-3 py-2 text-sm">On Pending</td>
+															<td className="border-b px-3 py-2 text-sm">Hiring Manager</td>
+															<td className="border-b px-3 py-2 text-right">
 																<input type="checkbox" />
 															</td>
 														</tr>

@@ -15,16 +15,18 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
+import moment from "moment";
+import { useUserStore } from "@/utils/code";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
 		<button
 			onClick={handleClick}
-			className="mr-3 flex items-center justify-center rounded border border-gray-400 py-2 px-6 text-sm font-bold last:mr-0 hover:bg-lightBlue dark:hover:text-black"
+			className="mr-3 flex items-center justify-center rounded border border-gray-400 px-6 py-2 text-sm font-bold last:mr-0 hover:bg-lightBlue dark:hover:text-black"
 			type="button"
 		>
 			<span className={"mr-2 block h-[20px] w-[20px] rounded-full text-[10px] text-white" + " " + iconBg}>{icon}</span>
@@ -34,7 +36,7 @@ const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 };
 
 const StickyLabel = ({ label }: any) => (
-	<h2 className="inline-block min-w-[250px] rounded-tl-normal rounded-br-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-4 px-8 text-center font-semibold text-white shadow-lg">
+	<h2 className="inline-block min-w-[250px] rounded-br-normal rounded-tl-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-4 text-center font-semibold text-white shadow-lg">
 		{label}
 	</h2>
 );
@@ -110,7 +112,7 @@ export default function JobsEdit() {
 			<button
 				type="button"
 				className={
-					"border-b-4 py-3 px-10 font-semibold focus:outline-none" +
+					"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
 					" " +
 					(tabIndex === currentIndex
 						? "border-primary text-primary"
@@ -249,11 +251,27 @@ export default function JobsEdit() {
 		}
 	}, [token]);
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
 	async function addJob(formData, type) {
 		await axiosInstanceAuth2
 			.put(`/job/update-job/${editJob}/`, formData)
 			.then(async (res) => {
 				toastcomp("Job Updated Successfully", "success");
+				let aname = "";
+				if (type === "active") {
+					aname = `${jtitle} Job is updated & published by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				}
+
+				if (type === "draft") {
+					aname = `${jtitle} Job is updated & drafted by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				}
+
+				addActivityLog(axiosInstanceAuth2, aname);
 				router.push(`/organization/jobs/${type}/`);
 			})
 			.catch((err) => {
@@ -899,7 +917,7 @@ export default function JobsEdit() {
 												<thead>
 													<tr>
 														{TeamTableHead.map((item, i) => (
-															<th className="border-b py-2 px-3 text-left" key={i}>
+															<th className="border-b px-3 py-2 text-left" key={i}>
 																{item.title}
 															</th>
 														))}
@@ -912,11 +930,11 @@ export default function JobsEdit() {
 															(data, i) =>
 																data["verified"] !== false && (
 																	<tr key={i}>
-																		<td className="border-b py-2 px-3 text-sm">{data["name"]}</td>
-																		<td className="border-b py-2 px-3 text-sm">{data["dept"]}</td>
-																		<td className="border-b py-2 px-3 text-sm">{data["email"]}</td>
-																		<td className="border-b py-2 px-3 text-sm">{data["role"]}</td>
-																		<td className="border-b py-2 px-3 text-right">
+																		<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																		<td className="border-b px-3 py-2 text-right">
 																			<input
 																				type="checkbox"
 																				value={data["email"]}
