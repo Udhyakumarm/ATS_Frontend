@@ -38,6 +38,7 @@ import { useRouter } from "next/router";
 import { axiosInstanceAuth } from "../api/axiosApi";
 import moment from "moment";
 import { useDashboardStore } from "@/utils/code";
+import Applicants from "./applicants";
 
 export default function OrganizationDashboard() {
 	const [sklLoad] = useState(true);
@@ -62,62 +63,62 @@ export default function OrganizationDashboard() {
 			</button>
 		)
 	};
+
+	const [tApp, settApp] = useState(0);
+	const [sApp, setsApp] = useState(0);
+	const [aApp, setaApp] = useState(0);
+	const [apApp, setapApp] = useState(0);
+	const [hApp, sethApp] = useState(0);
+	const [iApp, setiApp] = useState(0);
+	const [oApp, setoApp] = useState(0);
+	const [pApp, setpApp] = useState(0);
+	const [rApp, setrApp] = useState(0);
+
 	const aplc_status = [
 		{
-			percentage: "",
 			title: "Total Pipelines",
-			number: "",
-			color: "#58E700",
+			number: tApp,
 			icon: <i className="fa-solid fa-timeline"></i>
 		},
 		{
-			percentage: 10,
-			title: "Total On Hold",
-			number: 100,
-			color: "#FFF616",
+			title: "Total Sourced",
+			number: sApp,
 			icon: <i className="fa-solid fa-circle-pause"></i>
 		},
 		{
-			percentage: 6,
-			title: "Total Shortlisted",
-			number: 99,
-			color: "#58E700",
+			title: "Total Applied",
+			number: apApp,
 			icon: <i className="fa-solid fa-circle-check"></i>
 		},
 		{
-			percentage: 10,
-			title: "Total Hired",
-			number: 100,
-			color: "#58E700",
+			title: "Total Phone Screen",
+			number: pApp,
 			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
-			percentage: +10,
-			title: "Total In Review",
-			number: 100,
-			color: "#FE8F66",
+			title: "Total Assessment",
+			number: aApp,
 			icon: <i className="fa-solid fa-eye"></i>
 		},
 		{
-			percentage: 6,
-			title: "Total Rejected",
-			number: 100,
-			color: "#FF4500",
-			icon: <i className="fa-solid fa-circle-xmark"></i>
-		},
-		{
-			percentage: 6,
-			title: "Total Interviews",
-			number: 100,
-			color: "#FE8F66",
+			title: "Total Interview",
+			number: iApp,
 			icon: <i className="fa-solid fa-clipboard-question"></i>
 		},
 		{
-			percentage: 6,
-			title: "Aging Profiles",
-			number: 100,
-			color: "#FF4500",
-			icon: <i className="fa-solid fa-user-group"></i>
+			title: "Total Offer",
+			number: oApp,
+			icon: <i className="fa-solid fa-clipboard-question"></i>
+		},
+		{
+			title: "Total Hired",
+			number: hApp,
+			icon: <i className="fa-solid fa-users"></i>
+		},
+		{
+			title: "Total Rejected",
+			number: rApp,
+			icon: <i className="fa-solid fa-circle-xmark"></i>
 		}
 	];
 	const options = {
@@ -167,12 +168,14 @@ export default function OrganizationDashboard() {
 	const setcheck5 = useDashboardStore((state: { setcheck5: any }) => state.setcheck5);
 	const setcheck6 = useDashboardStore((state: { setcheck6: any }) => state.setcheck6);
 
-	const [applicantDetail, setapplicantDetail] = useState([]);
+	const [applicantDetail, setapplicantDetail] = useState({});
 	const [hiringAnalytics, sethiringAnalytics] = useState([]);
 	const [upcomingInterview, setupcomingInterview] = useState([]);
 	const [todoList, settodoList] = useState([]);
 	const [recentJob, setrecentJob] = useState([]);
 	const [activityLog, setactivityLog] = useState([]);
+
+	const [interview, setInterview] = useState([]);
 
 	async function loadActivityLog() {
 		await axiosInstanceAuth2
@@ -186,9 +189,49 @@ export default function OrganizationDashboard() {
 			});
 	}
 
+	async function loadAnalytics() {
+		await axiosInstanceAuth2
+			.get(`/organization/get_dashboard_and_analytics/`)
+			.then(async (res) => {
+				console.log("!", res.data);
+				// setactivityLog(res.data);
+				setapplicantDetail(res.data["Applicants"]);
+				settApp(res.data["Applicants"]["totalApplicants"]);
+				setsApp(res.data["Applicants"]["sourced"]);
+				setrApp(res.data["Applicants"]["rejected"]);
+				setpApp(res.data["Applicants"]["phoneScreen"]);
+				setoApp(res.data["Applicants"]["offer"]);
+				setiApp(res.data["Applicants"]["interview"]);
+				sethApp(res.data["Applicants"]["hired"]);
+				setaApp(res.data["Applicants"]["assessment"]);
+				setapApp(res.data["Applicants"]["applied"]);
+
+				setrecentJob(res.data["recentJob"]);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	function getAverage(num: any) {
+		return (num / tApp) * 100;
+	}
+
+	function getColor(num: any) {
+		num = (num / tApp) * 100;
+		if (num > 66) {
+			return "#58E700";
+		} else if (num > 33 && num <= 66) {
+			return "#FFF616";
+		} else {
+			return "#FE8F66";
+		}
+	}
+
 	useEffect(() => {
 		if (token && token.length > 0) {
 			loadActivityLog();
+			loadAnalytics();
 		}
 	}, [token]);
 
@@ -227,7 +270,7 @@ export default function OrganizationDashboard() {
 											</aside>
 										</div>
 										<div className="dashboardSlider p-6 pt-0">
-											{applicantDetail && applicantDetail.length > 0 ? (
+											{applicantDetail && applicantDetail["totalApplicants"] > 0 ? (
 												<Slider {...settings}>
 													{aplc_status.map((item, i) => (
 														<div key={i}>
@@ -235,7 +278,8 @@ export default function OrganizationDashboard() {
 																<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
 																	<div className="mb-2 flex items-center justify-between">
 																		<h4 className="grow pr-4 text-2xl font-extrabold">
-																			{item.number || <Skeleton width={40} />}
+																			{/* {item.number || <Skeleton width={40} />} */}
+																			{item.number}
 																		</h4>
 																		<div className="rounded bg-lightGray px-2 py-1 text-[12px] text-white">
 																			{item.icon}
@@ -243,25 +287,19 @@ export default function OrganizationDashboard() {
 																	</div>
 																	<p className="mb-2 text-sm">{item.title}</p>
 																	<div style={{ width: 40, height: 40 }}>
-																		{item.percentage ? (
-																			<>
-																				<CircularProgressbar
-																					value={item.percentage}
-																					text={`${item.percentage}`}
-																					styles={buildStyles({
-																						pathColor: item.color,
-																						textSize: "26px",
-																						textColor: "#727272"
-																					})}
-																				/>
-																			</>
-																		) : (
-																			<Skeleton circle width={40} height={40} />
-																		)}
+																		<CircularProgressbar
+																			value={getAverage(item.number)}
+																			text={`${getAverage(item.number)}`}
+																			styles={buildStyles({
+																				pathColor: getColor(item.number),
+																				textSize: "26px",
+																				textColor: "#727272"
+																			})}
+																		/>
 																	</div>
 																	<div
 																		className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
-																		style={{ borderRightColor: item.color }}
+																		style={{ borderRightColor: getColor(item.number) }}
 																	></div>
 																</div>
 															</div>
@@ -506,7 +544,7 @@ export default function OrganizationDashboard() {
 										<div className="p-6 pt-0">
 											{recentJob && recentJob.length > 0 ? (
 												<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
-													{sklLoad
+													{/* {sklLoad
 														? Array(5).fill(
 																<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
 																	<JobCard_1 />
@@ -516,7 +554,13 @@ export default function OrganizationDashboard() {
 																<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
 																	<JobCard_1 sklLoad={true} />
 																</div>
-														  )}
+														  )} */}
+
+													{recentJob.slice(0, 5).map((data, i) => (
+														<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
+															<JobCard_1 data={data} handleClick={() => router.push("jobs/active")} />
+														</div>
+													))}
 												</div>
 											) : (
 												<div className="py-8 text-center">

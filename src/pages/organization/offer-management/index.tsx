@@ -1018,7 +1018,7 @@ export default function OfferManagement() {
 													<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
 														<div
 															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-															onClick={() => setstep(1)}
+															// onClick={() => setstep(1)}
 														>
 															{step === 1 ? (
 																<>
@@ -1039,7 +1039,7 @@ export default function OfferManagement() {
 														</div>
 														<div
 															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-															onClick={() => setstep(2)}
+															// onClick={() => setstep(2)}
 														>
 															{step === 2 ? (
 																<>
@@ -1069,7 +1069,7 @@ export default function OfferManagement() {
 														</div>
 														<div
 															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-															onClick={() => setstep(3)}
+															// onClick={() => setstep(3)}
 														>
 															{step === 3 ? (
 																<>
@@ -1099,7 +1099,7 @@ export default function OfferManagement() {
 														</div>
 														<div
 															className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-															onClick={() => setstep(4)}
+															// onClick={() => setstep(4)}
 														>
 															{step === 4 ? (
 																<>
@@ -1762,7 +1762,7 @@ export default function OfferManagement() {
 																			required
 																		/>
 																		<div className="flex flex-wrap">
-																			<div className="grow pr-6 last:pr-0 mb-4">
+																			<div className="mb-4 grow pr-6 last:pr-0">
 																				<FormField
 																					label="Visa Sponsorship"
 																					singleSelect
@@ -1773,7 +1773,7 @@ export default function OfferManagement() {
 																					required
 																				/>
 																			</div>
-																			<div className="grow pr-6 last:pr-0 mb-4">
+																			<div className="mb-4 grow pr-6 last:pr-0">
 																				<FormField
 																					label="Paid Relocation"
 																					singleSelect
