@@ -6,11 +6,11 @@ import toastcomp from "./toast";
 import FormField from "./FormField";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useUserStore } from "@/utils/code";
+import { useUserStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
-import { addActivityLog } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
 
-export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad }: any) {
+export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
 	const [starred, setStarred] = useState(false);
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
@@ -18,6 +18,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	async function statusUpdate(status: string, refid: string) {
 		const formData = new FormData();
@@ -30,8 +32,11 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 				let aname = `${job.job_title} Job is now ${status} by ${userState[0]["name"]} (${
 					userState[0]["email"]
 				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				let title = `${userState[0]["name"]} (${userState[0]["email"]}) has ${status} a Job`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
+				addNotifyJobLog(axiosInstanceAuth2, title, "Job", refid);
+				toggleLoadMode(true);
 
 				router.push(`/organization/jobs/${status.toLowerCase()}/`);
 			})
@@ -105,173 +110,175 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 						</button>
 						<h4 className="font-bold capitalize">{job.job_title}</h4>
 					</div>
-					<div className="text-right text-gray-400">
-						<button type="button" className="mr-6">
-							<i className="fa-solid fa-copy"></i>
-						</button>
-						<Menu as="div" className="relative inline-block">
-							<Menu.Button className={"p-2"}>
-								<i className="fa-solid fa-ellipsis-vertical"></i>
-							</Menu.Button>
-							<Transition
-								as={Fragment}
-								enter="transition ease-out duration-100"
-								enterFrom="transform opacity-0 scale-95"
-								enterTo="transform opacity-100 scale-100"
-								leave="transition ease-in duration-75"
-								leaveFrom="transform opacity-100 scale-100"
-								leaveTo="transform opacity-0 scale-95"
-							>
-								<Menu.Items
-									className={
-										"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
-									}
+					{!dashbaord && (
+						<div className="text-right text-gray-400">
+							<button type="button" className="mr-6">
+								<i className="fa-solid fa-copy"></i>
+							</button>
+							<Menu as="div" className="relative inline-block">
+								<Menu.Button className={"p-2"}>
+									<i className="fa-solid fa-ellipsis-vertical"></i>
+								</Menu.Button>
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
 								>
-									{job.jobStatus === "Active" && (
-										<>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`edit/${job.refid}`);
-													}}
-												>
-													Edit Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`clone/${job.refid}`);
-													}}
-												>
-													Clone Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Archived", job.refid)}
-												>
-													Archieve Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Closed", job.refid)}
-												>
-													Delete Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => setAddCand(true)}
-												>
-													Upload Resume (PDF/DOC)
-												</button>
-											</Menu.Item>
-										</>
-									)}
+									<Menu.Items
+										className={
+											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
+										}
+									>
+										{job.jobStatus === "Active" && (
+											<>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`edit/${job.refid}`);
+														}}
+													>
+														Edit Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`clone/${job.refid}`);
+														}}
+													>
+														Clone Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={() => statusUpdate("Archived", job.refid)}
+													>
+														Archieve Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={() => statusUpdate("Closed", job.refid)}
+													>
+														Delete Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={() => setAddCand(true)}
+													>
+														Upload Resume (PDF/DOC)
+													</button>
+												</Menu.Item>
+											</>
+										)}
 
-									{job.jobStatus === "Draft" && (
-										<>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`edit/${job.refid}`);
-													}}
-												>
-													Edit Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`clone/${job.refid}`);
-													}}
-												>
-													Clone Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Closed", job.refid)}
-												>
-													Delete Job
-												</button>
-											</Menu.Item>
-										</>
-									)}
+										{job.jobStatus === "Draft" && (
+											<>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`edit/${job.refid}`);
+														}}
+													>
+														Edit Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`clone/${job.refid}`);
+														}}
+													>
+														Clone Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={() => statusUpdate("Closed", job.refid)}
+													>
+														Delete Job
+													</button>
+												</Menu.Item>
+											</>
+										)}
 
-									{job.jobStatus === "Archived" && (
-										<>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`edit/${job.refid}`);
-													}}
-												>
-													Edit Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`clone/${job.refid}`);
-													}}
-												>
-													Clone Job
-												</button>
-											</Menu.Item>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Closed", job.refid)}
-												>
-													Delete Job
-												</button>
-											</Menu.Item>
-										</>
-									)}
+										{job.jobStatus === "Archived" && (
+											<>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`edit/${job.refid}`);
+														}}
+													>
+														Edit Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`clone/${job.refid}`);
+														}}
+													>
+														Clone Job
+													</button>
+												</Menu.Item>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={() => statusUpdate("Closed", job.refid)}
+													>
+														Delete Job
+													</button>
+												</Menu.Item>
+											</>
+										)}
 
-									{job.jobStatus === "Closed" && (
-										<>
-											<Menu.Item>
-												<button
-													type="button"
-													className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`clone/${job.refid}`);
-													}}
-												>
-													Clone Job
-												</button>
-											</Menu.Item>
-										</>
-									)}
-								</Menu.Items>
-							</Transition>
-						</Menu>
-					</div>
+										{job.jobStatus === "Closed" && (
+											<>
+												<Menu.Item>
+													<button
+														type="button"
+														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+														onClick={(e) => {
+															router.push(`clone/${job.refid}`);
+														}}
+													>
+														Clone Job
+													</button>
+												</Menu.Item>
+											</>
+										)}
+									</Menu.Items>
+								</Transition>
+							</Menu>
+						</div>
+					)}
 				</div>
 				<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
 					<li className="mr-3 list-none capitalize">{job.worktype ? job.worktype : <>Not Disclosed</>}</li>

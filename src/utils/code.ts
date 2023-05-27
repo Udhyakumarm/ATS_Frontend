@@ -30,6 +30,11 @@ let settingsStore: any = (set: any) => ({
 	toggleDarkMode: () => set((state: any) => ({ dark: !state.dark }))
 });
 
+let notificationStore: any = (set: any) => ({
+	load: false,
+	toggleLoadMode: (id: any) => set(() => ({ load: id }))
+});
+
 let carrierStore: any = (set: any) => ({
 	// auth: false, // Candiate Auth
 	cname: "", //Company Name
@@ -68,6 +73,9 @@ dashboardStore = persist(dashboardStore, { name: "dashboardStore" });
 settingsStore = devtools(settingsStore);
 settingsStore = persist(settingsStore, { name: "user_settings" });
 
+notificationStore = devtools(notificationStore);
+notificationStore = persist(notificationStore, { name: "notificationStore" });
+
 carrierStore = devtools(carrierStore);
 carrierStore = persist(carrierStore, { name: "carrier_settings" });
 
@@ -76,6 +84,7 @@ applicantStore = persist(applicantStore, { name: "applicantStore" });
 
 export const useUserStore = create(userStore);
 export const useDashboardStore = create(dashboardStore);
+export const useNotificationStore = create(notificationStore);
 export const useSettingsStore = create(settingsStore);
 export const useCarrierStore = create(carrierStore);
 export const useApplicantStore = create(applicantStore);

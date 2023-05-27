@@ -9,6 +9,8 @@ import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import Validator, { Rules } from "validatorjs";
 import toastcomp from "@/components/toast";
+import { axiosInstance2 } from "../api/axiosApi";
+import moment from "moment";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -110,8 +112,51 @@ export default function AuthSignUp() {
 				password2: signUpInfo.passwordConfirm,
 				company_type: signUpInfo.companyType
 			})
-			.then((response) => {
+			.then(async (response) => {
 				console.log(response);
+
+				let aname = "";
+				let title = "";
+				try {
+					aname = `${response.data.userObj[0]["name"]} (${
+						response.data.userObj[0]["email"]
+					}) has newly sign up at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+					await axiosInstance2
+						.post("/organization/activity-log/unauth/", {
+							email: signUpInfo.email,
+							aname: aname
+						})
+						.then((res) => {
+							toastcomp("Log Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Log Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Log Not Add", "error");
+				}
+
+				try {
+					title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has newly sign up`;
+					// let notification_type = `${}`
+
+					await axiosInstance2
+						.post("/chatbot/notification/unauth/", {
+							email: signUpInfo.email,
+							title: title
+							// notification_type: notification_type
+						})
+						.then((res) => {
+							toastcomp("Notify Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Notify Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Notify Not Add", "error");
+				}
+
 				router.push("/auth/signin");
 				setTimeout(() => {
 					console.log("Send verification email");
@@ -147,7 +192,7 @@ export default function AuthSignUp() {
 						<Logo width={180} />
 					</div>
 					<form
-						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12"
+						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8"
 						onSubmit={handleSignUp}
 					>
 						<h1 className="mb-6 text-3xl font-bold">

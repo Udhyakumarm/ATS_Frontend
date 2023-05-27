@@ -4,9 +4,9 @@ import React from "react";
 import { Board } from "./Board";
 import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
-import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyApplicantLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
-import { useUserStore } from "@/utils/code";
+import { useNotificationStore, useUserStore } from "@/utils/code";
 import moment from "moment";
 
 function Canban(props: any) {
@@ -27,6 +27,8 @@ function Canban(props: any) {
 	const { applicantlist } = props;
 	const { setcardarefid } = props;
 	const { setcardstatus } = props;
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	useEffect(() => {
 		let arr = cards;
@@ -73,6 +75,12 @@ function Canban(props: any) {
 				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
+
+				let title = `Applicant has been shifted to ${status} By ${userState[0]["name"]} (${userState[0]["email"]})`;
+
+				addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid);
+
+				toggleLoadMode(true);
 
 				setcardarefid(arefid);
 				setcardstatus(status);

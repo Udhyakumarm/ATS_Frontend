@@ -37,8 +37,9 @@ import PreviewJob from "@/components/organization/PreviewJob";
 import { useRouter } from "next/router";
 import { axiosInstanceAuth } from "../api/axiosApi";
 import moment from "moment";
-import { useDashboardStore } from "@/utils/code";
+import { useApplicantStore, useDashboardStore } from "@/utils/code";
 import Applicants from "./applicants";
+import JobCard_2 from "@/components/JobCard-2";
 
 export default function OrganizationDashboard() {
 	const [sklLoad] = useState(true);
@@ -142,7 +143,6 @@ export default function OrganizationDashboard() {
 	const router = useRouter();
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
-	const [previewPopup, setPreviewPopup] = useState(false);
 
 	useEffect(() => {
 		if (session) {
@@ -167,6 +167,9 @@ export default function OrganizationDashboard() {
 	const setcheck4 = useDashboardStore((state: { setcheck4: any }) => state.setcheck4);
 	const setcheck5 = useDashboardStore((state: { setcheck5: any }) => state.setcheck5);
 	const setcheck6 = useDashboardStore((state: { setcheck6: any }) => state.setcheck6);
+
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
 
 	const [applicantDetail, setapplicantDetail] = useState({});
 	const [hiringAnalytics, sethiringAnalytics] = useState([]);
@@ -207,6 +210,7 @@ export default function OrganizationDashboard() {
 				setapApp(res.data["Applicants"]["applied"]);
 
 				setrecentJob(res.data["recentJob"]);
+				setupcomingInterview(res.data["Interview"]);
 			})
 			.catch((err) => {
 				console.log("!", err);
@@ -378,7 +382,53 @@ export default function OrganizationDashboard() {
 										<div className="p-6 pt-0">
 											{upcomingInterview && upcomingInterview.length > 0 ? (
 												<div className="max-h-[330px] overflow-y-auto">
-													{sklLoad
+													{upcomingInterview.slice(0, 5).map((data, i) => (
+														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2" key={i}>
+															<div className="flex w-[45%] items-center pr-2">
+																<Image
+																	src={userImg}
+																	alt="User"
+																	className="rounded-full object-cover"
+																	width={30}
+																	height={30}
+																/>
+																<div className="grow pl-2">
+																	<h5 className="text-sm font-bold">
+																		{data["applicant"]["user"]["first_name"]}&nbsp;
+																		{data["applicant"]["user"]["last_name"]}
+																	</h5>
+																	<p className="text-[12px] text-darkGray">{data["job"]["job_title"]}</p>
+																</div>
+															</div>
+															<div className="w-[30%] pr-2">
+																<h5 className="text-sm font-bold">
+																	{moment(data["date_time_from"]).format("DD MMM YYYY")}
+																</h5>
+																<p className="text-[12px] text-darkGray">
+																	{moment(data["date_time_from"]).format(" h:mm a")}
+																</p>
+															</div>
+															<div className="w-[20%]">
+																<Button
+																	btnStyle="outlined"
+																	label="View Profile"
+																	loader={false}
+																	btnType="button"
+																	handleClick={() => {
+																		setjobid(data["job"]["refid"]);
+																		setcanid(data["applicant"]["user"]["erefid"]);
+																		router.push("applicants/detail");
+																	}}
+																/>
+															</div>
+															<div className="w-[5%] text-center">
+																<button type="button" className="text-lightGray">
+																	<i className="fa-solid fa-ellipsis-vertical"></i>
+																</button>
+															</div>
+														</div>
+													))}
+													{/* {sklLoad
 														? Array(6).fill(
 																<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2">
 																	<div className="flex w-[45%] items-center pr-2">
@@ -436,7 +486,7 @@ export default function OrganizationDashboard() {
 																		<Skeleton width={6} height={20} />
 																	</div>
 																</div>
-														  )}
+														  )} */}
 												</div>
 											) : (
 												<div className="py-8 text-center">
@@ -556,9 +606,14 @@ export default function OrganizationDashboard() {
 																</div>
 														  )} */}
 
-													{recentJob.slice(0, 5).map((data, i) => (
+													{/* {recentJob.slice(0, 5).map((data, i) => (
 														<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
 															<JobCard_1 data={data} handleClick={() => router.push("jobs/active")} />
+														</div>
+													))} */}
+													{recentJob.slice(0, 5).map((data, i) => (
+														<div className="m-[15px]" key={i}>
+															<JobCard_2 job={data} dashbaord={true} />
 														</div>
 													))}
 												</div>
@@ -836,51 +891,6 @@ export default function OrganizationDashboard() {
 					</div>
 				</div>
 			</main>
-			<Transition.Root show={previewPopup} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setPreviewPopup}>
-					<Transition.Child
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-					</Transition.Child>
-
-					<div className="fixed inset-0 z-10 overflow-y-auto capitalize">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-								enterTo="opacity-100 translate-y-0 sm:scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							>
-								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
-									<div className="px-6 py-3 text-right">
-										<button
-											type="button"
-											className="leading-none hover:text-gray-700"
-											onClick={() => setPreviewPopup(false)}
-										>
-											<i className="fa-solid fa-xmark"></i>
-										</button>
-									</div>
-									<PreviewJob />
-									<div className="px-8 py-4">
-										<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
-						</div>
-					</div>
-				</Dialog>
-			</Transition.Root>
 		</>
 	);
 }

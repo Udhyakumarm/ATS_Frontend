@@ -9,10 +9,10 @@ import integrationIcon from "/public/images/icons/integration.png";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import { useSession } from "next-auth/react";
-import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import VCard from "@/components/vendor/vcard";
-import { useUserStore } from "@/utils/code";
+import { useNotificationStore, useUserStore } from "@/utils/code";
 import moment from "moment";
 
 export default function Vendors() {
@@ -66,6 +66,8 @@ export default function Vendors() {
 	const [aedate, setaedate] = useState("");
 
 	const [nvlink, setnvlink] = useState("");
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	function checkFormNewVendor() {
 		return (
@@ -127,6 +129,11 @@ export default function Vendors() {
 				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 				addActivityLog(axiosInstanceAuth2, aname2);
+
+				let title = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${userState[0]["email"]}) `;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
 
 				setagreement(null);
 				setcname("");
@@ -197,12 +204,17 @@ export default function Vendors() {
 			.then(async (res) => {
 				console.log("!", res.data);
 
-				if (res.data.message === "Update Successfully") {
+				if (res.data.message === "Onboard Successfully") {
 					let aname2 = `Vendor ${vid} Onboard by ${userState[0]["name"]} (${
 						userState[0]["email"]
 					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 					addActivityLog(axiosInstanceAuth2, aname2);
+
+					let title = `Vendor ${vid} Onboard by ${userState[0]["name"]} (${userState[0]["email"]})`;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
 				}
 
 				toastcomp(res.data.message, "success");
@@ -229,6 +241,11 @@ export default function Vendors() {
 					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 					addActivityLog(axiosInstanceAuth2, aname2);
+
+					let title = `Vendor ${vid} Activate by ${userState[0]["name"]} (${userState[0]["email"]}) `;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
 				}
 
 				if (res.data.message === "Update Successfully" && !activate) {
@@ -237,6 +254,11 @@ export default function Vendors() {
 					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 					addActivityLog(axiosInstanceAuth2, aname2);
+
+					let title = `Vendor ${vid} Deactivate by ${userState[0]["name"]} (${userState[0]["email"]}) `;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
 				}
 
 				toastcomp(res.data.message, "success");
@@ -511,7 +533,12 @@ export default function Vendors() {
 													) : (
 														<>
 															<div className="mb-6">
-																<FormField fieldType="input" inputType="search" placeholder="Search vendors..." icon={(<i className="fa-solid fa-search"></i>)} />
+																<FormField
+																	fieldType="input"
+																	inputType="search"
+																	placeholder="Search vendors..."
+																	icon={<i className="fa-solid fa-search"></i>}
+																/>
 															</div>
 															<div className="mx-[-15px] flex flex-wrap">
 																{pvendors.map((data, i) => (

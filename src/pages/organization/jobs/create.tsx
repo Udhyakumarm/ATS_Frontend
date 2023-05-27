@@ -16,14 +16,14 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
-import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import successGraphic from "public/images/success-graphic.png";
 import Link from "next/link";
 import moment from "moment";
-import { useUserStore } from "@/utils/code";
+import { useNotificationStore, useUserStore } from "@/utils/code";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -210,25 +210,32 @@ export default function JobsCreate() {
 	const [jcollaborator, setjcollaborator] = useState(false);
 	const [jtm, setjtm] = useState([]);
 
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
 	async function addJob(formData, type) {
 		await axiosInstanceAuth2
 			.post(`/job/create-job/`, formData)
 			.then(async (res) => {
 				toastcomp("Job Created Successfully", "success");
 				let aname = "";
+				let title = "";
 				if (type === "active") {
 					aname = `${jtitle} Job is created & published by ${userState[0]["name"]} (${
 						userState[0]["email"]
 					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+					title = `${userState[0]["name"]} (${userState[0]["email"]}) has posted a new Job`;
 				}
 
 				if (type === "draft") {
 					aname = `${jtitle} Job is created & drafted by ${userState[0]["name"]} (${
 						userState[0]["email"]
 					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+					title = `${userState[0]["name"]} (${userState[0]["email"]}) has drafted Job`;
 				}
 
 				addActivityLog(axiosInstanceAuth2, aname);
+				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"]);
+				toggleLoadMode(true);
 				router.push(`${type}/`);
 			})
 			.catch((err) => {

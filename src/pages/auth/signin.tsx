@@ -103,6 +103,26 @@ export default function AuthSignIn({ providers }: any) {
 					toastcomp("Log Not Add", "error");
 				}
 
+				try {
+					let title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
+					// let notification_type = `${}`
+
+					await axiosInstance2
+						.post("/chatbot/notification/unauth/", {
+							email: loginInfo.email,
+							title: title
+							// notification_type: notification_type
+						})
+						.then((res) => {
+							toastcomp("Notify Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Notify Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Notify Not Add", "error");
+				}
+
 				await signIn("credentials", {
 					email: loginInfo.email,
 					password: loginInfo.password,

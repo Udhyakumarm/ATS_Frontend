@@ -9,7 +9,8 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import { useUserStore } from "@/utils/code";
+import { useNotificationStore, useUserStore } from "@/utils/code";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -50,6 +51,54 @@ export default function OrgTopBar() {
 		loadIntegrations();
 	}, [router, session]);
 
+	const [token, settoken] = useState("");
+	const [count, setcount] = useState(0);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	async function loadNotificationCount() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/get-notification-count/`)
+			.then(async (res) => {
+				// console.log("!", res.data);
+				setcount(res.data.length);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	async function notification() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/read-notification-count/`)
+			.then(async (res) => {
+				// console.log("!", res.data);
+				setcount(res.data.length);
+				router.push("/organization/notifications");
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	const load = useNotificationStore((state: { load: any }) => state.load);
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
+	useEffect(() => {
+		if ((token && token.length > 0) || load) {
+			loadNotificationCount();
+			if (load) toggleLoadMode(false);
+		}
+	}, [token, load]);
+
 	return (
 		<>
 			<div
@@ -66,12 +115,15 @@ export default function OrgTopBar() {
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setIsCalendarOpen(true)}>
 					<i className="fa-regular fa-calendar-days text-[20px]"></i>
 				</button>
-				<Link href={`/organization/notifications`} className="relative mr-6 uppercase text-darkGray dark:text-gray-400">
+				<div
+					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
+					onClick={() => notification()}
+				>
 					<i className="fa-regular fa-bell text-[20px]"></i>
 					<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
-						99+
+						{count}
 					</span>
-				</Link>
+				</div>
 				<button
 					type="button"
 					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"

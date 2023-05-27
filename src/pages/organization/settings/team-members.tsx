@@ -9,10 +9,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import { useSession } from "next-auth/react";
-import { addActivityLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import moment from "moment";
-import { useUserStore } from "@/utils/code";
+import { useUserStore, useNotificationStore } from "@/utils/code";
 
 const people = [{ name: "Recruiter" }, { name: "Collaborator" }, { name: "Hiring Manager" }];
 
@@ -56,6 +56,8 @@ export default function TeamMembers() {
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
 	async function loadTeamMember() {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
@@ -85,6 +87,11 @@ export default function TeamMembers() {
 				} (${userState[0]["email"]}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
+
+				let title = `New User ${name} (${oemail}) as ${role["name"]} joined in our Organization by ${userState[0]["name"]} (${userState[0]["email"]})`;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
 
 				setAddTeam(false);
 				setname("");
@@ -119,6 +126,11 @@ export default function TeamMembers() {
 				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
+
+				let title = `Organization User role Updated to ${res.data["role"]} by ${userState[0]["name"]} (${userState[0]["email"]})`;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
 
 				loadTeamMember();
 			})

@@ -6,9 +6,9 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
-import { axiosInstance2, axiosInstanceAuth, axiosInstanceAuth22 } from "@/pages/api/axiosApi";
+import { addNotifyLog, axiosInstance2, axiosInstanceAuth, axiosInstanceAuth22 } from "@/pages/api/axiosApi";
 import { useEffect, useState, Fragment } from "react";
-import { useApplicantStore } from "@/utils/code";
+import { useApplicantStore, useNotificationStore, useUserStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
 import { Tab, Transition } from "@headlessui/react";
@@ -96,18 +96,18 @@ export default function ApplicantsDetail() {
 	}
 
 	async function loadAIInterviewQuestion() {
-		setailoader(true);
-		await axiosInstanceAuth21
-			.get(`/chatbot/interview-question-generator/${canid}/`)
-			.then(async (res) => {
-				setaires(res.data["res"]);
-				setaiquestion(res.data["res"].split("\n"));
-				setailoader(false);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				setailoader(false);
-			});
+		// setailoader(true);
+		// await axiosInstanceAuth21
+		// 	.get(`/chatbot/interview-question-generator/${canid}/`)
+		// 	.then(async (res) => {
+		// 		setaires(res.data["res"]);
+		// 		setaiquestion(res.data["res"].split("\n"));
+		// 		setailoader(false);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log("!", err);
+		// 		setailoader(false);
+		// 	});
 	}
 
 	useEffect(() => {
@@ -224,6 +224,10 @@ export default function ApplicantsDetail() {
 			});
 	}
 
+	const userState = useUserStore((state: { user: any }) => state.user);
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
 	async function createFeedback(status) {
 		const fdata = new FormData();
 		fdata.append("status", status);
@@ -231,6 +235,11 @@ export default function ApplicantsDetail() {
 			.post(`/job/feedback/${aid}/create/`, fdata)
 			.then((res) => {
 				toastcomp("Feedback Created", "success");
+				let title = `Feedback Added By ${userState[0]["name"]} (${userState[0]["email"]}) to Applicant ${canid})`;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
+
 				seteditfeedback(false);
 				setfeedbackreload(true);
 			})
@@ -454,8 +463,8 @@ export default function ApplicantsDetail() {
 											<div className="mr-4">
 												<Listbox value={selectedPerson} onChange={setSelectedPerson}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
-														<span className="py-2 px-3">Move Applicant</span>
-														<i className="fa-solid fa-chevron-down ml-2 border-l py-2 px-3 text-sm"></i>
+														<span className="px-3 py-2">Move Applicant</span>
+														<i className="fa-solid fa-chevron-down ml-2 border-l px-3 py-2 text-sm"></i>
 													</Listbox.Button>
 													<Transition
 														enter="transition duration-100 ease-out"
@@ -505,7 +514,7 @@ export default function ApplicantsDetail() {
 													{({ selected }) => (
 														<button
 															className={
-																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																" " +
 																(selected
 																	? "border-primary text-primary"
@@ -520,7 +529,7 @@ export default function ApplicantsDetail() {
 													{({ selected }) => (
 														<button
 															className={
-																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																" " +
 																(selected
 																	? "border-primary text-primary"
@@ -535,7 +544,7 @@ export default function ApplicantsDetail() {
 													{({ selected }) => (
 														<button
 															className={
-																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																" " +
 																(selected
 																	? "border-primary text-primary"
@@ -550,7 +559,7 @@ export default function ApplicantsDetail() {
 													{({ selected }) => (
 														<button
 															className={
-																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																" " +
 																(selected
 																	? "border-primary text-primary"
@@ -565,7 +574,7 @@ export default function ApplicantsDetail() {
 													{({ selected }) => (
 														<button
 															className={
-																"border-b-4 py-3 px-6 font-semibold focus:outline-none" +
+																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																" " +
 																(selected
 																	? "border-primary text-primary"
@@ -606,7 +615,7 @@ export default function ApplicantsDetail() {
 															></iframe>
 														))}
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													<div className="mx-[-15px] flex flex-wrap">
 														{Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
@@ -615,11 +624,11 @@ export default function ApplicantsDetail() {
 														)}
 													</div>
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													{!currentUserFeedback && (
 														<>
 															<div className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0">
-																<div className="mb-8 flex w-[280px] items-center rounded-tr-[30px] rounded-br-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																<div className="mb-8 flex w-[280px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
 																	<div
 																		className="group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]"
 																		onClick={(e) => {
@@ -635,7 +644,7 @@ export default function ApplicantsDetail() {
 																		></i>
 																		<p
 																			className={
-																				"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																				"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																				" " +
 																				"hidden group-hover:block group-hover:text-green-500"
 																			}
@@ -658,7 +667,7 @@ export default function ApplicantsDetail() {
 																		></i>
 																		<p
 																			className={
-																				"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																				"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																				" " +
 																				"hidden group-hover:block group-hover:text-yellow-500"
 																			}
@@ -681,7 +690,7 @@ export default function ApplicantsDetail() {
 																		></i>
 																		<p
 																			className={
-																				"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																				"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																				" " +
 																				"hidden group-hover:block group-hover:text-primary"
 																			}
@@ -704,7 +713,7 @@ export default function ApplicantsDetail() {
 																		></i>
 																		<p
 																			className={
-																				"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																				"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																				" " +
 																				"hidden group-hover:block group-hover:text-red-500"
 																			}
@@ -723,7 +732,7 @@ export default function ApplicantsDetail() {
 																className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0"
 																key={i}
 															>
-																<div className="mb-8 flex w-[280px] items-center rounded-tr-[30px] rounded-br-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																<div className="mb-8 flex w-[280px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
 																	{data["status"] !== "Hire" ? (
 																		<div className="group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]">
 																			<i
@@ -735,7 +744,7 @@ export default function ApplicantsDetail() {
 																			></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"hidden group-hover:block group-hover:text-green-500"
 																				}
@@ -748,7 +757,7 @@ export default function ApplicantsDetail() {
 																			<i className={"fa-solid fa-user text-sm" + " " + "text-green-500"}></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"block bg-gradDarkBlue text-white"
 																				}
@@ -769,7 +778,7 @@ export default function ApplicantsDetail() {
 																			></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
@@ -782,7 +791,7 @@ export default function ApplicantsDetail() {
 																			<i className={"fa-solid fa-circle-pause text-sm" + " " + "text-yellow-500"}></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"block bg-gradDarkBlue text-white"
 																				}
@@ -803,7 +812,7 @@ export default function ApplicantsDetail() {
 																			></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
@@ -816,7 +825,7 @@ export default function ApplicantsDetail() {
 																			<i className={"fa-solid fa-thumbs-up text-sm" + " " + "text-primary"}></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"block bg-gradDarkBlue text-white"
 																				}
@@ -837,7 +846,7 @@ export default function ApplicantsDetail() {
 																			></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
@@ -850,7 +859,7 @@ export default function ApplicantsDetail() {
 																			<i className={"fa-solid fa-thumbs-down text-sm" + " " + "text-red-500"}></i>
 																			<p
 																				className={
-																					"absolute left-[50%] bottom-[-22px] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
 																					" " +
 																					"block bg-gradDarkBlue text-white"
 																				}
@@ -866,7 +875,7 @@ export default function ApplicantsDetail() {
 																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
 																			<label
 																				htmlFor="addFeedback"
-																				className="block bg-lightBlue py-2 px-4 font-bold dark:bg-gray-700"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
 																			>
 																				<span className="flex items-center">
 																					Feedback
@@ -887,7 +896,7 @@ export default function ApplicantsDetail() {
 																				name="addFeedback"
 																				id="addFeedback"
 																				className={
-																					"dark:placeholder w-full resize-none border-0 py-2 px-4 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
 																					" " +
 																					"min-h-[100px]"
 																				}
@@ -927,7 +936,7 @@ export default function ApplicantsDetail() {
 																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
 																			<label
 																				htmlFor="addFeedback"
-																				className="block bg-lightBlue py-2 px-4 font-bold dark:bg-gray-700"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
 																			>
 																				<span className="flex items-center">Feedback</span>
 																			</label>
@@ -935,7 +944,7 @@ export default function ApplicantsDetail() {
 																				name="addFeedback"
 																				id="addFeedback"
 																				className={
-																					"dark:placeholder w-full resize-none border-0 py-2 px-4 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
 																					" " +
 																					"min-h-[100px]"
 																				}
@@ -1059,8 +1068,8 @@ export default function ApplicantsDetail() {
 													</div>
 													)} */}
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
-													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:top-0 before:left-[80px] before:h-[100%] before:w-[1px] before:bg-slate-200 before:bg-gray-600 before:content-['']">
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
 														<div className="flex items-start">
 															<div className="w-[80px] px-2 py-4">
 																<p className="text-sm text-darkGray dark:text-gray-400">
@@ -1075,7 +1084,9 @@ export default function ApplicantsDetail() {
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			By - Steve Paul : Collaborator
+																		</p>
 																	</article>
 																</div>
 															</div>
@@ -1094,13 +1105,17 @@ export default function ApplicantsDetail() {
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			By - Steve Paul : Collaborator
+																		</p>
 																	</article>
 																	<article className="py-4">
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			By - Steve Paul : Collaborator
+																		</p>
 																	</article>
 																</div>
 															</div>
@@ -1119,14 +1134,16 @@ export default function ApplicantsDetail() {
 																		<h6 className="mb-2 text-sm font-bold">
 																			Applicant has been shifted to new Job -Software Engineer
 																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">By - Steve Paul : Collaborator</p>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			By - Steve Paul : Collaborator
+																		</p>
 																	</article>
 																</div>
 															</div>
 														</div>
 													</div>
 												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)] py-6 px-8"}>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													<div>
 														<div className="mx-auto mb-4 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
 															<Image src={favIcon} alt="Somhako" width={30} />
@@ -1136,21 +1153,21 @@ export default function ApplicantsDetail() {
 														</p>
 														<div className="mx-auto w-full max-w-[650px]">
 															<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
-																<div className="py-4 px-10">
+																<div className="px-10 py-4">
 																	{aiquestion &&
 																		aiquestion.map((data, i) => (
 																			<div
-																				className="my-2 rounded border bg-white py-2 px-4 shadow-normal dark:border-gray-600 dark:bg-gray-700"
+																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-700"
 																				key={i}
 																			>
 																				<h5 className="text-sm text-darkGray dark:text-gray-400">{data}</h5>
 																			</div>
 																		))}
 																</div>
-																<div className="border-t py-4 px-10 dark:border-t-gray-600">
+																<div className="border-t px-10 py-4 dark:border-t-gray-600">
 																	<button
 																		type="button"
-																		className="flex items-center justify-center rounded border border-slate-300 py-2 px-3 text-sm hover:bg-primary hover:text-white"
+																		className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
 																		disabled={ailoader}
 																		onClick={() => {
 																			setaiquestion([]);

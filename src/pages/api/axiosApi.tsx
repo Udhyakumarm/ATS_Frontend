@@ -65,3 +65,62 @@ export async function addActivityLog(axiosInstanceAuth2: any, aname: any) {
 			toastcomp("Log Not Add", "error");
 		});
 }
+
+export async function addNotifyLog(axiosInstanceAuth2: any, title: any, type: any) {
+	const fd = new FormData();
+	fd.append("title", title);
+	fd.append("notification_type", type);
+	await axiosInstanceAuth2
+		.post(`/chatbot/notification/`, fd)
+		.then((res: any) => {
+			toastcomp("Notify Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("Notify Not Add", "error");
+		});
+}
+
+export async function addNotifyJobLog(axiosInstanceAuth2: any, title: any, type: any, refid: any) {
+	const fd = new FormData();
+	fd.append("title", title);
+	fd.append("notification_type", type);
+	fd.append("refid", refid);
+	await axiosInstanceAuth2
+		.post(`/chatbot/notification/`, fd)
+		.then((res: any) => {
+			toastcomp("Notify Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("Notify Not Add", "error");
+		});
+}
+
+export async function addNotifyApplicantLog(axiosInstanceAuth2: any, title: any, type: any, arefid: any) {
+	const fd = new FormData();
+	fd.append("title", title);
+	fd.append("notification_type", type);
+	fd.append("arefid", arefid);
+	await axiosInstanceAuth2
+		.post(`/chatbot/notification/`, fd)
+		.then((res: any) => {
+			toastcomp("Notify Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("Notify Not Add", "error");
+		});
+}
+
+export async function addNotifyInterviewLog(axiosInstanceAuth2: any, title: any, type: any, irefid: any) {
+	const fd = new FormData();
+	fd.append("title", title);
+	fd.append("notification_type", type);
+	fd.append("irefid", irefid);
+	await axiosInstanceAuth2
+		.post(`/chatbot/notification/`, fd)
+		.then((res: any) => {
+			toastcomp("Notify Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("Notify Not Add", "error");
+		});
+}
