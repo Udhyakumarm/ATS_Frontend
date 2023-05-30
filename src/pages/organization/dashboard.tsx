@@ -509,7 +509,7 @@ export default function OrganizationDashboard() {
 							)}
 							{check4 ? (
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800 relative overflow-hidden">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-xl font-bold">To Do List</h2>
 											<aside>
@@ -571,6 +571,12 @@ export default function OrganizationDashboard() {
 													<p className="text-sm text-darkGray">Nothing In To Do List</p>
 												</div>
 											)}
+										</div>
+										<div className="absolute z-[1] left-0 top-0 w-full h-full bg-[rgba(0,0,0,0.2)] p-6 flex items-center justify-center">
+											<div className="text-white p-6 rounded-normal text-center bg-[rgba(0,0,0,0.5)] transition hover:scale-[1.05]">
+												<h3 className="mb-1 font-extrabold text-xl">Coming Soon</h3>
+												<p className="text-[12px]">We are working on this and it will ready for you soon.</p>
+											</div>
 										</div>
 									</div>
 								</div>

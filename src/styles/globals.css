@@ -265,6 +265,43 @@ input[type=number] {
   background-position: center;
   min-height: 300px;
 }
+.bg_img_features {
+  background-image: url("../../public/images/home_cover.png");
+  background-size: cover;
+  background-position: center;
+}
+.bg_img_features__headings .slick-current .item {
+  border-bottom-width: 2px;
+  border-bottom-color: #000;
+}
+.bg_img_features__headings .slick-current h6 {
+  color: #000;
+}
+.bg_img_features__headings .slick-prev {
+  left: 0;
+}
+.bg_img_features__headings .slick-next {
+  right: 0;
+}
+.bg_img_features__headings .slick-arrow::before,
+.testimonials .slick-arrow::before {
+  display: none;
+}
+.bg_img_features__headings .slick-arrow,
+.testimonials .slick-arrow {
+  z-index: 1;
+  font-size: 15px;
+  width: 30px;
+  height: 30px;
+  color: black !important;
+  background: #fff !important;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+  border-radius: 40px;
+}
+.bg_img_features__headings .slick-arrow.slick-disabled,
+.testimonials .slick-arrow.slick-disabled {
+  opacity: 0.7;
+}
 
 .dark span.react-loading-skeleton {
   background-color: #d7dee8;
