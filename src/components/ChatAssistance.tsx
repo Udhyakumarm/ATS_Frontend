@@ -124,6 +124,7 @@ export default function ChatAssistance(props: any) {
 			const formData2 = new FormData();
 			formData2.append("summary", intername);
 			formData2.append("desc", interdesc);
+			console.log("$", moment(`${interdate} ${interstime}`).format());
 			formData2.append("stime", moment(`${interdate} ${interstime}`).format());
 			formData2.append("etime", moment(`${interdate} ${interetime}`).format());
 			await axiosInstanceAuth2
@@ -229,7 +230,7 @@ export default function ChatAssistance(props: any) {
 			></div>
 			<div
 				className={
-					`fixed right-5 bottom-5 z-[66]` + " " + (maximize ? "w-[calc(100%-2.5rem)] max-w-[1920px]" : "w-auto")
+					`fixed bottom-5 right-5 z-[66]` + " " + (maximize ? "w-[calc(100%-2.5rem)] max-w-[1920px]" : "w-auto")
 				}
 			>
 				<div
@@ -266,14 +267,14 @@ export default function ChatAssistance(props: any) {
 							</button>
 						</aside>
 					</div>
-					<div className="h-[calc(100%-134px)] overflow-y-auto py-2 px-6" ref={messageEl}>
+					<div className="h-[calc(100%-134px)] overflow-y-auto px-6 py-2" ref={messageEl}>
 						<ul className="w-full text-sm">
 							{msgs &&
 								msgs.map((data, i) => (
 									<>
 										<div key={i}>
 											<li className="my-2 ml-auto max-w-[90%] text-right">
-												<div className="mb-1 inline-block rounded rounded-tl-normal rounded-br-normal bg-white py-2 px-4 text-left font-bold shadow dark:bg-gray-700">
+												<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-700">
 													{data["message"]}
 												</div>
 												<div className="text-[10px] text-darkGray dark:text-gray-100">
@@ -282,12 +283,12 @@ export default function ChatAssistance(props: any) {
 											</li>
 											<li className="my-2 max-w-[90%]">
 												{!data["response"].includes("I suggest Interview can been Schedule at") ? (
-													<div className="mb-1 inline-block rounded rounded-tr-normal rounded-bl-normal bg-gradDarkBlue py-2 px-4 text-white shadow">
+													<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
 														{data["response"]}
 													</div>
 												) : (
 													<div className="mb-1 inline-block">
-														<div className="mb-2 rounded rounded-tr-normal rounded-bl-normal bg-gradDarkBlue py-2 px-4 text-white shadow">
+														<div className="mb-2 rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
 															{data["response"]}
 														</div>
 														<button

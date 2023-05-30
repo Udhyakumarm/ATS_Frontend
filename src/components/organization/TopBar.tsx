@@ -65,8 +65,9 @@ export default function OrgTopBar() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadNotificationCount() {
-		await axiosInstanceAuth2
-			.get(`/chatbot/get-notification-count/`)
+		if(role === "Super Admin"){
+			await axiosInstanceAuth2
+			.get(`/chatbot/get-notification-count-admin/`)
 			.then(async (res) => {
 				// console.log("!", res.data);
 				setcount(res.data.length);
@@ -74,10 +75,36 @@ export default function OrgTopBar() {
 			.catch((err) => {
 				console.log("!", err);
 			});
+		}
+		else{
+			
+			await axiosInstanceAuth2
+				.get(`/chatbot/get-notification-count/`)
+				.then(async (res) => {
+					// console.log("!", res.data);
+					setcount(res.data.length);
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
+		}
 	}
 
 	async function notification() {
+		if(role === "Super Admin"){
 		await axiosInstanceAuth2
+			.get(`/chatbot/read-notification-count-admin/`)
+			.then(async (res) => {
+				// console.log("!", res.data);
+				setcount(res.data.length);
+				router.push("/organization/notifications");
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+		}
+		else{
+			await axiosInstanceAuth2
 			.get(`/chatbot/read-notification-count/`)
 			.then(async (res) => {
 				// console.log("!", res.data);
@@ -87,17 +114,18 @@ export default function OrgTopBar() {
 			.catch((err) => {
 				console.log("!", err);
 			});
+		}
 	}
 
 	const load = useNotificationStore((state: { load: any }) => state.load);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	useEffect(() => {
-		if ((token && token.length > 0) || load) {
+		if ((token && token.length > 0 && role && role.length > 0) || load) {
 			loadNotificationCount();
 			if (load) toggleLoadMode(false);
 		}
-	}, [token, load]);
+	}, [token,role, load]);
 
 	return (
 		<>

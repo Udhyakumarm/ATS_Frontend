@@ -65,7 +65,7 @@ function DaysOfMonth({
 			>
 				{day > 50 && (
 					<div className="relative flex rounded-full ">
-						<div className={"absolute top-5 left-8 text-primary"}>•</div>
+						<div className={"absolute left-8 top-5 text-primary"}>•</div>
 					</div>
 				)}
 				{day > 50 ? day - 100 : day}
@@ -154,14 +154,14 @@ function EventCard({
 						<Link
 							href={meetingLink}
 							target="_blank"
-							className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-[3px] px-3 text-[12px] leading-normal text-white"
+							className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-[3px] text-[12px] leading-normal text-white"
 						>
 							Meet
 						</Link>
 						<Link
 							href={calendarLink}
 							target="_blank"
-							className="inline-block rounded py-[3px] px-3 text-[12px] leading-normal text-gradDarkBlue"
+							className="inline-block rounded px-3 py-[3px] text-[12px] leading-normal text-gradDarkBlue"
 						>
 							Calendar
 						</Link>
@@ -421,7 +421,10 @@ export default function OrganizationCalendar({ integration }: any) {
 					googleCalendarIntegration: integration
 				})
 				.then((response) => response.data)
-				.then((data) => setEventList(data.items))
+				.then((data) => {
+					setEventList(data.items);
+					console.log("$", data);
+				})
 				.then(() => setEventsLoading(false)),
 		[integration]
 	);

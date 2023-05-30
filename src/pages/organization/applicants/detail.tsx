@@ -157,24 +157,24 @@ export default function ApplicantsDetail() {
 			});
 	}
 
-	useEffect(() => {
-		if (applicantdetail && applicantlist && refersh2 <= 0) {
-			for (let i = 0; i < applicantlist.length; i++) {
-				if (applicantlist[i]["user"]["erefid"] === applicantdetail["CandidateProfile"][0]["user"]["erefid"]) {
-					console.log("*", applicantlist[i]);
-					setjtitle(applicantlist[i]["job"]["job_title"]);
-					for (let j = 0; j < people.length; j++) {
-						if (people[j]["name"] === applicantlist[i]["status"]) {
-							setSelectedPerson(people[j]);
-							setaid(applicantlist[i]["arefid"]);
-							setrefersh2(1);
-						}
-					}
-				}
-			}
-		}
-		console.log(applicantdetail);
-	}, [applicantdetail, applicantlist, refersh2]);
+	// useEffect(() => {
+	// 	if (applicantdetail && applicantlist && refersh2 <= 0) {
+	// 		for (let i = 0; i < applicantlist.length; i++) {
+	// 			if (applicantlist[i]["user"]["erefid"] === applicantdetail["CandidateProfile"][0]["user"]["erefid"]) {
+	// 				console.log("*", applicantlist[i]);
+	// 				setjtitle(applicantlist[i]["job"]["job_title"]);
+	// 				for (let j = 0; j < people.length; j++) {
+	// 					if (people[j]["name"] === applicantlist[i]["status"]) {
+	// 						setSelectedPerson(people[j]);
+	// 						setaid(applicantlist[i]["arefid"]);
+	// 						setrefersh2(1);
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	console.log(applicantdetail);
+	// }, [applicantdetail, applicantlist, refersh2]);
 
 	useEffect(() => {
 		if (refersh2 != 0 && aid.length > 0) {

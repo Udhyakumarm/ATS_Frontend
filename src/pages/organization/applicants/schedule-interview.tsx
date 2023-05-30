@@ -14,6 +14,8 @@ import { useApplicantStore } from "@/utils/code";
 import { useSession } from "next-auth/react";
 import { axiosInstance } from "@/utils";
 import toastcomp from "@/components/toast";
+import { addNotifyLog, axiosInstance2, axiosInstanceAuth, axiosInstanceAuth22 } from "@/pages/api/axiosApi";
+import moment from "moment";
 
 export default function ScheduleInterview() {
 	const router = useRouter();
@@ -31,6 +33,20 @@ export default function ScheduleInterview() {
 	const [interDuration, setInterDuration] = useState("15");
 
 	const applicantDetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
+	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
+	const canid = useApplicantStore((state: { canid: any }) => state.canid);
+	const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
+
+	const [token, settoken] = useState("");
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const initialState: CalendarEvent = {
 		summary: "",
@@ -88,6 +104,7 @@ export default function ScheduleInterview() {
 					name,
 					email,
 					role,
+					id,
 					profile: IndividualProfiles.find((profile: any) => profile.user == id)?.profile
 				}))
 			);
@@ -129,6 +146,7 @@ export default function ScheduleInterview() {
 
 	const createEvent = async (e: { preventDefault: () => void }) => {
 		e.preventDefault();
+		console.log("@", newSchedule);
 
 		if (calendarIntegrations.length == 0) return;
 
@@ -137,8 +155,56 @@ export default function ScheduleInterview() {
 				googleCalendarIntegration: calendarIntegrations[0],
 				event: newSchedule
 			})
-			.then(() => {
+			.then(async (res) => {
 				toastcomp("Interview Scheduled, Invitations Sent", "success");
+				console.log("!", "res", res);
+				let link = res.data.data.hangoutLink;
+				let arefid = "";
+				let teamId = [];
+				let refid = jobid;
+				for (let i = 0; i < applicantlist.length; i++) {
+					if (applicantlist[i]["job"]["refid"] === refid && applicantlist[i]["user"]["erefid"] === canid) {
+						arefid = applicantlist[i]["arefid"];
+					}
+				}
+
+				console.log("@", link);
+				console.log("@", arefid);
+				console.log("@", refid);
+				console.log("@", interviewerList);
+
+				let att = newSchedule["attendees"];
+
+				for (let i = 0; i < interviewerList.length; i++) {
+					for (let j = 0; j < att.length; j++) {
+						if (att[j]["email"] === interviewerList[i]["email"]) {
+							teamId.push(interviewerList[i]["id"]);
+						}
+					}
+				}
+
+				console.log("@", teamId);
+
+				const fd = new FormData();
+				fd.append("teamID", teamId.join("|"));
+				fd.append("date_time_from", moment(`${newSchedule["start"]}`).format().toString());
+				fd.append("date_time_to", moment(`${newSchedule["end"]}`).format().toString());
+				if (newSchedule["summary"] && newSchedule["summary"].length > 0)
+					fd.append("interview_name", newSchedule["summary"]);
+				if (newSchedule["platform"] && newSchedule["platform"].length > 0)
+					fd.append("platform", newSchedule["platform"][0]["name"]);
+				if (newSchedule["description"] && newSchedule["description"].length > 0)
+					fd.append("description", newSchedule["description"]);
+				if (link && link.length > 0) fd.append("link", link);
+				await axiosInstanceAuth2
+					.post(`/job/create-interview/${arefid}/${refid}/`, fd)
+					.then(async (res) => {
+						toastcomp("Interview Scheduled In backend", "success");
+					})
+					.catch((err) => {
+						toastcomp("Interview Scheduled not In backend", "error");
+					});
+				router.push("/organization/interviews");
 			});
 	};
 
@@ -299,12 +365,11 @@ export default function ScheduleInterview() {
 												</button>
 											</div>
 										))}
-										{
-											assignedInterviewerList.length == 0 &&
+										{assignedInterviewerList.length == 0 && (
 											<>
 												<p className="text-sm text-darkGray dark:text-gray-400">No Interviewer Added</p>
 											</>
-										}
+										)}
 									</div>
 								</div>
 								<div className="w-full p-4 lg:max-w-[60%]">
@@ -341,7 +406,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min15"
 													className={
-														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
 														" " +
 														(interDuration == "15" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -359,7 +424,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min30"
 													className={
-														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
 														" " +
 														(interDuration == "30" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -377,7 +442,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min45"
 													className={
-														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
 														" " +
 														(interDuration == "45" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -395,7 +460,7 @@ export default function ScheduleInterview() {
 												<label
 													htmlFor="min60"
 													className={
-														"cursor-pointer border-r dark:border-gray-600 py-3 px-3 text-sm text-darkGray last:border-r-0 dark:text-gray-400" +
+														"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
 														" " +
 														(interDuration == "60" ? "bg-gradDarkBlue text-white dark:text-white" : "")
 													}
@@ -500,7 +565,7 @@ export default function ScheduleInterview() {
 												<thead>
 													<tr>
 														{TeamTableHead.map((item, i) => (
-															<th className="border-b py-2 px-3 text-left" key={i}>
+															<th className="border-b px-3 py-2 text-left" key={i}>
 																{item.title}
 															</th>
 														))}
@@ -523,10 +588,10 @@ export default function ScheduleInterview() {
 														})
 														.map(({ email, role, name, profile }, i) => (
 															<tr key={i}>
-																<td className="border-b py-2 px-3 text-sm">{name}</td>
-																<td className="border-b py-2 px-3 text-sm">{role}</td>
-																<td className="border-b py-2 px-3 text-sm">{email}</td>
-																<td className="border-b py-2 px-3 text-right">
+																<td className="border-b px-3 py-2 text-sm">{name}</td>
+																<td className="border-b px-3 py-2 text-sm">{role}</td>
+																<td className="border-b px-3 py-2 text-sm">{email}</td>
+																<td className="border-b px-3 py-2 text-right">
 																	<input
 																		type="checkbox"
 																		checked={assignedInterviewerList?.find((interviewer) => interviewer.email == email)}

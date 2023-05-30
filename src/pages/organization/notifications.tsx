@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { axiosInstanceAuth } from "../api/axiosApi";
 import moment from "moment";
-import { useNotificationStore } from "@/utils/code";
+import { useNotificationStore, useUserStore } from "@/utils/code";
 
 export default function OrgNotifications() {
 	const router = useRouter();
@@ -19,6 +19,7 @@ export default function OrgNotifications() {
 
 	const load = useNotificationStore((state: { load: any }) => state.load);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	const role = useUserStore((state: { role: any }) => state.role);
 
 	useEffect(() => {
 		if (session) {
@@ -31,23 +32,35 @@ export default function OrgNotifications() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadNotification() {
-		await axiosInstanceAuth2
-			.get(`/chatbot/list-notification/`)
-			.then(async (res) => {
-				console.log("!", res.data);
-				setnotification(res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-			});
+		if (role === "Super Admin") {
+			await axiosInstanceAuth2
+				.get(`/chatbot/list-notification-admin/`)
+				.then(async (res) => {
+					console.log("!", res.data);
+					setnotification(res.data);
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
+		} else {
+			await axiosInstanceAuth2
+				.get(`/chatbot/list-notification/`)
+				.then(async (res) => {
+					console.log("!", res.data);
+					setnotification(res.data);
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
+		}
 	}
 
 	useEffect(() => {
-		if ((token && token.length > 0) || load) {
+		if ((token && token.length > 0 && role && role.length > 0) || load) {
 			loadNotification();
 			if (load) toggleLoadMode();
 		}
-	}, [token, load]);
+	}, [token, role, load]);
 
 	return (
 		<>
