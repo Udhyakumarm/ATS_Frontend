@@ -100,6 +100,7 @@ input[type=number] {
   color: #727272;
   width: 20px;
   height: 30px;
+  opacity: 1;
 }
 
 .dashboardSlider button.slick-arrow:hover {
@@ -290,6 +291,7 @@ input[type=number] {
 .bg_img_features__headings .slick-arrow,
 .testimonials .slick-arrow {
   z-index: 1;
+  opacity: 1;
   font-size: 15px;
   width: 30px;
   height: 30px;

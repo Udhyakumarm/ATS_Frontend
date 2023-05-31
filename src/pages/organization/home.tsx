@@ -7,6 +7,9 @@ import "slick-carousel/slick/slick-theme.css";
 import Image from 'next/image';
 
 export default function HomePage() {
+    const [open, setOpen] = useState(0)
+    const [nav1, setNav1] = useState();
+    const [nav2, setNav2] = useState();
     const features = [
 		{
 			title: <>HR <br /> Assistance</>,
@@ -30,8 +33,16 @@ export default function HomePage() {
             graphic: '/videos/job-boards-integration.mp4'
 		},
     ]
-    const [nav1, setNav1] = useState();
-    const [nav2, setNav2] = useState();
+    const faq = [
+        {
+            title: 'lorem impsum',
+            desc: 'desc text is here'
+        },
+        {
+            title: 'lorem impsum 2',
+            desc: 'desc text is here 3'
+        }
+    ]
     const settings = {
 		dots: false,
 		arrows: false,
@@ -87,6 +98,9 @@ export default function HomePage() {
 			</button>
 		),
 	};
+    function handleAccordion(i:any) {
+        setOpen(i)
+    }
     return(
         <>
         <main>
@@ -243,6 +257,19 @@ export default function HomePage() {
             <section className='py-20 bg-white dark:bg-gray-900'>
                 <div className='container'>
                     <h2 className='font-extrabold text-[30px] sm:text-[40px] xl:text-[50px] mb-10'>FREQUENTLY ASKED <span className='textGrad'>QUESTION</span></h2>
+                    {faq.map((item, i) => (
+                    <div className='border' key={i} onClick={()=>handleAccordion(i)}>
+                        <div className='flex items-center justify-between py-2 px-4'>
+                            <h5 className='font-extrabold text-sm'>{item.title}</h5>
+                            <button type='button' className='bg-white dark:bg-gray-700 rounded-full border w-[30px] h-[30px] shadow-normal text-sm'>
+                                <i className={`fa-solid ${open == i ? 'fa-angle-up' : 'fa-angle-down' }`}></i>
+                            </button>
+                        </div>
+                        <div className={`p-4 border-t text-sm ${open == i ? 'block' : 'hidden' }`}>
+                            {item.desc}
+                        </div>
+                    </div>
+                    ))}
                 </div>
             </section>
         </main>
