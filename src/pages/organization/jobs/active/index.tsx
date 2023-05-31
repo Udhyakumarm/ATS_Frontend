@@ -15,7 +15,7 @@ import Link from "next/link";
 import FormField from "@/components/FormField";
 
 export default function JobsActive() {
-	const [sklLoad] = useState(true)
+	const [sklLoad] = useState(true);
 	const router = useRouter();
 
 	const { data: session } = useSession();
@@ -35,15 +35,21 @@ export default function JobsActive() {
 
 	useEffect(() => {
 		const getActiveJobs = async () => {
-			const newDraftedJobs = await axiosInstance.api
+			await axiosInstance.api
 				.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => response.data.map((job: any) => job.jobStatus === "Active" && job))
+				.then((response) => {
+					let arr = [];
+
+					response.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
+
+					setActiveJobs(arr);
+				})
 				.catch((error) => {
 					console.log({ error });
 					return null;
 				});
 
-			setActiveJobs(newDraftedJobs);
+			// setDraftedJobs(newDraftedJobs);
 		};
 
 		session && getActiveJobs();
@@ -84,42 +90,59 @@ export default function JobsActive() {
 						</div>
 						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
 							<div className="mb-6">
-								<FormField fieldType="input" inputType="search" placeholder="Search by job title" icon={(<i className="fa-solid fa-search"></i>)} />
+								<FormField
+									fieldType="input"
+									inputType="search"
+									placeholder="Search by job title"
+									icon={<i className="fa-solid fa-search"></i>}
+								/>
 							</div>
-							<div className="mx-[-15px] flex flex-wrap">
-								{
-									sklLoad
-									?
-									active && active.map(
-										(job: any, i) => job && (
-											<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]" key={i}>
-												<JobCard_2
-													key={i}
-													job={job}
-													// handleView={() => {
-													// 	router.push("/organization/jobs/active/" + job.refid);
-													// }}
-													axiosInstanceAuth2={axiosInstanceAuth2}
-												/>
-											</div>
-										)
-									)
-									:
-									Array(4).fill(
-										<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
-											<JobCard_2 sklLoad={true} />
-										</div>
-									)
-								}
-							</div>
-							<div className="text-center py-8 w-full max-w-[300px] mx-auto">
-								<div className="mb-6 p-2">
-									<Image src={noActivedata} alt="No Data" width={300} className="w-auto max-w-[200px] max-h-[200px] mx-auto" />
+							{active && active.length > 0 ? (
+								<div className="mx-[-15px] flex flex-wrap">
+									{sklLoad
+										? active.map(
+												(job: any, i) =>
+													job && (
+														<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]" key={i}>
+															<JobCard_2
+																key={i}
+																job={job}
+																// handleView={() => {
+																// 	router.push("/organization/jobs/active/" + job.refid);
+																// }}
+																axiosInstanceAuth2={axiosInstanceAuth2}
+															/>
+														</div>
+													)
+										  )
+										: Array(4).fill(
+												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+													<JobCard_2 sklLoad={true} />
+												</div>
+										  )}
 								</div>
-								<h5 className="text-lg font-semibold mb-4">No Active Jobs</h5>
-								<p className="text-sm text-darkGray mb-2">There are no Active Jobs , Post a New Job to manage active Jobs</p>
-								<Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">Post a New Job</Link>
-							</div>
+							) : (
+								<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+									<div className="mb-6 p-2">
+										<Image
+											src={noActivedata}
+											alt="No Data"
+											width={300}
+											className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+										/>
+									</div>
+									<h5 className="mb-4 text-lg font-semibold">No Active Jobs</h5>
+									<p className="mb-2 text-sm text-darkGray">
+										There are no Active Jobs , Post a New Job to manage active Jobs
+									</p>
+									<Link
+										href={"/organization/jobs/create"}
+										className="my-2 inline-block min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-[14px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue"
+									>
+										Post a New Job
+									</Link>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

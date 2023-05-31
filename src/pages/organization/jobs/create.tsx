@@ -44,7 +44,7 @@ const StickyLabel = ({ label }: any) => (
 	</h2>
 );
 
-export default function JobsCreate() {
+export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) {
 	const [sklLoad] = useState(true);
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
@@ -244,7 +244,13 @@ export default function JobsCreate() {
 	}
 
 	function publishJob() {
-		if (jtitle.length <= 0 || jfunction.length <= 0 || jdept.length <= 0 || !jcollaborator || !jrecruiter) {
+		if (
+			jtitle.length <= 0 ||
+			jfunction.length <= 0 ||
+			jdept.length <= 0 ||
+			(!jcollaborator && atsVersion === "enterprice") ||
+			(!jrecruiter && atsVersion === "enterprice")
+		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
 			}
@@ -254,10 +260,10 @@ export default function JobsCreate() {
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator) {
+			if (!jcollaborator && atsVersion === "enterprice") {
 				toastcomp("One Collaborator Required", "error");
 			}
-			if (!jrecruiter) {
+			if (!jrecruiter && atsVersion === "enterprice") {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -529,21 +535,36 @@ export default function JobsCreate() {
 		setjtm(arr);
 	}
 
+	function checkHideOrNot(title: any) {
+		if (atsVersion === "basic" && title === "Job Details") {
+			return true;
+		} else if (atsVersion === "premium" && (title === "Job Details" || title === "Team Members")) {
+			return true;
+		} else if (atsVersion === "enterprice") {
+			return true;
+		}
+	}
+
 	const tabHeading_1 = [
 		{
-			title: "Job Details"
+			title: "Job Details",
+			hide: checkHideOrNot("Job Details")
 		},
 		{
-			title: "Assessment"
+			title: "Assessment",
+			hide: checkHideOrNot("Assessment")
 		},
 		{
-			title: "Team Members"
+			title: "Team Members",
+			hide: checkHideOrNot("Team Members")
 		},
 		{
-			title: "Vendors"
+			title: "Vendors",
+			hide: checkHideOrNot("Vendors")
 		},
 		{
-			title: "Job Boards"
+			title: "Job Boards",
+			hide: checkHideOrNot("Job Boards")
 		}
 	];
 	const tabHeading_2 = [
@@ -608,7 +629,9 @@ export default function JobsCreate() {
 														" " +
 														(selected
 															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400")
+															: "border-transparent text-darkGray dark:text-gray-400") +
+														" " +
+														(!item.hide && "display-none")
 													}
 												>
 													{item.title}

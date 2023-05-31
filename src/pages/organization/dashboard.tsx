@@ -366,21 +366,23 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												</div>
 											)}
 										</div>
-										<div
-											className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md"
-											onClick={() => {
-												if (userRole === "Super Admin") {
-													router.push("/organization/settings/pricing");
-												} else {
-													toastcomp("Kindly Contact Your Super Admin", "warning");
-												}
-											}}
-										>
-											<div className="rounded-normal bg-[rgba(0,0,0,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
-												<h3 className="mb-1 text-xl font-extrabold">Hiring Analytics Is A Premium Feature</h3>
-												<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
+										{atsVersion === "basic" && (
+											<div
+												className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md"
+												onClick={() => {
+													if (userRole === "Super Admin") {
+														router.push("/organization/settings/pricing");
+													} else {
+														toastcomp("Kindly Contact Your Super Admin", "warning");
+													}
+												}}
+											>
+												<div className="rounded-normal bg-[rgba(0,0,0,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
+													<h3 className="mb-1 text-xl font-extrabold">Hiring Analytics Is A Premium Feature</h3>
+													<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
+												</div>
 											</div>
-										</div>
+										)}
 									</div>
 								</div>
 							) : (
