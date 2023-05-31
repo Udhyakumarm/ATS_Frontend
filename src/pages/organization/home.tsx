@@ -25,12 +25,12 @@ export default function HomePage() {
         {
 			title: <>Integrations</>,
 			desc: "Optimize engagement and communication by seamlessly integrating powerful plugins.",
-            graphic: '/videos/job-boards-integration.mp4'
+            graphic: '/videos/integration.mp4'
 		},
         {
 			title: <>Workflow <br /> Automation</>,
 			desc: "Enhanced efficiency through streamlined workflow automation",
-            graphic: '/videos/job-boards-integration.mp4'
+            img: '/images/feature_calendar.png'
 		},
     ]
     const faq = [
@@ -51,7 +51,8 @@ export default function HomePage() {
 		slidesToShow: 1,
 		slidesToScroll: 1,
         fade: true,
-	};
+        adaptiveHeight: true,
+	}
     const settings2 = {
         dots: false,
 		arrows: false,
@@ -97,10 +98,7 @@ export default function HomePage() {
 				<i className="fa-solid fa-chevron-right"></i>
 			</button>
 		),
-	};
-    function handleAccordion(i:any) {
-        setOpen(i)
-    }
+	}
     return(
         <>
         <main>
@@ -131,7 +129,14 @@ export default function HomePage() {
                             </div>
                         </div>
                         <div className="px-6 my-4 w-full lg:max-w-[50%] xl:max-w-[50%]">
-                            <ReactPlayer className="reactPlayer bg-white rounded-normal overflow-hidden" url={item.graphic} playing loop muted width={'100%'} height={item.height ? item.height : ''} />
+                            {
+                                item.graphic &&
+                                <ReactPlayer className="reactPlayer bg-white rounded-normal overflow-hidden" url={item.graphic} playing loop muted width={'100%'} height={item.height ? item.height : ''} />
+                            }
+                            {
+                                item.img &&
+                                <Image src={item.img} alt='Image' width={600} height={300} />
+                            }
                         </div>
                     </div>
                     ))}
@@ -174,10 +179,10 @@ export default function HomePage() {
                             <div className='flex flex-wrap items-center'>
                                 <div className='w-full lg:max-w-[40%] lg:pr-6 my-6 text-center lg:text-left'>
                                     <h4 className='mb-8 text-[30px] sm:text-[35px] xl:text-[40px] leading-none font-extrabold dark:text-black'>Vendors</h4>
-                                    <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p>
+                                    {/* <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p> */}
                                 </div>
                                 <div className='w-full lg:max-w-[60%] lg:pl-6'>
-                                    {/* <ReactPlayer className="rounded-normal overflow-hidden" url={'/videos/kanban-board.webm'} playing loop muted width={'100%'} height={'100%'} /> */}
+                                    <Image src={'/images/home_vendors.png'} alt='Vendors' width={800} height={400} />
                                 </div>
                             </div>
                         </div>
@@ -185,10 +190,10 @@ export default function HomePage() {
                             <div className='flex flex-wrap items-center'>
                                 <div className='w-full lg:max-w-[40%] lg:pr-6 my-6 text-center lg:text-left'>
                                     <h4 className='mb-8 text-[30px] sm:text-[35px] xl:text-[40px] leading-none font-extrabold dark:text-black'>Career Page</h4>
-                                    <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p>
+                                    {/* <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p> */}
                                 </div>
                                 <div className='w-full lg:max-w-[60%] lg:pl-6'>
-                                    {/* <ReactPlayer className="rounded-normal overflow-hidden" url={'/videos/kanban-board.webm'} playing loop muted width={'100%'} height={'100%'} /> */}
+                                    <Image src={'/images/home_career.png'} alt='Career Page' width={800} height={400} />
                                 </div>
                             </div>
                         </div>
@@ -196,10 +201,10 @@ export default function HomePage() {
                             <div className='flex flex-wrap items-center'>
                                 <div className='w-full lg:max-w-[40%] lg:pr-6 my-6 text-center lg:text-left'>
                                     <h4 className='mb-8 text-[30px] sm:text-[35px] xl:text-[40px] leading-none font-extrabold dark:text-black'>Internal Chat</h4>
-                                    <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p>
+                                    {/* <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p> */}
                                 </div>
                                 <div className='w-full lg:max-w-[60%] lg:pl-6'>
-                                    {/* <ReactPlayer className="rounded-normal overflow-hidden" url={'/videos/kanban-board.webm'} playing loop muted width={'100%'} height={'100%'} /> */}
+                                    <Image src={'/images/home_internal_chat.png'} alt='Internal Chat' width={800} height={400} />
                                 </div>
                             </div>
                         </div>
@@ -207,7 +212,7 @@ export default function HomePage() {
                             <div className='flex flex-wrap items-center'>
                                 <div className='w-full lg:max-w-[40%] lg:pr-6 my-6 text-center lg:text-left'>
                                     <h4 className='mb-8 text-[30px] sm:text-[35px] xl:text-[40px] leading-none font-extrabold dark:text-black'>User Access</h4>
-                                    <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p>
+                                    {/* <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p> */}
                                 </div>
                                 <div className='w-full lg:max-w-[60%] lg:pl-6'>
                                     {/* <ReactPlayer className="rounded-normal overflow-hidden" url={'/videos/kanban-board.webm'} playing loop muted width={'100%'} height={'100%'} /> */}
@@ -261,7 +266,7 @@ export default function HomePage() {
                     <div className='border' key={i}>
                         <div className='flex items-center justify-between py-2 px-4'>
                             <h5 className='font-extrabold text-sm'>{item.title}</h5>
-                            <button type='button' className='bg-white dark:bg-gray-700 rounded-full border w-[30px] h-[30px] shadow-normal text-sm' onClick={()=>handleAccordion(i)}>
+                            <button type='button' className='bg-white dark:bg-gray-700 rounded-full border w-[30px] h-[30px] shadow-normal text-sm' onClick={()=>setOpen(i)}>
                                 <i className={`fa-solid ${open == i ? 'fa-angle-up' : 'fa-angle-down' }`}></i>
                             </button>
                         </div>

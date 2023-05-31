@@ -645,7 +645,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 														</div>
 													))} */}
 													{recentJob.slice(0, 5).map((data, i) => (
-														<div className="m-[15px]" key={i}>
+														<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
 															<JobCard_2 job={data} dashbaord={true} />
 														</div>
 													))}

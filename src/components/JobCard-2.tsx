@@ -285,17 +285,17 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total Candidates</h5>
+					<div className="border-r px-[15px] mb-2 w-max">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total <br/>Candidates</h5>
+						<h6 className="text-lg font-semibold">50</h6>
+					</div> 
+					<div className="border-r px-[15px] mb-2 w-max">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active <br/>Candidates</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active Candidates</h5>
-						<h6 className="text-lg font-semibold">50</h6>
-					</div>
-					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job ID</h5>
-						<h6 className="clamp_1 break-all text-lg font-semibold">{job.refid}</h6>
+					<div className="px-[15px] mb-2 w-max">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job <br/>ID Number</h5>
+						<h6 className="clamp_1 break-all text-lg font-semibold w-[100px]">{job.refid}</h6>
 					</div>
 				</div>
 				<Button btnStyle="outlined" btnType="button" label="View Job" handleClick={() => setPreviewPopup(true)} />

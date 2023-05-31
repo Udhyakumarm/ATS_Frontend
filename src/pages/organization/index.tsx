@@ -11,7 +11,7 @@ import offerManageIcon from "/public/images/icons/offer-manage.png";
 import interviewsIcon from "/public/images/icons/interviews.png";
 
 export default function Organization({ atsVersion, userRole }: any) {
-	const [hover, setHover] = useState(false);
+	const [hover, setHover] = useState(0);
 	function blurOrNot(name: any) {
 		if (atsVersion === "basic") {
 			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
@@ -99,8 +99,8 @@ export default function Organization({ atsVersion, userRole }: any) {
 													<div className="absolute left-0 top-0 z-[1] h-full w-full bg-[rgba(0,0,0,0.2)]">
 														<div
 															className="absolute left-2 top-2"
-															onMouseEnter={() => setHover(true)}
-															onMouseLeave={() => setHover(false)}
+															onMouseEnter={() => setHover(i)}
+															onMouseLeave={() => setHover(0)}
 														>
 															<button
 																type="button"
@@ -108,7 +108,7 @@ export default function Organization({ atsVersion, userRole }: any) {
 															>
 																<i className="fa-solid fa-question"></i>
 															</button>
-															{hover && (
+															{hover == i && (
 																<div className="ml-8">
 																	<div className="absolute left-full top-[2px] w-max min-w-[100px] rounded bg-white px-2 py-1 text-center before:absolute before:left-[-4px] before:top-[6px] before:h-[9px] before:w-[9px] before:rotate-45 before:bg-white before:content-['']">
 																		<p className="text-[12px] font-bold uppercase">Upgrade your plan</p>
