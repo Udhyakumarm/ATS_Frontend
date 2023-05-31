@@ -35,6 +35,11 @@ let notificationStore: any = (set: any) => ({
 	toggleLoadMode: (id: any) => set(() => ({ load: id }))
 });
 
+let versionStore: any = (set: any) => ({
+	version: "basic",
+	setversion: (id: any) => set(() => ({ version: id }))
+});
+
 let carrierStore: any = (set: any) => ({
 	// auth: false, // Candiate Auth
 	cname: "", //Company Name
@@ -76,6 +81,9 @@ settingsStore = persist(settingsStore, { name: "user_settings" });
 notificationStore = devtools(notificationStore);
 notificationStore = persist(notificationStore, { name: "notificationStore" });
 
+versionStore = devtools(versionStore);
+versionStore = persist(versionStore, { name: "versionStore" });
+
 carrierStore = devtools(carrierStore);
 carrierStore = persist(carrierStore, { name: "carrier_settings" });
 
@@ -85,6 +93,7 @@ applicantStore = persist(applicantStore, { name: "applicantStore" });
 export const useUserStore = create(userStore);
 export const useDashboardStore = create(dashboardStore);
 export const useNotificationStore = create(notificationStore);
+export const useVersionStore = create(versionStore);
 export const useSettingsStore = create(settingsStore);
 export const useCarrierStore = create(carrierStore);
 export const useApplicantStore = create(applicantStore);

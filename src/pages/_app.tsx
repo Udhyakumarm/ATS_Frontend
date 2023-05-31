@@ -3,12 +3,13 @@ import Head from "next/head";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/Header";
 import { SessionProvider, signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "nprogress/nprogress.css";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
+import { useUserStore, useVersionStore } from "@/utils/code";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	useEffect(() => {
@@ -27,6 +28,12 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 		};
 	}, []);
 
+	const version = useVersionStore((state: { version: any }) => state.version);
+	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
+	const role = useUserStore((state: { role: any }) => state.role);
+
+	const [soon, setSoon] = useState(true);
+
 	return (
 		<>
 			<Toaster />
@@ -42,7 +49,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
 						<Component {...pageProps} />
 					) : (
 						<Auth>
-							<Component {...pageProps} />
+							<Component {...pageProps} atsVersion={version} userRole={role} upcomingSoon={soon} />
 						</Auth>
 					)}
 				</SessionProvider>
