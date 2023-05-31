@@ -9,7 +9,7 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import { useNotificationStore, useUserStore } from "@/utils/code";
+import { useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 const CalendarIntegrationOptions = [
@@ -30,6 +30,7 @@ export default function OrgTopBar() {
 	const type = useUserStore((state: { type: any }) => state.type);
 	const role = useUserStore((state: { role: any }) => state.role);
 	const user = useUserStore((state: { user: any }) => state.user);
+	const version = useVersionStore((state: { version: any }) => state.version);
 
 	const [integration, setIntegration] = useState([]);
 
@@ -65,19 +66,17 @@ export default function OrgTopBar() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadNotificationCount() {
-		if(role === "Super Admin"){
+		if (role === "Super Admin") {
 			await axiosInstanceAuth2
-			.get(`/chatbot/get-notification-count-admin/`)
-			.then(async (res) => {
-				// console.log("!", res.data);
-				setcount(res.data.length);
-			})
-			.catch((err) => {
-				console.log("!", err);
-			});
-		}
-		else{
-			
+				.get(`/chatbot/get-notification-count-admin/`)
+				.then(async (res) => {
+					// console.log("!", res.data);
+					setcount(res.data.length);
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
+		} else {
 			await axiosInstanceAuth2
 				.get(`/chatbot/get-notification-count/`)
 				.then(async (res) => {
@@ -91,29 +90,28 @@ export default function OrgTopBar() {
 	}
 
 	async function notification() {
-		if(role === "Super Admin"){
-		await axiosInstanceAuth2
-			.get(`/chatbot/read-notification-count-admin/`)
-			.then(async (res) => {
-				// console.log("!", res.data);
-				setcount(res.data.length);
-				router.push("/organization/notifications");
-			})
-			.catch((err) => {
-				console.log("!", err);
-			});
-		}
-		else{
+		if (role === "Super Admin") {
 			await axiosInstanceAuth2
-			.get(`/chatbot/read-notification-count/`)
-			.then(async (res) => {
-				// console.log("!", res.data);
-				setcount(res.data.length);
-				router.push("/organization/notifications");
-			})
-			.catch((err) => {
-				console.log("!", err);
-			});
+				.get(`/chatbot/read-notification-count-admin/`)
+				.then(async (res) => {
+					// console.log("!", res.data);
+					setcount(res.data.length);
+					router.push("/organization/notifications");
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
+		} else {
+			await axiosInstanceAuth2
+				.get(`/chatbot/read-notification-count/`)
+				.then(async (res) => {
+					// console.log("!", res.data);
+					setcount(res.data.length);
+					router.push("/organization/notifications");
+				})
+				.catch((err) => {
+					console.log("!", err);
+				});
 		}
 	}
 
@@ -125,7 +123,7 @@ export default function OrgTopBar() {
 			loadNotificationCount();
 			if (load) toggleLoadMode(false);
 		}
-	}, [token,role, load]);
+	}, [token, role, load]);
 
 	return (
 		<>
@@ -136,13 +134,20 @@ export default function OrgTopBar() {
 				<p className="bg-blue-500 p-1 text-white">
 					{type}&nbsp;{role}
 				</p>
+				<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
 				<ThemeChange />
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400">
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
-				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setIsCalendarOpen(true)}>
-					<i className="fa-regular fa-calendar-days text-[20px]"></i>
-				</button>
+				{version != "basic" && (
+					<button
+						type="button"
+						className="mr-6 text-darkGray dark:text-gray-400"
+						onClick={() => setIsCalendarOpen(true)}
+					>
+						<i className="fa-regular fa-calendar-days text-[20px]"></i>
+					</button>
+				)}
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
 					onClick={() => notification()}

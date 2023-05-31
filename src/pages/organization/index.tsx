@@ -10,49 +10,67 @@ import settingsIcon from "/public/images/icons/settings.png";
 import offerManageIcon from "/public/images/icons/offer-manage.png";
 import interviewsIcon from "/public/images/icons/interviews.png";
 
-export default function Organization() {
+export default function Organization({ atsVersion, userRole }: any) {
 	const [hover, setHover] = useState(false);
+	function blurOrNot(name: any) {
+		if (atsVersion === "basic") {
+			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
+		}
+		if (atsVersion === "premium") {
+			return name === "Offer Management" || name === "Vendors";
+		}
+		if (atsVersion === "enterprice") {
+			return false;
+		}
+	}
 	const quicklinks = [
 		{
 			name: "Dashboard",
 			icon: dashboardIcon,
-			link: "/organization/dashboard"
+			link: "/organization/dashboard",
+			blur: blurOrNot("Dashboard")
 		},
 		{
 			name: "Jobs",
 			icon: jobsIcon,
-			link: "/organization/jobs"
+			link: "/organization/jobs",
+			blur: blurOrNot("Jobs")
 		},
 		{
 			name: "Applicants",
 			icon: applicantsIcon,
-			link: "/organization/applicants"
+			link: "/organization/applicants",
+			blur: blurOrNot("Applicants")
 		},
 		{
 			name: "Offer Management",
 			icon: offerManageIcon,
 			link: "/organization/offer-management",
-			blur: true
+			blur: blurOrNot("Offer Management")
 		},
 		{
 			name: "Interviews",
 			icon: interviewsIcon,
-			link: "/organization/interviews"
+			link: "/organization/interviews",
+			blur: blurOrNot("Interviews")
 		},
 		{
 			name: "Analytics",
 			icon: analyticsIcon,
-			link: "/organization/analytics"
+			link: "/organization/analytics",
+			blur: blurOrNot("Analytics")
 		},
 		{
 			name: "Vendors",
 			icon: vendorsIcon,
-			link: "/organization/settings/vendors"
+			link: "/organization/settings/vendors",
+			blur: blurOrNot("Vendors")
 		},
 		{
 			name: "Settings",
 			icon: settingsIcon,
-			link: "/organization/settings"
+			link: "/organization/settings",
+			blur: blurOrNot("Settings")
 		}
 	];
 	return (
@@ -69,39 +87,44 @@ export default function Organization() {
 								{quicklinks.map((links, i) => (
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
-											href={links.blur ? 'javascript:void(0)' : links.link}
-											className=" flex w-full items-center rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600 relative overflow-hidden"
+											href={links.blur ? "javascript:void(0)" : links.link}
+											className=" relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 										>
 											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 												<Image src={links.icon} alt={links.name} width={30} height={30} />
 											</div>
 											<span className="text-lg font-bold">{links.name}</span>
-											{
-												links.blur
-												&&
+											{links.blur && (
 												<>
-													<div className="absolute z-[1] left-0 top-0 w-full h-full bg-[rgba(0,0,0,0.2)]">
+													<div className="absolute left-0 top-0 z-[1] h-full w-full bg-[rgba(0,0,0,0.2)]">
 														<div
-														className="absolute left-2 top-2"
-														onMouseEnter={()=> setHover(true)} onMouseLeave={()=> setHover(false)}
+															className="absolute left-2 top-2"
+															onMouseEnter={() => setHover(true)}
+															onMouseLeave={() => setHover(false)}
 														>
-															<button type="button" className="py-1 px-2 rounded text-[10px] font-bold text-center text-white bg-yellow-600">
+															<button
+																type="button"
+																className="rounded bg-yellow-600 px-2 py-1 text-center text-[10px] font-bold text-white"
+															>
 																<i className="fa-solid fa-question"></i>
 															</button>
-															{
-																hover
-																&&
+															{hover && (
 																<div className="ml-8">
-																	<div className="py-1 px-2 min-w-[100px] w-max rounded absolute left-full top-[2px] bg-white text-center before:content-[''] before:w-[9px] before:h-[9px] before:rotate-45 before:bg-white before:absolute before:top-[6px] before:left-[-4px]">
+																	<div className="absolute left-full top-[2px] w-max min-w-[100px] rounded bg-white px-2 py-1 text-center before:absolute before:left-[-4px] before:top-[6px] before:h-[9px] before:w-[9px] before:rotate-45 before:bg-white before:content-['']">
 																		<p className="text-[12px] font-bold uppercase">Upgrade your plan</p>
-																		<Link href={'#'} className="inline-block p-1 rounded text-[8px] font-bold bg-primary text-white">Learn More</Link>
+																		<Link
+																			href={"#"}
+																			className="inline-block rounded bg-primary p-1 text-[8px] font-bold text-white"
+																		>
+																			Learn More
+																		</Link>
 																	</div>
 																</div>
-															}
+															)}
 														</div>
 													</div>
 												</>
-											}
+											)}
 										</Link>
 									</div>
 								))}

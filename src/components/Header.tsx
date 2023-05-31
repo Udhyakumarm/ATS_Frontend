@@ -1,7 +1,7 @@
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { useCarrierStore, useUserStore } from "@/utils/code";
+import { useCarrierStore, useUserStore, useVersionStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
@@ -21,6 +21,7 @@ export default function Header() {
 	const type = useUserStore((state: { type: any }) => state.type);
 	const role = useUserStore((state: { role: any }) => state.role);
 	const user = useUserStore((state: { user: any }) => state.user);
+	const version = useVersionStore((state: { version: any }) => state.version);
 
 	useEffect(() => {
 		if (session) {
@@ -145,7 +146,7 @@ export default function Header() {
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
 												<li>
-													<Link href="#" className="block w-full py-2 py-1 px-4 font-bold hover:bg-gray-200">
+													<Link href="#" className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200">
 														<i className="fa-solid fa-gear mr-3"></i>
 														Settings
 													</Link>
@@ -185,6 +186,8 @@ export default function Header() {
 							<p className="bg-blue-500 p-1 text-white">
 								{type}&nbsp;{role}
 							</p>
+
+							<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
 							<ThemeChange />
 							<button
 								type="button"
