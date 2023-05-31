@@ -258,10 +258,10 @@ export default function HomePage() {
                 <div className='container'>
                     <h2 className='font-extrabold text-[30px] sm:text-[40px] xl:text-[50px] mb-10'>FREQUENTLY ASKED <span className='textGrad'>QUESTION</span></h2>
                     {faq.map((item, i) => (
-                    <div className='border' key={i} onClick={()=>handleAccordion(i)}>
+                    <div className='border' key={i}>
                         <div className='flex items-center justify-between py-2 px-4'>
                             <h5 className='font-extrabold text-sm'>{item.title}</h5>
-                            <button type='button' className='bg-white dark:bg-gray-700 rounded-full border w-[30px] h-[30px] shadow-normal text-sm'>
+                            <button type='button' className='bg-white dark:bg-gray-700 rounded-full border w-[30px] h-[30px] shadow-normal text-sm' onClick={()=>handleAccordion(i)}>
                                 <i className={`fa-solid ${open == i ? 'fa-angle-up' : 'fa-angle-down' }`}></i>
                             </button>
                         </div>
