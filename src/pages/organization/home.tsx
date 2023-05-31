@@ -215,7 +215,7 @@ export default function HomePage() {
                                     {/* <p className='font-bold lg:text-lg dark:text-black'>Effortlessly navigate talent with Kanban: Empowering eagle-eye precision in candidate movement.</p> */}
                                 </div>
                                 <div className='w-full lg:max-w-[60%] lg:pl-6'>
-                                    {/* <ReactPlayer className="rounded-normal overflow-hidden" url={'/videos/kanban-board.webm'} playing loop muted width={'100%'} height={'100%'} /> */}
+                                <Image src={'/images/home_user_access.png'} alt='User Access' width={800} height={400} />
                                 </div>
                             </div>
                         </div>
