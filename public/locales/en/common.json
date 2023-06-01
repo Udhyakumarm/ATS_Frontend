@@ -1,0 +1,18 @@
+{
+    "Form": {
+        "FullName": "Full Name",
+        "FirstName": "First Name",
+        "LastName": "Last Name",
+        "Email": "Email",
+        "PhoneNumber": "Phone Number",
+        "Password": "Password",
+        "Confirm Password": "Confirm Password"
+    },
+    "Btn": {
+        "SignIn": "Sign In",
+        "SignUp": "Sign Up",
+        "Submit": "Submit",
+        "Save": "Save",
+        "Close": "Close"
+    }
+}

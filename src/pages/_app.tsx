@@ -10,8 +10,9 @@ import NProgress from "nprogress";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { useUserStore, useVersionStore } from "@/utils/code";
+import { appWithTranslation } from 'next-i18next';
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: any) {
+function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	useEffect(() => {
 		const handleRouteStart = () => NProgress.start();
 		const handleRouteDone = () => NProgress.done();
@@ -73,3 +74,5 @@ function Auth({ children }: any) {
 
 	return <></>;
 }
+
+export default appWithTranslation(App)

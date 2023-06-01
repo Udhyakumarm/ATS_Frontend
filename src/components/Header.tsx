@@ -7,6 +7,7 @@ import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ToggleLang from "./ToggleLang";
 
 export default function Header() {
 	const router = useRouter();
@@ -245,5 +246,7 @@ export default function Header() {
 			</>
 		);
 	}
-	return <></>;
+	return <>
+	<ToggleLang />
+	</>;
 }

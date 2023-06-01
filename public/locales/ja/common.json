@@ -1,0 +1,18 @@
+{
+    "Form": {
+        "FullName": "Full Name",
+        "FirstName": "First Name",
+        "LastName": "Last Name",
+        "Email": "メールアドレス",
+        "PhoneNumber": "Phone Number",
+        "Password": "パスワード",
+        "Confirm Password": "Confirm Password"
+    },
+    "Btn": {
+        "SignIn": "ログイン",
+        "SignUp": "Sign Up",
+        "Submit": "Submit",
+        "Save": "Save",
+        "Close": "Close"
+    }
+}

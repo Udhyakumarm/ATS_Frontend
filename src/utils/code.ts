@@ -69,6 +69,14 @@ let applicantStore: any = (set: any) => ({
 	setcanid: (id: any) => set(() => ({ canid: id }))
 });
 
+let langStore: any = (set: any) => ({
+	lang: '',
+	setlang: (id: any) => set(() => ({ lang: id }))
+});
+
+langStore = devtools(langStore);
+langStore = persist(langStore, { name: "langStore" });
+
 userStore = devtools(userStore);
 userStore = persist(userStore, { name: "userStore" });
 
@@ -97,3 +105,4 @@ export const useVersionStore = create(versionStore);
 export const useSettingsStore = create(settingsStore);
 export const useCarrierStore = create(carrierStore);
 export const useApplicantStore = create(applicantStore);
+export const useLangStore = create(langStore);
