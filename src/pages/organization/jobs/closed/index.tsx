@@ -11,6 +11,8 @@ import draftedIcon from "/public/images/icons/closed.png";
 import Image from "next/image";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import FormField from "@/components/FormField";
+import Link from "next/link";
+import noActivedata from "/public/images/no-data/iconGroup-1.png";
 
 export default function JobsDrafted() {
 	const router = useRouter();
@@ -32,15 +34,21 @@ export default function JobsDrafted() {
 
 	useEffect(() => {
 		const getDraftedJobs = async () => {
-			const newDraftedJobs = await axiosInstance.api
+			await axiosInstance.api
 				.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => response.data.map((job: any) => job.jobStatus === "Closed" && job))
+				.then((response) => {
+					let arr = [];
+
+					response.data.map((job: any) => job.jobStatus === "Closed" && arr.push(job));
+
+					setDraftedJobs(arr);
+				})
 				.catch((error) => {
 					console.log({ error });
 					return null;
 				});
 
-			setDraftedJobs(newDraftedJobs);
+			// setDraftedJobs(newDraftedJobs);
 		};
 
 		session && getDraftedJobs();
@@ -81,26 +89,54 @@ export default function JobsDrafted() {
 						</div>
 						<div className="mx-auto w-full max-w-[980px] px-4 py-8">
 							<div className="mb-6">
-								<FormField fieldType="input" inputType="search" placeholder="Search by job title" icon={(<i className="fa-solid fa-search"></i>)} />
+								<FormField
+									fieldType="input"
+									inputType="search"
+									placeholder="Search by job title"
+									icon={<i className="fa-solid fa-search"></i>}
+								/>
 							</div>
-							<div className="mx-[-15px] flex flex-wrap">
-								{draftedJobs &&
-									draftedJobs.map(
-										(job: any, i) =>
-											job && (
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]" key={i}>
-													<JobCard_2
-														key={i}
-														job={job}
-														// handleView={() => {
-														// 	router.push("/organization/jobs/drafted/" + job.refid);
-														// }}
-														axiosInstanceAuth2={axiosInstanceAuth2}
-													/>
-												</div>
-											)
-									)}
-							</div>
+							{draftedJobs && draftedJobs.length > 0 ? (
+								<div className="mx-[-15px] flex flex-wrap">
+									{draftedJobs &&
+										draftedJobs.map(
+											(job: any, i) =>
+												job && (
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]" key={i}>
+														<JobCard_2
+															key={i}
+															job={job}
+															// handleView={() => {
+															// 	router.push("/organization/jobs/drafted/" + job.refid);
+															// }}
+															axiosInstanceAuth2={axiosInstanceAuth2}
+														/>
+													</div>
+												)
+										)}
+								</div>
+							) : (
+								<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+									<div className="mb-6 p-2">
+										<Image
+											src={noActivedata}
+											alt="No Data"
+											width={300}
+											className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+										/>
+									</div>
+									<h5 className="mb-4 text-lg font-semibold">No Closed Jobs</h5>
+									<p className="mb-2 text-sm text-darkGray">
+										There are no Closed Jobs , Post a New Job to manage closed Jobs
+									</p>
+									<Link
+										href={"/organization/jobs/create"}
+										className="my-2 inline-block min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-[14px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue"
+									>
+										Post a New Job
+									</Link>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
