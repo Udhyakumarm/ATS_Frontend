@@ -1,7 +1,5 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Tab } from "@headlessui/react";
-// import { Tab, Tabs, TabList, Tab.Panel } from "react-tabs";
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Validator, { Rules } from "validatorjs";
@@ -14,7 +12,7 @@ import Image from "next/image";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
-import { Dialog, Listbox, Transition } from "@headlessui/react";
+import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
 import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
@@ -83,23 +81,6 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			iconBg: "bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]"
 		}
 	];
-
-	const CustomTabs = (currentIndex: number, tabIndex: number) => (
-		<Tab key={tabIndex} as={Fragment}>
-			<button
-				type="button"
-				className={
-					"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
-					" " +
-					(tabIndex === currentIndex
-						? "border-primary text-primary"
-						: "border-transparent text-darkGray dark:text-gray-400")
-				}
-			>
-				{tabTitles[tabIndex]}
-			</button>
-		</Tab>
-	);
 
 	const TeamTableHead = [
 		{

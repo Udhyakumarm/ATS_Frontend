@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import Validator, { Rules } from "validatorjs";
@@ -13,7 +12,7 @@ import Image from "next/image";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
-import { Dialog, Listbox, Transition } from "@headlessui/react";
+import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
 import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
@@ -41,8 +40,6 @@ const StickyLabel = ({ label }: any) => (
 	</h2>
 );
 
-const tabTitles = ["Job Details", "Assessment", "Team Members", "Vendors", "Job Boards"];
-
 export default function JobsEdit() {
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
@@ -50,6 +47,8 @@ export default function JobsEdit() {
 	const [index, setIndex] = useState(0);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const { editJob } = router.query;
+
+	const [accordionOpen, setAccordionOpen] = useState(false);
 
 	//job create state
 	const [jtitle, setjtitle] = useState("");
@@ -584,6 +583,34 @@ export default function JobsEdit() {
 		console.log("#", router.query);
 	}, [router]);
 
+	const tabHeading_1 = [
+		{
+			title: "Job Details"
+		},
+		{
+			title: "Assessment"
+		},
+		{
+			title: "Team Members"
+		},
+		{
+			title: "Vendors"
+		},
+		{
+			title: "Job Boards"
+		}
+	];
+	const tabHeading_2 = [
+		{
+			title: "All Team Members",
+			icon: <i className="fa-solid fa-users"></i>
+		},
+		{
+			title: "Divison",
+			icon: <i className="fa-solid fa-table-cells"></i>
+		}
+	];
+
 	return (
 		<>
 			<Head>
@@ -599,7 +626,7 @@ export default function JobsEdit() {
 				></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
-						<Tabs onSelect={(i, l) => setIndex(i)}>
+						<Tab.Group>
 							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex flex-wrap items-center justify-between p-6">
 									<div className="flex flex-wrap items-center justify-start py-2">
@@ -625,412 +652,527 @@ export default function JobsEdit() {
 										))}
 									</div>
 								</div>
-								<TabList className={"mx-auto flex w-full max-w-[1100px] flex-wrap"}>
-									{tabTitles.map((_, i) => CustomTabs(index, i))}
-								</TabList>
+								<Tab.List className={"mx-auto flex w-full max-w-[1100px] flex-wrap"}>
+									{tabHeading_1.map((item, i) => (
+										<Tab key={i} as={Fragment}>
+											{({ selected }) => (
+												<button
+													className={
+														"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
+														" " +
+														(selected
+															? "border-primary text-primary"
+															: "border-transparent text-darkGray dark:text-gray-400")
+													}
+												>
+													{item.title}
+												</button>
+											)}
+										</Tab>
+									))}
+								</Tab.List>
 							</div>
-							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Job Title and Department" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											fieldType="input"
-											inputType="text"
-											label="Job Title"
-											id="job_title"
-											value={jtitle}
-											handleChange={(e) => setjtitle(e.target.value)}
-											required
-										/>
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Job Function"
-													id="job_function"
-													value={jfunction}
-													handleChange={(e) => setjfunction(e.target.value)}
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Department"
-													value={jdept}
-													handleChange={(e) => setjdept(e.target.value)}
-													id="department"
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Industry"
-													value={jind}
-													handleChange={(e) => setjind(e.target.value)}
-													id="industry"
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Group or Division"
-													id="group_or_division"
-													value={jgrp}
-													handleChange={(e) => setjgrp(e.target.value)}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="number"
-													value={jvac}
-													handleChange={(e) => setjvac(e.target.value)}
-													label="Vacancy"
-													id="vacancy"
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Department Information" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Your Responsibilities" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField fieldType="reactquill" id="responsibility" value={jres} handleChange={setjres} />
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="What We are Looking For" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField fieldType="reactquill" id="looking_for" value={jlooking} handleChange={setjlooking} />
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Skills" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											options={ski}
-											onSearch={searchSkill}
-											fieldType="select2"
-											id="skills"
-											value={jskill}
-											handleChange={setjskill}
-											label="Skills"
-										/>
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Employment Details" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="select2"
-													label="Employment Type"
-													id="employment_type"
-													singleSelect
-													options={["Full Time", "Part Time", "Contract", "Temporary", "Internship"]}
-													value={jetype}
-													handleChange={setjetype}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Experience"
-													value={jexp}
-													handleChange={(e) => setjexp(e.target.value)}
-													id="experience"
-												/>
-											</div>
-										</div>
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Education"
-													value={jedu}
-													handleChange={(e) => setjedu(e.target.value)}
-													id="education"
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Language"
-													value={jlang}
-													handleChange={(e) => setjlang(e.target.value)}
-													id="language"
-												/>
+							<Tab.Panels>
+								<Tab.Panel>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Job Title and Department" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField
+												fieldType="input"
+												inputType="text"
+												label="Job Title"
+												id="job_title"
+												value={jtitle}
+												handleChange={(e) => setjtitle(e.target.value)}
+												required
+											/>
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Job Function"
+														id="job_function"
+														value={jfunction}
+														handleChange={(e) => setjfunction(e.target.value)}
+														required
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Department"
+														value={jdept}
+														handleChange={(e) => setjdept(e.target.value)}
+														id="department"
+														required
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Industry"
+														value={jind}
+														handleChange={(e) => setjind(e.target.value)}
+														id="industry"
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Group or Division"
+														id="group_or_division"
+														value={jgrp}
+														handleChange={(e) => setjgrp(e.target.value)}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="number"
+														value={jvac}
+														handleChange={(e) => setjvac(e.target.value)}
+														label="Vacancy"
+														id="vacancy"
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Department Information" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Your Responsibilities" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField fieldType="reactquill" id="responsibility" value={jres} handleChange={setjres} />
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="What We are Looking For" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField fieldType="reactquill" id="looking_for" value={jlooking} handleChange={setjlooking} />
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Skills" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField
+												options={ski}
+												onSearch={searchSkill}
+												fieldType="select2"
+												id="skills"
+												value={jskill}
+												handleChange={setjskill}
+												label="Skills"
+											/>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Employment Details" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="select2"
+														label="Employment Type"
+														id="employment_type"
+														singleSelect
+														options={["Full Time", "Part Time", "Contract", "Temporary", "Internship"]}
+														value={jetype}
+														handleChange={setjetype}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Experience"
+														value={jexp}
+														handleChange={(e) => setjexp(e.target.value)}
+														id="experience"
+													/>
+												</div>
+											</div>
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Education"
+														value={jedu}
+														handleChange={(e) => setjedu(e.target.value)}
+														id="education"
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Language"
+														value={jlang}
+														handleChange={(e) => setjlang(e.target.value)}
+														id="language"
+													/>
+												</div>
+											</div>
+										</div>
 
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<FormField
-											options={locf}
-											onSearch={searchLoc}
-											fieldType="select2"
-											id="location"
-											label="Location"
-											value={jloc}
-											handleChange={setjloc}
-										/>
-									</div>
-								</div>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Annual Salary" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="number"
-													label="Salary Starting From"
-													id="salary"
-													value={jsalary}
-													handleChange={(e) => setjsalary(e.target.value)}
-													icon={<i className="fa-regular fa-money-bill-alt"></i>}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Currency"
-													id="currency"
-													value={jcurr}
-													handleChange={(e) => setjcurr(e.target.value)}
-													icon={<i className="fa-regular fa-money-bill-alt"></i>}
-												/>
-											</div>
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<FormField
+												options={locf}
+												onSearch={searchLoc}
+												fieldType="select2"
+												id="location"
+												label="Location"
+												value={jloc}
+												handleChange={setjloc}
+											/>
 										</div>
 									</div>
-								</div>
-								<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Benefits" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="select2"
-													label="Relocation"
-													id="relocation"
-													singleSelect
-													options={["yes", "no"]}
-													value={jreloc}
-													handleChange={setjreloc}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="select2"
-													label="Visa Sponsorship"
-													id="visa"
-													singleSelect
-													options={["yes", "no"]}
-													value={jvisa}
-													handleChange={setjvisa}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="select2"
-													label="Work Type"
-													id="work_type"
-													singleSelect
-													options={["remote", "office", "hybrid"]}
-													value={jwtype}
-													handleChange={setjwtype}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-							</TabPanel>
-							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Assessment" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="mx-[-15px] flex flex-wrap">
-											{Array(6).fill(
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-													<CardLayout_1 isBlank={true} />
-												</div>
-											)}
-										</div>
-									</div>
-								</div>
-							</TabPanel>
-							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Team Members" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="mb-6 flex flex-wrap items-center justify-between">
-											<div className="w-[350px] pr-2">
-												<FormField
-													fieldType="input"
-													inputType="search"
-													placeholder="Search"
-													icon={<i className="fa-solid fa-magnifying-glass"></i>}
-												/>
-											</div>
-											<div className="flex grow items-center justify-end">
-												<div className="mr-3 w-[150px]">
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Annual Salary" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
-														fieldType="select"
-														placeholder="Sort"
-														singleSelect={true}
-														options={[
-															{
-																id: "A-to-Z",
-																name: "A to Z"
-															},
-															{
-																id: "Z-to-A",
-																name: "Z to A"
-															}
-														]}
+														fieldType="input"
+														inputType="number"
+														label="Salary Starting From"
+														id="salary"
+														value={jsalary}
+														handleChange={(e) => setjsalary(e.target.value)}
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
 													/>
 												</div>
-												<div className="w-[150px]">
-													<label
-														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-													>
-														<span>Select All</span>
-														<input type="checkbox" id="teamSelectAll" />
-													</label>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="input"
+														inputType="text"
+														label="Currency"
+														id="currency"
+														value={jcurr}
+														handleChange={(e) => setjcurr(e.target.value)}
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+													/>
 												</div>
 											</div>
 										</div>
-										<div className="overflow-x-auto">
-											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-												<thead>
-													<tr>
-														{TeamTableHead.map((item, i) => (
-															<th className="border-b px-3 py-2 text-left" key={i}>
-																{item.title}
-															</th>
-														))}
-													</tr>
-												</thead>
-												<tbody>
-													{tm &&
-														ujtm &&
-														tm.map(
-															(data, i) =>
-																data["verified"] !== false && (
-																	<tr key={i}>
-																		<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
-																		<td className="border-b px-3 py-2 text-right">
-																			<input
-																				type="checkbox"
-																				value={data["email"]}
-																				data-id={data["role"]}
-																				data-pk={data["id"]}
-																				onChange={(e) => onChnageCheck(e)}
-																				checked={ujtm.includes(data["id"])}
-																			/>
-																		</td>
+									</div>
+									<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Benefits" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="select2"
+														label="Relocation"
+														id="relocation"
+														singleSelect
+														options={["yes", "no"]}
+														value={jreloc}
+														handleChange={setjreloc}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="select2"
+														label="Visa Sponsorship"
+														id="visa"
+														singleSelect
+														options={["yes", "no"]}
+														value={jvisa}
+														handleChange={setjvisa}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="select2"
+														label="Work Type"
+														id="work_type"
+														singleSelect
+														options={["remote", "office", "hybrid"]}
+														value={jwtype}
+														handleChange={setjwtype}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+								</Tab.Panel>
+								<Tab.Panel>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Assessment" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="mx-[-15px] flex flex-wrap">
+												{Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_1 isBlank={true} />
+													</div>
+												)}
+											</div>
+										</div>
+									</div>
+								</Tab.Panel>
+								<Tab.Panel>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Team Members" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<Tab.Group>
+												<Tab.List className={"mb-6 flex border-b"}>
+													{tabHeading_2.map((item, i) => (
+														<Tab key={i} as={Fragment}>
+															{({ selected }) => (
+																<button
+																	type="button"
+																	className={
+																		"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary"
+																			: "border-transparent text-darkGray dark:text-gray-400")
+																	}
+																>
+																	<div className="mr-2">{item.icon}</div>
+																	{item.title}
+																</button>
+															)}
+														</Tab>
+													))}
+												</Tab.List>
+												<Tab.Panels>
+													<Tab.Panel>
+														<div className="mb-6 flex flex-wrap items-center justify-between">
+															<div className="w-[350px] pr-2">
+																<FormField
+																	fieldType="input"
+																	inputType="search"
+																	placeholder="Search"
+																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
+																/>
+															</div>
+															<div className="flex grow items-center justify-end">
+																<div className="mr-3 w-[150px]">
+																	<FormField
+																		fieldType="select"
+																		placeholder="Sort"
+																		singleSelect={true}
+																		options={[
+																			{
+																				id: "A-to-Z",
+																				name: "A to Z"
+																			},
+																			{
+																				id: "Z-to-A",
+																				name: "Z to A"
+																			}
+																		]}
+																	/>
+																</div>
+																<div className="w-[150px]">
+																	<label
+																		htmlFor="teamSelectAll"
+																		className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+																	>
+																		<span>Select All</span>
+																		<input type="checkbox" id="teamSelectAll" />
+																	</label>
+																</div>
+															</div>
+														</div>
+														<div className="overflow-x-auto">
+															<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																<thead>
+																	<tr>
+																		{TeamTableHead.map((item, i) => (
+																			<th className="border-b px-3 py-2 text-left" key={i}>
+																				{item.title}
+																			</th>
+																		))}
 																	</tr>
-																)
-														)}
-												</tbody>
-											</table>
+																</thead>
+																<tbody>
+																	{tm &&
+																		ujtm &&
+																		tm.map(
+																			(data, i) =>
+																				data["verified"] !== false && (
+																					<tr key={i}>
+																						<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																						<td className="border-b px-3 py-2 text-right">
+																							<input
+																								type="checkbox"
+																								value={data["email"]}
+																								data-id={data["role"]}
+																								data-pk={data["id"]}
+																								onChange={(e) => onChnageCheck(e)}
+																								checked={ujtm.includes(data["id"])}
+																							/>
+																						</td>
+																					</tr>
+																				)
+																		)}
+																</tbody>
+															</table>
+														</div>
+													</Tab.Panel>
+													<Tab.Panel>
+														<div>
+															{Array(4).fill(
+																<label
+																	htmlFor="checkDivison"
+																	className={
+																		"mb-3 block rounded border text-sm" +
+																		" " +
+																		(accordionOpen ? "border-slate-300" : "")
+																	}
+																>
+																	<div className="flex flex-wrap items-center px-4">
+																		<h6 className="grow py-3 font-bold">Software Developer</h6>
+																		<div className="py-3 text-right">
+																			<input type="checkbox" id="checkDivison" />
+																			<button
+																				type="button"
+																				className="ml-4 text-darkGray dark:text-gray-400"
+																				onClick={() => setAccordionOpen(!accordionOpen)}
+																			>
+																				<i
+																					className={
+																						"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
+																					}
+																				></i>
+																			</button>
+																		</div>
+																	</div>
+																	<Transition.Root show={accordionOpen} as={Fragment}>
+																		<Transition.Child
+																			as={Fragment}
+																			enter="ease-out duration-300"
+																			enterFrom="opacity-0"
+																			enterTo="opacity-100"
+																			leave="ease-in duration-200"
+																			leaveFrom="opacity-100"
+																			leaveTo="opacity-0"
+																		>
+																			<div className="border-t">
+																				<div className="overflow-x-auto">
+																					<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																						<thead>
+																							<tr>
+																								{TeamTableHead.map((item, i) => (
+																									<th className="border-b px-4 py-2 text-left" key={i}>
+																										{item.title}
+																									</th>
+																								))}
+																							</tr>
+																						</thead>
+																						<tbody>
+																							{Array(6).fill(
+																								<tr>
+																									<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																									<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																									<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																									<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																									<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
+																								</tr>
+																							)}
+																						</tbody>
+																					</table>
+																				</div>
+																			</div>
+																		</Transition.Child>
+																	</Transition.Root>
+																</label>
+															)}
+														</div>
+													</Tab.Panel>
+												</Tab.Panels>
+											</Tab.Group>
 										</div>
 									</div>
-								</div>
-							</TabPanel>
-							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Vendors" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="mb-6 flex flex-wrap items-center justify-between">
-											<div className="w-[350px] pr-2">
-												<FormField
-													fieldType="input"
-													inputType="search"
-													placeholder="Search"
-													icon={<i className="fa-solid fa-magnifying-glass"></i>}
-												/>
-											</div>
-											<div className="flex grow items-center justify-end">
-												<div className="mr-3 w-[150px]">
+								</Tab.Panel>
+								<Tab.Panel>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Vendors" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="mb-6 flex flex-wrap items-center justify-between">
+												<div className="w-[350px] pr-2">
 													<FormField
-														fieldType="select"
-														placeholder="Sort"
-														singleSelect={true}
-														options={[
-															{
-																id: "A-to-Z",
-																name: "A to Z"
-															},
-															{
-																id: "Z-to-A",
-																name: "Z to A"
-															}
-														]}
+														fieldType="input"
+														inputType="search"
+														placeholder="Search"
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
 													/>
 												</div>
-												<div className="w-[150px]">
-													<label
-														htmlFor="teamSelectAll"
-														className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-													>
-														<span>Select All</span>
-														<input type="checkbox" id="teamSelectAll" />
-													</label>
+												<div className="flex grow items-center justify-end">
+													<div className="mr-3 w-[150px]">
+														<FormField
+															fieldType="select"
+															placeholder="Sort"
+															singleSelect={true}
+															options={[
+																{
+																	id: "A-to-Z",
+																	name: "A to Z"
+																},
+																{
+																	id: "Z-to-A",
+																	name: "Z to A"
+																}
+															]}
+														/>
+													</div>
+													<div className="w-[150px]">
+														<label
+															htmlFor="teamSelectAll"
+															className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+														>
+															<span>Select All</span>
+															<input type="checkbox" id="teamSelectAll" />
+														</label>
+													</div>
 												</div>
 											</div>
-										</div>
-										<div className="mx-[-15px] flex flex-wrap">
-											{Array(6).fill(
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-													<CardLayout_2 />
-												</div>
-											)}
-										</div>
-									</div>
-								</div>
-							</TabPanel>
-							<TabPanel>
-								<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-									<StickyLabel label="Job Boards" />
-									<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-										<div className="mx-[-15px] flex flex-wrap">
-											{Object.keys(integrationList).map((key: any) => (
-												<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
-													<CardLayout_1
-														key={key}
-														label={key}
-														access={integrationList[key as keyof typeof integrationList].access}
-														isBlank={false}
-													/>
-												</div>
-											))}
+											<div className="mx-[-15px] flex flex-wrap">
+												{Array(6).fill(
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+														<CardLayout_2 />
+													</div>
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							</TabPanel>
-						</Tabs>
+								</Tab.Panel>
+								<Tab.Panel>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label="Job Boards" />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="mx-[-15px] flex flex-wrap">
+												{Object.keys(integrationList).map((key: any) => (
+													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
+														<CardLayout_1
+															key={key}
+															label={key}
+															access={integrationList[key as keyof typeof integrationList].access}
+															isBlank={false}
+														/>
+													</div>
+												))}
+											</div>
+										</div>
+									</div>
+								</Tab.Panel>
+							</Tab.Panels>
+						</Tab.Group>
 					</div>
 				</div>
 			</main>
