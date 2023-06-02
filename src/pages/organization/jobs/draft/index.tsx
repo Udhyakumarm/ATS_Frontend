@@ -91,8 +91,9 @@ export default function JobsDrafted() {
 								<FormField
 									fieldType="input"
 									inputType="search"
-									placeholder="Search by job title"
+									placeholder="Search by job title .... coming soon"
 									icon={<i className="fa-solid fa-search"></i>}
+									readOnly
 								/>
 							</div>
 							{draftedJobs && draftedJobs.length > 0 ? (

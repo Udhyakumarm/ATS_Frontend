@@ -20,6 +20,9 @@ import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
+import UpcomingComp from "@/components/organization/upcomingComp";
+import PermiumComp from "@/components/organization/premiumComp";
+
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -573,13 +576,14 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	}, [router]);
 
 	function checkHideOrNot(title: any) {
-		if (atsVersion === "starter" && title === "Job Details") {
-			return true;
-		} else if (atsVersion === "premium" && (title === "Job Details" || title === "Team Members")) {
-			return true;
-		} else if (atsVersion === "enterprise") {
-			return true;
-		}
+		// if (atsVersion === "starter" && title === "Job Details") {
+		// 	return true;
+		// } else if (atsVersion === "premium" && (title === "Job Details" || title === "Team Members")) {
+		// 	return true;
+		// } else if (atsVersion === "enterprise") {
+		// 	return true;
+		// }
+		return true;
 	}
 
 	const tabHeading_1 = [
@@ -918,6 +922,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 								</Tab.Panel>
 								<Tab.Panel>
+									{upcomingSoon ? 
+														<UpcomingComp /> :
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Assessment" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
@@ -930,8 +936,11 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											</div>
 										</div>
 									</div>
+}
 								</Tab.Panel>
 								<Tab.Panel>
+								{atsVersion === "starter" ? 
+											<PermiumComp userRole={userRole} /> :
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Team Members" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
@@ -1037,6 +1046,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 														</div>
 													</Tab.Panel>
 													<Tab.Panel>
+										{upcomingSoon ? 
+														<UpcomingComp /> :
 														<div>
 															{Array(4).fill(
 																<label
@@ -1105,13 +1116,17 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																</label>
 															)}
 														</div>
+													}
 													</Tab.Panel>
 												</Tab.Panels>
 											</Tab.Group>
 										</div>
 									</div>
+}
 								</Tab.Panel>
 								<Tab.Panel>
+									{atsVersion != "enterprise" ? 
+											<PermiumComp userRole={userRole} /> :
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Vendors" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
@@ -1162,8 +1177,11 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											</div>
 										</div>
 									</div>
+}
 								</Tab.Panel>
 								<Tab.Panel>
+								{upcomingSoon ? 
+														<UpcomingComp /> :
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Job Boards" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
@@ -1181,6 +1199,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											</div>
 										</div>
 									</div>
+}
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>
