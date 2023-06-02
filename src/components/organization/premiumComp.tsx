@@ -3,6 +3,7 @@ import Image from "next/image";
 import permiumImg from "/public/images/upgrade-plan-icon.png";
 import { useRouter } from "next/router";
 import toastcomp from "../toast";
+import Button from "../Button";
 
 export default function PermiumComp({ userRole }: any) {
 	const router = useRouter();
@@ -22,9 +23,10 @@ export default function PermiumComp({ userRole }: any) {
 				<h3 className="textGrad mb-1 mb-4 inline-block rounded-[10px] border px-2 py-1 text-3xl font-extrabold">
 					Go Premium
 				</h3>
-				<p className="text-sm text-darkGray">
+				<p className="text-sm text-darkGray mb-2">
 					Upgrade your experience with our premium package for enhanced features and exclusive benefits.
 				</p>
+				<Button btnStyle="sm" label="Upgrade" />
 			</div>
 		</div>
 	);
