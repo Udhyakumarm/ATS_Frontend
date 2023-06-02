@@ -13,13 +13,13 @@ import interviewsIcon from "/public/images/icons/interviews.png";
 export default function Organization({ atsVersion, userRole }: any) {
 	const [hover, setHover] = useState(0);
 	function blurOrNot(name: any) {
-		if (atsVersion === "basic") {
+		if (atsVersion === "starter") {
 			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
 		}
 		if (atsVersion === "premium") {
 			return name === "Offer Management" || name === "Vendors";
 		}
-		if (atsVersion === "enterprice") {
+		if (atsVersion === "enterprise") {
 			return false;
 		}
 	}

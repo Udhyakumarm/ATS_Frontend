@@ -36,7 +36,10 @@ let notificationStore: any = (set: any) => ({
 });
 
 let versionStore: any = (set: any) => ({
-	version: "basic",
+	//starter
+	//premium
+	//enterprise
+	version: "starter",
 	setversion: (id: any) => set(() => ({ version: id }))
 });
 

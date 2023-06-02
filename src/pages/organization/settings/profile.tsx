@@ -29,7 +29,7 @@ import jspdf from "jspdf";
 import { useUserStore } from "@/utils/code";
 import moment from "moment";
 
-export default function Profile() {
+export default function Profile({ atsVersion, userRole, comingSoon }: any) {
 	const router = useRouter();
 
 	const cancelButtonRef = useRef(null);
@@ -44,32 +44,63 @@ export default function Profile() {
 
 	const [gallUpload, setGallUpload] = useState(false);
 
+	function blurOrNot(name: any) {
+		if (userRole === "Super Admin") {
+			if (atsVersion === "starter") {
+				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
+			}
+			if (atsVersion === "premium") {
+				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
+			}
+			if (atsVersion === "enterprise") {
+				return false;
+			}
+		} else {
+			if (atsVersion === "starter") {
+				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+			}
+			if (atsVersion === "premium") {
+				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+			}
+			if (atsVersion === "enterprise") {
+				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+			}
+		}
+	}
+
 	const tabHeading_1 = [
 		{
-			title: "Individual Profile"
+			title: "Individual Profile",
+			blur: blurOrNot("Individual Profile")
 		},
 		{
-			title: "Organization Profile"
+			title: "Organization Profile",
+			blur: blurOrNot("Organization Profile")
 		},
 		{
-			title: "Groups/Division"
+			title: "Groups/Division",
+			blur: blurOrNot("Groups/Division")
 		},
 		{
-			title: "Offer Letter Format"
+			title: "Offer Letter Format",
+			blur: blurOrNot("Offer Letter Format")
 		}
 	];
 	const tabHeading_2 = [
 		{
 			title: "Summary",
-			icon: <i className="fa-solid fa-bars"></i>
+			icon: <i className="fa-solid fa-bars"></i>,
+			blur: blurOrNot("Summary")
 		},
 		{
 			title: "Gallery",
-			icon: <i className="fa-solid fa-mountain-sun"></i>
+			icon: <i className="fa-solid fa-mountain-sun"></i>,
+			blur: blurOrNot("Gallery")
 		},
 		{
 			title: "Widget",
-			icon: <i className="fa-solid fa-gauge"></i>
+			icon: <i className="fa-solid fa-gauge"></i>,
+			blur: blurOrNot("Widget")
 		}
 		// {
 		//     title: 'Custom Domain',
@@ -983,7 +1014,9 @@ export default function Profile() {
 															" " +
 															(selected
 																? "border-primary text-primary"
-																: "border-transparent text-darkGray dark:text-gray-400")
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(item.blur ? "display-none" : "")
 														}
 													>
 														{item.title}
@@ -1086,7 +1119,7 @@ export default function Profile() {
 											<div className="flex flex-wrap">
 												{ilink &&
 													ilink.map((data, i) => (
-														<div className="relative mr-6 mb-4 p-1" key={i}>
+														<div className="relative mb-4 mr-6 p-1" key={i}>
 															<Link href={data["title"]} className="text-center">
 																<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
 																	<i className={`${geticon(data["title"])}`}></i>
@@ -1094,7 +1127,7 @@ export default function Profile() {
 															</Link>
 															<button
 																type="button"
-																className="absolute top-[-5px] right-[0px] rounded-full text-center text-[12px] font-bold text-red-500 dark:text-white"
+																className="absolute right-[0px] top-[-5px] rounded-full text-center text-[12px] font-bold text-red-500 dark:text-white"
 																onClick={(e) => delIndividualLink(data["id"])}
 															>
 																<i className="fa-solid fa-circle-xmark"></i>
@@ -1121,7 +1154,9 @@ export default function Profile() {
 																	" " +
 																	(selected
 																		? "border-primary text-primary"
-																		: "border-transparent text-darkGray dark:text-gray-400")
+																		: "border-transparent text-darkGray dark:text-gray-400") +
+																	" " +
+																	(item.blur ? "display-none" : "")
 																}
 															>
 																<div className="mr-2">{item.icon}</div>
@@ -1383,22 +1418,24 @@ export default function Profile() {
 															</div>
 														</div>
 													</div>
-													<div className="-mx-3 flex flex-wrap">
-														<div className="mb-6 w-full px-3 lg:max-w-[50%]">
-															<h6 className="mb-3 font-bold">Choose from the Color Palates</h6>
-															<div className="flex flex-wrap items-center">
-																<input type="color" id="favcolor" name="favcolor" className="h-8 w-8 bg-white" />
+													{atsVersion === "enterprise" && (
+														<div className="-mx-3 flex flex-wrap">
+															<div className="mb-6 w-full px-3 lg:max-w-[50%]">
+																<h6 className="mb-3 font-bold">Choose from the Color Palates</h6>
+																<div className="flex flex-wrap items-center">
+																	<input type="color" id="favcolor" name="favcolor" className="h-8 w-8 bg-white" />
+																</div>
+															</div>
+															<div className="w-full px-3 lg:max-w-[50%]">
+																<h6 className="mb-3 font-bold">Connect with our team to customize</h6>
+																<Button
+																	btnStyle="iconLeftBtn"
+																	label="Send Mail"
+																	iconLeft={<i className="fa-solid fa-envelope"></i>}
+																/>
 															</div>
 														</div>
-														<div className="w-full px-3 lg:max-w-[50%]">
-															<h6 className="mb-3 font-bold">Connect with our team to customize</h6>
-															<Button
-																btnStyle="iconLeftBtn"
-																label="Send Mail"
-																iconLeft={<i className="fa-solid fa-envelope"></i>}
-															/>
-														</div>
-													</div>
+													)}
 												</Tab.Panel>
 												<Tab.Panel>
 													<h6 className="mb-2 font-bold">Add Widget</h6>

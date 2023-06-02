@@ -229,8 +229,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			jtitle.length <= 0 ||
 			jfunction.length <= 0 ||
 			jdept.length <= 0 ||
-			(!jcollaborator && atsVersion === "enterprice") ||
-			(!jrecruiter && atsVersion === "enterprice")
+			(!jcollaborator && atsVersion === "enterprise") ||
+			(!jrecruiter && atsVersion === "enterprise")
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
@@ -241,10 +241,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator && atsVersion === "enterprice") {
+			if (!jcollaborator && atsVersion === "enterprise") {
 				toastcomp("One Collaborator Required", "error");
 			}
-			if (!jrecruiter && atsVersion === "enterprice") {
+			if (!jrecruiter && atsVersion === "enterprise") {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -517,11 +517,11 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	}
 
 	function checkHideOrNot(title: any) {
-		if (atsVersion === "basic" && title === "Job Details") {
+		if (atsVersion === "starter" && title === "Job Details") {
 			return true;
 		} else if (atsVersion === "premium" && (title === "Job Details" || title === "Team Members")) {
 			return true;
-		} else if (atsVersion === "enterprice") {
+		} else if (atsVersion === "enterprise") {
 			return true;
 		}
 	}
