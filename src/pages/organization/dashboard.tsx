@@ -677,7 +677,16 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 							)}
 							{atsVersion && atsVersion != "enterprise" && (
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
-									<div className="upgradePlan h-full rounded-normal bg-white shadow dark:bg-gray-800">
+									<div
+										className="upgradePlan h-full cursor-pointer rounded-normal bg-white shadow dark:bg-gray-800"
+										onClick={() => {
+											if (userRole === "Super Admin") {
+												router.push("/organization/settings/pricing");
+											} else {
+												toastcomp("Kindly Contact Your Super Admin", "warning");
+											}
+										}}
+									>
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-xl font-bold"></h2>
 											{atsVersion && atsVersion === "enterprise" && (

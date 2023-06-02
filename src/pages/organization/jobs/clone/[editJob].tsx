@@ -40,7 +40,7 @@ const StickyLabel = ({ label }: any) => (
 	</h2>
 );
 
-export default function JobsEdit() {
+export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
@@ -285,7 +285,13 @@ export default function JobsEdit() {
 	}
 
 	function publishJob() {
-		if (jtitle.length <= 0 || jfunction.length <= 0 || jdept.length <= 0 || !jcollaborator || !jrecruiter) {
+		if (
+			jtitle.length <= 0 ||
+			jfunction.length <= 0 ||
+			jdept.length <= 0 ||
+			(!jcollaborator && atsVersion === "enterprise") ||
+			(!jrecruiter && atsVersion === "enterprise")
+		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
 			}
@@ -295,10 +301,10 @@ export default function JobsEdit() {
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator) {
+			if (!jcollaborator && atsVersion === "enterprise") {
 				toastcomp("One Collaborator Required", "error");
 			}
-			if (!jrecruiter) {
+			if (!jrecruiter && atsVersion === "enterprise") {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -583,21 +589,36 @@ export default function JobsEdit() {
 		console.log("#", router.query);
 	}, [router]);
 
+	function checkHideOrNot(title: any) {
+		if (atsVersion === "starter" && title === "Job Details") {
+			return true;
+		} else if (atsVersion === "premium" && (title === "Job Details" || title === "Team Members")) {
+			return true;
+		} else if (atsVersion === "enterprise") {
+			return true;
+		}
+	}
+
 	const tabHeading_1 = [
 		{
-			title: "Job Details"
+			title: "Job Details",
+			hide: checkHideOrNot("Job Details")
 		},
 		{
-			title: "Assessment"
+			title: "Assessment",
+			hide: checkHideOrNot("Assessment")
 		},
 		{
-			title: "Team Members"
+			title: "Team Members",
+			hide: checkHideOrNot("Team Members")
 		},
 		{
-			title: "Vendors"
+			title: "Vendors",
+			hide: checkHideOrNot("Vendors")
 		},
 		{
-			title: "Job Boards"
+			title: "Job Boards",
+			hide: checkHideOrNot("Job Boards")
 		}
 	];
 	const tabHeading_2 = [
@@ -662,7 +683,9 @@ export default function JobsEdit() {
 														" " +
 														(selected
 															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400")
+															: "border-transparent text-darkGray dark:text-gray-400") +
+														" " +
+														(!item.hide && "display-none")
 													}
 												>
 													{item.title}
@@ -745,7 +768,12 @@ export default function JobsEdit() {
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label="Department Information" />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="description" value={jdeptinfo} handleChange={setjdeptinfo} />
+											<FormField
+												fieldType="reactquill"
+												id="description"
+												value={jdeptinfo}
+												handleChange={setjdeptinfo}
+											/>
 										</div>
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">

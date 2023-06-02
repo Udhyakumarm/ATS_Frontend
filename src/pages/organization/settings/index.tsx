@@ -94,6 +94,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 						<h1 className="mb-6 text-2xl font-bold">Settings</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
 							{quicklinks.map((links, i) => (
+								userRole != "Super Admin" && links.name === "Plans & Pricing" ? <></> :
 								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
 									<Link
 										href={links.blur ? "javascript:void(0)" : links.link}

@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
 import { useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import UpcomingComp from "./upcomingComp";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -33,6 +34,7 @@ export default function OrgTopBar() {
 	const version = useVersionStore((state: { version: any }) => state.version);
 
 	const [integration, setIntegration] = useState([]);
+	const [comingSoon, setComingSoon] = useState(false);
 
 	useEffect(() => {
 		async function loadIntegrations() {
@@ -136,14 +138,15 @@ export default function OrgTopBar() {
 				</p>
 				<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
 				<ThemeChange />
-				<button type="button" className="mr-6 text-darkGray dark:text-gray-400">
+				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setComingSoon(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
-				{version != "basic" && (
+				{version != "starter" && (
 					<button
 						type="button"
 						className="mr-6 text-darkGray dark:text-gray-400"
 						onClick={() => setIsCalendarOpen(true)}
+						x
 					>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
 					</button>
@@ -236,6 +239,51 @@ export default function OrgTopBar() {
 										</div>
 									</Dialog.Panel>
 								)}
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={comingSoon} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Coming Soon</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setComingSoon(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<UpcomingComp title={"Todo List"} setComingSoon={setComingSoon} />
+									</div>
+								</Dialog.Panel>
 							</Transition.Child>
 						</div>
 					</div>

@@ -28,8 +28,10 @@ import html2canvas from "html2canvas";
 import jspdf from "jspdf";
 import { useUserStore } from "@/utils/code";
 import moment from "moment";
+import UpcomingComp from "@/components/organization/upcomingComp";
+import PermiumComp from "@/components/organization/premiumComp";
 
-export default function Profile({ atsVersion, userRole, comingSoon }: any) {
+export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
 
 	const cancelButtonRef = useRef(null);
@@ -45,27 +47,28 @@ export default function Profile({ atsVersion, userRole, comingSoon }: any) {
 	const [gallUpload, setGallUpload] = useState(false);
 
 	function blurOrNot(name: any) {
-		if (userRole === "Super Admin") {
-			if (atsVersion === "starter") {
-				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
-			}
-			if (atsVersion === "premium") {
-				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
-			}
-			if (atsVersion === "enterprise") {
-				return false;
-			}
-		} else {
-			if (atsVersion === "starter") {
-				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
-			}
-			if (atsVersion === "premium") {
-				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
-			}
-			if (atsVersion === "enterprise") {
-				return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
-			}
-		}
+		// if (userRole === "Super Admin") {
+		// 	if (atsVersion === "starter") {
+		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
+		// 	}
+		// 	if (atsVersion === "premium") {
+		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Widget";
+		// 	}
+		// 	if (atsVersion === "enterprise") {
+		// 		return false;
+		// 	}
+		// } else {
+		// 	if (atsVersion === "starter") {
+		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+		// 	}
+		// 	if (atsVersion === "premium") {
+		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+		// 	}
+		// 	if (atsVersion === "enterprise") {
+		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
+		// 	}
+		// }
+		return false;
 	}
 
 	const tabHeading_1 = [
@@ -1438,133 +1441,151 @@ export default function Profile({ atsVersion, userRole, comingSoon }: any) {
 													)}
 												</Tab.Panel>
 												<Tab.Panel>
-													<h6 className="mb-2 font-bold">Add Widget</h6>
-													<div className="flex rounded-normal border">
-														<div className="flex w-[80%] items-center p-4">
-															<p>All your Jobs will be posted on customized Career Page</p>
-														</div>
-														<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600">
-															<Button btnType="button" label="Add Here" handleClick={() => setAddWidget(true)} />
-														</div>
-													</div>
+													{upcomingSoon ? (
+														<UpcomingComp />
+													) : (
+														<>
+															<h6 className="mb-2 font-bold">Add Widget</h6>
+															<div className="flex rounded-normal border">
+																<div className="flex w-[80%] items-center p-4">
+																	<p>All your Jobs will be posted on customized Career Page</p>
+																</div>
+																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600">
+																	<Button btnType="button" label="Add Here" handleClick={() => setAddWidget(true)} />
+																</div>
+															</div>
+														</>
+													)}
 												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
 									</Tab.Panel>
 									<Tab.Panel>
-										<div className="mb-6 flex flex-wrap items-center justify-between">
-											<h5 className="mb-2 font-bold">Add Groups to your Parent Organization</h5>
-											<Button
-												btnStyle="iconRightBtn"
-												label="Add Group"
-												iconRight={<i className="fa-solid fa-circle-plus"></i>}
-												btnType="button"
-												handleClick={() => setAddGroups(true)}
-											/>
-										</div>
-										<div className="py-2">
-											<p className="text-center text-darkGray dark:text-gray-400">No groups found</p>
-											<div className="mx-[-15px] flex flex-wrap">
-												{Array(5).fill(
-													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-														<div className="h-full rounded-normal bg-lightBlue p-4 shadow-highlight dark:bg-gray-700">
-															<div className="mb-2 flex items-start justify-between">
-																<Image
-																	src={userImg}
-																	alt="Logo"
-																	width={100}
-																	className="h-[50px] w-[50px] rounded-full object-cover"
-																/>
-																<button type="button" className="text-red-500 hover:text-red-700">
-																	<i className="fa-solid fa-trash"></i>
-																</button>
+										{upcomingSoon ? (
+											<UpcomingComp />
+										) : (
+											<>
+												<div className="mb-6 flex flex-wrap items-center justify-between">
+													<h5 className="mb-2 font-bold">Add Groups to your Parent Organization</h5>
+													<Button
+														btnStyle="iconRightBtn"
+														label="Add Group"
+														iconRight={<i className="fa-solid fa-circle-plus"></i>}
+														btnType="button"
+														handleClick={() => setAddGroups(true)}
+													/>
+												</div>
+												<div className="py-2">
+													<p className="text-center text-darkGray dark:text-gray-400">No groups found</p>
+													<div className="mx-[-15px] flex flex-wrap">
+														{Array(5).fill(
+															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																<div className="h-full rounded-normal bg-lightBlue p-4 shadow-highlight dark:bg-gray-700">
+																	<div className="mb-2 flex items-start justify-between">
+																		<Image
+																			src={userImg}
+																			alt="Logo"
+																			width={100}
+																			className="h-[50px] w-[50px] rounded-full object-cover"
+																		/>
+																		<button type="button" className="text-red-500 hover:text-red-700">
+																			<i className="fa-solid fa-trash"></i>
+																		</button>
+																	</div>
+																	<p className="mb-2 flex items-center justify-between text-sm text-darkGray dark:text-gray-400">
+																		<span>Bell Cosmetic</span>
+																		<span>ID - 45989</span>
+																	</p>
+																	<div className="flex items-center justify-between">
+																		<Switch
+																			checked={enabled}
+																			onChange={setEnabled}
+																			className={`${
+																				enabled ? "bg-green-500" : "bg-gray-400"
+																			} relative inline-flex h-6 w-11 items-center rounded-full`}
+																		>
+																			<span className="sr-only">Enable notifications</span>
+																			<span
+																				className={`${
+																					enabled ? "translate-x-6" : "translate-x-1"
+																				} inline-block h-4 w-4 transform rounded-full bg-white transition`}
+																			/>
+																		</Switch>
+																		<Button btnStyle="outlined" label="Edit" />
+																	</div>
+																</div>
 															</div>
-															<p className="mb-2 flex items-center justify-between text-sm text-darkGray dark:text-gray-400">
-																<span>Bell Cosmetic</span>
-																<span>ID - 45989</span>
-															</p>
-															<div className="flex items-center justify-between">
-																<Switch
-																	checked={enabled}
-																	onChange={setEnabled}
-																	className={`${
-																		enabled ? "bg-green-500" : "bg-gray-400"
-																	} relative inline-flex h-6 w-11 items-center rounded-full`}
-																>
-																	<span className="sr-only">Enable notifications</span>
-																	<span
-																		className={`${
-																			enabled ? "translate-x-6" : "translate-x-1"
-																		} inline-block h-4 w-4 transform rounded-full bg-white transition`}
-																	/>
-																</Switch>
-																<Button btnStyle="outlined" label="Edit" />
-															</div>
-														</div>
+														)}
 													</div>
-												)}
-											</div>
-										</div>
+												</div>
+											</>
+										)}
 									</Tab.Panel>
 									<Tab.Panel>
-										<section className="px-10 py-6">
-											<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-												<p className="my-2">
-													{word != null || wordpath != "" ? (
-														<>FileName (Offer Letter)</>
-													) : (
-														<>Select Offer Letter (Offer Letter)</>
+										{atsVersion != "enterprise" ? (
+											<PermiumComp userRole={userRole} />
+										) : (
+											<>
+												<section className="px-10 py-6">
+													<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+														<p className="my-2">
+															{word != null || wordpath != "" ? (
+																<>FileName (Offer Letter)</>
+															) : (
+																<>Select Offer Letter (Offer Letter)</>
+															)}
+														</p>
+														{word != null || wordpath != "" ? (
+															<div>
+																<button
+																	className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																	onClick={handleDownload}
+																>
+																	<i className="fa-solid fa-download mr-2"></i>
+																	Download
+																</button>
+																&nbsp;|&nbsp;
+																<button
+																	className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																	onClick={() => resetOL()}
+																>
+																	Reset
+																</button>
+															</div>
+														) : (
+															<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
+																<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+																	<input
+																		type="file"
+																		className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+																		accept=".docx"
+																		onChange={handleFileInputChange}
+																	/>
+																	<span className="absolute right-3 top-[12px] text-lightGray">
+																		<i className="fa-solid fa-paperclip"></i>
+																	</span>
+																	<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+																		Docx etc...
+																	</span>
+																</div>
+															</div>
+														)}
+													</div>
+													{value && value.length > 0 && (word != null || wordpath != "") && (
+														<>
+															<div className="border py-2">
+																<article
+																	className="m-6"
+																	ref={htmlRef}
+																	id="contentABC"
+																	dangerouslySetInnerHTML={{ __html: value }}
+																></article>
+															</div>
+														</>
 													)}
-												</p>
-												{word != null || wordpath != "" ? (
-													<div>
-														<button
-															className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-															onClick={handleDownload}
-														>
-															<i className="fa-solid fa-download mr-2"></i>
-															Download
-														</button>
-														&nbsp;|&nbsp;
-														<button
-															className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-															onClick={() => resetOL()}
-														>
-															Reset
-														</button>
-													</div>
-												) : (
-													<div className="my-2 inline-block w-[50%] font-bold text-primary hover:underline dark:text-gray-200">
-														<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
-															<input
-																type="file"
-																className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
-																accept=".docx"
-																onChange={handleFileInputChange}
-															/>
-															<span className="absolute right-3 top-[12px] text-lightGray">
-																<i className="fa-solid fa-paperclip"></i>
-															</span>
-															<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
-																Docx etc...
-															</span>
-														</div>
-													</div>
-												)}
-											</div>
-											{value && value.length > 0 && (word != null || wordpath != "") && (
-												<>
-													<div className="border py-2">
-														<article
-															className="m-6"
-															ref={htmlRef}
-															id="contentABC"
-															dangerouslySetInnerHTML={{ __html: value }}
-														></article>
-													</div>
-												</>
-											)}
-										</section>
+												</section>
+											</>
+										)}
 									</Tab.Panel>
 								</Tab.Panels>
 							</Tab.Group>

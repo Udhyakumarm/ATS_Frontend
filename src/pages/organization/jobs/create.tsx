@@ -217,7 +217,16 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				addActivityLog(axiosInstanceAuth2, aname);
 				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"]);
 				toggleLoadMode(true);
+				if (type === "active") {
+					setPublishThanks(true)
+					setTimeout(()=>{
+						setPublishThanks(false)
+						router.push(`${type}/`);
+					}, 3000);
+				}
+				else{
 				router.push(`${type}/`);
+				}
 			})
 			.catch((err) => {
 				toastcomp("Job Not Created", "error");
