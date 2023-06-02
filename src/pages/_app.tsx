@@ -49,7 +49,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 					{Component.noAuth ? (
 						<Component {...pageProps} />
 					) : (
-						<Auth>
+						<Auth></Auth>
 							<Component {...pageProps} atsVersion={version} userRole={role} upcomingSoon={soon} />
 						</Auth>
 					)}
