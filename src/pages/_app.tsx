@@ -10,7 +10,7 @@ import NProgress from "nprogress";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { useUserStore, useVersionStore } from "@/utils/code";
-import { appWithTranslation } from 'next-i18next';
+import { appWithTranslation } from "next-i18next";
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	useEffect(() => {
@@ -49,7 +49,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 					{Component.noAuth ? (
 						<Component {...pageProps} />
 					) : (
-						<Auth></Auth>
+						<Auth>
 							<Component {...pageProps} atsVersion={version} userRole={role} upcomingSoon={soon} />
 						</Auth>
 					)}
@@ -75,4 +75,4 @@ function Auth({ children }: any) {
 	return <></>;
 }
 
-export default appWithTranslation(App)
+export default appWithTranslation(App);

@@ -41,6 +41,8 @@ import { useApplicantStore, useDashboardStore } from "@/utils/code";
 import Applicants from "./applicants";
 import JobCard_2 from "@/components/JobCard-2";
 import toastcomp from "@/components/toast";
+import UpcomingComp from "@/components/organization/upcomingComp";
+import PermiumComp from "@/components/organization/premiumComp";
 
 export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon }: any) {
 	const [sklLoad] = useState(true);
@@ -354,44 +356,19 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<HighchartsReact highcharts={Highcharts} options={options} />
 											) : (
 												<>
-													<div className="py-8 text-center">
-														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-															<Image
-																src={nodata_2}
-																alt="No Data"
-																width={300}
-																className="max-h-[60px] w-auto max-w-[60px]"
-															/>
-														</div>
-														<p className="text-sm text-darkGray">No Hiring Analytics</p>
-													</div>
-													{atsVersion === "basic" && (
-														<div
-															className="flex h-full w-full cursor-pointer items-center justify-center"
-															onClick={() => {
-																if (userRole === "Super Admin") {
-																	router.push("/organization/settings/pricing");
-																} else {
-																	toastcomp("Kindly Contact Your Super Admin", "warning");
-																}
-															}}
-														>
-															<div className="mx-auto w-full max-w-[400px] rounded-normal bg-[rgba(255,255,255,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
+													{atsVersion === "starter" ? (
+														<PermiumComp userRole={userRole} />
+													) : (
+														<div className="py-8 text-center">
+															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
 																<Image
-																	src={"/images/upgrade-plan-icon.png"}
-																	alt="Upgrade"
-																	width={100}
-																	height={100}
-																	className="mx-auto mb-6 w-auto"
+																	src={nodata_2}
+																	alt="No Data"
+																	width={300}
+																	className="max-h-[60px] w-auto max-w-[60px]"
 																/>
-																<h3 className="textGrad mb-1 mb-4 inline-block rounded-[10px] border px-2 py-1 text-3xl font-extrabold">
-																	Go Premium
-																</h3>
-																<p className="text-sm text-darkGray">
-																	Upgrade your experience with our premium package for enhanced features and exclusive
-																	benefits.
-																</p>
 															</div>
+															<p className="text-sm text-darkGray">No Hiring Analytics</p>
 														</div>
 													)}
 												</>
@@ -616,34 +593,20 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																</div>
 														  )}
 												</div>
+											) : upcomingSoon ? (
+												<UpcomingComp />
 											) : (
-												<>
-													<div className="py-8 text-center">
-														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-															<Image
-																src={nodata_4}
-																alt="No Data"
-																width={300}
-																className="max-h-[60px] w-auto max-w-[60px]"
-															/>
-														</div>
-														<p className="text-sm text-darkGray">Nothing In To Do List</p>
-													</div>
-													<div className="mx-auto w-full max-w-[400px] rounded-normal bg-[rgba(255,255,255,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
 														<Image
-															src={"/images/coming-soon-icon.png"}
-															alt="Coming Soon"
-															width={100}
-															height={100}
-															className="mx-auto mb-6 w-auto"
+															src={nodata_4}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
 														/>
-														<h3 className="textGrad mb-1 mb-4 text-3xl font-extrabold">Coming Soon</h3>
-														<p className="text-sm text-darkGray">
-															Upgrade your experience with our premium package for enhanced features and exclusive
-															benefits.
-														</p>
 													</div>
-												</>
+													<p className="text-sm text-darkGray">Nothing In To Do List</p>
+												</div>
 											)}
 										</div>
 									</div>
@@ -761,7 +724,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																</div>
 															</div>
 														) : (
-															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1" key={i}>
 																<div className="flex items-center justify-center p-3">
 																	<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
 																		<i className="fa-solid fa-star"></i>
