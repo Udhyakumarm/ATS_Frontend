@@ -22,9 +22,15 @@ import moment from "moment";
 import Canban from "@/components/organization/applicant/Canban";
 import ChatAssistance from "@/components/ChatAssistance";
 import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useLangStore } from "@/utils/code";
 
 export default function Applicants() {
 	const router = useRouter();
+
+	const { t } = useTranslation('common')
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const cancelButtonRef = useRef(null);
 	const [createBoard, setCreateBoard] = useState(false);
@@ -159,6 +165,20 @@ export default function Applicants() {
 		}
 	},[cardstatus])
 
+	function getAverage(num: any) {
+		return (num / tApp) * 100;
+	}
+	function getColor(num: any) {
+		num = (num / tApp) * 100;
+		if (num > 66) {
+			return "#58E700";
+		} else if (num > 33 && num <= 66) {
+			return "#FFF616";
+		} else {
+			return "#FE8F66";
+		}
+	}
+
 	return (
 		<>
 			<Head>
@@ -194,6 +214,117 @@ export default function Applicants() {
 				setinteretime={setinteretime}
 				/> }
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
+				<div className="layoutWrap p-4 lg:p-8">
+					<div className="bg-white dark:bg-gray-800 rounded-normal shadow-normal p-6">
+						<h2 className="font-bold text-xl mb-6">
+						{srcLang === "ja" ? "すべての応募" : "All Applicants"}
+						</h2>
+						<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+							<thead>
+								<tr>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "資格名" : "Name"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "ID" : "ID"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "経験" : "Experience"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "メールアドレス" : "Email"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "内定から入社までの必要日数" : "Notice Period"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "ステータス" : "Status"}
+									</th>
+									<th className="border-b py-2 px-3 text-sm text-center">
+									{srcLang === "ja" ? "プロフィール" : "Profile"}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+							{Array(6).fill(
+								<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+									<td className="py-2 px-3 text-[12px] text-center">
+										<button
+										type="button"
+										className="py-2 px-3 rounded hover:bg-gradDarkBlue hover:text-white"
+										>
+										Jhon Cerden
+										</button>
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										<button
+										type="button"
+										className="py-2 px-3 rounded hover:bg-gradDarkBlue hover:text-white"
+										>
+										CA1236
+										</button>
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										5 years
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										<span className="break-all">
+											jhonecerden@email.com
+										</span>
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										30 days
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										<span
+											className="border rounded-lg py-1 px-4 text-center text-[12px] min-w-[110px] inline-block"
+											style={{
+											["border-color" as any]: `#4ea818`,
+											["color" as any]: `#4ea818`,
+											}}
+										>
+											Shortlisted
+										</span>
+										<span
+											className="border rounded-lg py-1 px-4 text-center text-[12px] min-w-[110px] inline-block"
+											style={{
+											["border-color" as any]: `#a9a30d`,
+											["color" as any]: `#a9a30d`,
+											}}
+										>
+											On Hold
+										</span>
+										<span
+											className="border rounded-lg py-1 px-4 text-center text-[12px] min-w-[110px] inline-block"
+											style={{
+											["border-color" as any]: `#FE8F66`,
+											["color" as any]: `#FE8F66`,
+											}}
+										>
+											Rejected
+										</span>
+									</td>
+									<td className="py-2 px-3 text-[12px] text-center">
+										<Button btnStyle="sm" label={srcLang === "ja" ? "閲覧する" : "View"} />
+									</td>
+								</tr>
+							)}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div className="layoutWrap p-4 lg:p-8">
+					<div className="bg-white dark:bg-gray-800 rounded-normal shadow-normal min-h-[calc(100vh-130px)] flex items-center justify-center">
+						<div className="text-center py-8 w-full max-w-[300px] mx-auto">
+							<div className="mb-6 p-2">
+								<Image src={noApplicantdata} alt="No Data" width={300} className="w-auto max-w-[200px] max-h-[200px] mx-auto" />
+							</div>
+							<h5 className="text-lg font-semibold mb-4">No Applicants</h5>
+							<p className="text-sm text-darkGray mb-2">There are no Applicants as of now , Post a New Job to have Applicants</p>
+							{/* <Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">Post a New Job</Link> */}
+						</div>
+					</div>
+				</div>
 				<div className="layoutWrap">
 					<div className="flex flex-wrap items-center justify-between bg-white py-4 px-4 shadow-normal dark:bg-gray-800 lg:px-8">
 						<div className="mr-3">
@@ -306,18 +437,6 @@ export default function Applicants() {
 						</aside>
 					</div>
 					{refersh == 0 && <Canban applicantlist={applicantlist} token={token} setcardarefid={setcardarefid} setcardstatus={setcardstatus}/>}
-				</div>
-				<div className="layoutWrap p-4 lg:p-8">
-					<div className="bg-white dark:bg-gray-800 rounded-normal shadow-normal min-h-[calc(100vh-130px)] flex items-center justify-center">
-						<div className="text-center py-8 w-full max-w-[300px] mx-auto">
-							<div className="mb-6 p-2">
-								<Image src={noApplicantdata} alt="No Data" width={300} className="w-auto max-w-[200px] max-h-[200px] mx-auto" />
-							</div>
-							<h5 className="text-lg font-semibold mb-4">No Applicants</h5>
-							<p className="text-sm text-darkGray mb-2">There are no Applicants as of now , Post a New Job to have Applicants</p>
-							{/* <Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">Post a New Job</Link> */}
-						</div>
-					</div>
 				</div>
 			</main>
 			<Transition.Root show={createBoard} as={Fragment}>
@@ -465,4 +584,13 @@ export default function Applicants() {
 			</Transition.Root>
 		</>
 	);
+}
+
+export async function getServerSideProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
 }

@@ -11,6 +11,9 @@ import Validator, { Rules } from "validatorjs";
 import toastcomp from "@/components/toast";
 import { axiosInstance2 } from "../api/axiosApi";
 import moment from "moment";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useLangStore } from "@/utils/code";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -36,12 +39,15 @@ const errorMessages = {
 
 const AuthError = ({ error }: { error: any }) => {
 	const errorMessage = error && (errorMessages[error as keyof typeof errorMessages] ?? errorMessages.default);
-	return <div className="pb-4 text-red-600">{errorMessage}</div>;
+	return <div className="mt-1 text-[12px] text-red-500">{errorMessage}</div>;
 };
 
 export default function AuthSignUp() {
 	const router = useRouter();
 	const { error } = useRouter().query;
+
+	const { t } = useTranslation('common')
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const [formError, setFormError] = useState({
 		organizationName: null,
@@ -183,7 +189,7 @@ export default function AuthSignUp() {
 	return (
 		<>
 			<Head>
-				<title>Sign Up</title>
+				<title>{srcLang === 'ja' ? 'アカウント作成' : 'Sign Up'}</title>
 				<meta name="description" />
 			</Head>
 			<main className="py-8">
@@ -196,14 +202,14 @@ export default function AuthSignUp() {
 						onSubmit={handleSignUp}
 					>
 						<h1 className="mb-6 text-3xl font-bold">
-							Sign <span className="text-primary">Up</span>
+						{srcLang === 'ja' ? 'アカウント作成' : <>Sign <span className="text-primary">Up</span></>}
 						</h1>
 						<AuthError error={error} />
 
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label="Organization Name"
+							label={t('Form.OrgName')}
 							id="organizationName"
 							handleChange={dispatch}
 							value={signUpInfo.organizationName}
@@ -213,7 +219,7 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label="Full Name"
+							label={t('Form.FullName')}
 							id="fullName"
 							value={signUpInfo.fullName}
 							error={formError.fullName}
@@ -223,7 +229,7 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="email"
-							label="Email"
+							label={t('Form.Email')}
 							id="email"
 							value={signUpInfo.email}
 							handleChange={dispatch}
@@ -234,14 +240,14 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="select"
 							inputType="text"
-							label="Organization Type"
+							label={t('Form.OrgType')}
 							id="companyType"
 							singleSelect
 							value={signUpInfo.companyType}
 							options={[
-								{ name: "Sole Proprietorship" },
-								{ name: "Corporation" },
-								{ name: "Limited Liability Company (LLC)" }
+								{ name: t('Select.Sole_Proprietorship') },
+								{ name: t('Select.Corporation') },
+								{ name: t('Select.Limited_Liability_Company') }
 							]}
 							handleChange={dispatch}
 							error={formError.companyType}
@@ -253,7 +259,7 @@ export default function AuthSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label="Password"
+									label={t('Form.Password')}
 									id="password"
 									value={signUpInfo.password}
 									error={formError.password}
@@ -264,7 +270,7 @@ export default function AuthSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label="Confirm Password"
+									label={t('Form.ConfirmPassword')}
 									id="passwordConfirm"
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
@@ -273,12 +279,12 @@ export default function AuthSignUp() {
 							</div>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label="Create Account" full={true} loader={false} disabled={false} />
+							<Button btnType="submit" label={t('Btn.CreateAccount')} full={true} loader={false} disabled={false} />
 						</div>
 						<p className="text-center text-darkGray">
-							Already have an Account?{" "}
+							{srcLang === 'ja' ? 'アカウント作成がまだの方は' : 'Already have an Account?'}{" "}
 							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline">
-								Sign In
+								{srcLang === 'ja' ? 'こちら' : 'Sign In'}
 							</Link>
 						</p>
 					</form>
@@ -286,6 +292,15 @@ export default function AuthSignUp() {
 			</main>
 		</>
 	);
+}
+
+export async function getServerSideProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
 }
 
 AuthSignUp.noAuth = true;

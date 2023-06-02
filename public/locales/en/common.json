@@ -6,13 +6,22 @@
         "Email": "Email",
         "PhoneNumber": "Phone Number",
         "Password": "Password",
-        "Confirm Password": "Confirm Password"
+        "NewPassword": "New Password",
+        "ConfirmPassword": "Confirm Password",
+        "OrgName": "Organization Name",
+        "OrgType": "Organization Type"
     },
     "Btn": {
         "SignIn": "Sign In",
         "SignUp": "Sign Up",
         "Submit": "Submit",
         "Save": "Save",
-        "Close": "Close"
+        "Close": "Close",
+        "CreateAccount": "Create Account"
+    },
+    "Select": {
+        "Sole_Proprietorship": "Sole Proprietorship",
+        "Corporation": "Corporation",
+        "Limited_Liability_Company": "Limited Liability Company (LLC)"
     }
 }

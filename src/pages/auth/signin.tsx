@@ -34,7 +34,7 @@ const errorMessages = {
 
 const AuthError = ({ error }: { error: any }) => {
 	const errorMessage = error && (errorMessages[error as keyof typeof errorMessages] ?? errorMessages.default);
-	return <div className="pb-4 text-red-600">{errorMessage}</div>;
+	return <div className="mt-1 text-[12px] text-red-500">{errorMessage}</div>;
 };
 
 export default function AuthSignIn({ providers }: any) {

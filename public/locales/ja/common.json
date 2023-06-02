@@ -1,18 +1,27 @@
 {
     "Form": {
-        "FullName": "Full Name",
-        "FirstName": "First Name",
-        "LastName": "Last Name",
+        "FullName": "お名前",
+        "FirstName": "姓",
+        "LastName": "名",
         "Email": "メールアドレス",
-        "PhoneNumber": "Phone Number",
+        "PhoneNumber": "電話番号",
         "Password": "パスワード",
-        "Confirm Password": "Confirm Password"
+        "NewPassword": "新しいパスワード",
+        "ConfirmPassword": "パスワードの確認",
+        "OrgName": "会社名",
+        "OrgType": "会社の種類 "
     },
     "Btn": {
         "SignIn": "ログイン",
-        "SignUp": "Sign Up",
+        "SignUp": "アカウント作成",
         "Submit": "確認メールを送信",
-        "Save": "Save",
-        "Close": "Close"
+        "Save": "保存",
+        "Close": "Close",
+        "CreateAccount": "アカウントを作成"
+    },
+    "Select": {
+        "Sole_Proprietorship": "個人事業主",
+        "Corporation": "株式会社",
+        "Limited_Liability_Company": "合同会社"
     }
 }

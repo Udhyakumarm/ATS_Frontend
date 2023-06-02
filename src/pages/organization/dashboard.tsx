@@ -43,9 +43,15 @@ import JobCard_2 from "@/components/JobCard-2";
 import toastcomp from "@/components/toast";
 import UpcomingComp from "@/components/organization/upcomingComp";
 import PermiumComp from "@/components/organization/premiumComp";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useLangStore } from "@/utils/code";
 
 export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon }: any) {
 	const [sklLoad] = useState(true);
+
+	const { t } = useTranslation('common')
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const cancelButtonRef = useRef(null);
 	const settings = {
@@ -949,4 +955,13 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			</main>
 		</>
 	);
+}
+
+export async function getServerSideProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
 }

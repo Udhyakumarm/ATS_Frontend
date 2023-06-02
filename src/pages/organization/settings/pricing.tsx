@@ -106,7 +106,7 @@ export default function Pricing() {
                                                         $54
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / month</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">Professional</h5>
+                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">Premium</h5>
                                                     <p className="text-[12px] mb-2">Advanced tools to take your work to the next level.</p>
                                                     <ul className="mb-10">
                                                         {Array(3).fill(
@@ -154,7 +154,7 @@ export default function Pricing() {
                                                             Starter
                                                         </th>
                                                         <th className="border-b py-2 px-3">
-                                                            Professional
+                                                            Premium
                                                         </th>
                                                         <th className="border-b py-2 px-3">
                                                             Enterprises
@@ -519,7 +519,7 @@ export default function Pricing() {
                                                         $454
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / yearly</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">Professional</h5>
+                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">Premium</h5>
                                                     <p className="text-[12px] mb-2">Advanced tools to take your work to the next level.</p>
                                                     <ul className="mb-10">
                                                         {Array(3).fill(
@@ -567,7 +567,7 @@ export default function Pricing() {
                                                             Starter
                                                         </th>
                                                         <th className="border-b py-2 px-3">
-                                                            Professional
+                                                            Premium
                                                         </th>
                                                         <th className="border-b py-2 px-3">
                                                             Enterprises

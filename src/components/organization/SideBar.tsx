@@ -28,9 +28,12 @@ import { useUserStore, useVersionStore } from "@/utils/code";
 import UpcomingComp from "./upcomingComp";
 import PermiumComp from "./premiumComp";
 import toastcomp from "../toast";
+import { useTranslation } from 'next-i18next'
+import { useLangStore } from "@/utils/code";
 
 export default function OrgSideBar() {
 	const router = useRouter();
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	function toggleSidebar() {
@@ -63,7 +66,7 @@ export default function OrgSideBar() {
 
 	const menu = [
 		{
-			title: "Dashboard",
+			title: srcLang === 'ja' ? 'ダッシュボード' : 'Dashboard',
 			url: "/organization/dashboard",
 			img: dashboardIcon,
 			imgWhite: dashboardIconWhite,
@@ -71,7 +74,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Dashboard")
 		},
 		{
-			title: "Jobs",
+			title: srcLang === 'ja' ? '求人' : 'Jobs',
 			url: "/organization/jobs",
 			img: jobsIcon,
 			imgWhite: jobsIconWhite,
@@ -79,7 +82,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Jobs")
 		},
 		{
-			title: "Applicants",
+			title: srcLang === 'ja' ? '候補者' : 'Applicants',
 			url: "/organization/applicants",
 			img: applicantsIcon,
 			imgWhite: applicantsIconWhite,
@@ -87,7 +90,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Applicants")
 		},
 		{
-			title: "Offer Management",
+			title: srcLang === 'ja' ? 'オファー管理' : 'Offer Management',
 			url: "/organization/offer-management",
 			img: offerManageIcon,
 			imgWhite: offerManageIconWhite,
@@ -95,7 +98,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Offer Management")
 		},
 		{
-			title: "Interviews",
+			title: srcLang === 'ja' ? '面接' : 'Interviews',
 			url: "/organization/interviews",
 			img: interviewsIcon,
 			imgWhite: interviewsIconWhite,
@@ -103,7 +106,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Interviews")
 		},
 		{
-			title: "Analytics",
+			title: srcLang === 'ja' ? 'アナリティクス' : 'Analytics',
 			url: "/organization/analytics",
 			img: analyticsIcon,
 			imgWhite: analyticsIconWhite,
@@ -111,7 +114,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Analytics")
 		},
 		{
-			title: "Inboxes",
+			title: srcLang === 'ja' ? 'インボックス' : 'Inboxes',
 			url: "/organization/inbox",
 			img: inboxesIcon,
 			imgWhite: inboxesIconWhite,
@@ -119,7 +122,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Inboxes")
 		},
 		{
-			title: "Settings",
+			title: srcLang === 'ja' ? '設定' : 'Settings',
 			url: "/organization/settings",
 			img: settingsIcon,
 			imgWhite: settingsIconWhite,
@@ -132,7 +135,7 @@ export default function OrgSideBar() {
         settitle(title)
         if(com){
             setComingSoon(true)
-        }
+		}
         else if(pre){
             setUpgradePlan(true)
         }

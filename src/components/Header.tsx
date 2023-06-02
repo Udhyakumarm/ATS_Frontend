@@ -51,6 +51,7 @@ export default function Header() {
 	) {
 		return (
 			<>
+				<ToggleLang />
 				<header className="hello bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<div className="flex items-center">
@@ -180,6 +181,7 @@ export default function Header() {
 	} else if (router.asPath == "/organization") {
 		return (
 			<>
+				<ToggleLang />
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
@@ -219,6 +221,7 @@ export default function Header() {
 	) {
 		return (
 			<>
+				<ToggleLang />
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
@@ -246,7 +249,5 @@ export default function Header() {
 			</>
 		);
 	}
-	return <>
-	<ToggleLang />
-	</>;
+	return <><ToggleLang /></>;
 }
