@@ -29,49 +29,49 @@ export default function Organization({ atsVersion, userRole }: any) {
 	}
 	const quicklinks = [
 		{
-			name: srcLang === 'ja' ? 'ダッシュボード' : 'Dashboard',
+			name: t('Words.Dashboard'),
 			icon: dashboardIcon,
 			link: "/organization/dashboard",
 			blur: blurOrNot("Dashboard")
 		},
 		{
-			name: srcLang === 'ja' ? '求人' : 'Jobs',
+			name: t('Words.Jobs'),
 			icon: jobsIcon,
 			link: "/organization/jobs",
 			blur: blurOrNot("Jobs")
 		},
 		{
-			name: srcLang === 'ja' ? '候補者' : 'Applicants',
+			name: t('Words.Applicants'),
 			icon: applicantsIcon,
 			link: "/organization/applicants",
 			blur: blurOrNot("Applicants")
 		},
 		{
-			name: srcLang === 'ja' ? 'オファー管理' : 'Offer Management',
+			name: t('Words.OfferManagement'),
 			icon: offerManageIcon,
 			link: "/organization/offer-management",
 			blur: blurOrNot("Offer Management")
 		},
 		{
-			name: srcLang === 'ja' ? '面接' : 'Interviews',
+			name: t('Words.Interviews'),
 			icon: interviewsIcon,
 			link: "/organization/interviews",
 			blur: blurOrNot("Interviews")
 		},
 		{
-			name: srcLang === 'ja' ? 'アナリティクス' : 'Analytics',
+			name: t('Words.Analytics'),
 			icon: analyticsIcon,
 			link: "/organization/analytics",
 			blur: blurOrNot("Analytics")
 		},
 		{
-			name: srcLang === 'ja' ? '人材紹介会社' : 'Vendors',
+			name: t('Words.Vendors'),
 			icon: vendorsIcon,
 			link: "/organization/settings/vendors",
 			blur: blurOrNot("Vendors")
 		},
 		{
-			name: srcLang === 'ja' ? '設定' : 'Settings',
+			name: t('Words.Settings'),
 			icon: settingsIcon,
 			link: "/organization/settings",
 			blur: blurOrNot("Settings")

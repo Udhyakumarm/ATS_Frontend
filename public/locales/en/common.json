@@ -23,5 +23,21 @@
         "Sole_Proprietorship": "Sole Proprietorship",
         "Corporation": "Corporation",
         "Limited_Liability_Company": "Limited Liability Company (LLC)"
+    },
+    "Words": {
+        "Dashboard": "Dashboard",
+        "Jobs": "Jobs",
+        "Applicants": "Applicants",
+        "OfferManagement": "Offer Management",
+        "Interviews": "Interviews",
+        "Analytics": "Analytics",
+        "Vendors": "Vendors",
+        "Settings": "Settings",
+        "ApplicantDetails": "Applicant Details",
+        "HiringAnalytics": "Hiring Analytics",
+        "UpcomingInterviews": "Upcoming Interviews",
+        "ToDoList": "To Do List",
+        "RecentJobs": "Recent Jobs",
+        "ActivityLog": "Activity Log"
     }
 }

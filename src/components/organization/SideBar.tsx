@@ -30,6 +30,7 @@ import PermiumComp from "./premiumComp";
 import toastcomp from "../toast";
 import { useTranslation } from 'next-i18next'
 import { useLangStore } from "@/utils/code";
+import Button from "../Button";
 
 export default function OrgSideBar() {
 	const router = useRouter();
@@ -208,14 +209,27 @@ export default function OrgSideBar() {
 					</ul>
 					{
 						version != "enterprise" && !show && (
-							<div className="cursor-pointer py-4" onClick={()=>{
-                                if (role === "Super Admin") {
-                                    router.push("/organization/settings/pricing");
-                                } else {
-                                    toastcomp("Kindly Contact Your Super Admin", "warning");
-                                }
-                        }}>
-								<Image src={upgradeBadge} alt="Upgrade" width={230} />
+							<div className="py-4">
+								<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue rounded-large p-6 text-white">
+									<div className="flex items-center mb-2">
+										<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
+										<Image src={'/images/upgrade_launch.png'} alt="Upgrade" width={80} height={80} className="w-auto ml-auto" />
+									</div>
+									<p className="mb-2">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
+									<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
+									<Button
+									btnStyle="white"
+									btnType="button"
+									label="Upgrade"
+									handleClick={() => {
+										if (role === "Super Admin") {
+											router.push("/organization/settings/pricing");
+										} else {
+											toastcomp("Kindly Contact Your Super Admin", "warning");
+										}
+									}}
+									/>
+								</div>
 							</div>
 						)
 					}

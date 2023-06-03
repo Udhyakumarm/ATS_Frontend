@@ -23,5 +23,21 @@
         "Sole_Proprietorship": "個人事業主",
         "Corporation": "株式会社",
         "Limited_Liability_Company": "合同会社"
+    },
+    "Words": {
+        "Dashboard": "ダッシュボード",
+        "Jobs": "求人",
+        "Applicants": "候補者",
+        "OfferManagement": "オファー管理",
+        "Interviews": "面接",
+        "Analytics": "アナリティクス",
+        "Vendors": "人材紹介会社",
+        "Settings": "設定",
+        "ApplicantDetails": "応募状況",
+        "HiringAnalytics": "アナリティクス",
+        "UpcomingInterviews": "予定している面接・面談",
+        "ToDoList": "ToDoリスト",
+        "RecentJobs": "直近の求人",
+        "ActivityLog": "アクティビティ履歴"
     }
 }

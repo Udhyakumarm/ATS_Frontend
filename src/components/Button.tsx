@@ -122,6 +122,23 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			</button>
 		)
 	}
+	if (btnStyle === "white") {
+		return (
+			<button
+				type={btnType ? btnType : "button"}
+				className={
+					`my-2 min-w-[100px] rounded text-gradDarkBlue bg-white hover:bg-black hover:text-white py-2 px-6 font-semibold text-sm disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-slate-200` +
+					" " +
+					(full ? "w-full" : "w-auto")
+				}
+				disabled={disabled}
+				onClick={btnType && handleClick}
+			>
+				{label}
+				{loader ? <i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> : ""}
+			</button>
+		)
+	}
 	return (
 		<>
 			<button
