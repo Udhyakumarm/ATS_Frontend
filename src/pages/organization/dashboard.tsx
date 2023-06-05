@@ -689,7 +689,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 											<Button 
 											btnStyle="white"
 											btnType="button"
-											label="Upgrade"
+											label={srcLang === 'ja' ? 'アップグレード' : 'Upgrade'}
 											handleClick={() => {
 												if (userRole === "Super Admin") {
 													router.push("/organization/settings/pricing");

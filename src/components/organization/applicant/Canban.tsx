@@ -6,14 +6,23 @@ import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { addActivityLog, addNotifyApplicantLog, addNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
-import { useNotificationStore, useUserStore } from "@/utils/code";
+import { useLangStore, useNotificationStore, useUserStore } from "@/utils/code";
 import moment from "moment";
 
 function Canban(props: any) {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	let _columnId = 0;
 	let _cardId = 0;
-	var initialColumns = ["Sourced", "Review", "Interview", "Shortlisted", "Offer", "Hired", "Reject"].map(
+	var initialColumns = [
+		srcLang === 'ja' ? '応募前' : 'Sourced',
+		srcLang === 'ja' ? 'レビュー' : 'Review',
+		srcLang === 'ja' ? '面接' : 'Interview',
+		srcLang === 'ja' ? '面接通過' : 'Shortlisted',
+		srcLang === 'ja' ? 'オファー' : 'Offer',
+		srcLang === 'ja' ? '入社' : 'Hired',
+		srcLang === 'ja' ? '辞退' : 'Reject',
+	].map(
 		(title, i) => ({
 			id: _columnId++,
 			title,

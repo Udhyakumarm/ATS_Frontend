@@ -9,7 +9,15 @@
         "NewPassword": "新しいパスワード",
         "ConfirmPassword": "パスワードの確認",
         "OrgName": "会社名",
-        "OrgType": "会社の種類 "
+        "OrgType": "会社の種類",
+        "NoticePeriod": "内定から入社までの必要日数",
+        "InterviewName": "面接概要",
+        "Description": "案内文",
+        "StartDate": "開始日",
+        "EndDate": "終了日",
+        "StartTime": "開始時間",
+        "EndTime": "終了時間",
+        "Date": "日付"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -21,7 +29,8 @@
         "Preview": "プレビュー",
         "SaveAsDraft": "下書き保存",
         "Publish": "求人公開",
-        "View": "みる"
+        "View": "みる",
+        "Confirm": "確認"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -96,6 +105,10 @@
         "SelectAll": "全選択",
         "UserName": "名前",
         "Department_Title": "組織・タイトル",
-        "Access": "アクセス権限"
+        "Access": "アクセス権限",
+        "Source": "ソース",
+        "Status": "ステータス",
+        "Profile": "プロフィール",
+        "ScheduleInterview": "面接・面談を調整"
     }
 }

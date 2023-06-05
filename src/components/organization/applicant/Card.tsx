@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import userImg from "/public/images/user-image.png";
 import socialIcon from "/public/images/social/linkedin-icon.png";
-import { useApplicantStore, useNotificationStore } from "@/utils/code";
+import { useApplicantStore, useLangStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
 import Button from "@/components/Button";
 import { DragSource, DropTarget } from "react-dnd";
@@ -13,6 +13,7 @@ import _ from "lodash";
 import React from "react";
 
 export default function Card(props: any) {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
 	const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
@@ -57,7 +58,7 @@ export default function Card(props: any) {
 						</aside>
 						<Button
 							btnStyle="outlined"
-							label="View"
+							label={srcLang === 'ja' ? 'みる' : 'View'}
 							btnType="button"
 							// handleClick={() => {
 							// 	setjobid(props["data"]["job"]["refid"]);
@@ -69,9 +70,9 @@ export default function Card(props: any) {
 				</div>
 			) : (
 				<div className="mb-4 rounded-normal bg-white px-4 py-2 text-center shadow-normal dark:bg-gray-800">
-					No Applicant <br />{" "}
+					{srcLang === 'ja' ? '申請者がいません' : 'No Applicant'} <br />{" "}
 					<small>
-						<i>You Can Drag Here</i>
+						<i>{srcLang === 'ja' ? 'ここにドラッグできます' : 'You Can Drag Here'}</i>
 					</small>
 				</div>
 			)}
