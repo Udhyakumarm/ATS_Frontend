@@ -1,9 +1,27 @@
 import React from "react";
 import Image from "next/image";
 import Button from "./Button";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import testGorrila from "/public/images/test-gorrila.png";
 
-export default function CardLayout_1({ handleIntegrate, label, access, handlePost, isBlank }: any) {
+export default function CardLayout_1({ handleIntegrate, label, access, handlePost, isBlank, sklLoad }: any) {
+    if(sklLoad === true) {
+        return(
+            <div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-6 shadow-lg">
+                <div className="mb-4 flex flex-wrap items-center justify-between">
+                    <Skeleton circle width={30} height={30} />
+                    <div className="pl-2">
+                        <Skeleton width={60} height={25} />
+                    </div>
+                </div>
+                <h4 className="text-lg font-semibold">
+                    <Skeleton width={130} />
+                    <Skeleton count={2} />
+                </h4>
+            </div>
+        )
+    }
     return(
         <>
         {

@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		.then((response) => response.data[0]);
 
 	const { integrations }: { integrations: Array<any> } = await axiosInstance.api
-		.get("/organization/integrations/calendar/" + unique_id + "/", {
+		.get("/organization/integrations/mail/" + unique_id + "/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
 		.then((response) => response.data)
@@ -27,16 +27,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return { data: { success: false } };
 		});
 
-	const googleCalendarIntegration = integrations.find(
-		(integration: { provider: string }) => integration.provider == "google"
-	);
+	const gmailIntegration = integrations.find((integration: { provider: string }) => integration.provider == "google");
 
-	if (!googleCalendarIntegration) return res.json({ success: false, message: "No google provider found." });
+	if (!gmailIntegration) return res.json({ success: false, message: "No google provider found." });
 
-	const expiry_date = Number(googleCalendarIntegration.expires_in) + Date.now();
+	const expiry_date = Number(gmailIntegration.expires_in) + Date.now();
 
 	Integration.googleCalendarOAuth2Client.setCredentials({
-		...googleCalendarIntegration,
+		...gmailIntegration,
 		expiry_date,
 		token_type: "Bearer"
 	});
@@ -50,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	if (!refreshedToken) {
 		const response = await axiosInstance.api
-			.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+			.post("/organization/delete_mail_integration/" + gmailIntegration.id + "/", {
 				headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
 			})
 			.then((res) => res.data)
@@ -65,14 +63,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const response = await axiosInstance.api
 		.post(
-			"/organization/create_calendar_integration/" + unique_id + "/",
+			"/organization/create_mail_integration/" + unique_id + "/",
 			{
 				access_token: refreshedToken.access_token,
 				refresh_token: refreshedToken.refresh_token,
 				expires_in: expires_in,
 				scope: refreshedToken.scope,
 				provider: "google",
-				calendar_id: googleCalendarIntegration.calendar_id
+				label_id: gmailIntegration.label_id
 			},
 			{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
 		)

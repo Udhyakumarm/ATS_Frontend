@@ -3,133 +3,212 @@ import FormField from "@/components/FormField";
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import { Transition } from "@headlessui/react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Head from "next/head";
+import Image from "next/image";
+import { Fragment, useEffect, useState } from "react";
+import userImg from "/public/images/user-image.png";
+import googleIcon from "/public/images/social/google-icon.png";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import noInterviewdata from "/public/images/no-data/iconGroup-3.png";
+import InterviewComp from "@/components/organization/InterviewComp.";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
-export default function Interviews() {
-    const [accordionOpen, setAccordionOpen] = useState(false);
-    const [upcomingInterview, setUpcomingInterview] = useState(true);
-    const [pastInterview, setPastInterview] = useState(false);
-    function handleUpcomingInterview() {
-        setUpcomingInterview(true);
-        setPastInterview(false);
-    }
-    function handlePastInterview() {
-        setPastInterview(true);
-        setUpcomingInterview(false);
-    }
-    const Interviews = () => {
-        return (
-         <>
-         <div className="border-b last:border-b-0 py-6">
-            <h6 className="text-darkGray dark:text-gray-400 mb-2"><b className="text-black dark:text-white">Today:</b> 8 Feb</h6>
-            {Array(4).fill(
-            <div className={'border rounded mb-3' + ' ' + (accordionOpen ? 'border-slate-300' : '')}>
-                <div className="flex flex-wrap items-center text-sm text-darkGray dark:text-gray-400 px-4">
-                    <div className="w-full lg:max-w-[25%] py-3 px-2">
-                        <h6 className="font-bold">Job</h6>
-                        <p>Software Developer</p>
-                    </div>
-                    <div className="w-full lg:max-w-[25%] py-3 px-2">
-                        <h6 className="font-bold">Candidate</h6>
-                        <p>Jack Paul - ID 42123</p>
-                    </div>
-                    <div className="w-full lg:max-w-[25%] py-3 px-2">
-                        <h6 className="font-bold">Scheduled Time</h6>
-                        <p>2:00 PM to 3:00 PM</p>
-                    </div>
-                    <div className="w-full lg:max-w-[10%] py-3">
-                        <Button btnStyle='sm' label="Join" />
-                    </div>
-                    <div className="w-full lg:max-w-[15%] py-3 text-right">
-                        <button type="button" className="font-semibold" onClick={() => setAccordionOpen(!accordionOpen)}>
-                            View More
-                            <i className={'fa-solid ml-2' + ' ' + (accordionOpen ? 'fa-chevron-up' : 'fa-chevron-down')}></i>
-                        </button>
-                    </div>
-                </div>
-                <Transition.Root show={accordionOpen} as={Fragment}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="p-8 border-t">
-                        Body
-                        </div>
-                    </Transition.Child>
-                </Transition.Root>
-            </div>
-            )}
-         </div>
-         </>   
-        )
-    };
-    return(
-        <>
-            <Head>
+export default function Interviews({upcomingSoon}:any) {
+	const [sklLoad, setskLoad] = useState(true);
+	const [accordionOpen, setAccordionOpen] = useState(false);
+	const [upcomingInterview, setUpcomingInterview] = useState(true);
+	const [pastInterview, setPastInterview] = useState(false);
+	function handleUpcomingInterview() {
+		setUpcomingInterview(true);
+		setPastInterview(false);
+	}
+	function handlePastInterview() {
+		setPastInterview(true);
+		setUpcomingInterview(false);
+	}
+
+	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	const [interviewUpcoming, setinterviewUpcoming] = useState([]);
+	const [interviewPast, setinterviewPast] = useState([]);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	async function loadUpcomingInterview() {
+		await axiosInstanceAuth2
+			.get(`/job/upcoming-listing-interview/`)
+			.then(async (res) => {
+				console.log("!", "upcome", res.data);
+				setinterviewUpcoming(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setinterviewUpcoming([]);
+			});
+	}
+
+	async function loadPastInterview() {
+		await axiosInstanceAuth2
+			.get(`/job/past-listing-interview/`)
+			.then(async (res) => {
+				console.log("!", "past", res.data);
+				setinterviewPast(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setinterviewPast([]);
+			});
+	}
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			loadUpcomingInterview();
+			loadPastInterview();
+			setskLoad(false);
+		}
+	}, [token]);
+
+	return (
+		<>
+			<Head>
 				<title>Interviews</title>
 				<meta name="description" content="Generated by create next app" />
 			</Head>
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"></div>
+				<div
+					id="overlay"
+					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+				></div>
 				<div className="layoutWrap p-4 lg:p-8">
-                    <div className="flex flex-wrap">
-                        <div className="w-full lg:max-w-[25%]">
-                            <div className="h-[calc(100vh-130px)] bg-white dark:bg-gray-800 rounded-normal shadow-normal border dark:border-gray-600">
-                                <div className="border-b py-3 px-8">
-                                    <h2 className="font-bold text-lg">Filters</h2>
-                                </div>
-                                <div className="border-b mb-4 py-2">
-                                    <button type="button" className={'w-full py-3 px-8 flex items-center font-bold hover:bg-lightBlue dark:hover:bg-gray-900' + ' ' + (upcomingInterview ? 'bg-lightBlue text-primary dark:bg-gray-900 dark:text-white' : '')} onClick={()=> handleUpcomingInterview()}>
-                                        <i className="fa-solid fa-calendar-days mr-3"></i>
-                                        Upcoming Interviews
-                                    </button>
-                                    <button type="button" className={'w-full py-3 px-8 flex items-center font-bold hover:bg-lightBlue dark:hover:bg-gray-900' + ' ' + (pastInterview ? 'bg-lightBlue text-primary dark:bg-gray-900 dark:text-white' : '')} onClick={()=> handlePastInterview()}>
-                                        <i className="fa-solid fa-clock-rotate-left mr-3"></i>
-                                        Past Interviews
-                                    </button>
-                                </div>
-                                <div className="py-3 px-8">
-                                    <FormField fieldType="select" label="Jobs" />
-                                    <FormField fieldType="select" label="Time" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="w-full lg:max-w-[75%] pl-8">
-                            <div className="bg-white dark:bg-gray-800 rounded-normal shadow-normal overflow-hidden">
-                                <div className="bg-white dark:bg-gray-700 shadow-normal">
-                                    <h2 className="inline-block min-w-[200px] rounded-tl-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue py-4 px-8 text-center font-semibold text-white shadow-lg">
-                                        Interviews
-                                    </h2>
-                                </div>
-                                <div className="px-8 h-[calc(100vh-185px)] overflow-y-auto">
-                                    {
-                                        upcomingInterview
-                                        ?
-                                        <>
-                                        {Array(2).fill(
-                                            <Interviews />
-                                        )}
-                                        </>
-                                        :
-                                        <>
-                                        Same component use as upcoming interviews
-                                        </>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </>
-    )
+					<div className="flex flex-wrap">
+						<div className="w-full lg:max-w-[25%]">
+							<div className="h-[calc(100vh-130px)] rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
+								<div className="border-b px-8 py-3">
+									<h2 className="text-lg font-bold">Filters</h2>
+								</div>
+								<div className="mb-4 border-b py-2">
+									<button
+										type="button"
+										className={
+											"flex w-full items-center px-8 py-3 font-bold hover:bg-lightBlue dark:hover:bg-gray-900" +
+											" " +
+											(upcomingInterview ? "bg-lightBlue text-primary dark:bg-gray-900 dark:text-white" : "")
+										}
+										onClick={() => handleUpcomingInterview()}
+									>
+										<i className="fa-solid fa-calendar-days mr-3"></i>
+										Upcoming Interviews
+									</button>
+									<button
+										type="button"
+										className={
+											"flex w-full items-center px-8 py-3 font-bold hover:bg-lightBlue dark:hover:bg-gray-900" +
+											" " +
+											(pastInterview ? "bg-lightBlue text-primary dark:bg-gray-900 dark:text-white" : "")
+										}
+										onClick={() => handlePastInterview()}
+									>
+										<i className="fa-solid fa-clock-rotate-left mr-3"></i>
+										Past Interviews
+									</button>
+								</div>
+								{!upcomingSoon && <div className="px-8 py-3">
+									<FormField fieldType="select" label="Jobs" />
+									<FormField fieldType="select" label="Time" />
+									
+								</div>
+								}
+							</div>
+						</div>
+						<div className="w-full pl-8 lg:max-w-[75%]">
+							<div className="overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-800">
+								<div className="bg-white shadow-normal dark:bg-gray-700">
+									<h2 className="inline-block min-w-[200px] rounded-tl-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-4 text-center font-semibold text-white shadow-lg">
+										Interviews
+									</h2>
+								</div>
+								<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
+									{upcomingInterview &&
+										interviewUpcoming &&
+										(interviewUpcoming.length > 0 ? (
+											interviewUpcoming.map((data, i) => <InterviewComp key={i} data={data} />)
+										) : (
+											<div className="flex min-h-full items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+												<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+													<div className="mb-6 p-2">
+														<Image
+															src={noInterviewdata}
+															alt="No Data"
+															width={300}
+															className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+														/>
+													</div>
+													<h5 className="mb-4 text-lg font-semibold">No Upcoming Interviews</h5>
+													<p className="mb-2 text-sm text-darkGray">
+														There are no Interviews as of now , Post a New Job to schedule interview with applicants{" "}
+													</p>
+												</div>
+											</div>
+										))}
+
+									{pastInterview &&
+										interviewPast &&
+										(interviewPast.length > 0 ? (
+											interviewPast.map((data, i) => <InterviewComp key={i} data={data} />)
+										) : (
+											<div className="flex min-h-full items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+												<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+													<div className="mb-6 p-2">
+														<Image
+															src={noInterviewdata}
+															alt="No Data"
+															width={300}
+															className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+														/>
+													</div>
+													<h5 className="mb-4 text-lg font-semibold">No Past Interviews</h5>
+													<p className="mb-2 text-sm text-darkGray">
+														There are no Interviews as of now , Post a New Job to schedule interview with applicants{" "}
+													</p>
+												</div>
+											</div>
+										))}
+								</div>
+							</div>
+						</div>
+					</div>
+					{/* <div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+						<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+							<div className="mb-6 p-2">
+								<Image
+									src={noInterviewdata}
+									alt="No Data"
+									width={300}
+									className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+								/>
+							</div>
+							<h5 className="mb-4 text-lg font-semibold">No Interviews</h5>
+							<p className="mb-2 text-sm text-darkGray">
+								There are no Interviews as of now , Post a New Job to schedule interview with applicants{" "}
+							</p>
+						</div>
+					</div> */}
+				</div>
+			</main>
+		</>
+	);
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Multiselect from "multiselect-react-dropdown";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
@@ -16,6 +17,7 @@ export default function FormField({
 	inputType,
 	fieldType,
 	handleChange,
+	handleOnBlur,
 	error,
 	value,
 	options,
@@ -25,24 +27,27 @@ export default function FormField({
 	clickevent,
 	showTimeSelect,
 	disabled,
-	onSearch
+	onSearch,
+	showHours
 }: {
 	label?: string;
 	required?: boolean;
 	readOnly?: boolean;
 	icon?: any;
 	inputType?: string;
-	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill";
-	handleChange?: any;
+	fieldType?: "input" | "textarea" | "select" | "addItem" | "date" | "reactquill" | "select2";
+	handleChange: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
+	handleOnBlur: ({ target: { id, value } }: { target: { id: string; value: any } }) => void;
 	error?: any;
 	value?: any;
 	options?: Array<any>;
 	singleSelect?: boolean;
-	id?: string;
+	id: string;
 	placeholder?: string;
 	clickevent?: any;
 	showTimeSelect?: boolean;
 	disabled?: boolean;
+	showHours?: boolean;
 	onSearch?: any;
 }) {
 	const [typePass, setTypePass] = useState(false);
@@ -73,7 +78,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -96,7 +101,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -111,9 +116,13 @@ export default function FormField({
 								<input
 									type={inputType}
 									id={id}
-									className={`min-h-[45px] w-full rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "}
+									className={
+										`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+										" "
+									}
 									value={value}
 									onChange={handleChange}
+									onBlur={handleOnBlur}
 									placeholder={placeholder}
 									readOnly={readOnly}
 									disabled={disabled}
@@ -145,7 +154,8 @@ export default function FormField({
 						<textarea
 							id={id}
 							className={
-								`min-h-[45px] w-full resize-none rounded-normal border-borderColor text-sm dark:bg-gray-700` + " "
+								`min-h-[45px] w-full resize-none rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+								" "
 							}
 							value={value}
 							onChange={handleChange}
@@ -195,6 +205,63 @@ export default function FormField({
 			</>
 		);
 	}
+	if (fieldType === "select2") {
+		return (
+			<>
+				<div className="mb-4 last:mb-0">
+					<div>
+						{label ? (
+							<label
+								htmlFor={`field_` + label.replace(/\s+/g, "").toLowerCase()}
+								className="mb-1 inline-block font-bold"
+							>
+								{label}
+								{required ? <sup className="text-red-500">*</sup> : ""}
+							</label>
+						) : (
+							<></>
+						)}
+						<Multiselect
+							options={options} // Options to display in the dropdown
+							selectedValues={id === "location" ? value && value.split("|") : value && value.split(",")} // Preselected value to persist in dropdown
+							singleSelect={singleSelect}
+							isObject={false}
+							onSearch={onSearch}
+							closeOnSelect
+							showArrow={true}
+							placeholder={placeholder}
+							disable={readOnly}
+							onSelect={(selectedList, selectedItem) => {
+								if (singleSelect) {
+									handleChange(selectedItem);
+								} else {
+									if (id === "location") {
+										handleChange(selectedList.join("|"));
+									} else {
+										handleChange(selectedList.join(","));
+									}
+								}
+							}} // Function will trigger on select event
+							onRemove={(selectedList, selectedItem) => {
+								if (singleSelect) {
+									handleChange("");
+								} else {
+									if (id === "location") {
+										handleChange(selectedList.join("|"));
+									} else {
+										handleChange(selectedList.join(","));
+									}
+								}
+							}}
+							// onRemove={(selected) => handleChange({ target: { id, value: selected } })} // Function will trigger on remove event
+							displayValue="name" // Property name to display in the dropdown options
+						/>
+					</div>
+					{errorMessage}
+				</div>
+			</>
+		);
+	}
 	if (fieldType === "reactquill") {
 		return (
 			<>
@@ -214,7 +281,10 @@ export default function FormField({
 						<ReactQuill
 							defaultValue={"\n\n\n\n\n"}
 							value={value}
-							onChange={(value: string) => handleChange({ target: { id, value } })}
+							// onChange={(value: string) => handleChange({ target: { id, value } })}
+							// onBlur={(value: string) => handleOnBlur({ target: { id, value } })}
+							onChange={(content, delta, source, editor) => handleChange(content)}
+							onBlur={(previousRange, source, editor) => handleOnBlur(editor.getHTML())}
 						/>
 					</div>
 					{errorMessage}
@@ -238,8 +308,10 @@ export default function FormField({
 						<div className="relative">
 							<DatePicker
 								selected={value}
+								placeholderText={placeholder}
 								onChange={(date) => handleChange({ target: { id, value: date } })}
 								showTimeSelect={showTimeSelect}
+								dateFormat={showHours ? "MMMM d, yyyy h:mm aa" : "MMMM d, yyyy"}
 							/>
 						</div>
 					</div>
@@ -251,7 +323,7 @@ export default function FormField({
 	return (
 		<>
 			<p className="rounded-normal bg-violet-200 p-2 text-sm">
-				Please choose some <b>type</b> to show field here.
+				Please choose <b>fieldType</b> to show field here.
 			</p>
 		</>
 	);

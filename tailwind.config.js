@@ -11,6 +11,9 @@ module.exports = {
       padding: "1rem",
     },
     extend: {
+      fontFamily: {
+        'poppins': ['Poppins']
+      },
       colors: {
         primary: "#5500FF",
         secondary: "#6433c5",

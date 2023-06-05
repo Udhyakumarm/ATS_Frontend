@@ -1,43 +1,26 @@
-import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
-import dashboardIcon from "/public/images/icons/dashboard.png";
-import integrationIcon from "/public/images/icons/integration.png";
-import jobsIcon from "/public/images/icons/jobs.png";
-import analyticsIcon from "/public/images/icons/analytics.png";
-import vendorsIcon from "/public/images/icons/vendors.png";
-import applicantsIcon from "/public/images/icons/applicants.png";
-import collectionIcon from "/public/images/icons/collection.png";
-import { useCarrierStore } from "@/utils/code";
+import { useCarrierStore, useUserStore } from "@/utils/code";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Home() {
-	const cid = useCarrierStore((state: { cid: any }) => state.cid);
-}
-
-import { authOptions } from "./api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next";
-
-export async function getServerSideProps(context: any) {
-	// const cid = useCarrierStore((state) => state.cid)
-
-	const session: any = await getServerSession(context.req, context.res, authOptions);
-	if (!session)
-		return {
-			redirect: {
-				destination: "/auth/signin",
-				permanent: false
+	const type = useUserStore((state: { type: any }) => state.type);
+	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const vid = useCarrierStore((state: { vid: any }) => state.vid);
+	const router = useRouter();
+	useEffect(() => {
+		if (type && type.length > 0) {
+			if (type === "Organization") {
+				router.replace("/organization");
 			}
-		};
-
-	return {
-		redirect: {
-			// destination: session.user_type !== "candidate" ? "/organization" : `/organization/${cid}`,
-			destination: session.user_type !== "candidate" ? "/organization" : `/organization/`,
-			permanent: false
+			if (type === "Candidate" && cname && cname.length > 0) {
+				router.replace(`/organization/${cname}/`);
+			}
+			if (type === "Vendor" && vid && vid.length > 0) {
+				router.replace(`/vendor/${vid}/clients`);
+			}
+		} else {
+			router.replace("/auth/signin");
 		}
-	};
-
-	return {
-		props: {}
-	};
+	}, [type, cname, vid]);
+	return <></>;
 }

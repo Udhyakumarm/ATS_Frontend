@@ -13,6 +13,19 @@
   --gradDarkBlue: #6A67EA;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(187, 187, 187);
+}
+
 html,
 body {
   max-width: 100vw;
@@ -32,7 +45,10 @@ h1,h2,h3,h4,h5,h6 {
 i, img {
   vertical-align: middle;
 }
-
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+}
 input[type="checkbox"]:focus {
   outline: none;
   --tw-ring-offset-width: 0
@@ -41,6 +57,12 @@ input[type="checkbox"]:focus {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.textGrad {
+  background: -webkit-linear-gradient(left, #FFB68D, #C67AEF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -94,6 +116,7 @@ input[type=number] {
   color: #727272;
   width: 20px;
   height: 30px;
+  opacity: 1;
 }
 
 .dashboardSlider button.slick-arrow:hover {
@@ -194,6 +217,7 @@ input[type=number] {
   padding: 2px 5px;
   font-size: 14px;
   vertical-align: -webkit-baseline-middle;
+  max-width: 100%;
 }
 .multiSelectContainer ul li.option, .multiSelectContainer ul .notFound {
   font-size: 12px;
@@ -208,6 +232,7 @@ input[type=number] {
 .dark .multiSelectContainer .searchWrapper, 
 .dark .optionListContainer {
   background-color: #374151;
+  border-color: #4b5563;
 }
 .dark .multiSelectContainer .searchWrapper img.icon_cancel.icon_down_dir {
   filter: invert(1);
@@ -215,7 +240,10 @@ input[type=number] {
 .dark .ql-toolbar.ql-snow {
   background-color: #fff;
 }
-.dark .ql-editor {
+.dark .ql-container.ql-snow, .dark .react-datepicker__input-container input {
+  border-color: #4b5563 !important;
+}
+.dark .ql-editor, .dark .react-datepicker__input-container input {
   background: #374151;
 }
 .ql-editor {
@@ -231,6 +259,70 @@ input[type=number] {
   border-bottom-right-radius: 12px;
   border-color: #e5e7eb !important;
   overflow: hidden;
+}
+.react-datepicker-popper {
+  width: 320px;
+}
+.react-datepicker__month-container {
+  width: calc(100% - 85px);
+  overflow: auto;
+}
+.react-datepicker__input-container input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #727272;
+  min-height: 45px;
+}
+
+.upgradePlan {
+  background-image: url("../../public/images/bigger_upgragePlan.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 300px;
+}
+.bg_img_features {
+  background-image: url("../../public/images/home_cover.png");
+  background-size: cover;
+  background-position: center;
+}
+.bg_img_features__headings .slick-current .item {
+  border-bottom-width: 2px;
+  border-bottom-color: #000;
+}
+.bg_img_features__headings .slick-current h6 {
+  color: #000;
+}
+.bg_img_features__headings .slick-prev {
+  left: 0;
+}
+.bg_img_features__headings .slick-next {
+  right: 0;
+}
+.bg_img_features__headings .slick-arrow::before,
+.testimonials .slick-arrow::before {
+  display: none;
+}
+.bg_img_features__headings .slick-arrow,
+.testimonials .slick-arrow {
+  z-index: 1;
+  opacity: 1;
+  font-size: 15px;
+  width: 30px;
+  height: 30px;
+  color: black !important;
+  background: #fff !important;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+  border-radius: 40px;
+}
+.bg_img_features__headings .slick-arrow.slick-disabled,
+.testimonials .slick-arrow.slick-disabled {
+  opacity: 0.7;
+}
+
+.dark span.react-loading-skeleton {
+  background-color: #d7dee8;
 }
 
 @media (max-width: 1023px) {
@@ -252,5 +344,11 @@ input[type=number] {
 @media (min-width: 1000px) {
   .container {
     max-width: 1100px;
+  }
+}
+
+@media (max-width: 600px) {
+  #features_1 .reactPlayer {
+      height: 440px !important;
   }
 }

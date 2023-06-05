@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { Key } from 'react';
 import Card from './Card';
 import {Column} from './Column';
@@ -5,7 +6,7 @@ import {DraggableCard} from './Card';
 
 export function Board({cards, columns, moveCard, applicantlist}: any) {
   return (
-    <div className="flex h-[calc(100vh-155px)] overflow-auto p-4 lg:p-8">
+    <div className="flex h-[calc(100vh-135px)] overflow-auto p-4 lg:p-8">
       {columns.map(column => (
         <Column
           key={column.id}
