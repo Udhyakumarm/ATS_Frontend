@@ -10,8 +10,9 @@ import { useEffect, useState, Fragment } from "react";
 import { Tab, Transition } from "@headlessui/react";
 import signature from "/public/images/signature.jpg";
 import Image from "next/image";
+import UpcomingComp from "@/components/organization/upcomingComp";
 
-export default function CanCareerDashboard() {
+export default function CanCareerDashboard({ upcomingSoon }: any) {
 	const [sklLoad] = useState(true);
 	const { data: session } = useSession();
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
@@ -66,7 +67,7 @@ export default function CanCareerDashboard() {
 		<>
 			<main className="py-8">
 				<div className="container">
-					<h3 className="mb-6 text-xl font-bold">Dashboard</h3>
+					{/* <h3 className="mb-6 text-xl font-bold">Dashboard</h3> */}
 					<div className="overflow-hidden rounded-normal border dark:border-gray-600">
 						<Tab.Group>
 							<Tab.List className={"border-b bg-white px-6 shadow-normal dark:border-gray-600 dark:bg-gray-800"}>
@@ -201,48 +202,52 @@ export default function CanCareerDashboard() {
 									</div>
 								</Tab.Panel>
 								<Tab.Panel>
-									<div className="bg-white p-6 dark:bg-gray-800">
-										<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-											<p className="my-2 font-bold">Offer Letter</p>
-											<button className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200">
-												<i className="fa-solid fa-download mr-2"></i>
-												Download
-											</button>
-										</div>
-										<div className="mx-auto w-full max-w-[700px] py-4">
-											<p className="text-center">Preview Is Here</p>
-											<div className="pt-8">
-												<h5 className="mb-2 font-bold">Add Signature</h5>
-												<label
-													htmlFor="uploadBanner"
-													className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed py-4 hover:bg-lightBlue dark:hover:bg-gray-700"
-												>
-													<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-													<p className="text-sm text-darkGray dark:text-gray-400">
-														Upload Signature or Photo
-														<br />
-														<small>(File type should be .png format)</small>
-													</p>
-													<Image
-														src={signature}
-														alt="Sign"
-														width={1200}
-														height={800}
-														className="mx-auto h-auto max-h-[200px] w-auto object-contain"
-													/>
-													<input type="file" hidden id="uploadBanner" accept="image/*" />
-												</label>
+									{upcomingSoon ? (
+										<UpcomingComp />
+									) : (
+										<div className="bg-white p-6 dark:bg-gray-800">
+											<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+												<p className="my-2 font-bold">Offer Letter</p>
+												<button className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200">
+													<i className="fa-solid fa-download mr-2"></i>
+													Download
+												</button>
+											</div>
+											<div className="mx-auto w-full max-w-[700px] py-4">
+												<p className="text-center">Preview Is Here</p>
+												<div className="pt-8">
+													<h5 className="mb-2 font-bold">Add Signature</h5>
+													<label
+														htmlFor="uploadBanner"
+														className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed py-4 hover:bg-lightBlue dark:hover:bg-gray-700"
+													>
+														<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
+														<p className="text-sm text-darkGray dark:text-gray-400">
+															Upload Signature or Photo
+															<br />
+															<small>(File type should be .png format)</small>
+														</p>
+														<Image
+															src={signature}
+															alt="Sign"
+															width={1200}
+															height={800}
+															className="mx-auto h-auto max-h-[200px] w-auto object-contain"
+														/>
+														<input type="file" hidden id="uploadBanner" accept="image/*" />
+													</label>
+												</div>
+											</div>
+											<div className="flex flex-wrap items-center justify-center border-t pt-4 dark:border-t-gray-600">
+												<div className="mx-2">
+													<Button btnStyle="success" label="Accept" />
+												</div>
+												<div className="mx-2">
+													<Button btnStyle="danger" label="Reject" />
+												</div>
 											</div>
 										</div>
-										<div className="flex flex-wrap items-center justify-center border-t pt-4 dark:border-t-gray-600">
-											<div className="mx-2">
-												<Button btnStyle="success" label="Accept" />
-											</div>
-											<div className="mx-2">
-												<Button btnStyle="danger" label="Reject" />
-											</div>
-										</div>
-									</div>
+									)}
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>
@@ -252,5 +257,3 @@ export default function CanCareerDashboard() {
 		</>
 	);
 }
-
-CanCareerDashboard.noAuth = true;

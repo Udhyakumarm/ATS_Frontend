@@ -220,14 +220,13 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"]);
 				toggleLoadMode(true);
 				if (type === "active") {
-					setPublishThanks(true)
-					setTimeout(()=>{
-						setPublishThanks(false)
+					setPublishThanks(true);
+					setTimeout(() => {
+						setPublishThanks(false);
 						router.push(`${type}/`);
 					}, 3000);
-				}
-				else{
-				router.push(`${type}/`);
+				} else {
+					router.push(`${type}/`);
 				}
 			})
 			.catch((err) => {
@@ -483,6 +482,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				let arr = [];
 				for (const [key, value] of Object.entries(obj)) {
 					arr.push(value);
+				}
+				if (arr.length <= 0 && value.length > 0) {
+					arr.push(value.toLowerCase().replace(/\s/g, ""));
 				}
 				setski(arr);
 				setload(false);
@@ -871,303 +873,309 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									</div>
 								</Tab.Panel>
 								<Tab.Panel>
-									{upcomingSoon ? 
-														<UpcomingComp /> :
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label="Assessment" />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="mx-[-15px] flex flex-wrap">
-												{sklLoad
-													? Array(6).fill(
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-																<CardLayout_1 isBlank={true} />
-															</div>
-													  )
-													: Array(6).fill(
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-																<CardLayout_1 sklLoad={true} />
-															</div>
-													  )}
+									{upcomingSoon ? (
+										<UpcomingComp />
+									) : (
+										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+											<StickyLabel label="Assessment" />
+											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+												<div className="mx-[-15px] flex flex-wrap">
+													{sklLoad
+														? Array(6).fill(
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																	<CardLayout_1 isBlank={true} />
+																</div>
+														  )
+														: Array(6).fill(
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																	<CardLayout_1 sklLoad={true} />
+																</div>
+														  )}
+												</div>
 											</div>
 										</div>
-									</div>
-}
+									)}
 								</Tab.Panel>
 								<Tab.Panel>
-									
-								{atsVersion === "starter" ? 
-											<PermiumComp userRole={userRole} /> :
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label="Team Members" />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<Tab.Group>
-												<Tab.List className={"mb-6 flex border-b"}>
-													{tabHeading_2.map((item, i) => (
-														<Tab key={i} as={Fragment}>
-															{({ selected }) => (
-																<button
-																	type="button"
-																	className={
-																		"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
-																		" " +
-																		(selected
-																			? "border-primary text-primary"
-																			: "border-transparent text-darkGray dark:text-gray-400")
-																	}
-																>
-																	<div className="mr-2">{item.icon}</div>
-																	{item.title}
-																</button>
-															)}
-														</Tab>
-													))}
-												</Tab.List>
-												<Tab.Panels>
-													<Tab.Panel>
-														<div className="mb-6 flex flex-wrap items-center justify-between">
-															<div className="w-[350px] pr-2">
-																<FormField
-																	fieldType="input"
-																	inputType="search"
-																	placeholder="Search"
-																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
-																/>
-															</div>
-															<div className="flex grow items-center justify-end">
-																<div className="mr-3 w-[150px]">
+									{atsVersion === "starter" ? (
+										<PermiumComp userRole={userRole} />
+									) : (
+										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+											<StickyLabel label="Team Members" />
+											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+												<Tab.Group>
+													<Tab.List className={"mb-6 flex border-b"}>
+														{tabHeading_2.map((item, i) => (
+															<Tab key={i} as={Fragment}>
+																{({ selected }) => (
+																	<button
+																		type="button"
+																		className={
+																			"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																			" " +
+																			(selected
+																				? "border-primary text-primary"
+																				: "border-transparent text-darkGray dark:text-gray-400")
+																		}
+																	>
+																		<div className="mr-2">{item.icon}</div>
+																		{item.title}
+																	</button>
+																)}
+															</Tab>
+														))}
+													</Tab.List>
+													<Tab.Panels>
+														<Tab.Panel>
+															<div className="mb-6 flex flex-wrap items-center justify-between">
+																<div className="w-[350px] pr-2">
 																	<FormField
-																		fieldType="select"
-																		placeholder="Sort"
-																		singleSelect={true}
-																		options={[
-																			{
-																				id: "A-to-Z",
-																				name: "A to Z"
-																			},
-																			{
-																				id: "Z-to-A",
-																				name: "Z to A"
-																			}
-																		]}
+																		fieldType="input"
+																		inputType="search"
+																		placeholder="Search"
+																		icon={<i className="fa-solid fa-magnifying-glass"></i>}
 																	/>
 																</div>
-																<div className="w-[150px]">
-																	<label
-																		htmlFor="teamSelectAll"
-																		className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																	>
-																		<span>Select All</span>
-																		<input type="checkbox" id="teamSelectAll" />
-																	</label>
+																<div className="flex grow items-center justify-end">
+																	<div className="mr-3 w-[150px]">
+																		<FormField
+																			fieldType="select"
+																			placeholder="Sort"
+																			singleSelect={true}
+																			options={[
+																				{
+																					id: "A-to-Z",
+																					name: "A to Z"
+																				},
+																				{
+																					id: "Z-to-A",
+																					name: "Z to A"
+																				}
+																			]}
+																		/>
+																	</div>
+																	<div className="w-[150px]">
+																		<label
+																			htmlFor="teamSelectAll"
+																			className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+																		>
+																			<span>Select All</span>
+																			<input type="checkbox" id="teamSelectAll" />
+																		</label>
+																	</div>
 																</div>
 															</div>
-														</div>
-														<div className="overflow-x-auto">
-															<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																<thead>
-																	<tr>
-																		{TeamTableHead.map((item, i) => (
-																			<th className="border-b px-3 py-2 text-left" key={i}>
-																				{item.title}
-																			</th>
-																		))}
-																	</tr>
-																</thead>
-																<tbody>
-																	{tm &&
-																		tm.map(
-																			(data, i) =>
-																				data["verified"] !== false && (
-																					<tr key={i}>
-																						<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
-																						<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
-																						<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																						<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
-																						<td className="border-b px-3 py-2 text-right">
-																							<input
-																								type="checkbox"
-																								value={data["email"]}
-																								data-id={data["role"]}
-																								data-pk={data["id"]}
-																								onChange={(e) => onChnageCheck(e)}
-																							/>
-																						</td>
-																					</tr>
-																				)
-																		)}
-																</tbody>
-															</table>
-														</div>
-													</Tab.Panel>
-													<Tab.Panel>
-														
-									{upcomingSoon ? 
-														<UpcomingComp /> :
-														<div>
-															{Array(4).fill(
-																<label
-																	htmlFor="checkDivison"
-																	className={
-																		"mb-3 block rounded border text-sm" +
-																		" " +
-																		(accordionOpen ? "border-slate-300" : "")
-																	}
-																>
-																	<div className="flex flex-wrap items-center px-4">
-																		<h6 className="grow py-3 font-bold">Software Developer</h6>
-																		<div className="py-3 text-right">
-																			<input type="checkbox" id="checkDivison" />
-																			<button
-																				type="button"
-																				className="ml-4 text-darkGray dark:text-gray-400"
-																				onClick={() => setAccordionOpen(!accordionOpen)}
-																			>
-																				<i
-																					className={
-																						"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
-																					}
-																				></i>
-																			</button>
-																		</div>
-																	</div>
-																	<Transition.Root show={accordionOpen} as={Fragment}>
-																		<Transition.Child
-																			as={Fragment}
-																			enter="ease-out duration-300"
-																			enterFrom="opacity-0"
-																			enterTo="opacity-100"
-																			leave="ease-in duration-200"
-																			leaveFrom="opacity-100"
-																			leaveTo="opacity-0"
+															<div className="overflow-x-auto">
+																<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																	<thead>
+																		<tr>
+																			{TeamTableHead.map((item, i) => (
+																				<th className="border-b px-3 py-2 text-left" key={i}>
+																					{item.title}
+																				</th>
+																			))}
+																		</tr>
+																	</thead>
+																	<tbody>
+																		{tm &&
+																			tm.map(
+																				(data, i) =>
+																					data["verified"] !== false && (
+																						<tr key={i}>
+																							<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																							<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																							<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																							<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																							<td className="border-b px-3 py-2 text-right">
+																								<input
+																									type="checkbox"
+																									value={data["email"]}
+																									data-id={data["role"]}
+																									data-pk={data["id"]}
+																									onChange={(e) => onChnageCheck(e)}
+																								/>
+																							</td>
+																						</tr>
+																					)
+																			)}
+																	</tbody>
+																</table>
+															</div>
+														</Tab.Panel>
+														<Tab.Panel>
+															{upcomingSoon ? (
+																<UpcomingComp />
+															) : (
+																<div>
+																	{Array(4).fill(
+																		<label
+																			htmlFor="checkDivison"
+																			className={
+																				"mb-3 block rounded border text-sm" +
+																				" " +
+																				(accordionOpen ? "border-slate-300" : "")
+																			}
 																		>
-																			<div className="border-t">
-																				<div className="overflow-x-auto">
-																					<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																						<thead>
-																							<tr>
-																								{TeamTableHead.map((item, i) => (
-																									<th className="border-b px-4 py-2 text-left" key={i}>
-																										{item.title}
-																									</th>
-																								))}
-																							</tr>
-																						</thead>
-																						<tbody>
-																							{Array(6).fill(
-																								<tr>
-																									<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
-																									<td className="border-b px-4 py-2 text-sm">Recruiter</td>
-																									<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
-																									<td className="border-b px-4 py-2 text-sm">On Pending</td>
-																									<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
-																								</tr>
-																							)}
-																						</tbody>
-																					</table>
+																			<div className="flex flex-wrap items-center px-4">
+																				<h6 className="grow py-3 font-bold">Software Developer</h6>
+																				<div className="py-3 text-right">
+																					<input type="checkbox" id="checkDivison" />
+																					<button
+																						type="button"
+																						className="ml-4 text-darkGray dark:text-gray-400"
+																						onClick={() => setAccordionOpen(!accordionOpen)}
+																					>
+																						<i
+																							className={
+																								"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
+																							}
+																						></i>
+																					</button>
 																				</div>
 																			</div>
-																		</Transition.Child>
-																	</Transition.Root>
-																</label>
+																			<Transition.Root show={accordionOpen} as={Fragment}>
+																				<Transition.Child
+																					as={Fragment}
+																					enter="ease-out duration-300"
+																					enterFrom="opacity-0"
+																					enterTo="opacity-100"
+																					leave="ease-in duration-200"
+																					leaveFrom="opacity-100"
+																					leaveTo="opacity-0"
+																				>
+																					<div className="border-t">
+																						<div className="overflow-x-auto">
+																							<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																								<thead>
+																									<tr>
+																										{TeamTableHead.map((item, i) => (
+																											<th className="border-b px-4 py-2 text-left" key={i}>
+																												{item.title}
+																											</th>
+																										))}
+																									</tr>
+																								</thead>
+																								<tbody>
+																									{Array(6).fill(
+																										<tr>
+																											<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																											<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																											<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																											<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																											<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
+																										</tr>
+																									)}
+																								</tbody>
+																							</table>
+																						</div>
+																					</div>
+																				</Transition.Child>
+																			</Transition.Root>
+																		</label>
+																	)}
+																</div>
 															)}
-														</div>
-}
-													</Tab.Panel>
-												</Tab.Panels>
-											</Tab.Group>
+														</Tab.Panel>
+													</Tab.Panels>
+												</Tab.Group>
+											</div>
 										</div>
-									</div>
-									}
+									)}
 								</Tab.Panel>
 								<Tab.Panel>
-									{atsVersion != "enterprise" ? 
-											<PermiumComp userRole={userRole} /> :
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label="Vendors" />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="mb-6 flex flex-wrap items-center justify-between">
-												<div className="w-[350px] pr-2">
-													<FormField
-														fieldType="input"
-														inputType="search"
-														placeholder="Search"
-														icon={<i className="fa-solid fa-magnifying-glass"></i>}
-													/>
-												</div>
-												<div className="flex grow items-center justify-end">
-													<div className="mr-3 w-[150px]">
+									{atsVersion != "enterprise" ? (
+										<PermiumComp userRole={userRole} />
+									) : (
+										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+											<StickyLabel label="Vendors" />
+											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+												<div className="mb-6 flex flex-wrap items-center justify-between">
+													<div className="w-[350px] pr-2">
 														<FormField
-															fieldType="select"
-															placeholder="Sort"
-															singleSelect={true}
-															options={[
-																{
-																	id: "A-to-Z",
-																	name: "A to Z"
-																},
-																{
-																	id: "Z-to-A",
-																	name: "Z to A"
-																}
-															]}
+															fieldType="input"
+															inputType="search"
+															placeholder="Search"
+															icon={<i className="fa-solid fa-magnifying-glass"></i>}
 														/>
 													</div>
-													<div className="w-[150px]">
-														<label
-															htmlFor="teamSelectAll"
-															className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-														>
-															<span>Select All</span>
-															<input type="checkbox" id="teamSelectAll" />
-														</label>
+													<div className="flex grow items-center justify-end">
+														<div className="mr-3 w-[150px]">
+															<FormField
+																fieldType="select"
+																placeholder="Sort"
+																singleSelect={true}
+																options={[
+																	{
+																		id: "A-to-Z",
+																		name: "A to Z"
+																	},
+																	{
+																		id: "Z-to-A",
+																		name: "Z to A"
+																	}
+																]}
+															/>
+														</div>
+														<div className="w-[150px]">
+															<label
+																htmlFor="teamSelectAll"
+																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+															>
+																<span>Select All</span>
+																<input type="checkbox" id="teamSelectAll" />
+															</label>
+														</div>
 													</div>
 												</div>
-											</div>
-											<div className="mx-[-15px] flex flex-wrap">
-												{sklLoad
-													? fvendors &&
-													  fvendors.map((data, i) => (
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
-																<CardLayout_2 data={data} />
-															</div>
-													  ))
-													: Array(6).fill(
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-																<CardLayout_2 sklLoad={true} />
-															</div>
-													  )}
+												<div className="mx-[-15px] flex flex-wrap">
+													{sklLoad
+														? fvendors &&
+														  fvendors.map((data, i) => (
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
+																	<CardLayout_2 data={data} />
+																</div>
+														  ))
+														: Array(6).fill(
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																	<CardLayout_2 sklLoad={true} />
+																</div>
+														  )}
+												</div>
 											</div>
 										</div>
-									</div>
-}
+									)}
 								</Tab.Panel>
 								<Tab.Panel>
-								{upcomingSoon ? 
-														<UpcomingComp /> :
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label="Job Boards" />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="mx-[-15px] flex flex-wrap">
-												{sklLoad
-													? Object.keys(integrationList).map((key: any) => (
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
-																<CardLayout_1
+									{upcomingSoon ? (
+										<UpcomingComp />
+									) : (
+										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+											<StickyLabel label="Job Boards" />
+											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+												<div className="mx-[-15px] flex flex-wrap">
+													{sklLoad
+														? Object.keys(integrationList).map((key: any) => (
+																<div
+																	className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]"
 																	key={key}
-																	label={key}
-																	access={integrationList[key as keyof typeof integrationList].access}
-																	isBlank={false}
-																/>
-															</div>
-													  ))
-													: Array(6).fill(
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-																<CardLayout_1 sklLoad={true} />
-															</div>
-													  )}
+																>
+																	<CardLayout_1
+																		key={key}
+																		label={key}
+																		access={integrationList[key as keyof typeof integrationList].access}
+																		isBlank={false}
+																	/>
+																</div>
+														  ))
+														: Array(6).fill(
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																	<CardLayout_1 sklLoad={true} />
+																</div>
+														  )}
+												</div>
 											</div>
 										</div>
-									</div>
-}
+									)}
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>

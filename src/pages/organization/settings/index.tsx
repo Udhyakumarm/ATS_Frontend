@@ -93,36 +93,41 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
 						<h1 className="mb-6 text-2xl font-bold">Settings</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
-							{quicklinks.map((links, i) => (
-								userRole != "Super Admin" && links.name === "Plans & Pricing" ? <></> :
-								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
-									<Link
-										href={links.blur ? "javascript:void(0)" : links.link}
-										className={`block rounded-normal p-6 shadow-normal dark:bg-gray-700 dark:hover:bg-gray-600 ${
-											links.blur ? "cursor-default bg-borderColor" : "bg-white hover:bg-lightBlue"
-										}`}
-									>
-										<div className="mb-10 flex w-full items-center">
-											<div
-												className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3"
-												style={{ backgroundColor: links.color }}
-											>
-												<Image src={links.icon} alt={links.name} width={100} />
+							{quicklinks.map((links, i) =>
+								userRole != "Super Admin" && links.name === "Plans & Pricing" ? (
+									<></>
+								) : (
+									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
+										<Link
+											href={links.blur ? "javascript:void(0)" : links.link}
+											className={`block rounded-normal p-6 shadow-normal dark:bg-gray-700 dark:hover:bg-gray-600 ${
+												links.blur ? "cursor-default bg-borderColor" : "bg-white hover:bg-lightBlue"
+											}`}
+										>
+											<div className="mb-10 flex w-full items-center">
+												<div
+													className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3"
+													style={{ backgroundColor: links.color }}
+												>
+													<Image src={links.icon} alt={links.name} width={100} />
+												</div>
+												<span className="text-lg font-bold">{links.name}</span>
 											</div>
-											<span className="text-lg font-bold">{links.name}</span>
-										</div>
-										<span className="flex items-center text-sm text-primary dark:text-gray-300">
-											{!links.blur ? (
-												<>
-													Go To <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
-												</>
-											) : (
-												<>&nbsp;</>
-											)}
-										</span>
-									</Link>
-								</div>
-							))}
+											<span className="flex items-center text-sm text-primary dark:text-gray-300">
+												{!links.blur ? (
+													<>
+														Go To <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
+													</>
+												) : (
+													<>
+														Premium Required <sup className="text-red-500">*</sup>
+													</>
+												)}
+											</span>
+										</Link>
+									</div>
+								)
+							)}
 						</div>
 					</div>
 				</div>

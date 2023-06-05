@@ -8,9 +8,11 @@ import userImg from "/public/images/user-image.png";
 import googleIcon from "/public/images/social/google-icon.png";
 import Link from "next/link";
 import moment from "moment";
+import { useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 
 export default function InterviewComp({ sklLoad, data }: any) {
 	const [accordionOpen, setAccordionOpen] = useState(false);
+	const version = useVersionStore((state: { version: any }) => state.version);
 
 	if (sklLoad === true) {
 		return (
@@ -93,16 +95,18 @@ export default function InterviewComp({ sklLoad, data }: any) {
 								}}
 							/>
 						</div>
-						<div className="w-full py-3 text-right lg:max-w-[10%]">
-							<button
-								type="button"
-								className="font-semibold text-darkGray dark:text-gray-400"
-								onClick={() => setAccordionOpen(!accordionOpen)}
-							>
-								View More
-								<i className={"fa-solid ml-2" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")}></i>
-							</button>
-						</div>
+						{version != "starter" && (
+							<div className="w-full py-3 text-right lg:max-w-[10%]">
+								<button
+									type="button"
+									className="font-semibold text-darkGray dark:text-gray-400"
+									onClick={() => setAccordionOpen(!accordionOpen)}
+								>
+									View More
+									<i className={"fa-solid ml-2" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")}></i>
+								</button>
+							</div>
+						)}
 					</div>
 					<Transition.Root show={accordionOpen} as={Fragment}>
 						<Transition.Child

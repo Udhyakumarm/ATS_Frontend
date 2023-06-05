@@ -199,8 +199,6 @@ export default function VendorClients() {
 		if (event.target.files && event.target.files[0]) {
 			const file = event.target.files && event.target.files[0];
 			setresume(file);
-		} else {
-			setresume(null);
 		}
 	}
 
@@ -237,6 +235,9 @@ export default function VendorClients() {
 				for (const [key, value] of Object.entries(obj)) {
 					arr.push(value);
 				}
+				if (arr.length <= 0 && value.length > 0) {
+					arr.push(value.toLowerCase().replace(/\s/g, ""));
+				}
 				setski(arr);
 				setload(false);
 			})
@@ -257,6 +258,8 @@ export default function VendorClients() {
 			});
 
 		setAddCand(false);
+
+		loadVendorAppDetail(vjdata[vjobclick]["refid"], vrefid);
 	}
 
 	async function addVendorCandidateCert(vrefid: any, refid: any, fd: any) {
@@ -339,36 +342,36 @@ export default function VendorClients() {
 
 						if (!newgre) {
 							for (let i = 0; i < expid.length; i++) {
-								var fd1 = new FormData();
+								var fd = new FormData();
 								fd.append("title", document.getElementById(`title${expid[i]}`).value);
 								fd.append("company", document.getElementById(`cname${expid[i]}`).value);
 								fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
 								fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
 								fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
 								fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
-								addVendorCandidateExp(vcrefid, refid, fd1);
+								addVendorCandidateExp(vcrefid, refid, fd);
 							}
 						}
 
 						for (let i = 0; i < eduid.length; i++) {
-							var fd1 = new FormData();
+							var fd = new FormData();
 							fd.append("title", document.getElementById(`title${eduid[i]}`).value);
 							fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
 							fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
 							fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
 							fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
-							addVendorCandidateEdu(vcrefid, refid, fd1);
+							addVendorCandidateEdu(vcrefid, refid, fd);
 						}
 
 						for (let i = 0; i < certid.length; i++) {
-							var fd1 = new FormData();
+							var fd = new FormData();
 							fd.append("title", document.getElementById(`title${certid[i]}`).value);
 							fd.append("company", document.getElementById(`cname${certid[i]}`).value);
 							fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
 							fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
 							fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
 							fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
-							addVendorCandidateCert(vcrefid, refid, fd1);
+							addVendorCandidateCert(vcrefid, refid, fd);
 						}
 
 						addVendorCandidateApplicant(refid, vrefid, vcrefid);
@@ -784,6 +787,8 @@ export default function VendorClients() {
 																						<Image
 																							src={`http://127.0.0.1:8000${data.image}`}
 																							alt="Office"
+																							width={1000}
+																							height={1000}
 																							className="w-full rounded-normal p-2"
 																							key={i}
 																						/>
@@ -803,10 +808,10 @@ export default function VendorClients() {
 														<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 															<thead>
 																<tr>
-																	<th className="border-b py-2 px-3 text-left">Applicants</th>
-																	<th className="border-b py-2 px-3 text-left">Status</th>
-																	<th className="border-b py-2 px-3 text-left">Applied</th>
-																	<th className="border-b py-2 px-3 text-left">Profile</th>
+																	<th className="border-b px-3 py-2 text-left">Applicants</th>
+																	<th className="border-b px-3 py-2 text-left">Status</th>
+																	<th className="border-b px-3 py-2 text-left">Applied</th>
+																	<th className="border-b px-3 py-2 text-left">Profile</th>
 																</tr>
 															</thead>
 															<tbody className="text-sm font-semibold">
@@ -820,12 +825,12 @@ export default function VendorClients() {
 																				setViewApplicant(true);
 																			}}
 																		>
-																			<td className="py-2 px-3 text-left">
+																			<td className="px-3 py-2 text-left">
 																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
 																			</td>
-																			<td className="py-2 px-3 text-left">{data["status"]}</td>
-																			<td className="py-2 px-3 text-left">{moment(data["timestamp"]).fromNow()}</td>
-																			<td className="py-2 px-3 text-left">
+																			<td className="px-3 py-2 text-left">{data["status"]}</td>
+																			<td className="px-3 py-2 text-left">{moment(data["timestamp"]).fromNow()}</td>
+																			<td className="px-3 py-2 text-left">
 																				<button type="button" className="text-primary hover:underline">
 																					View
 																				</button>
@@ -889,17 +894,74 @@ export default function VendorClients() {
 										}}
 									>
 										<div className="p-8">
-											<label
-												htmlFor="uploadCV"
-												className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
-											>
-												<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
-												<p className="mb-2 text-sm">
-													Or <span className="font-semibold text-primary">Click Here To Upload</span>
-												</p>
-												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-												<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
-											</label>
+											{resume === null ? (
+												<label
+													htmlFor="uploadCV"
+													className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+												>
+													<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
+													<p className="mb-2 text-sm">
+														Or <span className="font-semibold text-primary">Click Here To Upload</span>
+													</p>
+													<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+													<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
+												</label>
+											) : (
+												<div className="my-2 mb-5 flex pb-5">
+													<div className="">
+														{resume.type === "application/pdf" && (
+															<i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
+														)}
+														{resume.type === "application/msword" ||
+															(resume.type ===
+																"application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+																<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
+															))}
+													</div>
+													<div className="flex grow flex-col justify-between pl-4">
+														<div className="flex items-center justify-between text-[15px]">
+															<span className="flex w-[50%] items-center">
+																<p className="clamp_1 mr-2">{resume.name && resume.name}</p>(
+																{resume.size && <>{(resume.size / (1024 * 1024)).toFixed(2)} MB</>})
+															</span>
+															<aside>
+																<button
+																	type="button"
+																	className="hover:text-underline text-primary"
+																	title="View"
+																	onClick={() => {
+																		if (resume) {
+																			const fileUrl = URL.createObjectURL(resume);
+																			window.open(fileUrl, "_blank");
+																		}
+																	}}
+																>
+																	<i className="fa-solid fa-eye"></i>
+																</button>
+																<button
+																	type="button"
+																	className="hover:text-underline ml-4 text-red-500"
+																	title="Delete"
+																	onClick={() => {
+																		setresume(null);
+																	}}
+																>
+																	<i className="fa-solid fa-trash"></i>
+																</button>
+															</aside>
+														</div>
+														<div className="relative pt-4">
+															<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
+																<span
+																	className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
+																	style={{ width: "99%" }}
+																></span>
+															</div>
+														</div>
+													</div>
+												</div>
+											)}
+
 											<div className="mx-[-10px] flex flex-wrap">
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 													<FormField
@@ -962,7 +1024,7 @@ export default function VendorClients() {
 													{links &&
 														links.map((data, i) => (
 															<div
-																className="relative mr-6 mb-4 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
+																className="relative mb-4 mr-6 w-[100px] rounded-normal bg-lightBlue p-3 text-center shadow-highlight dark:bg-gray-700"
 																key={i}
 															>
 																<Link href={data} target="_blank" className="">
@@ -973,7 +1035,7 @@ export default function VendorClients() {
 																</Link>
 																<button
 																	type="button"
-																	className="absolute top-[-10px] right-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
+																	className="absolute right-[-10px] top-[-10px] rounded-full text-center text-[20px] font-bold text-red-500 dark:text-white"
 																	onClick={() => deleteLink(i)}
 																>
 																	<i className="fa-solid fa-circle-xmark"></i>
@@ -1000,14 +1062,14 @@ export default function VendorClients() {
 											/>
 
 											{/* exp */}
-											<hr className="mt-8 mb-4" />
+											<hr className="mb-4 mt-8" />
 											<div className="relative mb-4">
 												<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
 													<input
 														type="checkbox"
 														id="newGraduate"
 														name="newGraduate"
-														className="mr-2 mb-[3px]"
+														className="mb-[3px] mr-2"
 														checked={newgre}
 														onChange={(e) => setnewgre(e.target.checked)}
 													/>
@@ -1018,7 +1080,7 @@ export default function VendorClients() {
 														Experience <sup className="text-red-500">*</sup>
 													</label>
 													<div className="flex" style={{ display: newgre === true ? "none" : "flex" }}>
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 															{expid &&
 																expid.map((data, i) => (
 																	<article className="border-b last:border-b-0" key={i} id={data}>
@@ -1108,12 +1170,12 @@ export default function VendorClients() {
 											</div>
 
 											{/* edu */}
-											<hr className="mt-8 mb-4" />
+											<hr className="mb-4 mt-8" />
 											<div className="relative mb-4">
 												<div className="mb-0">
 													<label className="mb-1 inline-block font-bold">Education</label>
 													<div className="flex">
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 															{eduid &&
 																eduid.map((data, i) => (
 																	<article className="border-b last:border-b-0" key={i} id={data}>
@@ -1192,12 +1254,12 @@ export default function VendorClients() {
 											</div>
 
 											{/* cer */}
-											<hr className="mt-8 mb-4" />
+											<hr className="mb-4 mt-8" />
 											<div className="relative mb-4">
 												<div className="mb-0">
 													<label className="mb-1 inline-block font-bold">Certificate</label>
 													<div className="flex">
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
+														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 															{certid &&
 																certid.map((data, i) => (
 																	<article className="border-b last:border-b-0" key={i} id={data}>
@@ -1527,7 +1589,7 @@ export default function VendorClients() {
 												</div>
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 													<label className="mb-1 inline-block font-bold">Skills</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
 														<div className="text-sm">
 															{data["skills"] &&
 																data["skills"].length > 0 &&
@@ -1541,7 +1603,7 @@ export default function VendorClients() {
 												</div>
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 													<label className="mb-1 inline-block font-bold">Experience</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
 														{venappdetail["Experience"] &&
 															venappdetail["Experience"].length > 0 &&
 															venappdetail["Experience"].map((data, i) => (
@@ -1565,8 +1627,9 @@ export default function VendorClients() {
 												</div>
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 													<label className="mb-1 inline-block font-bold">Education</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
-														{venappdetail["Education"] &&
+													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
+														{venappdetail &&
+															venappdetail["Education"] &&
 															venappdetail["Education"].length > 0 &&
 															venappdetail["Education"].map((data, i) => (
 																<article className="border-b last:border-b-0" key={i}>
@@ -1589,7 +1652,7 @@ export default function VendorClients() {
 												</div>
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 													<label className="mb-1 inline-block font-bold">Certifications</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor py-1 px-3">
+													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
 														{venappdetail["Certification"] &&
 															venappdetail["Certification"].length > 0 &&
 															venappdetail["Certification"].map((data, i) => (

@@ -1,7 +1,7 @@
 import ThemeChange from "../ThemeChange";
 import { signOut, useSession } from "next-auth/react";
 import { useState, Fragment, useRef, useEffect } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Listbox } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
@@ -16,6 +16,8 @@ import UpcomingComp from "./upcomingComp";
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
 ];
+
+const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
 export default function OrgTopBar() {
 	const cancelButtonRef = useRef(null);
@@ -32,6 +34,8 @@ export default function OrgTopBar() {
 	const role = useUserStore((state: { role: any }) => state.role);
 	const user = useUserStore((state: { user: any }) => state.user);
 	const version = useVersionStore((state: { version: any }) => state.version);
+	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
+	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
 	const [integration, setIntegration] = useState([]);
 	const [comingSoon, setComingSoon] = useState(false);
@@ -127,6 +131,10 @@ export default function OrgTopBar() {
 		}
 	}, [token, role, load]);
 
+	useEffect(() => {
+		setversion(selectedPreVersion.name);
+	}, [selectedPreVersion]);
+
 	return (
 		<>
 			<div
@@ -137,6 +145,55 @@ export default function OrgTopBar() {
 					{type}&nbsp;{role}
 				</p>
 				<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
+
+				{role === "Super Admin" && (
+					<div className="ms-3">
+						<Listbox value={selectedPreVersion} onChange={setPreVersion}>
+							<div className="relative">
+								<Listbox.Button className="flex items-center justify-center rounded-l bg-secondary px-2 py-2 text-white">
+									{/* <span className="block truncate uppercase leading-1 mr-2">{lang}</span> */}
+									<i className="fa-solid fa-code-compare"></i>
+								</Listbox.Button>
+								<Transition
+									as={Fragment}
+									leave="transition ease-in duration-100"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Listbox.Options className="absolute right-0 top-[100%] mt-1 max-h-60 w-full min-w-[150px] overflow-auto rounded-md bg-secondary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+										{preVersions.map((item, itemIdx) => (
+											<Listbox.Option
+												className={({ active }) =>
+													`relative block cursor-pointer select-none py-2 pl-10 pr-4 hover:bg-indigo-500 hover:text-white ${
+														active ? "bg-indigo-500 text-white" : "text-white"
+													}`
+												}
+												value={item}
+												key={itemIdx}
+												as={Link}
+												href={router.asPath}
+											>
+												<span
+													className={`block truncate uppercase ${
+														version === item.name ? "font-medium" : "font-normal"
+													}`}
+												>
+													{item.name}
+												</span>
+												{version === item.name ? (
+													<span className={`absolute inset-y-0 left-0 flex items-center pl-3 text-white`}>
+														<i className="fa-solid fa-check"></i>
+													</span>
+												) : null}
+											</Listbox.Option>
+										))}
+									</Listbox.Options>
+								</Transition>
+							</div>
+						</Listbox>
+					</div>
+				)}
+
 				<ThemeChange />
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setComingSoon(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>

@@ -83,9 +83,11 @@ export default function Vendors() {
 	}
 
 	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
-		const file = event.target.files && event.target.files[0];
-		setagreement(file);
-		setfile(true);
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files && event.target.files[0];
+			setagreement(file);
+			setfile(true);
+		}
 	}
 
 	async function loadVendorData(email: string) {

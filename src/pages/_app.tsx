@@ -55,7 +55,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 					</Head>
 					<Header />
 					{Component.noAuth ? (
-						<Component {...pageProps} />
+						<Component {...pageProps} upcomingSoon={soon} />
 					) : (
 						<>
 							<Auth>

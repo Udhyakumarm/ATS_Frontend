@@ -380,7 +380,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												</>
 											)}
 										</div>
-										{/* {atsVersion === "starter" && (
+										{atsVersion === "starter" && (
 											<div
 												className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md"
 												onClick={() => {
@@ -396,7 +396,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
 												</div>
 											</div>
-										)} */}
+										)}
 									</div>
 								</div>
 							) : (

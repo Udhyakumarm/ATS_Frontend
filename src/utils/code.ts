@@ -39,7 +39,7 @@ let versionStore: any = (set: any) => ({
 	//starter
 	//premium
 	//enterprise
-	version: "starter",
+	version: "enterprise",
 	setversion: (id: any) => set(() => ({ version: id }))
 });
 
@@ -73,7 +73,7 @@ let applicantStore: any = (set: any) => ({
 });
 
 let langStore: any = (set: any) => ({
-	lang: '',
+	lang: "",
 	setlang: (id: any) => set(() => ({ lang: id }))
 });
 

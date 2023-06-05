@@ -9,6 +9,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useUserStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
 import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
+import UpcomingComp from "./organization/upcomingComp";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
 	const [starred, setStarred] = useState(false);
@@ -20,6 +21,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const userState = useUserStore((state: { user: any }) => state.user);
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	const [comingSoon, setComingSoon] = useState(false);
 
 	async function statusUpdate(status: string, refid: string) {
 		const formData = new FormData();
@@ -179,7 +181,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													<button
 														type="button"
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => setAddCand(true)}
+														// onClick={() => setAddCand(true)}
+														onClick={() => setComingSoon(true)}
 													>
 														Upload Resume (PDF/DOC)
 													</button>
@@ -285,17 +288,26 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="border-r px-[15px] mb-2 w-max">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Total <br/>Candidates</h5>
-						<h6 className="text-lg font-semibold">50</h6>
-					</div> 
-					<div className="border-r px-[15px] mb-2 w-max">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Active <br/>Candidates</h5>
+					<div className="mb-2 w-max border-r px-[15px]">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							Total <br />
+							Candidates
+						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="px-[15px] mb-2 w-max">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">Job <br/>ID Number</h5>
-						<h6 className="clamp_1 break-all text-lg font-semibold w-[100px]">{job.refid}</h6>
+					<div className="mb-2 w-max border-r px-[15px]">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							Active <br />
+							Candidates
+						</h5>
+						<h6 className="text-lg font-semibold">50</h6>
+					</div>
+					<div className="mb-2 w-max px-[15px]">
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							Job <br />
+							ID Number
+						</h5>
+						<h6 className="clamp_1 w-[100px] break-all text-lg font-semibold">{job.refid}</h6>
 					</div>
 				</div>
 				<Button btnStyle="outlined" btnType="button" label="View Job" handleClick={() => setPreviewPopup(true)} />
@@ -716,6 +728,52 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
 										<FormField fieldType="reactquill" label="Any Message to Recruiter" placeholder="Notice Period" />
 										<Button label="Add" loader={false} btnType="button" />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={comingSoon} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Coming Soon</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setComingSoon(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<UpcomingComp title={"Upload Manually Candidate Feature"} setComingSoon={setComingSoon} />
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

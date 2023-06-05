@@ -4,7 +4,7 @@ import React from "react";
 import { Board } from "./Board";
 import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
-import { addActivityLog, addNotifyApplicantLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyApplicantLog, addNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { useNotificationStore, useUserStore } from "@/utils/code";
 import moment from "moment";
@@ -13,7 +13,7 @@ function Canban(props: any) {
 	const router = useRouter();
 	let _columnId = 0;
 	let _cardId = 0;
-	var initialColumns = ["Sourced", "Applied", "Phone Screen", "Assessment", "Interview", "Offer", "Hired"].map(
+	var initialColumns = ["Sourced", "Review", "Interview", "Shortlisted", "Offer", "Hired", "Reject"].map(
 		(title, i) => ({
 			id: _columnId++,
 			title,
@@ -38,7 +38,8 @@ function Canban(props: any) {
 				let dic = {
 					id: ++_cardId,
 					title: `Card ${_cardId}`,
-					arefid: `${applicantlist[i]["arefid"]}`
+					arefid: `${applicantlist[i]["arefid"]}`,
+					type: `${applicantlist[i]["type"]}`
 				};
 				arr.push(dic);
 				for (let j = 0; j < initialColumns.length; j++) {
@@ -63,11 +64,18 @@ function Canban(props: any) {
 	const userState = useUserStore((state: { user: any }) => state.user);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(props.token);
-	async function chnageStatus(status: string | Blob, arefid: any) {
+	async function chnageStatus(status: string | Blob, arefid: any, type: any) {
 		const fdata = new FormData();
 		fdata.append("status", status);
+		let url = "";
+		if (type === "carrier") {
+			url = `/job/applicant/${arefid}/update/`;
+		}
+		if (type === "vendor") {
+			url = `/job/vapplicant/${arefid}/update/`;
+		}
 		await axiosInstanceAuth2
-			.put(`/job/applicant/${arefid}/update/`, fdata)
+			.put(url, fdata)
 			.then((res) => {
 				toastcomp("Status Changed", "success");
 				let aname = `Applicant ${arefid} status is change to ${status} by ${userState[0]["name"]} (${
@@ -78,7 +86,12 @@ function Canban(props: any) {
 
 				let title = `Applicant has been shifted to ${status} By ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-				addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid);
+				if (type === "carrier") {
+					addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid);
+				}
+				if (type === "vendor") {
+					addNotifyLog(axiosInstanceAuth2, title, "Vendor Applicant");
+				}
 
 				toggleLoadMode(true);
 
@@ -117,7 +130,7 @@ function Canban(props: any) {
 							for (let j = 0; j < cards.length; j++) {
 								if (cards[j]["id"] === cardId) {
 									console.log("*", "arefid", cards[j]["arefid"]);
-									chnageStatus(columns[k]["title"], cards[j]["arefid"]);
+									chnageStatus(columns[k]["title"], cards[j]["arefid"], cards[j]["type"]);
 								}
 							}
 						}

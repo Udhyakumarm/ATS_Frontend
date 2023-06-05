@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
-export default function Interviews() {
+export default function Interviews({upcomingSoon}:any) {
 	const [sklLoad, setskLoad] = useState(true);
 	const [accordionOpen, setAccordionOpen] = useState(false);
 	const [upcomingInterview, setUpcomingInterview] = useState(true);
@@ -126,10 +126,12 @@ export default function Interviews() {
 										Past Interviews
 									</button>
 								</div>
-								<div className="px-8 py-3">
+								{!upcomingSoon && <div className="px-8 py-3">
 									<FormField fieldType="select" label="Jobs" />
 									<FormField fieldType="select" label="Time" />
+									
 								</div>
+								}
 							</div>
 						</div>
 						<div className="w-full pl-8 lg:max-w-[75%]">

@@ -47,7 +47,8 @@ export default function Header() {
 			router.asPath == "/organization/" + cname + "/search-jobs" ||
 			router.asPath == "/organization/" + cname + "/dashboard" ||
 			router.asPath == "/organization/" + cname + "/job-detail" ||
-			router.asPath == "/organization/" + cname + "/job-apply")
+			router.asPath == "/organization/" + cname + "/job-apply" ||
+			router.asPath == "/organization/" + cname + "/settings")
 	) {
 		return (
 			<>
@@ -148,7 +149,7 @@ export default function Header() {
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
 												<li>
-													<Link href="#" className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200">
+													<Link href={`/organization/${cname}/settings`} className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200">
 														<i className="fa-solid fa-gear mr-3"></i>
 														Settings
 													</Link>
@@ -249,5 +250,9 @@ export default function Header() {
 			</>
 		);
 	}
-	return <><ToggleLang /></>;
+	return (
+		<>
+			<ToggleLang />
+		</>
+	);
 }

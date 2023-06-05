@@ -32,14 +32,24 @@ export default function Card(props: any) {
 						<aside className="flex items-center">
 							<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
 							<h5 className="pl-4 text-sm font-semibold">
-								{props["data"]["user"]["first_name"]} {props["data"]["user"]["last_name"]}
+								{props["data"]["type"] === "carrier" && (
+									<>
+										{props["data"]["user"]["first_name"]} {props["data"]["user"]["last_name"]}
+									</>
+								)}
+								{props["data"]["type"] === "vendor" && (
+									<>
+										{props["data"]["applicant"]["first_name"]} {props["data"]["applicant"]["last_name"]}
+									</>
+								)}
 							</h5>
 						</aside>
 						<aside>
-							<Image src={socialIcon} alt="Social" className="h-[16px] w-auto" />
+							{/* <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" /> */}
+							{props["data"]["type"]}
 						</aside>
 					</div>
-					<p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["user"]["erefid"]}</p>
+					<p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["arefid"]}</p>
 					<div className="flex items-center justify-between">
 						<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
 							<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
@@ -49,11 +59,11 @@ export default function Card(props: any) {
 							btnStyle="outlined"
 							label="View"
 							btnType="button"
-							handleClick={() => {
-								setjobid(props["data"]["job"]["refid"]);
-								setcanid(props["data"]["user"]["erefid"]);
-								router.push("applicants/detail");
-							}}
+							// handleClick={() => {
+							// 	setjobid(props["data"]["job"]["refid"]);
+							// 	setcanid(props["data"]["user"]["erefid"]);
+							// 	router.push("applicants/detail");
+							// }}
 						/>
 					</div>
 				</div>
