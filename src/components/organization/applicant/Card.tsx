@@ -17,6 +17,9 @@ export default function Card(props: any) {
 	const router = useRouter();
 	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
 	const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
 	return _.flowRight(
 		props.connectDragSource,
 		props.connectDropTarget
@@ -60,11 +63,14 @@ export default function Card(props: any) {
 							btnStyle="outlined"
 							label={srcLang === 'ja' ? 'みる' : 'View'}
 							btnType="button"
-							// handleClick={() => {
-							// 	setjobid(props["data"]["job"]["refid"]);
-							// 	setcanid(props["data"]["user"]["erefid"]);
-							// 	router.push("applicants/detail");
-							// }}
+							handleClick={() => {
+								setjobid(props["data"]["job"]["refid"]);
+								// setcanid(props["data"]["user"]["erefid"]);
+								setappid(props["data"]["arefid"]);
+								settype(props["data"]["type"]);
+								setappdata(props["data"]);
+								router.push("applicants/detail");
+							}}
 						/>
 					</div>
 				</div>

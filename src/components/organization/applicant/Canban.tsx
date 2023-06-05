@@ -21,7 +21,7 @@ function Canban(props: any) {
 		srcLang === 'ja' ? '面接通過' : 'Shortlisted',
 		srcLang === 'ja' ? 'オファー' : 'Offer',
 		srcLang === 'ja' ? '入社' : 'Hired',
-		srcLang === 'ja' ? '辞退' : 'Reject',
+		'Rejected',
 	].map(
 		(title, i) => ({
 			id: _columnId++,
