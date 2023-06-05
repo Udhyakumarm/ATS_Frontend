@@ -43,7 +43,7 @@ export default function CreatePassword() {
 	);
 }
 
-export async function getServerSideProps({ context, locale }:any) {
+export async function getStaticProps({ context, locale }:any) {
 	const translations = await serverSideTranslations(locale, ['common']);
 	return {
 		props: {

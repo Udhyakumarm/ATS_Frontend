@@ -1222,7 +1222,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
 											<h4 className="text-xl font-bold leading-none">
-												{jtitle && jtitle.length > 0 ? jtitle : <>Job Title</>}
+												{jtitle && jtitle.length > 0 ? jtitle : <>{srcLang === 'ja' ? '求人タイトル' : 'Job Title'}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
 												<li className="mr-3 list-none">
@@ -1251,7 +1251,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Department Information</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '部門情報' : 'Department Information'}</h5>
 												<article className="text-sm">
 													{jdeptinfo && jdeptinfo.length > 0 ? (
 														<>
@@ -1263,7 +1263,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Your Responsibilities</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める役割' : 'Your Responsibilities'}</h5>
 												<article className="text-sm">
 													{jres && jres.length > 0 ? (
 														<>
@@ -1275,7 +1275,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">What We are Looking For</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める要件' : 'What We are Looking For'}</h5>
 												<article className="text-sm">
 													{jlooking && jlooking.length > 0 ? (
 														<>
@@ -1287,7 +1287,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Skills</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? 'スキル' : 'Skills'}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													{jskill && jskill.length > 0 ? (
 														jskill.split(",").map((data, i) =>
@@ -1310,7 +1310,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Employment Details</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '基本要件' : 'Employment Details'}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
 														{jetype && jetype.length > 0 ? jetype : <>Not Disclosed</>}
@@ -1321,7 +1321,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Annual Salary</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '想定年収' : 'Annual Salary'}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
 														{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
@@ -1335,13 +1335,13 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Benefits</h5>
+												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '待遇面' : 'Benefits'}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														Paid Relocation : {jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
+													{srcLang === 'ja' ? '引越し費用負担' : 'Paid Relocation:'}{jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
-														Visa Sposnership : {jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
+													{srcLang === 'ja' ? 'VISAサポート' : 'Visa Sposnership:'}{jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
 														{jwtype && jwtype.length > 0 ? <>{jwtype} Working</> : <>Not Disclosed Work Type</>}
@@ -1350,7 +1350,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 											</div>
 										</div>
 										<div className="py-4">
-											<Button label="Close" btnType="button" handleClick={() => setPreviewPopup(false)} />
+											<Button label={srcLang === 'ja' ? '近い' : 'Close'} btnType="button" handleClick={() => setPreviewPopup(false)} />
 										</div>
 									</div>
 								</Dialog.Panel>
@@ -1396,17 +1396,18 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									</div>
 									<div className="p-8 pt-0 text-center">
 										<i className="fa-solid fa-circle-check mb-4 text-[50px] text-green-500"></i>
-										<h4 className="mb-2 text-xl font-bold">Job has been Published</h4>
+										<h4 className="mb-2 text-xl font-bold">{srcLang === 'ja' ? '求人が公開されました' : 'Job has been Published'}</h4>
 										<p className="text-sm">
-											Go To{" "}
-											<Link
-												href="/organization/jobs/active"
-												onClick={() => setPublishThanks(false)}
-												className="font-bold text-primary hover:underline"
-											>
-												Active Jobs
-											</Link>{" "}
-											to Manage your Jobs
+											{srcLang === 'ja' 
+											? 
+											<>
+											<Link href="/organization/jobs/active" onClick={() => setPublishThanks(false)} className="font-bold text-primary hover:underline">公開中の求人を確認する</Link>
+											</>
+											: 
+											<>
+											<Link href="/organization/jobs/active" onClick={() => setPublishThanks(false)} className="font-bold text-primary hover:underline">Check open jobs</Link>
+											</>
+											}
 										</p>
 									</div>
 								</Dialog.Panel>
@@ -1419,7 +1420,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	);
 }
 
-export async function getServerSideProps({ context, locale }:any) {
+export async function getStaticProps({ context, locale }:any) {
 	const translations = await serverSideTranslations(locale, ['common']);
 	return {
 		props: {

@@ -20,7 +20,8 @@
         "CreateAccount": "Create Account",
         "Preview": "Preview",
         "SaveAsDraft": "Save as Draft",
-        "Publish": "Publish"
+        "Publish": "Publish",
+        "View": "View"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -58,6 +59,8 @@
         "DraftJobs": "Draft Jobs",
         "ArchivedJobs": "Archived Jobs",
         "ClosedJobs": "Closed Jobs",
+        "CloneJob": "Clone Job",
+        "EditJob": "Edit Job",
         "JobDetails": "Job Details",
         "Assessment": "Assessment",
         "TeamMembers": "Team Members",

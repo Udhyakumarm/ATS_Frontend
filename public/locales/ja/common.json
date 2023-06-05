@@ -16,11 +16,12 @@
         "SignUp": "アカウント作成",
         "Submit": "確認メールを送信",
         "Save": "保存",
-        "Close": "Close",
+        "Close": "近い",
         "CreateAccount": "アカウントを作成",
         "Preview": "プレビュー",
         "SaveAsDraft": "下書き保存",
-        "Publish": "求人公開"
+        "Publish": "求人公開",
+        "View": "みる"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -58,6 +59,8 @@
         "DraftJobs": "作成中の求人",
         "ArchivedJobs": "アーカイブ済みの求人",
         "ClosedJobs": "求人クローズ",
+        "CloneJob": "クローンジョブ",
+        "EditJob": "ジョブの編集",
         "JobDetails": "求人詳細",
         "Assessment": "評価",
         "TeamMembers": "チームメンバー",
