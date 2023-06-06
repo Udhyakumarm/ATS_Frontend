@@ -89,24 +89,6 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		}
 	];
 
-	const TeamTableHead = [
-		{
-			title: t('Words.UserName')
-		},
-		{
-			title: t('Words.Department_Title')
-		},
-		{
-			title: t('Form.Email')
-		},
-		{
-			title: t('Words.Access')
-		},
-		{
-			title: " "
-		}
-	];
-
 	const userState = useUserStore((state: { user: any }) => state.user);
 
 	//naman
@@ -575,6 +557,23 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		{
 			title: t('Words.Divison'),
 			icon: <i className="fa-solid fa-table-cells"></i>
+		}
+	];
+	const TeamTableHead = [
+		{
+			title: t('Words.UserName')
+		},
+		{
+			title: t('Words.Department_Title')
+		},
+		{
+			title: t('Form.Email')
+		},
+		{
+			title: t('Words.Access')
+		},
+		{
+			title: " "
 		}
 	];
 

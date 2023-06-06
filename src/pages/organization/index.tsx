@@ -92,7 +92,7 @@ export default function Organization({ atsVersion, userRole }: any) {
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
 											href={links.blur ? "javascript:void(0)" : links.link}
-											className=" relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+											className="relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 										>
 											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 												<Image src={links.icon} alt={links.name} width={30} height={30} />
