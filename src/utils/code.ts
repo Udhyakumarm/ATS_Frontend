@@ -66,10 +66,16 @@ let applicantStore: any = (set: any) => ({
 	applicantdetail: {}, //applicant list
 	jobid: "",
 	canid: "",
+	appid: "",
+	appdata: {},
+	type: "",
 	setapplicantlist: (id: any) => set(() => ({ applicantlist: id })),
 	setapplicantdetail: (id: any) => set(() => ({ applicantdetail: id })),
 	setjobid: (id: any) => set(() => ({ jobid: id })),
-	setcanid: (id: any) => set(() => ({ canid: id }))
+	setcanid: (id: any) => set(() => ({ canid: id })),
+	setappid: (id: any) => set(() => ({ appid: id })),
+	setappdata: (id: any) => set(() => ({ appdata: id })),
+	settype: (id: any) => set(() => ({ type: id }))
 });
 
 let langStore: any = (set: any) => ({

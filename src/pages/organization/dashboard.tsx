@@ -76,13 +76,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 
 	const [tApp, settApp] = useState(0);
 	const [sApp, setsApp] = useState(0);
-	const [aApp, setaApp] = useState(0);
-	const [apApp, setapApp] = useState(0);
-	const [hApp, sethApp] = useState(0);
-	const [iApp, setiApp] = useState(0);
-	const [oApp, setoApp] = useState(0);
-	const [pApp, setpApp] = useState(0);
 	const [rApp, setrApp] = useState(0);
+	const [iApp, setiApp] = useState(0);
+	const [shApp, setshApp] = useState(0);
+	const [oApp, setoApp] = useState(0);
+	const [hApp, sethApp] = useState(0);
+	const [reApp, setreApp] = useState(0);
 
 	const aplc_status = [
 		{
@@ -96,24 +95,19 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			icon: <i className="fa-solid fa-circle-pause"></i>
 		},
 		{
-			title: srcLang === 'ja' ? 'オファー' : 'Total Applied',
-			number: apApp,
-			icon: <i className="fa-solid fa-circle-check"></i>
-		},
-		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Phone Screen',
-			number: pApp,
+			title: 'Total Review',
+			number: rApp,
 			icon: <i className="fa-solid fa-users"></i>
-		},
-		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Assessment',
-			number: aApp,
-			icon: <i className="fa-solid fa-eye"></i>
 		},
 		{
 			title: srcLang === 'ja' ? 'パイプライン' : 'Total Interview',
 			number: iApp,
-			icon: <i className="fa-solid fa-clipboard-question"></i>
+			icon: <i className="fa-solid fa-circle-check"></i>
+		},
+		{
+			title: 'Total Shortlisted',
+			number: shApp,
+			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
 			title: srcLang === 'ja' ? 'パイプライン' : 'Total Offer',
@@ -127,7 +121,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		},
 		{
 			title: srcLang === 'ja' ? 'パイプライン' : 'Total Rejected',
-			number: rApp,
+			number: reApp,
 			icon: <i className="fa-solid fa-circle-xmark"></i>
 		}
 	];
@@ -210,13 +204,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				setapplicantDetail(res.data["Applicants"]);
 				settApp(res.data["Applicants"]["totalApplicants"]);
 				setsApp(res.data["Applicants"]["sourced"]);
-				setrApp(res.data["Applicants"]["rejected"]);
-				setpApp(res.data["Applicants"]["phoneScreen"]);
-				setoApp(res.data["Applicants"]["offer"]);
+				setrApp(res.data["Applicants"]["review"]);
 				setiApp(res.data["Applicants"]["interview"]);
+				setshApp(res.data["Applicants"]["shortlisted"]);
+				setoApp(res.data["Applicants"]["offer"]);
 				sethApp(res.data["Applicants"]["hired"]);
-				setaApp(res.data["Applicants"]["assessment"]);
-				setapApp(res.data["Applicants"]["applied"]);
+				setreApp(res.data["Applicants"]["rejected"]);
 
 				setrecentJob(res.data["recentJob"]);
 				setupcomingInterview(res.data["Interview"]);
@@ -227,7 +220,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 	}
 
 	function getAverage(num: any) {
-		return (num / tApp) * 100;
+		return Math.round((num / tApp) * 100);
 	}
 
 	function getColor(num: any) {
@@ -380,7 +373,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												</>
 											)}
 										</div>
-										{atsVersion === "starter" && (
+										{/* {atsVersion === "starter" && (
 											<div
 												className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md"
 												onClick={() => {
@@ -396,7 +389,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
 												</div>
 											</div>
-										)}
+										)} */}
 									</div>
 								</div>
 							) : (
@@ -689,7 +682,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 											<Button 
 											btnStyle="white"
 											btnType="button"
-											label="Upgrade"
+											label={srcLang === 'ja' ? 'アップグレード' : 'Upgrade'}
 											handleClick={() => {
 												if (userRole === "Super Admin") {
 													router.push("/organization/settings/pricing");

@@ -220,7 +220,7 @@ export default function OrgSideBar() {
 									<Button
 									btnStyle="white"
 									btnType="button"
-									label="Upgrade"
+									label={srcLang === 'ja' ? 'アップグレード' : 'Upgrade'}
 									handleClick={() => {
 										if (role === "Super Admin") {
 											router.push("/organization/settings/pricing");
@@ -263,7 +263,7 @@ export default function OrgSideBar() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Upgrade Your Plan</h4>
+										<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'プランをアップグレードする' : 'Upgrade Your Plan'}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"

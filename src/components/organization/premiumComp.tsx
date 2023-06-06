@@ -12,7 +12,7 @@ export default function PermiumComp({ userRole, title, setUpgradePlan }: any) {
 			<div className="mx-auto w-full max-w-[400px] rounded-normal bg-[rgba(255,255,255,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
 				<Image src={permiumImg} alt="Upgrade" width={100} height={100} className="mx-auto mb-6 w-auto" />
 				<h3 className="textGrad mb-4 inline-block rounded-[10px] border px-2 py-1 text-3xl font-extrabold">
-					{title && title.length > 0 && <>{title}&nbsp;</>}Go Premium
+					{title && title.length > 0 && <>{title}&nbsp;</>} Go Premium
 				</h3>
 				<p className="mb-2 text-sm text-darkGray">
 					Upgrade your experience with our premium package for enhanced features and exclusive benefits.

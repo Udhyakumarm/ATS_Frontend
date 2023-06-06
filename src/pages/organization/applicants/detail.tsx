@@ -20,55 +20,28 @@ import CardLayout_1 from "@/components/CardLayout-1";
 import { Listbox } from "@headlessui/react";
 import toastcomp from "@/components/toast";
 import favIcon from "/public/favicon-white.ico";
+import UpcomingComp from "@/components/organization/upcomingComp";
 
 const people = [
-	{ id: 1, name: "Sourced", unavailable: false },
-	{ id: 2, name: "Applied", unavailable: false },
-	{ id: 3, name: "Phone Screen", unavailable: false },
-	{ id: 4, name: "Assessment", unavailable: false },
-	{ id: 5, name: "Interview", unavailable: false },
-	{ id: 6, name: "Offered Letter", unavailable: false },
-	{ id: 7, name: "Hired", unavailable: false }
+	{ name: "Sourced", unavailable: false },
+	{ name: "Review", unavailable: false },
+	{ name: "Interview", unavailable: false },
+	{ name: "Shortlisted", unavailable: false },
+	{ name: "Offer", unavailable: false },
+	{ name: "Hired", unavailable: false },
+	{ name: "Rejected", unavailable: false }
 ];
 
-export default function ApplicantsDetail() {
+export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:any) {
 	const router = useRouter();
-
-	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
-	const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
-	const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
-	const setapplicantdetail = useApplicantStore((state: { setapplicantdetail: any }) => state.setapplicantdetail);
 	const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
-	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
-	const canid = useApplicantStore((state: { canid: any }) => state.canid);
-	const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
+	const appid = useApplicantStore((state: { appid: any }) => state.appid);
+	const type = useApplicantStore((state: { type: any }) => state.type);
+	const appdata = useApplicantStore((state: { appdata: any }) => state.appdata);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
-	const [refersh, setrefersh] = useState(1);
-	const [refersh1, setrefersh1] = useState(0);
-	const [refersh2, setrefersh2] = useState(0);
-	const [jtitle, setjtitle] = useState("");
-	const [aid, setaid] = useState("");
-
-	const [selectedFeedBack, setSelectedFeedBack] = useState(false);
-	const [feedBack, setFeedBack] = useState(true);
-	const [updateFeedBack, setUpdateFeedBack] = useState(false);
-
-	const [selectedPerson, setSelectedPerson] = useState({});
-
-	//feedback
-	const [currentUser, setcurrentUser] = useState([]);
-	const [feedbackList, setfeedbackList] = useState([]);
-	const [editfeedback, seteditfeedback] = useState(false);
-	const [editfeedbackTA, seteditfeedbackTA] = useState("");
-	const [feedbackreload, setfeedbackreload] = useState(true);
-	const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
-
-	//ai
-	const [aires, setaires] = useState("");
-	const [aiquestion, setaiquestion] = useState([]);
-	const [ailoader, setailoader] = useState(false);
 
 	useEffect(() => {
 		if (session) {
@@ -81,81 +54,218 @@ export default function ApplicantsDetail() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	const axiosInstanceAuth21 = axiosInstanceAuth22(token);
 
-	async function loadApplicantDetail() {
-		await axiosInstanceAuth2
-			.get(`/candidate/listuser/${canid}/${jobid}`)
+	const [selectedPerson, setSelectedPerson] = useState(people[3]);
+
+	
+	//ai interview question
+	const [aires, setaires] = useState("");
+	const [aiquestion, setaiquestion] = useState([]);
+	const [ailoader, setailoader] = useState(false);
+	
+	useEffect(() => {
+		// toastcomp(appdata["status"],"success")
+		for(let i=0;i<people.length;i++){
+			if(people[i]["name"] === appdata["status"]){
+				setSelectedPerson(people[i])
+			}
+		}
+	}, [appdata]);
+
+	async function loadNEWAPPDATA(arefid: any) {
+		if(type === "carrier"){
+			await axiosInstanceAuth2
+				.get(`/job/listsapplicant/${arefid}/`)
+				.then((res) => {
+					setappdata(res.data[0])
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+		if(type === "vendor"){
+			await axiosInstanceAuth2
+				.get(`/job/listsvapplicant/${arefid}/`)
+				.then((res) => {
+					setappdata(res.data[0])
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
+
+	async function chnageStatus(status: string, arefid: any) {
+		if(type === "carrier"){
+			const fdata = new FormData();
+			fdata.append("status", status);
+			await axiosInstanceAuth2
+				.put(`/job/applicant/${arefid}/update/`, fdata)
+				.then((res) => {
+					toastcomp("Status Changed", "success");
+					loadNEWAPPDATA(arefid)
+				})
+				.catch((err) => {
+					console.log(err);
+					toastcomp("Status Not Change", "error");
+				});
+		}
+		if(type === "vendor"){
+			const fdata = new FormData();
+			fdata.append("status", status);
+			await axiosInstanceAuth2
+				.put(`/job/vapplicant/${arefid}/update/`, fdata)
+				.then((res) => {
+					toastcomp("Status Changed", "success");
+					loadNEWAPPDATA(arefid)
+				})
+				.catch((err) => {
+					console.log(err);
+					toastcomp("Status Not Change", "error");
+				});
+		}
+	}
+
+
+	function moveApplicant(v){
+		setSelectedPerson(v)
+		chnageStatus(v["name"], appid);
+	}
+
+	
+	async function loadAIInterviewQuestion() {
+		setailoader(true);
+		let canid = ""
+		if(type === "carrier"){
+			canid = appdata["user"]["erefid"]
+		}
+		if(type === "vendor"){
+			canid = appdata["applicant"]["vcrefid"]
+		}
+		
+		await axiosInstanceAuth21
+			.get(`/chatbot/interview-question-generator/${canid}/${jobid}/`)
 			.then(async (res) => {
-				console.log(res.data);
-				setapplicantdetail(res.data);
-				setrefersh(0);
+				setaires(res.data["res"]);
+				setaiquestion(res.data["res"].split("\n"));
+				setailoader(false);
 			})
 			.catch((err) => {
-				console.log(err);
-				setrefersh(0);
+				console.log("!", err);
+				setailoader(false);
 			});
 	}
 
-	async function loadAIInterviewQuestion() {
-		// setailoader(true);
-		// await axiosInstanceAuth21
-		// 	.get(`/chatbot/interview-question-generator/${canid}/`)
-		// 	.then(async (res) => {
-		// 		setaires(res.data["res"]);
-		// 		setaiquestion(res.data["res"].split("\n"));
-		// 		setailoader(false);
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log("!", err);
-		// 		setailoader(false);
-		// 	});
-	}
-
 	useEffect(() => {
-		console.log(token);
-		console.log(jobid);
-		console.log(canid);
-		console.log(refersh);
-		if (token.length > 0 && jobid.length > 0 && canid.length > 0 && refersh > 0) {
-			loadApplicantDetail();
+		if (token && token.length > 0 && aiquestion.length <= 0) {
+			// loadApplicantDetail();
 			loadAIInterviewQuestion();
 		}
-	}, [token, refersh, jobid, canid]);
+	}, [token]);
 
-	async function loadApplicant() {
-		await axiosInstanceAuth2
-			.get(`/job/listapplicant/`)
-			.then(async (res) => {
-				// console.log(res.data)
-				setapplicantlist(res.data);
-				setrefersh1(0);
-			})
-			.catch((err) => {
-				console.log(err);
-				setrefersh1(0);
-			});
-	}
+	// const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
+	// const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
+	// const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
+	// const setapplicantdetail = useApplicantStore((state: { setapplicantdetail: any }) => state.setapplicantdetail);
+	// const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
+	// const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	// const canid = useApplicantStore((state: { canid: any }) => state.canid);
+	// const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
+	// const appid = useApplicantStore((state: { appid: any }) => state.appid);
+	// const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	// const type = useApplicantStore((state: { type: any }) => state.type);
+	// const settype = useApplicantStore((state: { settype: any }) => state.settype);
 
-	useEffect(() => {
-		if (refersh1 != 0) {
-			loadApplicant();
-		}
-	}, [refersh1]);
+	// const [refersh, setrefersh] = useState(1);
+	// const [refersh1, setrefersh1] = useState(0);
+	// const [refersh2, setrefersh2] = useState(0);
+	// const [jtitle, setjtitle] = useState("");
+	// const [aid, setaid] = useState("");
 
-	async function chnageStatus(status: string | Blob, arefid: any) {
-		const fdata = new FormData();
-		fdata.append("status", status);
-		await axiosInstanceAuth2
-			.put(`/job/applicant/${arefid}/update/`, fdata)
-			.then((res) => {
-				setrefersh1(1);
-				toastcomp("Status Changed", "success");
-			})
-			.catch((err) => {
-				console.log(err);
-				toastcomp("Status Not Change", "error");
-				setrefersh1(1);
-			});
-	}
+	// const [selectedFeedBack, setSelectedFeedBack] = useState(false);
+	// const [feedBack, setFeedBack] = useState(true);
+	// const [updateFeedBack, setUpdateFeedBack] = useState(false);
+
+	
+
+	//feedback
+	// const [currentUser, setcurrentUser] = useState([]);
+	// const [feedbackList, setfeedbackList] = useState([]);
+	// const [editfeedback, seteditfeedback] = useState(false);
+	// const [editfeedbackTA, seteditfeedbackTA] = useState("");
+	// const [feedbackreload, setfeedbackreload] = useState(true);
+	// const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
+
+
+	// useEffect(() => {
+	// 	if (session) {
+	// 		settoken(session.accessToken as string);
+	// 	} else if (!session) {
+	// 		settoken("");
+	// 	}
+	// }, [session]);
+
+	// const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	// const axiosInstanceAuth21 = axiosInstanceAuth22(token);
+
+	// async function loadApplicantDetail() {
+	// 	if(type === "carrier"){
+	// 		let candidateId = ""
+	// 		for(let i=0;i<applicantlist.length;i++){
+	// 			if(appid === applicantlist[i]["arefid"]){
+	// 				candidateId=applicantlist[i]["user"]["erefid"]
+	// 			}
+	// 		}
+	// 		await axiosInstanceAuth2
+	// 			.get(`/candidate/listuser/${candidateId}/${jobid}`)
+	// 			.then(async (res) => {
+	// 				console.log(res.data);
+	// 				setapplicantdetail(res.data);
+	// 				setrefersh(0);
+	// 			})
+	// 			.catch((err) => {
+	// 				console.log(err);
+	// 				setrefersh(0);
+	// 			});
+	// 	}
+	// }
+
+
+
+	// async function loadApplicant() {
+	// 	await axiosInstanceAuth2
+	// 		.get(`/job/listapplicant/`)
+	// 		.then(async (res) => {
+	// 			// console.log(res.data)
+	// 			setapplicantlist(res.data);
+	// 			setrefersh1(0);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 			setrefersh1(0);
+	// 		});
+	// }
+
+	// useEffect(() => {
+	// 	if (refersh1 != 0) {
+	// 		loadApplicant();
+	// 	}
+	// }, [refersh1]);
+
+	// async function chnageStatus(status: string | Blob, arefid: any) {
+	// 	const fdata = new FormData();
+	// 	fdata.append("status", status);
+	// 	await axiosInstanceAuth2
+	// 		.put(`/job/applicant/${arefid}/update/`, fdata)
+	// 		.then((res) => {
+	// 			setrefersh1(1);
+	// 			toastcomp("Status Changed", "success");
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 			toastcomp("Status Not Change", "error");
+	// 			setrefersh1(1);
+	// 		});
+	// }
 
 	// useEffect(() => {
 	// 	if (applicantdetail && applicantlist && refersh2 <= 0) {
@@ -176,98 +286,92 @@ export default function ApplicantsDetail() {
 	// 	console.log(applicantdetail);
 	// }, [applicantdetail, applicantlist, refersh2]);
 
-	useEffect(() => {
-		if (refersh2 != 0 && aid.length > 0) {
-			console.log("&", "status change");
-			chnageStatus(selectedPerson["name"], aid);
-		}
-	}, [selectedPerson]);
 
-	async function loadFeedback(arefid: any) {
-		await axiosInstance2
-			.get(`/job/listfeedback/${arefid}/`)
-			.then((res) => {
-				setfeedbackList(res.data);
-				console.log("@", res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
+	// async function loadFeedback(arefid: any) {
+	// 	await axiosInstance2
+	// 		.get(`/job/listfeedback/${arefid}/`)
+	// 		.then((res) => {
+	// 			setfeedbackList(res.data);
+	// 			console.log("@", res.data);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 		});
+	// }
 
-	async function getcurrentUser() {
-		await axiosInstanceAuth2
-			.get(`/job/currentuser/`)
-			.then((res) => {
-				setcurrentUser(res.data);
-				console.log("@", res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
+	// async function getcurrentUser() {
+	// 	await axiosInstanceAuth2
+	// 		.get(`/job/currentuser/`)
+	// 		.then((res) => {
+	// 			setcurrentUser(res.data);
+	// 			console.log("@", res.data);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 		});
+	// }
 
-	async function updateFeedback(pk) {
-		const fdata = new FormData();
-		fdata.append("feedback", editfeedbackTA);
-		await axiosInstanceAuth2
-			.put(`/job/feedback/${pk}/update/`, fdata)
-			.then((res) => {
-				toastcomp("Feedback Updated", "success");
-				seteditfeedback(false);
-				setfeedbackreload(true);
-			})
-			.catch((err) => {
-				toastcomp("Feedback Not Updated", "error");
-				seteditfeedback(false);
-				setfeedbackreload(true);
-			});
-	}
+	// async function updateFeedback(pk) {
+	// 	const fdata = new FormData();
+	// 	fdata.append("feedback", editfeedbackTA);
+	// 	await axiosInstanceAuth2
+	// 		.put(`/job/feedback/${pk}/update/`, fdata)
+	// 		.then((res) => {
+	// 			toastcomp("Feedback Updated", "success");
+	// 			seteditfeedback(false);
+	// 			setfeedbackreload(true);
+	// 		})
+	// 		.catch((err) => {
+	// 			toastcomp("Feedback Not Updated", "error");
+	// 			seteditfeedback(false);
+	// 			setfeedbackreload(true);
+	// 		});
+	// }
 
-	const userState = useUserStore((state: { user: any }) => state.user);
+	// const userState = useUserStore((state: { user: any }) => state.user);
 
-	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	// const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
-	async function createFeedback(status) {
-		const fdata = new FormData();
-		fdata.append("status", status);
-		await axiosInstanceAuth2
-			.post(`/job/feedback/${aid}/create/`, fdata)
-			.then((res) => {
-				toastcomp("Feedback Created", "success");
-				let title = `Feedback Added By ${userState[0]["name"]} (${userState[0]["email"]}) to Applicant ${canid})`;
+	// async function createFeedback(status) {
+	// 	const fdata = new FormData();
+	// 	fdata.append("status", status);
+	// 	await axiosInstanceAuth2
+	// 		.post(`/job/feedback/${aid}/create/`, fdata)
+	// 		.then((res) => {
+	// 			toastcomp("Feedback Created", "success");
+	// 			let title = `Feedback Added By ${userState[0]["name"]} (${userState[0]["email"]}) to Applicant ${canid})`;
 
-				addNotifyLog(axiosInstanceAuth2, title, "");
-				toggleLoadMode(true);
+	// 			addNotifyLog(axiosInstanceAuth2, title, "");
+	// 			toggleLoadMode(true);
 
-				seteditfeedback(false);
-				setfeedbackreload(true);
-			})
-			.catch((err) => {
-				toastcomp("Feedback Not Created", "error");
-				seteditfeedback(false);
-				setfeedbackreload(true);
-			});
-	}
+	// 			seteditfeedback(false);
+	// 			setfeedbackreload(true);
+	// 		})
+	// 		.catch((err) => {
+	// 			toastcomp("Feedback Not Created", "error");
+	// 			seteditfeedback(false);
+	// 			setfeedbackreload(true);
+	// 		});
+	// }
 
-	useEffect(() => {
-		if (aid.length > 0 && feedbackreload) {
-			loadFeedback(aid);
-			getcurrentUser();
-			setfeedbackreload(false);
-		}
-	}, [aid, feedbackreload]);
+	// useEffect(() => {
+	// 	if (aid.length > 0 && feedbackreload) {
+	// 		loadFeedback(aid);
+	// 		getcurrentUser();
+	// 		setfeedbackreload(false);
+	// 	}
+	// }, [aid, feedbackreload]);
 
-	useEffect(() => {
-		if (feedbackList.length > 0 && currentUser.length > 0) {
-			for (let i = 0; i < feedbackList.length; i++) {
-				if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
-					seteditfeedbackTA(feedbackList[i]["feedback"]);
-					setcurrentUserFeedback(true);
-				}
-			}
-		}
-	}, [feedbackList, currentUser]);
+	// useEffect(() => {
+	// 	if (feedbackList.length > 0 && currentUser.length > 0) {
+	// 		for (let i = 0; i < feedbackList.length; i++) {
+	// 			if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
+	// 				seteditfeedbackTA(feedbackList[i]["feedback"]);
+	// 				setcurrentUserFeedback(true);
+	// 			}
+	// 		}
+	// 	}
+	// }, [feedbackList, currentUser]);
 
 	return (
 		<>
@@ -299,7 +403,7 @@ export default function ApplicantsDetail() {
 										<span>Profile</span>
 									</h2>
 								</div>
-								{applicantdetail["CandidateProfile"] &&
+								{/* {applicantdetail["CandidateProfile"] &&
 									applicantdetail["CandidateProfile"].map((data: any, i: React.Key) => (
 										<div
 											className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800"
@@ -437,7 +541,7 @@ export default function ApplicantsDetail() {
 												</div>
 											</div>
 										</div>
-									))}
+									))} */}
 							</div>
 							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
@@ -445,10 +549,17 @@ export default function ApplicantsDetail() {
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
-												<span>{jtitle}</span>
+												<span>{appdata["job"]["job_title"]}</span>
 											</h2>
 										</aside>
 										<aside className="flex grow items-center justify-end">
+										<div className="mr-4">
+												<Button
+													btnType="button"
+													btnStyle="sm"
+													label={`Source ${type}`}
+												/>
+											</div>
 											<div className="mr-4">
 												<Button
 													btnType="button"
@@ -461,7 +572,7 @@ export default function ApplicantsDetail() {
 												/>
 											</div>
 											<div className="mr-4">
-												<Listbox value={selectedPerson} onChange={setSelectedPerson}>
+												<Listbox value={selectedPerson} onChange={(v)=>moveApplicant(v)}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
 														<span className="px-3 py-2">Move Applicant</span>
 														<i className="fa-solid fa-chevron-down ml-2 border-l px-3 py-2 text-sm"></i>
@@ -479,9 +590,9 @@ export default function ApplicantsDetail() {
 																"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
 															}
 														>
-															{people.map((person) => (
+															{people.map((person,i) => (
 																<Listbox.Option
-																	key={person.id}
+																	key={i}
 																	value={person}
 																	disabled={person.unavailable}
 																	className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
@@ -588,7 +699,7 @@ export default function ApplicantsDetail() {
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
-													{applicantdetail["Resume"] &&
+													{/* {applicantdetail["Resume"] &&
 														applicantdetail["Resume"].map((data, i) => (
 															<div
 																className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm"
@@ -604,18 +715,19 @@ export default function ApplicantsDetail() {
 																	Download
 																</Link>
 															</div>
-														))}
-													{/* <div className="px-8">Preview Here</div> */}
-													{applicantdetail["Resume"] &&
+														))}*/}
+													<div className="px-8">Preview Here</div>
+													{/*{applicantdetail["Resume"] &&
 														applicantdetail["Resume"].map((data, i) => (
 															<iframe
 																src={`http://127.0.0.1:8000${data["file"]}`}
 																key={i}
 																className="h-[100vh] w-[100%]"
 															></iframe>
-														))}
+														))} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													{upcomingSoon ? <UpcomingComp /> : 
 													<div className="mx-[-15px] flex flex-wrap">
 														{Array(6).fill(
 															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
@@ -623,9 +735,10 @@ export default function ApplicantsDetail() {
 															</div>
 														)}
 													</div>
+													}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													{!currentUserFeedback && (
+													{/* {!currentUserFeedback && (
 														<>
 															<div className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0">
 																<div className="mb-8 flex w-[280px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
@@ -724,9 +837,9 @@ export default function ApplicantsDetail() {
 																</div>
 															</div>
 														</>
-													)}
+													)} */}
 
-													{feedbackList &&
+													{/* {feedbackList &&
 														feedbackList.map((data, i) => (
 															<div
 																className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0"
@@ -909,7 +1022,6 @@ export default function ApplicantsDetail() {
 																				{!editfeedback ? (
 																					<>
 																						<div className="flex items-center justify-between py-2 text-sm">
-																							{/* <h6 className="font-bold">By - Steve Paul :  Collaborator</h6> */}
 																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
 																							<p className="text-[12px] text-darkGray dark:text-gray-400">
 																								{moment(data["timestamp"]).format("Do MMM YYYY")}
@@ -956,7 +1068,6 @@ export default function ApplicantsDetail() {
 																				{
 																					<>
 																						<div className="flex items-center justify-between py-2 text-sm">
-																							{/* <h6 className="font-bold">By - Steve Paul :  Collaborator</h6> */}
 																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
 																							<p className="text-[12px] text-darkGray dark:text-gray-400">
 																								{moment(data["timestamp"]).format("Do MMM YYYY")}
@@ -969,7 +1080,7 @@ export default function ApplicantsDetail() {
 																	</>
 																)}
 															</div>
-														))}
+														))} */}
 													{/* <div className="border dark:border-gray-500 rounded-normal overflow-hidden">
 																<label htmlFor="addFeedback" className="bg-lightBlue dark:bg-gray-700 py-2 px-4 block font-bold">
 																	{
@@ -1069,6 +1180,8 @@ export default function ApplicantsDetail() {
 													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+												{upcomingSoon ? <UpcomingComp /> : 
+													
 													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
 														<div className="flex items-start">
 															<div className="w-[80px] px-2 py-4">
@@ -1142,6 +1255,7 @@ export default function ApplicantsDetail() {
 															</div>
 														</div>
 													</div>
+													}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													<div>

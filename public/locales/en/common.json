@@ -9,7 +9,15 @@
         "NewPassword": "New Password",
         "ConfirmPassword": "Confirm Password",
         "OrgName": "Organization Name",
-        "OrgType": "Organization Type"
+        "OrgType": "Organization Type",
+        "NoticePeriod": "Notice Period",
+        "InterviewName": "Interview Name",
+        "Description": "Description",
+        "StartDate": "Start Date",
+        "EndDate": "End Date",
+        "StartTime": "Start Time",
+        "EndTime": "End Time",
+        "Date": "Date"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -21,7 +29,8 @@
         "Preview": "Preview",
         "SaveAsDraft": "Save as Draft",
         "Publish": "Publish",
-        "View": "View"
+        "View": "View",
+        "Confirm": "Confirm"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -96,6 +105,10 @@
         "SelectAll": "Select All",
         "UserName": "User Name",
         "Department_Title": "Department/Title",
-        "Access": "Access"
+        "Access": "Access",
+        "Source": "Source",
+        "Status": "Status",
+        "Profile": "Profile",
+        "ScheduleInterview": "Schedule Interview"
     }
 }
