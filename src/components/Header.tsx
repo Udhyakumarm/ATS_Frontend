@@ -1,7 +1,7 @@
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { useCarrierStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import ToggleLang from "./ToggleLang";
 
 export default function Header() {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const { data: session, status: sessionStatus } = useSession();
 
@@ -80,7 +81,7 @@ export default function Header() {
 												: "border-b-transparent")
 										}
 									>
-										Search Jobs
+										{srcLang==='ja' ? '求人検索' : 'Search Jobs'}
 									</Link>
 								</li>
 								{auth && (
@@ -95,7 +96,7 @@ export default function Header() {
 													: "border-b-transparent")
 											}
 										>
-											Dashboard
+											{srcLang==='ja' ? 'ダッシュボード' : 'Dashboard'}
 										</Link>
 									</li>
 								)}
@@ -151,7 +152,7 @@ export default function Header() {
 												<li>
 													<Link href={`/organization/${cname}/settings`} className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200">
 														<i className="fa-solid fa-gear mr-3"></i>
-														Settings
+														{srcLang==='ja' ? '設定' : 'Settings'}
 													</Link>
 												</li>
 												<li>
@@ -166,7 +167,7 @@ export default function Header() {
 															setuser([]);
 														}}
 													>
-														<i className="fa-solid fa-right-from-bracket mr-3"></i> Logout
+														<i className="fa-solid fa-right-from-bracket mr-3"></i> {srcLang==='ja' ? 'ログアウト' : 'Logout'}
 													</button>
 												</li>
 											</ul>
@@ -211,45 +212,46 @@ export default function Header() {
 				</header>
 			</>
 		);
-	} else if (
-		vid &&
-		vid.length > 0 &&
-		(router.asPath == "/vendor/" + vid + "/signup" ||
-			router.asPath == "/vendor/" + vid + "/clients" ||
-			router.asPath == "/vendor/" + vid + "/inbox" ||
-			router.asPath == "/vendor/" + vid + "/settings" ||
-			router.asPath == "/vendor/" + vid + "/signin")
-	) {
-		return (
-			<>
-				<ToggleLang />
-				<header className="test bg-white shadow-normal dark:bg-gray-800">
-					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
-						<Logo url="/" width={205} />
-						<div className="flex items-center">
-							<p className="bg-blue-500 p-1 text-white">
-								{type}&nbsp;{role}
-							</p>
-							<ThemeChange />
-							<button
-								type="button"
-								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
-								onClick={() => {
-									signOut();
+	} 
+	// else if (
+	// 	vid &&
+	// 	vid.length > 0 &&
+	// 	(router.asPath == "/vendor/" + vid + "/signup" ||
+	// 		router.asPath == "/vendor/" + vid + "/clients" ||
+	// 		router.asPath == "/vendor/" + vid + "/inbox" ||
+	// 		router.asPath == "/vendor/" + vid + "/settings" ||
+	// 		router.asPath == "/vendor/" + vid + "/signin")
+	// ) {
+	// 	return (
+	// 		<>
+	// 			<ToggleLang />
+	// 			<header className="test2 bg-white shadow-normal dark:bg-gray-800">
+	// 				<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
+	// 					<Logo url="/" width={205} />
+	// 					<div className="flex items-center">
+	// 						<p className="bg-blue-500 p-1 text-white">
+	// 							{type}&nbsp;{role}
+	// 						</p>
+	// 						<ThemeChange />
+	// 						<button
+	// 							type="button"
+	// 							className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+	// 							onClick={() => {
+	// 								signOut();
 
-									settype("");
-									setrole("");
-									setuser([]);
-								}}
-							>
-								<i className="fa-solid fa-right-from-bracket"></i>
-							</button>
-						</div>
-					</div>
-				</header>
-			</>
-		);
-	}
+	// 								settype("");
+	// 								setrole("");
+	// 								setuser([]);
+	// 							}}
+	// 						>
+	// 							<i className="fa-solid fa-right-from-bracket"></i>
+	// 						</button>
+	// 					</div>
+	// 				</div>
+	// 			</header>
+	// 		</>
+	// 	);
+	// }
 	return (
 		<>
 			<ToggleLang />
