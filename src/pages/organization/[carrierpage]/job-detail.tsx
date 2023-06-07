@@ -234,7 +234,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 	async function addCandidateExp(refid: any, fd: any) {
 		const axiosInstanceAuth2 = axiosInstanceAuth(token);
 		await axiosInstanceAuth2
-			.post(`/candidate/vendorcandidateexperience/${refid}/`, fd)
+			.post(`/candidate/candidateexperience/${refid}/`, fd)
 			.then((res) => {
 				toastcomp("Candidate Exp Created", "success");
 			})
