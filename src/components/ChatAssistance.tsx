@@ -385,7 +385,7 @@ export default function ChatAssistance(props: any) {
 																	setMaximize(false);
 																	setjobid(data["job"]["refid"]);
 																	setappid(data["arefid"]);
-																	settype(data["type"]);
+																	settype("career");
 																	setappdata(data);
 																	router.push("/organization/applicants/detail");
 																}}
@@ -404,7 +404,7 @@ export default function ChatAssistance(props: any) {
 																	setMaximize(false);
 																	setjobid(data["job"]["refid"]);
 																	setappid(data["arefid"]);
-																	settype(data["type"]);
+																	settype("vendor");
 																	setappdata(data);
 																	router.push("/organization/applicants/detail");
 																}}

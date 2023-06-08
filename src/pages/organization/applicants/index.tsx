@@ -77,7 +77,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				let arr = res.data;
 				for (let i = 0; i < arr.length; i++) {
 					let dic = arr[i];
-					dic["type"] = "carrier";
+					dic["type"] = "career";
 					arr2.push(dic);
 				}
 				console.log("!", "applicant2", arr2);

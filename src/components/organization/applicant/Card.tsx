@@ -36,7 +36,7 @@ export default function Card(props: any) {
 						<aside className="flex items-center">
 							<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
 							<h5 className="pl-4 text-sm font-semibold">
-								{props["data"]["type"] === "carrier" && (
+								{props["data"]["type"] === "career" && (
 									<>
 										{props["data"]["user"]["first_name"]} {props["data"]["user"]["last_name"]}
 									</>
@@ -61,7 +61,7 @@ export default function Card(props: any) {
 						</aside>
 						<Button
 							btnStyle="outlined"
-							label={srcLang === 'ja' ? 'みる' : 'View'}
+							label={srcLang === "ja" ? "みる" : "View"}
 							btnType="button"
 							handleClick={() => {
 								setjobid(props["data"]["job"]["refid"]);
@@ -76,9 +76,9 @@ export default function Card(props: any) {
 				</div>
 			) : (
 				<div className="mb-4 rounded-normal bg-white px-4 py-2 text-center shadow-normal dark:bg-gray-800">
-					{srcLang === 'ja' ? '申請者がいません' : 'No Applicant'} <br />{" "}
+					{srcLang === "ja" ? "申請者がいません" : "No Applicant"} <br />{" "}
 					<small>
-						<i>{srcLang === 'ja' ? 'ここにドラッグできます' : 'You Can Drag Here'}</i>
+						<i>{srcLang === "ja" ? "ここにドラッグできます" : "You Can Drag Here"}</i>
 					</small>
 				</div>
 			)}
