@@ -1000,9 +1000,9 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 									onClick={() => router.back()}
 									className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
 								>
-									<i className="fa-solid fa-arrow-left text-2xl"></i>
+									<i className="fa-solid fa-arrow-left text-xl"></i>
 								</button>
-								<h2 className="flex items-center text-xl font-bold">
+								<h2 className="flex items-center text-lg font-bold">
 									<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 										<Image src={userIcon} alt="Active Job" height={20} />
 									</div>

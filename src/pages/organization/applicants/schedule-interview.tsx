@@ -244,9 +244,9 @@ export default function ScheduleInterview() {
 										onClick={() => router.back()}
 										className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
 									>
-										<i className="fa-solid fa-arrow-left text-2xl"></i>
+										<i className="fa-solid fa-arrow-left text-xl"></i>
 									</button>
-									<h2 className="text-xl font-bold">
+									<h2 className="text-lg font-bold">
 										<span>Schedule Interview</span>
 									</h2>
 								</div>

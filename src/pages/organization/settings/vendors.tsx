@@ -299,9 +299,9 @@ export default function Vendors() {
 									onClick={() => router.back()}
 									className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
 								>
-									<i className="fa-solid fa-arrow-left text-2xl"></i>
+									<i className="fa-solid fa-arrow-left text-xl"></i>
 								</button>
-								<h2 className="flex items-center text-xl font-bold">
+								<h2 className="flex items-center text-lg font-bold">
 									<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 										<Image src={integrationIcon} alt="Active Job" height={20} />
 									</div>
@@ -681,7 +681,7 @@ export default function Vendors() {
 									</div>
 									<div className="mx-auto w-full max-w-[500px] p-8 text-center">
 										<i className="fa-solid fa-circle-check mb-2 text-[50px] text-green-500"></i>
-										<h4 className="mb-6 text-xl font-bold">
+										<h4 className="mb-6 text-lg font-bold">
 										{
 											srcLang === 'ja' ? '契約書は正常に送信されました' : 'Agreement Sent Successfully'
 										}

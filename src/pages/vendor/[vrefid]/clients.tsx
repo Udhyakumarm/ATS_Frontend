@@ -529,7 +529,7 @@ export default function VendorClients() {
 										</Transition>
 									</div>
 								</Combobox> */}
-								<h4 className="mb-2 font-bold text-xl">{t('Words.Jobs')}</h4>
+								<h4 className="mb-2 font-bold text-lg">{t('Words.Jobs')}</h4>
 								<div>
 									{vjdata &&
 										vjdata.length > 0 &&
@@ -1545,7 +1545,7 @@ export default function VendorClients() {
 													</p>
 												</div>
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<h2 className="mb-2 text-xl font-bold">
+													<h2 className="mb-2 text-lg font-bold">
 														{data["first_name"]}&nbsp;{data["last_name"]}
 													</h2>
 													<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
@@ -1576,7 +1576,7 @@ export default function VendorClients() {
 															)}
 														</li>
 													</ul>
-													<div className="flex flex-wrap items-center text-2xl">
+													<div className="flex flex-wrap items-center text-xl">
 														{venappdetail["Link"] &&
 															venappdetail["Link"].length > 0 &&
 															venappdetail["Link"].map((data, i) => (

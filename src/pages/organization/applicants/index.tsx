@@ -289,7 +289,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 						{atsVersion === "starter" && refresh === 2 ? (
 							<div className="layoutWrap p-4 lg:p-8">
 								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
-									<h2 className="mb-6 text-xl font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
+									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 										<thead>
 											<tr>

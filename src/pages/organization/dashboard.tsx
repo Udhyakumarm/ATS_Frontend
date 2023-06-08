@@ -262,7 +262,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ApplicantDetails')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ApplicantDetails')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside className="flex items-center justify-end">
 													{/* <div className="mr-4 w-[140px]">
@@ -285,7 +285,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 															<div className="px-2 py-3">
 																<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
 																	<div className="mb-2 flex items-center justify-between">
-																		<h4 className="grow pr-4 text-2xl font-extrabold">
+																		<h4 className="grow pr-4 text-xl font-extrabold">
 																			{/* {item.number || <Skeleton width={40} />} */}
 																			{item.number}
 																		</h4>
@@ -338,7 +338,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.HiringAnalytics')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.HiringAnalytics')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
 													{/* <button
@@ -385,7 +385,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												}}
 											>
 												<div className="rounded-normal bg-[rgba(0,0,0,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
-													<h3 className="mb-1 text-xl font-extrabold">Hiring Analytics Is A Premium Feature</h3>
+													<h3 className="mb-1 text-lg font-extrabold">Hiring Analytics Is A Premium Feature</h3>
 													<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
 												</div>
 											</div>
@@ -399,7 +399,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.UpcomingInterviews')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.UpcomingInterviews')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
 													{/* <button
@@ -538,7 +538,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ToDoList')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ToDoList')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
 													{/* <button
@@ -564,7 +564,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		</p>
 																	</div>
 																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="font-bold">20 Nov 2023</h5>
@@ -577,7 +577,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		<Skeleton containerClassName="grow" count={2} />
 																	</div>
 																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="grow font-bold">
@@ -612,7 +612,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.RecentJobs')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.RecentJobs')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
 													{/* <button
@@ -677,8 +677,8 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<h6 className="font-bold text-4xl mr-3 my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
 												<Image src={'/images/upgrade_launch.png'} alt="Upgrade" width={200} height={200} className="w-auto max-w-[150px] ml-auto" />
 											</div>
-											<p className="mb-4 text-xl">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
-											<h6 className="font-bold text-2xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
+											<p className="mb-4 text-lg">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
+											<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
 											<Button 
 											btnStyle="white"
 											btnType="button"
@@ -699,7 +699,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ActivityLog')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ActivityLog')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
 													{/* <button
@@ -801,7 +801,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 							<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
 								<Popover className="relative">
 									<Popover.Button
-										className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
+										className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
 									>
 										<i className="fa-solid fa-gauge"></i>
 									</Popover.Button>

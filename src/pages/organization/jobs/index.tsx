@@ -70,7 +70,7 @@ export default function JobsDashboard() {
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
-						<h1 className="mb-6 text-2xl font-bold">{t('Words.Jobs')}</h1>
+						<h1 className="mb-6 text-xl font-bold">{t('Words.Jobs')}</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
 							{quicklinks.map((links, i) => (
 								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">

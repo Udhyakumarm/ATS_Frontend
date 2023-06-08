@@ -49,7 +49,8 @@
         "CredentialURL": "認証情報の URL",
         "CurrentSalary": "現年収",
         "ExpectedSalary": "希望年収",
-        "AnyMessageRecruiter": "リクルーターへの共有事項"
+        "AnyMessageRecruiter": "リクルーターへの共有事項",
+        "Designation": "配属先"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -198,7 +199,12 @@
         "ApplicantProfile": "応募者のプロフィール",
         "Career": "キャリア",
         "AppliedJobs": "応募済みの求人",
-        "Offer": "オファー"
+        "Offer": "オファー",
+        "Timeline": "タイムライン",
+        "OfferPrepration": "オファー承認依頼",
+        "OfferFinalization": "オファー作成",
+        "OfferDiscussion": "オファー提示",
+        "OfferStatus": "ステータス"
     },
     "Plans": {
         "Starter": "スターター",

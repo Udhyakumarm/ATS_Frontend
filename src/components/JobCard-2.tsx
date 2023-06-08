@@ -340,7 +340,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
-											<h4 className="text-xl font-bold leading-none">
+											<h4 className="text-lg font-bold leading-none">
 												{job.job_title && job.job_title.length > 0 ? job.job_title : <>{srcLang === 'ja' ? '求人タイトル' : 'Job Title'}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">

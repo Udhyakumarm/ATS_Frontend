@@ -189,7 +189,7 @@ export default function CanCareerApplyJob() {
 							</div>
 							<hr className="my-4" />
 							<label htmlFor="uploadCV" className="mb-6 block cursor-pointer rounded-normal border p-6 text-center">
-								<h3 className="mb-4 text-xl font-semibold">Autofill With Resume</h3>
+								<h3 className="mb-4 text-lg font-semibold">Autofill With Resume</h3>
 								<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
 								<p className="mb-2 text-sm">
 									Or <span className="font-semibold text-primary">Click Here To Upload</span>

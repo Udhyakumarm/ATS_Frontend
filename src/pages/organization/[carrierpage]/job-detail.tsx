@@ -421,7 +421,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 									className={`w-full rounded border-0 pl-8 text-sm focus:ring-0 dark:bg-gray-800`}
 									placeholder="Search for Jobs"
 								/>
-								<span className="absolute left-0 top-[2px] text-xl">
+								<span className="absolute left-0 top-[2px] text-lg">
 									<i className="fa-solid fa-magnifying-glass"></i>
 								</span>
 							</div>
@@ -437,7 +437,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 						{upcomingSoon && (
 							<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md">
 								<div className="rounded-normal bg-[rgba(0,0,0,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
-									<h3 className="mb-1 text-xl font-extrabold">
+									<h3 className="mb-1 text-lg font-extrabold">
 										Job Filters
 										<br />
 										Coming Soon
@@ -599,7 +599,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 									</aside>
 								</div>
 							</div>
-							{/* <h3 className="mb-6 text-xl font-bold">Similar Jobs</h3>
+							{/* <h3 className="mb-6 text-lg font-bold">Similar Jobs</h3>
 							<div className="mx-[-7px] flex flex-wrap">
 								{sklLoad
 									? Array(4).fill(

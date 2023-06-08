@@ -41,9 +41,9 @@ export default function Pricing() {
                                     onClick={() => router.back()}
                                     className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
                                 >
-                                    <i className="fa-solid fa-arrow-left text-2xl"></i>
+                                    <i className="fa-solid fa-arrow-left text-xl"></i>
                                 </button>
-                                <h2 className="text-xl font-bold flex items-center">
+                                <h2 className="text-lg font-bold flex items-center">
                                     <div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
                                         <Image src={pricingIcon} alt='Active Job' height={20} />
                                     </div>
@@ -83,11 +83,11 @@ export default function Pricing() {
                                                     <div className="text-right mb-10">
                                                         
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3 text-black dark:text-white">
+                                                    <h3 className="font-extrabold text-xl mb-3 text-black dark:text-white">
                                                         $19
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / {srcLang === 'ja' ? '1ヵ月' : 'month'}</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">{t('Plans.Starter')}</h5>
+                                                    <h5 className="text-lg font-semibold mb-2 text-black dark:text-white">{t('Plans.Starter')}</h5>
                                                     <p className="text-[12px] mb-2">Unleash the power of automation.</p>
                                                     <ul className="mb-[92px]">
                                                         {Array(2).fill(
@@ -107,11 +107,11 @@ export default function Pricing() {
                                                     <div className="text-right mb-10">
                                                         
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3 text-black dark:text-white">
+                                                    <h3 className="font-extrabold text-xl mb-3 text-black dark:text-white">
                                                         $54
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / {srcLang === 'ja' ? '1ヵ月' : 'month'}</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">{t('Plans.Premium')}</h5>
+                                                    <h5 className="text-lg font-semibold mb-2 text-black dark:text-white">{t('Plans.Premium')}</h5>
                                                     <p className="text-[12px] mb-2">Advanced tools to take your work to the next level.</p>
                                                     <ul className="mb-10">
                                                         {Array(3).fill(
@@ -131,8 +131,8 @@ export default function Pricing() {
                                                     <div className="text-right mb-4">
                                                         <span className="rounded-full bg-[#403879] text-white py-1 px-4 font-bold text-[10px] uppercase">Most Popular</span>
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3">Book</h3>
-                                                    <h5 className="text-xl font-semibold mb-2">{t('Plans.Enterprise')}</h5>
+                                                    <h3 className="font-extrabold text-xl mb-3">Book</h3>
+                                                    <h5 className="text-lg font-semibold mb-2">{t('Plans.Enterprise')}</h5>
                                                     <p className="text-[12px] mb-2">Automation plus enterprise-grade features.</p>
                                                     <ul>
                                                         {Array(4).fill(
@@ -496,11 +496,11 @@ export default function Pricing() {
                                                     <div className="text-right mb-10">
                                                         
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3 text-black dark:text-white">
+                                                    <h3 className="font-extrabold text-xl mb-3 text-black dark:text-white">
                                                         $229
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / {srcLang === 'ja' ? '1年' : 'yearly'}</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">{t('Plans.Starter')}</h5>
+                                                    <h5 className="text-lg font-semibold mb-2 text-black dark:text-white">{t('Plans.Starter')}</h5>
                                                     <p className="text-[12px] mb-2">Unleash the power of automation.</p>
                                                     <ul className="mb-[92px]">
                                                         {Array(2).fill(
@@ -520,11 +520,11 @@ export default function Pricing() {
                                                     <div className="text-right mb-10">
                                                         
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3 text-black dark:text-white">
+                                                    <h3 className="font-extrabold text-xl mb-3 text-black dark:text-white">
                                                         $454
                                                         <sub className="text-sm text-darkGray dark:text-gray-400 bottom-0"> / {srcLang === 'ja' ? '1年' : 'yearly'}</sub>
                                                     </h3>
-                                                    <h5 className="text-xl font-semibold mb-2 text-black dark:text-white">{t('Plans.Premium')}</h5>
+                                                    <h5 className="text-lg font-semibold mb-2 text-black dark:text-white">{t('Plans.Premium')}</h5>
                                                     <p className="text-[12px] mb-2">Advanced tools to take your work to the next level.</p>
                                                     <ul className="mb-10">
                                                         {Array(3).fill(
@@ -544,8 +544,8 @@ export default function Pricing() {
                                                     <div className="text-right mb-4">
                                                         <span className="rounded-full bg-[#403879] text-white py-1 px-4 font-bold text-[10px] uppercase">Most Popular</span>
                                                     </div>
-                                                    <h3 className="font-extrabold text-2xl mb-3">Book</h3>
-                                                    <h5 className="text-xl font-semibold mb-2">{t('Plans.Enterprise')}</h5>
+                                                    <h3 className="font-extrabold text-xl mb-3">Book</h3>
+                                                    <h5 className="text-lg font-semibold mb-2">{t('Plans.Enterprise')}</h5>
                                                     <p className="text-[12px] mb-2">Automation plus enterprise-grade features.</p>
                                                     <ul>
                                                         {Array(4).fill(

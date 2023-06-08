@@ -212,11 +212,11 @@ export default function OrgSideBar() {
 							<div className="py-4">
 								<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue rounded-large p-6 text-white">
 									<div className="flex items-center mb-2">
-										<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
+										<h6 className="font-bold text-lg my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
 										<Image src={'/images/upgrade_launch.png'} alt="Upgrade" width={80} height={80} className="w-auto ml-auto" />
 									</div>
 									<p className="mb-2">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
-									<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
+									<h6 className="font-bold text-lg my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
 									<Button
 									btnStyle="white"
 									btnType="button"

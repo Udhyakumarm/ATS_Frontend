@@ -397,9 +397,9 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 											router.back();
 										}}
 									>
-										<i className="fa-solid fa-arrow-left text-2xl"></i>
+										<i className="fa-solid fa-arrow-left text-xl"></i>
 									</button>
-									<h2 className="text-xl font-bold">
+									<h2 className="text-lg font-bold">
 										<span>Profile</span>
 									</h2>
 								</div>
@@ -444,7 +444,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 													</div>
 												</div>
 												{applicantdetail["Link"] && (
-													<div className="flex flex-wrap items-center justify-center text-2xl">
+													<div className="flex flex-wrap items-center justify-center text-xl">
 														{applicantdetail["Link"].map((data: any, i: React.Key) => (
 															<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
 																<i className="fa-brands fa-behance"></i>

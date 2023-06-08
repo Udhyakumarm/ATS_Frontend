@@ -124,7 +124,7 @@ export default function VendorSettings() {
 				></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
-						<h1 className="mb-3 p-10 pb-0 text-2xl font-bold">{t('Words.Settings')}</h1>
+						<h1 className="mb-3 p-10 pb-0 text-xl font-bold">{t('Words.Settings')}</h1>
 						<Tab.Group>
 							<div className="border-b dark:border-b-gray-600">
 								<Tab.List className={"mx-auto w-full max-w-[1150px] px-4"}>

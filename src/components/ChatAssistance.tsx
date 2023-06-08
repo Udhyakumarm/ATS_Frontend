@@ -569,7 +569,7 @@ export default function ChatAssistance(props: any) {
 
 					{click ? (
 						<>
-							<i className="fa-solid fa-xmark text-2xl text-white"></i>
+							<i className="fa-solid fa-xmark text-xl text-white"></i>
 						</>
 					) : (
 						<>

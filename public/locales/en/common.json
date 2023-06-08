@@ -49,7 +49,8 @@
         "CredentialURL": "Credential URL",
         "CurrentSalary": "Current Salary",
         "ExpectedSalary": "Expected Salary",
-        "AnyMessageRecruiter": "Any Message to Recruiter"
+        "AnyMessageRecruiter": "Any Message to Recruiter",
+        "Designation": "Designation"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -198,7 +199,12 @@
         "ApplicantProfile": "Applicant Profile",
         "Career": "Career",
         "AppliedJobs": "Applied Jobs",
-        "Offer": "Offer"
+        "Offer": "Offer",
+        "Timeline": "Timeline",
+        "OfferPrepration": "Offer Prepration",
+        "OfferFinalization": "Offer Finalization",
+        "OfferDiscussion": "Offer Discussion",
+        "OfferStatus": "Offer Status"
     },
     "Plans": {
         "Starter": "Starter",

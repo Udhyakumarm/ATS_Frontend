@@ -77,7 +77,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 			</Head>
 			<main className="py-8">
 				<div className="container">
-					{/* <h3 className="mb-6 text-xl font-bold">Dashboard</h3> */}
+					{/* <h3 className="mb-6 text-lg font-bold">Dashboard</h3> */}
 					<div className="overflow-hidden rounded-normal border dark:border-gray-600">
 						<Tab.Group>
 							<Tab.List className={"border-b bg-white px-6 shadow-normal dark:border-gray-600 dark:bg-gray-800"}>

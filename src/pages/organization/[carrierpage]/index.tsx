@@ -195,7 +195,7 @@ export default function CanCareer() {
 									</div>
 									{/* {orgdetail["Job"] && (
 										<div>
-											<h2 className="mb-3 text-xl font-bold">Similar Jobs</h2>
+											<h2 className="mb-3 text-lg font-bold">Similar Jobs</h2>
 											<div className="mx-[-7px] flex flex-wrap">
 												{orgdetail["Job"].slice(0, 2).map((data: any, i: React.Key) => (
 													<div className="mb-[15px] w-full px-[7px] md:max-w-[50%] lg:max-w-[calc(100%/3)]" key={i}>
