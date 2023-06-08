@@ -15,20 +15,18 @@ function Canban(props: any) {
 	let _columnId = 0;
 	let _cardId = 0;
 	var initialColumns = [
-		srcLang === 'ja' ? '応募前' : 'Sourced',
-		srcLang === 'ja' ? 'レビュー' : 'Review',
-		srcLang === 'ja' ? '面接' : 'Interview',
-		srcLang === 'ja' ? '面接通過' : 'Shortlisted',
-		srcLang === 'ja' ? 'オファー' : 'Offer',
-		srcLang === 'ja' ? '入社' : 'Hired',
-		'Rejected',
-	].map(
-		(title, i) => ({
-			id: _columnId++,
-			title,
-			cardIds: []
-		})
-	);
+		srcLang === "ja" ? "応募前" : "Sourced",
+		srcLang === "ja" ? "レビュー" : "Review",
+		srcLang === "ja" ? "面接" : "Interview",
+		srcLang === "ja" ? "面接通過" : "Shortlisted",
+		srcLang === "ja" ? "オファー" : "Offer",
+		srcLang === "ja" ? "入社" : "Hired",
+		srcLang === "ja" ? "不合格" : "Rejected"
+	].map((title, i) => ({
+		id: _columnId++,
+		title,
+		cardIds: []
+	}));
 
 	const [columns, setcolumns] = useState([]);
 	const [cards, setcards] = useState([]);
@@ -77,7 +75,7 @@ function Canban(props: any) {
 		const fdata = new FormData();
 		fdata.append("status", status);
 		let url = "";
-		if (type === "carrier") {
+		if (type === "career") {
 			url = `/job/applicant/${arefid}/update/`;
 		}
 		if (type === "vendor") {
@@ -95,7 +93,7 @@ function Canban(props: any) {
 
 				let title = `Applicant has been shifted to ${status} By ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-				if (type === "carrier") {
+				if (type === "career") {
 					addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid);
 				}
 				if (type === "vendor") {

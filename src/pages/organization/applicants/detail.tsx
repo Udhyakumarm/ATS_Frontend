@@ -21,6 +21,10 @@ import { Listbox } from "@headlessui/react";
 import toastcomp from "@/components/toast";
 import favIcon from "/public/favicon-white.ico";
 import UpcomingComp from "@/components/organization/upcomingComp";
+import userImg1 from "/public/images/user-image1.jpeg";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useLangStore } from "@/utils/code";
 
 const people = [
 	{ name: "Sourced", unavailable: false },
@@ -32,13 +36,17 @@ const people = [
 	{ name: "Rejected", unavailable: false }
 ];
 
-export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:any) {
+export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }: any) {
+	const { t } = useTranslation('common')
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
 	const appid = useApplicantStore((state: { appid: any }) => state.appid);
 	const type = useApplicantStore((state: { type: any }) => state.type);
 	const appdata = useApplicantStore((state: { appdata: any }) => state.appdata);
 	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const currentUser = useUserStore((state: { user: any }) => state.user);
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -56,37 +64,53 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 
 	const [selectedPerson, setSelectedPerson] = useState(people[3]);
 
-	
 	//ai interview question
 	const [aires, setaires] = useState("");
 	const [aiquestion, setaiquestion] = useState([]);
 	const [ailoader, setailoader] = useState(false);
-	
+
+	//applicant detail
+	const [profileData, setprofileData] = useState({});
+	const [linkData, setlinkData] = useState([]);
+	const [educationData, seteducationData] = useState([]);
+	const [experienceData, setexperienceData] = useState([]);
+	const [certificateData, setcertificateData] = useState([]);
+
+	//feedback
+	const [feedbackList, setfeedbackList] = useState([]);
+	const [editfeedback, seteditfeedback] = useState(false);
+	const [editfeedbackTA, seteditfeedbackTA] = useState("");
+	const [feedbackreload, setfeedbackreload] = useState(true);
+	const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
+
+	const [feedbackStatus, setfeedbackStatus] = useState("");
+	const [feedbackTA, setfeedbackTA] = useState("");
+
 	useEffect(() => {
 		// toastcomp(appdata["status"],"success")
-		for(let i=0;i<people.length;i++){
-			if(people[i]["name"] === appdata["status"]){
-				setSelectedPerson(people[i])
+		for (let i = 0; i < people.length; i++) {
+			if (people[i]["name"] === appdata["status"]) {
+				setSelectedPerson(people[i]);
 			}
 		}
 	}, [appdata]);
 
 	async function loadNEWAPPDATA(arefid: any) {
-		if(type === "carrier"){
+		if (type === "career") {
 			await axiosInstanceAuth2
 				.get(`/job/listsapplicant/${arefid}/`)
 				.then((res) => {
-					setappdata(res.data[0])
+					setappdata(res.data[0]);
 				})
 				.catch((err) => {
 					console.log(err);
 				});
 		}
-		if(type === "vendor"){
+		if (type === "vendor") {
 			await axiosInstanceAuth2
 				.get(`/job/listsvapplicant/${arefid}/`)
 				.then((res) => {
-					setappdata(res.data[0])
+					setappdata(res.data[0]);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -95,28 +119,28 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	}
 
 	async function chnageStatus(status: string, arefid: any) {
-		if(type === "carrier"){
+		if (type === "career") {
 			const fdata = new FormData();
 			fdata.append("status", status);
 			await axiosInstanceAuth2
 				.put(`/job/applicant/${arefid}/update/`, fdata)
 				.then((res) => {
 					toastcomp("Status Changed", "success");
-					loadNEWAPPDATA(arefid)
+					loadNEWAPPDATA(arefid);
 				})
 				.catch((err) => {
 					console.log(err);
 					toastcomp("Status Not Change", "error");
 				});
 		}
-		if(type === "vendor"){
+		if (type === "vendor") {
 			const fdata = new FormData();
 			fdata.append("status", status);
 			await axiosInstanceAuth2
 				.put(`/job/vapplicant/${arefid}/update/`, fdata)
 				.then((res) => {
 					toastcomp("Status Changed", "success");
-					loadNEWAPPDATA(arefid)
+					loadNEWAPPDATA(arefid);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -125,23 +149,21 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 		}
 	}
 
-
-	function moveApplicant(v){
-		setSelectedPerson(v)
+	function moveApplicant(v) {
+		setSelectedPerson(v);
 		chnageStatus(v["name"], appid);
 	}
 
-	
 	async function loadAIInterviewQuestion() {
 		setailoader(true);
-		let canid = ""
-		if(type === "carrier"){
-			canid = appdata["user"]["erefid"]
+		let canid = "";
+		if (type === "career") {
+			canid = appdata["user"]["erefid"];
 		}
-		if(type === "vendor"){
-			canid = appdata["applicant"]["vcrefid"]
+		if (type === "vendor") {
+			canid = appdata["applicant"]["vcrefid"];
 		}
-		
+
 		await axiosInstanceAuth21
 			.get(`/chatbot/interview-question-generator/${canid}/${jobid}/`)
 			.then(async (res) => {
@@ -155,12 +177,186 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 			});
 	}
 
+	async function loadApplicantDetail() {
+		if (type === "career") {
+			let canid = appdata["user"]["erefid"];
+			await axiosInstanceAuth21
+				.get(`/candidate/listuser/${canid}/${jobid}/`)
+				.then(async (res) => {
+					setprofileData(res.data["CandidateProfile"][0]);
+					setlinkData(res.data["Link"]);
+					setexperienceData(res.data["Experience"]);
+					seteducationData(res.data["Education"]);
+					setcertificateData(res.data["Certification"]);
+					console.log("$", res.data);
+				})
+				.catch((err) => {
+					console.log("!", err);
+					setprofileData({});
+					setlinkData([]);
+					setexperienceData([]);
+					seteducationData([]);
+					setcertificateData([]);
+				});
+		}
+		if (type === "vendor") {
+			let canid = appdata["applicant"]["vcrefid"];
+			await axiosInstanceAuth21
+				.get(`/vendors/vendoruser/${jobid}/${canid}/`)
+				.then(async (res) => {
+					setprofileData(res.data["VendorCandidateProfile"][0]);
+					setlinkData(res.data["Link"]);
+					setexperienceData(res.data["Experience"]);
+					seteducationData(res.data["Education"]);
+					setcertificateData(res.data["Certification"]);
+					console.log("$", res.data);
+				})
+				.catch((err) => {
+					console.log("!", err);
+					setprofileData({});
+					setlinkData([]);
+					setexperienceData([]);
+					seteducationData([]);
+					setcertificateData([]);
+				});
+		}
+	}
+
+	async function loadFeedback() {
+		let canid = appdata["arefid"];
+		let url = "";
+		if (type === "career") {
+			url = `/job/listfeedback/${canid}/`;
+		}
+		if (type === "vendor") {
+			url = `/job/listvfeedback/${canid}/`;
+		}
+
+		await axiosInstanceAuth21
+			.get(url)
+			.then(async (res) => {
+				console.log("@@", res.data);
+				setfeedbackList(res.data);
+				seteditfeedback(false);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setfeedbackList([]);
+			});
+	}
+
 	useEffect(() => {
 		if (token && token.length > 0 && aiquestion.length <= 0) {
-			// loadApplicantDetail();
+			loadApplicantDetail();
+			loadFeedback();
 			loadAIInterviewQuestion();
 		}
 	}, [token]);
+
+	function checkDis() {
+		return feedbackStatus.length > 0 && feedbackTA.length > 0;
+	}
+
+	async function createFeedback() {
+		let url = "";
+		if (type === "career") {
+			url = `/job/feedback/${appdata["arefid"]}/create/`;
+		}
+		if (type === "vendor") {
+			url = `/job/vfeedback/${appdata["arefid"]}/create/`;
+		}
+
+		const fdata = new FormData();
+		fdata.append("status", feedbackStatus);
+		fdata.append("feedback", feedbackTA);
+		await axiosInstanceAuth2
+			.post(url, fdata)
+			.then((res) => {
+				toastcomp("Feedback Created", "success");
+				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
+				loadFeedback();
+			})
+			.catch((err) => {
+				toastcomp("Feedback Not Created", "error");
+			});
+	}
+
+	async function updateFeedback(pk) {
+		if (selectedPerson["name"] != "Review") {
+			toastcomp("At this stage of applicant you cant able to update feedback", "error");
+			seteditfeedback(false);
+			loadFeedback();
+		} else {
+			let url = "";
+			if (type === "career") {
+				url = `/job/feedback/${pk}/update/`;
+			}
+			if (type === "vendor") {
+				url = `/job/vfeedback/${pk}/update/`;
+			}
+
+			const fdata = new FormData();
+			fdata.append("feedback", editfeedbackTA);
+			await axiosInstanceAuth2
+				.put(url, fdata)
+				.then((res) => {
+					toastcomp("Feedback Updated", "success");
+					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
+					loadFeedback();
+				})
+				.catch((err) => {
+					toastcomp("Feedback Not Updated", "error");
+				});
+		}
+	}
+
+	async function updateFeedbackStatus(pk, status) {
+		if (selectedPerson["name"] != "Review") {
+			toastcomp("At this stage of applicant you cant able to update feedback", "error");
+			seteditfeedback(false);
+			loadFeedback();
+		} else {
+			let url = "";
+			if (type === "career") {
+				url = `/job/feedback/${pk}/update/`;
+			}
+			if (type === "vendor") {
+				url = `/job/vfeedback/${pk}/update/`;
+			}
+			const fdata = new FormData();
+			fdata.append("status", status);
+			await axiosInstanceAuth2
+				.put(url, fdata)
+				.then((res) => {
+					toastcomp("Feedback Status Updated", "success");
+					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
+					loadFeedback();
+				})
+				.catch((err) => {
+					toastcomp("Feedback Status Not Updated", "error");
+				});
+		}
+	}
+
+	useEffect(() => {
+		if (feedbackList.length > 0 && currentUser.length > 0) {
+			for (let i = 0; i < feedbackList.length; i++) {
+				if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
+					seteditfeedbackTA(feedbackList[i]["feedback"]);
+					setcurrentUserFeedback(true);
+				}
+			}
+		}
+	}, [feedbackList, currentUser]);
 
 	// const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
 	// const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
@@ -185,8 +381,6 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	// const [feedBack, setFeedBack] = useState(true);
 	// const [updateFeedBack, setUpdateFeedBack] = useState(false);
 
-	
-
 	//feedback
 	// const [currentUser, setcurrentUser] = useState([]);
 	// const [feedbackList, setfeedbackList] = useState([]);
@@ -194,7 +388,6 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	// const [editfeedbackTA, seteditfeedbackTA] = useState("");
 	// const [feedbackreload, setfeedbackreload] = useState(true);
 	// const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
-
 
 	// useEffect(() => {
 	// 	if (session) {
@@ -228,8 +421,6 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	// 			});
 	// 	}
 	// }
-
-
 
 	// async function loadApplicant() {
 	// 	await axiosInstanceAuth2
@@ -285,7 +476,6 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	// 	}
 	// 	console.log(applicantdetail);
 	// }, [applicantdetail, applicantlist, refersh2]);
-
 
 	// async function loadFeedback(arefid: any) {
 	// 	await axiosInstance2
@@ -362,21 +552,10 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 	// 	}
 	// }, [aid, feedbackreload]);
 
-	// useEffect(() => {
-	// 	if (feedbackList.length > 0 && currentUser.length > 0) {
-	// 		for (let i = 0; i < feedbackList.length; i++) {
-	// 			if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
-	// 				seteditfeedbackTA(feedbackList[i]["feedback"]);
-	// 				setcurrentUserFeedback(true);
-	// 			}
-	// 		}
-	// 	}
-	// }, [feedbackList, currentUser]);
-
 	return (
 		<>
 			<Head>
-				<title>Applicant Detail</title>
+				<title>{t('Words.ApplicantDetails')}</title>
 				<meta name="description" content="Generated by create next app" />
 			</Head>
 			<main>
@@ -397,151 +576,173 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 											router.back();
 										}}
 									>
-										<i className="fa-solid fa-arrow-left text-2xl"></i>
+										<i className="fa-solid fa-arrow-left text-xl"></i>
 									</button>
-									<h2 className="text-xl font-bold">
-										<span>Profile</span>
+									<h2 className="text-lg font-bold">
+										<span>{t('Words.Profile')}</span>
 									</h2>
 								</div>
-								{/* {applicantdetail["CandidateProfile"] &&
-									applicantdetail["CandidateProfile"].map((data: any, i: React.Key) => (
-										<div
-											className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800"
-											key={i}
-										>
-											<div className="mb-4 border-b pb-4">
-												<div className="mb-4 border-b pb-2 text-center">
-													<Image
-														src={`http://127.0.0.1:8000${data["profile"]}`}
-														alt="User"
-														width={90}
-														height={90}
-														className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
-													/>
-													<h3 className="mb-2 font-bold">
-														{data["first_name"]} {data["last_name"]}
-													</h3>
-													<p className="mb-2 text-sm text-darkGray">Product Manager - ID 43108</p>
-													<p className="mb-2 text-sm text-darkGray">
-														Source - &nbsp;
-														<span className="font-semibold text-primary">
-															<i className="fa-brands fa-linkedin"></i> LinkedIn
-														</span>
-													</p>
+								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+									<div className="mb-4 border-b pb-4">
+										<div className="mb-4 border-b pb-2 text-center">
+											{profileData["profile"] && profileData["profile"].length > 0 ? (
+												<Image
+													src={`http://127.0.0.1:8000${profileData["profile"]}`}
+													alt="User"
+													width={90}
+													height={90}
+													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
+												/>
+											) : (
+												<Image
+													src={userImg1}
+													alt="User"
+													width={90}
+													height={90}
+													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
+												/>
+											)}
+											<h3 className="mb-2 font-bold">
+												{profileData["first_name"]} {profileData["last_name"]}
+											</h3>
+											<p className="mb-2 text-sm text-darkGray">{appdata["arefid"]}</p>
+											<p className="mb-2 text-sm text-darkGray">
+												{t('Words.Source')} - &nbsp;
+												<span className="font-semibold uppercase text-primary">{type}</span>
+											</p>
+										</div>
+										<div className="flex flex-wrap items-center justify-between">
+											<div className="my-1 flex items-center">
+												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-red-100 text-center leading-[23px] text-red-500 shadow-normal">
+													<i className="fa-regular fa-envelope"></i>
 												</div>
-												<div className="flex flex-wrap items-center justify-between">
-													<div className="my-1 flex items-center">
-														<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-red-100 text-center leading-[23px] text-red-500 shadow-normal">
-															<i className="fa-regular fa-envelope"></i>
-														</div>
-														<p className="text-[11px] font-semibold text-darkGray">{data["user"]["email"]}</p>
-													</div>
-													<div className="my-1 flex items-center">
-														<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-teal-100 text-center leading-[23px] text-teal-500 shadow-normal">
-															<i className="fa-solid fa-phone text-[14px]"></i>
-														</div>
-														<p className="text-[11px] font-semibold text-darkGray">{data["mobile"]}</p>
-													</div>
+												<p className="text-[11px] font-semibold text-darkGray">
+													{type === "career" && profileData["user"] && profileData["user"]["email"]}
+													{type === "vendor" && profileData["email"] && profileData["email"]}
+												</p>
+											</div>
+											<div className="my-1 flex items-center">
+												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-teal-100 text-center leading-[23px] text-teal-500 shadow-normal">
+													<i className="fa-solid fa-phone text-[14px]"></i>
 												</div>
-												{applicantdetail["Link"] && (
-													<div className="flex flex-wrap items-center justify-center text-2xl">
-														{applicantdetail["Link"].map((data: any, i: React.Key) => (
-															<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
-																<i className="fa-brands fa-behance"></i>
-															</Link>
-														))}
-													</div>
-												)}
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Details</h3>
-												<ul className="flex flex-wrap text-[12px] text-darkGray">
-													<li className="mb-2 w-[50%] pr-2">Current Salary - {data["current_salary"]}</li>
-													<li className="mb-2 w-[50%] pr-2">Expected Salary - {data["expected_salary"]}</li>
-												</ul>
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Summary</h3>
-												<p className="text-[12px] text-darkGray">{`${data["summary"]}`}</p>
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Skills</h3>
-												{applicantdetail["Skill"] && (
-													<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
-														{applicantdetail["Skill"].map((data: any, i: React.Key) => (
-															<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center" key={i}>
-																{data["title"]}
-															</li>
-														))}
-													</ul>
-												)}
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Education</h3>
-												{applicantdetail["Education"] &&
-													applicantdetail["Education"].map((data: any, i: React.Key) => (
-														<div
-															className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
-															key={i}
-														>
-															<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
-															<p>{data["college"]}</p>
-															<p className="mb-1">
-																{moment(data["yearofjoin"]).format("MMMM YYYY")} -{" "}
-																{data["yearofend"] ? moment(data["yearofend"]).format("MMMM YYYY") : <>PRESENT</>}
-															</p>
-															<p>{data["edubody"]}</p>
-														</div>
-													))}
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Certifications</h3>
-												{applicantdetail["Certification"] &&
-													applicantdetail["Certification"].map((data: any, i: React.Key) => (
-														<div
-															className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
-															key={i}
-														>
-															<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
-															<p>{data["college"]}</p>
-															<p className="mb-1">
-																{moment(data["yearofissue"]).format("MMMM YYYY")} -{" "}
-																{data["yearofexp"] ? moment(data["yearofexp"]).format("MMMM YYYY") : <>NOT EXPIRE</>}
-															</p>
-															<p>
-																URL : {data["creurl"]} <br />
-																ID : {data["creid"]}
-															</p>
-														</div>
-													))}
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Experience</h3>
-												{applicantdetail["Experience"] &&
-													applicantdetail["Experience"].map((data: any, i: React.Key) => (
-														<div
-															className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
-															key={i}
-														>
-															<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
-															<p>{data["company"]}</p>
-															<p className="mb-1">
-																{moment(data["year_of_join"]).format("MMMM YYYY")} -{" "}
-																{data["year_of_end"] ? moment(data["year_of_end"]).format("MMMM YYYY") : <>PRESENT</>}
-															</p>
-															<p>{data["type"]}</p>
-															<p>{data["expbody"]}</p>
-														</div>
-													))}
-											</div>
-											<div className="mb-4 border-b pb-4">
-												<h3 className="mb-4 text-lg font-semibold">Message from Vendor</h3>
-												<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
-													<p>{data["recuriter_message"]}</p>
-												</div>
+												<p className="text-[11px] font-semibold text-darkGray">{profileData["mobile"]}</p>
 											</div>
 										</div>
-									))} */}
+										{linkData && linkData.length > 0 && (
+											<div className="flex flex-wrap items-center justify-center text-2xl">
+												{linkData.map((data: any, i: React.Key) => (
+													<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
+														<i className="fa-solid fa-link"></i>
+													</Link>
+												))}
+											</div>
+										)}
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Details')}</h3>
+										<ul className="flex flex-wrap text-[12px] text-darkGray">
+											<li className="mb-2 w-[50%] pr-2">{t('Form.CurrentSalary')} - {profileData["current_salary"]}</li>
+											<li className="mb-2 w-[50%] pr-2">{t('Form.ExpectedSalary')} - {profileData["expected_salary"]}</li>
+										</ul>
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Summary')}</h3>
+										<p className="text-[12px] text-darkGray">{`${profileData["summary"]}`}</p>
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Skills')}</h3>
+										{profileData["skills"] && profileData["skills"].length > 0 ? (
+											<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
+												{profileData["skills"].split(",").map((data: any, i: React.Key) => (
+													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center" key={i}>
+														{data}
+													</li>
+												))}
+											</ul>
+										) : (
+											<p className="text-[12px] text-darkGray">{t('Select.No')} {t('Words.Skills')}</p>
+										)}
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Experience')}</h3>
+										{experienceData && experienceData.length > 0 ? (
+											experienceData.map((data: any, i: React.Key) => (
+												<div
+													className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
+													key={i}
+												>
+													<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
+													<p>{data["company"]}</p>
+													<p className="mb-1">
+														{moment(data["year_of_join"]).format("MMMM YYYY")} -{" "}
+														{data["year_of_end"] ? moment(data["year_of_end"]).format("MMMM YYYY") : <>PRESENT</>}
+													</p>
+													<p>{data["type"]}</p>
+													<p>{data["expbody"]}</p>
+												</div>
+											))
+										) : (
+											<p className="text-[12px] text-darkGray">{t('Select.No')} {t('Words.Experience')}</p>
+										)}
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Education')}</h3>
+										{educationData && educationData.length > 0 ? (
+											educationData.map((data: any, i: React.Key) => (
+												<div
+													className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
+													key={i}
+												>
+													<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
+													<p>{data["college"]}</p>
+													<p className="mb-1">
+														{moment(data["yearofjoin"]).format("MMMM YYYY")} -{" "}
+														{data["yearofend"] ? moment(data["yearofend"]).format("MMMM YYYY") : <>PRESENT</>}
+													</p>
+													<p>{data["edubody"]}</p>
+												</div>
+											))
+										) : (
+											<p className="text-[12px] text-darkGray">{t('Select.No')} {t('Words.Education')}</p>
+										)}
+									</div>
+									<div className="mb-4 border-b pb-4">
+										<h3 className="mb-4 text-lg font-semibold">{t('Words.Certifications')}</h3>
+										{certificateData && certificateData.length > 0 ? (
+											certificateData.map((data: any, i: React.Key) => (
+												<div
+													className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0"
+													key={i}
+												>
+													<h4 className="mb-1 font-bold text-black dark:text-white">{data["title"]}</h4>
+													<p>{data["college"]}</p>
+													<p className="mb-1">
+														{moment(data["yearofissue"]).format("MMMM YYYY")} -{" "}
+														{data["yearofexp"] ? moment(data["yearofexp"]).format("MMMM YYYY") : <>NOT EXPIRE</>}
+													</p>
+													<p>
+														URL : {data["creurl"]} <br />
+														ID : {data["creid"]}
+													</p>
+												</div>
+											))
+										) : (
+											<p className="text-[12px] text-darkGray">{t('Select.No')} {t('Words.Certifications')}</p>
+										)}
+									</div>
+									{type === "vendor" && (
+										<div className="mb-4 border-b pb-4">
+											<h3 className="mb-4 text-lg font-semibold">{t('Words.MessageFromVendor')}</h3>
+											<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
+												{profileData["recuriter_message"] && profileData["recuriter_message"].length > 0 ? (
+													<p dangerouslySetInnerHTML={{ __html: profileData["recuriter_message"] }}></p>
+												) : (
+													<p>{t('Select.No')} {t('Words.MessageFromVendor')}</p>
+												)}
+											</div>
+										</div>
+									)}
+								</div>
 							</div>
 							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
@@ -553,18 +754,14 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 											</h2>
 										</aside>
 										<aside className="flex grow items-center justify-end">
-										<div className="mr-4">
-												<Button
-													btnType="button"
-													btnStyle="sm"
-													label={`Source ${type}`}
-												/>
+											<div className="mr-4">
+												<Button btnType="button" btnStyle="gray" label={`${t('Words.Source')} ${type}`} />
 											</div>
 											<div className="mr-4">
 												<Button
 													btnType="button"
 													btnStyle="iconLeftBtn"
-													label="Schedule Interview"
+													label={t('Words.ScheduleInterview')}
 													iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
 													handleClick={() => {
 														router.push("/organization/applicants/schedule-interview");
@@ -572,9 +769,9 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 												/>
 											</div>
 											<div className="mr-4">
-												<Listbox value={selectedPerson} onChange={(v)=>moveApplicant(v)}>
+												<Listbox value={selectedPerson} onChange={(v) => moveApplicant(v)}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
-														<span className="px-3 py-2">Move Applicant</span>
+														<span className="px-3 py-2">{t('Words.MoveApplicant')}</span>
 														<i className="fa-solid fa-chevron-down ml-2 border-l px-3 py-2 text-sm"></i>
 													</Listbox.Button>
 													<Transition
@@ -590,7 +787,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																"absolute right-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
 															}
 														>
-															{people.map((person,i) => (
+															{people.map((person, i) => (
 																<Listbox.Option
 																	key={i}
 																	value={person}
@@ -632,7 +829,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																	: "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
-															Profile
+															{t('Words.Profile')}
 														</button>
 													)}
 												</Tab>
@@ -647,7 +844,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																	: "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
-															Assessment
+															{t('Words.Assessment')}
 														</button>
 													)}
 												</Tab>
@@ -662,7 +859,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																	: "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
-															Feedback
+															{t('Form.Feedback')}
 														</button>
 													)}
 												</Tab>
@@ -677,7 +874,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																	: "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
-															Timeline
+															{t('Words.Timeline')}
 														</button>
 													)}
 												</Tab>
@@ -692,52 +889,206 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 																	: "border-transparent text-darkGray dark:text-gray-400")
 															}
 														>
-															AI Generated Interview
+															{t('Words.AIGeneratedInterview')}
 														</button>
 													)}
 												</Tab>
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
-													{/* {applicantdetail["Resume"] &&
-														applicantdetail["Resume"].map((data, i) => (
-															<div
-																className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm"
-																key={i}
-															>
-																<p className="my-2">{data["file"].split("/").pop()}</p>
+													{profileData["resume"] && profileData["resume"].length > 0 && (
+														<>
+															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
+																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
-																	href={`http://127.0.0.1:8000${data["file"]}`}
+																	href={`http://127.0.0.1:8000${profileData["resume"]}`}
 																	className="my-2 inline-block font-bold text-primary hover:underline"
-																	download={data["file"].split("/").pop()}
+																	download={profileData["resume"].split("/").pop()}
 																>
 																	<i className="fa-solid fa-download mr-2"></i>
-																	Download
+																	{t('Btn.Download')}
 																</Link>
 															</div>
-														))}*/}
-													<div className="px-8">Preview Here</div>
-													{/*{applicantdetail["Resume"] &&
-														applicantdetail["Resume"].map((data, i) => (
 															<iframe
-																src={`http://127.0.0.1:8000${data["file"]}`}
-																key={i}
+																src={`http://127.0.0.1:8000${profileData["resume"]}`}
 																className="h-[100vh] w-[100%]"
 															></iframe>
-														))} */}
+														</>
+													)}
+													{/* <div className="px-8">Preview Here</div> */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													{upcomingSoon ? <UpcomingComp /> : 
-													<div className="mx-[-15px] flex flex-wrap">
-														{Array(6).fill(
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
-																<CardLayout_1 isBlank={true} />
+													{upcomingSoon ? (
+														<UpcomingComp />
+													) : (
+														<div className="mx-[-15px] flex flex-wrap">
+															{Array(6).fill(
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]">
+																	<CardLayout_1 isBlank={true} />
+																</div>
+															)}
+														</div>
+													)}
+												</Tab.Panel>
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													{!currentUserFeedback &&
+														selectedPerson["name"] === "Review" &&
+														((atsVersion === "enterprise" && userRole === "Hiring Manager") ||
+															atsVersion != "enterprise") && (
+															<div className="relative mt-6 border-t pb-8 pt-6 first:mt-0 first:border-t-0 first:pt-0">
+																<h3 className="mb-5">GIVE FEEDBACK FIRST</h3>
+																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																	{feedbackStatus !== "Shortlist" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("Shortlist");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-up text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-primary dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-primary"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-up text-sm" + " " + "text-primary"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	)}
+
+																	{feedbackStatus !== "On Hold" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("On Hold");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-circle-pause text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-yellow-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-yellow-500"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-circle-pause text-sm" + " " + "text-yellow-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	)}
+
+																	{feedbackStatus !== "Reject" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("Reject");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-down text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-red-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-red-500"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-down text-sm" + " " + "text-red-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	)}
+																</div>
+																{feedbackStatus.length > 0 && (
+																	<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																		<label
+																			htmlFor="addFeedback"
+																			className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																		>
+																			<span className="flex items-center">{t('Form.Feedback')}</span>
+																		</label>
+																		<textarea
+																			name="addFeedback"
+																			id="addFeedback"
+																			className={
+																				"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																				" " +
+																				"min-h-[100px]"
+																			}
+																			placeholder="Enter feedback here ..."
+																			value={feedbackTA}
+																			onChange={(e) => setfeedbackTA(e.target.value)}
+																		></textarea>
+																		<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																			<Button
+																				btnStyle="sm"
+																				label={"Add"}
+																				btnType={"button"}
+																				disabled={!checkDis()}
+																				handleClick={() => createFeedback()}
+																			/>
+																		</div>
+																	</div>
+																)}
 															</div>
 														)}
-													</div>
-													}
-												</Tab.Panel>
-												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+
 													{/* {!currentUserFeedback && (
 														<>
 															<div className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0">
@@ -838,6 +1189,247 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 															</div>
 														</>
 													)} */}
+
+													{feedbackList &&
+														feedbackList.map((data, i) => (
+															<div
+																className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0"
+																key={i}
+															>
+																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																	{data["status"] !== "Shortlist" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "Shortlist");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-up text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-primary dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-primary"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-up text-sm" + " " + "text-primary"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	)}
+
+																	{data["status"] !== "On Hold" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "On Hold");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-circle-pause text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-yellow-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-yellow-500"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-circle-pause text-sm" + " " + "text-yellow-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	)}
+
+																	{data["status"] !== "Reject" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "Reject");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-down text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-red-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-red-500"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-down text-sm" + " " + "text-red-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	)}
+																</div>
+																{data["user"]["email"] === currentUser[0]["email"] ? (
+																	<>
+																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																			<label
+																				htmlFor="addFeedback"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																			>
+																				<span className="flex items-center">
+																					{t('Form.Feedback')}
+																					{!editfeedback && (
+																						<button
+																							type="button"
+																							className="ml-5 text-darkGray dark:text-gray-400"
+																							onClick={(e) => {
+																								seteditfeedback(true);
+																							}}
+																						>
+																							<i className="fa-solid fa-pen-to-square"></i>
+																						</button>
+																					)}
+																				</span>
+																			</label>
+																			<textarea
+																				name="addFeedback"
+																				id="addFeedback"
+																				className={
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					" " +
+																					"min-h-[100px]"
+																				}
+																				placeholder="Enter feedback here ..."
+																				value={editfeedbackTA}
+																				onChange={(e) => seteditfeedbackTA(e.target.value)}
+																				readOnly={!editfeedback}
+																			></textarea>
+																			<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																				{!editfeedback ? (
+																					<>
+																						<div className="flex items-center justify-between py-2 text-sm">
+																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																							<p className="text-[12px] text-darkGray dark:text-gray-400">
+																								{moment(data["timestamp"]).format("Do MMM YYYY")}
+																							</p>
+																						</div>
+																					</>
+																				) : (
+																					<>
+																						<Button
+																							btnStyle="sm"
+																							label={data["feedback"] && data["feedback"].length > 0 ? "Update" : "Add"}
+																							btnType={"button"}
+																							handleClick={(e) => {
+																								updateFeedback(data["id"]);
+																							}}
+																						/>
+																					</>
+																				)}
+																			</div>
+																		</div>
+																	</>
+																) : (
+																	<>
+																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																			<label
+																				htmlFor="addFeedback"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																			>
+																				<span className="flex items-center">{t('Form.Feedback')}</span>
+																			</label>
+																			<textarea
+																				name="addFeedback"
+																				id="addFeedback"
+																				className={
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					" " +
+																					"min-h-[100px]"
+																				}
+																				placeholder="Enter feedback here ..."
+																				value={data["feedback"]}
+																				readOnly={true}
+																			></textarea>
+																			<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																				{
+																					<>
+																						<div className="flex items-center justify-between py-2 text-sm">
+																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																							<p className="text-[12px] text-darkGray dark:text-gray-400">
+																								{moment(data["timestamp"]).format("Do MMM YYYY")}
+																							</p>
+																						</div>
+																					</>
+																				}
+																			</div>
+																		</div>
+																	</>
+																)}
+															</div>
+														))}
 
 													{/* {feedbackList &&
 														feedbackList.map((data, i) => (
@@ -1180,82 +1772,83 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-												{upcomingSoon ? <UpcomingComp /> : 
-													
-													<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
-														<div className="flex items-start">
-															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray dark:text-gray-400">
-																	8 Feb
-																	<br />
-																	<small>2:30 PM</small>
-																</p>
+													{upcomingSoon ? (
+														<UpcomingComp />
+													) : (
+														<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
+															<div className="flex items-start">
+																<div className="w-[80px] px-2 py-4">
+																	<p className="text-sm text-darkGray dark:text-gray-400">
+																		8 Feb
+																		<br />
+																		<small>2:30 PM</small>
+																	</p>
+																</div>
+																<div className="w-[calc(100%-80px)] pl-6">
+																	<div className="border-b dark:border-b-gray-600">
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
+																	</div>
+																</div>
 															</div>
-															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b dark:border-b-gray-600">
-																	<article className="py-4">
-																		<h6 className="mb-2 text-sm font-bold">
-																			Applicant has been shifted to new Job -Software Engineer
-																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">
-																			By - Steve Paul : Collaborator
-																		</p>
-																	</article>
+															<div className="flex items-start">
+																<div className="w-[80px] px-2 py-4">
+																	<p className="text-sm text-darkGray dark:text-gray-400">
+																		8 Feb
+																		<br />
+																		<small>2:30 PM</small>
+																	</p>
+																</div>
+																<div className="w-[calc(100%-80px)] pl-6">
+																	<div className="border-b dark:border-b-gray-600">
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
+																	</div>
+																</div>
+															</div>
+															<div className="flex items-start">
+																<div className="w-[80px] px-2 py-4">
+																	<p className="text-sm text-darkGray dark:text-gray-400">
+																		8 Feb
+																		<br />
+																		<small>2:30 PM</small>
+																	</p>
+																</div>
+																<div className="w-[calc(100%-80px)] pl-6">
+																	<div className="border-b dark:border-b-gray-600">
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
+																	</div>
 																</div>
 															</div>
 														</div>
-														<div className="flex items-start">
-															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray dark:text-gray-400">
-																	8 Feb
-																	<br />
-																	<small>2:30 PM</small>
-																</p>
-															</div>
-															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b dark:border-b-gray-600">
-																	<article className="py-4">
-																		<h6 className="mb-2 text-sm font-bold">
-																			Applicant has been shifted to new Job -Software Engineer
-																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">
-																			By - Steve Paul : Collaborator
-																		</p>
-																	</article>
-																	<article className="py-4">
-																		<h6 className="mb-2 text-sm font-bold">
-																			Applicant has been shifted to new Job -Software Engineer
-																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">
-																			By - Steve Paul : Collaborator
-																		</p>
-																	</article>
-																</div>
-															</div>
-														</div>
-														<div className="flex items-start">
-															<div className="w-[80px] px-2 py-4">
-																<p className="text-sm text-darkGray dark:text-gray-400">
-																	8 Feb
-																	<br />
-																	<small>2:30 PM</small>
-																</p>
-															</div>
-															<div className="w-[calc(100%-80px)] pl-6">
-																<div className="border-b dark:border-b-gray-600">
-																	<article className="py-4">
-																		<h6 className="mb-2 text-sm font-bold">
-																			Applicant has been shifted to new Job -Software Engineer
-																		</h6>
-																		<p className="text-[12px] text-darkGray dark:text-gray-400">
-																			By - Steve Paul : Collaborator
-																		</p>
-																	</article>
-																</div>
-															</div>
-														</div>
-													</div>
-													}
+													)}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													<div>
@@ -1263,7 +1856,7 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 															<Image src={favIcon} alt="Somhako" width={30} />
 														</div>
 														<p className="mb-4 text-center text-darkGray dark:text-gray-400">
-															Ask Questions Related to the Candidate
+															{t('Words.AskQuestionsRelatedCandidate')}
 														</p>
 														<div className="mx-auto w-full max-w-[650px]">
 															<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
@@ -1408,4 +2001,12 @@ export default function ApplicantsDetail({atsVersion, userRole, upcomingSoon}:an
 			</main>
 		</>
 	);
+}
+export async function getStaticProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
 }

@@ -92,7 +92,7 @@ export default function Organization({ atsVersion, userRole }: any) {
 									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[33.33%]">
 										<Link
 											href={links.blur ? "javascript:void(0)" : links.link}
-											className=" relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+											className="relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
 										>
 											<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 												<Image src={links.icon} alt={links.name} width={30} height={30} />
@@ -102,7 +102,7 @@ export default function Organization({ atsVersion, userRole }: any) {
 												<>
 													<div className="absolute left-0 top-0 w-full h-full bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center">
 														<div className="mx-auto w-max max-w-[400px] py-2 px-6 rounded-normal text-center text-white transition hover:scale-[1.05]">
-															<h3 className="text-white mb-1 text-xl font-extrabold">{srcLang === 'ja' ? 'プランをアップグレード' : 'Go Premium'}</h3>
+															<h3 className="text-white mb-1 text-lg font-extrabold">{srcLang === 'ja' ? 'プランをアップグレード' : 'Go Premium'}</h3>
 															<Link href={'/organization/settings/pricing'} className="inline-block p-1 text-[10px] text-white rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">{srcLang === 'ja' ? 'アップグレード' : 'Upgrade'}</Link>
 														</div>
 													</div>

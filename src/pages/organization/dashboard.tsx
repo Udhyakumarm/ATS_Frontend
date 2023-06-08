@@ -262,18 +262,18 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ApplicantDetails')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ApplicantDetails')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside className="flex items-center justify-end">
 													{/* <div className="mr-4 w-[140px]">
 													<FormField fieldType="select" />
 												</div> */}
-													<button
+													{/* <button
 														type="button"
 														className="relative z-[1] h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -285,7 +285,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 															<div className="px-2 py-3">
 																<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
 																	<div className="mb-2 flex items-center justify-between">
-																		<h4 className="grow pr-4 text-2xl font-extrabold">
+																		<h4 className="grow pr-4 text-xl font-extrabold">
 																			{/* {item.number || <Skeleton width={40} />} */}
 																			{item.number}
 																		</h4>
@@ -338,15 +338,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.HiringAnalytics')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.HiringAnalytics')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
-													<button
+													{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -385,7 +385,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												}}
 											>
 												<div className="rounded-normal bg-[rgba(0,0,0,0.5)] p-6 text-center text-white transition hover:scale-[1.05]">
-													<h3 className="mb-1 text-xl font-extrabold">Hiring Analytics Is A Premium Feature</h3>
+													<h3 className="mb-1 text-lg font-extrabold">Hiring Analytics Is A Premium Feature</h3>
 													<p className="text-[12px]">If you want to use this feature kindly upgrade your plan.</p>
 												</div>
 											</div>
@@ -399,15 +399,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.UpcomingInterviews')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.UpcomingInterviews')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
-													<button
+													{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -538,15 +538,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ToDoList')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ToDoList')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
-													<button
+													{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -564,7 +564,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		</p>
 																	</div>
 																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="font-bold">20 Nov 2023</h5>
@@ -577,7 +577,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		<Skeleton containerClassName="grow" count={2} />
 																	</div>
 																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-xl leading-normal text-white dark:bg-gray-800">
+																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="grow font-bold">
@@ -612,15 +612,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.RecentJobs')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.RecentJobs')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
-													<button
+													{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -677,8 +677,8 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<h6 className="font-bold text-4xl mr-3 my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
 												<Image src={'/images/upgrade_launch.png'} alt="Upgrade" width={200} height={200} className="w-auto max-w-[150px] ml-auto" />
 											</div>
-											<p className="mb-4 text-xl">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
-											<h6 className="font-bold text-2xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
+											<p className="mb-4 text-lg">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
+											<h6 className="font-bold text-xl my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
 											<Button 
 											btnStyle="white"
 											btnType="button"
@@ -699,15 +699,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
-											<h2 className="text-xl font-bold">{t('Words.ActivityLog')}</h2>
+											<h2 className="text-lg font-bold">{t('Words.ActivityLog')}</h2>
 											{atsVersion && atsVersion === "enterprise" && (
 												<aside>
-													<button
+													{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
-													</button>
+													</button> */}
 												</aside>
 											)}
 										</div>
@@ -801,16 +801,16 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 							<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
 								<Popover className="relative">
 									<Popover.Button
-										className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-2xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
+										className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
 									>
 										<i className="fa-solid fa-gauge"></i>
 									</Popover.Button>
-									<Popover.Overlay className="fixed inset-0 left-0 top-0 z-30 h-full w-full bg-black opacity-30 dark:bg-white" />
-									<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal bg-white shadow-normal">
+									<Popover.Overlay className="fixed inset-0 left-0 top-0 z-30 h-full w-full bg-black opacity-30 dark:bg-white dark:opacity-50" />
+									<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal shadow-normal">
 										<div className="flex flex-wrap">
 											<label
 												htmlFor="cust_applicants"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
 											>
 												<input
 													type="checkbox"
@@ -819,17 +819,18 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onClick={() => setcheck1(!check1)}
 												/>
-												<Image src={customizeApplicants} alt="Applicants" className="mb-2" />
+												{/* <Image src={customizeApplicants} alt="Applicants" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-users-viewfinder mb-3 text-[18px] leading-[1px]"></i>
 												<p className="text-[12px] font-bold">{t('Words.ApplicantDetails')}</p>
 												<i
 													className={`fa-solid ${
 														check1 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
 											<label
 												htmlFor="cust_hiring"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
 											>
 												<input
 													type="checkbox"
@@ -838,17 +839,18 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onChange={() => setcheck2(!check2)}
 												/>
-												<Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2" />
+												{/* <Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-chart-line mb-3 text-[18px] leading-[1px]"></i>
 												<p className="text-[12px] font-bold">{t('Words.HiringAnalytics')}</p>
 												<i
 													className={`fa-solid ${
 														check2 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
 											<label
 												htmlFor="cust_upcoming"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center dark:from-gradDarkBlue dark:to-gradLightBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-700 dark:to-gray-500"
 											>
 												<input
 													type="checkbox"
@@ -857,17 +859,18 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onChange={() => setcheck3(!check3)}
 												/>
-												<Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2" />
+												{/* <Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-calendar-days mb-3 text-[18px] leading-[1px]"></i>
 												<p className="text-[12px] font-bold">{t('Words.UpcomingInterviews')}</p>
 												<i
 													className={`fa-solid ${
 														check3 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
 											<label
 												htmlFor="cust_todo"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-500 dark:to-gray-700"
 											>
 												<input
 													type="checkbox"
@@ -876,22 +879,23 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onChange={() => setcheck4(!check4)}
 												/>
-												<Image src={customizeTodo} alt="To Do List" className="mb-2" />
-												<p className="text-[12px] font-bold">{t('Words.ToDoList')}</p>
+												{/* <Image src={customizeTodo} alt="To Do List" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-list mb-3 text-[18px] leading-[1px]"></i>
+												<p className="text-[12px] font-bold max-w-[55px]">{t('Words.ToDoList')}</p>
 												<i
 													className={`fa-solid ${
 														check4 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center dark:bg-primary">
+											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center dark:bg-gray-900">
 												<p className="text-[12px] font-bold">
 													{srcLang === 'ja' ? <>カスタマイズ <br /> ダッシュボード</> : <>Customize <br /> Your <br /> Dashboard</>}
 												</p>
 											</div>
 											<label
 												htmlFor="cust_recent"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-2 text-center dark:from-gradDarkBlue dark:to-gradLightBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-500 dark:to-gray-700"
 											>
 												<input
 													type="checkbox"
@@ -900,17 +904,18 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onChange={() => setcheck5(!check5)}
 												/>
-												<Image src={customizeRecent} alt="Recent Jobs" className="mb-2" />
-												<p className="text-[12px] font-bold">{t('Words.RecentJobs')}</p>
+												{/* <Image src={customizeRecent} alt="Recent Jobs" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-briefcase mb-3 text-[18px] leading-[1px]"></i>
+												<p className="text-[12px] font-bold max-w-[60px]">{t('Words.RecentJobs')}</p>
 												<i
 													className={`fa-solid ${
 														check5 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
 											<label
 												htmlFor="cust_activity"
-												className="relative flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"
+												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
 											>
 												<input
 													type="checkbox"
@@ -919,16 +924,17 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													className="hidden"
 													onChange={() => setcheck6(!check6)}
 												/>
-												<Image src={customizeActivity} alt="Activity Log" className="mb-2" />
-												<p className="text-[12px] font-bold">{t('Words.ActivityLog')}</p>
+												{/* <Image src={customizeActivity} alt="Activity Log" className="mb-2 w-auto h-[18px]" /> */}
+												<i className="fa-solid fa-clock mb-3 text-[18px] leading-[1px]"></i>
+												<p className="text-[12px] font-bold max-w-[60px]">{t('Words.ActivityLog')}</p>
 												<i
 													className={`fa-solid ${
 														check6 ? "fa-eye" : "fa-eye-slash"
-													} absolute left-1 top-2 flex h-4 w-6 items-center justify-center rounded-full text-[12px] leading-[1px]`}
+													} absolute right-2 top-4 text-[12px] leading-[1px]`}
 												></i>
 											</label>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"></div>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gradLightBlue dark:to-gradDarkBlue"></div>
+											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
+											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
 										</div>
 									</Popover.Panel>
 								</Popover>

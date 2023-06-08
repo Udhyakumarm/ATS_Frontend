@@ -27,9 +27,10 @@ import glassdoorIcon from '/public/images/social/glassdoor-icon.png'
 import gorillaIcon from '/public/images/social/gorilla-icon.png'
 import codilityIcon from '/public/images/social/codility-icon.png'
 import slackIcon from '/public/images/social/slack-icon.png'
+import UpcomingComp from "@/components/organization/upcomingComp";
 
 
-export default function Integrations() {
+export default function Integrations({upcomingSoon}:any) {
     const router = useRouter();
     const [enabled, setEnabled] = useState(false)
     const tabHeading_1 = [
@@ -67,302 +68,312 @@ export default function Integrations() {
                                     onClick={() => router.back()}
                                     className="mr-10 justify-self-start text-darkGray dark:text-gray-400"
                                 >
-                                    <i className="fa-solid fa-arrow-left text-2xl"></i>
+                                    <i className="fa-solid fa-arrow-left text-xl"></i>
                                 </button>
-                                <h2 className="text-xl font-bold flex items-center">
+                                <h2 className="text-lg font-bold flex items-center">
                                     <div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
                                         <Image src={integrationIcon} alt='Active Job' height={20} />
                                     </div>
                                     <span>Integrations</span>
                                 </h2>
                             </div>
-                            <Tab.Group>
-                                <div className={"border-b px-4"}>
-                                    <Tab.List className={"w-full max-w-[950px] mx-auto"}>
-                                        {tabHeading_1.map((item, i)=> 
-                                        <Tab key={i} as={Fragment}>
-                                            {({ selected }) => (
-                                                <button
-                                                    className={
-                                                        "border-b-4 py-2 mr-16 font-semibold focus:outline-none" +
-                                                        " " +
-                                                        (selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
-                                                    }
-                                                >
-                                                    {item.title}
-                                                </button>
+                            {
+                                upcomingSoon
+                                ?
+                                <>
+                                <UpcomingComp />
+                                </>
+                                :
+                                <>
+                                <Tab.Group>
+                                    <div className={"border-b px-4"}>
+                                        <Tab.List className={"w-full max-w-[950px] mx-auto"}>
+                                            {tabHeading_1.map((item, i)=> 
+                                            <Tab key={i} as={Fragment}>
+                                                {({ selected }) => (
+                                                    <button
+                                                        className={
+                                                            "border-b-4 py-2 mr-16 font-semibold focus:outline-none" +
+                                                            " " +
+                                                            (selected ? "border-primary text-primary" : "border-transparent text-darkGray dark:text-gray-400")
+                                                        }
+                                                    >
+                                                        {item.title}
+                                                    </button>
+                                                )}
+                                            </Tab>
                                             )}
-                                        </Tab>
-                                        )}
-                                    </Tab.List>
-                                </div>
-                                <Tab.Panels className={"w-full max-w-[980px] mx-auto px-4 py-8"}>
-                                    <Tab.Panel>
-                                        <div className="flex flex-wrap -mx-3">
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={googleIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Google Suite</h4>
-                                                    <ul>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={gmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Gmail</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={googleCalIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Google Calendar</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={googleMeetIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Google Meet</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                    </ul>
+                                        </Tab.List>
+                                    </div>
+                                    <Tab.Panels className={"w-full max-w-[980px] mx-auto px-4 py-8"}>
+                                        <Tab.Panel>
+                                            <div className="flex flex-wrap -mx-3">
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={googleIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Google Suite</h4>
+                                                        <ul>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={gmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Gmail</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={googleCalIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Google Calendar</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={googleMeetIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Google Meet</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={microsoftIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Microsoft</h4>
+                                                        <ul>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={outlookEmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Email</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={outlookEmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Calendar</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                            <li className="flex items-center my-3 last:mb-0">
+                                                                <div className="flex items-center grow">
+                                                                    <span className="block w-8">
+                                                                        <Image src={outlookTeamIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
+                                                                    </span>
+                                                                    <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Team</h6>
+                                                                </div>
+                                                                <Switch
+                                                                checked={enabled}
+                                                                onChange={setEnabled}
+                                                                className={`${
+                                                                    enabled ? 'bg-primary' : 'bg-gray-400'
+                                                                } relative inline-flex h-5 w-10 items-center rounded-full`}
+                                                                >
+                                                                    <span className="sr-only">Enable notifications</span>
+                                                                    <span
+                                                                        className={`${
+                                                                        enabled ? 'translate-x-6' : 'translate-x-1'
+                                                                        } inline-block h-3 w-3 transform rounded-full bg-white transition`}
+                                                                    />
+                                                                </Switch>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={calendlyIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Calendly</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Calendly to get access</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={zoomIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Zoom</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Zoom</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={microsoftIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Microsoft</h4>
-                                                    <ul>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={outlookEmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Email</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={outlookEmailIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Calendar</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                        <li className="flex items-center my-3 last:mb-0">
-                                                            <div className="flex items-center grow">
-                                                                <span className="block w-8">
-                                                                    <Image src={outlookTeamIcon} alt="Social" width={100} className="max-h-[14px] w-auto mr-4" />
-                                                                </span>
-                                                                <h6 className="text-sm text-darkGray dark:text-gray-400">Outlook Team</h6>
-                                                            </div>
-                                                            <Switch
-                                                            checked={enabled}
-                                                            onChange={setEnabled}
-                                                            className={`${
-                                                                enabled ? 'bg-primary' : 'bg-gray-400'
-                                                            } relative inline-flex h-5 w-10 items-center rounded-full`}
-                                                            >
-                                                                <span className="sr-only">Enable notifications</span>
-                                                                <span
-                                                                    className={`${
-                                                                    enabled ? 'translate-x-6' : 'translate-x-1'
-                                                                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
-                                                                />
-                                                            </Switch>
-                                                        </li>
-                                                    </ul>
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="flex flex-wrap -mx-3">
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={bambooHrIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Bamboo HR</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Bamboo HR to get access</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={adpIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">ADP</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with ADP to get access</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={checkrIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Checkr</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Checkr to check the background of any user</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={calendlyIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Calendly</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Calendly to get access</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="flex flex-wrap -mx-3">
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={linkedinIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">LinkedIn</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with LinkedIn to post a jobs in your LinkedIn account</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={somhakoIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Somhako</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Somhako Marketplace to post a jobs</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={indeedIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Indeed</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Indeed to post a jobs</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={glassdoorIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Glassdoor</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Glassdoor to post a jobs</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={zoomIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Zoom</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Zoom</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="flex flex-wrap -mx-3">
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={codilityIcon} alt="Social" width={150} className="max-h-[20px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Codility</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Codility</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
+                                                </div>
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={gorillaIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Test Gorilla</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Test Gorilla</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel>
-                                        <div className="flex flex-wrap -mx-3">
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={bambooHrIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Bamboo HR</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Bamboo HR to get access</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="flex flex-wrap -mx-3">
+                                                <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
+                                                    <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
+                                                        <Image src={slackIcon} alt="Social" width={150} className="max-h-[20px] w-auto mb-2" />
+                                                        <h4 className="font-bold mb-4">Slack</h4>
+                                                        <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Slack to communicate with your team members</p>
+                                                        <Button btnStyle="outlined" label="Integrate" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={adpIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">ADP</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with ADP to get access</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={checkrIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Checkr</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Checkr to check the background of any user</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel>
-                                        <div className="flex flex-wrap -mx-3">
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={linkedinIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">LinkedIn</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with LinkedIn to post a jobs in your LinkedIn account</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={somhakoIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Somhako</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Somhako Marketplace to post a jobs</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={indeedIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Indeed</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Indeed to post a jobs</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={glassdoorIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Glassdoor</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Glassdoor to post a jobs</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel>
-                                        <div className="flex flex-wrap -mx-3">
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={codilityIcon} alt="Social" width={150} className="max-h-[20px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Codility</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Codility</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={gorillaIcon} alt="Social" width={150} className="max-h-[26px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Test Gorilla</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Test Gorilla</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel>
-                                        <div className="flex flex-wrap -mx-3">
-                                            <div className="w-full md:max-w-[50%] lg:max-w-[33.3333%] px-3 mb-6">
-                                                <div className="h-full bg-lightBlue dark:bg-gray-700 shadow-highlight rounded-normal p-5">
-                                                    <Image src={slackIcon} alt="Social" width={150} className="max-h-[20px] w-auto mb-2" />
-                                                    <h4 className="font-bold mb-4">Slack</h4>
-                                                    <p className="text-sm text-darkGray dark:text-gray-400 mb-4">Integrate with Slack to communicate with your team members</p>
-                                                    <Button btnStyle="outlined" label="Integrate" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                </Tab.Panels>
-                            </Tab.Group>
+                                        </Tab.Panel>
+                                    </Tab.Panels>
+                                </Tab.Group>
+                                </>
+                            }
 						</div>
 					</div>
                 </div>

@@ -2,7 +2,7 @@ export default function PreviewJob() {
 	return (
 		<>
 			<div className="border-b px-8 py-3 dark:border-b-gray-600">
-				<h4 className="text-xl font-bold leading-none">Job Title</h4>
+				<h4 className="text-lg font-bold leading-none">Job Title</h4>
 				<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
 					<li className="mr-3 list-none">Full Time</li>
 					<li className="mr-3">INR 5000</li>

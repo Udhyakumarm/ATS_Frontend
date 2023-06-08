@@ -1,12 +1,21 @@
-// @ts-nocheck
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import favIcon from "/public/favicon-white.ico";
 import Link from "next/link";
 import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
+import toastcomp from "./toast";
+import { useApplicantStore } from "@/utils/code";
+import { useRouter } from "next/router";
 
 export default function ChatAssistance(props: any) {
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+
+	const router = useRouter();
+
 	const [click, setClick] = useState(false);
 	const [maximize, setMaximize] = useState(false);
 	const messageEl: any = useRef(null);
@@ -51,8 +60,8 @@ export default function ChatAssistance(props: any) {
 			.get(`/chatbot/listchat/`)
 			.then(async (res) => {
 				setdes(false);
-				console.log(res);
-				console.log(res.data);
+				console.log("$", res);
+				console.log("@", res.data);
 				setmsgs(res.data);
 				let a = res.data;
 				for (let i = 0; i < a.length; i++) {
@@ -86,10 +95,17 @@ export default function ChatAssistance(props: any) {
 			// .post(`/candidate/chatuserjob/clf0u1qzc0000dcu01f9a5x0m/`, formData)
 			.post(`/chatbot/chat-organization-wise/`, formData)
 			.then((res) => {
-				const formData2 = new FormData();
-				formData2.append("message", p);
-				formData2.append("response", res.data.res);
-				addChat(formData2);
+				if (res.data.res === "Sure Here All Candidate" || res.data.res.includes("Sure Here Are Response") || res.data.res === "Applicant Transfer To The Next Stage") {
+					if(res.data.res === "Applicant Transfer To The Next Stage"){
+						props.loadApplicant()
+					}
+					loadChat();
+				} else {
+					const formData2 = new FormData();
+					formData2.append("message", p);
+					formData2.append("response", res.data.res);
+					addChat(formData2);
+				}
 				setprompt("");
 			})
 			.catch((err) => {
@@ -218,6 +234,33 @@ export default function ChatAssistance(props: any) {
 		}
 	}, [click]);
 
+	// function check22(res: any) {
+	// 	// toastcomp(res, "success");
+	// 	// let regex = /.*?(?=Array of Responded Applicant)/;
+	// 	// let match = res.match(regex);
+	// 	// toastcomp(match, "error");
+	// 	// if (match) {
+	// 	// 	return match[0];
+	// 	// } else {
+	// 	// 	return "LOREM";
+	// 	// }
+
+	// 	// let res2 = res.split("Array of Responded Applicant IDs: ");
+	// 	// // toastcomp(res2, "error");
+	// 	// return res2[0];
+	// 	return res;
+	// }
+
+	// function check23(res: any) {
+	// 	let res2 = res.split("Array of Responded Applicant IDs: ");
+	// 	//[clik2l57v00097wsr5qa2bf03]
+	// 	let fstr = res2[1];
+	// 	fstr = fstr.replaceAll("[", "");
+	// 	fstr = fstr.replaceAll("]", "");
+	// 	let fstrArr = fstr.split(",");
+	// 	return fstrArr;
+	// }
+
 	return (
 		<>
 			<div
@@ -283,9 +326,11 @@ export default function ChatAssistance(props: any) {
 											</li>
 											<li className="my-2 max-w-[90%]">
 												{!data["response"].includes("I suggest Interview can been Schedule at") ? (
-													<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
-														{data["response"]}
-													</div>
+													<>
+														<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
+															{data["response"]}
+														</div>
+													</>
 												) : (
 													<div className="mb-1 inline-block">
 														<div className="mb-2 rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
@@ -329,6 +374,47 @@ export default function ChatAssistance(props: any) {
 												)}
 												<div className="text-[10px] text-darkGray dark:text-gray-100">
 													{moment(data["timestamp"]).fromNow()}
+												</div>
+
+												<div>
+													{data["capplicant"] &&
+														data["capplicant"].map((data, i) => (
+															<button
+																key={i}
+																type="button"
+																className="rounded border border-slate-800 px-4 py-1.5 hover:bg-slate-800 hover:text-white"
+																onClick={() => {
+																	setClick(false);
+																	setMaximize(false);
+																	setjobid(data["job"]["refid"]);
+																	setappid(data["arefid"]);
+																	settype("career");
+																	setappdata(data);
+																	router.push("/organization/applicants/detail");
+																}}
+															>
+																{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
+															</button>
+														))}
+													{data["vapplicant"] &&
+														data["vapplicant"].map((data, i) => (
+															<button
+																key={i}
+																type="button"
+																className="rounded border border-slate-800 px-4 py-1.5 hover:bg-slate-800 hover:text-white"
+																onClick={() => {
+																	setClick(false);
+																	setMaximize(false);
+																	setjobid(data["job"]["refid"]);
+																	setappid(data["arefid"]);
+																	settype("vendor");
+																	setappdata(data);
+																	router.push("/organization/applicants/detail");
+																}}
+															>
+																{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
+															</button>
+														))}
 												</div>
 											</li>
 										</div>
@@ -453,6 +539,12 @@ export default function ChatAssistance(props: any) {
 								value={prompt}
 								onChange={(e) => setprompt(e.target.value)}
 								disabled={des}
+								onKeyDown={(e) => {
+									if (e.keyCode == 13 && e.shiftKey == false) {
+										e.preventDefault();
+										sendMsg();
+									}
+								}}
 							></textarea>
 							<button
 								type="button"
@@ -480,7 +572,7 @@ export default function ChatAssistance(props: any) {
 
 					{click ? (
 						<>
-							<i className="fa-solid fa-xmark text-2xl text-white"></i>
+							<i className="fa-solid fa-xmark text-xl text-white"></i>
 						</>
 					) : (
 						<>

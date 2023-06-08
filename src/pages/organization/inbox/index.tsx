@@ -356,7 +356,7 @@ export default function Inbox() {
 															<div className="mx-auto w-full max-w-[90%]">
 																<div className="overflow-hidden rounded-large border dark:border-gray-500">
 																	<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-center text-white">
-																		<h3 className="mb-2 text-xl">Interview has been Scheduled</h3>
+																		<h3 className="mb-2 text-lg">Interview has been Scheduled</h3>
 																		<p>You can find the details below</p>
 																	</div>
 																	<div className="py-6 px-10">

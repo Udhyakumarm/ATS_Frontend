@@ -77,7 +77,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				let arr = res.data;
 				for (let i = 0; i < arr.length; i++) {
 					let dic = arr[i];
-					dic["type"] = "carrier";
+					dic["type"] = "career";
 					arr2.push(dic);
 				}
 				console.log("!", "applicant2", arr2);
@@ -228,7 +228,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{session && atsVersion === "enterprise" && (
+				{session && atsVersion === "enterprise" && userRole != "Hiring Manager" && (
 					<ChatAssistance
 						accessToken={session.accessToken}
 						notifyStatus={notify}
@@ -251,6 +251,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 						setinterdate={setinterdate}
 						setinterstime={setinterstime}
 						setinteretime={setinteretime}
+						loadApplicant={loadApplicant}
 					/>
 				)}
 				<div
@@ -289,7 +290,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 						{atsVersion === "starter" && refresh === 2 ? (
 							<div className="layoutWrap p-4 lg:p-8">
 								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
-									<h2 className="mb-6 text-xl font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
+									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 										<thead>
 											<tr>

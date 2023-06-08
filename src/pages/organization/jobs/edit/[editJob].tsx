@@ -681,9 +681,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
 											onClick={() => router.replace("/organization/jobs")}
 										>
-											<i className="fa-solid fa-arrow-left text-2xl"></i>
+											<i className="fa-solid fa-arrow-left text-xl"></i>
 										</button>
-										<h2 className="text-xl font-bold">
+										<h2 className="text-lg font-bold">
 											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t('Words.JobTitle')}</>}</span>
 										</h2>
 									</div>
@@ -1284,7 +1284,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 								<Dialog.Panel className="relative min-h-screen w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:max-w-full">
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
-											<h4 className="text-xl font-bold leading-none">
+											<h4 className="text-lg font-bold leading-none">
 												{jtitle && jtitle.length > 0 ? jtitle : <>{srcLang === 'ja' ? '求人タイトル' : 'Job Title'}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
@@ -1459,7 +1459,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 									<div className="p-8 pt-0 text-center">
 										<i className="fa-solid fa-circle-check mb-4 text-[50px] text-green-500"></i>
-										<h4 className="mb-2 text-xl font-bold">{srcLang === 'ja' ? '求人が公開されました' : 'Job has been Published'}</h4>
+										<h4 className="mb-2 text-lg font-bold">{srcLang === 'ja' ? '求人が公開されました' : 'Job has been Published'}</h4>
 										<p className="text-sm">
 											{srcLang === 'ja' 
 											? 

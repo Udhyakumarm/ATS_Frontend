@@ -2,8 +2,10 @@ import { Dialog, Menu, Switch, Tab, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "../FormField";
 import Button from "../Button";
+import { useLangStore } from "@/utils/code";
 
 export default function VCard(props: any) {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const [companyDetails, setCompanyDetails] = useState(false);
 	const [enabled, setEnabled] = useState(false);
@@ -112,7 +114,7 @@ export default function VCard(props: any) {
 								</Switch>
 								<Button
 									btnStyle="sm"
-									label={"Company Details"}
+									label={srcLang === 'ja' ? '詳細' : 'Company Details'}
 									btnType="button"
 									handleClick={() => setCompanyDetails(true)}
 								/>
@@ -151,7 +153,7 @@ export default function VCard(props: any) {
 														className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
 														onClick={() => setCompanyDetails(true)}
 													>
-														<i className="fa-solid fa-building mr-2"></i> Company Details
+														<i className="fa-solid fa-building mr-2"></i> {srcLang === 'ja' ? '詳細' : 'Company Details'}
 													</button>
 												</Menu.Item>
 											</Menu.Items>
@@ -167,7 +169,7 @@ export default function VCard(props: any) {
 									</p>
 									<Button
 										btnStyle="sm"
-										label={"On Board"}
+										label={srcLang === 'ja' ? '登録' : 'On Board'}
 										btnType={"button"}
 										handleClick={(e: any) => props.onBoardVendor(props.data["vrefid"])}
 									/>
@@ -189,7 +191,7 @@ export default function VCard(props: any) {
 										<i className="fa-solid fa-clock mr-2"></i>
 										Pending
 									</p>
-									<Button btnStyle="sm" label={"On Board"} disabled />
+									<Button btnStyle="sm" label={srcLang === 'ja' ? '登録' : 'On Board'} disabled />
 								</div>
 							</div>
 						</div>
@@ -224,7 +226,7 @@ export default function VCard(props: any) {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Company Details</h4>
+										<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? '詳細' : 'Company Details'}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -236,11 +238,11 @@ export default function VCard(props: any) {
 									<div className="p-8">
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Company Name" fieldType="input" inputType="text" value={cname} readOnly />
+												<FormField label={srcLang === 'ja' ? '会社名' : 'Company Name'} fieldType="input" inputType="text" value={cname} readOnly />
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Email ID"
+													label={srcLang === 'ja' ? 'メールアドレス' : 'Email'}
 													fieldType="input"
 													inputType="email"
 													required
@@ -249,14 +251,14 @@ export default function VCard(props: any) {
 												/>
 											</div>
 										</div>
-										<FormField label="Agent Name" fieldType="input" inputType="text" value={aname} readOnly />
+										<FormField label={srcLang === 'ja' ? '担当エージェント' : 'Agent Name'} fieldType="input" inputType="text" value={aname} readOnly />
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="Contact Number" fieldType="input" inputType="number" value={phone} readOnly />
+												<FormField label={srcLang === 'ja' ? '電話番号' : 'Phone Number'} fieldType="input" inputType="number" value={phone} readOnly />
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Contact Number (Optional)"
+													label={srcLang === 'ja' ? '電話番号 (オプション)' : 'Phone Number (Optional)'}
 													fieldType="input"
 													inputType="number"
 													value={phone2}
@@ -266,11 +268,11 @@ export default function VCard(props: any) {
 										</div>
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField label="License Number" fieldType="input" inputType="text" value={lno} readOnly />
+												<FormField label={srcLang === 'ja' ? '有料職業紹介事業登録番号' : 'License Number'} fieldType="input" inputType="text" value={lno} readOnly />
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Headquarter Address"
+													label={srcLang === 'ja' ? '本社所在地' : 'Headquarter Location'}
 													fieldType="input"
 													inputType="text"
 													value={add}
@@ -280,7 +282,7 @@ export default function VCard(props: any) {
 										</div>
 										<div className="-mx-3 flex flex-wrap items-start">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<h6 className="mb-1 font-bold">Agreement</h6>
+												<h6 className="mb-1 font-bold">{srcLang === 'ja' ? '契約書' : 'Agreement'}</h6>
 												<div className="my-2 flex">
 													<div className="">
 														<i className="fa-solid fa-file-pdf text-[40px] text-red-500"></i>
@@ -292,7 +294,7 @@ export default function VCard(props: any) {
 															{agreement.split("/").pop()}
 														</span>
 														<Button
-															label="View"
+															label={srcLang === 'ja' ? 'みる' : 'View'}
 															btnStyle="sm"
 															btnType="button"
 															handleClick={() => {
@@ -306,43 +308,25 @@ export default function VCard(props: any) {
 												{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
 												<div className="w-full pr-2 md:max-w-[50%]">
 													<FormField
-														label="Agreement Start "
+														label={srcLang === 'ja' ? '開始日' : 'Start Date'}
 														fieldType="input"
 														inputType="date"
 														value={asdate}
 														readOnly
 													/>
-													{/* <FormField
-														id={"start"}
-														fieldType="date"
-														placeholder="Start Time"
-														singleSelect
-														showTimeSelect
-														showHours
-														required
-													/> */}
 												</div>
 												<div className="w-full pl-2 md:max-w-[50%]">
 													<FormField
-														label="Agreement End "
+														label={srcLang === 'ja' ? '終了日' : 'End Date'}
 														fieldType="input"
 														inputType="date"
 														value={aedate}
 														readOnly
 													/>
-													{/* <FormField
-														id={"end"}
-														fieldType="date"
-														placeholder="End Time"
-														singleSelect
-														showTimeSelect
-														showHours
-														required
-													/> */}
 												</div>
 											</div>
 										</div>
-										<Button label="Close" btnType="button" handleClick={() => setCompanyDetails(false)} />
+										<Button label={srcLang === 'ja' ? '近い' : 'Close'} btnType="button" handleClick={() => setCompanyDetails(false)} />
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -12,11 +12,12 @@ import settingsIcon from "/public/images/icons/settings.png";
 import clientsIconWhite from "/public/images/icons-white/clients.png";
 import inboxesIconWhite from "/public/images/icons-white/inboxes.png";
 import settingsIconWhite from "/public/images/icons-white/settings.png";
-import { useCarrierStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
 import UpcomingComp from "../organization/upcomingComp";
 import { Dialog, Transition } from "@headlessui/react";
 
 export default function VendorSideBar() {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
@@ -35,7 +36,7 @@ export default function VendorSideBar() {
 
 	const menu = [
 		{
-			title: "Clients",
+			title: srcLang === 'ja' ? 'クライアント' : 'Clients',
 			url: `/vendor/[vrefid]/clients`,
 			url2: `/vendor/${vid}/clients`,
 			img: clientsIcon,
@@ -43,7 +44,7 @@ export default function VendorSideBar() {
 			com: comOrNot("Clients")
 		},
 		{
-			title: "Inboxes",
+			title: srcLang === 'ja' ? 'インボックス' : 'Inboxes',
 			url: `/vendor/[vrefid]/inbox`,
 			url2: `/vendor/${vid}/inbox`,
 			img: inboxesIcon,
@@ -51,7 +52,7 @@ export default function VendorSideBar() {
 			com: comOrNot("Inboxes")
 		},
 		{
-			title: "Settings",
+			title: srcLang === 'ja' ? '設定' : 'Settings',
 			url: `/vendor/[vrefid]/settings`,
 			url2: `/vendor/${vid}/settings`,
 			img: settingsIcon,

@@ -125,7 +125,7 @@ export default function HomePage() {
                                     <span className="inline-block text-gradDarkBlue font-bold text-[90px] sm:text-[120px] xl:text-[135px] leading-none mr-5 lg:group-even:ml-5 lg:group-odd:mr-5">{i+1}</span>
                                     <h2 className="lg:grow textGrad font-extrabold text-[30px] sm:text-[40px] xl:text-[50px] leading-none">{item.title}</h2>
                                 </div>
-                                <p className="mt-4 font-bold lg:text-xl">{item.desc}</p>
+                                <p className="mt-4 font-bold lg:text-lg">{item.desc}</p>
                             </div>
                         </div>
                         <div className="px-6 my-4 w-full lg:max-w-[50%] xl:max-w-[50%]">
@@ -227,7 +227,7 @@ export default function HomePage() {
                     <div className="bg-gradient-to-r from-[#FFE9F44D] to-[#EAF3FF] dark:from-gray-800 dark:to-gray-700 shadow-highlight rounded-[20px] p-8 md:p-14">
                         <div className="w-full max-w-[500px] mx-auto">
                             <h2 className="font-extrabold text-[30px] sm:text-[40px] xl:text-[50px] mb-10">Book a <span className='textGrad'>Demo</span></h2>
-                            <p className="lg:text-xl mb-10">Book a demo with us today and discover unparalleled support and a deep understanding of your needs. We're here for you every step of the way, providing the best experience possible</p>
+                            <p className="lg:text-lg mb-10">Book a demo with us today and discover unparalleled support and a deep understanding of your needs. We're here for you every step of the way, providing the best experience possible</p>
                             <Button btnType="button" label="Request a Demo" />
                         </div>
                     </div>
@@ -247,7 +247,7 @@ export default function HomePage() {
                                         <div className='relative z-[3] px-8'>
                                             <Image src={'/images/user-image.png'} alt='User' className='mb-[-40px] object-cover mx-auto rounded-full w-[80px] h-[80px]' width={300} height={300} />
                                             <div className="bg-white dark:bg-gray-700 shadow-normal rounded-normal px-3 sm:px-6 pb-6 pt-14 text-center">
-                                                <h5 className='font-bold text-xl mb-2'>Hannah Schmitt</h5>
+                                                <h5 className='font-bold text-lg mb-2'>Hannah Schmitt</h5>
                                                 <p className='mb-3 sm:mb-6 text-sm'>Lead Designer</p>
                                                 <p className='text-[12px] sm:text-sm line-clamp-6'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus nibh mauris, nec turpis orci lectus maecenas. Suspendisse sed magna eget nibh in turpis. Consequat duis diam lacus arcu. Faucibus venenatis felis id augue sit cursus pellentesque enim Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus nibh mauris, nec turpis orci lectus maecenas. Suspendisse sed magna eget nibh in turpis. Consequat duis diam lacus arcu. Faucibus venenatis felis id augue sit cursus pellentesque enim Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus nibh mauris, nec turpis orci lectus maecenas. Suspendisse sed magna eget nibh in turpis. Consequat duis diam lacus arcu. Faucibus venenatis felis id augue sit cursus pellentesque enim Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus nibh mauris, nec turpis orci lectus maecenas. Suspendisse sed magna eget nibh in turpis. Consequat duis diam lacus arcu. Faucibus venenatis felis id augue sit cursus pellentesque enim  </p>
                                             </div>
