@@ -50,7 +50,11 @@
         "CurrentSalary": "現年収",
         "ExpectedSalary": "希望年収",
         "AnyMessageRecruiter": "リクルーターへの共有事項",
-        "Designation": "配属先"
+        "Designation": "配属先",
+        "Section": "課・グループ",
+        "Grade": "グレード",
+        "Location": "勤務地",
+        "SalaryRange": "年収レンジ"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -123,6 +127,7 @@
         "AllTeamMembers": "すべてのチームメンバー",
         "JobBoards": "掲載媒体",
         "Title": "タイトル",
+        "Type": "年間",
         "JobTitle": "求人タイトル",
         "JobType": "職種",
         "Department": "部門",
@@ -204,7 +209,9 @@
         "OfferPrepration": "オファー承認依頼",
         "OfferFinalization": "オファー作成",
         "OfferDiscussion": "オファー提示",
-        "OfferStatus": "ステータス"
+        "OfferStatus": "ステータス",
+        "From": "下限",
+        "To": "上限"
     },
     "Plans": {
         "Starter": "スターター",

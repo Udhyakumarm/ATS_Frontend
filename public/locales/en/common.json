@@ -50,7 +50,11 @@
         "CurrentSalary": "Current Salary",
         "ExpectedSalary": "Expected Salary",
         "AnyMessageRecruiter": "Any Message to Recruiter",
-        "Designation": "Designation"
+        "Designation": "Designation",
+        "Section": "Section",
+        "Grade": "Grade",
+        "Location": "Location",
+        "SalaryRange": "Salary Range"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -123,6 +127,7 @@
         "AllTeamMembers": "All Team Members",
         "JobBoards": "Job Boards",
         "Title": "Title",
+        "Type": "Type",
         "JobTitle": "Job Title",
         "JobType": "Job Type",
         "Department": "Department",
@@ -204,7 +209,9 @@
         "OfferPrepration": "Offer Prepration",
         "OfferFinalization": "Offer Finalization",
         "OfferDiscussion": "Offer Discussion",
-        "OfferStatus": "Offer Status"
+        "OfferStatus": "Offer Status",
+        "From": "From",
+        "To": "To"
     },
     "Plans": {
         "Starter": "Starter",

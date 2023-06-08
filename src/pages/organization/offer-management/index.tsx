@@ -1164,7 +1164,7 @@ export default function OfferManagement() {
 																	</div>
 																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																		<FormField
-																			label="Section"
+																			label={t('Form.Section')}
 																			fieldType="input"
 																			inputType="text"
 																			value={section}
@@ -1175,7 +1175,7 @@ export default function OfferManagement() {
 																	</div>
 																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																		<FormField
-																			label="Division"
+																			label={t('Words.Division')}
 																			fieldType="input"
 																			inputType="text"
 																			value={div}
@@ -1186,7 +1186,7 @@ export default function OfferManagement() {
 																	</div>
 																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																		<FormField
-																			label="Grade"
+																			label={t('Form.Grade')}
 																			fieldType="input"
 																			inputType="text"
 																			value={grade}
@@ -1197,7 +1197,7 @@ export default function OfferManagement() {
 																	</div>
 																	<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																		<FormField
-																			label="Location"
+																			label={t('Form.Location')}
 																			fieldType="input"
 																			inputType="text"
 																			value={location}
@@ -1209,12 +1209,12 @@ export default function OfferManagement() {
 																</div>
 																<div className="mb-4">
 																	<h4 className="mb-2 font-bold">
-																		Salary Range<sup className="text-red-500">*</sup>
+																		{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 																	</h4>
 																	<div className="flex flex-wrap">
 																		<div className="w-[170px] pr-6 last:pr-0">
 																			<FormField
-																				placeholder="Currency"
+																				placeholder={t('Words.Currency')}
 																				fieldType="select2"
 																				singleSelect
 																				value={curr}
@@ -1345,10 +1345,10 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="w-[170px] pr-6 last:pr-0">
 																			<FormField
-																				placeholder="Type"
+																				placeholder={t('Words.Type')}
 																				singleSelect
 																				fieldType="select2"
-																				options={["Monthly", "Yearly"]}
+																				options={[t('Form.Monthly'), t('Form.Yearly')]}
 																				value={type}
 																				handleChange={settype}
 																				readOnly
@@ -1356,7 +1356,7 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="grow pr-6 last:pr-0">
 																			<FormField
-																				placeholder="From"
+																				placeholder={t('Words.From')}
 																				fieldType="input"
 																				inputType="number"
 																				value={from}
@@ -1366,7 +1366,7 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="grow pr-6 last:pr-0">
 																			<FormField
-																				placeholder="To"
+																				placeholder={t('Words.To')}
 																				fieldType="input"
 																				inputType="number"
 																				value={to}
@@ -1533,7 +1533,7 @@ export default function OfferManagement() {
 																		<div className="-mx-3 flex flex-wrap">
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Designation"
+																					label={t('Form.Designation')}
 																					fieldType="input"
 																					inputType="text"
 																					value={designation}
@@ -2216,7 +2216,7 @@ export default function OfferManagement() {
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Designation"
+													label={t('Form.Designation')}
 													fieldType="input"
 													inputType="text"
 													value={designation}
