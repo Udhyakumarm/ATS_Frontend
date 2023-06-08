@@ -40,6 +40,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const type = useApplicantStore((state: { type: any }) => state.type);
 	const appdata = useApplicantStore((state: { appdata: any }) => state.appdata);
 	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const currentUser = useUserStore((state: { user: any }) => state.user);
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -68,6 +70,16 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const [educationData, seteducationData] = useState([]);
 	const [experienceData, setexperienceData] = useState([]);
 	const [certificateData, setcertificateData] = useState([]);
+
+	//feedback
+	const [feedbackList, setfeedbackList] = useState([]);
+	const [editfeedback, seteditfeedback] = useState(false);
+	const [editfeedbackTA, seteditfeedbackTA] = useState("");
+	const [feedbackreload, setfeedbackreload] = useState(true);
+	const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
+
+	const [feedbackStatus, setfeedbackStatus] = useState("");
+	const [feedbackTA, setfeedbackTA] = useState("");
 
 	useEffect(() => {
 		// toastcomp(appdata["status"],"success")
@@ -205,12 +217,141 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}
 
+	async function loadFeedback() {
+		let canid = appdata["arefid"];
+		let url = "";
+		if (type === "career") {
+			url = `/job/listfeedback/${canid}/`;
+		}
+		if (type === "vendor") {
+			url = `/job/listvfeedback/${canid}/`;
+		}
+
+		await axiosInstanceAuth21
+			.get(url)
+			.then(async (res) => {
+				console.log("@@", res.data);
+				setfeedbackList(res.data);
+				seteditfeedback(false);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setfeedbackList([]);
+			});
+	}
+
 	useEffect(() => {
 		if (token && token.length > 0 && aiquestion.length <= 0) {
 			loadApplicantDetail();
+			loadFeedback();
 			loadAIInterviewQuestion();
 		}
 	}, [token]);
+
+	function checkDis() {
+		return feedbackStatus.length > 0 && feedbackTA.length > 0;
+	}
+
+	async function createFeedback() {
+		let url = "";
+		if (type === "career") {
+			url = `/job/feedback/${appdata["arefid"]}/create/`;
+		}
+		if (type === "vendor") {
+			url = `/job/vfeedback/${appdata["arefid"]}/create/`;
+		}
+
+		const fdata = new FormData();
+		fdata.append("status", feedbackStatus);
+		fdata.append("feedback", feedbackTA);
+		await axiosInstanceAuth2
+			.post(url, fdata)
+			.then((res) => {
+				toastcomp("Feedback Created", "success");
+				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+				addNotifyLog(axiosInstanceAuth2, title, "");
+				toggleLoadMode(true);
+				loadFeedback();
+			})
+			.catch((err) => {
+				toastcomp("Feedback Not Created", "error");
+			});
+	}
+
+	async function updateFeedback(pk) {
+		if (selectedPerson["name"] != "Review") {
+			toastcomp("At this stage of applicant you cant able to update feedback", "error");
+			seteditfeedback(false);
+			loadFeedback();
+		} else {
+			let url = "";
+			if (type === "career") {
+				url = `/job/feedback/${pk}/update/`;
+			}
+			if (type === "vendor") {
+				url = `/job/vfeedback/${pk}/update/`;
+			}
+
+			const fdata = new FormData();
+			fdata.append("feedback", editfeedbackTA);
+			await axiosInstanceAuth2
+				.put(url, fdata)
+				.then((res) => {
+					toastcomp("Feedback Updated", "success");
+					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
+					loadFeedback();
+				})
+				.catch((err) => {
+					toastcomp("Feedback Not Updated", "error");
+				});
+		}
+	}
+
+	async function updateFeedbackStatus(pk, status) {
+		if (selectedPerson["name"] != "Review") {
+			toastcomp("At this stage of applicant you cant able to update feedback", "error");
+			seteditfeedback(false);
+			loadFeedback();
+		} else {
+			let url = "";
+			if (type === "career") {
+				url = `/job/feedback/${pk}/update/`;
+			}
+			if (type === "vendor") {
+				url = `/job/vfeedback/${pk}/update/`;
+			}
+			const fdata = new FormData();
+			fdata.append("status", status);
+			await axiosInstanceAuth2
+				.put(url, fdata)
+				.then((res) => {
+					toastcomp("Feedback Status Updated", "success");
+					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
+
+					addNotifyLog(axiosInstanceAuth2, title, "");
+					toggleLoadMode(true);
+					loadFeedback();
+				})
+				.catch((err) => {
+					toastcomp("Feedback Status Not Updated", "error");
+				});
+		}
+	}
+
+	useEffect(() => {
+		if (feedbackList.length > 0 && currentUser.length > 0) {
+			for (let i = 0; i < feedbackList.length; i++) {
+				if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
+					seteditfeedbackTA(feedbackList[i]["feedback"]);
+					setcurrentUserFeedback(true);
+				}
+			}
+		}
+	}, [feedbackList, currentUser]);
 
 	// const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
 	// const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
@@ -405,17 +546,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	// 		setfeedbackreload(false);
 	// 	}
 	// }, [aid, feedbackreload]);
-
-	// useEffect(() => {
-	// 	if (feedbackList.length > 0 && currentUser.length > 0) {
-	// 		for (let i = 0; i < feedbackList.length; i++) {
-	// 			if (feedbackList[i]["user"]["email"] === currentUser[0]["email"]) {
-	// 				seteditfeedbackTA(feedbackList[i]["feedback"]);
-	// 				setcurrentUserFeedback(true);
-	// 			}
-	// 		}
-	// 	}
-	// }, [feedbackList, currentUser]);
 
 	return (
 		<>
@@ -796,6 +926,164 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													)}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													{!currentUserFeedback &&
+														selectedPerson["name"] === "Review" &&
+														((atsVersion === "enterprise" && userRole === "Hiring Manager") ||
+															atsVersion != "enterprise") && (
+															<div className="relative mt-6 border-t pb-8 pt-6 first:mt-0 first:border-t-0 first:pt-0">
+																<h3 className="mb-5">GIVE FEEDBACK FIRST</h3>
+																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																	{feedbackStatus !== "Shortlist" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("Shortlist");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-up text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-primary dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-primary"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-up text-sm" + " " + "text-primary"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	)}
+
+																	{feedbackStatus !== "On Hold" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("On Hold");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-circle-pause text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-yellow-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-yellow-500"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-circle-pause text-sm" + " " + "text-yellow-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	)}
+
+																	{feedbackStatus !== "Reject" ? (
+																		<div
+																			className={`group relative h-[40px] w-[70px] cursor-pointer text-center text-[12px] leading-[40px]`}
+																			onClick={(e) => {
+																				setfeedbackStatus("Reject");
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-down text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-red-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-red-500"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-down text-sm" + " " + "text-red-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	)}
+																</div>
+																{feedbackStatus.length > 0 && (
+																	<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																		<label
+																			htmlFor="addFeedback"
+																			className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																		>
+																			<span className="flex items-center">Feedback</span>
+																		</label>
+																		<textarea
+																			name="addFeedback"
+																			id="addFeedback"
+																			className={
+																				"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																				" " +
+																				"min-h-[100px]"
+																			}
+																			placeholder="Enter feedback here ..."
+																			value={feedbackTA}
+																			onChange={(e) => setfeedbackTA(e.target.value)}
+																		></textarea>
+																		<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																			<Button
+																				btnStyle="sm"
+																				label={"Add"}
+																				btnType={"button"}
+																				disabled={!checkDis()}
+																				handleClick={() => createFeedback()}
+																			/>
+																		</div>
+																	</div>
+																)}
+															</div>
+														)}
+
 													{/* {!currentUserFeedback && (
 														<>
 															<div className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0">
@@ -896,6 +1184,247 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															</div>
 														</>
 													)} */}
+
+													{feedbackList &&
+														feedbackList.map((data, i) => (
+															<div
+																className="relative mt-6 border-t pt-6 first:mt-0 first:border-t-0 first:pt-0"
+																key={i}
+															>
+																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
+																	{data["status"] !== "Shortlist" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "Shortlist");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-up text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-primary dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-primary"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-up text-sm" + " " + "text-primary"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Shortlist
+																			</p>
+																		</div>
+																	)}
+
+																	{data["status"] !== "On Hold" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "On Hold");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-circle-pause text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-yellow-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-yellow-500"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-circle-pause text-sm" + " " + "text-yellow-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				On Hold
+																			</p>
+																		</div>
+																	)}
+
+																	{data["status"] !== "Reject" ? (
+																		<div
+																			className={`${
+																				data["user"]["email"] === currentUser[0]["email"]
+																					? "cursor-pointer"
+																					: "cursor-normal"
+																			} group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]`}
+																			onClick={() => {
+																				if (data["user"]["email"] === currentUser[0]["email"]) {
+																					updateFeedbackStatus(data["id"], "Reject");
+																				}
+																			}}
+																		>
+																			<i
+																				className={
+																					"fa-solid fa-thumbs-down text-sm" +
+																					" " +
+																					"text-darkGray group-hover:text-red-500 dark:text-gray-400"
+																				}
+																			></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"hidden group-hover:block group-hover:text-red-500"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	) : (
+																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
+																			<i className={"fa-solid fa-thumbs-down text-sm" + " " + "text-red-500"}></i>
+																			<p
+																				className={
+																					"absolute bottom-[-22px] left-[50%] block w-full translate-x-[-50%] whitespace-nowrap rounded-b-[8px] px-2 py-[2px] font-semibold leading-normal" +
+																					" " +
+																					"block bg-gradDarkBlue text-white"
+																				}
+																			>
+																				Reject
+																			</p>
+																		</div>
+																	)}
+																</div>
+																{data["user"]["email"] === currentUser[0]["email"] ? (
+																	<>
+																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																			<label
+																				htmlFor="addFeedback"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																			>
+																				<span className="flex items-center">
+																					Feedback
+																					{!editfeedback && (
+																						<button
+																							type="button"
+																							className="ml-5 text-darkGray dark:text-gray-400"
+																							onClick={(e) => {
+																								seteditfeedback(true);
+																							}}
+																						>
+																							<i className="fa-solid fa-pen-to-square"></i>
+																						</button>
+																					)}
+																				</span>
+																			</label>
+																			<textarea
+																				name="addFeedback"
+																				id="addFeedback"
+																				className={
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					" " +
+																					"min-h-[100px]"
+																				}
+																				placeholder="Enter feedback here ..."
+																				value={editfeedbackTA}
+																				onChange={(e) => seteditfeedbackTA(e.target.value)}
+																				readOnly={!editfeedback}
+																			></textarea>
+																			<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																				{!editfeedback ? (
+																					<>
+																						<div className="flex items-center justify-between py-2 text-sm">
+																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																							<p className="text-[12px] text-darkGray dark:text-gray-400">
+																								{moment(data["timestamp"]).format("Do MMM YYYY")}
+																							</p>
+																						</div>
+																					</>
+																				) : (
+																					<>
+																						<Button
+																							btnStyle="sm"
+																							label={data["feedback"] && data["feedback"].length > 0 ? "Update" : "Add"}
+																							btnType={"button"}
+																							handleClick={(e) => {
+																								updateFeedback(data["id"]);
+																							}}
+																						/>
+																					</>
+																				)}
+																			</div>
+																		</div>
+																	</>
+																) : (
+																	<>
+																		<div className="overflow-hidden rounded-normal border dark:border-gray-500">
+																			<label
+																				htmlFor="addFeedback"
+																				className="block bg-lightBlue px-4 py-2 font-bold dark:bg-gray-700"
+																			>
+																				<span className="flex items-center">Feedback</span>
+																			</label>
+																			<textarea
+																				name="addFeedback"
+																				id="addFeedback"
+																				className={
+																					"dark:placeholder w-full resize-none border-0 px-4 py-2 align-middle text-sm focus:ring-0 dark:bg-gray-600 dark:text-white" +
+																					" " +
+																					"min-h-[100px]"
+																				}
+																				placeholder="Enter feedback here ..."
+																				value={data["feedback"]}
+																				readOnly={true}
+																			></textarea>
+																			<div className="bg-lightBlue px-4 dark:bg-gray-700">
+																				{
+																					<>
+																						<div className="flex items-center justify-between py-2 text-sm">
+																							<h6 className="font-bold">By - {data["user"]["email"]}</h6>
+																							<p className="text-[12px] text-darkGray dark:text-gray-400">
+																								{moment(data["timestamp"]).format("Do MMM YYYY")}
+																							</p>
+																						</div>
+																					</>
+																				}
+																			</div>
+																		</div>
+																	</>
+																)}
+															</div>
+														))}
 
 													{/* {feedbackList &&
 														feedbackList.map((data, i) => (

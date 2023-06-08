@@ -11,6 +11,7 @@ import { DragSource, DropTarget } from "react-dnd";
 import cn from "classnames";
 import _ from "lodash";
 import React from "react";
+import toastcomp from "@/components/toast";
 
 export default function Card(props: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -53,7 +54,15 @@ export default function Card(props: any) {
 							{props["data"]["type"]}
 						</aside>
 					</div>
-					<p className="mb-1 text-[12px] text-darkGray">ID - {props["data"]["arefid"]}</p>
+					<p
+						className="mb-1 cursor-pointer text-[12px] text-darkGray"
+						onClick={() => {
+							navigator.clipboard.writeText(props["data"]["arefid"]);
+							toastcomp("ID Copied to clipboard", "success");
+						}}
+					>
+						ID - {props["data"]["arefid"]}
+					</p>
 					<div className="flex items-center justify-between">
 						<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
 							<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>

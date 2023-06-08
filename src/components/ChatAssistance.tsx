@@ -95,7 +95,10 @@ export default function ChatAssistance(props: any) {
 			// .post(`/candidate/chatuserjob/clf0u1qzc0000dcu01f9a5x0m/`, formData)
 			.post(`/chatbot/chat-organization-wise/`, formData)
 			.then((res) => {
-				if (res.data.res === "Sure Here All Candidate" || res.data.res.includes("Sure Here Are Response")) {
+				if (res.data.res === "Sure Here All Candidate" || res.data.res.includes("Sure Here Are Response") || res.data.res === "Applicant Transfer To The Next Stage") {
+					if(res.data.res === "Applicant Transfer To The Next Stage"){
+						props.loadApplicant()
+					}
 					loadChat();
 				} else {
 					const formData2 = new FormData();

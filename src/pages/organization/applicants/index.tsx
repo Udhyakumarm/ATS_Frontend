@@ -228,7 +228,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{session && atsVersion === "enterprise" && (
+				{session && atsVersion === "enterprise" && userRole != "Hiring Manager" && (
 					<ChatAssistance
 						accessToken={session.accessToken}
 						notifyStatus={notify}
@@ -251,6 +251,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 						setinterdate={setinterdate}
 						setinterstime={setinterstime}
 						setinteretime={setinteretime}
+						loadApplicant={loadApplicant}
 					/>
 				)}
 				<div
