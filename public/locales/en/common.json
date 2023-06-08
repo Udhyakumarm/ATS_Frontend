@@ -60,7 +60,9 @@
         "Feedback": "Feedback",
         "WriteFeedback": "Write Feedback",
         "Rejected": "Rejected",
-        "Approved": "Approved"
+        "Approved": "Approved",
+        "Platform": "Platform",
+        "InterviewDuration": "Interview Duration"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -92,7 +94,8 @@
         "Edit": "Edit",
         "Download": "Download",
         "SendEmailTemplate": "Send Email Template",
-        "Update": "Update"
+        "Update": "Update",
+        "SendInvite": "Send Invitation"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -114,6 +117,7 @@
         "Jobs": "Jobs",
         "Time": "Time",
         "Applicants": "Applicants",
+        "Interviewer": "Interviewer",
         "OfferManagement": "Offer Management",
         "Interviews": "Interviews",
         "Analytics": "Analytics",
@@ -180,6 +184,7 @@
         "Profile": "Profile",
         "Applied": "Applied",
         "ScheduleInterview": "Schedule Interview",
+        "ScheduleManually": "Schedule Manually",
         "Integrations": "Integrations",
         "Calendar": "Calendar",
         "Notifications": "Notifications",
@@ -237,7 +242,13 @@
         "OfferPending": "Offer Pending",
         "OfferStatusApplicant": "Offer status by Applicant",
         "OfferAccepted": "Offer Accepted",
-        "EditOfferDetails": "Edit Offer Details"
+        "EditOfferDetails": "Edit Offer Details",
+        "Details": "Details",
+        "MessageFromVendor": "Message from Vendor",
+        "MoveApplicant": "Move Applicant",
+        "AIGeneratedInterview": "AI Generated Interview",
+        "AskQuestionsRelatedCandidate": "Ask Questions Related to the Candidate",
+        "LetChooseAvailability": "Let the invite choose from my availability"
     },
     "Plans": {
         "Starter": "Starter",

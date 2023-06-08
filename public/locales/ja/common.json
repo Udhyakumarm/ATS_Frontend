@@ -60,7 +60,9 @@
         "Feedback": "フィードバック",
         "WriteFeedback": "フィードバックを書く",
         "Rejected": "拒否されました",
-        "Approved": "承認済み"
+        "Approved": "承認済み",
+        "Platform": "使用ツール",
+        "InterviewDuration": "インタビュー時間"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -92,7 +94,8 @@
         "Edit": "編集",
         "Download": "ダウンロード",
         "SendEmailTemplate": "メールテンプレートの送信",
-        "Update": "アップデート"
+        "Update": "アップデート",
+        "SendInvite": "招待を送る"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -114,6 +117,7 @@
         "Jobs": "求人",
         "Time": "実施日",
         "Applicants": "候補者",
+        "Interviewer": "面接官",
         "OfferManagement": "オファー管理",
         "Interviews": "面接",
         "Analytics": "アナリティクス",
@@ -180,6 +184,7 @@
         "Profile": "プロフィール",
         "Applied": "推薦日",
         "ScheduleInterview": "面接・面談を調整",
+        "ScheduleManually": "手動で調整",
         "Integrations": "ツール連携",
         "Calendar": "カレンダー",
         "Notifications": "通知",
@@ -237,7 +242,13 @@
         "OfferPending": "オファー保留中",
         "OfferStatusApplicant": "応募者別の内定状況",
         "OfferAccepted": "オファー承諾",
-        "EditOfferDetails": "オファーの詳細を編集する"
+        "EditOfferDetails": "オファーの詳細を編集する",
+        "Details": "年収・必要期間",
+        "MessageFromVendor": "人材紹介会社からのコメント",
+        "MoveApplicant": "候補者を移動",
+        "AIGeneratedInterview": "AI生成インタビュー",
+        "AskQuestionsRelatedCandidate": "候補者に関連する質問をする",
+        "LetChooseAvailability": "面接官に候補日程を共有する"
     },
     "Plans": {
         "Starter": "スターター",
