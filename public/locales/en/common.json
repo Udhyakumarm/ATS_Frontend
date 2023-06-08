@@ -54,7 +54,13 @@
         "Section": "Section",
         "Grade": "Grade",
         "Location": "Location",
-        "SalaryRange": "Salary Range"
+        "SalaryRange": "Salary Range",
+        "CandidateType": "Candidate Type",
+        "ApprovalAuthorities": "Approval Authorities",
+        "Feedback": "Feedback",
+        "WriteFeedback": "Write Feedback",
+        "Rejected": "Rejected",
+        "Approved": "Approved"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -78,7 +84,15 @@
         "Prev": "Prev",
         "AddCandidate": "Add Candidate",
         "ApplyHere": "Apply Here",
-        "AlreadyApplied": "Already Applied"
+        "AlreadyApplied": "Already Applied",
+        "Approve": "Approve",
+        "Reject": "Reject",
+        "SendForApproval": "Send For Approval",
+        "ReSendForApproval": "Re-Send For Approval",
+        "Edit": "Edit",
+        "Download": "Download",
+        "SendEmailTemplate": "Send Email Template",
+        "Update": "Update"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -211,7 +225,19 @@
         "OfferDiscussion": "Offer Discussion",
         "OfferStatus": "Offer Status",
         "From": "From",
-        "To": "To"
+        "To": "To",
+        "OfferNotYetCreated": "Offer Not Yet Created",
+        "UnderDevelopment": "Under Development",
+        "OfferSentSuccessfully": "Offer Sent Successfully",
+        "UnderReview": "Under Review",
+        "OfferLetterFomratPending": "Offer Letter Format Pending",
+        "KindlyContactYourOrgSuperAdminATS": "Kindly Contact Your Org Super Admin of ATS",
+        "OfferLetter": "Offer Letter",
+        "SelectOfferLetter": "Select Offer Letter",
+        "OfferPending": "Offer Pending",
+        "OfferStatusApplicant": "Offer status by Applicant",
+        "OfferAccepted": "Offer Accepted",
+        "EditOfferDetails": "Edit Offer Details"
     },
     "Plans": {
         "Starter": "Starter",

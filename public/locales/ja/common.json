@@ -54,7 +54,13 @@
         "Section": "課・グループ",
         "Grade": "グレード",
         "Location": "勤務地",
-        "SalaryRange": "年収レンジ"
+        "SalaryRange": "年収レンジ",
+        "CandidateType": "Candidate Type",
+        "ApprovalAuthorities": "決裁者",
+        "Feedback": "フィードバック",
+        "WriteFeedback": "フィードバックを書く",
+        "Rejected": "拒否されました",
+        "Approved": "承認済み"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -78,7 +84,15 @@
         "Prev": "前",
         "AddCandidate": "候補者を追加",
         "ApplyHere": "応募する",
-        "AlreadyApplied": "すでに適用されています"
+        "AlreadyApplied": "すでに適用されています",
+        "Approve": "承認",
+        "Reject": "拒絶",
+        "SendForApproval": "承認のために送信",
+        "ReSendForApproval": "承認のために再送信",
+        "Edit": "編集",
+        "Download": "ダウンロード",
+        "SendEmailTemplate": "メールテンプレートの送信",
+        "Update": "アップデート"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -211,7 +225,19 @@
         "OfferDiscussion": "オファー提示",
         "OfferStatus": "ステータス",
         "From": "下限",
-        "To": "上限"
+        "To": "上限",
+        "OfferNotYetCreated": "オファーはまだ作成されていません",
+        "UnderDevelopment": "開発中で",
+        "OfferSentSuccessfully": "オファーは正常に送信されました",
+        "UnderReview": "検討中",
+        "OfferLetterFomratPending": "オファーレターのフォーマットは保留中",
+        "KindlyContactYourOrgSuperAdminATS": "組織の ATS のスーパー管理者にお問い合わせください。",
+        "OfferLetter": "オファーレター",
+        "SelectOfferLetter": "選択するオファーレター",
+        "OfferPending": "オファー保留中",
+        "OfferStatusApplicant": "応募者別の内定状況",
+        "OfferAccepted": "オファー承諾",
+        "EditOfferDetails": "オファーの詳細を編集する"
     },
     "Plans": {
         "Starter": "スターター",

@@ -1377,10 +1377,10 @@ export default function OfferManagement() {
 																	</div>
 																</div>
 																<FormField
-																	label="Candidate Type"
+																	label={t('Form.CandidateType')}
 																	singleSelect
 																	fieldType="select2"
-																	options={["Full Time", "Part TIme", "Internship"]}
+																	options={[t('Select.FullTime'), t('Select.PartTime'), t('Select.Internship')]}
 																	value={ctype}
 																	handleChange={setctype}
 																	required
@@ -1389,10 +1389,10 @@ export default function OfferManagement() {
 																<div className="flex flex-wrap">
 																	<div className="grow pr-6 last:pr-0">
 																		<FormField
-																			label="Visa Sponsorship"
+																			label={t('Words.VisaSponsorship')}
 																			singleSelect
 																			fieldType="select2"
-																			options={["Yes", "No", "N/A"]}
+																			options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 																			value={visa}
 																			handleChange={setvisa}
 																			required
@@ -1401,10 +1401,10 @@ export default function OfferManagement() {
 																	</div>
 																	<div className="grow pr-6 last:pr-0">
 																		<FormField
-																			label="Paid Relocation"
+																			label={t('Words.PaidRelocation')}
 																			singleSelect
 																			fieldType="select2"
-																			options={["Yes", "No", "N/A"]}
+																			options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 																			value={relocation}
 																			handleChange={setrelocation}
 																			required
@@ -1413,7 +1413,7 @@ export default function OfferManagement() {
 																	</div>
 																</div>
 																<FormField
-																	label="Approval Authorities"
+																	label={t('Form.ApprovalAuthorities')}
 																	fieldType="select2"
 																	options={hmanage}
 																	value={approval}
@@ -1424,9 +1424,9 @@ export default function OfferManagement() {
 
 																<hr />
 
-																<h4 className="mb-2 mt-6 font-bold">Feedback</h4>
+																<h4 className="mb-2 mt-6 font-bold">{t('Form.Feedback')}</h4>
 																<FormField
-																	placeholder="Write Feedback"
+																	placeholder={t('Form.WriteFeedback')}
 																	fieldType="textarea"
 																	value={feedback}
 																	handleChange={(e) => setfeedback(e.target.value)}
@@ -1434,7 +1434,7 @@ export default function OfferManagement() {
 
 																<div className="flex flex-wrap gap-2">
 																	<Button
-																		label={"Approve"}
+																		label={t('Btn.Approve')}
 																		btnStyle="success"
 																		btnType={"button"}
 																		handleClick={() => newOfferFeedback("Approve")}
@@ -1443,7 +1443,7 @@ export default function OfferManagement() {
 																	{/* disabled={!checkBtnOffer()} handleClick={()=>newOffer(applicantlist[userID]["arefid"])} */}
 
 																	<Button
-																		label={"Reject"}
+																		label={t('Btn.Reject')}
 																		btnType={"button"}
 																		btnStyle="danger"
 																		disabled={!rejectVerify()}
@@ -1454,8 +1454,8 @@ export default function OfferManagement() {
 														) : (
 															<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-																<p className="text-lg text-yellow-700">Offer Not Yet Created</p>
-																<p className="text-sm">Under Development</p>
+																<p className="text-lg text-yellow-700">{t('Words.OfferNotYetCreated')}</p>
+																<p className="text-sm">{t('Words.UnderDevelopment')}</p>
 															</div>
 														)}
 													</section>
@@ -1503,28 +1503,28 @@ export default function OfferManagement() {
 																					<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
 																						<div className="flex flex-wrap items-center justify-between font-bold">
 																							<p className="mb-1 text-red-700">
-																								<i className="fa-regular fa-face-frown"></i> Rejected (
+																								<i className="fa-regular fa-face-frown"></i> {t('Form.Rejected')} (
 																								{data["organization"]["email"]})
 																							</p>
 																							<p className="text-[12px] text-darkGray">
 																								{moment(data["timestamp"]).fromNow()}
 																							</p>
 																						</div>
-																						<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																						<h5 className="mt-2 font-semibold text-black">{t('Form.Feedback')}:</h5>
 																						<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
 																					</div>
 																				) : (
 																					<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
 																						<div className="flex flex-wrap items-center justify-between font-bold">
 																							<p className="mb-1 text-green-700">
-																								<i className="fa-regular fa-face-smile"></i> Approved (
+																								<i className="fa-regular fa-face-smile"></i> {t('Form.Approved')} (
 																								{data["organization"]["email"]})
 																							</p>
 																							<p className="text-[12px] text-darkGray">
 																								{moment(data["timestamp"]).fromNow()}
 																							</p>
 																						</div>
-																						<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																						<h5 className="mt-2 font-semibold text-black">{t('Form.Feedback')}:</h5>
 																						<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
 																					</div>
 																				)
@@ -1543,7 +1543,7 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Department"
+																					label={t('Words.Department')}
 																					fieldType="input"
 																					inputType="text"
 																					value={dept}
@@ -1553,7 +1553,7 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Section"
+																					label={t('Form.Section')}
 																					fieldType="input"
 																					inputType="text"
 																					value={section}
@@ -1563,7 +1563,7 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Division"
+																					label={t('Words.Division')}
 																					fieldType="input"
 																					inputType="text"
 																					value={div}
@@ -1573,7 +1573,7 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Grade"
+																					label={t('Form.Grade')}
 																					fieldType="input"
 																					inputType="text"
 																					value={grade}
@@ -1583,7 +1583,7 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
 																				<FormField
-																					label="Location"
+																					label={t('Form.Location')}
 																					fieldType="input"
 																					inputType="text"
 																					value={location}
@@ -1594,12 +1594,12 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="mb-4">
 																			<h4 className="mb-2 font-bold">
-																				Salary Range<sup className="text-red-500">*</sup>
+																				{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 																			</h4>
 																			<div className="flex flex-wrap">
 																				<div className="w-[170px] pr-6 last:pr-0">
 																					<FormField
-																						placeholder="Currency"
+																						placeholder={t('Words.Currency')}
 																						fieldType="select2"
 																						singleSelect
 																						value={curr}
@@ -1729,7 +1729,7 @@ export default function OfferManagement() {
 																				</div>
 																				<div className="w-[170px] pr-6 last:pr-0">
 																					<FormField
-																						placeholder="Type"
+																						placeholder={t('Words.Type')}
 																						singleSelect
 																						fieldType="select2"
 																						options={["Monthly", "Yearly"]}
@@ -1739,7 +1739,7 @@ export default function OfferManagement() {
 																				</div>
 																				<div className="grow pr-6 last:pr-0">
 																					<FormField
-																						placeholder="From"
+																						placeholder={t('Words.From')}
 																						fieldType="input"
 																						inputType="number"
 																						value={from}
@@ -1748,7 +1748,7 @@ export default function OfferManagement() {
 																				</div>
 																				<div className="grow pr-6 last:pr-0">
 																					<FormField
-																						placeholder="To"
+																						placeholder={t('Words.To')}
 																						fieldType="input"
 																						inputType="number"
 																						value={to}
@@ -1758,10 +1758,10 @@ export default function OfferManagement() {
 																			</div>
 																		</div>
 																		<FormField
-																			label="Candidate Type"
+																			label={t('Form.CandidateType')}
 																			singleSelect
 																			fieldType="select2"
-																			options={["Full Time", "Part TIme", "Internship"]}
+																			options={[t('Select.FullTime'), t('Select.PartTime'), t('Select.Internship')]}
 																			value={ctype}
 																			handleChange={setctype}
 																			required
@@ -1769,10 +1769,10 @@ export default function OfferManagement() {
 																		<div className="flex flex-wrap">
 																			<div className="mb-4 grow pr-6 last:pr-0">
 																				<FormField
-																					label="Visa Sponsorship"
+																					label={t('Words.VisaSponsorship')}
 																					singleSelect
 																					fieldType="select2"
-																					options={["Yes", "No", "N/A"]}
+																					options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 																					value={visa}
 																					handleChange={setvisa}
 																					required
@@ -1780,10 +1780,10 @@ export default function OfferManagement() {
 																			</div>
 																			<div className="mb-4 grow pr-6 last:pr-0">
 																				<FormField
-																					label="Paid Relocation"
+																					label={t('Words.PaidRelocation')}
 																					singleSelect
 																					fieldType="select2"
-																					options={["Yes", "No", "N/A"]}
+																					options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 																					value={relocation}
 																					handleChange={setrelocation}
 																					required
@@ -1791,7 +1791,7 @@ export default function OfferManagement() {
 																			</div>
 																		</div>
 																		<FormField
-																			label="Approval Authorities"
+																			label={t('Form.ApprovalAuthorities')}
 																			fieldType="select2"
 																			options={hmanage}
 																			value={approval}
@@ -1800,7 +1800,7 @@ export default function OfferManagement() {
 																		/>
 
 																		<Button
-																			label={newoffer ? "Send For Approval" : "Re-Send For Approval"}
+																			label={newoffer ? t('Btn.SendForApproval') : t('Btn.ReSendForApproval')}
 																			btnType={"button"}
 																			disabled={!checkBtnOffer()}
 																			handleClick={() => newOffer(applicantlist[userID]["arefid"])}
@@ -1813,35 +1813,35 @@ export default function OfferManagement() {
 																				<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
 																					<div className="flex flex-wrap items-center justify-between font-bold">
 																						<p className="mb-1 text-red-700">
-																							<i className="fa-regular fa-face-frown"></i> Rejected (
+																							<i className="fa-regular fa-face-frown"></i> {t('Form.Rejected')} (
 																							{data["organization"]["email"]})
 																						</p>
 																						<p className="text-[12px] text-darkGray">
 																							{moment(data["timestamp"]).fromNow()}
 																						</p>
 																					</div>
-																					<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																					<h5 className="mt-2 font-semibold text-black">{t('Form.Feedback')}:</h5>
 																					<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
 																				</div>
 																			) : (
 																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
 																					<div className="flex flex-wrap items-center justify-between font-bold">
 																						<p className="mb-1 text-green-700">
-																							<i className="fa-regular fa-face-smile"></i> Approved (
+																							<i className="fa-regular fa-face-smile"></i> {t('Form.Approved')} (
 																							{data["organization"]["email"]})
 																						</p>
 																						<p className="text-[12px] text-darkGray">
 																							{moment(data["timestamp"]).fromNow()}
 																						</p>
 																					</div>
-																					<h5 className="mt-2 font-semibold text-black">Feedback:</h5>
+																					<h5 className="mt-2 font-semibold text-black">{t('Form.Feedback')}:</h5>
 																					<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
 																				</div>
 																			)
 																		)}
 
 																		<Button
-																			label={"Next Step"}
+																			label={t('Btn.Next')}
 																			btnType={"button"}
 																			disabled={!nextstepVerify()}
 																			handleClick={() => {
@@ -1853,8 +1853,8 @@ export default function OfferManagement() {
 																) : (
 																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																		<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-																		<p className="text-lg text-yellow-700">Offer Sent Successfully</p>
-																		<p className="text-sm">Under Review</p>
+																		<p className="text-lg text-yellow-700">{t('Words.OfferSentSuccessfully')}</p>
+																		<p className="text-sm">{t('Words.UnderReview')}</p>
 																	</div>
 																)}
 															</section>
@@ -1865,16 +1865,16 @@ export default function OfferManagement() {
 																{wordpath === "" ? (
 																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																		<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																		<p className="text-lg">Offer Letter Fomrat Pending</p>
-																		<small className="font-semibold">Kindly Contact Your Org Super Admin of ATS</small>
+																		<p className="text-lg">{t('Words.OfferLetterFomratPending')}</p>
+																		<small className="font-semibold">{t('Words.KindlyContactYourOrgSuperAdminATS')}</small>
 																	</div>
 																) : (
 																	<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
 																		<p className="my-2">
 																			{word != null ? (
-																				<>FileName (Offer Letter)</>
+																				<>{t('Words.OfferLetter')}</>
 																			) : (
-																				<>Select Offer Letter (Offer Letter)</>
+																				<>{t('Words.SelectOfferLetter')}</>
 																			)}
 																		</p>
 																		{word != null ? (
@@ -1927,7 +1927,7 @@ export default function OfferManagement() {
 																		<div className="flex flex-wrap items-center justify-between px-8 pt-4">
 																			<div className="my-1 mr-4 last:mr-0">
 																				<Button
-																					label="Confirm Details"
+																					label={t('Btn.Confirm')}
 																					btnType="button"
 																					handleClick={() => updateOfferStep2(applicantlist[userID]["arefid"])}
 																				/>
@@ -1935,7 +1935,7 @@ export default function OfferManagement() {
 																			<div className="my-1 mr-4 last:mr-0">
 																				<Button
 																					btnStyle="gray"
-																					label="Edit Details"
+																					label={t('Btn.Edit')}
 																					btnType="button"
 																					handleClick={() => seteditDetails(true)}
 																				/>
@@ -1950,13 +1950,13 @@ export default function OfferManagement() {
 															<section className="px-10 py-6">
 																{word != null && (
 																	<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																		<p className="my-2">FileName (Offer Letter)</p>
+																		<p className="my-2">{t('Words.OfferLetter')}</p>
 																		<button
 																			className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
 																			onClick={handleDownload}
 																		>
 																			<i className="fa-solid fa-download mr-2"></i>
-																			Download
+																			{t('Btn.Download')}
 																		</button>
 																	</div>
 																)}
@@ -1972,7 +1972,7 @@ export default function OfferManagement() {
 																		</div>
 																		<div className="px-8 pt-4 text-center">
 																			<Button
-																				label="Send Email Template"
+																				label={t('Btn.SendEmailTemplate')}
 																				btnType="button"
 																				handleClick={() => handleStep3()}
 																			/>
@@ -1987,19 +1987,19 @@ export default function OfferManagement() {
 																{ocstatus === "Pending" && (
 																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																		<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																		<p className="text-lg">Offer Pending</p>
-																		<small className="font-semibold">Offer status by Applicant</small>
+																		<p className="text-lg">{t('Words.OfferPending')}</p>
+																		<small className="font-semibold">{t('Words.OfferStatusApplicant')}</small>
 																	</div>
 																)}
 																{ocstatus === "Accepted" && (
 																	<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
 																		<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
-																		<p className="mb-2 text-lg text-green-700">Offer Accepted</p>
+																		<p className="mb-2 text-lg text-green-700">{t('Words.OfferAccepted')}</p>
 																		<button
 																			onClick={() => handleDownload()}
 																			className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
 																		>
-																			Download Offer Letter
+																			{t('Btn.Download')} {t('Words.OfferLetter')}
 																		</button>
 																	</div>
 																)}
@@ -2151,12 +2151,20 @@ export default function OfferManagement() {
 										</button>
 									</div>
 									<div className="p-8 pt-0 text-center">
-										<h4 className="text-3xl font-bold">Email has been sent</h4>
+										<h4 className="text-3xl font-bold">
+											{
+												srcLang==='ja'
+												?
+												'メールが送信されました'
+												:
+												'Email has been sent'
+											}
+										</h4>
 										<Image src={successGraphic} alt="Success" width={300} className="mx-auto my-4 w-[200px]" />
 										<hr className="mb-4" />
 										<div className="mb-2">
 											<Button
-												label="Schedule a Call"
+												label={ srcLang==='ja'?  '面談を調整' : 'Schedule a Call' }
 												btnType="button"
 												handleClick={() => {
 													setDiscussEmail(false);
@@ -2165,7 +2173,13 @@ export default function OfferManagement() {
 											/>
 										</div>
 										<p className="mx-auto w-full max-w-[320px] text-sm text-darkGray">
-											Schedule a Call with Applicant to Discuss Further Onboarding Steps
+											{
+												srcLang==='ja'
+												?
+												'候補者とオファー面談を調整します'
+												:
+												'Schedule a Call with Applicant to Discuss Further Onboarding Steps'
+											}
 										</p>
 									</div>
 								</Dialog.Panel>
@@ -2211,7 +2225,7 @@ export default function OfferManagement() {
 										</button>
 									</div>
 									<div className="p-8 pt-0">
-										<h4 className="text-3xl font-bold">Edit Offer Details</h4>
+										<h4 className="text-3xl font-bold">{t('Words.EditOfferDetails')}</h4>
 										<hr className="mb-4" />
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -2226,7 +2240,7 @@ export default function OfferManagement() {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Department"
+													label={t('Words.Department')}
 													fieldType="input"
 													inputType="text"
 													value={dept}
@@ -2236,7 +2250,7 @@ export default function OfferManagement() {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Section"
+													label={t('Form.Section')}
 													fieldType="input"
 													inputType="text"
 													value={section}
@@ -2246,7 +2260,7 @@ export default function OfferManagement() {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Division"
+													label={t('Words.Division')}
 													fieldType="input"
 													inputType="text"
 													value={div}
@@ -2256,7 +2270,7 @@ export default function OfferManagement() {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Grade"
+													label={t('Form.Grade')}
 													fieldType="input"
 													inputType="text"
 													value={grade}
@@ -2266,7 +2280,7 @@ export default function OfferManagement() {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label="Location"
+													label={t('Form.Location')}
 													fieldType="input"
 													inputType="text"
 													value={location}
@@ -2277,12 +2291,12 @@ export default function OfferManagement() {
 										</div>
 										<div className="mb-4">
 											<h4 className="mb-2 font-bold">
-												Salary Range<sup className="text-red-500">*</sup>
+											{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 											</h4>
 											<div className="flex flex-wrap">
 												<div className="w-[170px] pr-6 last:pr-0">
 													<FormField
-														placeholder="Currency"
+														placeholder={t('Words.Currency')}
 														fieldType="select2"
 														singleSelect
 														value={curr}
@@ -2412,7 +2426,7 @@ export default function OfferManagement() {
 												</div>
 												<div className="w-[170px] pr-6 last:pr-0">
 													<FormField
-														placeholder="Type"
+														placeholder={t('Words.Type')}
 														singleSelect
 														fieldType="select2"
 														options={["Monthly", "Yearly"]}
@@ -2422,7 +2436,7 @@ export default function OfferManagement() {
 												</div>
 												<div className="grow pr-6 last:pr-0">
 													<FormField
-														placeholder="From"
+														placeholder={t('Words.From')}
 														fieldType="input"
 														inputType="number"
 														value={from}
@@ -2431,7 +2445,7 @@ export default function OfferManagement() {
 												</div>
 												<div className="grow pr-6 last:pr-0">
 													<FormField
-														placeholder="To"
+														placeholder={t('Words.To')}
 														fieldType="input"
 														inputType="number"
 														value={to}
@@ -2441,10 +2455,10 @@ export default function OfferManagement() {
 											</div>
 										</div>
 										<FormField
-											label="Candidate Type"
+											label={t('Form.CandidateType')}
 											singleSelect
 											fieldType="select2"
-											options={["Full Time", "Part TIme", "Internship"]}
+											options={[t('Select.FullTime'), t('Select.PartTime'), t('Select.Internship')]}
 											value={ctype}
 											handleChange={setctype}
 											required
@@ -2452,10 +2466,10 @@ export default function OfferManagement() {
 										<div className="flex flex-wrap">
 											<div className="grow pr-6 last:pr-0">
 												<FormField
-													label="Visa Sponsorship"
+													label={t('Words.VisaSponsorship')}
 													singleSelect
 													fieldType="select2"
-													options={["Yes", "No", "N/A"]}
+													options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 													value={visa}
 													handleChange={setvisa}
 													required
@@ -2463,10 +2477,10 @@ export default function OfferManagement() {
 											</div>
 											<div className="grow pr-6 last:pr-0">
 												<FormField
-													label="Paid Relocation"
+													label={t('Words.PaidRelocation')}
 													singleSelect
 													fieldType="select2"
-													options={["Yes", "No", "N/A"]}
+													options={[t('Select.Yes'), t('Select.No'), 'N/A']}
 													value={relocation}
 													handleChange={setrelocation}
 													required
@@ -2475,7 +2489,7 @@ export default function OfferManagement() {
 										</div>
 										<hr className="mb-5 mt-5" />
 										<Button
-											label={"Update"}
+											label={t('Btn.Update')}
 											btnType={"button"}
 											disabled={!checkBtnOffer1()}
 											handleClick={() => updateOffer()}
@@ -2515,7 +2529,7 @@ export default function OfferManagement() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Schedule Interview</h4>
+										<h4 className="flex items-center font-semibold leading-none">{t('Words.ScheduleInterview')}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -2526,7 +2540,7 @@ export default function OfferManagement() {
 									</div>
 									<div className="p-8">
 										<FormField
-											label="Interview Name"
+											label={t('Form.InterviewName')}
 											fieldType="input"
 											inputType="text"
 											value={intername}
@@ -2535,7 +2549,7 @@ export default function OfferManagement() {
 										{/* <FormField label="Date & Time" fieldType="date" singleSelect showTimeSelect showHours /> */}
 										{/* <FormField label="Platform" fieldType="select" /> */}
 										<FormField
-											label="Description"
+											label={t('Form.Description')}
 											fieldType="textarea"
 											value={interdesc}
 											handleChange={(e) => setinterdesc(e.target.value)}
@@ -2545,7 +2559,7 @@ export default function OfferManagement() {
 										<div className="mb-4 last:mb-0">
 											<div>
 												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{"Start Date"}
+												{t('Form.StartDate')}
 												</label>
 												<div className="relative">
 													<input type="date" value={interdate} onChange={(e) => setinterdate(e.target.value)} />
@@ -2555,7 +2569,7 @@ export default function OfferManagement() {
 										<div className="mb-4 last:mb-0">
 											<div>
 												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{"Start Time"}
+												{t('Form.StartTime')}
 												</label>
 												<div className="relative">
 													<input type="time" value={interstime} onChange={(e) => setinterstime(e.target.value)} />
@@ -2565,7 +2579,7 @@ export default function OfferManagement() {
 										<div className="mb-4 last:mb-0">
 											<div>
 												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{"End Time"}
+												{t('Form.EndTime')}
 												</label>
 												<div className="relative">
 													<input type="time" value={interetime} onChange={(e) => setinteretime(e.target.value)} />
@@ -2574,7 +2588,7 @@ export default function OfferManagement() {
 										</div>
 
 										<Button
-											label="Confirm"
+											label={t('Btn.Confirm')}
 											disabled={!checkForm()}
 											btnType={"button"}
 											handleClick={() => handleStep32()}
