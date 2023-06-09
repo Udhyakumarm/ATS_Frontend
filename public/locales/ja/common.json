@@ -88,6 +88,8 @@
         "ApplyHere": "応募する",
         "AlreadyApplied": "すでに適用されています",
         "Approve": "承認",
+        "OnHold": "保留",
+        "Shortlist": "候補者リスト",
         "Reject": "拒絶",
         "SendForApproval": "承認のために送信",
         "ReSendForApproval": "承認のために再送信",
@@ -95,7 +97,12 @@
         "Download": "ダウンロード",
         "SendEmailTemplate": "メールテンプレートの送信",
         "Update": "アップデート",
-        "SendInvite": "招待を送る"
+        "SendInvite": "招待を送る",
+        "InProgress": "進行中",
+        "Regenerate": "再生する",
+        "ComingSoon": "準備中",
+        "GoPremium": "プレミアムプランにアップグレード",
+        "Upgrade": "アップグレード"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",

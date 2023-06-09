@@ -959,7 +959,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				Shortlist
+																				{t('Btn.Shortlist')}
 																			</p>
 																		</div>
 																	) : (
@@ -972,7 +972,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				Shortlist
+																				{t('Btn.Shortlist')}
 																			</p>
 																		</div>
 																	)}
@@ -998,7 +998,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				On Hold
+																				{t('Btn.OnHold')}
 																			</p>
 																		</div>
 																	) : (
@@ -1011,7 +1011,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				On Hold
+																				{t('Btn.OnHold')}
 																			</p>
 																		</div>
 																	)}
@@ -1037,7 +1037,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
 																			>
-																				Reject
+																				{t('Btn.Reject')}
 																			</p>
 																		</div>
 																	) : (
@@ -1050,7 +1050,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				Reject
+																				{t('Btn.Reject')}
 																			</p>
 																		</div>
 																	)}
@@ -1078,7 +1078,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		<div className="bg-lightBlue px-4 dark:bg-gray-700">
 																			<Button
 																				btnStyle="sm"
-																				label={"Add"}
+																				label={t('Btn.Add')}
 																				btnType={"button"}
 																				disabled={!checkDis()}
 																				handleClick={() => createFeedback()}
@@ -1224,7 +1224,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				Shortlist
+																				{t('Btn.Shortlist')}
 																			</p>
 																		</div>
 																	) : (
@@ -1237,7 +1237,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				Shortlist
+																				{t('Btn.Shortlist')}
 																			</p>
 																		</div>
 																	)}
@@ -1269,7 +1269,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				On Hold
+																				{t('Btn.OnHold')}
 																			</p>
 																		</div>
 																	) : (
@@ -1282,7 +1282,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				On Hold
+																				{t('Btn.OnHold')}
 																			</p>
 																		</div>
 																	)}
@@ -1314,7 +1314,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
 																			>
-																				Reject
+																				
 																			</p>
 																		</div>
 																	) : (
@@ -1327,7 +1327,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				Reject
+																				{t('Btn.Reject')}
 																			</p>
 																		</div>
 																	)}
@@ -1381,7 +1381,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					<>
 																						<Button
 																							btnStyle="sm"
-																							label={data["feedback"] && data["feedback"].length > 0 ? "Update" : "Add"}
+																							label={data["feedback"] && data["feedback"].length > 0 ? t('Btn.Update') : t('Btn.Add') }
 																							btnType={"button"}
 																							handleClick={(e) => {
 																								updateFeedback(data["id"]);
@@ -1887,7 +1887,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				<i className={"fa-solid fa-rotate fa-spin"}></i>
 																			</span>
 																		)}
-																		{ailoader ? <>In Progress</> : <>Regenerate</>}
+																		{ailoader ? <>{t('Btn.InProgress')}</> : <>{t('Btn.Regenerate')}</>}
 																	</button>
 																</div>
 															</div>

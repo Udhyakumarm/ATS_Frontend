@@ -88,6 +88,8 @@
         "ApplyHere": "Apply Here",
         "AlreadyApplied": "Already Applied",
         "Approve": "Approve",
+        "OnHold": "On Hold",
+        "Shortlist": "Shortlist",
         "Reject": "Reject",
         "SendForApproval": "Send For Approval",
         "ReSendForApproval": "Re-Send For Approval",
@@ -95,7 +97,12 @@
         "Download": "Download",
         "SendEmailTemplate": "Send Email Template",
         "Update": "Update",
-        "SendInvite": "Send Invitation"
+        "SendInvite": "Send Invitation",
+        "InProgress": "In Progress",
+        "Regenerate": "Regenerate",
+        "ComingSoon": "Coming Soon",
+        "GoPremium": "Go Premium",
+        "Upgrade": "Upgrade"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
