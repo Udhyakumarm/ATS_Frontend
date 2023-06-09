@@ -95,9 +95,17 @@ export default function ChatAssistance(props: any) {
 			// .post(`/candidate/chatuserjob/clf0u1qzc0000dcu01f9a5x0m/`, formData)
 			.post(`/chatbot/chat-organization-wise/`, formData)
 			.then((res) => {
-				if (res.data.res === "Sure Here All Candidate" || res.data.res.includes("Sure Here Are Response") || res.data.res === "Applicant Transfer To The Next Stage") {
-					if(res.data.res === "Applicant Transfer To The Next Stage"){
-						props.loadApplicant()
+				if (
+					res.data.res === "Sure Here All Candidate" ||
+					res.data.res.includes("Sure Here Are Response") ||
+					res.data.res === "Applicant Transfer To The Next Stage"
+				) {
+					if (res.data.res === "Applicant Transfer To The Next Stage") {
+						if (res.data.status && res.data.status === "Interview") {
+							setClick(!click);
+							setMaximize(false);
+						}
+						props.loadApplicant();
 					}
 					loadChat();
 				} else {
