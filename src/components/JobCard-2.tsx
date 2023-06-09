@@ -116,9 +116,6 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 					{!dashbaord && (
 						<div className="text-right text-gray-400">
-							<button type="button" className="mr-6">
-								<i className="fa-solid fa-copy"></i>
-							</button>
 							<Menu as="div" className="relative inline-block">
 								<Menu.Button className={"p-2"}>
 									<i className="fa-solid fa-ellipsis-vertical"></i>

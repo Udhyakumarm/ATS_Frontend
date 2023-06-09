@@ -492,7 +492,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 										) : (
 											<>
 												<div className="mb-6 flex flex-wrap items-center justify-between rounded-normal border p-3 dark:border-gray-600">
-													<h2 className="text-lg font-bold">{t("Btn.Add") + " " + t("Form.Division")}</h2>
+													<h2 className="text-lg font-bold">{t("Btn.Add") + " " + t("Words.Division")}</h2>
 													<Button
 														btnType="button"
 														btnStyle="iconRightBtn"
@@ -683,7 +683,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 										<h4 className="flex items-center font-semibold leading-none">
-											{t("Btn.Add") + " " + t("Form.Division")}
+											{t("Btn.Add") + " " + t("Words.Division")}
 										</h4>
 										<button
 											type="button"
