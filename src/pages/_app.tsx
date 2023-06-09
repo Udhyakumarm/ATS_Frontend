@@ -14,8 +14,11 @@ import { appWithTranslation } from "next-i18next";
 import { Dialog, Transition } from "@headlessui/react";
 import PermiumComp from "@/components/organization/premiumComp";
 import UpcomingComp from "@/components/organization/upcomingComp";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
+	const { t } = useTranslation('common')
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	useEffect(() => {
 		const handleRouteStart = () => NProgress.start();
@@ -145,7 +148,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 									>
 										<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 											<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-												<h4 className="flex items-center font-semibold leading-none">Coming Soon</h4>
+												<h4 className="flex items-center font-semibold leading-none">{t('Words.ComingSoon')}</h4>
 												<button
 													type="button"
 													className="leading-none hover:text-gray-700"
@@ -184,5 +187,12 @@ function Auth({ children }: any) {
 
 	return <></>;
 }
-
+export async function getStaticProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
+}
 export default appWithTranslation(App);

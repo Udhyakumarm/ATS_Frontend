@@ -192,18 +192,56 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			});
 	}
 
+	async function loadFeedback(appList: any) {
+		let canid = appList["arefid"];
+		let url = "";
+		if (appList["type"] === "career") {
+			url = `/job/listfeedback/${canid}/`;
+		}
+		if (appList["type"] === "vendor") {
+			url = `/job/listvfeedback/${canid}/`;
+		}
+
+		await axiosInstanceAuth2.get(url).then(async (res) => {
+			let data = res.data;
+			if (data.length > 0) {
+				let ch = true;
+				for (let i = 0; i < data.length; i++) {
+					if (data[i]["status"] != "Shortlist") {
+						ch = false;
+					}
+				}
+				if (ch) {
+					setnotify(true);
+					loadInd_OrgProfile();
+					setTimeout(() => {
+						setnotify(false);
+					}, 10000);
+				}
+			}
+		});
+	}
 	useEffect(() => {
 		if (cardstatus.length > 0) {
 			if (cardstatus === "Phone Screen" || cardstatus === "Interview") {
-				// setnotify(true)
+				setnotify(true);
 				loadInd_OrgProfile();
-				// setTimeout(
-				// () => {setnotify(false)},
-				// 10000
-				// );
+				setTimeout(() => {
+					setnotify(false);
+				}, 10000);
 			}
 		}
 	}, [cardstatus]);
+
+	useEffect(() => {
+		if (applicantList.length > 0) {
+			for (let i = 0; i < applicantList.length; i++) {
+				if (applicantList[i]["status"] === "Interview") {
+					loadFeedback(applicantList[i]);
+				}
+			}
+		}
+	}, [applicantList]);
 
 	function getAverage(num: any) {
 		return (num / tApp) * 100;
@@ -313,7 +351,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 																type="button"
 																className="rounded px-3 py-2 hover:bg-gradDarkBlue hover:text-white"
 															>
-																{data["type"] === "carrier" && (
+																{data["type"] === "career" && (
 																	<>
 																		{data["user"]["first_name"]} {data["user"]["last_name"]}
 																	</>
@@ -336,12 +374,12 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 														<td className="px-3 py-2 text-center text-[12px]">{data["type"]}</td>
 														<td className="px-3 py-2 text-center text-[12px]">
 															<span className="break-all">
-																{data["type"] === "carrier" && data["user"]["email"]}
+																{data["type"] === "career" && data["user"]["email"]}
 																{data["type"] === "vendor" && data["applicant"]["email"]}
 															</span>
 														</td>
 														<td className="px-3 py-2 text-center text-[12px]">
-															{data["type"] === "carrier" && data["user"]["notice_period"]}
+															{data["type"] === "career" && data["user"]["notice_period"]}
 															{data["type"] === "vendor" && data["applicant"]["notice_period"]}
 														</td>
 														<td className="px-3 py-2 text-center text-[12px]">

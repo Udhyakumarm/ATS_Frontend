@@ -90,37 +90,37 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			icon: <i className="fa-solid fa-timeline"></i>
 		},
 		{
-			title: srcLang === 'ja' ? '保留中' : 'Total Sourced',
+			title: srcLang === 'ja' ? 'コンタクト数' : 'Total Sourced',
 			number: sApp,
 			icon: <i className="fa-solid fa-circle-pause"></i>
 		},
 		{
-			title: 'Total Review',
+			title: srcLang === 'ja' ? '総レビュー数' : 'Total Reviewed',
 			number: rApp,
 			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Interview',
+			title: srcLang === 'ja' ? '面接数' : 'Total Interview',
 			number: iApp,
 			icon: <i className="fa-solid fa-circle-check"></i>
 		},
 		{
-			title: 'Total Shortlisted',
+			title: srcLang === 'ja' ? '最終候補者リストに残った合計' : 'Total Shortlisted',
 			number: shApp,
 			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Offer',
+			title: srcLang === 'ja' ? 'オファー数' : 'Total Offer',
 			number: oApp,
 			icon: <i className="fa-solid fa-clipboard-question"></i>
 		},
 		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Hired',
+			title: srcLang === 'ja' ? '入社数' : 'Total Hired',
 			number: hApp,
 			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
-			title: srcLang === 'ja' ? 'パイプライン' : 'Total Rejected',
+			title: srcLang === 'ja' ? '不合格数' : 'Total Rejected',
 			number: reApp,
 			icon: <i className="fa-solid fa-circle-xmark"></i>
 		}
