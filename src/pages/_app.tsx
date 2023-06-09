@@ -16,6 +16,7 @@ import PermiumComp from "@/components/organization/premiumComp";
 import UpcomingComp from "@/components/organization/upcomingComp";
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import {isMobileOnly} from 'react-device-detect';
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const { t } = useTranslation('common')
@@ -49,126 +50,143 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 
 	return (
 		<>
-			<Toaster />
-			<ThemeProvider attribute="class">
-				<SessionProvider session={session}>
-					<Head>
-						<meta name="viewport" content="viewport-fit=cover" />
-						<meta name="viewport" content="width=device-width, initial-scale=1" />
-						<link rel="icon" href="/favicon.ico" />
-					</Head>
-					<Header />
-					{Component.noAuth ? (
-						<Component {...pageProps} upcomingSoon={soon} />
-					) : (
-						<>
-							<Auth>
-								<Component
-									{...pageProps}
-									atsVersion={version}
-									userRole={role}
-									upcomingSoon={soon}
-									setUpgradePlan={setUpgradePlan}
-									setComingSoon={setComingSoon}
-									popupTitle={settitle}
-								/>
-							</Auth>
-						</>
-					)}
+			{
+				isMobileOnly
+				?
+				<>
+					<div className="p-8 flex items-center justify-center h-screen">
+						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
+							<h3 className="textGrad mb-4 text-3xl font-extrabold">
+								{srcLang==='ja' ? '準備中' : 'Mobile View Coming Soon'}
+							</h3>
+							<p className="text-sm text-darkGray">{srcLang==='ja' ? 'もうまもなくリリース予定' : 'We are working on this and it will ready for you soon.'}</p>
+						</div>
+					</div>
+				</>
+				:
+				<>
+					<Toaster />
+					<ThemeProvider attribute="class">
+						<SessionProvider session={session}>
+							<Head>
+								<meta name="viewport" content="viewport-fit=cover" />
+								<meta name="viewport" content="width=device-width, initial-scale=1" />
+								<link rel="icon" href="/favicon.ico" />
+							</Head>
+							<Header />
+							{Component.noAuth ? (
+								<Component {...pageProps} upcomingSoon={soon} />
+							) : (
+								<>
+									<Auth>
+										<Component
+											{...pageProps}
+											atsVersion={version}
+											userRole={role}
+											upcomingSoon={soon}
+											setUpgradePlan={setUpgradePlan}
+											setComingSoon={setComingSoon}
+											popupTitle={settitle}
+										/>
+									</Auth>
+								</>
+							)}
 
-					<Transition.Root show={upgradePlan} as={Fragment}>
-						<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setUpgradePlan}>
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0"
-								enterTo="opacity-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-							</Transition.Child>
-
-							<div className="fixed inset-0 z-10 overflow-y-auto">
-								<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Root show={upgradePlan} as={Fragment}>
+								<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setUpgradePlan}>
 									<Transition.Child
 										as={Fragment}
 										enter="ease-out duration-300"
-										enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-										enterTo="opacity-100 translate-y-0 sm:scale-100"
+										enterFrom="opacity-0"
+										enterTo="opacity-100"
 										leave="ease-in duration-200"
-										leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-										leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+										leaveFrom="opacity-100"
+										leaveTo="opacity-0"
 									>
-										<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
-											<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-												<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'プランをアップグレードする' : 'Upgrade Your Plan'}</h4>
-												<button
-													type="button"
-													className="leading-none hover:text-gray-700"
-													onClick={() => setUpgradePlan(false)}
-												>
-													<i className="fa-solid fa-xmark"></i>
-												</button>
-											</div>
-											<div className="p-8">
-												<PermiumComp userRole={role} title={title} setUpgradePlan={setUpgradePlan} />
-											</div>
-										</Dialog.Panel>
+										<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 									</Transition.Child>
-								</div>
-							</div>
-						</Dialog>
-					</Transition.Root>
-					<Transition.Root show={comingSoon} as={Fragment}>
-						<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0"
-								enterTo="opacity-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-							</Transition.Child>
 
-							<div className="fixed inset-0 z-10 overflow-y-auto">
-								<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+									<div className="fixed inset-0 z-10 overflow-y-auto">
+										<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+											<Transition.Child
+												as={Fragment}
+												enter="ease-out duration-300"
+												enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+												enterTo="opacity-100 translate-y-0 sm:scale-100"
+												leave="ease-in duration-200"
+												leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+												leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+											>
+												<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+													<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+														<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'プランをアップグレードする' : 'Upgrade Your Plan'}</h4>
+														<button
+															type="button"
+															className="leading-none hover:text-gray-700"
+															onClick={() => setUpgradePlan(false)}
+														>
+															<i className="fa-solid fa-xmark"></i>
+														</button>
+													</div>
+													<div className="p-8">
+														<PermiumComp userRole={role} title={title} setUpgradePlan={setUpgradePlan} />
+													</div>
+												</Dialog.Panel>
+											</Transition.Child>
+										</div>
+									</div>
+								</Dialog>
+							</Transition.Root>
+							<Transition.Root show={comingSoon} as={Fragment}>
+								<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
 									<Transition.Child
 										as={Fragment}
 										enter="ease-out duration-300"
-										enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-										enterTo="opacity-100 translate-y-0 sm:scale-100"
+										enterFrom="opacity-0"
+										enterTo="opacity-100"
 										leave="ease-in duration-200"
-										leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-										leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+										leaveFrom="opacity-100"
+										leaveTo="opacity-0"
 									>
-										<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
-											<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-												<h4 className="flex items-center font-semibold leading-none">{t('Words.ComingSoon')}</h4>
-												<button
-													type="button"
-													className="leading-none hover:text-gray-700"
-													onClick={() => setComingSoon(false)}
-												>
-													<i className="fa-solid fa-xmark"></i>
-												</button>
-											</div>
-											<div className="p-8">
-												<UpcomingComp title={title} setComingSoon={setComingSoon} />
-											</div>
-										</Dialog.Panel>
+										<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 									</Transition.Child>
-								</div>
-							</div>
-						</Dialog>
-					</Transition.Root>
-				</SessionProvider>
-			</ThemeProvider>
-			<Analytics />
+
+									<div className="fixed inset-0 z-10 overflow-y-auto">
+										<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+											<Transition.Child
+												as={Fragment}
+												enter="ease-out duration-300"
+												enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+												enterTo="opacity-100 translate-y-0 sm:scale-100"
+												leave="ease-in duration-200"
+												leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+												leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+											>
+												<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+													<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+														<h4 className="flex items-center font-semibold leading-none">{t('Words.ComingSoon')}</h4>
+														<button
+															type="button"
+															className="leading-none hover:text-gray-700"
+															onClick={() => setComingSoon(false)}
+														>
+															<i className="fa-solid fa-xmark"></i>
+														</button>
+													</div>
+													<div className="p-8">
+														<UpcomingComp title={title} setComingSoon={setComingSoon} />
+													</div>
+												</Dialog.Panel>
+											</Transition.Child>
+										</div>
+									</div>
+								</Dialog>
+							</Transition.Root>
+						</SessionProvider>
+					</ThemeProvider>
+					<Analytics />
+				</>
+			}
 		</>
 	);
 }
