@@ -54,7 +54,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 				isMobileOnly
 				?
 				<>
-					<div className="p-8 flex items-center justify-center h-screen">
+					<div className="p-[40px] flex items-center justify-center h-[calc(100vh-80px)]">
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
 							<h3 className="textGrad mb-4 text-3xl font-extrabold">
 								{srcLang==='ja' ? '準備中' : 'Mobile View Coming Soon'}

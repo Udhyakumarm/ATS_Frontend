@@ -54,6 +54,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const cancelButtonRef = useRef(null);
+	const [activityLogPopup, setActivityLogPopup] = useState(false);
 	const settings = {
 		dots: false,
 		arrows: true,
@@ -713,6 +714,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										</div>
 										<div className="p-6 pt-0">
 											{activityLog && activityLog.length > 0 ? (
+												<>
 												<div className="max-h-[330px] overflow-y-auto">
 													{activityLog.slice(0, 5).map((data, i) =>
 														i % 2 == 0 ? (
@@ -735,48 +737,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 															</div>
 														)
 													)}
-
-													{/* {sklLoad
-													? Array(2).fill(
-															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
-																<div className="flex items-center justify-center p-3">
-																	<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
-																		<i className="fa-solid fa-briefcase"></i>
-																	</span>
-																	<p className="w-[calc(100%-40px)]">
-																		<b>Product Manager </b>
-																		Job has been posted by the Adam Smith
-																	</p>
-																</div>
-															</div>
-													  )
-													: Array(2).fill(
-															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
-																<div className="flex items-center justify-center p-3">
-																	<Skeleton circle width={40} height={40} />
-																	<p className="w-[calc(100%-40px)] pl-4">
-																		<Skeleton width={200} />
-																		<Skeleton width={100} />
-																	</p>
-																</div>
-															</div>
-													  )}
-												{Array(2).fill(
-													<>
-														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1">
-															<div className="flex items-center justify-center p-3">
-																<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
-																	<i className="fa-solid fa-star"></i>
-																</div>
-																<p className="w-[calc(100%-40px)]">
-																	<b>New User - Alison Will </b>
-																	has logged in as an <b>Admin</b>
-																</p>
-															</div>
-														</div>
-													</>
-												)} */}
 												</div>
+												<div>
+													<Button btnStyle="outlined" label={t('Btn.LoadMore')} btnType="button" handleClick={() => setActivityLogPopup(true)} />
+												</div>
+												</>
 											) : (
 												<div className="py-8 text-center">
 													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
@@ -943,6 +908,78 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 					</div>
 				</div>
 			</main>
+			<Transition.Root show={activityLogPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setActivityLogPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">{t('Words.ActivityLog')}</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setActivityLogPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{
+											activityLog && activityLog.length > 0 &&
+											<>
+												<div className="max-h-[75vh] overflow-y-auto">
+													{activityLog.slice(0, -1).map((data, i) =>
+														i % 2 == 0 ? (
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1" key={i}>
+																<div className="flex items-center justify-center p-3">
+																	<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																		<i className="fa-solid fa-briefcase"></i>
+																	</span>
+																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																</div>
+															</div>
+														) : (
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1" key={i}>
+																<div className="flex items-center justify-center p-3">
+																	<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																		<i className="fa-solid fa-star"></i>
+																	</div>
+																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																</div>
+															</div>
+														)
+													)}
+												</div>
+											</>
+										}
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }
