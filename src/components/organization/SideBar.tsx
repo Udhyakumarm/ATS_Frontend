@@ -28,7 +28,7 @@ import { useUserStore, useVersionStore } from "@/utils/code";
 import UpcomingComp from "./upcomingComp";
 import PermiumComp from "./premiumComp";
 import toastcomp from "../toast";
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from "next-i18next";
 import { useLangStore } from "@/utils/code";
 import Button from "../Button";
 
@@ -48,7 +48,6 @@ export default function OrgSideBar() {
 	const role = useUserStore((state: { role: any }) => state.role);
 	const version = useVersionStore((state: { version: any }) => state.version);
 
-    
 	function preOrNot(name: any) {
 		if (version === "starter") {
 			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
@@ -60,14 +59,15 @@ export default function OrgSideBar() {
 			return false;
 		}
 	}
-    
+
 	function comOrNot(name: any) {
-		return name === "Inboxes" || name === "Analytics";
+		// return name === "Inboxes" || name === "Analytics";
+		return name === "Inboxes";
 	}
 
 	const menu = [
 		{
-			title: srcLang === 'ja' ? 'ダッシュボード' : 'Dashboard',
+			title: srcLang === "ja" ? "ダッシュボード" : "Dashboard",
 			url: "/organization/dashboard",
 			img: dashboardIcon,
 			imgWhite: dashboardIconWhite,
@@ -75,7 +75,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Dashboard")
 		},
 		{
-			title: srcLang === 'ja' ? '求人' : 'Jobs',
+			title: srcLang === "ja" ? "求人" : "Jobs",
 			url: "/organization/jobs",
 			img: jobsIcon,
 			imgWhite: jobsIconWhite,
@@ -83,7 +83,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Jobs")
 		},
 		{
-			title: srcLang === 'ja' ? '候補者' : 'Applicants',
+			title: srcLang === "ja" ? "候補者" : "Applicants",
 			url: "/organization/applicants",
 			img: applicantsIcon,
 			imgWhite: applicantsIconWhite,
@@ -91,7 +91,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Applicants")
 		},
 		{
-			title: srcLang === 'ja' ? 'オファー管理' : 'Offer Management',
+			title: srcLang === "ja" ? "オファー管理" : "Offer Management",
 			url: "/organization/offer-management",
 			img: offerManageIcon,
 			imgWhite: offerManageIconWhite,
@@ -99,7 +99,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Offer Management")
 		},
 		{
-			title: srcLang === 'ja' ? '面接' : 'Interviews',
+			title: srcLang === "ja" ? "面接" : "Interviews",
 			url: "/organization/interviews",
 			img: interviewsIcon,
 			imgWhite: interviewsIconWhite,
@@ -107,7 +107,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Interviews")
 		},
 		{
-			title: srcLang === 'ja' ? 'アナリティクス' : 'Analytics',
+			title: srcLang === "ja" ? "アナリティクス" : "Analytics",
 			url: "/organization/analytics",
 			img: analyticsIcon,
 			imgWhite: analyticsIconWhite,
@@ -115,7 +115,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Analytics")
 		},
 		{
-			title: srcLang === 'ja' ? 'インボックス' : 'Inboxes',
+			title: srcLang === "ja" ? "インボックス" : "Inboxes",
 			url: "/organization/inbox",
 			img: inboxesIcon,
 			imgWhite: inboxesIconWhite,
@@ -123,7 +123,7 @@ export default function OrgSideBar() {
 			com: comOrNot("Inboxes")
 		},
 		{
-			title: srcLang === 'ja' ? '設定' : 'Settings',
+			title: srcLang === "ja" ? "設定" : "Settings",
 			url: "/organization/settings",
 			img: settingsIcon,
 			imgWhite: settingsIconWhite,
@@ -132,18 +132,16 @@ export default function OrgSideBar() {
 		}
 	];
 
-    function handleClickLink(url,com,pre,title){
-        settitle(title)
-        if(com){
-            setComingSoon(true)
+	function handleClickLink(url, com, pre, title) {
+		settitle(title);
+		if (com) {
+			setComingSoon(true);
+		} else if (pre) {
+			setUpgradePlan(true);
+		} else {
+			router.push(url);
 		}
-        else if(pre){
-            setUpgradePlan(true)
-        }
-        else{
-            router.push(url)
-        }
-    }
+	}
 	return (
 		<>
 			<div
@@ -181,9 +179,9 @@ export default function OrgSideBar() {
 						{menu.map((menuItem, i) => (
 							<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
 								<div
-									onClick={()=>handleClickLink(menuItem.url,menuItem.com,menuItem.pre,menuItem.title)}
+									onClick={() => handleClickLink(menuItem.url, menuItem.com, menuItem.pre, menuItem.title)}
 									className={
-										`flex items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900 cursor-pointer` +
+										`flex cursor-pointer items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
 										" " +
 										(router.pathname == menuItem.url
 											? "border-r-gradDarkBlue bg-lightBlue text-primary dark:bg-gray-900 dark:text-white"
@@ -207,20 +205,29 @@ export default function OrgSideBar() {
 							</li>
 						))}
 					</ul>
-					{
-						version != "enterprise" && !show && (
-							<div className="py-4">
-								<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue rounded-large p-6 text-white">
-									<div className="flex items-center mb-2">
-										<h6 className="font-bold text-lg my-2">{srcLang === 'ja' ? 'プランをアップグレード' : 'Upgrade to Premium'}</h6>
-										<Image src={'/images/upgrade_launch.png'} alt="Upgrade" width={80} height={80} className="w-auto ml-auto" />
-									</div>
-									<p className="mb-2">{srcLang === 'ja' ? 'プレミアムプランの詳細はこちら' : 'Check out the Power of Premium Account'}</p>
-									<h6 className="font-bold text-lg my-2">{srcLang === 'ja' ? '20%オフキャンペーン実施中' : '20% Off'}</h6>
-									<Button
+					{version != "enterprise" && !show && (
+						<div className="py-4">
+							<div className="rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
+								<div className="mb-2 flex items-center">
+									<h6 className="my-2 text-lg font-bold">
+										{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Premium"}
+									</h6>
+									<Image
+										src={"/images/upgrade_launch.png"}
+										alt="Upgrade"
+										width={80}
+										height={80}
+										className="ml-auto w-auto"
+									/>
+								</div>
+								<p className="mb-2">
+									{srcLang === "ja" ? "プレミアムプランの詳細はこちら" : "Check out the Power of Premium Account"}
+								</p>
+								<h6 className="my-2 text-lg font-bold">{srcLang === "ja" ? "20%オフキャンペーン実施中" : "20% Off"}</h6>
+								<Button
 									btnStyle="white"
 									btnType="button"
-									label={srcLang === 'ja' ? 'アップグレード' : 'Upgrade'}
+									label={srcLang === "ja" ? "アップグレード" : "Upgrade"}
 									handleClick={() => {
 										if (role === "Super Admin") {
 											router.push("/organization/settings/pricing");
@@ -228,11 +235,10 @@ export default function OrgSideBar() {
 											toastcomp("Kindly Contact Your Super Admin", "warning");
 										}
 									}}
-									/>
-								</div>
+								/>
 							</div>
-						)
-					}
+						</div>
+					)}
 				</div>
 			</div>
 
@@ -263,7 +269,9 @@ export default function OrgSideBar() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'プランをアップグレードする' : 'Upgrade Your Plan'}</h4>
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
