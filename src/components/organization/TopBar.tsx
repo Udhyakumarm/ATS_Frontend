@@ -1,7 +1,7 @@
 import ThemeChange from "../ThemeChange";
 import { signOut, useSession } from "next-auth/react";
 import { useState, Fragment, useRef, useEffect } from "react";
-import { Dialog, Transition, Listbox } from "@headlessui/react";
+import { Dialog, Transition, Listbox, Tab } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
@@ -9,9 +9,11 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import { useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
+import Button from "../Button";
+import FormField from "../FormField";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -20,6 +22,7 @@ const CalendarIntegrationOptions = [
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
 export default function OrgTopBar() {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -38,7 +41,8 @@ export default function OrgTopBar() {
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
 	const [integration, setIntegration] = useState([]);
-	const [comingSoon, setComingSoon] = useState(false);
+	const [toDoPopup, setToDoPopup] = useState(false);
+	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
 	useEffect(() => {
 		async function loadIntegrations() {
@@ -135,6 +139,21 @@ export default function OrgTopBar() {
 		setversion(selectedPreVersion.name);
 	}, [selectedPreVersion]);
 
+	const tabHeading = [
+		{
+			title: srcLang==='ja' ? '高い' : 'High'
+		},
+		{
+			title: srcLang==='ja' ? '中くらい' : 'Medium'
+		},
+		{
+			title: srcLang==='ja' ? '低い' : 'Low'
+		},
+		{
+			title: srcLang==='ja' ? '完了しました' : 'Completed'
+		}
+	];
+
 	return (
 		<>
 			<div
@@ -195,7 +214,7 @@ export default function OrgTopBar() {
 				)}
 
 				<ThemeChange />
-				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setComingSoon(true)}>
+				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
 				{version != "starter" && (
@@ -203,7 +222,6 @@ export default function OrgTopBar() {
 						type="button"
 						className="mr-6 text-darkGray dark:text-gray-400"
 						onClick={() => setIsCalendarOpen(true)}
-						x
 					>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
 					</button>
@@ -301,8 +319,219 @@ export default function OrgTopBar() {
 					</div>
 				</Dialog>
 			</Transition.Root>
-			<Transition.Root show={comingSoon} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
+			<Transition.Root show={toDoPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setToDoPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">{srcLang==='ja' ? 'ToDoリスト' : 'To Do List'}</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setToDoPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="text-right mb-6">
+											<Button
+												btnType="button"
+												btnStyle="iconRightBtn"
+												label={srcLang==='ja' ? '追加' : 'Add Task'}
+												iconRight={<i className="fa-solid fa-circle-plus"></i>}
+												handleClick={() => setToDoAddTaskPopup(true)}
+											/>
+										</div>
+										<Tab.Group>
+											<Tab.List className={"mb-6 border-b text-center"}>
+												{tabHeading.map((item, i) => (
+													<Tab key={i} as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{item.title}
+															</button>
+														)}
+													</Tab>
+												))}
+											</Tab.List>
+											<Tab.Panels>
+												<Tab.Panel>
+													<p className="text-sm text-darkGray text-center">{srcLang === 'ja' ? '未完了のタスクはありません' : 'Nothing In To Do List'}</p>	
+													<div className="max-h-[60vh] overflow-auto">
+														{Array(5).fill(
+														<div className="rounded-normal border overflow-hidden my-2">
+															<div className="px-8 py-4">
+																<h5 className="font-bold mb-2">To do list title here</h5>
+																<p className="text-sm text-darkGray dark:text-gray-400">Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit usersBeing able to rename and edit users lorem rename and edit users</p>
+															</div>
+															<div className="bg-lightBlue dark:bg-gray-700 px-8 py-2 flex flex-wrap items-center">
+																<aside className="grow flex items-center">
+																	<div className="flex items-center mr-6">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold text-sm">20 Nov 2023</h5>
+																	</div>
+																	<p className="text-white bg-red-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">{srcLang==='ja' ? '高い' : 'High'}</p>
+																</aside>
+																<aside>
+																	<label htmlFor="markDone" className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400">
+																		{srcLang==='ja' ? '完了としてマークする' : 'Mark as Done'}
+																		<input type="checkbox" id="markDone" className="ml-2" />
+																	</label>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-pencil"></i>
+																	</button>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-trash-can"></i>
+																	</button>
+																</aside>
+															</div>
+														</div>
+														)}
+													</div>
+												</Tab.Panel>
+												<Tab.Panel>
+													<p className="text-sm text-darkGray text-center">{srcLang === 'ja' ? '未完了のタスクはありません' : 'Nothing In To Do List'}</p>	
+													<div className="max-h-[60vh] overflow-auto">
+														{Array(5).fill(
+														<div className="rounded-normal border overflow-hidden my-2">
+															<div className="px-8 py-4">
+																<h5 className="font-bold mb-2">To do list title here</h5>
+																<p className="text-sm text-darkGray dark:text-gray-400">Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit usersBeing able to rename and edit users lorem rename and edit users</p>
+															</div>
+															<div className="bg-lightBlue dark:bg-gray-700 px-8 py-2 flex flex-wrap items-center">
+																<aside className="grow flex items-center">
+																	<div className="flex items-center mr-6">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold text-sm">20 Nov 2023</h5>
+																	</div>
+																	<p className="text-white bg-yellow-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">{srcLang==='ja' ? '中くらい' : 'Medium'}</p>
+																</aside>
+																<aside>
+																	<label htmlFor="markDone" className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400">
+																	{srcLang==='ja' ? '完了としてマークする' : 'Mark as Done'}
+																		<input type="checkbox" id="markDone" className="ml-2" />
+																	</label>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-pencil"></i>
+																	</button>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-trash-can"></i>
+																	</button>
+																</aside>
+															</div>
+														</div>
+														)}
+													</div>
+												</Tab.Panel>
+												<Tab.Panel>
+													<p className="text-sm text-darkGray text-center">{srcLang === 'ja' ? '未完了のタスクはありません' : 'Nothing In To Do List'}</p>	
+													<div className="max-h-[60vh] overflow-auto">
+														{Array(5).fill(
+														<div className="rounded-normal border overflow-hidden my-2">
+															<div className="px-8 py-4">
+																<h5 className="font-bold mb-2">To do list title here</h5>
+																<p className="text-sm text-darkGray dark:text-gray-400">Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit usersBeing able to rename and edit users lorem rename and edit users</p>
+															</div>
+															<div className="bg-lightBlue dark:bg-gray-700 px-8 py-2 flex flex-wrap items-center">
+																<aside className="grow flex items-center">
+																	<div className="flex items-center mr-6">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold text-sm">20 Nov 2023</h5>
+																	</div>
+																	<p className="text-white bg-gray-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">{srcLang==='ja' ? '低い' : 'Low'}</p>
+																</aside>
+																<aside>
+																	<label htmlFor="markDone" className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400">
+																	{srcLang==='ja' ? '完了としてマークする' : 'Mark as Done'}
+																		<input type="checkbox" id="markDone" className="ml-2" />
+																	</label>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-pencil"></i>
+																	</button>
+																	<button type="button" className="ml-6">
+																		<i className="fa-solid fa-trash-can"></i>
+																	</button>
+																</aside>
+															</div>
+														</div>
+														)}
+													</div>
+												</Tab.Panel>
+												<Tab.Panel>
+													<p className="text-sm text-darkGray text-center">{srcLang === 'ja' ? '未完了のタスクはありません' : 'Nothing In To Do List'}</p>	
+													<div className="max-h-[60vh] overflow-auto">
+														{Array(5).fill(
+														<div className="rounded-normal border overflow-hidden my-2">
+															<div className="px-8 py-4">
+																<h5 className="font-bold mb-2">To do list title here</h5>
+																<p className="text-sm text-darkGray dark:text-gray-400">Being able to rename and edit users lorem rename and edit users Being able to rename and edit users lorem rename and edit usersBeing able to rename and edit users lorem rename and edit users</p>
+															</div>
+															<div className="bg-lightBlue dark:bg-gray-700 px-8 py-2 flex flex-wrap items-center">
+																<aside className="grow">
+																	<div className="flex items-center mr-6">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold text-sm">20 Nov 2023</h5>
+																	</div>
+																</aside>
+																<div className="flex items-center">
+																	<p className="text-white bg-green-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">{srcLang==='ja' ? '完了しました' : 'Completed'}</p>
+																	<span className="text-[10px] text-darkGray dark:text-gray-400 ml-2">on 26 Jan 2024</span>
+																</div>
+															</div>
+														</div>
+														)}
+													</div>
+												</Tab.Panel>
+											</Tab.Panels>
+										</Tab.Group>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={toDoAddTaskPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setToDoAddTaskPopup}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -328,17 +557,25 @@ export default function OrgTopBar() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Coming Soon</h4>
+										<h4 className="flex items-center font-semibold leading-none">{srcLang==='ja' ? 'タスクの追加' : 'Add Task'}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
-											onClick={() => setComingSoon(false)}
+											onClick={() => setToDoAddTaskPopup(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
 									<div className="p-8">
-										<UpcomingComp title={"Todo List"} setComingSoon={setComingSoon} />
+										<FormField fieldType="input" inputType="text" label={srcLang==='ja' ? 'タイトル' : 'Title'} />
+										<FormField fieldType="reactquill" label={srcLang==='ja' ? '案内文' : 'Description'} />
+										<FormField
+											fieldType="select"
+											label={srcLang==='ja' ? 'タスクの優先順位' : 'Task Priority'}
+											options={[{ name: srcLang==='ja' ? '高い' : 'High' }, { name: srcLang==='ja' ? '中くらい' : 'Medium' }, { name: srcLang==='ja' ? '低い' : 'Low' }]}
+										/>
+										<FormField fieldType="input" inputType="date" label={srcLang==='ja' ? '締め切り' : 'Deadline'} />
+										<Button label={srcLang==='ja' ? '追加' : 'Add'} />
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -53,7 +53,7 @@ function DaysOfMonth({
 		dayType: number;
 		day: number;
 	}) => (
-		<div className="group h-[100px] w-[calc(100%/7)] cursor-pointer border border-slate-100" key={day.toString()}>
+		<div className="group h-[45px] md:h-[55px] lg:h-[100px] w-[calc(100%/7)] cursor-pointer border border-slate-100" key={day.toString()}>
 			<div
 				className={
 					dayType !== 1
@@ -460,8 +460,8 @@ export default function OrganizationCalendar({ integration }: any) {
 	}, [currentDate, eventList]);
 
 	return (
-		<div className="flex">
-			<div className="w-[75%] bg-white">
+		<div className="flex flex-wrap">
+			<div className="w-full md:max-w-[60%] lg:max-w-[75%] bg-white">
 				<div className="flex items-center justify-between px-6 py-4">
 					<div>
 						<h6 className="font-bold">
@@ -522,11 +522,11 @@ export default function OrganizationCalendar({ integration }: any) {
 					getCurrentEvents={getCurrentEvents}
 				/>
 			</div>
-			<div className="w-[25%] bg-lightBlue">
+			<div className="w-full md:max-w-[40%] lg:max-w-[25%] bg-lightBlue">
 				<div className="p-4">
 					<h6 className="font-bold">Events</h6>
 				</div>
-				<div className="h-[calc(100vh-100px)] overflow-y-auto p-4 pt-0">
+				<div className="h-[calc(100vh-270px)] overflow-y-auto p-4 pt-0">
 					{currentDayEvents.map((eventItem, i) => (
 						<EventCard
 							key={i}

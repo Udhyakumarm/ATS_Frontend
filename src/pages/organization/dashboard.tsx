@@ -553,6 +553,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										</div>
 										<div className="p-6 pt-0">
 											{todoList && todoList.length > 0 && !upcomingSoon ? (
+												<>
 												<div className="max-h-[330px] overflow-y-auto">
 													{sklLoad
 														? Array(6).fill(
@@ -564,11 +565,16 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																			users lorem rename and edit users
 																		</p>
 																	</div>
-																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
+																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700 relative">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="font-bold">20 Nov 2023</h5>
+																		<div className="absolute right-1 top-1">
+																			<p className="text-white bg-red-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">High</p>
+																			<p className="text-white bg-yellow-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">Medium</p>
+																			<p className="text-white bg-gray-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">Low</p>
+																		</div>
 																	</div>
 																</div>
 														  )
@@ -578,7 +584,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		<Skeleton containerClassName="grow" count={2} />
 																	</div>
 																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] px-[6px] py-[1px] text-center text-lg leading-normal text-white dark:bg-gray-800">
+																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
 																			<i className="fa-regular fa-square-check"></i>
 																		</span>
 																		<h5 className="grow font-bold">
@@ -588,6 +594,10 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																</div>
 														  )}
 												</div>
+												<div className="pt-4">
+													<Button btnStyle="outlined" label={t('Btn.LoadMore')} btnType="button" />
+												</div>
+												</>
 											) : upcomingSoon ? (
 												<UpcomingComp />
 											) : (
@@ -738,7 +748,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 														)
 													)}
 												</div>
-												<div>
+												<div className="pt-4">
 													<Button btnStyle="outlined" label={t('Btn.LoadMore')} btnType="button" handleClick={() => setActivityLogPopup(true)} />
 												</div>
 												</>

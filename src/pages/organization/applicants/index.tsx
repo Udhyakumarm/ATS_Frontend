@@ -683,7 +683,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 													{t("Form.StartDate")}
 												</label>
 												<div className="relative">
-													<input type="date" value={interdate} onChange={(e) => setinterdate(e.target.value)} />
+													<input type="date" value={interdate} onChange={(e) => setinterdate(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
 												</div>
 											</div>
 										</div>
@@ -693,7 +693,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 													{t("Form.StartTime")}
 												</label>
 												<div className="relative">
-													<input type="time" value={interstime} onChange={(e) => setinterstime(e.target.value)} />
+													<input type="time" value={interstime} onChange={(e) => setinterstime(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
 												</div>
 											</div>
 										</div>
@@ -703,7 +703,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 													{t("Form.EndTime")}
 												</label>
 												<div className="relative">
-													<input type="time" value={interetime} onChange={(e) => setinteretime(e.target.value)} />
+													<input type="time" value={interetime} onChange={(e) => setinteretime(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
 												</div>
 											</div>
 										</div>
