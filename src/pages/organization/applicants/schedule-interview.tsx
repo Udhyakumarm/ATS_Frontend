@@ -21,7 +21,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 
-export default function ScheduleInterview() {
+export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -37,6 +37,27 @@ export default function ScheduleInterview() {
 	const [scheduleType, setScheduleType] = useState(0);
 
 	const [interDuration, setInterDuration] = useState("15");
+
+	//starter state
+	const [title, settitle] = useState("");
+	const [desc, setdesc] = useState("");
+	const [link, setlink] = useState("");
+	const [sdate, setsdate] = useState("");
+	const [edate, setedate] = useState("");
+	const [fsdate, setfsdate] = useState("");
+	const [fedate, setfedate] = useState("");
+
+	function disBtn() {
+		return title.length > 0 && desc.length > 0 && link.length > 0 && fsdate.length > 0 && fedate.length > 0;
+	}
+
+	useEffect(() => {
+		setfsdate(moment(sdate).format().toString());
+	}, [sdate]);
+
+	useEffect(() => {
+		setfedate(moment(edate).format().toString());
+	}, [edate]);
 
 	const applicantDetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
 	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
@@ -151,7 +172,7 @@ export default function ScheduleInterview() {
 			setCalendarIntegration(newIntegrations);
 		}
 
-		loadCalendarIntegrations();
+		if (atsVersion != "starter") loadCalendarIntegrations();
 	}, [router, session]);
 
 	const createEvent = async (e: { preventDefault: () => void }) => {
@@ -213,6 +234,24 @@ export default function ScheduleInterview() {
 			});
 	};
 
+	async function starterInterviewSchedule() {
+		const fd = new FormData();
+		fd.append("date_time_from", fsdate);
+		fd.append("date_time_to", fedate);
+		fd.append("interview_name", title);
+		fd.append("description", desc);
+		fd.append("link", link);
+		await axiosInstanceAuth2
+			.post(`/job/create-interview/${appdata["arefid"]}/${jobid}/`, fd)
+			.then(async (res) => {
+				toastcomp("Interview Scheduled", "success");
+			})
+			.catch((err) => {
+				toastcomp("Interview not Scheduled", "error");
+			});
+		router.push("/organization/interviews");
+	}
+
 	const TeamTableHead = [
 		{
 			title: "User Name"
@@ -256,7 +295,7 @@ export default function ScheduleInterview() {
 										<span>{t("Words.ScheduleInterview")}</span>
 									</h2>
 								</div>
-								<TeamMembers />
+								{!upcomingSoon && <TeamMembers />}
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[1150px] px-4 py-8">
@@ -267,83 +306,279 @@ export default function ScheduleInterview() {
 								</h2>
 								<p className="text-darkGray dark:text-gray-400">ID-{appdata["job"]["refid"]}</p>
 							</aside>
-							<div className="mb-10 flex flex-wrap items-center">
-								<label
-									htmlFor="manualSchedule"
-									className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
-								>
-									<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
-										<input
-											type="radio"
-											id="manualSchedule"
-											name="setSchedule"
-											checked={scheduleType == 0}
-											onClick={() => setScheduleType(0)}
-										/>
-									</div>
-									{t("Words.ScheduleManually")}
-								</label>
-								<label
-									htmlFor="chooseSchedule"
-									className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
-								>
-									<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
-										<input
-											type="radio"
-											id="chooseSchedule"
-											name="setSchedule"
-											checked={scheduleType == 1}
-											onClick={() => setScheduleType(1)}
-										/>
-									</div>
-									{t("Words.LetChooseAvailability")}
-								</label>
-							</div>
-							<form className="flex flex-wrap rounded-normal border" onSubmit={createEvent}>
-								<div className="w-full border-r p-4 lg:max-w-[40%]">
-									<div className="mb-4 rounded-normal border p-3">
-										<h2 className="mb-3 font-bold">{t("Words.Applicants")}</h2>
-										<div className="flex flex-wrap items-center rounded border p-2">
-											<div className="w-[70px]">
-												<Image
-													src={userImg1}
-													alt="User"
-													width={300}
-													height={300}
-													className="mx-auto h-[60px] w-[60px] rounded-full object-cover shadow-normal"
+							{atsVersion != "starter" ? (
+								<>
+									<div className="mb-10 flex flex-wrap items-center">
+										<label
+											htmlFor="manualSchedule"
+											className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
+										>
+											<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
+												<input
+													type="radio"
+													id="manualSchedule"
+													name="setSchedule"
+													checked={scheduleType == 0}
+													onClick={() => setScheduleType(0)}
 												/>
 											</div>
-											<div className="my-1 pl-2">
-												<h5 className="mb-1 font-semibold">
-													{" "}
-													{`${
-														type === "career" ? appdata["user"]["first_name"] : appdata["applicant"]["first_name"]
-													}`}{" "}
-													{`${type === "career" ? appdata["user"]["last_name"] : appdata["applicant"]["last_name"]}`}
-												</h5>
-												<p className="text-[12px] text-darkGray dark:text-gray-400">ID {appdata["arefid"]}</p>
+											{t("Words.ScheduleManually")}
+										</label>
+										<label
+											htmlFor="chooseSchedule"
+											className="mr-6 flex cursor-pointer items-center overflow-hidden rounded bg-gray-50 pr-4 text-sm font-bold shadow-normal dark:bg-gray-600"
+										>
+											<div className="mr-4 flex h-[25px] w-[25px] items-center justify-center rounded-l border-r bg-white p-5 dark:border-gray-500 dark:bg-gray-700">
+												<input
+													type="radio"
+													id="chooseSchedule"
+													name="setSchedule"
+													checked={scheduleType == 1}
+													onClick={() => setScheduleType(1)}
+												/>
 											</div>
-										</div>
+											{t("Words.LetChooseAvailability")}
+										</label>
 									</div>
-									<div className="rounded-normal border p-3">
-										<div className="mb-2 flex items-start justify-between">
-											<h2 className="font-bold">{t("Words.Interviewer")}</h2>
-											<div className="mt-[-10px]">
-												<Button btnStyle="sm" btnType="button" label="Add" handleClick={() => setSocialPopup(true)} />
+
+									<form className="flex flex-wrap rounded-normal border" onSubmit={createEvent}>
+										<div className="w-full border-r p-4 lg:max-w-[40%]">
+											<div className="mb-4 rounded-normal border p-3">
+												<h2 className="mb-3 font-bold">{t("Words.Applicants")}</h2>
+												<div className="flex flex-wrap items-center rounded border p-2">
+													<div className="w-[70px]">
+														<Image
+															src={userImg1}
+															alt="User"
+															width={300}
+															height={300}
+															className="mx-auto h-[60px] w-[60px] rounded-full object-cover shadow-normal"
+														/>
+													</div>
+													<div className="my-1 pl-2">
+														<h5 className="mb-1 font-semibold">
+															{" "}
+															{`${
+																type === "career" ? appdata["user"]["first_name"] : appdata["applicant"]["first_name"]
+															}`}{" "}
+															{`${
+																type === "career" ? appdata["user"]["last_name"] : appdata["applicant"]["last_name"]
+															}`}
+														</h5>
+														<p className="text-[12px] text-darkGray dark:text-gray-400">ID {appdata["arefid"]}</p>
+													</div>
+												</div>
+											</div>
+
+											<div className="rounded-normal border p-3">
+												<div className="mb-2 flex items-start justify-between">
+													<h2 className="font-bold">{t("Words.Interviewer")}</h2>
+													<div className="mt-[-10px]">
+														<Button
+															btnStyle="sm"
+															btnType="button"
+															label="Add"
+															handleClick={() => setSocialPopup(true)}
+														/>
+													</div>
+												</div>
+												{assignedInterviewerList.map(({ email, name, role, profile }, i) => (
+													<div
+														className="relative mb-2 flex flex-wrap items-center overflow-hidden rounded border p-2 pr-[40px]"
+														key={i}
+													>
+														<div className="w-[70px]">
+															<Image
+																src={
+																	process.env.NODE_ENV === "production"
+																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE
+																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profile
+																}
+																alt="User"
+																width={300}
+																height={300}
+																className="mx-auto h-[60px] w-[60px] rounded-full object-cover shadow-normal"
+															/>
+														</div>
+														<div className="my-1 pl-2">
+															<h5 className="mb-1 font-semibold">{name}</h5>
+															<p className="text-[12px] text-darkGray dark:text-gray-400">{role}</p>
+														</div>
+														<button
+															type="button"
+															className="absolute right-0 top-0 h-full w-[30px] bg-gray-200 text-darkGray hover:bg-red-500 hover:text-white"
+															onClick={() =>
+																setAssignedInterviewerList((prevList) =>
+																	prevList.filter(({ email: listEmail }) => listEmail != email)
+																)
+															}
+														>
+															<i className="fa-solid fa-trash-can"></i>
+														</button>
+													</div>
+												))}
+												{assignedInterviewerList.length == 0 && (
+													<>
+														<p className="text-sm text-darkGray dark:text-gray-400">
+															{t("Select.No")} {t("Words.Interviewer")}
+														</p>
+													</>
+												)}
 											</div>
 										</div>
-										{assignedInterviewerList.map(({ email, name, role, profile }, i) => (
-											<div
-												className="relative mb-2 flex flex-wrap items-center overflow-hidden rounded border p-2 pr-[40px]"
-												key={i}
-											>
+										<div className="w-full p-4 lg:max-w-[60%]">
+											<FormField
+												id={"summary"}
+												fieldType="input"
+												inputType="text"
+												label={t("Words.Summary")}
+												value={newSchedule.summary}
+												handleChange={handleNewSchedule}
+												required
+											/>
+											<FormField
+												id={"description"}
+												fieldType="textarea"
+												label={t("Form.Description")}
+												value={newSchedule.description}
+												handleChange={handleNewSchedule}
+											/>
+											<FormField
+												id={"platform"}
+												fieldType="select"
+												label={t("Form.Platform")}
+												singleSelect
+												value={newSchedule.platform}
+												handleChange={handleNewSchedule}
+												options={[{ name: "Google Meet" }, { name: "Telephonic" }]}
+											/>
+
+											{scheduleType === 0 && (
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+														<label className="mb-1 inline-block font-bold">{t("Form.InterviewDuration")}</label>
+														<div className="relative flex w-[280px] overflow-hidden rounded-normal border dark:border-gray-600">
+															<label
+																htmlFor="min15"
+																className={
+																	"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
+																	" " +
+																	(interDuration == "15" ? "bg-gradDarkBlue text-white dark:text-white" : "")
+																}
+															>
+																15 min
+																<input
+																	type="radio"
+																	name="interDuration"
+																	id="min15"
+																	className="hidden"
+																	value={"15"}
+																	onChange={(e) => setInterDuration(e.target.value)}
+																/>
+															</label>
+															<label
+																htmlFor="min30"
+																className={
+																	"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
+																	" " +
+																	(interDuration == "30" ? "bg-gradDarkBlue text-white dark:text-white" : "")
+																}
+															>
+																30 min
+																<input
+																	type="radio"
+																	name="interDuration"
+																	id="min30"
+																	className="hidden"
+																	value={"30"}
+																	onChange={(e) => setInterDuration(e.target.value)}
+																/>
+															</label>
+															<label
+																htmlFor="min45"
+																className={
+																	"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
+																	" " +
+																	(interDuration == "45" ? "bg-gradDarkBlue text-white dark:text-white" : "")
+																}
+															>
+																45 min
+																<input
+																	type="radio"
+																	name="interDuration"
+																	id="min45"
+																	className="hidden"
+																	value={"45"}
+																	onChange={(e) => setInterDuration(e.target.value)}
+																/>
+															</label>
+															<label
+																htmlFor="min60"
+																className={
+																	"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
+																	" " +
+																	(interDuration == "60" ? "bg-gradDarkBlue text-white dark:text-white" : "")
+																}
+															>
+																60 min
+																<input
+																	type="radio"
+																	name="interDuration"
+																	id="min60"
+																	className="hidden"
+																	value={"60"}
+																	onChange={(e) => setInterDuration(e.target.value)}
+																/>
+															</label>
+														</div>
+													</div>
+												</div>
+											)}
+											{scheduleType === 1 && (
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															id={"start"}
+															fieldType="date"
+															label={t("Form.StartTime")}
+															singleSelect
+															value={newSchedule.start}
+															handleChange={handleNewSchedule}
+															showTimeSelect
+															showHours
+															required
+														/>
+													</div>
+													<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															id={"end"}
+															fieldType="date"
+															label={t("Form.EndTime")}
+															singleSelect
+															value={newSchedule.end}
+															handleChange={handleNewSchedule}
+															showTimeSelect
+															showHours
+															required
+														/>
+													</div>
+												</div>
+											)}
+											<div>
+												<Button label={t("Btn.SendInvite")} btnType={"submit"} />
+											</div>
+										</div>
+									</form>
+								</>
+							) : (
+								<div className="flex flex-wrap rounded-normal border">
+									<div className="w-full border-r p-4 lg:max-w-[40%]">
+										<div className="mb-4 rounded-normal border p-3">
+											<h2 className="mb-3 font-bold">{t("Words.Applicants")}</h2>
+											<div className="flex flex-wrap items-center rounded border p-2">
 												<div className="w-[70px]">
 													<Image
-														src={
-															process.env.NODE_ENV === "production"
-																? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE
-																: process.env.NEXT_PUBLIC_DEV_BACKEND + profile
-														}
+														src={userImg1}
 														alt="User"
 														width={300}
 														height={300}
@@ -351,149 +586,53 @@ export default function ScheduleInterview() {
 													/>
 												</div>
 												<div className="my-1 pl-2">
-													<h5 className="mb-1 font-semibold">{name}</h5>
-													<p className="text-[12px] text-darkGray dark:text-gray-400">{role}</p>
-												</div>
-												<button
-													type="button"
-													className="absolute right-0 top-0 h-full w-[30px] bg-gray-200 text-darkGray hover:bg-red-500 hover:text-white"
-													onClick={() =>
-														setAssignedInterviewerList((prevList) =>
-															prevList.filter(({ email: listEmail }) => listEmail != email)
-														)
-													}
-												>
-													<i className="fa-solid fa-trash-can"></i>
-												</button>
-											</div>
-										))}
-										{assignedInterviewerList.length == 0 && (
-											<>
-												<p className="text-sm text-darkGray dark:text-gray-400">
-													{t("Select.No")} {t("Words.Interviewer")}
-												</p>
-											</>
-										)}
-									</div>
-								</div>
-								<div className="w-full p-4 lg:max-w-[60%]">
-									<FormField
-										id={"summary"}
-										fieldType="input"
-										inputType="text"
-										label={t("Words.Summary")}
-										value={newSchedule.summary}
-										handleChange={handleNewSchedule}
-										required
-									/>
-									<FormField
-										id={"description"}
-										fieldType="textarea"
-										label={t("Form.Description")}
-										value={newSchedule.description}
-										handleChange={handleNewSchedule}
-									/>
-									<FormField
-										id={"platform"}
-										fieldType="select"
-										label={t("Form.Platform")}
-										singleSelect
-										value={newSchedule.platform}
-										handleChange={handleNewSchedule}
-										options={[{ name: "Google Meet" }, { name: "Telephonic" }]}
-									/>
-
-									{scheduleType === 0 && (
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
-												<label className="mb-1 inline-block font-bold">{t("Form.InterviewDuration")}</label>
-												<div className="relative flex w-[280px] overflow-hidden rounded-normal border dark:border-gray-600">
-													<label
-														htmlFor="min15"
-														className={
-															"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
-															" " +
-															(interDuration == "15" ? "bg-gradDarkBlue text-white dark:text-white" : "")
-														}
-													>
-														15 min
-														<input
-															type="radio"
-															name="interDuration"
-															id="min15"
-															className="hidden"
-															value={"15"}
-															onChange={(e) => setInterDuration(e.target.value)}
-														/>
-													</label>
-													<label
-														htmlFor="min30"
-														className={
-															"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
-															" " +
-															(interDuration == "30" ? "bg-gradDarkBlue text-white dark:text-white" : "")
-														}
-													>
-														30 min
-														<input
-															type="radio"
-															name="interDuration"
-															id="min30"
-															className="hidden"
-															value={"30"}
-															onChange={(e) => setInterDuration(e.target.value)}
-														/>
-													</label>
-													<label
-														htmlFor="min45"
-														className={
-															"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
-															" " +
-															(interDuration == "45" ? "bg-gradDarkBlue text-white dark:text-white" : "")
-														}
-													>
-														45 min
-														<input
-															type="radio"
-															name="interDuration"
-															id="min45"
-															className="hidden"
-															value={"45"}
-															onChange={(e) => setInterDuration(e.target.value)}
-														/>
-													</label>
-													<label
-														htmlFor="min60"
-														className={
-															"cursor-pointer border-r px-3 py-3 text-sm text-darkGray last:border-r-0 dark:border-gray-600 dark:text-gray-400" +
-															" " +
-															(interDuration == "60" ? "bg-gradDarkBlue text-white dark:text-white" : "")
-														}
-													>
-														60 min
-														<input
-															type="radio"
-															name="interDuration"
-															id="min60"
-															className="hidden"
-															value={"60"}
-															onChange={(e) => setInterDuration(e.target.value)}
-														/>
-													</label>
+													<h5 className="mb-1 font-semibold">
+														{" "}
+														{`${
+															type === "career" ? appdata["user"]["first_name"] : appdata["applicant"]["first_name"]
+														}`}{" "}
+														{`${type === "career" ? appdata["user"]["last_name"] : appdata["applicant"]["last_name"]}`}
+													</h5>
+													<p className="text-[12px] text-darkGray dark:text-gray-400">ID {appdata["arefid"]}</p>
 												</div>
 											</div>
 										</div>
-									)}
-									{scheduleType === 1 && (
+									</div>
+									<div className="w-full p-4 lg:max-w-[60%]">
+										<FormField
+											id={"summary"}
+											fieldType="input"
+											inputType="text"
+											label={"Interview Title"}
+											value={title}
+											handleChange={(e) => settitle(e.target.value)}
+											required
+										/>
+										<FormField
+											id={"description"}
+											fieldType="textarea"
+											label={"Interview Description"}
+											value={desc}
+											handleChange={(e) => setdesc(e.target.value)}
+											required
+										/>
+										<FormField
+											id={"link"}
+											fieldType="input"
+											label={"Interview Link"}
+											value={link}
+											handleChange={(e) => setlink(e.target.value)}
+											required
+										/>
 										<div className="mx-[-10px] flex flex-wrap">
 											<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
 												<FormField
 													id={"start"}
 													fieldType="date"
-													label={t("Form.StartTime")}
+													label={"Interview StartTime"}
 													singleSelect
-													value={newSchedule.start}
-													handleChange={handleNewSchedule}
+													value={sdate}
+													handleChange={(e) => setsdate(e.target.value)}
 													showTimeSelect
 													showHours
 													required
@@ -503,22 +642,27 @@ export default function ScheduleInterview() {
 												<FormField
 													id={"end"}
 													fieldType="date"
-													label={t("Form.EndTime")}
+													label={"Interview EndTime"}
 													singleSelect
-													value={newSchedule.end}
-													handleChange={handleNewSchedule}
+													value={edate}
+													handleChange={(e) => setedate(e.target.value)}
 													showTimeSelect
 													showHours
 													required
 												/>
 											</div>
 										</div>
-									)}
-									<div>
-										<Button label={t("Btn.SendInvite")} btnType={"submit"} />
+										<div>
+											<Button
+												label={t("Btn.SendInvite")}
+												btnType={"button"}
+												disabled={!disBtn()}
+												handleClick={starterInterviewSchedule}
+											/>
+										</div>
 									</div>
 								</div>
-							</form>
+							)}
 						</div>
 					</div>
 				</div>
