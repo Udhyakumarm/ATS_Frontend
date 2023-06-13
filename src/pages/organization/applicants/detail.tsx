@@ -621,23 +621,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
 									<div className="mb-4 border-b pb-4">
 										<div className="mb-4 border-b pb-2 text-center">
-											{profileData["profile"] && profileData["profile"].length > 0 ? (
-												<Image
-													src={`http://127.0.0.1:8000${profileData["profile"]}`}
-													alt="User"
-													width={90}
-													height={90}
-													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
-												/>
-											) : (
-												<Image
-													src={userImg1}
-													alt="User"
-													width={90}
-													height={90}
-													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
-												/>
-											)}
+											<Image
+												src={userImg1}
+												alt="User"
+												width={90}
+												height={90}
+												className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
+											/>
 											<h3 className="mb-2 font-bold">
 												{profileData["first_name"]} {profileData["last_name"]}
 											</h3>
@@ -805,9 +795,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</aside>
 										<aside className="flex grow items-center justify-end">
 											<div className="mr-4">
-												<Button btnType="button" btnStyle="gray" label={`${t("Words.Source")} ${type}`} />
-											</div>
-											<div className="mr-4">
 												<Button
 													btnType="button"
 													btnStyle="iconLeftBtn"
@@ -862,7 +849,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													</Transition>
 												</Listbox>
 											</div>
-											<TeamMembers />
+											{!upcomingSoon && <TeamMembers />}
 										</aside>
 									</div>
 									<div className="">
@@ -951,7 +938,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
 																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
-																	href={`http://127.0.0.1:8000${profileData["resume"]}`}
+																	href={
+																		process.env.NODE_ENV === "production"
+																			? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
+																	}
 																	className="my-2 inline-block font-bold text-primary hover:underline"
 																	download={profileData["resume"].split("/").pop()}
 																>
@@ -960,7 +951,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																</Link>
 															</div>
 															<iframe
-																src={`http://127.0.0.1:8000${profileData["resume"]}`}
+																src={
+																	process.env.NODE_ENV === "production"
+																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
+																}
 																className="h-[100vh] w-[100%]"
 															></iframe>
 														</>
@@ -1009,7 +1004,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	) : (
@@ -1022,7 +1017,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	)}
@@ -1048,7 +1043,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	) : (
@@ -1061,7 +1056,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	)}
@@ -1087,7 +1082,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	) : (
@@ -1100,7 +1095,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	)}
@@ -1128,7 +1123,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		<div className="bg-lightBlue px-4 dark:bg-gray-700">
 																			<Button
 																				btnStyle="sm"
-																				label={t('Btn.Add')}
+																				label={t("Btn.Add")}
 																				btnType={"button"}
 																				disabled={!checkDis()}
 																				handleClick={() => createFeedback()}
@@ -1274,7 +1269,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	) : (
@@ -1287,7 +1282,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	)}
@@ -1319,7 +1314,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	) : (
@@ -1332,7 +1327,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	)}
@@ -1363,9 +1358,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					" " +
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
-																			>
-																				
-																			</p>
+																			></p>
 																		</div>
 																	) : (
 																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
@@ -1377,7 +1370,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	)}
@@ -1431,7 +1424,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					<>
 																						<Button
 																							btnStyle="sm"
-																							label={data["feedback"] && data["feedback"].length > 0 ? t('Btn.Update') : t('Btn.Add') }
+																							label={
+																								data["feedback"] && data["feedback"].length > 0
+																									? t("Btn.Update")
+																									: t("Btn.Add")
+																							}
 																							btnType={"button"}
 																							handleClick={(e) => {
 																								updateFeedback(data["id"]);
@@ -1937,7 +1934,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				<i className={"fa-solid fa-rotate fa-spin"}></i>
 																			</span>
 																		)}
-																		{ailoader ? <>{t('Btn.InProgress')}</> : <>{t('Btn.Regenerate')}</>}
+																		{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
 																	</button>
 																</div>
 															</div>
@@ -1968,10 +1965,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									<Document file=`${data['file']}` key={i}/>
 								))}
 
-							{applicantdetail["Resume"] &&
-								applicantdetail["Resume"].map((data, i) => (
-									<iframe src={`http://127.0.0.1:8000${data["file"]}`} key={i} />
-								))}
 							{applicantlist &&
 								applicantlist.map(
 									(data, i) =>
