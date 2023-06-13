@@ -552,49 +552,55 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="p-6 pt-0">
 											{todoList && todoList.length > 0 && !upcomingSoon ? (
 												<>
-												<div className="max-h-[330px] overflow-y-auto">
-													{sklLoad
-														? Array(6).fill(
-																<div className="mb-3 flex flex-wrap rounded-[10px] border">
-																	<div className="flex w-[65%] items-center px-3 py-2">
-																		<p className="clamp_2 text-sm">
-																			Being able to rename and edit users lorem rename and edit users Being able to
-																			rename and edit users lorem rename and edit users Being able to rename and edit
-																			users lorem rename and edit users
-																		</p>
-																	</div>
-																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700 relative">
-																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
-																			<i className="fa-regular fa-square-check"></i>
-																		</span>
-																		<h5 className="font-bold">20 Nov 2023</h5>
-																		<div className="absolute right-1 top-1">
-																			<p className="text-white bg-red-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">High</p>
-																			<p className="text-white bg-yellow-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">Medium</p>
-																			<p className="text-white bg-gray-500 text-[10px] rounded-full leading-[1.2] py-1 px-2">Low</p>
+													<div className="max-h-[330px] overflow-y-auto">
+														{sklLoad
+															? Array(6).fill(
+																	<div className="mb-3 flex flex-wrap rounded-[10px] border">
+																		<div className="flex w-[65%] items-center px-3 py-2">
+																			<p className="clamp_2 text-sm">
+																				Being able to rename and edit users lorem rename and edit users Being able to
+																				rename and edit users lorem rename and edit users Being able to rename and edit
+																				users lorem rename and edit users
+																			</p>
+																		</div>
+																		<div className="relative flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																			<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<i className="fa-regular fa-square-check"></i>
+																			</span>
+																			<h5 className="font-bold">20 Nov 2023</h5>
+																			<div className="absolute right-1 top-1">
+																				<p className="rounded-full bg-red-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					High
+																				</p>
+																				<p className="rounded-full bg-yellow-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					Medium
+																				</p>
+																				<p className="rounded-full bg-gray-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					Low
+																				</p>
+																			</div>
 																		</div>
 																	</div>
-																</div>
-														  )
-														: Array(6).fill(
-																<div className="mb-3 flex flex-wrap rounded-[10px] border">
-																	<div className="flex w-[65%] items-center px-3 py-2">
-																		<Skeleton containerClassName="grow" count={2} />
+															  )
+															: Array(6).fill(
+																	<div className="mb-3 flex flex-wrap rounded-[10px] border">
+																		<div className="flex w-[65%] items-center px-3 py-2">
+																			<Skeleton containerClassName="grow" count={2} />
+																		</div>
+																		<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																			<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<i className="fa-regular fa-square-check"></i>
+																			</span>
+																			<h5 className="grow font-bold">
+																				<Skeleton height={12} />
+																			</h5>
+																		</div>
 																	</div>
-																	<div className="flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																		<span className="mr-2 rounded bg-[#FF8A00] p-2 flex items-center justify-center text-lg leading-normal text-white dark:bg-gray-800">
-																			<i className="fa-regular fa-square-check"></i>
-																		</span>
-																		<h5 className="grow font-bold">
-																			<Skeleton height={12} />
-																		</h5>
-																	</div>
-																</div>
-														  )}
-												</div>
-												<div className="pt-4">
-													<Button btnStyle="outlined" label={t('Btn.LoadMore')} btnType="button" />
-												</div>
+															  )}
+													</div>
+													<div className="pt-4">
+														<Button btnStyle="outlined" label={t("Btn.LoadMore")} btnType="button" />
+													</div>
 												</>
 											) : upcomingSoon ? (
 												<UpcomingComp />
@@ -737,45 +743,63 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 											)}
 										</div>
 										<div className="p-6 pt-0">
-											{activityLog && activityLog.length > 0 ? (
-												<>
-													<div className="max-h-[330px] overflow-y-auto">
-														{activityLog.slice(0, 5).map((data, i) =>
-															i % 2 == 0 ? (
-																<div
-																	className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
-																	key={i}
-																>
-																	<div className="flex items-center justify-center p-3">
-																		<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
-																			<i className="fa-solid fa-briefcase"></i>
-																		</span>
-																		<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+											<div className="max-h-[330px] overflow-y-auto">
+												{activityLog && activityLog.length > 0 ? (
+													<>
+														<div className="max-h-[330px] overflow-y-auto">
+															{activityLog.slice(0, 5).map((data, i) =>
+																i % 2 == 0 ? (
+																	<div
+																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																		key={i}
+																	>
+																		<div className="flex items-center justify-center p-3">
+																			<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																				<i className="fa-solid fa-briefcase"></i>
+																			</span>
+																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																		</div>
 																	</div>
-																</div>
-															</div>
-														)
-													)}
-												</div>
-												<div className="pt-4">
-													<Button btnStyle="outlined" label={t('Btn.LoadMore')} btnType="button" handleClick={() => setActivityLogPopup(true)} />
-												</div>
-												</>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_6}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
+																) : (
+																	<div
+																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																		key={i}
+																	>
+																		<div className="flex items-center justify-center p-3">
+																			<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																				<i className="fa-solid fa-star"></i>
+																			</div>
+																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																		</div>
+																	</div>
+																)
+															)}
+														</div>
+														<div className="pt-4">
+															<Button
+																btnStyle="outlined"
+																label={t("Btn.LoadMore")}
+																btnType="button"
+																handleClick={() => setActivityLogPopup(true)}
+															/>
+														</div>
+													</>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_6}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
+															/>
+														</div>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
+														</p>
 													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
-													</p>
-												</div>
-											)}
+												)}
+											</div>
 										</div>
 									</div>
 								</div>
