@@ -250,7 +250,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 					<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
 							{check1 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ApplicantDetails")}</h2>
@@ -327,7 +327,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check2 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
@@ -395,7 +395,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check3 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
@@ -415,7 +415,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<div className="max-h-[330px] overflow-y-auto">
 													{upcomingInterview.slice(0, 5).map((data, i) => (
 														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2" key={i}>
-															<div className="flex w-[45%] items-center pr-2">
+															<div className="flex items-center w-[250px] py-1 pr-2">
 																<Image
 																	src={userImg1}
 																	alt="User"
@@ -442,23 +442,25 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	<p className="text-[12px] text-darkGray">{data["job"]["job_title"]}</p>
 																</div>
 															</div>
-															<div className="w-[20%] pr-2">
-																<h5 className="text-sm font-bold">
-																	{moment(data["date_time_from"]).format("DD MMM YYYY")}
-																</h5>
-																<p className="text-[12px] text-darkGray">
-																	{moment(data["date_time_from"]).format(" h:mm a")}
-																</p>
+															<div className="grow flex">
+																<div className="pr-2 py-1 grow">
+																	<h5 className="text-sm font-bold">
+																		{moment(data["date_time_from"]).format("DD MMM YYYY")}
+																	</h5>
+																	<p className="text-[12px] text-darkGray">
+																		{moment(data["date_time_from"]).format(" h:mm a")}
+																	</p>
+																</div>
+																<div className="pr-2 py-1 grow">
+																	<h5 className="text-sm font-bold">
+																		{moment(data["date_time_to"]).format("DD MMM YYYY")}
+																	</h5>
+																	<p className="text-[12px] text-darkGray">
+																		{moment(data["date_time_to"]).format(" h:mm a")}
+																	</p>
+																</div>
 															</div>
-															<div className="w-[20%] pr-2">
-																<h5 className="text-sm font-bold">
-																	{moment(data["date_time_to"]).format("DD MMM YYYY")}
-																</h5>
-																<p className="text-[12px] text-darkGray">
-																	{moment(data["date_time_to"]).format(" h:mm a")}
-																</p>
-															</div>
-															<div className="w-[15%]">
+															<div className="text-right py-1 grow">
 																<Button
 																	btnStyle="outlined"
 																	label={t("Btn.View")}
@@ -482,65 +484,6 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 															</div>
 														</div>
 													))}
-													{/* {sklLoad
-														? Array(6).fill(
-																<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2">
-																	<div className="flex w-[45%] items-center pr-2">
-																		<Image
-																			src={userImg}
-																			alt="User"
-																			className="rounded-full object-cover"
-																			width={30}
-																			height={30}
-																		/>
-																		<div className="grow pl-2">
-																			<h5 className="text-sm font-bold">Bethany Jackson</h5>
-																			<p className="text-[12px] text-darkGray">Software Developer</p>
-																		</div>
-																	</div>
-																	<div className="w-[30%] pr-2">
-																		<h5 className="text-sm font-bold">20 Nov 2023</h5>
-																		<p className="text-[12px] text-darkGray">10:40 AM</p>
-																	</div>
-																	<div className="w-[20%]">
-																		<Button btnStyle="outlined" label="View Profile" loader={false} />
-																	</div>
-																	<div className="w-[5%] text-center">
-																		<button type="button" className="text-lightGray">
-																			<i className="fa-solid fa-ellipsis-vertical"></i>
-																		</button>
-																	</div>
-																</div>
-														  )
-														: Array(6).fill(
-																<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2">
-																	<div className="flex w-[45%] items-center pr-2">
-																		<Skeleton circle width={30} height={30} />
-																		<div className="grow pl-2">
-																			<h5 className="text-sm font-bold">
-																				<Skeleton width={100} />
-																			</h5>
-																			<p className="text-[12px] text-darkGray">
-																				<Skeleton width={60} />
-																			</p>
-																		</div>
-																	</div>
-																	<div className="w-[30%] pr-2">
-																		<h5 className="text-sm font-bold">
-																			<Skeleton width={100} />
-																		</h5>
-																		<p className="text-[12px] text-darkGray">
-																			<Skeleton width={50} />
-																		</p>
-																	</div>
-																	<div className="w-[20%]">
-																		<Skeleton height={28} />
-																	</div>
-																	<div className="w-[5%] text-center">
-																		<Skeleton width={6} height={20} />
-																	</div>
-																</div>
-														  )} */}
 												</div>
 											) : (
 												<div className="py-8 text-center">
@@ -564,7 +507,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check4 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
@@ -656,7 +599,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check5 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
@@ -692,7 +635,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 														</div>
 													))} */}
 													{recentJob.slice(0, 5).map((data, i) => (
-														<div className="mb-[15px] w-full px-[7px] py-1 md:max-w-[50%]" key={i}>
+														<div className="mb-[15px] w-full px-[7px] py-1 xl:max-w-[50%]" key={i}>
 															<JobCard_2 job={data} dashbaord={true} />
 														</div>
 													))}
@@ -719,7 +662,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{atsVersion && atsVersion != "enterprise" && (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="flex h-full items-center justify-center rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
 										<div className="mx-auto w-full max-w-[400px]">
 											<div className="mb-2 flex items-center">
@@ -757,7 +700,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								</div>
 							)}
 							{check6 ? (
-								<div className="mb-[30px] w-full px-[15px] lg:max-w-[50%]">
+								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>

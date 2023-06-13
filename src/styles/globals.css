@@ -100,19 +100,7 @@ input[type=number] {
   font-weight: 900;
 }
 
-.sidebarToggled #sidebar {
-  width: 50px;
-}
-.sidebarToggled #topbar {
-  width: calc(100% - 50px) !important;
-  left: 50px !important;
-}
 .layoutWrap {
-  margin-left: 270px;
-  margin-top: 65px;
-}
-.sidebarToggled .layoutWrap {
-  margin-left: 50px;
   margin-top: 65px;
 }
 
@@ -331,25 +319,42 @@ input[type=number] {
   background-color: #d7dee8;
 }
 
-@media (max-width: 1023px) {
-  .sidebarToggled #sidebar {
-    width: 48px;
+
+@media (min-width: 1024px) {
+  .layoutWrap {
+    margin-left: 270px;
   }
-  main:not(.sidebarToggled) #overlay {
-    display: block !important;
+  .desktopSidebar .layoutWrap {
+    margin-left: 50px;
   }
-  .sidebarToggled #topbar {
-    width: calc(100% - 0px) !important;
-    left: 0 !important;
-  }
-  .layoutWrap, .sidebarToggled .layoutWrap {
-    margin-left: 0;
+  .desktopSidebar #topbar {
+    width: calc(100% - 50px);
+    left: 50px;
   }
 }
-
 @media (min-width: 1000px) {
   .container {
     max-width: 1100px;
+  }
+}
+@media (max-width: 1023.98px) {
+  #sidebar {
+    left: -270px;
+  }
+  main:not(.mobileSidebar) #sidebar #btnToggle {
+    right: -30px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  main:not(.mobileSidebar) #sidebar #btnToggle i {
+    transform: rotate(180deg);
+  }
+  .mobileSidebar #overlay {
+    display: block;
+    z-index: 12;
+  }
+  .mobileSidebar #sidebar {
+    left: 0;
   }
 }
 

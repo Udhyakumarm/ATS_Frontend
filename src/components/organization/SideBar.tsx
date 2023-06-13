@@ -1,4 +1,4 @@
-import { useState, Fragment, useRef } from "react";
+import { useState, Fragment, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "../Logo";
@@ -31,6 +31,7 @@ import toastcomp from "../toast";
 import { useTranslation } from "next-i18next";
 import { useLangStore } from "@/utils/code";
 import Button from "../Button";
+import {isMobile} from 'react-device-detect';
 
 export default function OrgSideBar() {
 	const router = useRouter();
@@ -38,8 +39,15 @@ export default function OrgSideBar() {
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	function toggleSidebar() {
-		document.querySelector("main")?.classList.toggle("sidebarToggled");
-		setShow(!show);
+		if(!isMobile) {
+			document.querySelector("main")?.classList.toggle("desktopSidebar");
+			setShow(!show);
+		}
+	}
+	function mobileSidebarToggle() {
+		if(isMobile) {
+			document.querySelector("main")?.classList.toggle("mobileSidebar");
+		}
 	}
 	const cancelButtonRef = useRef(null);
 	const [upgradePlan, setUpgradePlan] = useState(false);
@@ -147,20 +155,21 @@ export default function OrgSideBar() {
 			<div
 				id="sidebar"
 				className={
-					`fixed top-0 z-[13] h-full w-[270px] bg-white shadow transition dark:bg-gray-800 lg:left-0` +
+					`fixed top-0 z-[13] h-full bg-white shadow transition dark:bg-gray-800 lg:left-0` +
 					" " +
-					(show ? "left-[-50px]" : "left-0")
+					(show ? "left-[-50px] w-[50px]" : "left-0 w-[270px]")
 				}
 			>
 				<div className="relative flex h-[65px] items-center p-3">
 					<button
 						type="button"
+						id="btnToggle"
 						className={
 							`absolute right-[-16px] top-[50%] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
 							" " +
 							(show ? "right-[-31px] rounded-[6px] rounded-bl-[0] rounded-tl-[0]" : <></>)
 						}
-						onClick={toggleSidebar}
+						onClick={isMobile ? mobileSidebarToggle : toggleSidebar}
 					>
 						<i className={`fa-solid fa-chevron-left` + " " + (show ? "fa-chevron-right" : <></>)}></i>
 					</button>
@@ -175,7 +184,7 @@ export default function OrgSideBar() {
 					)}
 				</div>
 				<div className="h-[calc(100%-65px)] overflow-y-auto p-3">
-					<ul className={show ? "" : "border-b pb-4"}>
+					<ul className={'sideMenu' + ' ' + show ? "" : "border-b pb-4"}>
 						{menu.map((menuItem, i) => (
 							<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
 								<div
@@ -197,7 +206,7 @@ export default function OrgSideBar() {
 											src={theme === "dark" ? menuItem.imgWhite : menuItem.img}
 											alt={menuItem.title}
 											width={100}
-											className={"mx-auto max-h-[20px] w-auto"}
+											className={"mx-auto h-[20px] w-auto"}
 										/>
 									</span>
 									{show ? "" : menuItem.title}

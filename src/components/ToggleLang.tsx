@@ -35,7 +35,7 @@ export default function ToggleLang() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute w-[150px] top-[100%] right-0 mt-1 max-h-60 overflow-auto rounded-md bg-primary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <Listbox.Options className="absolute z-[10] w-[150px] top-[100%] right-0 mt-1 max-h-60 overflow-auto rounded-md bg-primary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {languages.map((item, itemIdx) => (
                 <Listbox.Option
                 className={({ active }) =>
