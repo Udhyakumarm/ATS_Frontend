@@ -14,6 +14,7 @@ import moment from "moment";
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useLangStore } from "@/utils/code";
+import ToggleLang from "@/components/ToggleLang";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -288,6 +289,9 @@ export default function AuthSignUp() {
 							</Link>
 						</p>
 					</form>
+					<div className="text-right pt-2">
+						<ToggleLang />
+					</div>
 				</div>
 			</main>
 		</>

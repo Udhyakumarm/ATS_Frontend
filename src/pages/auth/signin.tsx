@@ -18,6 +18,7 @@ const Toaster = dynamic(() => import("../../components/Toaster"), {
 });
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import ToggleLang from "@/components/ToggleLang";
 
 const errorMessages = {
 	Signin: "Try signing with a different account.",
@@ -218,6 +219,9 @@ export default function AuthSignIn({ providers }: any) {
 								{srcLang === 'ja' ? 'こちら' : 'Create Account'}
 							</Link>
 						</p>
+					</div>
+					<div className="text-right pt-2">
+						<ToggleLang />
 					</div>
 				</form>
 			</main>

@@ -14,6 +14,7 @@ import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
 import Button from "../Button";
 import FormField from "../FormField";
+import ToggleLang from "../ToggleLang";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -235,9 +236,10 @@ export default function OrgTopBar() {
 						{count}
 					</span>
 				</div>
+				<ToggleLang />
 				<button
 					type="button"
-					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+					className="ml-4 h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
 					onClick={() => {
 						signOut();
 

@@ -773,63 +773,61 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 											)}
 										</div>
 										<div className="p-6 pt-0">
-											<div className="max-h-[330px] overflow-y-auto">
-												{activityLog && activityLog.length > 0 ? (
-													<>
-														<div className="max-h-[330px] overflow-y-auto">
-															{activityLog.slice(0, 5).map((data, i) =>
-																i % 2 == 0 ? (
-																	<div
-																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
-																		key={i}
-																	>
-																		<div className="flex items-center justify-center p-3">
-																			<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
-																				<i className="fa-solid fa-briefcase"></i>
-																			</span>
-																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
-																		</div>
+											{activityLog && activityLog.length > 0 ? (
+												<>
+													<div className="max-h-[330px] overflow-y-auto">
+														{activityLog.slice(0, 5).map((data, i) =>
+															i % 2 == 0 ? (
+																<div
+																	className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																	key={i}
+																>
+																	<div className="flex items-center justify-center p-3">
+																		<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																			<i className="fa-solid fa-briefcase"></i>
+																		</span>
+																		<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
 																	</div>
-																) : (
-																	<div
-																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
-																		key={i}
-																	>
-																		<div className="flex items-center justify-center p-3">
-																			<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
-																				<i className="fa-solid fa-star"></i>
-																			</div>
-																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																</div>
+															) : (
+																<div
+																	className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																	key={i}
+																>
+																	<div className="flex items-center justify-center p-3">
+																		<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																			<i className="fa-solid fa-star"></i>
 																		</div>
+																		<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
 																	</div>
-																)
-															)}
-														</div>
-														<div className="pt-4">
-															<Button
-																btnStyle="outlined"
-																label={t("Btn.LoadMore")}
-																btnType="button"
-																handleClick={() => setActivityLogPopup(true)}
-															/>
-														</div>
-													</>
-												) : (
-													<div className="py-8 text-center">
-														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-															<Image
-																src={nodata_6}
-																alt="No Data"
-																width={300}
-																className="max-h-[60px] w-auto max-w-[60px]"
-															/>
-														</div>
-														<p className="text-sm text-darkGray">
-															{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
-														</p>
+																</div>
+															)
+														)}
 													</div>
-												)}
-											</div>
+													<div className="pt-4">
+														<Button
+															btnStyle="outlined"
+															label={t("Btn.LoadMore")}
+															btnType="button"
+															handleClick={() => setActivityLogPopup(true)}
+														/>
+													</div>
+												</>
+											) : (
+												<div className="py-8 text-center">
+													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+														<Image
+															src={nodata_6}
+															alt="No Data"
+															width={300}
+															className="max-h-[60px] w-auto max-w-[60px]"
+														/>
+													</div>
+													<p className="text-sm text-darkGray">
+														{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
+													</p>
+												</div>
+											)}
 										</div>
 									</div>
 								</div>

@@ -53,7 +53,6 @@ export default function Header() {
 	) {
 		return (
 			<>
-				<ToggleLang />
 				<header className="hello bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<div className="flex items-center">
@@ -107,11 +106,12 @@ export default function Header() {
 								{type}&nbsp;{role}
 							</p>
 							<ThemeChange />
+							<ToggleLang />
 							{!auth && (
 								<Link
 									href={"/organization/" + cname + "/candidate/signin"}
 									className={
-										`inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
+										`ml-4 inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
 										" " +
 										(router.pathname == "/organization/" + cname + "/candidate/signin"
 											? "border-b-primary text-primary"
@@ -123,7 +123,7 @@ export default function Header() {
 							)}
 							{auth && (
 								<>
-									<Popover className="relative mr-6">
+									<Popover className="relative ml-4 mr-6">
 										<Popover.Button>
 											<button type="button" className="relative uppercase text-darkGray dark:text-gray-400">
 												<i className="fa-regular fa-bell text-[20px]"></i>
@@ -183,7 +183,6 @@ export default function Header() {
 	} else if (router.asPath == "/organization") {
 		return (
 			<>
-				<ToggleLang />
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
@@ -194,9 +193,10 @@ export default function Header() {
 
 							<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
 							<ThemeChange />
+							<ToggleLang />
 							<button
 								type="button"
-								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+								className="ml-4 h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
 								onClick={() => {
 									signOut();
 
@@ -254,7 +254,7 @@ export default function Header() {
 	// }
 	return (
 		<>
-			<ToggleLang />
+			
 		</>
 	);
 }

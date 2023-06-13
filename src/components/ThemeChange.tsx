@@ -7,7 +7,7 @@ export default function ThemeChange() {
 			<button
 				aria-label="Toggle Dark Mode"
 				type="button"
-				className="mr-2 w-[35px] rounded px-2 py-1 text-darkGray dark:text-gray-400"
+				className="mr-2 w-[35px] rounded px-2 py-1 text-darkGray dark:text-gray-400 flex items-center"
 				onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
 			>
 				{theme === "dark" ? (
