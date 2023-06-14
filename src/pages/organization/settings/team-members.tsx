@@ -455,15 +455,6 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																							</>
 																						</Listbox.Option>
 																					))}
-																					<div className="border-t px-8 py-2 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
-																						<p>
-																							Access of <b>{data["role"]}</b> to the following:-
-																						</p>
-																						<p>- Job Applications</p>
-																						<p>- Analytics</p>
-																						<p>- Offer Management</p>
-																						<p>- Interviews</p>
-																					</div>
 																				</Listbox.Options>
 																			</Transition>
 																		</Listbox>
@@ -576,13 +567,6 @@ export default function TeamMembers({ upcomingSoon }: any) {
 												/>
 											</div>
 										</div>
-										<FormField
-											fieldType="input"
-											inputType="text"
-											label={t("Words.Department")}
-											value={dept}
-											handleChange={(e) => setdept(e.target.value)}
-										/>
 										<div className="mb-4">
 											<h6 className="mb-1 font-bold">{t("Words.Access")}</h6>
 											<Listbox value={role} onChange={setrole}>
@@ -627,19 +611,17 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																)}
 															</Listbox.Option>
 														))}
-														<div className="border-t px-8 py-2 text-[12px] text-darkGray dark:border-gray-400 dark:text-gray-400">
-															<p>
-																Access of <b>{role.name}</b> to the following:-
-															</p>
-															<p>- Job Applications</p>
-															<p>- Analytics</p>
-															<p>- Offer Management</p>
-															<p>- Interviews</p>
-														</div>
 													</Listbox.Options>
 												</Transition>
 											</Listbox>
 										</div>
+										<FormField
+											fieldType="input"
+											inputType="text"
+											label={t("Words.Department")}
+											value={dept}
+											handleChange={(e) => setdept(e.target.value)}
+										/>
 										<div className="text-center">
 											<Button
 												label={t("Btn.Add")}

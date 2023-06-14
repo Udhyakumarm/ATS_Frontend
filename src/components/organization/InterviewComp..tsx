@@ -109,10 +109,10 @@ export default function InterviewComp({ sklLoad, data }: any) {
 							/>
 						</div>
 						{version != "starter" && (
-							<div className="w-full py-3 text-right lg:max-w-[10%]">
+							<div className="w-full py-3 text-right lg:max-w-[100px]">
 								<button
 									type="button"
-									className="font-semibold text-darkGray dark:text-gray-400"
+									className="font-semibold text-darkGray dark:text-gray-400 flex items-center"
 									onClick={() => setAccordionOpen(!accordionOpen)}
 								>
 									{srcLang === "ja" ? "詳細をみる" : "View More"}

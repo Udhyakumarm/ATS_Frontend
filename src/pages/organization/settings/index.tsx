@@ -102,7 +102,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 								userRole != "Super Admin" && links.name === "Plans & Pricing" ? (
 									<></>
 								) : (
-									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
+									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
 										<Link
 											href={links.blur ? "javascript:void(0)" : links.link}
 											className={`relative overflow-hidden block rounded-normal p-6 shadow-normal dark:bg-gray-700 dark:hover:bg-gray-600`}

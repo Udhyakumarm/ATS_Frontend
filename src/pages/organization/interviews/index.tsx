@@ -100,7 +100,7 @@ export default function Interviews({upcomingSoon}:any) {
 				></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="flex flex-wrap">
-						<div className="w-full lg:max-w-[25%]">
+						<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px] mb-4">
 							<div className="h-[calc(100vh-130px)] rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
 								<div className="border-b px-8 py-3">
 									<h2 className="text-lg font-bold">{t('Words.Filters')}</h2>
@@ -139,7 +139,7 @@ export default function Interviews({upcomingSoon}:any) {
 								}
 							</div>
 						</div>
-						<div className="w-full pl-8 lg:max-w-[75%]">
+						<div className="w-full xl:max-w-[calc(100%-300px)] 2xl:max-w-[calc(100%-400px)] xl:pl-8">
 							<div className="overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="bg-white shadow-normal dark:bg-gray-700">
 									<h2 className="inline-block min-w-[200px] rounded-tl-normal bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-4 text-center font-semibold text-white shadow-lg">

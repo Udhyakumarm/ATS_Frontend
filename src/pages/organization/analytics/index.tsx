@@ -217,7 +217,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 									<div className="mb-6 rounded-normal border p-10 pb-4 dark:border-gray-400">
 										<div className="-mx-3 flex flex-wrap">
 											{quicklinks.map((item, i) => (
-												<div className="mb-6 w-full px-3 md:max-w-[33.3333%] lg:max-w-[25%]" key={i}>
+												<div className="mb-6 w-full px-3 md:max-w-[33.3333%] 2xl:max-w-[25%]" key={i}>
 													<div className="flex h-full items-start rounded-normal border p-6 shadow-normal dark:border-gray-400">
 														<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 															<Image src={item.icon} alt={"Icon"} width={30} height={30} />

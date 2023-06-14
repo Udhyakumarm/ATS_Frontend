@@ -604,7 +604,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<div className="flex flex-wrap">
-							<div className="w-full lg:max-w-[400px]">
+							<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px]">
 								<div className="mb-4 flex items-center rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
 									<button
 										className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
@@ -618,7 +618,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										<span>{t("Words.Profile")}</span>
 									</h2>
 								</div>
-								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 max-h-[500px] overflow-auto xl:max-h-[inherit]">
 									<div className="mb-4 border-b pb-4">
 										<div className="mb-4 border-b pb-2 text-center">
 											<Image
@@ -784,16 +784,16 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									)}
 								</div>
 							</div>
-							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
+							<div className="w-full xl:max-w-[calc(100%-300px)] 2xl:max-w-[calc(100%-400px)] xl:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
-									<div className="jusitfy-between relative z-10 flex flex-wrap items-center p-5 shadow">
+									<div className="relative z-10 flex flex-wrap items-center justify-between p-5 shadow">
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
 												<span>{appdata["job"]["job_title"]}</span>
 											</h2>
 										</aside>
-										<aside className="flex grow items-center justify-end">
+										<aside className="flex items-center">
 											<div className="mr-4">
 												<Button
 													btnType="button"
@@ -805,7 +805,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													}}
 												/>
 											</div>
-											<div className="mr-4">
+											<div className="">
 												<Listbox value={selectedPerson} onChange={(v) => moveApplicant(v)}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
 														<span className="px-3 py-2">{t("Words.MoveApplicant")}</span>
@@ -854,82 +854,84 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									</div>
 									<div className="">
 										<Tab.Group>
-											<Tab.List className={"border-b px-4"}>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Profile")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Assessment")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Form.Feedback")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Timeline")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.AIGeneratedInterview")}
-														</button>
-													)}
-												</Tab>
+											<Tab.List className={"border-b px-4 overflow-auto"}>
+												<div className="flex w-[700px]">
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Profile")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Assessment")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Form.Feedback")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Timeline")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.AIGeneratedInterview")}
+															</button>
+														)}
+													</Tab>
+												</div>
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>

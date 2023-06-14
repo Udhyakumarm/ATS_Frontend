@@ -287,19 +287,19 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="mb-2 w-max border-r px-[15px]">
+					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '総応募' : <>Total <br/>Candidates</>}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="mb-2 w-max border-r px-[15px]">
+					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '選考中' : <>Active <br/>Candidates</>}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="mb-2 w-max px-[15px]">
+					<div className="mb-2 grow px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '求人ID' : <>Job <br/>ID</>}
 						</h5>

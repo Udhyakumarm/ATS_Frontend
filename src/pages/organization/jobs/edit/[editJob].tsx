@@ -699,26 +699,28 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 										))}
 									</div>
 								</div>
-								<Tab.List className={"mx-auto flex w-full max-w-[1100px] flex-wrap"}>
-									{tabHeading_1.map((item, i) => (
-										<Tab key={i} as={Fragment}>
-											{({ selected }) => (
-												<button
-													className={
-														"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
-														" " +
-														(selected
-															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400") +
-														" " +
-														(!item.hide && "display-none")
-													}
-												>
-													{item.title}
-												</button>
-											)}
-										</Tab>
-									))}
+								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
+									<div className="w-[820px] flex">
+										{tabHeading_1.map((item, i) => (
+											<Tab key={i} as={Fragment}>
+												{({ selected }) => (
+													<button
+														className={
+															"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
+															" " +
+															(selected
+																? "border-primary text-primary"
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(!item.hide && "display-none")
+														}
+													>
+														{item.title}
+													</button>
+												)}
+											</Tab>
+										))}
+									</div>
 								</Tab.List>
 							</div>
 							<Tab.Panels>
@@ -970,7 +972,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 										<UpcomingComp />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label="Assessment" />
+											<StickyLabel label={t('Words.Assessment')} />
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<div className="mx-[-15px] flex flex-wrap">
 													{Array(6).fill(
@@ -1219,7 +1221,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												<div className="mx-[-15px] flex flex-wrap">
 													{fvendors &&
 														fvendors.map((data, i) => (
-															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
+															<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]" key={i}>
 																<CardLayout_2 data={data} />
 															</div>
 														))}
@@ -1237,7 +1239,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<div className="mx-[-15px] flex flex-wrap">
 													{Object.keys(integrationList).map((key: any) => (
-														<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={key}>
+														<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]" key={key}>
 															<CardLayout_1
 																key={key}
 																label={key}

@@ -4,8 +4,10 @@ import Button from "./Button";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import testGorrila from "/public/images/test-gorrila.png";
+import { useLangStore } from "@/utils/code";
 
 export default function CardLayout_1({ handleIntegrate, label, access, handlePost, isBlank, sklLoad }: any) {
+    const srcLang = useLangStore((state: { lang: any }) => state.lang);
     if(sklLoad === true) {
         return(
             <div className="h-full rounded-normal bg-lightBlue dark:bg-gray-700 p-6 shadow-lg">
@@ -32,7 +34,7 @@ export default function CardLayout_1({ handleIntegrate, label, access, handlePos
                     <div className="mb-4 flex flex-wrap items-start justify-between">
                         <Image src={testGorrila} width={300} height={200} alt="Assessment" className="mb-2 h-[30px] w-auto mr-2" />
                         <div className="-mt-2">
-                            <Button btnStyle="outlined" label={'Add'} />
+                            <Button btnStyle="outlined" label={srcLang==='ja' ? '追加' : 'Add'} />
                         </div>
                     </div>
                     <h4 className="text-lg font-semibold">Test Gorilla</h4>
@@ -44,7 +46,7 @@ export default function CardLayout_1({ handleIntegrate, label, access, handlePos
                     <div className="mb-4 flex flex-wrap items-start justify-between">
                         <Image src={"/images/logos/" + label.toLowerCase() + "_logo.png"} width={300} height={200} alt="Assessment" className="mb-2 h-[30px] w-auto" />
                         <div className="-mt-2 pl-2">
-                            <Button btnStyle="outlined" label={access ? "Post Job" : "Add"} onClick={() => (access ? handlePost() : handleIntegrate())} />
+                            <Button btnStyle="outlined" label={access ? <>{srcLang==='ja' ? 'ポストジョブ' : 'Post Job'}</> : <>{srcLang==='ja' ? '追加' : 'Add'}</>} onClick={() => (access ? handlePost() : handleIntegrate())} />
                         </div>
                     </div>
                     <h4 className="text-lg font-semibold">{label}</h4>

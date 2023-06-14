@@ -894,14 +894,14 @@ export default function OfferManagement() {
 						</aside>
 					</div>
 					<div className="relative z-[9] flex flex-wrap p-4 lg:p-8">
-						<div className="w-full lg:max-w-[280px]">
+						<div className="w-full xl:max-w-[280px] mb-4">
 							<FormField
 								fieldType="input"
 								inputType="search"
 								placeholder={t('Words.Search')}
 								icon={<i className="fa-solid fa-magnifying-glass"></i>}
 							/>
-							<div>
+							<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
 								{applicantlist ? (
 									applicantlist.map(
 										(data, i) =>
@@ -976,7 +976,7 @@ export default function OfferManagement() {
 							</div>
 						</div>
 						{showOffer && (
-							<div className="w-full pl-6 lg:max-w-[calc(100%-280px)]">
+							<div className="w-full xl:max-w-[calc(100%-280px)] xl:pl-6">
 								<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
 									<h2 className="flex justify-between px-10 py-4 text-lg font-bold">
 										<span>
@@ -1207,12 +1207,12 @@ export default function OfferManagement() {
 																		/>
 																	</div>
 																</div>
-																<div className="mb-4">
+																<div className="">
 																	<h4 className="mb-2 font-bold">
 																		{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 																	</h4>
 																	<div className="flex flex-wrap">
-																		<div className="w-[170px] pr-6 last:pr-0">
+																		<div className="w-[170px] pr-6 last:pr-0 mb-4">
 																			<FormField
 																				placeholder={t('Words.Currency')}
 																				fieldType="select2"
@@ -1343,7 +1343,7 @@ export default function OfferManagement() {
 																				]}
 																			/>
 																		</div>
-																		<div className="w-[170px] pr-6 last:pr-0">
+																		<div className="w-[170px] pr-6 last:pr-0 mb-4">
 																			<FormField
 																				placeholder={t('Words.Type')}
 																				singleSelect
@@ -1354,7 +1354,7 @@ export default function OfferManagement() {
 																				readOnly
 																			/>
 																		</div>
-																		<div className="grow pr-6 last:pr-0">
+																		<div className="grow pr-6 last:pr-0 mb-4">
 																			<FormField
 																				placeholder={t('Words.From')}
 																				fieldType="input"
@@ -1364,7 +1364,7 @@ export default function OfferManagement() {
 																				readOnly
 																			/>
 																		</div>
-																		<div className="grow pr-6 last:pr-0">
+																		<div className="grow pr-6 last:pr-0 mb-4">
 																			<FormField
 																				placeholder={t('Words.To')}
 																				fieldType="input"
@@ -1592,12 +1592,12 @@ export default function OfferManagement() {
 																				/>
 																			</div>
 																		</div>
-																		<div className="mb-4">
+																		<div className="">
 																			<h4 className="mb-2 font-bold">
 																				{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 																			</h4>
-																			<div className="flex flex-wrap">
-																				<div className="w-[170px] pr-6 last:pr-0">
+																			<div className="flex flex-wrap -mx-3">
+																				<div className="w-[50%] xl:max-w-[20%] mb-4 px-3">
 																					<FormField
 																						placeholder={t('Words.Currency')}
 																						fieldType="select2"
@@ -1727,7 +1727,7 @@ export default function OfferManagement() {
 																						]}
 																					/>
 																				</div>
-																				<div className="w-[170px] pr-6 last:pr-0">
+																				<div className="w-[50%] xl:max-w-[20%] mb-4 px-3">
 																					<FormField
 																						placeholder={t('Words.Type')}
 																						singleSelect
@@ -1737,7 +1737,7 @@ export default function OfferManagement() {
 																						handleChange={settype}
 																					/>
 																				</div>
-																				<div className="grow pr-6 last:pr-0">
+																				<div className="w-[50%] xl:max-w-[30%] mb-4 px-3">
 																					<FormField
 																						placeholder={t('Words.From')}
 																						fieldType="input"
@@ -1746,7 +1746,7 @@ export default function OfferManagement() {
 																						handleChange={(e) => setfrom(e.target.value)}
 																					/>
 																				</div>
-																				<div className="grow pr-6 last:pr-0">
+																				<div className="w-[50%] xl:max-w-[30%] mb-4 px-3">
 																					<FormField
 																						placeholder={t('Words.To')}
 																						fieldType="input"
@@ -2289,12 +2289,12 @@ export default function OfferManagement() {
 												/>
 											</div>
 										</div>
-										<div className="mb-4">
+										<div className="">
 											<h4 className="mb-2 font-bold">
 											{t('Form.SalaryRange')}<sup className="text-red-500">*</sup>
 											</h4>
 											<div className="flex flex-wrap">
-												<div className="w-[170px] pr-6 last:pr-0">
+												<div className="w-[170px] pr-6 last:pr-0 mb-4">
 													<FormField
 														placeholder={t('Words.Currency')}
 														fieldType="select2"
@@ -2424,7 +2424,7 @@ export default function OfferManagement() {
 														]}
 													/>
 												</div>
-												<div className="w-[170px] pr-6 last:pr-0">
+												<div className="w-[170px] pr-6 last:pr-0 mb-4">
 													<FormField
 														placeholder={t('Words.Type')}
 														singleSelect
@@ -2434,7 +2434,7 @@ export default function OfferManagement() {
 														handleChange={settype}
 													/>
 												</div>
-												<div className="grow pr-6 last:pr-0">
+												<div className="grow pr-6 last:pr-0 mb-4">
 													<FormField
 														placeholder={t('Words.From')}
 														fieldType="input"
@@ -2443,7 +2443,7 @@ export default function OfferManagement() {
 														handleChange={(e) => setfrom(e.target.value)}
 													/>
 												</div>
-												<div className="grow pr-6 last:pr-0">
+												<div className="grow pr-6 last:pr-0 mb-4">
 													<FormField
 														placeholder={t('Words.To')}
 														fieldType="input"
