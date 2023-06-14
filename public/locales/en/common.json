@@ -256,7 +256,15 @@
         "MoveApplicant": "Move Applicant",
         "AIGeneratedInterview": "AI Generated Interview",
         "AskQuestionsRelatedCandidate": "Ask Questions Related to the Candidate",
-        "LetChooseAvailability": "Let the invite choose from my availability"
+        "LetChooseAvailability": "Let the invite choose from my availability",
+        "Overview": "Overview",
+        "Performance": "Performance",
+        "ApplicantPipeline": "Applicant Pipeline",
+        "VendorsPerformance": "Vendors Performance",
+        "TotalSubmissions": "Total Submissions",
+        "Conversions": "Conversions",
+        "Hiring": "Hiring",
+        "ApplicantSourced": "Applicant Sourced"
     },
     "Plans": {
         "Starter": "Starter",

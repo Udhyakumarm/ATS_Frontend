@@ -188,7 +188,7 @@ export default function Header() {
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
 							<p className="bg-blue-500 p-1 text-white">
-								{type}&nbsp;{role}
+								{type} | {role}
 							</p>
 
 							<p className="bg-green-500 p-1 uppercase text-white">{version}</p>

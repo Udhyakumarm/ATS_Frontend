@@ -254,13 +254,13 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 
 	const TeamTableHead = [
 		{
-			title: "User Name"
+			title: t('Words.UserName')
 		},
 		{
-			title: "Department/Title"
+			title: t('Words.Department_Title')
 		},
 		{
-			title: "Email"
+			title: t('Form.Email')
 		},
 		{
 			title: " "
@@ -377,7 +377,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 														<Button
 															btnStyle="sm"
 															btnType="button"
-															label="Add"
+															label={t('Btn.Add')}
 															handleClick={() => setSocialPopup(true)}
 														/>
 													</div>
@@ -694,7 +694,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="font-semibold leading-none">Add interviewers to this interview</h4>
+										<h4 className="font-semibold leading-none">{srcLang === 'ja' ? 'このインタビューにインタビュアーを追加する' : 'Add interviewers to this interview'}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -708,7 +708,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 											fieldType="input"
 											id={"search"}
 											inputType="search"
-											placeholder="Search"
+											placeholder={t('Words.Search')}
 											icon={<i className="fa-solid fa-magnifying-glass"></i>}
 											handleChange={(e) => setInterviewerSearch(e.target.value)}
 										/>

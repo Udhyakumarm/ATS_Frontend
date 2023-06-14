@@ -20,6 +20,14 @@ export default function ToggleLang() {
   useEffect(()=> {
     setlang(router.locale)
   }, [router])
+  
+  const [hydrated, setHydrated]  = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, [setHydrated]);
+  if (!hydrated) {
+      return null;
+  }
 
   return (
     <div className="relative inline-block">
