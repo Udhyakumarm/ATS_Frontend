@@ -234,9 +234,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 										</div>
 									</div>
 									<div className="-mx-3 flex flex-wrap">
-										<div className="mb-6 w-full px-3 md:max-w-[50%]">
+										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
 											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
+												<div className="flex items-center border-b p-4 dark:border-gray-400 min-h-[80px]">
 													<h2 className="grow font-bold">{t('Words.ApplicantPipeline')}</h2>
 													<div className="w-[180px]">
 														<FormField fieldType="select" placeholder={t('Words.AllApplicants')} />
@@ -261,9 +261,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 												</div>
 											</div>
 										</div>
-										<div className="mb-6 w-full px-3 md:max-w-[50%]">
+										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
 											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
+												<div className="flex items-center border-b p-4 dark:border-gray-400 min-h-[80px]">
 													<h2 className="grow font-bold">{t('Words.HiringAnalytics')}</h2>
 													{/* <div className="w-[180px]">
 														<FormField fieldType="select" placeholder="All Time" />
@@ -299,9 +299,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 												</div>
 											</div>
 										</div>
-										<div className="mb-6 w-full px-3 md:max-w-[50%]">
+										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
 											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
+												<div className="flex items-center border-b p-4 dark:border-gray-400 min-h-[80px]">
 													<h2 className="grow font-bold">{srcLang === 'ja' ? '応募経路' : 'Average Source of Candidate'}</h2>
 												</div>
 												<div className="p-8">
@@ -323,9 +323,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 												</div>
 											</div>
 										</div>
-										<div className="mb-6 w-full px-3 md:max-w-[50%]">
+										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
 											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
+												<div className="flex items-center border-b p-4 dark:border-gray-400 min-h-[80px]">
 													<h2 className="grow font-bold">{srcLang === 'ja' ? '面接実施推移' : 'Average Interviews Schedule'}</h2>
 													<div className="w-[180px]">
 														<FormField fieldType="select" placeholder={srcLang === 'ja' ? '全期間' : 'All Time'} />

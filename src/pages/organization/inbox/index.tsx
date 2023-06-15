@@ -96,7 +96,7 @@ export default function Inbox() {
 				></div>
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="flex flex-wrap">
-						<div className="w-full md:max-w-[32%]">
+						<div className="w-full xl:max-w-[32%] mb-4 xl:mb-0">
 							<div className="overflow-hidden rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
 								<Tab.Group>
 									<Tab.List className={"border-b px-6 pt-2 dark:border-gray-600"}>
@@ -314,7 +314,7 @@ export default function Inbox() {
 								</Tab.Group>
 							</div>
 						</div>
-						<div className="w-full pl-6 md:max-w-[68%]">
+						<div className="w-full xl:pl-6 xl:max-w-[68%]">
 							<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
 								{togglePages ? (
 									<>

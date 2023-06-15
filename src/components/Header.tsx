@@ -158,7 +158,7 @@ export default function Header() {
 												<li>
 													<button
 														type="button"
-														className="block w-full bg-red-500 px-4 py-1 py-2 text-left font-bold text-white hover:bg-red-600"
+														className="block w-full text-red-500 px-4 py-1 py-2 text-left font-bold hover:bg-gray-200"
 														onClick={() => {
 															signOut({ callbackUrl: `/organization/${cname}` });
 
@@ -196,7 +196,7 @@ export default function Header() {
 							<ToggleLang />
 							<button
 								type="button"
-								className="ml-4 h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+								className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
 								onClick={() => {
 									signOut();
 

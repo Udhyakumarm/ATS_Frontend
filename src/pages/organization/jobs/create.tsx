@@ -18,7 +18,7 @@ import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
-import tokenImg from "public/images/token.png";
+import favIcon from "/public/favicon-white.ico";
 import Link from "next/link";
 import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
@@ -843,7 +843,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														? 
 														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> 
 														: 
-														<Image src={tokenImg} alt="AI" width={100} height={100} className="w-[25px]" />
+														<div className="flex h-[25px] w-[25px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-[6px] shadow-normal">
+															<Image src={favIcon} alt="AI" width={100} height={100} className="" />
+														</div>
 													}
 												</button>
 											</div>

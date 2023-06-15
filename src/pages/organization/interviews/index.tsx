@@ -101,7 +101,7 @@ export default function Interviews({upcomingSoon}:any) {
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="flex flex-wrap">
 						<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px] mb-4">
-							<div className="h-[calc(100vh-130px)] rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
+							<div className="xl:h-[calc(100vh-130px)] rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
 								<div className="border-b px-8 py-3">
 									<h2 className="text-lg font-bold">{t('Words.Filters')}</h2>
 								</div>

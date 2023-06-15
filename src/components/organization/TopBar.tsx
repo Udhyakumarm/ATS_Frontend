@@ -239,7 +239,7 @@ export default function OrgTopBar() {
 				<ToggleLang />
 				<button
 					type="button"
-					className="ml-4 h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+					className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut();
 
