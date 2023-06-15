@@ -16,6 +16,7 @@ export default function Document() {
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        <title>Somhako</title>
       </Head>
       <body className="bg-lightBlue dark:bg-gray-900 text-black dark:text-white">
         <Main />

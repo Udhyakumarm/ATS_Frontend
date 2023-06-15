@@ -477,7 +477,7 @@ export default function VendorClients() {
 				></div>
 				<div className="layoutWrap">
 					<div className="flex flex-wrap p-4 lg:p-8">
-						<div className="w-full lg:max-w-[300px]">
+						<div className="w-full xl:max-w-[300px] mb-4 xl:mb-0">
 							<div className="rounded-normal border bg-white p-4 dark:border-gray-600 dark:bg-gray-800">
 								{/* <Combobox value={selected} onChange={setSelected}>
 									<div className="relative mb-6">
@@ -530,7 +530,7 @@ export default function VendorClients() {
 									</div>
 								</Combobox> */}
 								<h4 className="mb-2 font-bold text-lg">{t('Words.Jobs')}</h4>
-								<div>
+								<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
 									{vjdata &&
 										vjdata.length > 0 &&
 										vjdata.map((data, i) => (
@@ -573,7 +573,7 @@ export default function VendorClients() {
 							</div>
 						</div>
 						{vjobclick != -1 && (
-							<div className="w-full pl-6 lg:max-w-[calc(100%-300px)]">
+							<div className="w-full xl:pl-6 xl:max-w-[calc(100%-300px)]">
 								<div className="rounded-normal bg-white dark:bg-gray-800">
 									<div className="mx-auto flex w-full max-w-[800px] flex-wrap justify-between px-4 py-4">
 										<aside>
@@ -870,7 +870,7 @@ export default function VendorClients() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1511,7 +1511,7 @@ export default function VendorClients() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1540,7 +1540,7 @@ export default function VendorClients() {
 													<p className="mx-auto w-full max-w-[600px] text-center">
 														<iframe
 															src={`http://127.0.0.1:8000${data["resume"]}`}
-															className="h-[100vh] w-[100%]"
+															className="h-[50vh] w-[100%]"
 														></iframe>
 													</p>
 												</div>
@@ -1704,7 +1704,7 @@ export default function VendorClients() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"

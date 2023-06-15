@@ -18,7 +18,7 @@ import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
-import tokenImg from "public/images/token.png";
+import favIcon from "/public/favicon-white.ico";
 import Link from "next/link";
 import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
@@ -868,6 +868,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													) : (
 														<Image src={tokenImg} alt="AI" width={100} height={100} className="w-[25px]" />
 													)}
+
 												</button>
 											</div>
 											<FormField
@@ -1376,7 +1377,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1550,7 +1551,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"

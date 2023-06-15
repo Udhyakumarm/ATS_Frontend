@@ -958,7 +958,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
-																className="h-[100vh] w-[100%]"
+																className="h-[50vh] w-[100%]"
 															></iframe>
 														</>
 													)}

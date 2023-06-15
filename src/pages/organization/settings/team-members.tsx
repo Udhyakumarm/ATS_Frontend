@@ -234,7 +234,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 							leaveTo="opacity-0"
 						>
 							<div className="border-t">
-								<div className="overflow-x-auto">
+								<div className="overflow-x-auto two">
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 										<thead>
 											<tr>
@@ -367,8 +367,8 @@ export default function TeamMembers({ upcomingSoon }: any) {
 												</div> */}
 											</div>
 										</div>
-										<div className="overflow-x-auto">
-											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+										<div className="overflow-x-auto three">
+											<table cellPadding={"0"} cellSpacing={"0"} className="w-full min-w-[948px]">
 												<thead>
 													<tr>
 														{TeamTableHead.map((item, i) => (
@@ -464,12 +464,9 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																	<input type="checkbox" />
 																</td> */}
 																<td className="border-b px-3 py-2 text-right">
-																	<Button
-																		btnType="button"
-																		btnStyle="outlined"
-																		label={<i className="fa-solid fa-trash"></i>}
-																		handleClick={() => delTeamMember(data["id"], data["email"])}
-																	/>
+																	<button type="button" className="ml-2 text-red-500 hover:text-red-700" onClick={() => delTeamMember(data["id"], data["email"])}>
+																		<i className={"fa-solid fa-trash"}></i>
+																	</button>
 																</td>
 															</tr>
 														))}
@@ -522,7 +519,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -652,7 +649,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -677,7 +674,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 									</div>
 									<div className="p-8">
 										<FormField fieldType="input" inputType="text" label={t("Words.Title")} />
-										<div className="overflow-x-auto">
+										<div className="overflow-x-auto one">
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 												<thead>
 													<tr>

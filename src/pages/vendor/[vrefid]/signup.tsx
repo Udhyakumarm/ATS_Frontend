@@ -381,7 +381,7 @@ export default function VendorSignup() {
 									<section className="mx-auto w-full max-w-[700px] py-4">
 										<p className="text-center">
 											{aggrement && aggrement.length > 0 && (
-												<iframe src={`${aggrement}`} className="h-[100vh] w-[100%]"></iframe>
+												<iframe src={`${aggrement}`} className="h-[50vh] w-[100%]"></iframe>
 											)}
 										</p>
 										<hr className="my-4" />
@@ -498,7 +498,15 @@ export default function VendorSignup() {
 		</>
 	);
 }
-export async function getServerSideProps({ context, locale }:any) {
+export async function getStaticPaths() {
+	return {
+	  paths: [
+		{ params: { vrefid: 'string' } },
+	  ],
+	  fallback: true,
+	}
+}
+export async function getStaticProps({ context, locale }:any) {
 	const translations = await serverSideTranslations(locale, ['common']);
 	return {
 		props: {

@@ -92,7 +92,7 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 							<div className="mx-[-7px] flex flex-wrap">
 								{sklLoad
 									? orgdetail["Job"].map((data: any, i: React.Key) => (
-											<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]" key={i}>
+											<div className="mb-[15px] w-full px-[7px] lg:max-w-[50%]" key={i}>
 												<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
 													<h4 className="mb-3 text-lg font-bold">{data["job_title"]}</h4>
 													<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
@@ -131,7 +131,7 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 											</div>
 									  ))
 									: Array(5).fill(
-											<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
+											<div className="mb-[15px] w-full px-[7px] lg:max-w-[50%]">
 												<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-800">
 													<h4 className="mb-3 text-lg font-bold">
 														<Skeleton width={160} />

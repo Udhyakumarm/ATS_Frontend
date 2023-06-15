@@ -136,21 +136,21 @@ export default function InterviewComp({ sklLoad, data }: any) {
 									<div className="w-full border-r md:max-w-[75%]">
 										<div className="px-6 py-4">
 											<div className="mb-4 flex flex-wrap">
-												<div className="mr-4 w-full pr-4 lg:max-w-[25%]">
-													<h6 className="font-bold">{srcLang === "ja" ? "設定者" : "Scheduled by"}</h6>
+												<div className="mr-4 w-full pr-4 lg:max-w-[25%] my-1">
+													<h6 className="font-bold mb-1">{srcLang === "ja" ? "設定者" : "Scheduled by"}</h6>
 													<p className="text-[12px] text-darkGray dark:text-gray-400">{data["user"]["email"]}</p>
 												</div>
-												<div className="w-full pl-4 lg:max-w-[50%]">
-													<h6 className="font-bold">{srcLang === "ja" ? "求人ID" : "Job ID"}</h6>
+												<div className="w-full lg:pl-4 lg:max-w-[50%] my-1">
+													<h6 className="font-bold mb-1">{srcLang === "ja" ? "求人ID" : "Job ID"}</h6>
 													<p className="text-[12px] text-darkGray dark:text-gray-400">{data["job"]["refid"]}</p>
 												</div>
 											</div>
 											<div className="mb-4 flex flex-wrap">
 												<div className="mr-4 w-full border-r pr-4 lg:max-w-[25%]">
-													<h6 className="font-bold">{srcLang === "ja" ? "面接方法" : "Interview Type"}</h6>
+													<h6 className="font-bold mb-1">{srcLang === "ja" ? "面接方法" : "Interview Type"}</h6>
 													<p className="text-[12px] text-darkGray dark:text-gray-400">{data["platform"]}</p>
 												</div>
-												<div className="w-full pl-4 lg:max-w-[50%]">
+												<div className="w-full lg:pl-4 lg:max-w-[50%]">
 													<div className="flex items-center">
 														<Image
 															src={googleIcon}
@@ -169,7 +169,7 @@ export default function InterviewComp({ sklLoad, data }: any) {
 											</div>
 											<div className="mb-4 flex flex-wrap">
 												<div className="w-full">
-													<h6 className="font-bold">{srcLang === "ja" ? "面接官" : "Interviewers"}</h6>
+													<h6 className="font-bold mb-1">{srcLang === "ja" ? "面接官" : "Interviewers"}</h6>
 													<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
 														{data["add_interviewer"] && data["add_interviewer"].length > 0 ? (
 															data["add_interviewer"].map((data, i) =>
@@ -191,7 +191,7 @@ export default function InterviewComp({ sklLoad, data }: any) {
 											</div>
 											<div className="mb-2 flex flex-wrap">
 												<div className="w-full">
-													<h6 className="font-bold">{srcLang === "ja" ? "面接概要" : "Event Name"}</h6>
+													<h6 className="font-bold mb-1">{srcLang === "ja" ? "面接概要" : "Event Name"}</h6>
 													<p className="text-[12px] text-darkGray dark:text-gray-400">{data["interview_name"]}</p>
 												</div>
 											</div>
