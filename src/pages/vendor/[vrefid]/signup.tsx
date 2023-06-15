@@ -498,7 +498,15 @@ export default function VendorSignup() {
 		</>
 	);
 }
-export async function getServerSideProps({ context, locale }:any) {
+export async function getStaticPaths() {
+	return {
+	  paths: [
+		{ params: { vrefid: 'string' } },
+	  ],
+	  fallback: true,
+	}
+}
+export async function getStaticProps({ context, locale }:any) {
 	const translations = await serverSideTranslations(locale, ['common']);
 	return {
 		props: {
