@@ -89,7 +89,7 @@ export default function Organization({ atsVersion, userRole }: any) {
 						<div className="mx-auto w-full max-w-[1100px]">
 							<div className="-mx-4 flex flex-wrap items-center">
 								{quicklinks.map((links, i) => (
-									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
+									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%]">
 										<Link
 											href={links.blur ? "javascript:void(0)" : links.link}
 											className="relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"

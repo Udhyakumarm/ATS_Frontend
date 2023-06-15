@@ -264,7 +264,8 @@
         "TotalSubmissions": "Total Submissions",
         "Conversions": "Conversions",
         "Hiring": "Hiring",
-        "ApplicantSourced": "Applicant Sourced"
+        "ApplicantSourced": "Applicant Sourced",
+        "BasicInformation": "Basic Information"
     },
     "Plans": {
         "Starter": "Starter",

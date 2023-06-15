@@ -264,7 +264,8 @@
         "TotalSubmissions": "応募数",
         "Conversions": "採用数",
         "Hiring": "採用決定率",
-        "ApplicantSourced": "採用実績"
+        "ApplicantSourced": "採用実績",
+        "BasicInformation": "基本情報"
     },
     "Plans": {
         "Starter": "スターター",
