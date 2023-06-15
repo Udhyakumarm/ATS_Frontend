@@ -185,6 +185,30 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			});
 	}
 
+	const [todos, settodos] = useState([]);
+	const [nctodos, setnctodos] = useState([]);
+	const [todoLoadMore, settodoLoadMore] = useState(false);
+
+	async function loadTodo() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/list-todo/`)
+			.then(async (res) => {
+				console.log("!", "TODO", res.data);
+				settodos(res.data);
+				var data = res.data;
+				let arr = [];
+				for (let i = 0; i < data.length; i++) {
+					if (!data[i]["compelete"]) {
+						arr.push(data[i]);
+					}
+				}
+				setnctodos(arr);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
 	async function loadAnalytics() {
 		await axiosInstanceAuth2
 			.get(`/organization/get_analytics/`)
@@ -227,8 +251,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 
 	useEffect(() => {
 		if (token && token.length > 0) {
-			loadActivityLog();
+			loadTodo();
 			loadAnalytics();
+			loadActivityLog();
 		}
 	}, [token]);
 
@@ -241,7 +266,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			<main>
 				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
-				<Orgtopbar />
+				<Orgtopbar todoLoadMore={todoLoadMore} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -415,7 +440,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<div className="max-h-[330px] overflow-y-auto">
 													{upcomingInterview.slice(0, 5).map((data, i) => (
 														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2" key={i}>
-															<div className="flex items-center w-[250px] py-1 pr-2">
+															<div className="flex w-[250px] items-center py-1 pr-2">
 																<Image
 																	src={userImg1}
 																	alt="User"
@@ -442,8 +467,8 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	<p className="text-[12px] text-darkGray">{data["job"]["job_title"]}</p>
 																</div>
 															</div>
-															<div className="grow flex">
-																<div className="pr-2 py-1 grow">
+															<div className="flex grow">
+																<div className="grow py-1 pr-2">
 																	<h5 className="text-sm font-bold">
 																		{moment(data["date_time_from"]).format("DD MMM YYYY")}
 																	</h5>
@@ -451,7 +476,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		{moment(data["date_time_from"]).format(" h:mm a")}
 																	</p>
 																</div>
-																<div className="pr-2 py-1 grow">
+																<div className="grow py-1 pr-2">
 																	<h5 className="text-sm font-bold">
 																		{moment(data["date_time_to"]).format("DD MMM YYYY")}
 																	</h5>
@@ -460,7 +485,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	</p>
 																</div>
 															</div>
-															<div className="text-right py-1 grow">
+															<div className="grow py-1 text-right">
 																<Button
 																	btnStyle="outlined"
 																	label={t("Btn.View")}
@@ -523,10 +548,45 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 											)}
 										</div>
 										<div className="p-6 pt-0">
-											{todoList && todoList.length > 0 && !upcomingSoon ? (
+											{nctodos && nctodos.length > 0 ? (
 												<>
 													<div className="max-h-[330px] overflow-y-auto">
-														{sklLoad
+														{nctodos.slice(0, 5).map((data, i) => (
+															<div className="mb-3 flex flex-wrap rounded-[10px] border" key={i}>
+																{/* <div className="flex w-[65%] items-center px-3 py-2"> */}
+																<div className="w-[65%] px-8 py-4">
+																	<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																	<p
+																		className="text-sm text-darkGray dark:text-gray-400"
+																		dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																	></p>
+																</div>
+																<div className="relative flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																	<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																		<i className="fa-regular fa-square-check"></i>
+																	</span>
+																	<h5 className="font-bold">{moment(data["deadline"]).format("DD MMM YYYY")}</h5>
+																	<div className="absolute right-1 top-1">
+																		{data["priority"] === "High" && (
+																			<p className="rounded-full bg-red-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				High
+																			</p>
+																		)}
+																		{data["priority"] === "Medium" && (
+																			<p className="rounded-full bg-yellow-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				Medium
+																			</p>
+																		)}
+																		{data["priority"] === "Low" && (
+																			<p className="rounded-full bg-gray-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				Low
+																			</p>
+																		)}
+																	</div>
+																</div>
+															</div>
+														))}
+														{/* {sklLoad
 															? Array(6).fill(
 																	<div className="mb-3 flex flex-wrap rounded-[10px] border">
 																		<div className="flex w-[65%] items-center px-3 py-2">
@@ -569,14 +629,17 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																			</h5>
 																		</div>
 																	</div>
-															  )}
+															  )} */}
 													</div>
 													<div className="pt-4">
-														<Button btnStyle="outlined" label={t("Btn.LoadMore")} btnType="button" />
+														<Button
+															btnStyle="outlined"
+															label={t("Btn.LoadMore")}
+															btnType="button"
+															handleClick={() => settodoLoadMore(true)}
+														/>
 													</div>
 												</>
-											) : upcomingSoon ? (
-												<UpcomingComp />
 											) : (
 												<div className="py-8 text-center">
 													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
