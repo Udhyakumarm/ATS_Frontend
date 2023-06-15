@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ const Toaster = dynamic(() => import("../../components/Toaster"), {
 });
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import ToggleLang from "@/components/ToggleLang";
 
 const errorMessages = {
 	Signin: "Try signing with a different account.",
@@ -54,7 +55,7 @@ export default function AuthSignIn({ providers }: any) {
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
-
+	
 	const { error } = useRouter().query;
 
 	const [loginInfo, dispatch] = useReducer(updateLoginInfo, {
@@ -218,6 +219,9 @@ export default function AuthSignIn({ providers }: any) {
 								{srcLang === 'ja' ? 'こちら' : 'Create Account'}
 							</Link>
 						</p>
+					</div>
+					<div className="text-right pt-2">
+						<ToggleLang />
 					</div>
 				</form>
 			</main>

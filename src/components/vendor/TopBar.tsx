@@ -1,6 +1,7 @@
 import { useCarrierStore, useUserStore } from "@/utils/code";
 import ThemeChange from "../ThemeChange";
 import { signOut } from "next-auth/react";
+import ToggleLang from "../ToggleLang";
 
 export default function VendorTopBar() {
 	const settype = useUserStore((state: { settype: any }) => state.settype);
@@ -26,9 +27,10 @@ export default function VendorTopBar() {
 						99+
 					</span>
 				</button>
+				<ToggleLang />
 				<button
 					type="button"
-					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+					className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut({ callbackUrl: `/vendor/${vid}/signin` });
 

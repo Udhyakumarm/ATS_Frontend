@@ -53,7 +53,6 @@ export default function Header() {
 	) {
 		return (
 			<>
-				<ToggleLang />
 				<header className="hello bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<div className="flex items-center">
@@ -107,11 +106,12 @@ export default function Header() {
 								{type}&nbsp;{role}
 							</p>
 							<ThemeChange />
+							<ToggleLang />
 							{!auth && (
 								<Link
 									href={"/organization/" + cname + "/candidate/signin"}
 									className={
-										`inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
+										`ml-4 inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
 										" " +
 										(router.pathname == "/organization/" + cname + "/candidate/signin"
 											? "border-b-primary text-primary"
@@ -123,7 +123,7 @@ export default function Header() {
 							)}
 							{auth && (
 								<>
-									<Popover className="relative mr-6">
+									<Popover className="relative ml-4 mr-6">
 										<Popover.Button>
 											<button type="button" className="relative uppercase text-darkGray dark:text-gray-400">
 												<i className="fa-regular fa-bell text-[20px]"></i>
@@ -158,7 +158,7 @@ export default function Header() {
 												<li>
 													<button
 														type="button"
-														className="block w-full bg-red-500 px-4 py-1 py-2 text-left font-bold text-white hover:bg-red-600"
+														className="block w-full text-red-500 px-4 py-1 py-2 text-left font-bold hover:bg-gray-200"
 														onClick={() => {
 															signOut({ callbackUrl: `/organization/${cname}` });
 
@@ -183,20 +183,20 @@ export default function Header() {
 	} else if (router.asPath == "/organization") {
 		return (
 			<>
-				<ToggleLang />
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
 						<div className="flex items-center">
 							<p className="bg-blue-500 p-1 text-white">
-								{type}&nbsp;{role}
+								{type} | {role}
 							</p>
 
 							<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
 							<ThemeChange />
+							<ToggleLang />
 							<button
 								type="button"
-								className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+								className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
 								onClick={() => {
 									signOut();
 
@@ -254,7 +254,7 @@ export default function Header() {
 	// }
 	return (
 		<>
-			<ToggleLang />
+			
 		</>
 	);
 }

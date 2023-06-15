@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import userImg from "/public/images/user-image.png";
+import userImg1 from "/public/images/user-image1.jpeg";
 import socialIcon from "/public/images/social/linkedin-icon.png";
 import { useApplicantStore, useLangStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
@@ -35,7 +35,7 @@ export default function Card(props: any) {
 				<div className="mb-4 rounded-normal bg-white px-4 py-2 shadow-normal dark:bg-gray-800">
 					<div className="mb-2 flex items-center justify-between">
 						<aside className="flex items-center">
-							<Image src={userImg} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
+							<Image src={userImg1} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
 							<h5 className="pl-4 text-sm font-semibold">
 								{props["data"]["type"] === "career" && (
 									<>

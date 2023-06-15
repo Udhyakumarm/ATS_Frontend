@@ -604,7 +604,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				<div className="layoutWrap p-4 lg:p-8">
 					<div className="relative">
 						<div className="flex flex-wrap">
-							<div className="w-full lg:max-w-[400px]">
+							<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px]">
 								<div className="mb-4 flex items-center rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
 									<button
 										className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
@@ -618,26 +618,16 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										<span>{t("Words.Profile")}</span>
 									</h2>
 								</div>
-								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 max-h-[500px] overflow-auto xl:max-h-[inherit]">
 									<div className="mb-4 border-b pb-4">
 										<div className="mb-4 border-b pb-2 text-center">
-											{profileData["profile"] && profileData["profile"].length > 0 ? (
-												<Image
-													src={`http://127.0.0.1:8000${profileData["profile"]}`}
-													alt="User"
-													width={90}
-													height={90}
-													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
-												/>
-											) : (
-												<Image
-													src={userImg1}
-													alt="User"
-													width={90}
-													height={90}
-													className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
-												/>
-											)}
+											<Image
+												src={userImg1}
+												alt="User"
+												width={90}
+												height={90}
+												className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
+											/>
 											<h3 className="mb-2 font-bold">
 												{profileData["first_name"]} {profileData["last_name"]}
 											</h3>
@@ -794,19 +784,16 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									)}
 								</div>
 							</div>
-							<div className="w-full lg:max-w-[calc(100%-400px)] lg:pl-8">
+							<div className="w-full xl:max-w-[calc(100%-300px)] 2xl:max-w-[calc(100%-400px)] xl:pl-8">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
-									<div className="jusitfy-between relative z-10 flex flex-wrap items-center p-5 shadow">
+									<div className="relative z-10 flex flex-wrap items-center justify-between p-5 shadow">
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
 												<span>{appdata["job"]["job_title"]}</span>
 											</h2>
 										</aside>
-										<aside className="flex grow items-center justify-end">
-											<div className="mr-4">
-												<Button btnType="button" btnStyle="gray" label={`${t("Words.Source")} ${type}`} />
-											</div>
+										<aside className="flex items-center">
 											<div className="mr-4">
 												<Button
 													btnType="button"
@@ -818,7 +805,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													}}
 												/>
 											</div>
-											<div className="mr-4">
+											<div className="">
 												<Listbox value={selectedPerson} onChange={(v) => moveApplicant(v)}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
 														<span className="px-3 py-2">{t("Words.MoveApplicant")}</span>
@@ -862,87 +849,89 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													</Transition>
 												</Listbox>
 											</div>
-											<TeamMembers />
+											{!upcomingSoon && <TeamMembers />}
 										</aside>
 									</div>
 									<div className="">
 										<Tab.Group>
-											<Tab.List className={"border-b px-4"}>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Profile")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Assessment")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Form.Feedback")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.Timeline")}
-														</button>
-													)}
-												</Tab>
-												<Tab as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary"
-																	: "border-transparent text-darkGray dark:text-gray-400")
-															}
-														>
-															{t("Words.AIGeneratedInterview")}
-														</button>
-													)}
-												</Tab>
+											<Tab.List className={"border-b px-4 overflow-auto"}>
+												<div className="flex w-[700px]">
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Profile")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Assessment")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Form.Feedback")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.Timeline")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{t("Words.AIGeneratedInterview")}
+															</button>
+														)}
+													</Tab>
+												</div>
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
@@ -951,7 +940,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
 																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
-																	href={`http://127.0.0.1:8000${profileData["resume"]}`}
+																	href={
+																		process.env.NODE_ENV === "production"
+																			? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
+																	}
 																	className="my-2 inline-block font-bold text-primary hover:underline"
 																	download={profileData["resume"].split("/").pop()}
 																>
@@ -960,8 +953,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																</Link>
 															</div>
 															<iframe
-																src={`http://127.0.0.1:8000${profileData["resume"]}`}
-																className="h-[100vh] w-[100%]"
+																src={
+																	process.env.NODE_ENV === "production"
+																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
+																}
+																className="h-[50vh] w-[100%]"
 															></iframe>
 														</>
 													)}
@@ -1009,7 +1006,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	) : (
@@ -1022,7 +1019,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	)}
@@ -1048,7 +1045,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	) : (
@@ -1061,7 +1058,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	)}
@@ -1087,7 +1084,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	) : (
@@ -1100,7 +1097,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	)}
@@ -1128,7 +1125,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		<div className="bg-lightBlue px-4 dark:bg-gray-700">
 																			<Button
 																				btnStyle="sm"
-																				label={t('Btn.Add')}
+																				label={t("Btn.Add")}
 																				btnType={"button"}
 																				disabled={!checkDis()}
 																				handleClick={() => createFeedback()}
@@ -1274,7 +1271,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-primary"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	) : (
@@ -1287,7 +1284,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Shortlist')}
+																				{t("Btn.Shortlist")}
 																			</p>
 																		</div>
 																	)}
@@ -1319,7 +1316,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"hidden group-hover:block group-hover:text-yellow-500"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	) : (
@@ -1332,7 +1329,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.OnHold')}
+																				{t("Btn.OnHold")}
 																			</p>
 																		</div>
 																	)}
@@ -1363,9 +1360,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					" " +
 																					"hidden group-hover:block group-hover:text-red-500"
 																				}
-																			>
-																				
-																			</p>
+																			></p>
 																		</div>
 																	) : (
 																		<div className="cursor-normal group relative h-[40px] w-[70px] text-center text-[12px] leading-[40px]">
@@ -1377,7 +1372,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					"block bg-gradDarkBlue text-white"
 																				}
 																			>
-																				{t('Btn.Reject')}
+																				{t("Btn.Reject")}
 																			</p>
 																		</div>
 																	)}
@@ -1431,7 +1426,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					<>
 																						<Button
 																							btnStyle="sm"
-																							label={data["feedback"] && data["feedback"].length > 0 ? t('Btn.Update') : t('Btn.Add') }
+																							label={
+																								data["feedback"] && data["feedback"].length > 0
+																									? t("Btn.Update")
+																									: t("Btn.Add")
+																							}
 																							btnType={"button"}
 																							handleClick={(e) => {
 																								updateFeedback(data["id"]);
@@ -1937,7 +1936,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				<i className={"fa-solid fa-rotate fa-spin"}></i>
 																			</span>
 																		)}
-																		{ailoader ? <>{t('Btn.InProgress')}</> : <>{t('Btn.Regenerate')}</>}
+																		{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
 																	</button>
 																</div>
 															</div>
@@ -1968,10 +1967,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									<Document file=`${data['file']}` key={i}/>
 								))}
 
-							{applicantdetail["Resume"] &&
-								applicantdetail["Resume"].map((data, i) => (
-									<iframe src={`http://127.0.0.1:8000${data["file"]}`} key={i} />
-								))}
 							{applicantlist &&
 								applicantlist.map(
 									(data, i) =>

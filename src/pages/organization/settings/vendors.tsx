@@ -483,9 +483,9 @@ export default function Vendors() {
 																</div>
 															)}
 														</div>
-														<div className="mb-4 flex w-full flex-wrap px-3 md:max-w-[50%]">
+														<div className="flex w-full flex-wrap px-3 md:max-w-[50%]">
 															{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
-															<div className="w-full pr-2 md:max-w-[50%]">
+															<div className="w-full mb-4 pr-2 md:max-w-[50%]">
 																<FormField
 																	label={t('Form.StartDate')}
 																	fieldType="input"
@@ -496,17 +496,8 @@ export default function Vendors() {
 																	}}
 																	required
 																/>
-																{/* <FormField
-																	id={"start"}
-																	fieldType="date"
-																	placeholder="Start Time"
-																	singleSelect
-																	showTimeSelect
-																	showHours
-																	required
-																/> */}
 															</div>
-															<div className="w-full pl-2 md:max-w-[50%]">
+															<div className="w-full mb-4 md:pl-2 md:max-w-[50%]">
 																<FormField
 																	label={t('Form.EndDate')}
 																	fieldType="input"
@@ -515,15 +506,6 @@ export default function Vendors() {
 																	handleChange={(e) => setaedate(e.target.value)}
 																	required
 																/>
-																{/* <FormField
-																	id={"end"}
-																	fieldType="date"
-																	placeholder="End Time"
-																	singleSelect
-																	showTimeSelect
-																	showHours
-																	required
-																/> */}
 															</div>
 														</div>
 													</div>
@@ -654,7 +636,7 @@ export default function Vendors() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"

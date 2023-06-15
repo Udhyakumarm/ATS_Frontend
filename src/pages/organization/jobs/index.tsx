@@ -73,7 +73,7 @@ export default function JobsDashboard() {
 						<h1 className="mb-6 text-xl font-bold">{t('Words.Jobs')}</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
 							{quicklinks.map((links, i) => (
-								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] lg:max-w-[25%]">
+								<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
 									<Link
 										href={links.link}
 										className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"

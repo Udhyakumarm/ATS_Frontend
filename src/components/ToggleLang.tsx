@@ -20,14 +20,22 @@ export default function ToggleLang() {
   useEffect(()=> {
     setlang(router.locale)
   }, [router])
+  
+  const [hydrated, setHydrated]  = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, [setHydrated]);
+  if (!hydrated) {
+      return null;
+  }
 
   return (
-    <div className="fixed z-[100] top-[40%] right-0">
+    <div className="relative inline-block">
       <Listbox value={selectedLanguages} onChange={setLanguages}>
         <div className="relative">
-          <Listbox.Button className="bg-primary text-white py-2 px-2 rounded-l flex items-center justify-center">
-            {/* <span className="block truncate uppercase leading-1 mr-2">{lang}</span> */}
-            <i className='fa-solid fa-globe'></i>
+          <Listbox.Button className="flex items-center w-[50px] text-darkGray dark:text-gray-400 text-sm">
+            <span className="block truncate uppercase leading-1 mr-2">{lang}</span>
+            <i className='fa-solid fa-angle-down'></i>
           </Listbox.Button>
           <Transition
             as={Fragment}
@@ -35,11 +43,11 @@ export default function ToggleLang() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute min-w-[150px] top-[100%] right-0 mt-1 max-h-60 w-full overflow-auto rounded-md bg-primary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <Listbox.Options className="absolute z-[10] w-[150px] top-[100%] right-0 mt-1 max-h-60 overflow-auto rounded-md bg-primary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {languages.map((item, itemIdx) => (
                 <Listbox.Option
                 className={({ active }) =>
-                    `relative cursor-pointer select-none py-2 pl-10 pr-4 block hover:bg-indigo-500 hover:text-white ${
+                    `relative text-left cursor-pointer select-none py-2 pl-10 pr-4 block hover:bg-indigo-500 hover:text-white ${
                     active ? 'bg-indigo-500 text-white' : 'text-white'
                     }`
                 }

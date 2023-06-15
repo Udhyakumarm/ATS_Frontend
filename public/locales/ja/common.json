@@ -102,7 +102,8 @@
         "Regenerate": "再生する",
         "ComingSoon": "準備中",
         "GoPremium": "プレミアムプランにアップグレード",
-        "Upgrade": "アップグレード"
+        "Upgrade": "アップグレード",
+        "LoadMore": "もっと読み込む"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -255,7 +256,16 @@
         "MoveApplicant": "候補者を移動",
         "AIGeneratedInterview": "AI生成インタビュー",
         "AskQuestionsRelatedCandidate": "候補者に関連する質問をする",
-        "LetChooseAvailability": "面接官に候補日程を共有する"
+        "LetChooseAvailability": "面接官に候補日程を共有する",
+        "Overview": "概要",
+        "Performance": "実績",
+        "ApplicantPipeline": "選考状況",
+        "VendorsPerformance": "人材紹介会社経由",
+        "TotalSubmissions": "応募数",
+        "Conversions": "採用数",
+        "Hiring": "採用決定率",
+        "ApplicantSourced": "採用実績",
+        "BasicInformation": "基本情報"
     },
     "Plans": {
         "Starter": "スターター",

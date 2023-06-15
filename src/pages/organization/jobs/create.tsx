@@ -18,7 +18,7 @@ import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
-import successGraphic from "public/images/success-graphic.png";
+import favIcon from "/public/favicon-white.ico";
 import Link from "next/link";
 import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
@@ -50,6 +50,7 @@ const StickyLabel = ({ label }: any) => (
 export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation('common')
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const [loader, setLoader] = useState(false);
 	const [sklLoad] = useState(true);
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
@@ -618,32 +619,34 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										))}
 									</div>
 								</div>
-								<Tab.List className={"mx-auto flex w-full max-w-[1100px] flex-wrap"}>
-									{tabHeading_1.map((item, i) => (
-										<Tab key={i} as={Fragment}>
-											{({ selected }) => (
-												<button
-													className={
-														"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
-														" " +
-														(selected
-															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400") +
-														" " +
-														(!item.hide && "display-none")
-													}
-												>
-													{item.title}
-												</button>
-											)}
-										</Tab>
-									))}
+								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
+									<div className="w-[820px] flex">
+										{tabHeading_1.map((item, i) => (
+											<Tab key={i} as={Fragment}>
+												{({ selected }) => (
+													<button
+														className={
+															"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
+															" " +
+															(selected
+																? "border-primary text-primary"
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(!item.hide && "display-none")
+														}
+													>
+														{item.title}
+													</button>
+												)}
+											</Tab>
+										))}
+									</div>
 								</Tab.List>
 							</div>
 							<Tab.Panels>
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={(t('Words.JobTitle')) + ' & ' + t('Words.Department')} />
+										<StickyLabel label={t('Words.BasicInformation')} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<FormField
 												fieldType="input"
@@ -654,6 +657,209 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												handleChange={(e) => setjtitle(e.target.value)}
 												required
 											/>
+											<FormField
+												options={ski}
+												onSearch={searchSkill}
+												fieldType="select2"
+												id="skills"
+												handleChange={setjskill}
+												label={t('Words.Skills')}
+												required
+											/>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t('Words.AnnualSalary')} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8 relative">
+											<div className="absolute right-5 top-2">
+												<label htmlFor="hideSalary" className="text-sm text-darkGray dark:text-gray-400 flex items-center">
+													<input type="checkbox" id="hideSalary" className="rounded border border-darkGray dark:border-gray-600 dark:bg-gray-70 mr-2" />
+													Hide Salary
+												</label>
+											</div>
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[25%]">
+													<FormField
+														required
+														fieldType="input"
+														inputType="number"
+														label={t('Words.From')}
+														id="salary"
+														value={jsalary}
+														handleChange={(e) => setjsalary(e.target.value)}
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[25%]">
+													<FormField
+														required
+														fieldType="input"
+														inputType="number"
+														label={t('Words.To')}
+														id="salary"
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														required
+														fieldType="select"
+														label={t('Words.Currency')}
+														id="currency"
+														options={[
+															"USD $",
+															"CAD CA$",
+															"EUR €",
+															"AED AED",
+															"AFN Af",
+															"ALL ALL",
+															"AMD AMD",
+															"ARS AR$",
+															"AUD AU$",
+															"AZN man.",
+															"BAM KM",
+															"BDT Tk",
+															"BGN BGN",
+															"BHD BD",
+															"BIF FBu",
+															"BND BN$",
+															"BOB Bs",
+															"BRL R$",
+															"BWP BWP",
+															"BYN Br",
+															"BZD BZ$",
+															"CDF CDF",
+															"CHF CHF",
+															"CLP CL$",
+															"CNY CN¥",
+															"COP CO$",
+															"CRC ₡",
+															"CVE CV$",
+															"CZK Kč",
+															"DJF Fdj",
+															"DKK Dkr",
+															"DOP RD$",
+															"DZD DA",
+															"EEK Ekr",
+															"EGP EGP",
+															"ERN Nfk",
+															"ETB Br",
+															"GBP £",
+															"GEL GEL",
+															"GHS GH₵",
+															"GNF FG",
+															"GTQ GTQ",
+															"HKD HK$",
+															"HNL HNL",
+															"HRK kn",
+															"HUF Ft",
+															"IDR Rp",
+															"ILS ₪",
+															"INR ₹",
+															"IQD IQD",
+															"IRR IRR",
+															"ISK Ikr",
+															"JMD J$",
+															"JOD JD",
+															"JPY ¥",
+															"KES Ksh",
+															"KHR KHR",
+															"KMF CF",
+															"KRW ₩",
+															"KWD KD",
+															"KZT KZT",
+															"LBP L.L.",
+															"LKR SLRs",
+															"LTL Lt",
+															"LVL Ls",
+															"LYD LD",
+															"MAD MAD",
+															"MDL MDL",
+															"MGA MGA",
+															"MKD MKD",
+															"MMK MMK",
+															"MOP MOP$",
+															"MUR MURs",
+															"MXN MX$",
+															"MYR RM",
+															"MZN MTn",
+															"NAD N$",
+															"NGN ₦",
+															"NIO C$",
+															"NOK Nkr",
+															"NPR NPRs",
+															"NZD NZ$",
+															"OMR OMR",
+															"PAB B/.",
+															"PEN S/.",
+															"PHP ₱",
+															"PKR PKRs",
+															"PLN zł",
+															"PYG ₲",
+															"QAR QR",
+															"RON RON",
+															"RSD din.",
+															"RUB RUB",
+															"RWF RWF",
+															"SAR SR",
+															"SDG SDG",
+															"SEK Skr",
+															"SGD S$",
+															"SOS Ssh",
+															"SYP SY£",
+															"THB ฿",
+															"TND DT",
+															"TOP T$",
+															"TRY TL",
+															"TTD TT$",
+															"TWD NT$",
+															"TZS TSh",
+															"UAH ₴",
+															"UGX USh",
+															"UYU $U",
+															"UZS UZS",
+															"VEF Bs.F.",
+															"VND ₫",
+															"XAF FCFA",
+															"XOF CFA",
+															"YER YR",
+															"ZAR R",
+															"ZMK ZK",
+															"ZWL ZWL$",
+														]}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t('Words.JobDescription')} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 pt-2 pb-8">
+											<div className="text-right w-full mb-4">
+												<button type="button" className="bg-white dark:bg-gray-700 shadow-highlight hover:shadow-normal text-sm ml-auto p-2 px-4 rounded flex items-center">
+													<span className="mr-3">Generate Description</span>
+													{
+														loader 
+														? 
+														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i> 
+														: 
+														<div className="flex h-[25px] w-[25px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-[6px] shadow-normal">
+															<Image src={favIcon} alt="AI" width={100} height={100} className="" />
+														</div>
+													}
+												</button>
+											</div>
+											<FormField
+												fieldType="reactquill"
+												id="description"
+												value={jdeptinfo}
+												handleChange={setjdeptinfo}
+											/>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t('Words.DepartmentInformation')} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
@@ -697,23 +903,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														handleChange={(e) => setjgrp(e.target.value)}
 													/>
 												</div>
-												<div className="mb-4 w-full px-3 md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="number"
-														value={jvac}
-														handleChange={(e) => setjvac(e.target.value)}
-														label={t('Words.NoOfVacancy')}
-														id="vacancy"
-													/>
-												</div>
 											</div>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.DepartmentInformation')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<FormField
+												label={t('Words.Department') + ' ' + t('Form.Description')}
 												fieldType="reactquill"
 												id="description"
 												value={jdeptinfo}
@@ -722,33 +914,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.YourResponsibilities')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="responsibility" value={jres} handleChange={setjres} />
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.WhatWeAreLookingFor')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="looking_for" value={jlooking} handleChange={setjlooking} />
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.Skills')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField
-												options={ski}
-												onSearch={searchSkill}
-												fieldType="select2"
-												id="skills"
-												handleChange={setjskill}
-												label={t('Words.Skills')}
-											/>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t('Words.EmploymentDetails')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 pt-8">
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
@@ -777,8 +944,6 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														id="experience"
 													/>
 												</div>
-											</div>
-											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
@@ -797,45 +962,28 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														value={jlang}
 														handleChange={(e) => setjlang(e.target.value)}
 														id="language"
+														required
 													/>
 												</div>
-											</div>
-										</div>
-										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8">
-											<FormField
-												options={locf}
-												onSearch={searchLoc}
-												fieldType="select2"
-												id="location"
-												label={t('Words.JobLocation')}
-												handleChange={setjloc}
-											/>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.AnnualSalary')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="number"
-														label={t('Words.SalaryStartingFrom')}
-														id="salary"
-														value={jsalary}
-														handleChange={(e) => setjsalary(e.target.value)}
-														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+														value={jvac}
+														handleChange={(e) => setjvac(e.target.value)}
+														label={t('Words.NoOfVacancy')}
+														id="vacancy"
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
-														fieldType="input"
-														inputType="text"
-														label={t('Words.Currency')}
-														id="currency"
-														value={jcurr}
-														handleChange={(e) => setjcurr(e.target.value)}
-														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+														options={locf}
+														onSearch={searchLoc}
+														fieldType="select2"
+														id="location"
+														label={t('Words.JobLocation')}
+														handleChange={setjloc}
+														required
 													/>
 												</div>
 											</div>
@@ -887,17 +1035,17 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										<UpcomingComp />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label="Assessment" />
+											<StickyLabel label={t('Words.Assessment')} />
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<div className="mx-[-15px] flex flex-wrap">
 													{sklLoad
 														? Array(6).fill(
-																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]">
 																	<CardLayout_1 isBlank={true} />
 																</div>
 														  )
 														: Array(6).fill(
-																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]">
 																	<CardLayout_1 sklLoad={true} />
 																</div>
 														  )}
@@ -1141,12 +1289,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													{sklLoad
 														? fvendors &&
 														  fvendors.map((data, i) => (
-																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]" key={i}>
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]" key={i}>
 																	<CardLayout_2 data={data} />
 																</div>
 														  ))
 														: Array(6).fill(
-																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]">
 																	<CardLayout_2 sklLoad={true} />
 																</div>
 														  )}
@@ -1166,7 +1314,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													{sklLoad
 														? Object.keys(integrationList).map((key: any) => (
 																<div
-																	className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]"
+																	className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]"
 																	key={key}
 																>
 																	<CardLayout_1
@@ -1178,7 +1326,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																</div>
 														  ))
 														: Array(6).fill(
-																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+																<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] xl:max-w-[33.3333%]">
 																	<CardLayout_1 sklLoad={true} />
 																</div>
 														  )}
@@ -1207,7 +1355,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1373,7 +1521,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"

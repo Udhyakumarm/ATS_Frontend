@@ -15,6 +15,7 @@ import settingsIconWhite from "/public/images/icons-white/settings.png";
 import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
 import UpcomingComp from "../organization/upcomingComp";
 import { Dialog, Transition } from "@headlessui/react";
+import {isMobile} from 'react-device-detect';
 
 export default function VendorSideBar() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -22,8 +23,15 @@ export default function VendorSideBar() {
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	function toggleSidebar() {
-		document.querySelector("main")?.classList.toggle("sidebarToggled");
-		setShow(!show);
+		if(!isMobile) {
+			document.querySelector("main")?.classList.toggle("desktopSidebar");
+			setShow(!show);
+		}
+	}
+	function mobileSidebarToggle() {
+		if(isMobile) {
+			document.querySelector("main")?.classList.toggle("mobileSidebar");
+		}
 	}
 
 	const vid = useCarrierStore((state: { vid: any }) => state.vid);
@@ -85,20 +93,21 @@ export default function VendorSideBar() {
 					<div
 						id="sidebar"
 						className={
-							`fixed top-0 z-[13] h-full w-[270px] bg-white shadow transition dark:bg-gray-800 lg:left-0` +
+							`fixed top-0 z-[13] h-full bg-white shadow transition dark:bg-gray-800 lg:left-0` +
 							" " +
-							(show ? "left-[-50px]" : "left-0")
+							(show ? "left-[-50px] w-[50px]" : "left-0 w-[270px]")
 						}
 					>
 						<div className="relative flex h-[65px] items-center p-3">
 							<button
 								type="button"
+								id="btnToggle"
 								className={
 									`absolute right-[-16px] top-[50%] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
 									" " +
 									(show ? "right-[-31px] rounded-[6px] rounded-bl-[0] rounded-tl-[0]" : <></>)
 								}
-								onClick={toggleSidebar}
+								onClick={isMobile ? mobileSidebarToggle : toggleSidebar}
 							>
 								<i className={`fa-solid fa-chevron-left` + " " + (show ? "fa-chevron-right" : <></>)}></i>
 							</button>
@@ -161,7 +170,7 @@ export default function VendorSideBar() {
 							</Transition.Child>
 
 							<div className="fixed inset-0 z-10 overflow-y-auto">
-								<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+								<div className="flex min-h-full items-center justify-center p-4 text-center">
 									<Transition.Child
 										as={Fragment}
 										enter="ease-out duration-300"

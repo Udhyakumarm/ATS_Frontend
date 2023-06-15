@@ -287,19 +287,19 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
-					<div className="mb-2 w-max border-r px-[15px]">
+					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '総応募' : <>Total <br/>Candidates</>}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="mb-2 w-max border-r px-[15px]">
+					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '選考中' : <>Active <br/>Candidates</>}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
-					<div className="mb-2 w-max px-[15px]">
+					<div className="mb-2 grow px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
 						{srcLang === 'ja' ? '求人ID' : <>Job <br/>ID</>}
 						</h5>
@@ -324,7 +324,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto capitalize">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -500,7 +500,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -747,7 +747,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"

@@ -102,7 +102,8 @@
         "Regenerate": "Regenerate",
         "ComingSoon": "Coming Soon",
         "GoPremium": "Go Premium",
-        "Upgrade": "Upgrade"
+        "Upgrade": "Upgrade",
+        "LoadMore": "Load More"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -255,7 +256,16 @@
         "MoveApplicant": "Move Applicant",
         "AIGeneratedInterview": "AI Generated Interview",
         "AskQuestionsRelatedCandidate": "Ask Questions Related to the Candidate",
-        "LetChooseAvailability": "Let the invite choose from my availability"
+        "LetChooseAvailability": "Let the invite choose from my availability",
+        "Overview": "Overview",
+        "Performance": "Performance",
+        "ApplicantPipeline": "Applicant Pipeline",
+        "VendorsPerformance": "Vendors Performance",
+        "TotalSubmissions": "Total Submissions",
+        "Conversions": "Conversions",
+        "Hiring": "Hiring",
+        "ApplicantSourced": "Applicant Sourced",
+        "BasicInformation": "Basic Information"
     },
     "Plans": {
         "Starter": "Starter",

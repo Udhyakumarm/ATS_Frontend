@@ -107,7 +107,7 @@ export default function JobsDrafted() {
 										draftedJobs.map(
 											(job: any, i) =>
 												job && (
-													<div className="mb-[30px] w-full px-[15px] md:max-w-[50%]" key={i}>
+													<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]" key={i}>
 														<JobCard_2
 															key={i}
 															job={job}

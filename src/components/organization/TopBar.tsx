@@ -1,7 +1,7 @@
 import ThemeChange from "../ThemeChange";
 import { signOut, useSession } from "next-auth/react";
 import { useState, Fragment, useRef, useEffect } from "react";
-import { Dialog, Transition, Listbox } from "@headlessui/react";
+import { Dialog, Transition, Listbox, Tab } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
@@ -9,9 +9,14 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import { useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
+import Button from "../Button";
+import FormField from "../FormField";
+import ToggleLang from "../ToggleLang";
+import toastcomp from "../toast";
+import moment from "moment";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -19,7 +24,8 @@ const CalendarIntegrationOptions = [
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
-export default function OrgTopBar() {
+export default function OrgTopBar({todoLoadMore}:any) {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -38,7 +44,8 @@ export default function OrgTopBar() {
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
 	const [integration, setIntegration] = useState([]);
-	const [comingSoon, setComingSoon] = useState(false);
+	const [toDoPopup, setToDoPopup] = useState(false);
+	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
 	useEffect(() => {
 		async function loadIntegrations() {
@@ -127,6 +134,7 @@ export default function OrgTopBar() {
 	useEffect(() => {
 		if ((token && token.length > 0 && role && role.length > 0) || load) {
 			loadNotificationCount();
+			loadTodo();
 			if (load) toggleLoadMode(false);
 		}
 	}, [token, role, load]);
@@ -134,6 +142,164 @@ export default function OrgTopBar() {
 	useEffect(() => {
 		setversion(selectedPreVersion.name);
 	}, [selectedPreVersion]);
+
+	const tabHeading = [
+		{
+			title: srcLang === "ja" ? "高い" : "High"
+		},
+		{
+			title: srcLang === "ja" ? "中くらい" : "Medium"
+		},
+		{
+			title: srcLang === "ja" ? "低い" : "Low"
+		},
+		{
+			title: srcLang === "ja" ? "完了しました" : "Completed"
+		}
+	];
+
+	//toodo
+	const [editTodo, seteditTodo] = useState(false);
+	const [editTodoID, seteditTodoID] = useState();
+	const [title, settitle] = useState("");
+	const [desc, setdesc] = useState("");
+	const [priority, setpriority] = useState("");
+	const [deadline, setdeadline] = useState("");
+
+	const [todos, settodos] = useState([]);
+	const [htodos, sethtodos] = useState([]);
+	const [mtodos, setmtodos] = useState([]);
+	const [ltodos, setltodos] = useState([]);
+	const [ctodos, setctodos] = useState([]);
+
+	function checkAddDis() {
+		return title.length > 0 && desc.length > 0 && priority.length > 0 && deadline.length > 0;
+	}
+
+	async function addTodo() {
+		const fd = new FormData();
+		fd.append("title", title);
+		fd.append("desc", desc);
+		fd.append("priority", priority);
+		fd.append("deadline", moment(deadline).format().toString());
+		await axiosInstanceAuth2
+			.post(`/chatbot/todo/create/`, fd)
+			.then(async (res) => {
+				loadTodo();
+				setToDoAddTaskPopup(false);
+				toastcomp("Todo Created", "success");
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Todo Not Created", "error");
+			});
+	}
+
+	function markAsDone(e: any, pk: any, title: any) {
+		if (e.target.checked) {
+			const fd2 = new FormData();
+			fd2.append("title", title);
+			fd2.append("compelete", e.target.checked);
+			updateTodo(fd2, pk);
+		}
+	}
+
+	function updateFunDone() {
+		const fd = new FormData();
+		fd.append("title", title);
+		fd.append("desc", desc);
+		fd.append("priority", priority);
+		fd.append("deadline", moment(deadline).format().toString());
+		updateTodo(fd, editTodoID);
+	}
+
+	function editTodoFun(data: any) {
+		seteditTodo(true);
+		seteditTodoID(data["id"]);
+		settitle(data["title"]);
+		setdesc(data["desc"]);
+		setpriority(data["priority"]);
+		setdeadline(moment(data["deadline"]).format("YYYY-MM-DD").toString());
+		setToDoAddTaskPopup(true);
+	}
+
+	useEffect(() => {
+		if (!toDoAddTaskPopup) {
+			settitle("");
+			setdesc("");
+			setpriority("");
+			setdeadline("");
+		}
+	}, [toDoAddTaskPopup]);
+
+	async function updateTodo(fd: any, pk: any) {
+		await axiosInstanceAuth2
+			.put(`/chatbot/todo/${pk}/update/`, fd)
+			.then(async (res) => {
+				loadTodo();
+				setToDoAddTaskPopup(false);
+				toastcomp("Todo Updated", "success");
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Todo Not Updted", "error");
+			});
+	}
+
+	async function deleteTodo(pk: any) {
+		await axiosInstanceAuth2
+			.delete(`/chatbot/todo/${pk}/delete/`)
+			.then(async (res) => {
+				loadTodo();
+				setToDoAddTaskPopup(false);
+				toastcomp("Todo Deleted", "success");
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Todo Not Deleted", "error");
+			});
+	}
+
+	async function loadTodo() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/list-todo/`)
+			.then(async (res) => {
+				console.log("!", "TODO", res.data);
+				settodos(res.data);
+				var data = res.data;
+				let arr = [],
+					arr2 = [],
+					arr3 = [],
+					arr4 = [];
+				for (let i = 0; i < data.length; i++) {
+					if (data[i]["compelete"]) {
+						arr.push(data[i]);
+					} else {
+						if (data[i]["priority"] === "Low") {
+							arr2.push(data[i]);
+						} else if (data[i]["priority"] === "Medium") {
+							arr3.push(data[i]);
+						} else if (data[i]["priority"] === "High") {
+							arr4.push(data[i]);
+						}
+					}
+				}
+				setctodos(arr);
+				setltodos(arr2);
+				setmtodos(arr3);
+				sethtodos(arr4);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	
+	useEffect(() => {
+		if (todoLoadMore) {
+			setToDoPopup(true)
+		}
+	}, [todoLoadMore]);
 
 	return (
 		<>
@@ -195,7 +361,7 @@ export default function OrgTopBar() {
 				)}
 
 				<ThemeChange />
-				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setComingSoon(true)}>
+				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
 				{version != "starter" && (
@@ -203,7 +369,6 @@ export default function OrgTopBar() {
 						type="button"
 						className="mr-6 text-darkGray dark:text-gray-400"
 						onClick={() => setIsCalendarOpen(true)}
-						x
 					>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
 					</button>
@@ -217,9 +382,10 @@ export default function OrgTopBar() {
 						{count}
 					</span>
 				</div>
+				<ToggleLang />
 				<button
 					type="button"
-					className="h-[30px] w-[30px] rounded bg-red-500 text-sm text-white hover:bg-red-600"
+					className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut();
 
@@ -246,7 +412,7 @@ export default function OrgTopBar() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -301,8 +467,8 @@ export default function OrgTopBar() {
 					</div>
 				</Dialog>
 			</Transition.Root>
-			<Transition.Root show={comingSoon} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
+			<Transition.Root show={toDoPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setToDoPopup}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -316,7 +482,294 @@ export default function OrgTopBar() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "ToDoリスト" : "To Do List"}
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setToDoPopup(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="mb-6 text-right">
+											<Button
+												btnType="button"
+												btnStyle="iconRightBtn"
+												label={srcLang === "ja" ? "追加" : "Add Task"}
+												iconRight={<i className="fa-solid fa-circle-plus"></i>}
+												handleClick={() => {
+													seteditTodo(false);
+													setToDoAddTaskPopup(true);
+												}}
+											/>
+										</div>
+										<Tab.Group>
+											<Tab.List className={"mb-6 border-b text-center"}>
+												{tabHeading.map((item, i) => (
+													<Tab key={i} as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																{item.title}
+															</button>
+														)}
+													</Tab>
+												))}
+											</Tab.List>
+											<Tab.Panels>
+												<Tab.Panel>
+													{htodos && htodos.length > 0 ? (
+														<div className="max-h-[60vh] overflow-auto">
+															{htodos.map((data, i) => (
+																<div className="my-2 overflow-hidden rounded-normal border" key={i}>
+																	<div className="px-8 py-4">
+																		<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																		<p
+																			className="text-sm text-darkGray dark:text-gray-400"
+																			dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																		></p>
+																	</div>
+																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
+																		<aside className="flex grow items-center">
+																			<div className="mr-6 flex items-center">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																					<i className="fa-regular fa-square-check"></i>
+																				</span>
+																				<h5 className="text-sm font-bold">
+																					{moment(data["deadline"]).format("DD MMM YYYY")}
+																				</h5>
+																			</div>
+																			<p className="rounded-full bg-red-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				{srcLang === "ja" ? "高い" : "High"}
+																			</p>
+																		</aside>
+																		<aside>
+																			<label
+																				htmlFor="markDone"
+																				className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400"
+																			>
+																				{srcLang === "ja" ? "完了としてマークする" : "Mark as Done"}
+																				<input
+																					type="checkbox"
+																					className="ml-2"
+																					onChange={(e) => markAsDone(e, data["id"], data["title"])}
+																				/>
+																			</label>
+																			<button type="button" className="ml-6" onClick={() => editTodoFun(data)}>
+																				<i className="fa-solid fa-pencil"></i>
+																			</button>
+																			<button type="button" className="ml-6" onClick={() => deleteTodo(data["id"])}>
+																				<i className="fa-solid fa-trash-can"></i>
+																			</button>
+																		</aside>
+																	</div>
+																</div>
+															))}
+														</div>
+													) : (
+														<p className="text-center text-sm text-darkGray">
+															{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
+														</p>
+													)}
+												</Tab.Panel>
+												<Tab.Panel>
+													{mtodos && mtodos.length > 0 ? (
+														<div className="max-h-[60vh] overflow-auto">
+															{mtodos.map((data, i) => (
+																<div className="my-2 overflow-hidden rounded-normal border" key={i}>
+																	<div className="px-8 py-4">
+																		<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																		<p
+																			className="text-sm text-darkGray dark:text-gray-400"
+																			dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																		></p>
+																	</div>
+																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
+																		<aside className="flex grow items-center">
+																			<div className="mr-6 flex items-center">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																					<i className="fa-regular fa-square-check"></i>
+																				</span>
+																				<h5 className="text-sm font-bold">
+																					{moment(data["deadline"]).format("DD MMM YYYY")}
+																				</h5>
+																			</div>
+																			<p className="rounded-full bg-yellow-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				{srcLang === "ja" ? "中くらい" : "Medium"}
+																			</p>
+																		</aside>
+																		<aside>
+																			<label
+																				htmlFor="markDone"
+																				className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400"
+																			>
+																				{srcLang === "ja" ? "完了としてマークする" : "Mark as Done"}
+																				<input
+																					type="checkbox"
+																					className="ml-2"
+																					onChange={(e) => markAsDone(e, data["id"], data["title"])}
+																				/>
+																			</label>
+																			<button type="button" className="ml-6" onClick={() => editTodoFun(data)}>
+																				<i className="fa-solid fa-pencil"></i>
+																			</button>
+																			<button type="button" className="ml-6" onClick={() => deleteTodo(data["id"])}>
+																				<i className="fa-solid fa-trash-can"></i>
+																			</button>
+																		</aside>
+																	</div>
+																</div>
+															))}
+														</div>
+													) : (
+														<p className="text-center text-sm text-darkGray">
+															{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
+														</p>
+													)}
+												</Tab.Panel>
+												<Tab.Panel>
+													{ltodos && ltodos.length > 0 ? (
+														<div className="max-h-[60vh] overflow-auto">
+															{ltodos.map((data, i) => (
+																<div className="my-2 overflow-hidden rounded-normal border" key={i}>
+																	<div className="px-8 py-4">
+																		<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																		<p
+																			className="text-sm text-darkGray dark:text-gray-400"
+																			dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																		></p>
+																	</div>
+																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
+																		<aside className="flex grow items-center">
+																			<div className="mr-6 flex items-center">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																					<i className="fa-regular fa-square-check"></i>
+																				</span>
+																				<h5 className="text-sm font-bold">
+																					{moment(data["deadline"]).format("DD MMM YYYY")}
+																				</h5>
+																			</div>
+																			<p className="rounded-full bg-gray-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				{srcLang === "ja" ? "低い" : "Low"}
+																			</p>
+																		</aside>
+																		<aside>
+																			<label
+																				htmlFor="markDone"
+																				className="inline-flex items-center text-[10px] text-darkGray dark:text-gray-400"
+																			>
+																				{srcLang === "ja" ? "完了としてマークする" : "Mark as Done"}
+																				<input
+																					type="checkbox"
+																					className="ml-2"
+																					onChange={(e) => markAsDone(e, data["id"], data["title"])}
+																				/>
+																			</label>
+																			<button type="button" className="ml-6" onClick={() => editTodoFun(data)}>
+																				<i className="fa-solid fa-pencil"></i>
+																			</button>
+																			<button type="button" className="ml-6" onClick={() => deleteTodo(data["id"])}>
+																				<i className="fa-solid fa-trash-can"></i>
+																			</button>
+																		</aside>
+																	</div>
+																</div>
+															))}
+														</div>
+													) : (
+														<p className="text-center text-sm text-darkGray">
+															{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
+														</p>
+													)}
+												</Tab.Panel>
+												<Tab.Panel>
+													{ctodos && ctodos.length > 0 ? (
+														<div className="max-h-[60vh] overflow-auto">
+															{ctodos.map((data, i) => (
+																<div className="my-2 overflow-hidden rounded-normal border" key={i}>
+																	<div className="px-8 py-4">
+																		<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																		<p
+																			className="text-sm text-darkGray dark:text-gray-400"
+																			dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																		></p>
+																	</div>
+																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
+																		<aside className="grow">
+																			<div className="mr-6 flex items-center">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																					<i className="fa-regular fa-square-check"></i>
+																				</span>
+																				<h5 className="text-sm font-bold">
+																					{moment(data["deadline"]).format("DD MMM YYYY")}
+																				</h5>
+																			</div>
+																		</aside>
+																		<div className="flex items-center">
+																			<p className="rounded-full bg-green-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																				{srcLang === "ja" ? "完了しました" : "Completed"}
+																			</p>
+																			<span className="ml-2 text-[10px] text-darkGray dark:text-gray-400">
+																				on {moment(data["timestamp"]).format("DD MMM YYYY")}
+																			</span>
+																		</div>
+																	</div>
+																</div>
+															))}
+														</div>
+													) : (
+														<p className="text-center text-sm text-darkGray">
+															{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
+														</p>
+													)}
+												</Tab.Panel>
+											</Tab.Panels>
+										</Tab.Group>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={toDoAddTaskPopup} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setToDoAddTaskPopup}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -328,17 +781,63 @@ export default function OrgTopBar() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Coming Soon</h4>
+										<h4 className="flex items-center font-semibold leading-none">
+											{/* {srcLang === "ja" ? "タスクの追加" : "Add Task"} */}
+											{editTodo ? "Update Task" : "Add Task"}
+										</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
-											onClick={() => setComingSoon(false)}
+											onClick={() => setToDoAddTaskPopup(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
 									<div className="p-8">
-										<UpcomingComp title={"Todo List"} setComingSoon={setComingSoon} />
+										<FormField
+											fieldType="input"
+											inputType="text"
+											label={srcLang === "ja" ? "タイトル" : "Title"}
+											value={title}
+											handleChange={(e) => settitle(e.target.value)}
+										/>
+										<FormField
+											fieldType="reactquill"
+											label={srcLang === "ja" ? "案内文" : "Description"}
+											value={desc}
+											handleChange={setdesc}
+											handleOnBlur={setdesc}
+										/>
+										<FormField
+											fieldType="select2"
+											id="priority"
+											label={srcLang === "ja" ? "タスクの優先順位" : "Task Priority"}
+											// options={[
+											// 	srcLang === "ja" ? "高い" : "High",
+											// 	srcLang === "ja" ? "中くらい" : "Medium",
+											// 	srcLang === "ja" ? "低い" : "Low"
+											// ]}
+											options={["High", "Medium", "Low"]}
+											value={priority}
+											handleChange={setpriority}
+											singleSelect
+										/>
+										<FormField
+											fieldType="input"
+											inputType="date"
+											label={srcLang === "ja" ? "締め切り" : "Deadline"}
+											value={deadline}
+											handleChange={(e) => setdeadline(e.target.value)}
+										/>
+										<Button
+											// label={srcLang === "ja" ? "追加" : "Add"}
+											label={editTodo ? "Update" : "Add"}
+											disabled={!checkAddDis()}
+											btnType="button"
+											handleClick={() => {
+												editTodo ? updateFunDone() : addTodo();
+											}}
+										/>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -1010,27 +1010,29 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 								</h2>
 							</div>
 							<Tab.Group>
-								<div className={"border-b px-4"}>
+								<div className={"border-b px-4 overflow-auto"}>
 									<Tab.List className={"mx-auto w-full max-w-[950px]"}>
-										{tabHeading_1.map((item, i) => (
-											<Tab key={i} as={Fragment}>
-												{({ selected }) => (
-													<button
-														className={
-															"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
-															" " +
-															(selected
-																? "border-primary text-primary"
-																: "border-transparent text-darkGray dark:text-gray-400") +
-															" " +
-															(item.blur ? "display-none" : "")
-														}
-													>
-														{item.title}
-													</button>
-												)}
-											</Tab>
-										))}
+										<div className="w-[790px]">
+											{tabHeading_1.map((item, i) => (
+												<Tab key={i} as={Fragment}>
+													{({ selected }) => (
+														<button
+															className={
+																"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
+																" " +
+																(selected
+																	? "border-primary text-primary"
+																	: "border-transparent text-darkGray dark:text-gray-400") +
+																" " +
+																(item.blur ? "display-none" : "")
+															}
+														>
+															{item.title}
+														</button>
+													)}
+												</Tab>
+											))}
+										</div>
 									</Tab.List>
 								</div>
 								<Tab.Panels className={"mx-auto w-full max-w-[980px] px-4 py-8"}>
@@ -1612,7 +1614,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1681,7 +1683,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1731,7 +1733,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1800,7 +1802,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1933,7 +1935,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -2011,7 +2013,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
