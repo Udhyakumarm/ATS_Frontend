@@ -239,7 +239,7 @@ export default function VendorSettings() {
 												<iframe src={`${aggrement}`} className="h-[60vh] w-[100%] overflow-auto"></iframe>
 											)}
 										</div>
-										<div className="flex w-full flex-wrap md:max-w-[50%]">
+										<div className="flex flex-wrap max-w-[600px]">
 											{/* <h6 className="mb-2 w-full font-bold">Agreement Validity</h6> */}
 											<div className="w-full pr-2 md:max-w-[50%]">
 												<FormField
@@ -288,7 +288,7 @@ export default function VendorSettings() {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
