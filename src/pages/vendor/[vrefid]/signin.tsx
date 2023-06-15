@@ -152,7 +152,7 @@ export default function CanCareerSignIn({ providers }: any) {
 						</div>
 						<p className="text-center text-darkGray">
 							{srcLang === 'ja' ? 'アカウント作成がまだの方は' : 'Not sign up yet ?'}{" "}
-							<Link href={`/vendoe/${vrefid}/signup`}  className="font-bold text-primary hover:underline">
+							<Link href={`/vendor/${vrefid}/signup`}  className="font-bold text-primary hover:underline">
 								{srcLang === 'ja' ? 'こちら' : 'Create Account'}
 							</Link>
 						</p>
@@ -165,6 +165,7 @@ export default function CanCareerSignIn({ providers }: any) {
 export async function getStaticPaths() {
 	return {
 	  paths: [
+		// `vendor/${vrefid}/clients`,
 		{ params: { vrefid: 'string' } },
 	  ],
 	  fallback: true,

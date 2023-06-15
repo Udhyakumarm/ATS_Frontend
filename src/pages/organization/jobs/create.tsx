@@ -866,7 +866,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													{aiLoader ? (
 														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
 													) : (
-														<Image src={tokenImg} alt="AI" width={100} height={100} className="w-[25px]" />
+														<Image src={favIcon} alt="AI" width={100} height={100} className="w-[25px]" />
 													)}
 
 												</button>
