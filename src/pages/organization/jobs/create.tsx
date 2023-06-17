@@ -530,13 +530,52 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	}
 
 	async function onAIGenerateHandler() {
-		const prompt = "Generate a job description with responsiblities for the following information";
+		// const prompt =
+		// 	"Generate a job description in html tags format and english language with responsiblities for the following information";
+		// if (jtitle && jskill) {
+		// 	setAiLoader(true);
+		// 	const data = `${jtitle}${jskill}${jsalary}`;
+		// 	const result = await FetchHelper(prompt, data);
+		// 	setAiLoader(false);
+		// 	setjdeptinfo(result);
+		// } else {
+		// 	toastcomp("Please add title and skill to generate discription", "error");
+		// }
+
+		// srcLang === 'ja'
+
 		if (jtitle && jskill) {
 			setAiLoader(true);
-			const data = `${jtitle}${jskill}${jsalary}`;
-			const result = await FetchHelper(prompt, data);
-			setAiLoader(false);
-			setjdeptinfo(result);
+			// const prompt = `Write a Job description of ${jtitle} with skills are ${jskill} having salary of range 10 to 12 LPA withun 150 words in english language`;
+			var prompt = "";
+			setjdeptinfo("");
+			if (srcLang === "ja") {
+				prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}`;
+			} else if (srcLang === "en") {
+				// prompt = `Write a full Job description & responsiblities of ${jtitle} with skills are ${jskill} in english language and provide response in html tags format`;
+				prompt = `Write a Job description for ${jtitle} with skills ${jskill}`;
+				// prompt = `Generate a job description in html tags format and japanese language with responsiblities of ${jtitle} with skills are ${jskill}`;
+			}
+
+			const fd = new FormData();
+			console.log("!", "Prompt", prompt);
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/job/ai-description-job/`, fd)
+				.then(async (res) => {
+					toastcomp("Job Desc Successfully", "success");
+					if (res.data.message) {
+						let data = res.data.message;
+						data = data.replaceAll("\n\n", "<br />");
+						setjdeptinfo(data);
+					}
+					console.log("!", "desc", res.data);
+					setAiLoader(false);
+				})
+				.catch((err) => {
+					toastcomp("Job Desc Created", "error");
+					setAiLoader(false);
+				});
 		} else {
 			toastcomp("Please add title and skill to generate discription", "error");
 		}
@@ -855,7 +894,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.JobDescription")} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
+										<div className="mx-auto mt-[-60px] w-full max-w-[1055px] px-4 pb-8 pt-2">
 											<div className="mb-4 w-full text-right">
 												<button
 													type="button"
@@ -870,7 +909,6 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															<Image src={favIcon} alt="AI" width={100} height={100} className="" />
 														</div>
 													)}
-
 												</button>
 											</div>
 											<FormField
@@ -878,6 +916,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												id="description"
 												value={jdeptinfo}
 												handleChange={setjdeptinfo}
+												handleOnBlur={setjdeptinfo}
 											/>
 										</div>
 									</div>
