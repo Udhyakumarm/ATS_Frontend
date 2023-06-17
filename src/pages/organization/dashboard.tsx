@@ -562,7 +562,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	></p>
 																</div>
 																<div className="relative flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																	<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																	<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
 																		<i className="fa-regular fa-square-check"></i>
 																	</span>
 																	<h5 className="font-bold">{moment(data["deadline"]).format("DD MMM YYYY")}</h5>

@@ -554,7 +554,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
 																		<aside className="flex grow items-center">
 																			<div className="mr-6 flex items-center">
-																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
 																					<i className="fa-regular fa-square-check"></i>
 																				</span>
 																				<h5 className="text-sm font-bold">
@@ -609,7 +609,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
 																		<aside className="flex grow items-center">
 																			<div className="mr-6 flex items-center">
-																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
 																					<i className="fa-regular fa-square-check"></i>
 																				</span>
 																				<h5 className="text-sm font-bold">
@@ -664,7 +664,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
 																		<aside className="flex grow items-center">
 																			<div className="mr-6 flex items-center">
-																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
 																					<i className="fa-regular fa-square-check"></i>
 																				</span>
 																				<h5 className="text-sm font-bold">
@@ -719,7 +719,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 																	<div className="flex flex-wrap items-center bg-lightBlue px-8 py-2 dark:bg-gray-700">
 																		<aside className="grow">
 																			<div className="mr-6 flex items-center">
-																				<span className="mr-2 flex items-center justify-center rounded bg-[#FF8A00] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																				<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
 																					<i className="fa-regular fa-square-check"></i>
 																				</span>
 																				<h5 className="text-sm font-bold">
