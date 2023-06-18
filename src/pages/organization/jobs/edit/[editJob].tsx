@@ -22,11 +22,11 @@ import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
 import UpcomingComp from "@/components/organization/upcomingComp";
 import PermiumComp from "@/components/organization/premiumComp";
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import Link from "next/link";
-
+import favIcon from "/public/favicon-white.ico";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -48,8 +48,9 @@ const StickyLabel = ({ label }: any) => (
 );
 
 export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
-	const { t } = useTranslation('common')
+	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const [aiLoader, setAiLoader] = useState(false);
 	const [sklLoad] = useState(true);
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
@@ -63,22 +64,22 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 
 	//job create state
 	const [jtitle, setjtitle] = useState("");
+	const [jskill, setjskill] = useState("");
+	const [jfsalary, setjfsalary] = useState("");
+	const [jesalary, setjesalary] = useState("");
+	const [jcurr, setjcurr] = useState("");
+	const [jdesc, setjdesc] = useState("");
 	const [jfunction, setjfunction] = useState("");
 	const [jdept, setjdept] = useState("");
 	const [jind, setjind] = useState("");
 	const [jgrp, setjgrp] = useState("");
-	const [jvac, setjvac] = useState("");
 	const [jdeptinfo, setjdeptinfo] = useState("");
-	const [jres, setjres] = useState("");
-	const [jlooking, setjlooking] = useState("");
-	const [jskill, setjskill] = useState("");
 	const [jetype, setjetype] = useState("");
 	const [jexp, setjexp] = useState("");
 	const [jedu, setjedu] = useState("");
 	const [jlang, setjlang] = useState("");
+	const [jvac, setjvac] = useState("");
 	const [jloc, setjloc] = useState("");
-	const [jsalary, setjsalary] = useState("");
-	const [jcurr, setjcurr] = useState("");
 	const [jreloc, setjreloc] = useState("");
 	const [jvisa, setjvisa] = useState("");
 	const [jwtype, setjwtype] = useState("");
@@ -98,19 +99,19 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 
 	const jobActions = [
 		{
-			label: t('Btn.Preview'),
+			label: t("Btn.Preview"),
 			action: previewJob,
 			icon: <i className="fa-solid fa-play" />,
 			iconBg: "bg-gradient-to-r from-[#FF930F] to-[#FFB45B]"
 		},
 		{
-			label: t('Btn.SaveAsDraft'),
+			label: t("Btn.SaveAsDraft"),
 			action: draftJob,
 			icon: <i className="fa-regular fa-bookmark"></i>,
 			iconBg: "bg-gradient-to-r from-gradLightBlue to-gradDarkBlue"
 		},
 		{
-			label: t('Btn.Publish'),
+			label: t("Btn.Publish"),
 			action: publishJob,
 			icon: <i className="fa-solid fa-paper-plane"></i>,
 			iconBg: "bg-gradient-to-r from-[#6D27F9] to-[#9F09FB] text-[8px]"
@@ -118,16 +119,16 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	];
 	const TeamTableHead = [
 		{
-			title: t('Words.UserName')
+			title: t("Words.UserName")
 		},
 		{
-			title: t('Words.Department_Title')
+			title: t("Words.Department_Title")
 		},
 		{
-			title: t('Form.Email')
+			title: t("Form.Email")
 		},
 		{
-			title: t('Words.Access')
+			title: t("Words.Access")
 		},
 		{
 			title: " "
@@ -157,54 +158,87 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				var data = res.data;
 				if (data.length > 0) {
 					toastcomp("Job Loaded Successfully", "success");
-					console.log("#", res.data);
-
-					setjtitle(data[0]["job_title"]);
-					setjfunction(data[0]["job_function"]);
-					setjdept(data[0]["department"]);
-					setjind(data[0]["industry"]);
-					setjgrp(data[0]["group_or_division"]);
-					setjvac(data[0]["vacancy"]);
-					setjdeptinfo(data[0]["description"]);
-					setjlooking(data[0]["looking_for"]);
-					setjskill(data[0]["jobSkill"]);
-					setjetype(data[0]["employment_type"]);
-					setjexp(data[0]["experience"]);
-					setjedu(data[0]["education"]);
-					setjloc(data[0]["location"]);
-					setjres(data[0]["responsibility"]);
-
-					if (data[0]["currency"] && data[0]["currency"].length > 0) {
-						var abc = data[0]["currency"].split("");
-						setjcurr(abc[0]);
-						abc.shift();
-						abc = abc.join().replaceAll(",", "");
-						abc = parseInt(abc);
-						setjsalary(abc);
+					console.log("#", "job load data", res.data);
+					var jobData = data[0];
+					if (jobData["jobTitle"]) {
+						setjtitle(jobData["jobTitle"]);
+					}
+					if (jobData["jobSkill"]) {
+						setjskill(jobData["jobSkill"]);
+					}
+					if (jobData["jobCurrency"]) {
+						setjcurr(jobData["jobCurrency"]);
+					}
+					if (jobData["jobFromSalary"]) {
+						setjfsalary(jobData["jobFromSalary"]);
+					}
+					if (jobData["jobToSalary"]) {
+						setjesalary(jobData["jobToSalary"]);
+					}
+					if (jobData["jobDescription"]) {
+						setjdesc(jobData["jobDescription"]);
+					}
+					if (jobData["jobFunction"]) {
+						setjfunction(jobData["jobFunction"]);
+					}
+					if (jobData["jobDepartment"]) {
+						setjdept(jobData["jobDepartment"]);
+					}
+					if (jobData["jobIndustry"]) {
+						setjind(jobData["jobIndustry"]);
+					}
+					if (jobData["jobGroupDivision"]) {
+						setjgrp(jobData["jobGroupDivision"]);
+					}
+					if (jobData["jobDeptDescription"]) {
+						setjdeptinfo(jobData["jobDeptDescription"]);
+					}
+					if (jobData["jobEmploymentType"]) {
+						setjetype(jobData["jobEmploymentType"]);
+					}
+					if (jobData["jobExperience"]) {
+						setjexp(jobData["jobExperience"]);
+					}
+					if (jobData["jobQualification"]) {
+						setjedu(jobData["jobQualification"]);
+					}
+					if (jobData["jobLanguage"]) {
+						setjlang(jobData["jobLanguage"]);
+					}
+					if (jobData["jobVacancy"]) {
+						setjvac(jobData["jobVacancy"]);
+					}
+					if (jobData["jobLocation"]) {
+						setjloc(jobData["jobLocation"]);
+					}
+					if (jobData["jobRelocation"]) {
+						setjreloc(jobData["jobRelocation"]);
+					}
+					if (jobData["jobVisa"]) {
+						setjvisa(jobData["jobVisa"]);
+					}
+					if (jobData["jobWorktype"]) {
+						setjwtype(jobData["jobWorktype"]);
 					}
 
 					var arr = [];
-					if (data[0]["team"] && data[0]["team"].length > 0) {
+					if (jobData["team"] && jobData["team"].length > 0) {
 						let abc2 = jtm;
-						for (let j = 0; j < data[0]["team"].length; j++) {
-							if (data[0]["team"][j]["verified"] !== false) {
-								arr.push(data[0]["team"][j]["id"]);
-								if (data[0]["team"][j]["role"] === "Collaborator") {
+						for (let j = 0; j < jobData["team"].length; j++) {
+							if (jobData["team"][j]["verified"] !== false) {
+								arr.push(jobData["team"][j]["id"]);
+								if (jobData["team"][j]["role"] === "Collaborator") {
 									setjcollaborator(true);
 								}
-								if (data[0]["team"][j]["role"] === "Recruiter") {
+								if (jobData["team"][j]["role"] === "Recruiter") {
 									setjrecruiter(true);
 								}
-								abc2.push(data[0]["team"][j]["id"].toString());
+								abc2.push(jobData["team"][j]["id"].toString());
 							}
 						}
 						setjtm(abc2);
 					}
 					setujtm(arr);
-
-					setjreloc(data[0]["relocation"]);
-					setjvisa(data[0]["visa"]);
-					setjwtype(data[0]["worktype"]);
 				} else {
 					router.back();
 				}
@@ -275,7 +309,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	const userState = useUserStore((state: { user: any }) => state.user);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
-	async function addJob(formData, type) {
+	async function addJob(formData: any, type: any) {
 		await axiosInstanceAuth2
 			.put(`/job/update-job/${editJob}/`, formData)
 			.then(async (res) => {
@@ -299,7 +333,15 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				addActivityLog(axiosInstanceAuth2, aname);
 				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"]);
 				toggleLoadMode(true);
-				router.push(`/organization/jobs/${type}/`);
+				if (type === "active") {
+					setPublishThanks(true);
+					setTimeout(() => {
+						setPublishThanks(false);
+						router.push(`/organization/jobs/${type}/`);
+					}, 3000);
+				} else {
+					router.push(`/organization/jobs/${type}/`);
+				}
 			})
 			.catch((err) => {
 				toastcomp("Job Not Updated", "error");
@@ -309,13 +351,25 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	function publishJob() {
 		if (
 			jtitle.length <= 0 ||
+			jskill.length <= 0 ||
 			jfunction.length <= 0 ||
 			jdept.length <= 0 ||
+			jlang.length <= 0 ||
+			jloc.length <= 0 ||
 			(!jcollaborator && atsVersion === "enterprise") ||
 			(!jrecruiter && atsVersion === "enterprise")
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
+			}
+			if (jskill.length <= 0) {
+				toastcomp("Job Skills Required", "error");
+			}
+			if (jlang.length <= 0) {
+				toastcomp("Job Spoken Langauge Required", "error");
+			}
+			if (jloc.length <= 0) {
+				toastcomp("Job Location Required", "error");
 			}
 			if (jfunction.length <= 0) {
 				toastcomp("Job Function Required", "error");
@@ -331,92 +385,115 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle && jtitle.length > 0) {
-				fd.append("job_title", jtitle);
+			if (jtitle) {
+				fd.append("jobTitle", jtitle);
 			}
-			if (jfunction && jfunction.length > 0) {
-				fd.append("job_function", jfunction);
-			}
-			if (jdept && jdept.length > 0) {
-				fd.append("department", jdept);
-			}
-			if (jind && jind.length > 0) {
-				fd.append("industry", jind);
-			}
-			if (jgrp && jgrp.length > 0) {
-				fd.append("group_or_division", jgrp);
-			}
-			if (jvac && jvac.length > 0) {
-				fd.append("vacancy", jvac);
-			}
-			if (jdeptinfo && jdeptinfo.length > 0) {
-				fd.append("description", jdeptinfo);
-			}
-			if (jlooking && jlooking.length > 0) {
-				fd.append("looking_for", jlooking);
-			}
-			if (jskill && jskill.length > 0) {
+			if (jskill) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype && jetype.length > 0) {
-				fd.append("employment_type", jetype);
+			if (jcurr) {
+				fd.append("jobCurrency", jcurr);
 			}
-			if (jexp && jexp.length > 0) {
-				fd.append("experience", jexp);
+			if (jfsalary) {
+				fd.append("jobFromSalary", jfsalary);
 			}
-			if (jedu && jedu.length > 0) {
-				fd.append("education", jedu);
+			if (jesalary) {
+				fd.append("jobToSalary", jesalary);
 			}
-			if (jloc && jloc.length > 0) {
-				fd.append("location", jloc);
+			if (jdesc) {
+				fd.append("jobDescription", jdesc);
 			}
-			if (jsalary && jcurr && jsalary.length > 0 && jcurr.length > 0) {
-				fd.append("currency", jcurr + jsalary);
+			if (jfunction) {
+				fd.append("jobFunction", jfunction);
 			}
-			if (jreloc && jreloc.length > 0) {
-				fd.append("relocation", jreloc);
+			if (jdept) {
+				fd.append("jobDepartment", jdept);
 			}
-			if (jvisa && jvisa.length > 0) {
-				fd.append("visa", jvisa);
+			if (jind) {
+				fd.append("jobIndustry", jind);
 			}
-			if (jwtype && jwtype.length > 0) {
-				fd.append("worktype", jwtype);
+			if (jgrp) {
+				fd.append("jobGroupDivision", jgrp);
 			}
-			// if(jtitle.length > 0){
-			// 	fd.append("deadline",jtitle);
-			// }
+			if (jdeptinfo) {
+				fd.append("jobDeptDescription", jdeptinfo);
+			}
+			if (jetype) {
+				fd.append("jobEmploymentType", jetype);
+			}
+			if (jexp) {
+				fd.append("jobExperience", jexp);
+			}
+			if (jedu) {
+				fd.append("jobQualification", jedu);
+			}
+			if (jlang) {
+				fd.append("jobLanguage", jlang);
+			}
+			if (jvac) {
+				fd.append("jobVacancy", jvac);
+			}
+			if (jloc) {
+				fd.append("jobLocation", jloc);
+			}
+			if (jreloc) {
+				fd.append("jobRelocation", jreloc);
+			}
+			if (jvisa) {
+				fd.append("jobVisa", jvisa);
+			}
+			if (jwtype) {
+				fd.append("jobWorktype", jwtype);
+			}
+
 			fd.append("jobStatus", "Active");
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
 			}
-			console.log("jtitle", jtitle);
-			console.log("jfunction", jfunction);
-			console.log("jdept", jdept);
-			console.log("jind", jind);
-			console.log("jgrp", jgrp);
-			console.log("jvac", jvac);
-			console.log("jdeptinfo", jdeptinfo);
-			console.log("jres", jres);
-			console.log("jlooking", jlooking);
-			console.log("jskill", jskill);
-			console.log("jetype", jetype);
-			console.log("jexp", jexp);
-			console.log("jedu", jedu);
-			console.log("jlang", jlang);
-			console.log("jloc", jloc);
-			console.log("jsalary", jsalary);
-			console.log("jcurr", jcurr);
-			console.log("jreloc", jreloc);
-			console.log("jvisa", jvisa);
-			console.log("jwtype", jwtype);
+			// console.log("jtitle", jtitle);
+			// console.log("jfunction", jfunction);
+			// console.log("jdept", jdept);
+			// console.log("jind", jind);
+			// console.log("jgrp", jgrp);
+			// console.log("jvac", jvac);
+			// console.log("jdeptinfo", jdeptinfo);
+			// console.log("jres", jres);
+			// console.log("jlooking", jlooking);
+			// console.log("jskill", jskill);
+			// console.log("jetype", jetype);
+			// console.log("jexp", jexp);
+			// console.log("jedu", jedu);
+			// console.log("jlang", jlang);
+			// console.log("jloc", jloc);
+			// console.log("jsalary", jsalary);
+			// console.log("jcurr", jcurr);
+			// console.log("jreloc", jreloc);
+			// console.log("jvisa", jvisa);
+			// console.log("jwtype", jwtype);
 			addJob(fd, "active");
 		}
 	}
 
 	function draftJob() {
-		if (jtitle.length <= 0 || jfunction.length <= 0 || jdept.length <= 0) {
+		if (
+			jtitle.length <= 0 ||
+			jskill.length <= 0 ||
+			jfunction.length <= 0 ||
+			jdept.length <= 0 ||
+			jlang.length <= 0 ||
+			jloc.length <= 0
+		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
+			}
+			if (jskill.length <= 0) {
+				toastcomp("Job Skills Required", "error");
+			}
+			if (jlang.length <= 0) {
+				toastcomp("Job Spoken Langauge Required", "error");
+			}
+			if (jloc.length <= 0) {
+				toastcomp("Job Location Required", "error");
 			}
 			if (jfunction.length <= 0) {
 				toastcomp("Job Function Required", "error");
@@ -426,84 +503,91 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle && jtitle.length > 0) {
-				fd.append("job_title", jtitle);
+			if (jtitle) {
+				fd.append("jobTitle", jtitle);
 			}
-			if (jfunction && jfunction.length > 0) {
-				fd.append("job_function", jfunction);
-			}
-			if (jdept && jdept.length > 0) {
-				fd.append("department", jdept);
-			}
-			if (jind && jind.length > 0) {
-				fd.append("industry", jind);
-			}
-			if (jgrp && jgrp.length > 0) {
-				fd.append("group_or_division", jgrp);
-			}
-			if (jvac && jvac.length > 0) {
-				fd.append("vacancy", jvac);
-			}
-			if (jdeptinfo && jdeptinfo.length > 0) {
-				fd.append("description", jdeptinfo);
-			}
-			if (jlooking && jlooking.length > 0) {
-				fd.append("looking_for", jlooking);
-			}
-			if (jskill && jskill.length > 0) {
+			if (jskill) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype && jetype.length > 0) {
-				fd.append("employment_type", jetype);
+			if (jcurr) {
+				fd.append("jobCurrency", jcurr);
 			}
-			if (jexp && jexp.length > 0) {
-				fd.append("experience", jexp);
+			if (jfsalary) {
+				fd.append("jobFromSalary", jfsalary);
 			}
-			if (jedu && jedu.length > 0) {
-				fd.append("education", jedu);
+			if (jesalary) {
+				fd.append("jobToSalary", jesalary);
 			}
-			if (jloc && jloc.length > 0) {
-				fd.append("location", jloc);
+			if (jdesc) {
+				fd.append("jobDescription", jdesc);
 			}
-			if (jsalary && jcurr && jsalary.length > 0 && jcurr.length > 0) {
-				fd.append("currency", jcurr + jsalary);
+			if (jfunction) {
+				fd.append("jobFunction", jfunction);
 			}
-			if (jreloc && jreloc.length > 0) {
-				fd.append("relocation", jreloc);
+			if (jdept) {
+				fd.append("jobDepartment", jdept);
 			}
-			if (jvisa && jvisa.length > 0) {
-				fd.append("visa", jvisa);
+			if (jind) {
+				fd.append("jobIndustry", jind);
 			}
-			if (jwtype && jwtype.length > 0) {
-				fd.append("worktype", jwtype);
+			if (jgrp) {
+				fd.append("jobGroupDivision", jgrp);
 			}
-			// if(jtitle.length > 0){
-			// 	fd.append("deadline",jtitle);
-			// }
+			if (jdeptinfo) {
+				fd.append("jobDeptDescription", jdeptinfo);
+			}
+			if (jetype) {
+				fd.append("jobEmploymentType", jetype);
+			}
+			if (jexp) {
+				fd.append("jobExperience", jexp);
+			}
+			if (jedu) {
+				fd.append("jobQualification", jedu);
+			}
+			if (jlang) {
+				fd.append("jobLanguage", jlang);
+			}
+			if (jvac) {
+				fd.append("jobVacancy", jvac);
+			}
+			if (jloc) {
+				fd.append("jobLocation", jloc);
+			}
+			if (jreloc) {
+				fd.append("jobRelocation", jreloc);
+			}
+			if (jvisa) {
+				fd.append("jobVisa", jvisa);
+			}
+			if (jwtype) {
+				fd.append("jobWorktype", jwtype);
+			}
+
 			fd.append("jobStatus", "Draft");
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
 			}
-			console.log("jtitle", jtitle);
-			console.log("jfunction", jfunction);
-			console.log("jdept", jdept);
-			console.log("jind", jind);
-			console.log("jgrp", jgrp);
-			console.log("jvac", jvac);
-			console.log("jdeptinfo", jdeptinfo);
-			console.log("jres", jres);
-			console.log("jlooking", jlooking);
-			console.log("jskill", jskill);
-			console.log("jetype", jetype);
-			console.log("jexp", jexp);
-			console.log("jedu", jedu);
-			console.log("jlang", jlang);
-			console.log("jloc", jloc);
-			console.log("jsalary", jsalary);
-			console.log("jcurr", jcurr);
-			console.log("jreloc", jreloc);
-			console.log("jvisa", jvisa);
-			console.log("jwtype", jwtype);
+			// console.log("jtitle", jtitle);
+			// console.log("jfunction", jfunction);
+			// console.log("jdept", jdept);
+			// console.log("jind", jind);
+			// console.log("jgrp", jgrp);
+			// console.log("jvac", jvac);
+			// console.log("jdeptinfo", jdeptinfo);
+			// console.log("jres", jres);
+			// console.log("jlooking", jlooking);
+			// console.log("jskill", jskill);
+			// console.log("jetype", jetype);
+			// console.log("jexp", jexp);
+			// console.log("jedu", jedu);
+			// console.log("jlang", jlang);
+			// console.log("jloc", jloc);
+			// console.log("jsalary", jsalary);
+			// console.log("jcurr", jcurr);
+			// console.log("jreloc", jreloc);
+			// console.log("jvisa", jvisa);
+			// console.log("jwtype", jwtype);
 			addJob(fd, "draft");
 		}
 	}
@@ -625,35 +709,79 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		return true;
 	}
 
+	async function onAIGenerateHandler() {
+		if (jtitle && jskill) {
+			setAiLoader(true);
+			// const prompt = `Write a Job description of ${jtitle} with skills are ${jskill} having salary of range 10 to 12 LPA withun 150 words in english language`;
+			var prompt = "";
+			setjdesc("");
+			if (srcLang === "ja") {
+				if (jfsalary && jesalary && jcurr) {
+					prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}  having annual salary range ${jfsalary} to ${jesalary} in ${jcurr}`;
+				} else {
+					prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}`;
+				}
+			} else if (srcLang === "en") {
+				if (jfsalary && jesalary && jcurr) {
+					prompt = `Write a Job description for ${jtitle} with skills ${jskill} having annual salary range ${jfsalary} to ${jesalary} in ${jcurr}`;
+				} else {
+					prompt = `Write a Job description for ${jtitle} with skills ${jskill}`;
+				}
+			}
+
+			const fd = new FormData();
+			console.log("!", "Prompt", prompt);
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/job/ai-description-job/`, fd)
+				.then(async (res) => {
+					toastcomp("Job description generated", "success");
+					if (res.data.message) {
+						let data = res.data.message;
+						data = data.replaceAll("\n\n", "<br />");
+						setjdesc(data);
+					}
+					console.log("!", "desc", res.data);
+					setAiLoader(false);
+				})
+				.catch((err) => {
+					toastcomp("Job description not generated, try again later", "error");
+					setAiLoader(false);
+				});
+		} else {
+			toastcomp("Please add title and skill to generate discription", "error");
+		}
+	}
+
 	const tabHeading_1 = [
 		{
-			title: t('Words.JobDetails'),
+			title: t("Words.JobDetails"),
 			hide: checkHideOrNot("Job Details")
 		},
 		{
-			title: t('Words.Assessment'),
+			title: t("Words.Assessment"),
 			hide: checkHideOrNot("Assessment")
 		},
 		{
-			title: t('Words.TeamMembers'),
+			title: t("Words.TeamMembers"),
 			hide: checkHideOrNot("Team Members")
 		},
 		{
-			title: t('Words.Vendors'),
+			title: t("Words.Vendors"),
 			hide: checkHideOrNot("Vendors")
 		},
 		{
-			title: t('Words.JobBoards'),
+			title: t("Words.JobBoards"),
 			hide: checkHideOrNot("Job Boards")
 		}
 	];
 	const tabHeading_2 = [
 		{
-			title: t('Words.AllTeamMembers'),
+			title: t("Words.AllTeamMembers"),
 			icon: <i className="fa-solid fa-users"></i>
 		},
 		{
-			title: t('Words.Divison'),
+			title: t("Words.Divison"),
 			icon: <i className="fa-solid fa-table-cells"></i>
 		}
 	];
@@ -661,7 +789,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	return (
 		<>
 			<Head>
-				<title>{t('Words.EditJob')}</title>
+				<title>{t("Words.EditJob")}</title>
 				<meta name="description" content="Generated by create next app" />
 			</Head>
 			<main>
@@ -684,7 +812,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											<i className="fa-solid fa-arrow-left text-xl"></i>
 										</button>
 										<h2 className="text-lg font-bold">
-											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t('Words.JobTitle')}</>}</span>
+											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
 										</h2>
 									</div>
 									<div className="flex flex-wrap items-center">
@@ -700,7 +828,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 								</div>
 								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
-									<div className="w-[820px] flex">
+									<div className="flex w-[820px]">
 										{tabHeading_1.map((item, i) => (
 											<Tab key={i} as={Fragment}>
 												{({ selected }) => (
@@ -726,23 +854,227 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 							<Tab.Panels>
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={(t('Words.JobTitle')) + ' & ' + t('Words.Department')} />
+										<StickyLabel label={t("Words.BasicInformation")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<FormField
 												fieldType="input"
 												inputType="text"
-												label={t('Words.JobTitle')}
+												label={t("Words.JobTitle")}
 												id="job_title"
 												value={jtitle}
 												handleChange={(e) => setjtitle(e.target.value)}
 												required
 											/>
+											<FormField
+												options={ski}
+												onSearch={searchSkill}
+												fieldType="select2"
+												id="skills"
+												value={jskill}
+												handleChange={setjskill}
+												label={t("Words.Skills")}
+												required
+											/>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.AnnualSalary")} />
+										<div className="relative mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="-mx-3 flex flex-wrap">
+												<div className="mb-4 w-full px-3 md:max-w-[25%]">
+													<FormField
+														fieldType="input"
+														inputType="number"
+														label={t("Words.From")}
+														id="salary"
+														value={parseInt(jfsalary)}
+														handleChange={(e) => setjfsalary(e.target.value)}
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[25%]">
+													<FormField
+														fieldType="input"
+														inputType="number"
+														label={t("Words.To")}
+														id="salary"
+														value={jesalary}
+														handleChange={(e) => setjesalary(e.target.value)}
+														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+													/>
+												</div>
+												<div className="mb-4 w-full px-3 md:max-w-[50%]">
+													<FormField
+														fieldType="select2"
+														label={t("Words.Currency")}
+														id="currency"
+														options={[
+															"USD $",
+															"CAD CA$",
+															"EUR €",
+															"AED AED",
+															"AFN Af",
+															"ALL ALL",
+															"AMD AMD",
+															"ARS AR$",
+															"AUD AU$",
+															"AZN man.",
+															"BAM KM",
+															"BDT Tk",
+															"BGN BGN",
+															"BHD BD",
+															"BIF FBu",
+															"BND BN$",
+															"BOB Bs",
+															"BRL R$",
+															"BWP BWP",
+															"BYN Br",
+															"BZD BZ$",
+															"CDF CDF",
+															"CHF CHF",
+															"CLP CL$",
+															"CNY CN¥",
+															"COP CO$",
+															"CRC ₡",
+															"CVE CV$",
+															"CZK Kč",
+															"DJF Fdj",
+															"DKK Dkr",
+															"DOP RD$",
+															"DZD DA",
+															"EEK Ekr",
+															"EGP EGP",
+															"ERN Nfk",
+															"ETB Br",
+															"GBP £",
+															"GEL GEL",
+															"GHS GH₵",
+															"GNF FG",
+															"GTQ GTQ",
+															"HKD HK$",
+															"HNL HNL",
+															"HRK kn",
+															"HUF Ft",
+															"IDR Rp",
+															"ILS ₪",
+															"INR ₹",
+															"IQD IQD",
+															"IRR IRR",
+															"ISK Ikr",
+															"JMD J$",
+															"JOD JD",
+															"JPY ¥",
+															"KES Ksh",
+															"KHR KHR",
+															"KMF CF",
+															"KRW ₩",
+															"KWD KD",
+															"KZT KZT",
+															"LBP L.L.",
+															"LKR SLRs",
+															"LTL Lt",
+															"LVL Ls",
+															"LYD LD",
+															"MAD MAD",
+															"MDL MDL",
+															"MGA MGA",
+															"MKD MKD",
+															"MMK MMK",
+															"MOP MOP$",
+															"MUR MURs",
+															"MXN MX$",
+															"MYR RM",
+															"MZN MTn",
+															"NAD N$",
+															"NGN ₦",
+															"NIO C$",
+															"NOK Nkr",
+															"NPR NPRs",
+															"NZD NZ$",
+															"OMR OMR",
+															"PAB B/.",
+															"PEN S/.",
+															"PHP ₱",
+															"PKR PKRs",
+															"PLN zł",
+															"PYG ₲",
+															"QAR QR",
+															"RON RON",
+															"RSD din.",
+															"RUB RUB",
+															"RWF RWF",
+															"SAR SR",
+															"SDG SDG",
+															"SEK Skr",
+															"SGD S$",
+															"SOS Ssh",
+															"SYP SY£",
+															"THB ฿",
+															"TND DT",
+															"TOP T$",
+															"TRY TL",
+															"TTD TT$",
+															"TWD NT$",
+															"TZS TSh",
+															"UAH ₴",
+															"UGX USh",
+															"UYU $U",
+															"UZS UZS",
+															"VEF Bs.F.",
+															"VND ₫",
+															"XAF FCFA",
+															"XOF CFA",
+															"YER YR",
+															"ZAR R",
+															"ZMK ZK",
+															"ZWL ZWL$"
+														]}
+														singleSelect
+														value={jcurr}
+														handleChange={setjcurr}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.JobDescription")} />
+										<div className="mx-auto mt-[-60px] w-full max-w-[1055px] px-4 pb-8 pt-2">
+											<div className="mb-4 w-full text-right">
+												<button
+													type="button"
+													onClick={() => onAIGenerateHandler()}
+													className="ml-auto flex items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700"
+												>
+													<span className="mr-3">Generate Description</span>
+													{aiLoader ? (
+														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
+													) : (
+														<div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-[6px] shadow-normal">
+															<Image src={favIcon} alt="AI" width={100} height={100} className="" />
+														</div>
+													)}
+												</button>
+											</div>
+											<FormField
+												fieldType="reactquill"
+												id="description"
+												value={jdesc}
+												handleChange={setjdesc}
+												handleOnBlur={setjdesc}
+												readOnly={aiLoader}
+											/>
+										</div>
+									</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.DepartmentInformation")} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.JobFunction')}
+														label={t("Words.JobFunction")}
 														id="job_function"
 														value={jfunction}
 														handleChange={(e) => setjfunction(e.target.value)}
@@ -753,7 +1085,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Department')}
+														label={t("Words.Department")}
 														value={jdept}
 														handleChange={(e) => setjdept(e.target.value)}
 														id="department"
@@ -764,7 +1096,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Industry')}
+														label={t("Words.Industry")}
 														value={jind}
 														handleChange={(e) => setjind(e.target.value)}
 														id="industry"
@@ -774,78 +1106,39 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Group') +' / '+ t('Words.Division')}
+														label={t("Words.Group") + " / " + t("Words.Division")}
 														id="group_or_division"
 														value={jgrp}
 														handleChange={(e) => setjgrp(e.target.value)}
 													/>
 												</div>
-												<div className="mb-4 w-full px-3 md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="number"
-														value={jvac}
-														handleChange={(e) => setjvac(e.target.value)}
-														label={t('Words.NoOfVacancy')}
-														id="vacancy"
-													/>
-												</div>
 											</div>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.DepartmentInformation')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<FormField
+												label={t("Words.Department") + " " + t("Form.Description")}
 												fieldType="reactquill"
 												id="description"
 												value={jdeptinfo}
 												handleChange={setjdeptinfo}
+												handleOnBlur={setjdeptinfo}
 											/>
 										</div>
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.YourResponsibilities')} />
+										<StickyLabel label={t("Words.EmploymentDetails")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="responsibility" value={jres} handleChange={setjres} />
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.WhatWeAreLookingFor')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField fieldType="reactquill" id="looking_for" value={jlooking} handleChange={setjlooking} />
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.Skills')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<FormField
-												options={ski}
-												onSearch={searchSkill}
-												fieldType="select2"
-												id="skills"
-												value={jskill}
-												handleChange={setjskill}
-												label={t('Words.Skills')}
-											/>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.EmploymentDetails')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 pt-8">
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="select2"
-														label={t('Words.EmploymentType')}
+														label={t("Words.EmploymentType")}
 														id="employment_type"
 														singleSelect
 														options={[
-															t('Select.FullTime'),
-															t('Select.PartTime'),
-															t('Select.Contract'),
-															t('Select.Temporary'),
-															t('Select.Internship')
+															t("Select.FullTime"),
+															t("Select.PartTime"),
+															t("Select.Contract"),
+															t("Select.Temporary"),
+															t("Select.Internship")
 														]}
 														value={jetype}
 														handleChange={setjetype}
@@ -855,88 +1148,69 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Experience')}
+														label={t("Words.Experience")}
 														value={jexp}
 														handleChange={(e) => setjexp(e.target.value)}
 														id="experience"
 													/>
 												</div>
-											</div>
-											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Education')}
+														label={"Qualification"}
 														value={jedu}
 														handleChange={(e) => setjedu(e.target.value)}
-														id="education"
+														id="qualification"
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t('Words.Language')}
+														label={t("Words.Language")}
 														value={jlang}
 														handleChange={(e) => setjlang(e.target.value)}
 														id="language"
+														required
 													/>
 												</div>
-											</div>
-										</div>
-										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8">
-											<FormField
-												options={locf}
-												onSearch={searchLoc}
-												fieldType="select2"
-												id="location"
-												label={t('Words.JobLocation')}
-												value={jloc}
-												handleChange={setjloc}
-											/>
-										</div>
-									</div>
-									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.AnnualSalary')} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="number"
-														label={t('Words.SalaryStartingFrom')}
-														id="salary"
-														value={jsalary}
-														handleChange={(e) => setjsalary(e.target.value)}
-														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+														value={jvac}
+														handleChange={(e) => setjvac(e.target.value)}
+														label={t("Words.NoOfVacancy")}
+														id="vacancy"
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
-														fieldType="input"
-														inputType="text"
-														label={t('Words.Currency')}
-														id="currency"
-														value={jcurr}
-														handleChange={(e) => setjcurr(e.target.value)}
-														icon={<i className="fa-regular fa-money-bill-alt"></i>}
+														options={locf}
+														onSearch={searchLoc}
+														fieldType="select2"
+														id="location"
+														label={t("Words.JobLocation")}
+														handleChange={setjloc}
+														value={jloc}
+														required
 													/>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
-										<StickyLabel label={t('Words.Benefits')} />
+										<StickyLabel label={t("Words.Benefits")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="select2"
-														label={t('Words.PaidRelocation')}
+														label={t("Words.PaidRelocation")}
 														id="relocation"
 														singleSelect
-														options={[t('Select.Yes'), t('Select.No')]}
+														options={[t("Select.Yes"), t("Select.No")]}
 														value={jreloc}
 														handleChange={setjreloc}
 													/>
@@ -944,10 +1218,10 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="select2"
-														label={t('Words.VisaSponsorship')}
+														label={t("Words.VisaSponsorship")}
 														id="visa"
 														singleSelect
-														options={[t('Select.Yes'), t('Select.No')]}
+														options={[t("Select.Yes"), t("Select.No")]}
 														value={jvisa}
 														handleChange={setjvisa}
 													/>
@@ -955,10 +1229,10 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="select2"
-														label={t('Words.WorkplaceType')}
+														label={t("Words.WorkplaceType")}
 														id="work_type"
 														singleSelect
-														options={[t('Select.Remote'), t('Select.Office'), t('Select.Hybrid')]}
+														options={[t("Select.Remote"), t("Select.Office"), t("Select.Hybrid")]}
 														value={jwtype}
 														handleChange={setjwtype}
 													/>
@@ -972,7 +1246,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 										<UpcomingComp />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t('Words.Assessment')} />
+											<StickyLabel label={t("Words.Assessment")} />
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<div className="mx-[-15px] flex flex-wrap">
 													{Array(6).fill(
@@ -990,7 +1264,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 										<PermiumComp userRole={userRole} />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t('Words.TeamMembers')} />
+											<StickyLabel label={t("Words.TeamMembers")} />
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<Tab.Group>
 													<Tab.List className={"mb-6 flex border-b"}>
@@ -1021,7 +1295,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																	<FormField
 																		fieldType="input"
 																		inputType="search"
-																		placeholder={t('Words.Search')}
+																		placeholder={t("Words.Search")}
 																		icon={<i className="fa-solid fa-magnifying-glass"></i>}
 																	/>
 																</div>
@@ -1029,7 +1303,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																	<div className="mr-3 w-[150px]">
 																		<FormField
 																			fieldType="select"
-																			placeholder={t('Words.Sort')}
+																			placeholder={t("Words.Sort")}
 																			singleSelect={true}
 																			options={[
 																				{
@@ -1048,7 +1322,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																			htmlFor="teamSelectAll"
 																			className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 																		>
-																			<span>{t('Words.SelectAll')}</span>
+																			<span>{t("Words.SelectAll")}</span>
 																			<input type="checkbox" id="teamSelectAll" />
 																		</label>
 																	</div>
@@ -1178,14 +1452,14 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 										<PermiumComp userRole={userRole} />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t('Words.Vendors')} />
+											<StickyLabel label={t("Words.Vendors")} />
 											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
 												<div className="mb-6 flex flex-wrap items-center justify-between">
 													<div className="w-[350px] pr-2">
 														<FormField
 															fieldType="input"
 															inputType="search"
-															placeholder={t('Words.Search')}
+															placeholder={t("Words.Search")}
 															icon={<i className="fa-solid fa-magnifying-glass"></i>}
 														/>
 													</div>
@@ -1193,7 +1467,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 														<div className="mr-3 w-[150px]">
 															<FormField
 																fieldType="select"
-																placeholder={t('Words.Sort')}
+																placeholder={t("Words.Sort")}
 																singleSelect={true}
 																options={[
 																	{
@@ -1212,7 +1486,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																htmlFor="teamSelectAll"
 																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 															>
-																<span>{t('Words.SelectAll')}</span>
+																<span>{t("Words.SelectAll")}</span>
 																<input type="checkbox" id="teamSelectAll" />
 															</label>
 														</div>
@@ -1287,22 +1561,20 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
 											<h4 className="text-lg font-bold leading-none">
-												{jtitle && jtitle.length > 0 ? jtitle : <>{srcLang === 'ja' ? '求人タイトル' : 'Job Title'}</>}
+												{jtitle ? jtitle : <>{srcLang === "ja" ? "求人タイトル" : "Job Title"}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
-												<li className="mr-3 list-none">
-													{jetype && jetype.length > 0 ? jetype : <>Employment Type Not Disclosed</>}
-												</li>
+												<li className="mr-3 list-none">{jetype ? jetype : <>Employment Type Not Disclosed</>}</li>
 												<li className="mr-3">
-													{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+													{jcurr && jfsalary && jesalary ? (
 														<>
-															{jcurr} {jsalary}
+															{jcurr} {jfsalary} to {jesalary}
 														</>
 													) : (
 														<>Salary Not Disclosed</>
 													)}
 												</li>
-												<li className="mr-3">Vacancy - {jvac && jvac.length > 0 ? jvac : <>Not Disclosed</>}</li>
+												<li className="mr-3">Vacancy - {jvac ? jvac : <>Not Disclosed</>}</li>
 											</ul>
 										</aside>
 										<button
@@ -1316,45 +1588,52 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '部門情報' : 'Department Information'}</h5>
-												<article className="text-sm">
-													{jdeptinfo && jdeptinfo.length > 0 ? (
+												<h5 className="mb-2 font-bold">Job Description</h5>
+												<article>
+													{jdesc ? (
+														<>
+															<div dangerouslySetInnerHTML={{ __html: jdesc }}></div>
+														</>
+													) : (
+														<>Not Filled</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門情報" : "Department Information"}</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">
+														{"Job Function: "}
+														{jfunction ? jfunction : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Department: "}
+														{jdept ? jdept : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Industry: "}
+														{jind ? jind : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Group / Division: "}
+														{jgrp ? jgrp : <>Not Disclosed</>}
+													</li>
+												</ul>
+												<article className="mt-3">
+													<h5 className="mb-2 font-bold">{"Department Description"}</h5>
+													{jdeptinfo ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: jdeptinfo }}></p>
 														</>
 													) : (
-														<>Not Filled</>
+														<>Not Disclosed</>
 													)}
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める役割' : 'Your Responsibilities'}</h5>
-												<article className="text-sm">
-													{jres && jres.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: jres }}></p>
-														</>
-													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める要件' : 'What We are Looking For'}</h5>
-												<article className="text-sm">
-													{jlooking && jlooking.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: jlooking }}></p>
-														</>
-													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? 'スキル' : 'Skills'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "スキル" : "Skills"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-													{jskill && jskill.length > 0 ? (
+													{jskill ? (
 														jskill.split(",").map((data, i) =>
 															i === 0 ? (
 																<li className={`mr-3 list-none`} key={i}>
@@ -1367,15 +1646,12 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 															)
 														)
 													) : (
-														<li className="mr-3 list-none">Not Filled</li>
+														<li className="mr-3 list-none">Not Disclosed</li>
 													)}
-
-													{/* <li className="mr-3">ReactJs</li>
-													<li className="mr-3">HTML</li> */}
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '基本要件' : 'Employment Details'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "基本要件" : "Employment Details"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
 														{jetype && jetype.length > 0 ? jetype : <>Not Disclosed</>}
@@ -1386,27 +1662,29 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '想定年収' : 'Annual Salary'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "想定年収" : "Annual Salary"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+														{jcurr && jfsalary && jesalary ? (
 															<>
-																{jcurr} {jsalary}
+																{jcurr} {jfsalary} to {jesalary}
 															</>
 														) : (
-															<>Salary Not Disclosed</>
+															<>Not Disclosed</>
 														)}
 													</li>
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '待遇面' : 'Benefits'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "待遇面" : "Benefits"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-													{srcLang === 'ja' ? '引越し費用負担' : 'Paid Relocation:'}{jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
+														{srcLang === "ja" ? "引越し費用負担" : "Paid Relocation: "}
+														{jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
-													{srcLang === 'ja' ? 'VISAサポート' : 'Visa Sposnership:'}{jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
+														{srcLang === "ja" ? "VISAサポート" : "Visa Sposnership: "}
+														{jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
 														{jwtype && jwtype.length > 0 ? <>{jwtype} Working</> : <>Not Disclosed Work Type</>}
@@ -1415,7 +1693,11 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 											</div>
 										</div>
 										<div className="py-4">
-											<Button label={srcLang === 'ja' ? '近い' : 'Close'} btnType="button" handleClick={() => setPreviewPopup(false)} />
+											<Button
+												label={srcLang === "ja" ? "近い" : "Close"}
+												btnType="button"
+												handleClick={() => setPreviewPopup(false)}
+											/>
 										</div>
 									</div>
 								</Dialog.Panel>
@@ -1461,18 +1743,31 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 									<div className="p-8 pt-0 text-center">
 										<i className="fa-solid fa-circle-check mb-4 text-[50px] text-green-500"></i>
-										<h4 className="mb-2 text-lg font-bold">{srcLang === 'ja' ? '求人が公開されました' : 'Job has been Published'}</h4>
+										<h4 className="mb-2 text-lg font-bold">
+											{srcLang === "ja" ? "求人が公開されました" : "Job has been Published"}
+										</h4>
 										<p className="text-sm">
-											{srcLang === 'ja' 
-											? 
-											<>
-											<Link href="/organization/jobs/active" onClick={() => setPublishThanks(false)} className="font-bold text-primary hover:underline">公開中の求人を確認する</Link>
-											</>
-											: 
-											<>
-											<Link href="/organization/jobs/active" onClick={() => setPublishThanks(false)} className="font-bold text-primary hover:underline">Check open jobs</Link>
-											</>
-											}
+											{srcLang === "ja" ? (
+												<>
+													<Link
+														href="/organization/jobs/active"
+														onClick={() => setPublishThanks(false)}
+														className="font-bold text-primary hover:underline"
+													>
+														公開中の求人を確認する
+													</Link>
+												</>
+											) : (
+												<>
+													<Link
+														href="/organization/jobs/active"
+														onClick={() => setPublishThanks(false)}
+														className="font-bold text-primary hover:underline"
+													>
+														Check open jobs
+													</Link>
+												</>
+											)}
 										</p>
 									</div>
 								</Dialog.Panel>
@@ -1484,11 +1779,11 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		</>
 	);
 }
-export async function getServerSideProps({ context, locale }:any) {
-	const translations = await serverSideTranslations(locale, ['common']);
+export async function getServerSideProps({ context, locale }: any) {
+	const translations = await serverSideTranslations(locale, ["common"]);
 	return {
 		props: {
-		...translations
-		},
+			...translations
+		}
 	};
 }

@@ -158,22 +158,22 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 	//job create state
 	const [jtitle, setjtitle] = useState("");
+	const [jskill, setjskill] = useState("");
+	const [jfsalary, setjfsalary] = useState("");
+	const [jesalary, setjesalary] = useState("");
+	const [jcurr, setjcurr] = useState("");
+	const [jdesc, setjdesc] = useState("");
 	const [jfunction, setjfunction] = useState("");
 	const [jdept, setjdept] = useState("");
 	const [jind, setjind] = useState("");
 	const [jgrp, setjgrp] = useState("");
-	const [jvac, setjvac] = useState("");
 	const [jdeptinfo, setjdeptinfo] = useState("");
-	const [jres, setjres] = useState("");
-	const [jlooking, setjlooking] = useState("");
-	const [jskill, setjskill] = useState("");
 	const [jetype, setjetype] = useState("");
 	const [jexp, setjexp] = useState("");
 	const [jedu, setjedu] = useState("");
 	const [jlang, setjlang] = useState("");
+	const [jvac, setjvac] = useState("");
 	const [jloc, setjloc] = useState("");
-	const [jsalary, setjsalary] = useState("");
-	const [jcurr, setjcurr] = useState("");
 	const [jreloc, setjreloc] = useState("");
 	const [jvisa, setjvisa] = useState("");
 	const [jwtype, setjwtype] = useState("");
@@ -184,7 +184,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
-	async function addJob(formData, type) {
+	async function addJob(formData: any, type: any) {
 		await axiosInstanceAuth2
 			.post(`/job/create-job/`, formData)
 			.then(async (res) => {
@@ -212,10 +212,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					setPublishThanks(true);
 					setTimeout(() => {
 						setPublishThanks(false);
-						router.push(`${type}/`);
+						router.push(`/organization/jobs/${type}/`);
 					}, 3000);
 				} else {
-					router.push(`${type}/`);
+					router.push(`/organization/jobs/${type}/`);
 				}
 			})
 			.catch((err) => {
@@ -226,13 +226,25 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	function publishJob() {
 		if (
 			jtitle.length <= 0 ||
+			jskill.length <= 0 ||
 			jfunction.length <= 0 ||
 			jdept.length <= 0 ||
+			jlang.length <= 0 ||
+			jloc.length <= 0 ||
 			(!jcollaborator && atsVersion === "enterprise") ||
 			(!jrecruiter && atsVersion === "enterprise")
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
+			}
+			if (jskill.length <= 0) {
+				toastcomp("Job Skills Required", "error");
+			}
+			if (jlang.length <= 0) {
+				toastcomp("Job Spoken Langauge Required", "error");
+			}
+			if (jloc.length <= 0) {
+				toastcomp("Job Location Required", "error");
 			}
 			if (jfunction.length <= 0) {
 				toastcomp("Job Function Required", "error");
@@ -248,92 +260,115 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle.length > 0) {
-				fd.append("job_title", jtitle);
+			if (jtitle) {
+				fd.append("jobTitle", jtitle);
 			}
-			if (jfunction.length > 0) {
-				fd.append("job_function", jfunction);
-			}
-			if (jdept.length > 0) {
-				fd.append("department", jdept);
-			}
-			if (jind.length > 0) {
-				fd.append("industry", jind);
-			}
-			if (jgrp.length > 0) {
-				fd.append("group_or_division", jgrp);
-			}
-			if (jvac.length > 0) {
-				fd.append("vacancy", jvac);
-			}
-			if (jdeptinfo.length > 0) {
-				fd.append("description", jdeptinfo);
-			}
-			if (jlooking.length > 0) {
-				fd.append("looking_for", jlooking);
-			}
-			if (jskill.length > 0) {
+			if (jskill) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype.length > 0) {
-				fd.append("employment_type", jetype);
+			if (jcurr) {
+				fd.append("jobCurrency", jcurr);
 			}
-			if (jexp.length > 0) {
-				fd.append("experience", jexp);
+			if (jfsalary) {
+				fd.append("jobFromSalary", jfsalary);
 			}
-			if (jedu.length > 0) {
-				fd.append("education", jedu);
+			if (jesalary) {
+				fd.append("jobToSalary", jesalary);
 			}
-			if (jloc.length > 0) {
-				fd.append("location", jloc);
+			if (jdesc) {
+				fd.append("jobDescription", jdesc);
 			}
-			if (jsalary.length > 0 && jcurr.length > 0) {
-				fd.append("currency", jcurr + jsalary);
+			if (jfunction) {
+				fd.append("jobFunction", jfunction);
 			}
-			if (jreloc.length > 0) {
-				fd.append("relocation", jreloc);
+			if (jdept) {
+				fd.append("jobDepartment", jdept);
 			}
-			if (jvisa.length > 0) {
-				fd.append("visa", jvisa);
+			if (jind) {
+				fd.append("jobIndustry", jind);
 			}
-			if (jwtype.length > 0) {
-				fd.append("worktype", jwtype);
+			if (jgrp) {
+				fd.append("jobGroupDivision", jgrp);
 			}
-			// if(jtitle.length > 0){
-			// 	fd.append("deadline",jtitle);
-			// }
+			if (jdeptinfo) {
+				fd.append("jobDeptDescription", jdeptinfo);
+			}
+			if (jetype) {
+				fd.append("jobEmploymentType", jetype);
+			}
+			if (jexp) {
+				fd.append("jobExperience", jexp);
+			}
+			if (jedu) {
+				fd.append("jobQualification", jedu);
+			}
+			if (jlang) {
+				fd.append("jobLanguage", jlang);
+			}
+			if (jvac) {
+				fd.append("jobVacancy", jvac);
+			}
+			if (jloc) {
+				fd.append("jobLocation", jloc);
+			}
+			if (jreloc) {
+				fd.append("jobRelocation", jreloc);
+			}
+			if (jvisa) {
+				fd.append("jobVisa", jvisa);
+			}
+			if (jwtype) {
+				fd.append("jobWorktype", jwtype);
+			}
+
 			fd.append("jobStatus", "Active");
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
 			}
-			console.log("jtitle", jtitle);
-			console.log("jfunction", jfunction);
-			console.log("jdept", jdept);
-			console.log("jind", jind);
-			console.log("jgrp", jgrp);
-			console.log("jvac", jvac);
-			console.log("jdeptinfo", jdeptinfo);
-			console.log("jres", jres);
-			console.log("jlooking", jlooking);
-			console.log("jskill", jskill);
-			console.log("jetype", jetype);
-			console.log("jexp", jexp);
-			console.log("jedu", jedu);
-			console.log("jlang", jlang);
-			console.log("jloc", jloc);
-			console.log("jsalary", jsalary);
-			console.log("jcurr", jcurr);
-			console.log("jreloc", jreloc);
-			console.log("jvisa", jvisa);
-			console.log("jwtype", jwtype);
+			// console.log("jtitle", jtitle);
+			// console.log("jfunction", jfunction);
+			// console.log("jdept", jdept);
+			// console.log("jind", jind);
+			// console.log("jgrp", jgrp);
+			// console.log("jvac", jvac);
+			// console.log("jdeptinfo", jdeptinfo);
+			// console.log("jres", jres);
+			// console.log("jlooking", jlooking);
+			// console.log("jskill", jskill);
+			// console.log("jetype", jetype);
+			// console.log("jexp", jexp);
+			// console.log("jedu", jedu);
+			// console.log("jlang", jlang);
+			// console.log("jloc", jloc);
+			// console.log("jsalary", jsalary);
+			// console.log("jcurr", jcurr);
+			// console.log("jreloc", jreloc);
+			// console.log("jvisa", jvisa);
+			// console.log("jwtype", jwtype);
 			addJob(fd, "active");
 		}
 	}
 
 	function draftJob() {
-		if (jtitle.length <= 0 || jfunction.length <= 0 || jdept.length <= 0) {
+		if (
+			jtitle.length <= 0 ||
+			jskill.length <= 0 ||
+			jfunction.length <= 0 ||
+			jdept.length <= 0 ||
+			jlang.length <= 0 ||
+			jloc.length <= 0
+		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
+			}
+			if (jskill.length <= 0) {
+				toastcomp("Job Skills Required", "error");
+			}
+			if (jlang.length <= 0) {
+				toastcomp("Job Spoken Langauge Required", "error");
+			}
+			if (jloc.length <= 0) {
+				toastcomp("Job Location Required", "error");
 			}
 			if (jfunction.length <= 0) {
 				toastcomp("Job Function Required", "error");
@@ -343,84 +378,91 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			}
 		} else {
 			const fd = new FormData();
-			if (jtitle.length > 0) {
-				fd.append("job_title", jtitle);
+			if (jtitle) {
+				fd.append("jobTitle", jtitle);
 			}
-			if (jfunction.length > 0) {
-				fd.append("job_function", jfunction);
-			}
-			if (jdept.length > 0) {
-				fd.append("department", jdept);
-			}
-			if (jind.length > 0) {
-				fd.append("industry", jind);
-			}
-			if (jgrp.length > 0) {
-				fd.append("group_or_division", jgrp);
-			}
-			if (jvac.length > 0) {
-				fd.append("vacancy", jvac);
-			}
-			if (jdeptinfo.length > 0) {
-				fd.append("description", jdeptinfo);
-			}
-			if (jlooking.length > 0) {
-				fd.append("looking_for", jlooking);
-			}
-			if (jskill.length > 0) {
+			if (jskill) {
 				fd.append("jobSkill", jskill);
 			}
-			if (jetype.length > 0) {
-				fd.append("employment_type", jetype);
+			if (jcurr) {
+				fd.append("jobCurrency", jcurr);
 			}
-			if (jexp.length > 0) {
-				fd.append("experience", jexp);
+			if (jfsalary) {
+				fd.append("jobFromSalary", jfsalary);
 			}
-			if (jedu.length > 0) {
-				fd.append("education", jedu);
+			if (jesalary) {
+				fd.append("jobToSalary", jesalary);
 			}
-			if (jloc.length > 0) {
-				fd.append("location", jloc);
+			if (jdesc) {
+				fd.append("jobDescription", jdesc);
 			}
-			if (jsalary.length > 0 && jcurr.length > 0) {
-				fd.append("currency", jcurr + jsalary);
+			if (jfunction) {
+				fd.append("jobFunction", jfunction);
 			}
-			if (jreloc.length > 0) {
-				fd.append("relocation", jreloc);
+			if (jdept) {
+				fd.append("jobDepartment", jdept);
 			}
-			if (jvisa.length > 0) {
-				fd.append("visa", jvisa);
+			if (jind) {
+				fd.append("jobIndustry", jind);
 			}
-			if (jwtype.length > 0) {
-				fd.append("worktype", jwtype);
+			if (jgrp) {
+				fd.append("jobGroupDivision", jgrp);
 			}
-			// if(jtitle.length > 0){
-			// 	fd.append("deadline",jtitle);
-			// }
+			if (jdeptinfo) {
+				fd.append("jobDeptDescription", jdeptinfo);
+			}
+			if (jetype) {
+				fd.append("jobEmploymentType", jetype);
+			}
+			if (jexp) {
+				fd.append("jobExperience", jexp);
+			}
+			if (jedu) {
+				fd.append("jobQualification", jedu);
+			}
+			if (jlang) {
+				fd.append("jobLanguage", jlang);
+			}
+			if (jvac) {
+				fd.append("jobVacancy", jvac);
+			}
+			if (jloc) {
+				fd.append("jobLocation", jloc);
+			}
+			if (jreloc) {
+				fd.append("jobRelocation", jreloc);
+			}
+			if (jvisa) {
+				fd.append("jobVisa", jvisa);
+			}
+			if (jwtype) {
+				fd.append("jobWorktype", jwtype);
+			}
+
 			fd.append("jobStatus", "Draft");
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
 			}
-			console.log("jtitle", jtitle);
-			console.log("jfunction", jfunction);
-			console.log("jdept", jdept);
-			console.log("jind", jind);
-			console.log("jgrp", jgrp);
-			console.log("jvac", jvac);
-			console.log("jdeptinfo", jdeptinfo);
-			console.log("jres", jres);
-			console.log("jlooking", jlooking);
-			console.log("jskill", jskill);
-			console.log("jetype", jetype);
-			console.log("jexp", jexp);
-			console.log("jedu", jedu);
-			console.log("jlang", jlang);
-			console.log("jloc", jloc);
-			console.log("jsalary", jsalary);
-			console.log("jcurr", jcurr);
-			console.log("jreloc", jreloc);
-			console.log("jvisa", jvisa);
-			console.log("jwtype", jwtype);
+			// console.log("jtitle", jtitle);
+			// console.log("jfunction", jfunction);
+			// console.log("jdept", jdept);
+			// console.log("jind", jind);
+			// console.log("jgrp", jgrp);
+			// console.log("jvac", jvac);
+			// console.log("jdeptinfo", jdeptinfo);
+			// console.log("jres", jres);
+			// console.log("jlooking", jlooking);
+			// console.log("jskill", jskill);
+			// console.log("jetype", jetype);
+			// console.log("jexp", jexp);
+			// console.log("jedu", jedu);
+			// console.log("jlang", jlang);
+			// console.log("jloc", jloc);
+			// console.log("jsalary", jsalary);
+			// console.log("jcurr", jcurr);
+			// console.log("jreloc", jreloc);
+			// console.log("jvisa", jvisa);
+			// console.log("jwtype", jwtype);
 			addJob(fd, "draft");
 		}
 	}
@@ -530,31 +572,23 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	}
 
 	async function onAIGenerateHandler() {
-		// const prompt =
-		// 	"Generate a job description in html tags format and english language with responsiblities for the following information";
-		// if (jtitle && jskill) {
-		// 	setAiLoader(true);
-		// 	const data = `${jtitle}${jskill}${jsalary}`;
-		// 	const result = await FetchHelper(prompt, data);
-		// 	setAiLoader(false);
-		// 	setjdeptinfo(result);
-		// } else {
-		// 	toastcomp("Please add title and skill to generate discription", "error");
-		// }
-
-		// srcLang === 'ja'
-
 		if (jtitle && jskill) {
 			setAiLoader(true);
 			// const prompt = `Write a Job description of ${jtitle} with skills are ${jskill} having salary of range 10 to 12 LPA withun 150 words in english language`;
 			var prompt = "";
-			setjdeptinfo("");
+			setjdesc("");
 			if (srcLang === "ja") {
-				prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}`;
+				if (jfsalary && jesalary && jcurr) {
+					prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}  having annual salary range ${jfsalary} to ${jesalary} in ${jcurr}`;
+				} else {
+					prompt = `Write a Job description in japanese language for ${jtitle} with skills ${jskill}`;
+				}
 			} else if (srcLang === "en") {
-				// prompt = `Write a full Job description & responsiblities of ${jtitle} with skills are ${jskill} in english language and provide response in html tags format`;
-				prompt = `Write a Job description for ${jtitle} with skills ${jskill}`;
-				// prompt = `Generate a job description in html tags format and japanese language with responsiblities of ${jtitle} with skills are ${jskill}`;
+				if (jfsalary && jesalary && jcurr) {
+					prompt = `Write a Job description for ${jtitle} with skills ${jskill} having annual salary range ${jfsalary} to ${jesalary} in ${jcurr}`;
+				} else {
+					prompt = `Write a Job description for ${jtitle} with skills ${jskill}`;
+				}
 			}
 
 			const fd = new FormData();
@@ -563,17 +597,17 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			await axiosInstanceAuth2
 				.post(`/job/ai-description-job/`, fd)
 				.then(async (res) => {
-					toastcomp("Job Desc Successfully", "success");
+					toastcomp("Job description generated", "success");
 					if (res.data.message) {
 						let data = res.data.message;
 						data = data.replaceAll("\n\n", "<br />");
-						setjdeptinfo(data);
+						setjdesc(data);
 					}
 					console.log("!", "desc", res.data);
 					setAiLoader(false);
 				})
 				.catch((err) => {
-					toastcomp("Job Desc Created", "error");
+					toastcomp("Job description not generated, try again later", "error");
 					setAiLoader(false);
 				});
 		} else {
@@ -724,46 +758,32 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.AnnualSalary")} />
 										<div className="relative mx-auto w-full max-w-[1055px] px-4 py-8">
-											<div className="absolute right-5 top-2">
-												<label
-													htmlFor="hideSalary"
-													className="flex items-center text-sm text-darkGray dark:text-gray-400"
-												>
-													<input
-														type="checkbox"
-														id="hideSalary"
-														className="dark:bg-gray-70 mr-2 rounded border border-darkGray dark:border-gray-600"
-													/>
-													Hide Salary
-												</label>
-											</div>
 											<div className="-mx-3 flex flex-wrap">
 												<div className="mb-4 w-full px-3 md:max-w-[25%]">
 													<FormField
-														required
 														fieldType="input"
 														inputType="number"
 														label={t("Words.From")}
 														id="salary"
-														value={jsalary}
-														handleChange={(e) => setjsalary(e.target.value)}
+														value={jfsalary}
+														handleChange={(e) => setjfsalary(e.target.value)}
 														icon={<i className="fa-regular fa-money-bill-alt"></i>}
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[25%]">
 													<FormField
-														required
 														fieldType="input"
 														inputType="number"
 														label={t("Words.To")}
 														id="salary"
+														value={jesalary}
+														handleChange={(e) => setjesalary(e.target.value)}
 														icon={<i className="fa-regular fa-money-bill-alt"></i>}
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
-														required
-														fieldType="select"
+														fieldType="select2"
 														label={t("Words.Currency")}
 														id="currency"
 														options={[
@@ -887,6 +907,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															"ZMK ZK",
 															"ZWL ZWL$"
 														]}
+														singleSelect
+														value={jcurr}
+														handleChange={setjcurr}
 													/>
 												</div>
 											</div>
@@ -914,9 +937,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 											<FormField
 												fieldType="reactquill"
 												id="description"
-												value={jdeptinfo}
-												handleChange={setjdeptinfo}
-												handleOnBlur={setjdeptinfo}
+												value={jdesc}
+												handleChange={setjdesc}
+												handleOnBlur={setjdesc}
+												readOnly={aiLoader}
 											/>
 										</div>
 									</div>
@@ -973,6 +997,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												id="description"
 												value={jdeptinfo}
 												handleChange={setjdeptinfo}
+												handleOnBlur={setjdeptinfo}
 											/>
 										</div>
 									</div>
@@ -1011,10 +1036,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t("Words.Education")}
+														label={"Qualification"}
 														value={jedu}
 														handleChange={(e) => setjedu(e.target.value)}
-														id="education"
+														id="qualification"
 													/>
 												</div>
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -1432,22 +1457,20 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
 											<h4 className="text-lg font-bold leading-none">
-												{jtitle && jtitle.length > 0 ? jtitle : <>{srcLang === "ja" ? "求人タイトル" : "Job Title"}</>}
+												{jtitle ? jtitle : <>{srcLang === "ja" ? "求人タイトル" : "Job Title"}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
-												<li className="mr-3 list-none">
-													{jetype && jetype.length > 0 ? jetype : <>Employment Type Not Disclosed</>}
-												</li>
+												<li className="mr-3 list-none">{jetype ? jetype : <>Employment Type Not Disclosed</>}</li>
 												<li className="mr-3">
-													{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+													{jcurr && jfsalary && jesalary ? (
 														<>
-															{jcurr} {jsalary}
+															{jcurr} {jfsalary} to {jesalary}
 														</>
 													) : (
 														<>Salary Not Disclosed</>
 													)}
 												</li>
-												<li className="mr-3">Vacancy - {jvac && jvac.length > 0 ? jvac : <>Not Disclosed</>}</li>
+												<li className="mr-3">Vacancy - {jvac ? jvac : <>Not Disclosed</>}</li>
 											</ul>
 										</aside>
 										<button
@@ -1461,47 +1484,52 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">Job Description</h5>
+												<article>
+													{jdesc ? (
+														<>
+															<div dangerouslySetInnerHTML={{ __html: jdesc }}></div>
+														</>
+													) : (
+														<>Not Filled</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
 												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門情報" : "Department Information"}</h5>
-												<article className="text-sm">
-													{jdeptinfo && jdeptinfo.length > 0 ? (
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">
+														{"Job Function: "}
+														{jfunction ? jfunction : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Department: "}
+														{jdept ? jdept : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Industry: "}
+														{jind ? jind : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Group / Division: "}
+														{jgrp ? jgrp : <>Not Disclosed</>}
+													</li>
+												</ul>
+												<article className="mt-3">
+													<h5 className="mb-2 font-bold">{"Department Description"}</h5>
+													{jdeptinfo ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: jdeptinfo }}></p>
 														</>
 													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "求める役割" : "Your Responsibilities"}</h5>
-												<article className="text-sm">
-													{jres && jres.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: jres }}></p>
-														</>
-													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">
-													{srcLang === "ja" ? "求める要件" : "What We are Looking For"}
-												</h5>
-												<article className="text-sm">
-													{jlooking && jlooking.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: jlooking }}></p>
-														</>
-													) : (
-														<>Not Filled</>
+														<>Not Disclosed</>
 													)}
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
 												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "スキル" : "Skills"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-													{jskill && jskill.length > 0 ? (
+													{jskill ? (
 														jskill.split(",").map((data, i) =>
 															i === 0 ? (
 																<li className={`mr-3 list-none`} key={i}>
@@ -1514,11 +1542,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															)
 														)
 													) : (
-														<li className="mr-3 list-none">Not Filled</li>
+														<li className="mr-3 list-none">Not Disclosed</li>
 													)}
-
-													{/* <li className="mr-3">ReactJs</li>
-													<li className="mr-3">HTML</li> */}
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
@@ -1536,12 +1561,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "想定年収" : "Annual Salary"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														{jcurr && jsalary && jcurr.length > 0 && jcurr.length > 0 ? (
+														{jcurr && jfsalary && jesalary ? (
 															<>
-																{jcurr} {jsalary}
+																{jcurr} {jfsalary} to {jesalary}
 															</>
 														) : (
-															<>Salary Not Disclosed</>
+															<>Not Disclosed</>
 														)}
 													</li>
 												</ul>
@@ -1550,11 +1575,11 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "待遇面" : "Benefits"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														{srcLang === "ja" ? "引越し費用負担" : "Paid Relocation:"}
+														{srcLang === "ja" ? "引越し費用負担" : "Paid Relocation: "}
 														{jreloc && jreloc.length > 0 ? jreloc : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
-														{srcLang === "ja" ? "VISAサポート" : "Visa Sposnership:"}
+														{srcLang === "ja" ? "VISAサポート" : "Visa Sposnership: "}
 														{jvisa && jvisa.length > 0 ? jvisa : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
