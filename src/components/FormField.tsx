@@ -285,6 +285,7 @@ export default function FormField({
 							// onBlur={(value: string) => handleOnBlur({ target: { id, value } })}
 							onChange={(content, delta, source, editor) => handleChange(content)}
 							onBlur={(previousRange, source, editor) => handleOnBlur(editor.getHTML())}
+							readOnly={readOnly}
 						/>
 					</div>
 					{errorMessage}

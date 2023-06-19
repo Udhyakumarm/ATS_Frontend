@@ -77,19 +77,46 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
 					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">{srcLang === 'ja' ? '総応募' : <>Total <br/>Candidates</>}</h5>
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							{srcLang === "ja" ? (
+								"総応募"
+							) : (
+								<>
+									Total <br />
+									Candidates
+								</>
+							)}
+						</h5>
 						<h6 className="text-lg font-semibold">
 							<Skeleton width={40} height={16} />
 						</h6>
 					</div>
 					<div className="w-full max-w-[calc(100%/3)] border-r px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">{srcLang === 'ja' ? '選考中' : <>Active <br/>Candidates</>}</h5>
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							{srcLang === "ja" ? (
+								"選考中"
+							) : (
+								<>
+									Active <br />
+									Candidates
+								</>
+							)}
+						</h5>
 						<h6 className="text-lg font-semibold">
 							<Skeleton width={40} height={16} />
 						</h6>
 					</div>
 					<div className="w-full max-w-[calc(100%/3)] px-[15px]">
-						<h5 className="mb-1 text-darkGray dark:text-gray-400">{srcLang === 'ja' ? '求人ID' : <>Job <br/>ID</>}</h5>
+						<h5 className="mb-1 text-darkGray dark:text-gray-400">
+							{srcLang === "ja" ? (
+								"求人ID"
+							) : (
+								<>
+									Job <br />
+									ID
+								</>
+							)}
+						</h5>
 						<h6 className="clamp_1 break-all text-lg font-semibold">
 							<Skeleton width={40} height={16} />
 						</h6>
@@ -112,7 +139,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								}
 							/>
 						</button>
-						<h4 className="font-bold capitalize">{job.job_title}</h4>
+						<h4 className="font-bold capitalize">{job.jobTitle}</h4>
 					</div>
 					{!dashbaord && (
 						<div className="text-right text-gray-400">
@@ -144,7 +171,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`edit/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を編集' : 'Edit Job'}
+														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -155,7 +182,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`clone/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を複製' : 'Clone Job'}
+														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -164,7 +191,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 														onClick={() => statusUpdate("Archived", job.refid)}
 													>
-														{srcLang === 'ja' ? '求人をアーカイブ' : 'Archieve Job'}
+														{srcLang === "ja" ? "求人をアーカイブ" : "Archieve Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -173,7 +200,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 														onClick={() => statusUpdate("Closed", job.refid)}
 													>
-														{srcLang === 'ja' ? '求人をクローズ' : 'Delete Job'}
+														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -183,7 +210,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														// onClick={() => setAddCand(true)}
 														onClick={() => setComingSoon(true)}
 													>
-														{srcLang === 'ja' ? 'レジュメをアップロード (pdf/doc)' : 'Upload Resume (PDF/DOC)'}
+														{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
 													</button>
 												</Menu.Item>
 											</>
@@ -199,7 +226,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`edit/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を編集' : 'Edit Job'}
+														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -210,7 +237,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`clone/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を複製' : 'Clone Job'}
+														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -219,7 +246,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 														onClick={() => statusUpdate("Closed", job.refid)}
 													>
-														{srcLang === 'ja' ? '求人をクローズ' : 'Delete Job'}
+														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
 													</button>
 												</Menu.Item>
 											</>
@@ -235,7 +262,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`edit/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を編集' : 'Edit Job'}
+														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -246,7 +273,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`clone/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を複製' : 'Clone Job'}
+														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
 													</button>
 												</Menu.Item>
 												<Menu.Item>
@@ -255,7 +282,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 														onClick={() => statusUpdate("Closed", job.refid)}
 													>
-														{srcLang === 'ja' ? '求人をクローズ' : 'Delete Job'}
+														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
 													</button>
 												</Menu.Item>
 											</>
@@ -271,7 +298,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															router.push(`clone/${job.refid}`);
 														}}
 													>
-														{srcLang === 'ja' ? '求人を複製' : 'Clone Job'}
+														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
 													</button>
 												</Menu.Item>
 											</>
@@ -283,30 +310,56 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					)}
 				</div>
 				<ul className="mb-4 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-					<li className="mr-3 list-none capitalize">{job.worktype ? job.worktype : <>Not Disclosed</>}</li>
-					<li className="mr-3 capitalize">{job.employment_type ? job.employment_type : <>Not Disclosed</>}</li>
+					<li className="mr-3 list-none capitalize">{job.jobWorktype ? job.jobWorktype : <>Not Disclosed</>}</li>
+					<li className="mr-3 capitalize">{job.jobEmploymentType ? job.jobEmploymentType : <>Not Disclosed</>}</li>
 				</ul>
 				<div className="mx-[-15px] mb-4 flex flex-wrap text-sm">
 					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
-						{srcLang === 'ja' ? '総応募' : <>Total <br/>Candidates</>}
+							{srcLang === "ja" ? (
+								"総応募"
+							) : (
+								<>
+									Total <br />
+									Candidates
+								</>
+							)}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
 					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
-						{srcLang === 'ja' ? '選考中' : <>Active <br/>Candidates</>}
+							{srcLang === "ja" ? (
+								"選考中"
+							) : (
+								<>
+									Active <br />
+									Candidates
+								</>
+							)}
 						</h5>
 						<h6 className="text-lg font-semibold">50</h6>
 					</div>
 					<div className="mb-2 grow px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
-						{srcLang === 'ja' ? '求人ID' : <>Job <br/>ID</>}
+							{srcLang === "ja" ? (
+								"求人ID"
+							) : (
+								<>
+									Job <br />
+									ID
+								</>
+							)}
 						</h5>
 						<h6 className="clamp_1 w-[100px] break-all text-lg font-semibold">{job.refid}</h6>
 					</div>
 				</div>
-				<Button btnStyle="outlined" btnType="button" label={srcLang === 'ja' ? 'みる' : 'View'} handleClick={() => setPreviewPopup(true)} />
+				<Button
+					btnStyle="outlined"
+					btnType="button"
+					label={srcLang === "ja" ? "みる" : "View"}
+					handleClick={() => setPreviewPopup(true)}
+				/>
 			</div>
 
 			<Transition.Root show={previewPopup} as={Fragment}>
@@ -323,7 +376,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 					</Transition.Child>
 
-					<div className="fixed inset-0 z-10 overflow-y-auto capitalize">
+					<div className="fixed inset-0 z-10 overflow-y-auto">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
@@ -338,22 +391,22 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									<div className="flex items-center justify-between border-b px-8 py-3 dark:border-b-gray-600">
 										<aside>
 											<h4 className="text-lg font-bold leading-none">
-												{job.job_title && job.job_title.length > 0 ? job.job_title : <>{srcLang === 'ja' ? '求人タイトル' : 'Job Title'}</>}
+												{job.jobTitle ? job.jobTitle : <>{srcLang === "ja" ? "求人タイトル" : "Job Title"}</>}
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
 												<li className="mr-3 list-none">
-													{job.employment_type && job.employment_type.length > 0 ? (
-														job.employment_type
+													{job.jobEmploymentType ? job.jobEmploymentType : <>Employment Type Not Disclosed</>}
+												</li>
+												<li className="mr-3">
+													{job.jobCurrency && job.jobFromSalary && job.jobToSalary ? (
+														<>
+															{job.jobCurrency} {job.jobFromSalary} to {job.jobToSalary}
+														</>
 													) : (
-														<>Employment Type Not Disclosed</>
+														<>Salary Not Disclosed</>
 													)}
 												</li>
-												<li className="mr-3">
-													{job.currency && job.currency.length > 0 ? <>{job.currency}</> : <>Salary Not Disclosed</>}
-												</li>
-												<li className="mr-3">
-													Vacancy - {job.vacancy && job.vacancy.length > 0 ? job.vacancy : <>Not Disclosed</>}
-												</li>
+												<li className="mr-3">Vacancy - {job.jobVacancy ? job.jobVacancy : <>Not Disclosed</>}</li>
 											</ul>
 										</aside>
 										<button
@@ -367,11 +420,11 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '部門情報' : 'Department Information'}</h5>
-												<article className="text-sm">
-													{job.description && job.description.length > 0 ? (
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "求人票" : "Job Description"}</h5>
+												<article className="jd_article">
+													{job.jobDescription ? (
 														<>
-															<p dangerouslySetInnerHTML={{ __html: job.description }}></p>
+															<div dangerouslySetInnerHTML={{ __html: job.jobDescription }}></div>
 														</>
 													) : (
 														<>Not Filled</>
@@ -379,33 +432,40 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 												</article>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める役割' : 'Your Responsibilities'}</h5>
-												<article className="text-sm">
-													{job.responsibility && job.responsibility.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: job.responsibility }}></p>
-														</>
-													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '求める要件' : 'What We are Looking For'}</h5>
-												<article className="text-sm">
-													{job.looking_for && job.looking_for.length > 0 ? (
-														<>
-															<p dangerouslySetInnerHTML={{ __html: job.looking_for }}></p>
-														</>
-													) : (
-														<>Not Filled</>
-													)}
-												</article>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? 'スキル' : 'Skills'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門情報" : "Department Information"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-													{job.jobSkill && job.jobSkill.length > 0 ? (
+													<li className="mr-3 list-none">
+														{"Job Function: "}
+														{job.jobFunction ? job.jobFunction : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Department: "}
+														{job.jobDepartment ? job.jobDepartment : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Industry: "}
+														{job.jobIndustry ? job.jobIndustry : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">
+														{"Group / Division: "}
+														{job.jobGroupDivision ? job.jobGroupDivision : <>Not Disclosed</>}
+													</li>
+												</ul>
+												<article className="mt-3">
+													<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門案内文" : "Department Description"}</h5>
+													{job.jobDeptDescription ? (
+														<>
+															<p dangerouslySetInnerHTML={{ __html: job.jobDeptDescription }}></p>
+														</>
+													) : (
+														<>Not Disclosed</>
+													)}
+												</article>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "スキル" : "Skills"}</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													{job.jobSkill ? (
 														job.jobSkill.split(",").map((data, i) =>
 															i === 0 ? (
 																<li className={`mr-3 list-none`} key={i}>
@@ -418,55 +478,49 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 															)
 														)
 													) : (
-														<li className="mr-3 list-none">Not Filled</li>
+														<li className="mr-3 list-none">Not Disclosed</li>
 													)}
-
-													{/* <li className="mr-3">ReactJs</li>
-													<li className="mr-3">HTML</li> */}
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '基本要件' : 'Employment Details'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "基本要件" : "Employment Details"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														{job.employment_type && job.employment_type.length > 0 ? (
-															job.employment_type
+														{job.jobEmploymentType ? job.jobEmploymentType : <>Not Disclosed</>}
+													</li>
+													<li className="mr-3">{job.jobQualification ? job.jobQualification : <>Not Disclosed</>}</li>
+													<li className="mr-3">{job.jobLocation ? job.jobLocation : <>Not Disclosed</>}</li>
+													<li className="mr-3">Exp : {job.jobExperience ? job.jobExperience : <>Not Disclosed</>}</li>
+												</ul>
+											</div>
+											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "想定年収" : "Annual Salary"}</h5>
+												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
+													<li className="mr-3 list-none">
+														{job.jobCurrency && job.jobFromSalary && job.jobToSalary ? (
+															<>
+																{job.jobCurrency} {job.jobFromSalary} to {job.jobToSalary}
+															</>
 														) : (
 															<>Not Disclosed</>
 														)}
 													</li>
-													<li className="mr-3">
-														{job.education && job.education.length > 0 ? job.education : <>Not Disclosed</>}
-													</li>
-													<li className="mr-3">
-														{job.location && job.location.length > 0 ? job.location : <>Not Disclosed</>}
-													</li>
-													<li className="mr-3">
-														Exp : {job.experience && job.experience.length > 0 ? job.experience : <>Not Disclosed</>}
-													</li>
 												</ul>
 											</div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '想定年収' : 'Annual Salary'}</h5>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "待遇面" : "Benefits"}</h5>
 												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
 													<li className="mr-3 list-none">
-														{job.currency && job.currency.length > 0 ? <>{job.currency}</> : <>Salary Not Disclosed</>}
-													</li>
-												</ul>
-											</div>
-											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">{srcLang === 'ja' ? '待遇面' : 'Benefits'}</h5>
-												<ul className="flex list-inside list-disc flex-wrap items-center text-sm font-semibold">
-													<li className="mr-3 list-none">
-														{srcLang === 'ja' ? '引越し費用負担' : 'Paid Relocation:'}{" "}
-														{job.relocation && job.relocation.length > 0 ? job.relocation : <>Not Disclosed</>}
+														{srcLang === "ja" ? "引越し費用負担" : "Paid Relocation: "}
+														{job.jobRelocation ? job.jobRelocation : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
-														{srcLang === 'ja' ? 'VISAサポート' : 'Visa Sposnership:'}{job.visa && job.visa.length > 0 ? job.visa : <>Not Disclosed</>}
+														{srcLang === "ja" ? "VISAサポート" : "Visa Sposnership: "}
+														{job.jobVisa && job.jobVisa.length > 0 ? job.jobVisa : <>Not Disclosed</>}
 													</li>
 													<li className="mr-3">
-														{job.worktype && job.worktype.length > 0 ? (
-															<>{job.worktype} Working</>
+														{job.jobWorktype && job.jobWorktype.length > 0 ? (
+															<>{job.jobWorktype} Working</>
 														) : (
 															<>Not Disclosed Work Type</>
 														)}
@@ -475,7 +529,11 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 											</div>
 										</div>
 										<div className="py-4">
-											<Button label={srcLang === 'ja' ? '近い' : 'Close'} btnType="button" handleClick={() => setPreviewPopup(false)} />
+											<Button
+												label={srcLang === "ja" ? "近い" : "Close"}
+												btnType="button"
+												handleClick={() => setPreviewPopup(false)}
+											/>
 										</div>
 									</div>
 								</Dialog.Panel>

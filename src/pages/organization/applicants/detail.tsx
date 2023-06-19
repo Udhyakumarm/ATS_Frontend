@@ -618,7 +618,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										<span>{t("Words.Profile")}</span>
 									</h2>
 								</div>
-								<div className="mb-4 rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 max-h-[500px] overflow-auto xl:max-h-[inherit]">
+								<div className="mb-4 max-h-[500px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
 									<div className="mb-4 border-b pb-4">
 										<div className="mb-4 border-b pb-2 text-center">
 											<Image
@@ -784,13 +784,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									)}
 								</div>
 							</div>
-							<div className="w-full xl:max-w-[calc(100%-300px)] 2xl:max-w-[calc(100%-400px)] xl:pl-8">
+							<div className="w-full xl:max-w-[calc(100%-300px)] xl:pl-8 2xl:max-w-[calc(100%-400px)]">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
 									<div className="relative z-10 flex flex-wrap items-center justify-between p-5 shadow">
 										<aside className="flex items-center">
 											<Image src={jobIcon} alt="Jobs" width={20} className="mr-3 dark:invert" />
 											<h2 className="text-lg font-bold">
-												<span>{appdata["job"]["job_title"]}</span>
+												<span>{appdata["job"]["jobTitle"]}</span>
 											</h2>
 										</aside>
 										<aside className="flex items-center">
@@ -854,7 +854,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									</div>
 									<div className="">
 										<Tab.Group>
-											<Tab.List className={"border-b px-4 overflow-auto"}>
+											<Tab.List className={"overflow-auto border-b px-4"}>
 												<div className="flex w-[700px]">
 													<Tab as={Fragment}>
 														{({ selected }) => (
@@ -942,7 +942,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																<Link
 																	href={
 																		process.env.NODE_ENV === "production"
-																			? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																			? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																	}
 																	className="my-2 inline-block font-bold text-primary hover:underline"
@@ -955,7 +955,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															<iframe
 																src={
 																	process.env.NODE_ENV === "production"
-																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
 																className="h-[50vh] w-[100%]"

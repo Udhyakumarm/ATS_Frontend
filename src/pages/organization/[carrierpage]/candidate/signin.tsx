@@ -61,14 +61,14 @@ export default function CanCareerSignIn({ providers }: any) {
 
 							const callback = `${
 								process.env.NODE_ENV === "production"
-									? process.env.NEXT_PUBLIC_PROD_FRONTEND
-									: `http://localhost:3000/organization/${cname}`
+									? process.env.NEXT_PUBLIC_PROD_FRONTEND + "organization/" + cname + "/"
+									: process.env.NEXT_PUBLIC_DEV_FRONTEND + "organization/" + cname + "/"
 							}`;
 							await signIn("credentials", {
 								email: loginInfo.email,
 								password: loginInfo.password,
-								user_type: "candidate"
-								// callbackUrl: callback
+								user_type: "candidate",
+								callbackUrl: callback
 							})
 								.then(async (res) => {
 									console.log({ res });
@@ -121,7 +121,7 @@ export default function CanCareerSignIn({ providers }: any) {
 					<div className="mb-4 text-center">
 						<Logo width={180} />
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
+					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						<h1 className="mb-6 text-3xl font-bold">
 							Sign <span className="text-primary">In</span>
 						</h1>
@@ -147,7 +147,7 @@ export default function CanCareerSignIn({ providers }: any) {
 						<div className="mb-4 flex flex-wrap items-center justify-between">
 							<div className="flex items-center">
 								<label htmlFor="rememberMe" className="text-darkGray">
-									<input type="checkbox" id="rememberMe" className="mr-2 mb-1 rounded border-lightGray" />
+									<input type="checkbox" id="rememberMe" className="mb-1 mr-2 rounded border-lightGray" />
 									Remember Me
 								</label>
 							</div>

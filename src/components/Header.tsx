@@ -58,7 +58,11 @@ export default function Header() {
 						<div className="flex items-center">
 							{orgdetail["OrgProfile"] && (
 								<Image
-									src={`http://127.0.0.1:8000${orgdetail["OrgProfile"][0]["logo"]}`}
+									src={
+										process.env.NODE_ENV === "production"
+											? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+											: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+									}
 									alt={"Somhako"}
 									width={200}
 									height={200}

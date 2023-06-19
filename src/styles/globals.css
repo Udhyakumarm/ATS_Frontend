@@ -15,6 +15,7 @@
 
 /* width */
 ::-webkit-scrollbar {
+  height: 5px;
   width: 5px;
 }
 /* Track */
@@ -24,6 +25,10 @@
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: rgb(187, 187, 187);
+}
+
+.scrollbarHidden::-webkit-scrollbar {
+  width: 0;
 }
 
 html,
@@ -240,6 +245,9 @@ input[type=number] {
 .dark .ql-editor, .dark .react-datepicker__input-container input {
   background: #374151;
 }
+.ql-container {
+  font-family: 'Nunito';
+}
 .ql-editor {
   min-height: 180px;
 }
@@ -317,7 +325,41 @@ input[type=number] {
 .dark span.react-loading-skeleton {
   background-color: #d7dee8;
 }
-
+.chatNovus button.slick-arrow {
+  font-size: 14px;
+  width: auto;
+  color: #000;
+  z-index: 1;
+}
+.dark .chatNovus button.slick-arrow {
+  color: #fff;
+}
+.chatNovus button.slick-arrow::before {
+  display: none;
+}
+.chatNovus button.slick-prev {
+  left: -12px;
+}
+.chatNovus button.slick-next {
+  right: -12px;
+}
+.chatNovus .slick-track {
+  margin-left: 0;
+}
+.jd_article h1, .jd_article h2, .jd_article h3, .jd_article h4, .jd_article h5, .jd_article h6 {
+  font-weight: 700;
+  margin: 10px 0;
+}
+.jd_article {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+}
+.jd_article ul {
+  list-style: disc;
+  list-style-position: inside;
+  margin: 10px 0;
+}
 
 @media (min-width: 1024px) {
   .layoutWrap {
@@ -360,5 +402,18 @@ input[type=number] {
 @media (max-width: 600px) {
   #features_1 .reactPlayer {
       height: 440px !important;
+  }
+}
+
+.growIcon {
+  animation: growIcon 2.5s infinite;
+}
+
+@keyframes growIcon {
+  0% {
+    transform: scale(0.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
