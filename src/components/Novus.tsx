@@ -396,7 +396,7 @@ function Novus(props: any) {
 				</div>
 				<button
 					type="button"
-					className="relative ml-auto mt-3 flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2 shadow-normal"
+					className="relative growIcon ml-auto mt-3 flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2 shadow-normal"
 					onClick={handleClick}
 				>
 					<span className="absolute left-0 top-0 h-3 w-3 rounded-full bg-green-300 shadow-normal"></span>
