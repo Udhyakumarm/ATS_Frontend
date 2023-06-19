@@ -151,7 +151,7 @@ function Novus(props: any) {
 							<div className="mr-4 flex h-[30px] w-[30px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
 								<Image src={favIcon} alt="Somhako" width={16} />
 							</div>
-							<h4 className="text-lg font-bold">Novus {`${height}`}</h4>
+							<h4 className="text-lg font-bold">Novus</h4>
 						</aside>
 						<aside>
 							<button
@@ -295,11 +295,11 @@ function Novus(props: any) {
 						<div className="bg-white p-3 dark:bg-gray-700 relative border-t-2 border-gray-300">
 							{
 								subPrompt &&
-								<div className="px-3 py-2 absolute z-[3] left-0 bottom-[100%] bg-[#ddd] shadow-normal w-full border-t-2 border-gray-300 max-h-[150px] overflow-auto">
-									<p className="text-sm flex items-center font-semibold p-2 my-1 bg-white rounded cursor-pointer">1. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center font-semibold p-2 my-1 bg-white rounded cursor-pointer">2. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center font-semibold p-2 my-1 bg-white rounded cursor-pointer">3. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center font-semibold p-2 my-1 bg-white rounded cursor-pointer">4. Lorem impsum is a dummy text provider</p>
+								<div className="px-3 py-2 absolute z-[3] left-0 bottom-[calc(100%+5px)] scrollbarHidden bg-white shadow-normal w-full border-t-2 border-gray-300 max-h-[150px] overflow-auto">
+									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">1. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">2. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">3. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">4. Lorem impsum is a dummy text provider</p>
 								</div>
 							}
 							{
@@ -315,18 +315,18 @@ function Novus(props: any) {
 								<div className="flex items-center">
 									<Combobox value={selected} onChange={setSelected}>
 										<div className="w-[calc(100%-50px)] pr-2 border-r-2 border-gray-400">
-											<div className="relative flex flex-wrap items-center cursor-default overflow-hidden rounded-lg bg-transparent text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-												<Combobox.Button className={`px-2 text-left ${selected ? 'w-auto' : 'w-full'}`}>
+											<div className="relative flex flex-wrap items-center cursor-default overflow-hidden bg-transparent text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+												<Combobox.Button className={`px-2 text-left ${selected ? 'w-auto' : 'w-auto'}`}>
 													/
 												</Combobox.Button>
-												{/* {!selected.name &&
+												{!selected.name &&
 													<Combobox.Input
 														className="w-auto border-none p-0 pr-2 text-sm leading-5 bg-transparent text-gray-900 focus:ring-0"
-														placeholder="Click on “/” for prompt response"
+														placeholder="Click on “/” for prompt"
 														displayValue={(item:any) => item.name}
 														onChange={handleChangePromts}
 													/>
-												} */}
+												}
 												{
 													selected &&
 													<>
@@ -334,17 +334,16 @@ function Novus(props: any) {
 														{selected.name &&
 															<>
 																<div className="mx-2 bg-white rounded py-1 px-3 grow">
-																	<div className="flex items-center"><span className="w-[70px]">prompt |</span> <input type="search" className="w-full border-0 px-2 py-0 outline-0 text-[12px] focus:ring-0" /></div>
+																	<div className="flex items-center"><input type="search" className="w-full border-0 px-2 py-0 outline-0 text-[12px] focus:ring-0" placeholder="Choose prompt above..." /></div>
 																</div>
+																<Combobox.Input
+																	className="border-none p-0 pr-2 text-sm leading-5 bg-transparent text-gray-900 focus:ring-0"
+																	placeholder="Click on “/” for prompt"
+																	displayValue={(item: any) => ' '}
+																	onChange={handleChangePromts}
+																/>
 															</>
 														}
-														<Combobox.Input
-															className="border-none p-0 pr-2 text-sm leading-5 bg-transparent text-gray-900 focus:ring-0"
-															placeholder="Click on “/” for prompt response"
-															displayValue={(item: any) => ' '}
-															onChange={handleChangePromts}
-														/>
-
 													</>
 												}
 											</div>
@@ -355,7 +354,7 @@ function Novus(props: any) {
 												leaveTo="opacity-0"
 												afterLeave={() => setQuery('')}
 											>
-												<Combobox.Options className="absolute z-[3] bottom-full left-0 max-h-[150px] w-full overflow-auto rounded-md bg-white py-1 px-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+												<Combobox.Options className="absolute z-[3] left-0 bottom-[calc(100%+5px)] scrollbarHidden max-h-[150px] w-full overflow-auto bg-white py-1 px-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 													{filteredpromptsList.length === 0 && query !== '' ? (
 														<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
 															Nothing found.

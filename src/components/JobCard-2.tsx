@@ -420,8 +420,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Job Description</h5>
-												<article>
+												<h5 className="mb-2 font-bold">{srcLang === "ja" ? "求人票" : "Job Description"}</h5>
+												<article className="jd_article">
 													{job.jobDescription ? (
 														<>
 															<div dangerouslySetInnerHTML={{ __html: job.jobDescription }}></div>
@@ -452,7 +452,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													</li>
 												</ul>
 												<article className="mt-3">
-													<h5 className="mb-2 font-bold">{"Department Description"}</h5>
+													<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門案内文" : "Department Description"}</h5>
 													{job.jobDeptDescription ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: job.jobDeptDescription }}></p>

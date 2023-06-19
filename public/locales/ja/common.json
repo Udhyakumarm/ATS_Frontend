@@ -265,7 +265,8 @@
         "Conversions": "採用数",
         "Hiring": "採用決定率",
         "ApplicantSourced": "採用実績",
-        "BasicInformation": "基本情報"
+        "BasicInformation": "基本情報",
+        "GenerateDescription": "説明の生成"
     },
     "Plans": {
         "Starter": "スターター",

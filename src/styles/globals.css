@@ -27,6 +27,10 @@
   background: rgb(187, 187, 187);
 }
 
+.scrollbarHidden::-webkit-scrollbar {
+  width: 0;
+}
+
 html,
 body {
   max-width: 100vw;
@@ -241,6 +245,9 @@ input[type=number] {
 .dark .ql-editor, .dark .react-datepicker__input-container input {
   background: #374151;
 }
+.ql-container {
+  font-family: 'Nunito';
+}
 .ql-editor {
   min-height: 180px;
 }
@@ -335,6 +342,20 @@ input[type=number] {
 }
 .chatNovus .slick-track {
   margin-left: 0;
+}
+.jd_article h1, .jd_article h2, .jd_article h3, .jd_article h4, .jd_article h5, .jd_article h6 {
+  font-weight: 700;
+  margin: 10px 0;
+}
+.jd_article {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+}
+.jd_article ul {
+  list-style: disc;
+  list-style-position: inside;
+  margin: 10px 0;
 }
 
 @media (min-width: 1024px) {

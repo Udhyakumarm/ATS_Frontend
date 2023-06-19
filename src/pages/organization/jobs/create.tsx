@@ -917,14 +917,14 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									</div>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.JobDescription")} />
-										<div className="mx-auto mt-[-60px] w-full max-w-[1055px] px-4 pb-8 pt-2">
+										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
 											<div className="mb-4 w-full text-right">
 												<button
 													type="button"
 													onClick={() => onAIGenerateHandler()}
-													className="ml-auto flex items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700"
+													className="ml-auto md:mt-[-45px] min-h-[46px] flex items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700"
 												>
-													<span className="mr-3">Generate Description</span>
+													<span className="mr-3">{t('Words.GenerateDescription')}</span>
 													{aiLoader ? (
 														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
 													) : (
@@ -1484,7 +1484,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="px-8">
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
-												<h5 className="mb-2 font-bold">Job Description</h5>
+												<h5 className="mb-2 font-bold">{t("Words.JobDescription")}</h5>
 												<article>
 													{jdesc ? (
 														<>
@@ -1516,7 +1516,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													</li>
 												</ul>
 												<article className="mt-3">
-													<h5 className="mb-2 font-bold">{"Department Description"}</h5>
+													<h5 className="mb-2 font-bold">{t('Words.Department')} {t('Form.Description')}</h5>
 													{jdeptinfo ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: jdeptinfo }}></p>
