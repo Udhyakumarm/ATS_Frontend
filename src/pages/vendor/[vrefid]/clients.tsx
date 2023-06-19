@@ -764,7 +764,11 @@ export default function VendorClients() {
 																			key={i}
 																		>
 																			<Image
-																				src={`http://127.0.0.1:8000${data["image"]}`}
+																				src={
+																					process.env.NODE_ENV === "production"
+																						? process.env.NEXT_PUBLIC_PROD_BACKEND + data["image"]
+																						: process.env.NEXT_PUBLIC_DEV_BACKEND + data["image"]
+																				}
 																				alt="User"
 																				width={80}
 																				height={80}
@@ -839,7 +843,11 @@ export default function VendorClients() {
 																				{orgdetail["Gallery"].map(
 																					(data: { image: any }, i: React.Key | null | undefined) => (
 																						<Image
-																							src={`http://127.0.0.1:8000${data.image}`}
+																							src={
+																								process.env.NODE_ENV === "production"
+																									? process.env.NEXT_PUBLIC_PROD_BACKEND + data["image"]
+																									: process.env.NEXT_PUBLIC_DEV_BACKEND + data["image"]
+																							}
 																							alt="Office"
 																							width={1000}
 																							height={1000}
@@ -1587,7 +1595,11 @@ export default function VendorClients() {
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 													<p className="mx-auto w-full max-w-[600px] text-center">
 														<iframe
-															src={`http://127.0.0.1:8000${data["resume"]}`}
+															src={
+																process.env.NODE_ENV === "production"
+																	? process.env.NEXT_PUBLIC_PROD_BACKEND + data["resume"]
+																	: process.env.NEXT_PUBLIC_DEV_BACKEND + data["resume"]
+															}
 															className="h-[50vh] w-[100%]"
 														></iframe>
 													</p>

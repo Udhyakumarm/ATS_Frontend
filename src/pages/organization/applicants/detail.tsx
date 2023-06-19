@@ -942,7 +942,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																<Link
 																	href={
 																		process.env.NODE_ENV === "production"
-																			? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																			? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																	}
 																	className="my-2 inline-block font-bold text-primary hover:underline"
@@ -955,7 +955,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															<iframe
 																src={
 																	process.env.NODE_ENV === "production"
-																		? process.env.NEXT_PUBLIC_PROD_BACKEND_BASE + profileData["resume"]
+																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
 																className="h-[50vh] w-[100%]"

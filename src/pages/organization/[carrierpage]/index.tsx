@@ -82,7 +82,11 @@ export default function CanCareer() {
 						<>
 							<div className="mx-auto w-full max-w-[1200px] px-4" key={i}>
 								<Image
-									src={`http://127.0.0.1:8000${data["banner"]}`}
+									src={
+										process.env.NODE_ENV === "production"
+											? process.env.NEXT_PUBLIC_PROD_BACKEND + data["banner"]
+											: process.env.NEXT_PUBLIC_DEV_BACKEND + data["banner"]
+									}
 									alt="Banner"
 									width={1200}
 									height={200}
@@ -111,7 +115,11 @@ export default function CanCareer() {
 														key={i}
 													>
 														<Image
-															src={`http://127.0.0.1:8000${data["image"]}`}
+															src={
+																process.env.NODE_ENV === "production"
+																	? process.env.NEXT_PUBLIC_PROD_BACKEND + data["image"]
+																	: process.env.NEXT_PUBLIC_DEV_BACKEND + data["image"]
+															}
 															alt="User"
 															width={80}
 															height={80}
@@ -182,7 +190,11 @@ export default function CanCareer() {
 														<Masonry>
 															{orgdetail["Gallery"].map((data: { image: any }, i: React.Key | null | undefined) => (
 																<Image
-																	src={`http://127.0.0.1:8000${data.image}`}
+																	src={
+																		process.env.NODE_ENV === "production"
+																			? process.env.NEXT_PUBLIC_PROD_BACKEND + data["image"]
+																			: process.env.NEXT_PUBLIC_DEV_BACKEND + data["image"]
+																	}
 																	alt="Office"
 																	width={1000}
 																	height={1000}
