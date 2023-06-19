@@ -28,6 +28,7 @@ function Novus(props: any) {
 	const [query, setQuery] = useState('')
 	const [subPrompt, setSubPrompt] = useState(false);
 	const { width, height, ref } = useResizeDetector();
+	const [showTooltip, setShowTooltip] = useState(false)
 
 	const filteredpromptsList =
 		query === ''
@@ -45,7 +46,7 @@ function Novus(props: any) {
 				<Slider {...promptsSlider} className="w-full max-w-[400px]">
 					{Array(6).fill(
 						<div>
-							<p className="bg-white mr-2 border rounded py-1 px-3 text-[10px] shadow-normal cursor-pointer text-center" onClick={handleSubPrompt}>All applicants</p>
+							<p className="bg-white dark:bg-gray-800 mr-2 border rounded py-1 px-3 text-[10px] shadow-normal cursor-pointer text-center" onClick={handleSubPrompt}>All applicants</p>
 						</div>
 					)}
 				</Slider>
@@ -61,7 +62,12 @@ function Novus(props: any) {
 		}
 	}
 
-	function handleClick() {
+	function handleClickOverlay() {
+		setClick(!click);
+		setMaximize(false);
+	}
+
+	function handleClickBtn() {
 		setClick(!click);
 		setMaximize(false);
 	}
@@ -130,9 +136,9 @@ function Novus(props: any) {
 					" " +
 					(click ? "block" : "hidden")
 				}
-				onClick={handleClick}
+				onClick={handleClickOverlay}
 			></div>
-			<div
+			<div onMouseEnter={()=> setShowTooltip(!showTooltip)}
 				className={
 					`chatNovus fixed bottom-5 right-5 z-[66]` + " " + (maximize ? "w-[calc(100%-2.5rem)] max-w-[1920px]" : "w-auto")
 				}
@@ -174,10 +180,10 @@ function Novus(props: any) {
 					<div className={`overflow-y-auto px-6 py-2`} id="novusMiddle" ref={messageEl} style={{height: `calc(100% - calc(${height}px + 54px))`}}>
 						<ul className="w-full text-sm">
 							<li className="my-2 text-right max-w-[90%] ml-auto">
-								<div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+								<div className="inline-block text-left bg-white dark:bg-gray-800 py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
 									Hi
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:04 PM
 								</div>
 							</li>
@@ -185,15 +191,15 @@ function Novus(props: any) {
 								<div className="inline-block bg-gradDarkBlue text-white py-2 px-4 rounded rounded-tr-normal rounded-bl-normal shadow mb-1">
 									Hi there how may I help you?
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:03 PM
 								</div>
 							</li>
 							<li className="my-2 text-right max-w-[90%] ml-auto">
-								<div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+								<div className="inline-block text-left bg-white dark:bg-gray-800 py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
 									Show me the Urgent Tasks
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:02 PM
 								</div>
 							</li>
@@ -208,15 +214,15 @@ function Novus(props: any) {
 										<p className="text-[12px]">Lorem impsum is a dummy text</p>
 									</div>
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:03 PM
 								</div>
 							</li>
 							<li className="my-2 text-right max-w-[90%] ml-auto">
-								<div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+								<div className="inline-block text-left bg-white dark:bg-gray-800 py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
 									How many applicants total in pipeline
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:02 PM
 								</div>
 							</li>
@@ -224,15 +230,15 @@ function Novus(props: any) {
 								<div className="inline-block bg-gradDarkBlue text-white py-2 px-4 rounded rounded-tr-normal rounded-bl-normal shadow mb-1">
 									60 applicants
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:03 PM
 								</div>
 							</li>
 							<li className="my-2 text-right max-w-[90%] ml-auto">
-								<div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+								<div className="inline-block text-left bg-white dark:bg-gray-800 py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
 									Show me the most experienced applicants of Product Manager Job
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:02 PM
 								</div>
 							</li>
@@ -245,7 +251,7 @@ function Novus(props: any) {
 										{Array(6).fill(
 											<div className="pr-1">
 												<div className="rounded flex items-center shadow border overflow-hidden">
-													<button type="button" className="py-1 px-3 grow bg-white dark:bg-gray-700 text-black dark:text-white hover:bg-lightBlue text-[10px] whitespace-nowrap">
+													<button type="button" className="py-1 px-3 grow bg-white dark:bg-gray-600 text-black dark:text-white hover:bg-lightBlue text-[10px] whitespace-nowrap">
 														Anne Hardy
 													</button>
 													<button type="button" className="w-[25px] h-[30px] bg-gray-500 text-white hover:bg-gray-700 text-[10px] flex items-center justify-center">
@@ -256,15 +262,15 @@ function Novus(props: any) {
 										)}
 									</Slider>
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:03 PM
 								</div>
 							</li>
 							<li className="my-2 text-right max-w-[90%] ml-auto">
-								<div className="inline-block text-left bg-white py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
+								<div className="inline-block text-left bg-white dark:bg-gray-800 py-2 px-4 rounded rounded-tl-normal rounded-br-normal shadow font-bold mb-1">
 									Schedule Interview with Jack
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:02 PM
 								</div>
 							</li>
@@ -285,7 +291,7 @@ function Novus(props: any) {
 										</div>
 									</div>
 								</div>
-								<div className="text-[10px] text-darkGray">
+								<div className="text-[10px] text-darkGray dark:text-gray-400">
 									4:03 PM
 								</div>
 							</li>
@@ -295,11 +301,11 @@ function Novus(props: any) {
 						<div className="bg-white p-3 dark:bg-gray-700 relative border-t-2 border-gray-300">
 							{
 								subPrompt &&
-								<div className="px-3 py-2 absolute z-[3] left-0 bottom-[calc(100%+5px)] scrollbarHidden bg-white shadow-normal w-full border-t-2 border-gray-300 max-h-[150px] overflow-auto">
-									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">1. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">2. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">3. Lorem impsum is a dummy text provider</p>
-									<p className="text-sm flex items-center p-2 my-1 bg-white rounded cursor-pointer hover:bg-gray-100">4. Lorem impsum is a dummy text provider</p>
+								<div className="px-3 py-2 absolute z-[3] left-0 bottom-[calc(100%+0px)] scrollbarHidden bg-white shadow-normal w-full border-t-2 border-gray-300 max-h-[150px] overflow-auto">
+									<p className="text-sm flex items-center p-2 my-1 dark:text-black bg-white rounded cursor-pointer hover:bg-gray-100">1. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 dark:text-black bg-white rounded cursor-pointer hover:bg-gray-100">2. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 dark:text-black bg-white rounded cursor-pointer hover:bg-gray-100">3. Lorem impsum is a dummy text provider</p>
+									<p className="text-sm flex items-center p-2 my-1 dark:text-black bg-white rounded cursor-pointer hover:bg-gray-100">4. Lorem impsum is a dummy text provider</p>
 								</div>
 							}
 							{
@@ -354,7 +360,7 @@ function Novus(props: any) {
 												leaveTo="opacity-0"
 												afterLeave={() => setQuery('')}
 											>
-												<Combobox.Options className="absolute z-[3] left-0 bottom-[calc(100%+5px)] scrollbarHidden max-h-[150px] w-full overflow-auto bg-white py-1 px-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+												<Combobox.Options className="absolute z-[3] left-0 bottom-[calc(100%+0px)] scrollbarHidden max-h-[150px] w-full overflow-auto bg-white py-1 px-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 													{filteredpromptsList.length === 0 && query !== '' ? (
 														<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
 															Nothing found.
@@ -372,7 +378,7 @@ function Novus(props: any) {
 															>
 																{({ selected, active }) => (
 																	<>
-																		<div className={`text-sm flex items-center ${selected ? 'font-bold' : 'font-normal'}`}>/ <span className="ml-1">{item.name}</span></div>
+																		<div className={`text-sm flex items-center dark:text-gray-800 ${selected ? 'font-bold' : 'font-normal'}`}>/ <span className="ml-1">{item.name}</span></div>
 																		<p className="text-[12px] text-darkGray">{item.desc}</p>
 																	</>
 																)}
@@ -397,7 +403,9 @@ function Novus(props: any) {
 				<button
 					type="button"
 					className="relative growIcon ml-auto mt-3 flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2 shadow-normal"
-					onClick={handleClick}
+					onClick={handleClickBtn}
+					onMouseEnter={()=> setShowTooltip(true)}
+					onMouseLeave={()=> setShowTooltip(false)}
 				>
 					<span className="absolute left-0 top-0 h-3 w-3 rounded-full bg-green-300 shadow-normal"></span>
 
@@ -410,6 +418,10 @@ function Novus(props: any) {
 							<Image src={favIcon} alt="Somhako" width={22} />
 						</>
 					)}
+
+					<div className={`bg-gradDarkBlue text-white dark:bg-white dark:text-black py-1 px-4 rounded absolute right-[calc(100%+7px)] bottom-3 text-[10px] leading-[1.6] shadow-normal after:content[''] after:w-[10px] after:h-[10px] after:bg-gradDarkBlue after:dark:bg-white after:absolute after:right-[-4px] after:top-2 after:rotate-45 ${showTooltip ? 'block' : 'hidden'}`}>
+						NOVUS
+					</div>
 				</button>
 			</div>
 		</>

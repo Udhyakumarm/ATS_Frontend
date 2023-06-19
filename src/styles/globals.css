@@ -331,6 +331,9 @@ input[type=number] {
   color: #000;
   z-index: 1;
 }
+.dark .chatNovus button.slick-arrow {
+  color: #fff;
+}
 .chatNovus button.slick-arrow::before {
   display: none;
 }
