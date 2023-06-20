@@ -83,6 +83,19 @@ let langStore: any = (set: any) => ({
 	setlang: (id: any) => set(() => ({ lang: id }))
 });
 
+//#######
+
+let novusStore: any = (set: any) => ({
+	animation: false,
+	setanimation: (id: any) => set(() => ({ animation: id }))
+});
+
+novusStore = devtools(novusStore);
+novusStore = persist(novusStore, { name: "novusStore" });
+export const useNovusStore = create(novusStore);
+
+//#######
+
 langStore = devtools(langStore);
 langStore = persist(langStore, { name: "langStore" });
 

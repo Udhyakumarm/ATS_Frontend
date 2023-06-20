@@ -14,12 +14,13 @@ import { appWithTranslation } from "next-i18next";
 import { Dialog, Transition } from "@headlessui/react";
 import PermiumComp from "@/components/organization/premiumComp";
 import UpcomingComp from "@/components/organization/upcomingComp";
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import {isMobileOnly} from 'react-device-detect';
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { isMobileOnly } from "react-device-detect";
+import Novus from "@/components/Novus";
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
-	const { t } = useTranslation('common')
+	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	useEffect(() => {
 		const handleRouteStart = () => NProgress.start();
@@ -50,20 +51,22 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 
 	return (
 		<>
-			{
-				isMobileOnly
-				?
+			{isMobileOnly ? (
 				<>
-					<div className="p-[40px] flex items-center justify-center h-[calc(100vh-80px)]">
+					<div className="flex h-[calc(100vh-80px)] items-center justify-center p-[40px]">
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
 							<h3 className="textGrad mb-4 text-3xl font-extrabold">
-								{srcLang==='ja' ? '準備中' : 'Mobile View Coming Soon'}
+								{srcLang === "ja" ? "準備中" : "Mobile View Coming Soon"}
 							</h3>
-							<p className="text-sm text-darkGray">{srcLang==='ja' ? 'もうまもなくリリース予定' : 'We are working on this and it will ready for you soon.'}</p>
+							<p className="text-sm text-darkGray">
+								{srcLang === "ja"
+									? "もうまもなくリリース予定"
+									: "We are working on this and it will ready for you soon."}
+							</p>
 						</div>
 					</div>
 				</>
-				:
+			) : (
 				<>
 					<Toaster />
 					<ThemeProvider attribute="class">
@@ -92,6 +95,8 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 								</>
 							)}
 
+							{!Component.noAuth && <Novus />}
+
 							<Transition.Root show={upgradePlan} as={Fragment}>
 								<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setUpgradePlan}>
 									<Transition.Child
@@ -119,7 +124,9 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 											>
 												<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 													<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-														<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'プランをアップグレードする' : 'Upgrade Your Plan'}</h4>
+														<h4 className="flex items-center font-semibold leading-none">
+															{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+														</h4>
 														<button
 															type="button"
 															className="leading-none hover:text-gray-700"
@@ -164,7 +171,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 											>
 												<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 													<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-														<h4 className="flex items-center font-semibold leading-none">{t('Words.ComingSoon')}</h4>
+														<h4 className="flex items-center font-semibold leading-none">{t("Words.ComingSoon")}</h4>
 														<button
 															type="button"
 															className="leading-none hover:text-gray-700"
@@ -186,7 +193,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 					</ThemeProvider>
 					<Analytics />
 				</>
-			}
+			)}
 		</>
 	);
 }
@@ -205,12 +212,12 @@ function Auth({ children }: any) {
 
 	return <></>;
 }
-export async function getStaticProps({ context, locale }:any) {
-	const translations = await serverSideTranslations(locale, ['common']);
+export async function getStaticProps({ context, locale }: any) {
+	const translations = await serverSideTranslations(locale, ["common"]);
 	return {
 		props: {
-		...translations
-		},
+			...translations
+		}
 	};
 }
 export default appWithTranslation(App);
