@@ -126,6 +126,9 @@ function Novus(props: any) {
 		setIsEmpty(false);
 		if (selected["name"]) {
 			setCWidth(selected["name"].length + 1);
+			if (selected["name"] === "Applicant") {
+				applicantEmbedding();
+			}
 			if (subPromptsList[selected["name"]].length > 0) {
 				setShowPrompts(true);
 			} else {
@@ -213,12 +216,37 @@ function Novus(props: any) {
 			});
 	}
 
+	//applicant option chat res
+	async function applicantChat(prompt: any) {
+		setdisablechat(true);
+		const fd = new FormData();
+		fd.append("prompt", prompt);
+		await axiosInstanceAuth2
+			.post(`/chatbot/applicant-flow/`, fd)
+			.then(async (res) => {
+				if (res.data.response && res.data.response === "Success") {
+					loadChat();
+				}
+				setdisablechat(false);
+				setfinalquery("");
+			})
+			.catch((err) => {
+				console.log(err);
+				setdisablechat(false);
+				setfinalquery("");
+			});
+	}
+
 	//handle btn event
 	function submitQuery() {
 		if (finalquery.length > 0) {
 			if (selected["name"] === "Start") {
 				toastcomp("Start", "success");
 				startChat(finalquery);
+				setfinalquery("Loading...");
+			} else if (selected["name"] === "Applicant") {
+				toastcomp("Start", "success");
+				applicantChat(finalquery);
 				setfinalquery("Loading...");
 			} else {
 				toastcomp("Under Development Yet Else Start Basic Conversion", "success");
@@ -231,6 +259,25 @@ function Novus(props: any) {
 				toastcomp("Start The NOVUS by clicking on /", "error");
 			}
 		}
+	}
+
+	//applicant embedding
+	async function applicantEmbedding() {
+		setfinalquery("Loading ..... ");
+		setdisablechat(true);
+		await axiosInstanceAuth2
+			.post(`/chatbot/org-embedding/`)
+			.then(async (res) => {
+				toastcomp("success org---", "success");
+				setfinalquery("");
+				setdisablechat(false);
+			})
+			.catch((err) => {
+				console.log(err);
+				toastcomp("error", "error");
+				setfinalquery("");
+				setdisablechat(false);
+			});
 	}
 
 	//other data start
