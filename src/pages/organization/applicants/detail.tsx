@@ -657,7 +657,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										{linkData && linkData.length > 0 && (
 											<div className="flex flex-wrap items-center justify-center text-2xl">
 												{linkData.map((data: any, i: React.Key) => (
-													<Link href={`https://${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
+													<Link href={`${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
 														<i className="fa-solid fa-link"></i>
 													</Link>
 												))}

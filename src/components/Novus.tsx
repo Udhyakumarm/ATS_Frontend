@@ -9,7 +9,7 @@ import Button from "./Button";
 import { Combobox, Transition } from "@headlessui/react";
 import { useResizeDetector } from "react-resize-detector";
 import { withResizeDetector } from "react-resize-detector";
-import { useNovusStore } from "@/utils/code";
+import { useApplicantStore, useNovusStore } from "@/utils/code";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "./toast";
@@ -26,20 +26,26 @@ const promptsList = [
 const subPromptsList = {
 	Start: [],
 	Applicant: [
-		{ name: "all applicant", prompt: ["show me all applicant"] },
+		{ name: "all applicant", prompt: ["show me all applicant"], sprompt: ["show me all c applicant"] },
 		{
 			name: "search applicant",
 			prompt: [
-				"show me all applicant whose skills are Python,Java",
-				"show me all applicant whose experience is greater than 1 year"
-			]
+				"show me all applicant whose skills are skill 1,skill 2,...skill N",
+				"show me all applicant whose experience is greater than 0-N year"
+			],
+			sprompt: ["show me all applicant whose skills are ", "show me all applicant whose experience are "]
 		},
 		{
 			name: "move applicant",
 			prompt: [
-				"move applicant [12345] to the next phase",
-				"move applicant [12345] to the previous phase",
-				"move applicant [12345] to the {Interview}"
+				"applicant [12345] move to next phase",
+				"applicant [12345] move to previous phase",
+				"applicant [12345] move to specific {Interview}"
+			],
+			sprompt: [
+				"applicant [12345] move to next phase",
+				"applicant [12345] move to previous phase",
+				"applicant [12345] move to specific {Interview}"
 			]
 		}
 	],
@@ -48,6 +54,11 @@ const subPromptsList = {
 		{
 			name: "generate description",
 			prompt: [
+				"Write a Job description for Software Developer with skills python,javascript,django,react",
+				"Prompt Write a Job description for Software Developer with skills python,javascript,django,react having annual salary range 200000 to 1000000 in INR ₹",
+				"Write a Job description in japanese language for Software Developer with skills python,javascript,django,react"
+			],
+			sprompt: [
 				"Write a Job description for Software Developer with skills python,javascript,django,react",
 				"Prompt Write a Job description for Software Developer with skills python,javascript,django,react having annual salary range 200000 to 1000000 in INR ₹",
 				"Write a Job description in japanese language for Software Developer with skills python,javascript,django,react"
@@ -74,11 +85,16 @@ function Novus(props: any) {
 	//zustand state
 	const animation = useNovusStore((state: { animation: any }) => state.animation);
 	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
 
 	//typing state
 	const [cwidth, setCWidth] = useState(0);
 	const [isEmpty, setIsEmpty] = useState(false);
 	const [subprompttitle, setsubprompttitle] = useState([]);
+	const [dsubprompttitle, setdsubprompttitle] = useState([]);
 	const [finalquery, setfinalquery] = useState("");
 
 	//message state
@@ -114,6 +130,7 @@ function Novus(props: any) {
 			setShowPrompts(false);
 			setSubPrompt(false);
 			setsubprompttitle([]);
+			setdsubprompttitle([]);
 			setfinalquery("");
 		}
 		if (event.key === "Enter") {
@@ -135,6 +152,7 @@ function Novus(props: any) {
 				setShowPrompts(false);
 				setSubPrompt(false);
 				setsubprompttitle([]);
+				setdsubprompttitle([]);
 				setfinalquery("");
 			}
 		} else {
@@ -151,25 +169,29 @@ function Novus(props: any) {
 			setSelected(" ");
 			setSubPrompt(false);
 			setsubprompttitle([]);
+			setdsubprompttitle([]);
 			setfinalquery("");
 		}
 	}
 
 	//handle Sub Prompt List show or not
-	function handleSubPrompt(titleArr: any) {
-		if (titleArr.length > 0) {
-			if (titleArr.length === 1) {
-				setfinalquery(titleArr[0]);
+	function handleSubPrompt(sprompt: any, prompt: any) {
+		if (prompt.length > 0) {
+			if (prompt.length === 1) {
+				setfinalquery(sprompt[0]);
 				setSubPrompt(false);
 				setsubprompttitle([]);
+				setdsubprompttitle([]);
 			} else {
 				// setfinalquery("");
 				setSubPrompt(true);
-				setsubprompttitle(titleArr);
+				setsubprompttitle(prompt);
+				setdsubprompttitle(sprompt);
 			}
 		} else {
 			setSubPrompt(false);
 			setsubprompttitle([]);
+			setdsubprompttitle([]);
 		}
 	}
 
@@ -461,6 +483,79 @@ function Novus(props: any) {
 													<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
 														{data["response"]}
 													</div>
+													{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
+														<Slider {...teamListSlider} className="w-full max-w-[400px]">
+															{data["capplicant"] &&
+																data["capplicant"].length > 0 &&
+																data["capplicant"].map((data, i) => (
+																	<div className="pr-1" key={i}>
+																		<div className="flex items-center overflow-hidden rounded border shadow">
+																			<button
+																				type="button"
+																				className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																				onClick={() => {
+																					setClick(false);
+																					setMaximize(false);
+																					setjobid(data["job"]["refid"]);
+																					setappid(data["arefid"]);
+																					settype("career");
+																					setappdata(data);
+																					router.push("/organization/applicants/detail");
+																				}}
+																			>
+																				{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
+																			</button>
+																			<button
+																				type="button"
+																				className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																				onClick={() => {
+																					navigator.clipboard.writeText(data["arefid"]);
+																					toastcomp("ID Copied to clipboard", "success");
+																				}}
+																			>
+																				<i className="fa-solid fa-copy"></i>
+																			</button>
+																		</div>
+																	</div>
+																))}
+															{/* differ */}
+															{data["vapplicant"] &&
+																data["vapplicant"].length > 0 &&
+																data["vapplicant"].map((data, i) => (
+																	<div className="pr-1" key={i}>
+																		<div className="flex items-center overflow-hidden rounded border shadow">
+																			<button
+																				type="button"
+																				className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																				onClick={() => {
+																					setClick(false);
+																					setMaximize(false);
+																					setjobid(data["job"]["refid"]);
+																					setappid(data["arefid"]);
+																					settype("vendor");
+																					setappdata(data);
+																					router.push("/organization/applicants/detail");
+																				}}
+																			>
+																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
+																			</button>
+																			<button
+																				type="button"
+																				className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																				onClick={() => {
+																					navigator.clipboard.writeText(data["arefid"]);
+																					toastcomp("ID Copied to clipboard", "success");
+																				}}
+																			>
+																				<i className="fa-solid fa-copy"></i>
+																			</button>
+																		</div>
+																	</div>
+																))}
+														</Slider>
+													) : (
+														<></>
+													)}
 													<div className="text-[10px] text-darkGray dark:text-gray-400">
 														{moment(data["timestamp"]).fromNow()}
 													</div>
@@ -516,8 +611,8 @@ function Novus(props: any) {
 										Show me the most experienced applicants of Product Manager Job
 									</div>
 									<div className="text-[10px] text-darkGray dark:text-gray-400">4:02 PM</div>
-								</li>
-								<li className="my-2 max-w-[90%]">
+								</li> */}
+								{/* <li className="my-2 max-w-[90%]">
 									<div className="mb-1">
 										<div className="mb-1 rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
 											Here is the list of most experienced applicants of Product Manager Job
@@ -544,8 +639,8 @@ function Novus(props: any) {
 										</Slider>
 									</div>
 									<div className="text-[10px] text-darkGray dark:text-gray-400">4:03 PM</div>
-								</li>
-								<li className="my-2 ml-auto max-w-[90%] text-right">
+								</li> */}
+								{/* <li className="my-2 ml-auto max-w-[90%] text-right">
 									<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-800">
 										Schedule Interview with Jack
 									</div>
@@ -581,9 +676,10 @@ function Novus(props: any) {
 												className="my-1 flex cursor-pointer items-center rounded bg-white p-2 text-sm hover:bg-gray-100 dark:text-black"
 												key={i}
 												onClick={() => {
-													setfinalquery(data);
+													setfinalquery(dsubprompttitle[i]);
 													setSubPrompt(false);
 													setsubprompttitle([]);
+													setdsubprompttitle([]);
 												}}
 											>
 												{i + 1}. {data}
@@ -600,7 +696,7 @@ function Novus(props: any) {
 													<div key={i}>
 														<p
 															className="mr-2 cursor-pointer rounded border bg-white px-3 py-1 text-center text-[10px] shadow-normal dark:bg-gray-800"
-															onClick={() => handleSubPrompt(data["prompt"])}
+															onClick={() => handleSubPrompt(data["sprompt"], data["prompt"])}
 														>
 															{data["name"]}
 														</p>
@@ -654,6 +750,7 @@ function Novus(props: any) {
 																					value={finalquery}
 																					onChange={(e) => setfinalquery(e.target.value)}
 																					disabled={disablechat}
+																					autoFocus
 																				/>
 																			</div>
 																		</div>
