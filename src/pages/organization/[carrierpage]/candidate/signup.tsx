@@ -12,6 +12,8 @@ import { sign } from "crypto";
 import toastcomp from "@/components/toast";
 import { useCarrierStore } from "@/utils/code";
 import { axiosInstance as axiosInstance22 } from "@/pages/api/axiosApi";
+import Image from "next/image";
+import ToggleLang from "@/components/ToggleLang";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -23,9 +25,10 @@ const signUpInfoRules: Rules = {
 	// org_id: "required"
 };
 
-export default function CanCareerSignUp() {
+export default function CandSignUp() {
 	const router = useRouter();
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
 
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
@@ -156,13 +159,36 @@ export default function CanCareerSignUp() {
 	return (
 		<>
 			<Head>
-				<title>Sign Up</title>
+				<title>Candidate | Sign Up</title>
 				<meta name="description" />
 			</Head>
 			<main className="py-8">
 				<div className="mx-auto w-full max-w-[550px] px-4">
 					<div className="mb-4 text-center">
-						<Logo width={180} />
+						{
+							orgdetail["OrgProfile"] 
+							? 
+							(
+								<Image
+									src={
+										process.env.NODE_ENV === "production"
+											? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+											: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+									}
+									alt={"Somhako"}
+									width={200}
+									height={200}
+									className="mx-auto max-h-[80px] w-auto"
+									onClick={() => {
+										router.push("/organization/" + cname);
+									}}
+								/>
+							)
+							:
+							<>
+							<Logo width={180} />
+							</>
+						}
 					</div>
 					<form
 						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12"
@@ -255,15 +281,18 @@ export default function CanCareerSignUp() {
 						</div>
 						<p className="text-center text-darkGray">
 							Already have an Account?{" "}
-							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline">
 								Sign In
 							</Link>
 						</p>
 					</form>
+					<div className="text-right pt-2">
+						<ToggleLang />
+					</div>
 				</div>
 			</main>
 		</>
 	);
 }
 
-CanCareerSignUp.noAuth = true;
+CandSignUp.noAuth = true;
