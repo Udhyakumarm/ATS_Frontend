@@ -9,7 +9,8 @@ import Button from "./Button";
 import { Combobox, Transition } from "@headlessui/react";
 import { useResizeDetector } from "react-resize-detector";
 import { withResizeDetector } from "react-resize-detector";
-import { useApplicantStore, useNovusStore } from "@/utils/code";
+import { useApplicantStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useNovusStore } from "@/utils/novus";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "./toast";
@@ -82,13 +83,20 @@ function Novus(props: any) {
 	const { width, height, ref } = useResizeDetector();
 	const [showTooltip, setShowTooltip] = useState(false);
 
-	//zustand state
+	//novus zustand state
 	const animation = useNovusStore((state: { animation: any }) => state.animation);
 	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
+	const listOfApplicant = useNovusStore((state: { listOfApplicant: any }) => state.listOfApplicant);
+	const setlistOfApplicant = useNovusStore((state: { setlistOfApplicant: any }) => state.setlistOfApplicant);
+	//otehr zustand state
 	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
 	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
 	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
 	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
+	const version = useVersionStore((state: { version: any }) => state.version);
 
 	//typing state
 	const [cwidth, setCWidth] = useState(0);
@@ -217,6 +225,114 @@ function Novus(props: any) {
 			});
 	}
 
+	//update chat
+	async function updateChat(res: string, pk: any, type: string, aid: any, ctype: any) {
+		if (type === "stay") {
+			// Hiring Manager hm@somhako.com Giving Feedback To Applicant : `Shortlist`
+			let res2 = res.split("Feedback To Applicant");
+			let fres = "";
+			fres = fres + res2[0];
+			let res3 = res2[1];
+			res3 = res3.split("`")[1];
+			fres = fres + " " + res3 + " Feedback, You Select Stay Option...";
+			// console.log("&",res3)
+			// console.log("&",fres)
+			const formData2 = new FormData();
+			formData2.append("response", fres);
+			await axiosInstanceAuth2
+				.put(`/chatbot/updatechat/${pk}/`, formData2)
+				.then(async (res) => {
+					loadChat();
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		} else if (type === "next") {
+			let res2 = res.split("Feedback To Applicant");
+			let fres = "";
+			fres = fres + res2[0];
+			let res3 = res2[1];
+			res3 = res3.split("`")[1];
+			console.log("&", res3);
+			if (res3 === "On Hold") {
+				fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Stay In Review Stage...";
+				const formData2 = new FormData();
+				formData2.append("response", fres);
+				await axiosInstanceAuth2
+					.put(`/chatbot/updatechat/${pk}/`, formData2)
+					.then(async (res) => {
+						loadChat();
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
+			if (res3 === "Reject") {
+				fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Transfer To Rejected Stage...";
+				const formData2 = new FormData();
+				formData2.append("response", fres);
+				await axiosInstanceAuth2
+					.put(`/chatbot/updatechat/${pk}/`, formData2)
+					.then(async (res) => {
+						loadChat();
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+				let prompt = "applicant [" + aid + "] move to specific {Rejected}";
+				applicantChat(prompt);
+			}
+			if (res3 === "Shortlist") {
+				let canid = aid;
+				let url = "";
+				if (ctype === "career") {
+					url = `/job/listfeedback/${canid}/`;
+				}
+				if (ctype === "vendor") {
+					url = `/job/listvfeedback/${canid}/`;
+				}
+
+				await axiosInstanceAuth2.get(url).then(async (res) => {
+					console.log("@@", res.data);
+					let fdata = res.data;
+					let ch = true;
+					for (let i = 0; i < fdata.length; i++) {
+						if (fdata[i]["status"] != "Shortlist") {
+							ch = false;
+						}
+					}
+					if (ch) {
+						fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Transfer To Shortlisted Stage...";
+						const formData2 = new FormData();
+						formData2.append("response", fres);
+						await axiosInstanceAuth2
+							.put(`/chatbot/updatechat/${pk}/`, formData2)
+							.then(async (res) => {
+								loadChat();
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+						let prompt = "applicant [" + aid + "] move to specific {Shortlisted}";
+						applicantChat(prompt);
+					} else {
+						fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Not Transfer...";
+						const formData2 = new FormData();
+						formData2.append("response", fres);
+						await axiosInstanceAuth2
+							.put(`/chatbot/updatechat/${pk}/`, formData2)
+							.then(async (res) => {
+								loadChat();
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+					}
+				});
+			}
+		}
+	}
+
 	//start option chat res
 	async function startChat(prompt: any) {
 		setdisablechat(true);
@@ -302,6 +418,34 @@ function Novus(props: any) {
 			});
 	}
 
+	//applicant Data gathering function
+	async function loadListOfApplicant() {
+		let arr2 = [];
+		await axiosInstanceAuth2.get(`/job/listapplicant/`).then(async (res) => {
+			// console.log("!", "applicant", res.data);
+			let arr = res.data;
+			for (let i = 0; i < arr.length; i++) {
+				let dic = arr[i];
+				dic["type"] = "career";
+				arr2.push(dic);
+			}
+			// console.log("!", "applicant2", arr2);
+			setlistOfApplicant(arr2);
+		});
+
+		await axiosInstanceAuth2.get(`/job/listvendorapplicant/`).then(async (res) => {
+			// console.log("!", "vendorapplicant", res.data);
+			let arr = res.data;
+			for (let i = 0; i < arr.length; i++) {
+				let dic = arr[i];
+				dic["type"] = "vendor";
+				arr2.push(dic);
+			}
+			// console.log("!", "vendorapplicant2", arr2);
+			setlistOfApplicant(arr2);
+		});
+	}
+
 	//other data start
 	const filteredpromptsList =
 		query === ""
@@ -350,13 +494,19 @@ function Novus(props: any) {
 	}
 
 	useEffect(() => {
-		if (messageEl && allowedPaths.includes(router.pathname)) {
+		if (
+			messageEl &&
+			allowedPaths.includes(router.pathname) &&
+			chat.length > 0 &&
+			role != "Hiring Manager" &&
+			version === "enterprise"
+		) {
 			messageEl.current.addEventListener("DOMNodeInserted", (event: { currentTarget: any }) => {
 				const { currentTarget: target } = event;
 				target.scroll({ top: target.scrollHeight, behavior: "smooth" });
 			});
 		}
-	}, []);
+	}, [chat]);
 
 	useEffect(() => {
 		if (click && animation) {
@@ -364,6 +514,7 @@ function Novus(props: any) {
 		}
 		if (click) {
 			loadChat();
+			loadListOfApplicant();
 		}
 	}, [click]);
 
@@ -408,7 +559,9 @@ function Novus(props: any) {
 
 	//other data end
 	return (
-		allowedPaths.includes(router.pathname) && (
+		allowedPaths.includes(router.pathname) &&
+		role != "Hiring Manager" &&
+		version === "enterprise" && (
 			<>
 				<div
 					className={
@@ -471,95 +624,257 @@ function Novus(props: any) {
 									chat.map((data, i) => (
 										<>
 											<div key={i}>
-												<li className="my-2 ml-auto max-w-[90%] text-right">
-													<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-800">
-														{data["message"]}
-													</div>
-													<div className="text-[10px] text-darkGray dark:text-gray-400">
-														{moment(data["timestamp"]).fromNow()}
-													</div>
-												</li>
-												<li className="my-2 max-w-[90%]">
-													<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
-														{data["response"]}
-													</div>
-													{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
-														<Slider {...teamListSlider} className="w-full max-w-[400px]">
-															{data["capplicant"] &&
-																data["capplicant"].length > 0 &&
-																data["capplicant"].map((data, i) => (
-																	<div className="pr-1" key={i}>
-																		<div className="flex items-center overflow-hidden rounded border shadow">
-																			<button
-																				type="button"
-																				className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
-																				onClick={() => {
-																					setClick(false);
-																					setMaximize(false);
-																					setjobid(data["job"]["refid"]);
-																					setappid(data["arefid"]);
-																					settype("career");
-																					setappdata(data);
-																					router.push("/organization/applicants/detail");
-																				}}
-																			>
-																				{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
-																			</button>
-																			<button
-																				type="button"
-																				className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
-																				onClick={() => {
-																					navigator.clipboard.writeText(data["arefid"]);
-																					toastcomp("ID Copied to clipboard", "success");
-																				}}
-																			>
-																				<i className="fa-solid fa-copy"></i>
-																			</button>
-																		</div>
-																	</div>
-																))}
-															{/* differ */}
-															{data["vapplicant"] &&
-																data["vapplicant"].length > 0 &&
-																data["vapplicant"].map((data, i) => (
-																	<div className="pr-1" key={i}>
-																		<div className="flex items-center overflow-hidden rounded border shadow">
-																			<button
-																				type="button"
-																				className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
-																				onClick={() => {
-																					setClick(false);
-																					setMaximize(false);
-																					setjobid(data["job"]["refid"]);
-																					setappid(data["arefid"]);
-																					settype("vendor");
-																					setappdata(data);
-																					router.push("/organization/applicants/detail");
-																				}}
-																			>
-																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
-																			</button>
-																			<button
-																				type="button"
-																				className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
-																				onClick={() => {
-																					navigator.clipboard.writeText(data["arefid"]);
-																					toastcomp("ID Copied to clipboard", "success");
-																				}}
-																			>
-																				<i className="fa-solid fa-copy"></i>
-																			</button>
-																		</div>
-																	</div>
-																))}
-														</Slider>
-													) : (
-														<></>
-													)}
-													<div className="text-[10px] text-darkGray dark:text-gray-400">
-														{moment(data["timestamp"]).fromNow()}
-													</div>
-												</li>
+												{data["message"] && data["message"].length > 0 ? (
+													<>
+														<li className="my-2 ml-auto max-w-[90%] text-right">
+															<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-800">
+																{data["message"]}
+															</div>
+															<div className="text-[10px] text-darkGray dark:text-gray-400">
+																{moment(data["timestamp"]).fromNow()}
+															</div>
+														</li>
+
+														<li className="my-2 max-w-[90%]">
+															<div className="mb-1 inline-block rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
+																{data["response"]}
+															</div>
+															{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
+																<Slider {...teamListSlider} className="w-full max-w-[400px]">
+																	{data["capplicant"] &&
+																		data["capplicant"].length > 0 &&
+																		data["capplicant"].map((data, i) => (
+																			<div className="pr-1" key={i}>
+																				<div className="flex items-center overflow-hidden rounded border shadow">
+																					<button
+																						type="button"
+																						className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																						onClick={() => {
+																							setClick(false);
+																							setMaximize(false);
+																							setjobid(data["job"]["refid"]);
+																							setappid(data["arefid"]);
+																							settype("career");
+																							setappdata(data);
+																							router.push("/organization/applicants/detail");
+																						}}
+																					>
+																						{data["user"]["first_name"]}&nbsp;{data["user"]["last_name"]}
+																					</button>
+																					<button
+																						type="button"
+																						className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																						onClick={() => {
+																							navigator.clipboard.writeText(data["arefid"]);
+																							toastcomp("ID Copied to clipboard", "success");
+																						}}
+																					>
+																						<i className="fa-solid fa-copy"></i>
+																					</button>
+																				</div>
+																			</div>
+																		))}
+																	{/* differ */}
+																	{data["vapplicant"] &&
+																		data["vapplicant"].length > 0 &&
+																		data["vapplicant"].map((data, i) => (
+																			<div className="pr-1" key={i}>
+																				<div className="flex items-center overflow-hidden rounded border shadow">
+																					<button
+																						type="button"
+																						className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																						onClick={() => {
+																							setClick(false);
+																							setMaximize(false);
+																							setjobid(data["job"]["refid"]);
+																							setappid(data["arefid"]);
+																							settype("vendor");
+																							setappdata(data);
+																							router.push("/organization/applicants/detail");
+																						}}
+																					>
+																						{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
+																					</button>
+																					<button
+																						type="button"
+																						className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																						onClick={() => {
+																							navigator.clipboard.writeText(data["arefid"]);
+																							toastcomp("ID Copied to clipboard", "success");
+																						}}
+																					>
+																						<i className="fa-solid fa-copy"></i>
+																					</button>
+																				</div>
+																			</div>
+																		))}
+																</Slider>
+															) : (
+																<></>
+															)}
+															<div className="text-[10px] text-darkGray dark:text-gray-400">
+																{moment(data["timestamp"]).fromNow()}
+															</div>
+														</li>
+													</>
+												) : (
+													<>
+														<li className="my-2 max-w-[90%]">
+															<div className="mb-1 inline-block">
+																<div className="mb-1 last:mb-0">
+																	<p className="text-[14px]">{data["response"]}</p>
+																</div>
+															</div>
+															{data["response"].includes("Giving Feedback To Applicant") &&
+															(data["capplicant"].length > 0 || data["vapplicant"].length > 0) ? (
+																<>
+																	{data["capplicant"] &&
+																		data["capplicant"].length > 0 &&
+																		data["capplicant"].map((data2, i) => (
+																			<div className="flex flex-wrap" key={i}>
+																				<div className="pr-1">
+																					<div className="flex items-center overflow-hidden rounded border shadow">
+																						<button
+																							type="button"
+																							className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																							onClick={() => {
+																								setClick(false);
+																								setMaximize(false);
+																								setjobid(data2["job"]["refid"]);
+																								setappid(data2["arefid"]);
+																								settype("career");
+																								setappdata(data2);
+																								router.push("/organization/applicants/detail");
+																							}}
+																						>
+																							{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
+																						</button>
+																						<button
+																							type="button"
+																							className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																							onClick={() => {
+																								navigator.clipboard.writeText(data2["arefid"]);
+																								toastcomp("ID Copied to clipboard", "success");
+																							}}
+																						>
+																							<i className="fa-solid fa-copy"></i>
+																						</button>
+																					</div>
+																				</div>
+
+																				<div className="mr-2 last:mr-0">
+																					<Button
+																						btnStyle="success"
+																						label="Next"
+																						btnType={"button"}
+																						handleClick={() =>
+																							updateChat(
+																								data["response"],
+																								data["id"],
+																								"next",
+																								data2["arefid"],
+																								"career"
+																							)
+																						}
+																					/>
+																				</div>
+																				<div className="mr-2 last:mr-0">
+																					<Button
+																						btnStyle="gray"
+																						label="Stay"
+																						btnType={"button"}
+																						handleClick={() =>
+																							updateChat(
+																								data["response"],
+																								data["id"],
+																								"stay",
+																								data2["arefid"],
+																								"career"
+																							)
+																						}
+																					/>
+																				</div>
+																			</div>
+																		))}
+																	{/* differ */}
+																	{data["vapplicant"] &&
+																		data["vapplicant"].length > 0 &&
+																		data["vapplicant"].map((data2, i) => (
+																			<div className="flex flex-wrap" key={i}>
+																				<div className="pr-1">
+																					<div className="flex items-center overflow-hidden rounded border shadow">
+																						<button
+																							type="button"
+																							className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																							onClick={() => {
+																								setClick(false);
+																								setMaximize(false);
+																								setjobid(data2["job"]["refid"]);
+																								setappid(data2["arefid"]);
+																								settype("vendor");
+																								setappdata(data2);
+																								router.push("/organization/applicants/detail");
+																							}}
+																						>
+																							{data2["applicant"]["first_name"]}&nbsp;{data2["applicant"]["last_name"]}
+																						</button>
+																						<button
+																							type="button"
+																							className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																							onClick={() => {
+																								navigator.clipboard.writeText(data2["arefid"]);
+																								toastcomp("ID Copied to clipboard", "success");
+																							}}
+																						>
+																							<i className="fa-solid fa-copy"></i>
+																						</button>
+																					</div>
+																				</div>
+
+																				<div className="mr-2 last:mr-0">
+																					<Button
+																						btnStyle="success"
+																						label="Next"
+																						btnType={"button"}
+																						handleClick={() =>
+																							updateChat(
+																								data["response"],
+																								data["id"],
+																								"next",
+																								data2["arefid"],
+																								"vendor"
+																							)
+																						}
+																					/>
+																				</div>
+																				<div className="mr-2 last:mr-0">
+																					<Button
+																						btnStyle="gray"
+																						label="Stay"
+																						btnType={"button"}
+																						handleClick={() =>
+																							updateChat(
+																								data["response"],
+																								data["id"],
+																								"stay",
+																								data2["arefid"],
+																								"vendor"
+																							)
+																						}
+																					/>
+																				</div>
+																			</div>
+																		))}
+																</>
+															) : (
+																<></>
+															)}
+															<div className="text-[10px] text-darkGray dark:text-gray-400">
+																{moment(data["timestamp"]).fromNow()}
+															</div>
+														</li>
+													</>
+												)}
 											</div>
 										</>
 									))}
@@ -611,8 +926,8 @@ function Novus(props: any) {
 										Show me the most experienced applicants of Product Manager Job
 									</div>
 									<div className="text-[10px] text-darkGray dark:text-gray-400">4:02 PM</div>
-								</li> */}
-								{/* <li className="my-2 max-w-[90%]">
+								</li>
+								<li className="my-2 max-w-[90%]">
 									<div className="mb-1">
 										<div className="mb-1 rounded rounded-bl-normal rounded-tr-normal bg-gradDarkBlue px-4 py-2 text-white shadow">
 											Here is the list of most experienced applicants of Product Manager Job
@@ -639,8 +954,8 @@ function Novus(props: any) {
 										</Slider>
 									</div>
 									<div className="text-[10px] text-darkGray dark:text-gray-400">4:03 PM</div>
-								</li> */}
-								{/* <li className="my-2 ml-auto max-w-[90%] text-right">
+								</li>
+								<li className="my-2 ml-auto max-w-[90%] text-right">
 									<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-800">
 										Schedule Interview with Jack
 									</div>

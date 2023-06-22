@@ -279,7 +279,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				toggleLoadMode(true);
 				loadFeedback();
 				if (feedbackStatus === "Reject") {
-					chnageStatus("Rejected", appdata["arefid"]);
+					// chnageStatus("Rejected", appdata["arefid"]);
 				}
 				if (feedbackStatus === "Shortlist") {
 					if (feedbackList.length > 0) {
@@ -290,10 +290,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							}
 						}
 						if (ch) {
-							chnageStatus("Interview", appdata["arefid"]);
+							// chnageStatus("Interview", appdata["arefid"]);
 						}
 					} else {
-						chnageStatus("Interview", appdata["arefid"]);
+						// chnageStatus("Interview", appdata["arefid"]);
 					}
 				}
 			})
@@ -359,7 +359,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					toggleLoadMode(true);
 					loadFeedback();
 					if (status === "Reject") {
-						chnageStatus("Rejected", appdata["arefid"]);
+						// chnageStatus("Rejected", appdata["arefid"]);
 					}
 					if (status === "Shortlist") {
 						if (feedbackList.length > 0) {
@@ -370,10 +370,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 								}
 							}
 							if (ch) {
-								chnageStatus("Interview", appdata["arefid"]);
+								// chnageStatus("Interview", appdata["arefid"]);
 							}
 						} else {
-							chnageStatus("Interview", appdata["arefid"]);
+							// chnageStatus("Interview", appdata["arefid"]);
 						}
 					}
 				})

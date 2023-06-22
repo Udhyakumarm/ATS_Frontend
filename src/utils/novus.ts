@@ -5,7 +5,9 @@ import { devtools, persist } from "zustand/middleware";
 
 let novusStore: any = (set: any) => ({
 	animation: false,
-	setanimation: (id: any) => set(() => ({ animation: id }))
+	setanimation: (id: any) => set(() => ({ animation: id })),
+	listOfApplicant: [],
+	setlistOfApplicant: (id: any) => set(() => ({ listOfApplicant: id }))
 });
 
 //#######

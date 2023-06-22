@@ -24,7 +24,7 @@ const CalendarIntegrationOptions = [
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
-export default function OrgTopBar({todoLoadMore}:any) {
+export default function OrgTopBar({ todoLoadMore }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -55,7 +55,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 				.get("/api/integrations/calendar")
 				.then((response) => response.data)
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 					return { data: { success: false } };
 				});
 
@@ -294,10 +294,9 @@ export default function OrgTopBar({todoLoadMore}:any) {
 			});
 	}
 
-	
 	useEffect(() => {
 		if (todoLoadMore) {
-			setToDoPopup(true)
+			setToDoPopup(true);
 		}
 	}, [todoLoadMore]);
 
@@ -385,7 +384,7 @@ export default function OrgTopBar({todoLoadMore}:any) {
 				<ToggleLang />
 				<button
 					type="button"
-					className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
+					className="ml-4 rounded text-xl text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut();
 
