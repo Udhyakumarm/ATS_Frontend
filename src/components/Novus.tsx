@@ -640,7 +640,10 @@ function Novus(props: any) {
 																{data["response"]}
 															</div>
 															{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
-																<Slider {...teamListSlider} className="w-full max-w-[400px]">
+																<Slider
+																	{...teamListSlider}
+																	className={`w-full ${maximize ? "max-w-[800px]" : "max-w-[400px]"}`}
+																>
 																	{data["capplicant"] &&
 																		data["capplicant"].length > 0 &&
 																		data["capplicant"].map((data, i) => (
@@ -1006,7 +1009,7 @@ function Novus(props: any) {
 									<div className="flex w-full border px-3 py-2 shadow-normal">
 										<div className="flex w-[60px] items-center border-r py-2 text-[12px] font-bold">Prompts</div>
 										<div className="flex w-[calc(100%-60px)] items-center px-5">
-											<Slider {...promptsSlider} className="w-full max-w-[400px]">
+											<Slider {...promptsSlider} className={`w-full ${maximize ? "max-w-[800px]" : "max-w-[400px]"}`}>
 												{subPromptsList[selected["name"]].map((data, i) => (
 													<div key={i}>
 														<p
