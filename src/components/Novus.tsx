@@ -75,13 +75,13 @@ function Novus(props: any) {
 	const [click, setClick] = useState(false);
 	const [maximize, setMaximize] = useState(false);
 	const [showPrompts, setShowPrompts] = useState(false);
-	const messageEl: any = useRef(null);
 	const [prompt, setprompt] = useState("");
 	const [selected, setSelected] = useState("");
 	const [query, setQuery] = useState("");
 	const [subPrompt, setSubPrompt] = useState(false);
 	const { width, height, ref } = useResizeDetector();
 	const [showTooltip, setShowTooltip] = useState(false);
+	const chatContainerRef = useRef(null);
 
 	//novus zustand state
 	const animation = useNovusStore((state: { animation: any }) => state.animation);
@@ -495,16 +495,16 @@ function Novus(props: any) {
 
 	useEffect(() => {
 		if (
-			messageEl &&
+			chatContainerRef &&
 			allowedPaths.includes(router.pathname) &&
 			chat.length > 0 &&
 			role != "Hiring Manager" &&
 			version === "enterprise"
 		) {
-			messageEl.current.addEventListener("DOMNodeInserted", (event: { currentTarget: any }) => {
-				const { currentTarget: target } = event;
-				target.scroll({ top: target.scrollHeight, behavior: "smooth" });
-			});
+			chatContainerRef.current?.scrollTo({
+				top: chatContainerRef.current.scrollHeight,
+				behavior: 'smooth',
+			  });
 		}
 	}, [chat]);
 
@@ -613,13 +613,13 @@ function Novus(props: any) {
 								</button>
 							</aside>
 						</div>
+						{click && 
 						<div
 							className={`overflow-y-auto px-6 py-2`}
-							id="novusMiddle"
-							ref={messageEl}
+							ref={chatContainerRef}
 							style={{ height: `calc(100% - calc(${height}px + 54px))` }}
 						>
-							<ul className="w-full text-sm">
+							<ul className="w-full text-sm" id="append_div">
 								{chat.length > 0 &&
 									chat.map((data, i) => (
 										<>
@@ -985,6 +985,7 @@ function Novus(props: any) {
 								</li> */}
 							</ul>
 						</div>
+						}
 						<div ref={ref}>
 							<div className="relative border-t-2 border-gray-300 bg-white p-3 dark:bg-gray-700">
 								{subPrompt && (
