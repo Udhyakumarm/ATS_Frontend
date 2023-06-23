@@ -15,6 +15,8 @@ import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "./toast";
 import moment from "moment";
+import FormField from "./FormField";
+import { axiosInstance } from "@/utils";
 
 const promptsList = [
 	{ id: 1, name: "Start", desc: "Basic Conversion" },
@@ -88,6 +90,8 @@ function Novus(props: any) {
 	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
 	const listOfApplicant = useNovusStore((state: { listOfApplicant: any }) => state.listOfApplicant);
 	const setlistOfApplicant = useNovusStore((state: { setlistOfApplicant: any }) => state.setlistOfApplicant);
+	const kanbanAID = useNovusStore((state: { kanbanAID: any }) => state.kanbanAID);
+	const setkanbanAID = useNovusStore((state: { setkanbanAID: any }) => state.setkanbanAID);
 	//otehr zustand state
 	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
 	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
@@ -302,7 +306,7 @@ function Novus(props: any) {
 						}
 					}
 					if (ch) {
-						fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Transfer To Shortlisted Stage...";
+						fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Transfer To Next Stage...";
 						const formData2 = new FormData();
 						formData2.append("response", fres);
 						await axiosInstanceAuth2
@@ -313,10 +317,14 @@ function Novus(props: any) {
 							.catch((err) => {
 								console.log(err);
 							});
-						let prompt = "applicant [" + aid + "] move to specific {Shortlisted}";
+						let prompt = "applicant [" + aid + "] move to next stage";
 						applicantChat(prompt);
 					} else {
-						fres = fres + " " + res3 + " Feedback, You Select Next Option, Applicant Not Transfer...";
+						fres =
+							fres +
+							" " +
+							res3 +
+							" Feedback, You Select Next Option, Applicant Not Transfer Because Of All Feedback Are Not Shortlisted...";
 						const formData2 = new FormData();
 						formData2.append("response", fres);
 						await axiosInstanceAuth2
@@ -331,6 +339,119 @@ function Novus(props: any) {
 				});
 			}
 		}
+	}
+
+	//cancel interview
+	async function cancelInterview(pk: any) {
+		const formData2 = new FormData();
+		formData2.append("response", "Novus: Interview Proceess Cancel");
+		await axiosInstanceAuth2
+			.put(`/chatbot/updatechat/${pk}/`, formData2)
+			.then(async (res) => {
+				loadChat();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	//schedule Interview
+	const [nextSI, setnextSI] = useState(false);
+	const [title, settitle] = useState("");
+	const [desc, setdesc] = useState("");
+	const [sdate, setsdate] = useState("");
+	const [edate, setedate] = useState("");
+	const [fsdate, setfsdate] = useState("");
+	const [fedate, setfedate] = useState("");
+
+	function disBtn() {
+		return title.length > 0 && desc.length > 0 && fsdate.length > 0 && fedate.length > 0;
+	}
+
+	useEffect(() => {
+		setfsdate(moment(sdate).format().toString());
+	}, [sdate]);
+
+	useEffect(() => {
+		setfedate(moment(edate).format().toString());
+	}, [edate]);
+
+	//set Intervier
+	async function setInterview(email: any, arefid: any, jobid: any, pk: any) {
+		const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+			.get("/api/integrations/calendar")
+			.then((response) => response.data)
+			.catch((err) => {
+				console.log(err);
+				return { validatedIntegrations: [] };
+			});
+
+		var calendarIntegrations = newIntegrations;
+		let newSchedule = {
+			summary: title,
+			description: desc,
+			start: sdate,
+			end: edate,
+			attendees: [{ email: email }],
+			platform: [{ name: "Google Meet" }],
+			type: []
+		};
+		// newSchedule["end"] = edate
+
+		console.log("@", "newSchedule", newSchedule);
+
+		if (calendarIntegrations.length == 0) return;
+
+		await axiosInstance.next_api
+			.post("/api/integrations/gcal/createEvent", {
+				googleCalendarIntegration: calendarIntegrations[0],
+				event: newSchedule
+			})
+			.then(async (res) => {
+				console.log("!", "res", res);
+				let link = res.data.data.hangoutLink;
+				let teamId = [];
+
+				if (role != "Super Admin") {
+					teamId.push(user[0]["id"]);
+				}
+				let refid = jobid;
+
+				console.log("@", link);
+				console.log("@", arefid);
+				console.log("@", refid);
+				console.log("@", teamId);
+
+				const fd = new FormData();
+				fd.append("teamID", teamId.join("|"));
+				fd.append("date_time_from", moment(`${newSchedule["start"]}`).format().toString());
+				fd.append("date_time_to", moment(`${newSchedule["end"]}`).format().toString());
+				if (newSchedule["summary"] && newSchedule["summary"].length > 0)
+					fd.append("interview_name", newSchedule["summary"]);
+				if (newSchedule["platform"] && newSchedule["platform"].length > 0)
+					fd.append("platform", newSchedule["platform"][0]["name"]);
+				if (newSchedule["description"] && newSchedule["description"].length > 0)
+					fd.append("description", newSchedule["description"]);
+				if (link && link.length > 0) fd.append("link", link);
+				await axiosInstanceAuth2.post(`/job/create-interview/${arefid}/${refid}/`, fd).then(async (res) => {
+					toastcomp("Interview Scheduled", "success");
+					const formData2 = new FormData();
+					formData2.append("response", "Novus: Interview Schedule");
+					await axiosInstanceAuth2
+						.put(`/chatbot/updatechat/${pk}/`, formData2)
+						.then(async (res) => {
+							setnextSI(false);
+							loadChat();
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				});
+			})
+			.catch((err) => {
+				console.log("@", "newSchedule", newSchedule);
+				toastcomp("Interview Not Scheduled", "error");
+			});
 	}
 
 	//start option chat res
@@ -459,7 +580,7 @@ function Novus(props: any) {
 		"/organization/dashboard",
 		"/organization/notifications",
 		"/organization/analytics",
-		// "/organization/applicants",
+		"/organization/applicants",
 		"/organization/applicants/detail",
 		"/organization/applicants/schedule-interview",
 		"/organization/inbox",
@@ -508,9 +629,28 @@ function Novus(props: any) {
 		}
 	}, [chat]);
 
+	//kanban add chat of interview
+	async function addChatForInterview(arefid: any) {
+		const fd = new FormData();
+		fd.append("response", "Novus: Interview Proceess Will Schedule On Google Calender");
+		await axiosInstanceAuth2
+			.post(`/chatbot/kanban-interview/${arefid}/`, fd)
+			.then(async (res) => {
+				toastcomp("interview schedule proceess start", "success");
+				setkanbanAID("");
+				loadChat();
+			})
+			.catch((err) => {
+				toastcomp("interview schedule proceess not start", "error");
+				setkanbanAID("");
+			});
+	}
+
 	useEffect(() => {
-		if (click && animation) {
+		if (click && animation && kanbanAID) {
 			setanimation(false);
+			//interview process from kanban
+			addChatForInterview(kanbanAID);
 		}
 		if (click) {
 			loadChat();
@@ -640,10 +780,7 @@ function Novus(props: any) {
 																{data["response"]}
 															</div>
 															{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
-																<Slider
-																	{...teamListSlider}
-																	className={`w-full ${maximize ? "max-w-[800px]" : "max-w-[400px]"}`}
-																>
+																<Slider {...teamListSlider} className={`w-full max-w-[400px]`}>
 																	{data["capplicant"] &&
 																		data["capplicant"].length > 0 &&
 																		data["capplicant"].map((data, i) => (
@@ -725,7 +862,7 @@ function Novus(props: any) {
 														<li className="my-2 max-w-[90%]">
 															<div className="mb-1 inline-block">
 																<div className="mb-1 last:mb-0">
-																	<p className="text-[14px]">{data["response"]}</p>
+																	<p className="text-[12px] font-bold">{data["response"]}</p>
 																</div>
 															</div>
 															{data["response"].includes("Giving Feedback To Applicant") &&
@@ -734,8 +871,8 @@ function Novus(props: any) {
 																	{data["capplicant"] &&
 																		data["capplicant"].length > 0 &&
 																		data["capplicant"].map((data2, i) => (
-																			<div className="flex flex-wrap" key={i}>
-																				<div className="pr-1">
+																			<div className="flex flex-col" key={i}>
+																				<div className="w-[143px] pr-1">
 																					<div className="flex items-center overflow-hidden rounded border shadow">
 																						<button
 																							type="button"
@@ -764,38 +901,39 @@ function Novus(props: any) {
 																						</button>
 																					</div>
 																				</div>
-
-																				<div className="mr-2 last:mr-0">
-																					<Button
-																						btnStyle="success"
-																						label="Next"
-																						btnType={"button"}
-																						handleClick={() =>
-																							updateChat(
-																								data["response"],
-																								data["id"],
-																								"next",
-																								data2["arefid"],
-																								"career"
-																							)
-																						}
-																					/>
-																				</div>
-																				<div className="mr-2 last:mr-0">
-																					<Button
-																						btnStyle="gray"
-																						label="Stay"
-																						btnType={"button"}
-																						handleClick={() =>
-																							updateChat(
-																								data["response"],
-																								data["id"],
-																								"stay",
-																								data2["arefid"],
-																								"career"
-																							)
-																						}
-																					/>
+																				<div className="flex flex-wrap">
+																					<div className="mr-2 last:mr-0">
+																						<Button
+																							btnStyle="success"
+																							label="Next"
+																							btnType={"button"}
+																							handleClick={() =>
+																								updateChat(
+																									data["response"],
+																									data["id"],
+																									"next",
+																									data2["arefid"],
+																									"career"
+																								)
+																							}
+																						/>
+																					</div>
+																					<div className="mr-2 last:mr-0">
+																						<Button
+																							btnStyle="gray"
+																							label="Stay"
+																							btnType={"button"}
+																							handleClick={() =>
+																								updateChat(
+																									data["response"],
+																									data["id"],
+																									"stay",
+																									data2["arefid"],
+																									"career"
+																								)
+																							}
+																						/>
+																					</div>
 																				</div>
 																			</div>
 																		))}
@@ -803,8 +941,8 @@ function Novus(props: any) {
 																	{data["vapplicant"] &&
 																		data["vapplicant"].length > 0 &&
 																		data["vapplicant"].map((data2, i) => (
-																			<div className="flex flex-wrap" key={i}>
-																				<div className="pr-1">
+																			<div className="flex flex-col" key={i}>
+																				<div className="w-[143px] pr-1">
 																					<div className="flex items-center overflow-hidden rounded border shadow">
 																						<button
 																							type="button"
@@ -833,40 +971,161 @@ function Novus(props: any) {
 																						</button>
 																					</div>
 																				</div>
-
-																				<div className="mr-2 last:mr-0">
-																					<Button
-																						btnStyle="success"
-																						label="Next"
-																						btnType={"button"}
-																						handleClick={() =>
-																							updateChat(
-																								data["response"],
-																								data["id"],
-																								"next",
-																								data2["arefid"],
-																								"vendor"
-																							)
-																						}
-																					/>
-																				</div>
-																				<div className="mr-2 last:mr-0">
-																					<Button
-																						btnStyle="gray"
-																						label="Stay"
-																						btnType={"button"}
-																						handleClick={() =>
-																							updateChat(
-																								data["response"],
-																								data["id"],
-																								"stay",
-																								data2["arefid"],
-																								"vendor"
-																							)
-																						}
-																					/>
+																				<div className="flex flex-wrap">
+																					<div className="mr-2 last:mr-0">
+																						<Button
+																							btnStyle="success"
+																							label="Next"
+																							btnType={"button"}
+																							handleClick={() =>
+																								updateChat(
+																									data["response"],
+																									data["id"],
+																									"next",
+																									data2["arefid"],
+																									"vendor"
+																								)
+																							}
+																						/>
+																					</div>
+																					<div className="mr-2 last:mr-0">
+																						<Button
+																							btnStyle="gray"
+																							label="Stay"
+																							btnType={"button"}
+																							handleClick={() =>
+																								updateChat(
+																									data["response"],
+																									data["id"],
+																									"stay",
+																									data2["arefid"],
+																									"vendor"
+																								)
+																							}
+																						/>
+																					</div>
 																				</div>
 																			</div>
+																		))}
+																</>
+															) : (
+																<></>
+															)}
+															{/* Interview Schedule */}
+															{data["response"].includes("Interview Proceess Will Schedule On Google Calender") &&
+															(data["capplicant"].length > 0 || data["vapplicant"].length > 0) ? (
+																<>
+																	{data["capplicant"] &&
+																		data["capplicant"].length > 0 &&
+																		data["capplicant"].map((data2, i) => (
+																			<>
+																				<div className="flex flex-col" key={i}>
+																					<div className="w-[143px] pr-1">
+																						<div className="flex items-center overflow-hidden rounded border shadow">
+																							<button
+																								type="button"
+																								className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																								onClick={() => {
+																									setClick(false);
+																									setMaximize(false);
+																									setjobid(data2["job"]["refid"]);
+																									setappid(data2["arefid"]);
+																									settype("career");
+																									setappdata(data2);
+																									router.push("/organization/applicants/detail");
+																								}}
+																							>
+																								{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
+																							</button>
+																							<button
+																								type="button"
+																								className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																								onClick={() => {
+																									navigator.clipboard.writeText(data2["arefid"]);
+																									toastcomp("ID Copied to clipboard", "success");
+																								}}
+																							>
+																								<i className="fa-solid fa-copy"></i>
+																							</button>
+																						</div>
+																					</div>
+																					<div className="flex flex-wrap">
+																						<div className="mr-2 last:mr-0">
+																							<Button
+																								btnStyle="success"
+																								label="Next"
+																								btnType={"button"}
+																								handleClick={() => setnextSI(!nextSI)}
+																							/>
+																						</div>
+																						<div className="mr-2 last:mr-0">
+																							<Button
+																								btnStyle="gray"
+																								label="Cancel"
+																								btnType={"button"}
+																								handleClick={() => cancelInterview(data["id"])}
+																							/>
+																						</div>
+																					</div>
+																				</div>
+																			</>
+																		))}
+																	{/* differ */}
+																	{data["vapplicant"] &&
+																		data["vapplicant"].length > 0 &&
+																		data["vapplicant"].map((data2, i) => (
+																			<>
+																				<div className="flex flex-col" key={i}>
+																					<div className="w-[143px] pr-1">
+																						<div className="flex items-center overflow-hidden rounded border shadow">
+																							<button
+																								type="button"
+																								className="grow whitespace-nowrap bg-white px-3 py-1 text-[10px] text-black hover:bg-lightBlue dark:bg-gray-600 dark:text-white"
+																								onClick={() => {
+																									setClick(false);
+																									setMaximize(false);
+																									setjobid(data2["job"]["refid"]);
+																									setappid(data2["arefid"]);
+																									settype("vendor");
+																									setappdata(data2);
+																									router.push("/organization/applicants/detail");
+																								}}
+																							>
+																								{data2["applicant"]["first_name"]}&nbsp;
+																								{data2["applicant"]["last_name"]}
+																							</button>
+																							<button
+																								type="button"
+																								className="flex h-[30px] w-[25px] items-center justify-center bg-gray-500 text-[10px] text-white hover:bg-gray-700"
+																								onClick={() => {
+																									navigator.clipboard.writeText(data2["arefid"]);
+																									toastcomp("ID Copied to clipboard", "success");
+																								}}
+																							>
+																								<i className="fa-solid fa-copy"></i>
+																							</button>
+																						</div>
+																					</div>
+																					<div className="flex flex-wrap">
+																						<div className="mr-2 last:mr-0">
+																							<Button
+																								btnStyle="success"
+																								label="Next"
+																								btnType={"button"}
+																								handleClick={() => setnextSI(!nextSI)}
+																							/>
+																						</div>
+																						<div className="mr-2 last:mr-0">
+																							<Button
+																								btnStyle="gray"
+																								label="Cancel"
+																								btnType={"button"}
+																								handleClick={() => cancelInterview(data["id"])}
+																							/>
+																						</div>
+																					</div>
+																				</div>
+																			</>
 																		))}
 																</>
 															) : (
@@ -876,6 +1135,103 @@ function Novus(props: any) {
 																{moment(data["timestamp"]).fromNow()}
 															</div>
 														</li>
+														{data["response"].includes("Interview Proceess Will Schedule On Google Calender") &&
+															nextSI && (
+																<li className="my-2 ml-auto max-w-[90%] text-right">
+																	<div className="mb-1 inline-block rounded rounded-br-normal rounded-tl-normal bg-white px-4 py-2 text-left font-bold shadow dark:bg-gray-800">
+																		<div className="w-full p-4">
+																			<FormField
+																				id={"summary"}
+																				fieldType="input"
+																				inputType="text"
+																				label={"Interview Title"}
+																				value={title}
+																				handleChange={(e) => settitle(e.target.value)}
+																				required
+																			/>
+																			<FormField
+																				id={"description"}
+																				fieldType="textarea"
+																				label={"Interview Description"}
+																				value={desc}
+																				handleChange={(e) => setdesc(e.target.value)}
+																				required
+																			/>
+																			<div className="mx-[-10px] flex flex-wrap">
+																				<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+																					<FormField
+																						id={"start"}
+																						fieldType="date"
+																						label={"Interview StartTime"}
+																						singleSelect
+																						value={sdate}
+																						handleChange={(e) => setsdate(e.target.value)}
+																						showTimeSelect
+																						showHours
+																						required
+																					/>
+																				</div>
+																				<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+																					<FormField
+																						id={"end"}
+																						fieldType="date"
+																						label={"Interview EndTime"}
+																						singleSelect
+																						value={edate}
+																						handleChange={(e) => setedate(e.target.value)}
+																						showTimeSelect
+																						showHours
+																						required
+																					/>
+																				</div>
+																			</div>
+
+																			{data["capplicant"] &&
+																				data["capplicant"].length > 0 &&
+																				data["capplicant"].map((data2, i) => (
+																					<div key={i}>
+																						<Button
+																							label={"Schedule"}
+																							btnType={"button"}
+																							disabled={!disBtn()}
+																							handleClick={() =>
+																								setInterview(
+																									data2["user"]["email"],
+																									data2["arefid"],
+																									data2["job"]["refid"],
+																									data["id"]
+																								)
+																							}
+																						/>
+																					</div>
+																				))}
+
+																			{data["vapplicant"] &&
+																				data["vapplicant"].length > 0 &&
+																				data["vapplicant"].map((data2, i) => (
+																					<div key={i}>
+																						<Button
+																							label={"Schedule"}
+																							btnType={"button"}
+																							disabled={!disBtn()}
+																							handleClick={() =>
+																								setInterview(
+																									data2["applicant"]["email"],
+																									data2["arefid"],
+																									data2["job"]["refid"],
+																									data["id"]
+																								)
+																							}
+																						/>
+																					</div>
+																				))}
+																		</div>
+																	</div>
+																	{/* <div className="text-[10px] text-darkGray dark:text-gray-400">
+																{moment(data["timestamp"]).fromNow()}
+															</div> */}
+																</li>
+															)}
 													</>
 												)}
 											</div>
@@ -1010,7 +1366,7 @@ function Novus(props: any) {
 									<div className="flex w-full border px-3 py-2 shadow-normal">
 										<div className="flex w-[60px] items-center border-r py-2 text-[12px] font-bold">Prompts</div>
 										<div className="flex w-[calc(100%-60px)] items-center px-5">
-											<Slider {...promptsSlider} className={`w-full ${maximize ? "max-w-[800px]" : "max-w-[400px]"}`}>
+											<Slider {...promptsSlider} className={`w-full max-w-[400px]`}>
 												{subPromptsList[selected["name"]].map((data, i) => (
 													<div key={i}>
 														<p

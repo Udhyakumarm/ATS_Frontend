@@ -7,7 +7,9 @@ let novusStore: any = (set: any) => ({
 	animation: false,
 	setanimation: (id: any) => set(() => ({ animation: id })),
 	listOfApplicant: [],
-	setlistOfApplicant: (id: any) => set(() => ({ listOfApplicant: id }))
+	setlistOfApplicant: (id: any) => set(() => ({ listOfApplicant: id })),
+	kanbanAID: "",
+	setkanbanAID: (id: any) => set(() => ({ kanbanAID: id }))
 });
 
 //#######
