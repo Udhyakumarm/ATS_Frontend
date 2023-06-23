@@ -11,6 +11,12 @@ import moment from "moment";
 import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
 import UpcomingComp from "./organization/upcomingComp";
 import { useLangStore } from "@/utils/code";
+import {
+	LinkedinShareButton,
+	TwitterShareButton,
+	FacebookShareButton,
+	TelegramShareButton,
+  } from "react-share"
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -18,6 +24,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
 	const [addCand, setAddCand] = useState(false);
+	const [shareJob, shareJobPopupOpen] = useState(false)
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
@@ -143,6 +150,14 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 					{!dashbaord && (
 						<div className="text-right text-gray-400">
+							{
+								job.jobStatus === "Active" &&
+								<>
+									<button type="button" className="mr-2 text-sm" onClick={() => shareJobPopupOpen(true)}>
+										<i className="fa-solid fa-share"></i>
+									</button>
+								</>
+							}
 							<Menu as="div" className="relative inline-block">
 								<Menu.Button className={"p-2"}>
 									<i className="fa-solid fa-ellipsis-vertical"></i>
@@ -828,6 +843,89 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									</div>
 									<div className="p-8">
 										<UpcomingComp title={"Upload Manually Candidate Feature"} setComingSoon={setComingSoon} />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={shareJob} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={shareJobPopupOpen}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'ジョブを共有する' : 'Share Job Via'}</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => shareJobPopupOpen(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<ul className="flex items-center flex-wrap justify-center text-center text-[#6D27F9] dark:text-[#fff] text-xl">
+											<li className="w-[33.33%] px-[10px] mb-2">
+											<LinkedinShareButton
+												url={`http://localhost:3000/organization/jobs/${job.refid}`}
+											>
+												<i className="fa-brands fa-linkedin-in hover:text-black"></i>
+											</LinkedinShareButton>
+											</li>
+											<li className="w-[33.33%] px-[10px] mb-2">
+											<TwitterShareButton
+												url={`http://localhost:3000/organization/jobs/${job.refid}`}
+											>
+												<i className="fa-brands fa-twitter hover:text-black"></i>
+											</TwitterShareButton>
+											</li>
+											<li className="w-[33.33%] px-[10px] mb-2">
+											<FacebookShareButton
+												url={`http://localhost:3000/organization/jobs/${job.refid}`}
+											>
+												<i className="fa-brands fa-facebook-f hover:text-black"></i>
+											</FacebookShareButton>
+											</li>
+											<li className="w-[33.33%] px-[10px] mb-2">
+											<TelegramShareButton
+												url={`http://localhost:3000/organization/jobs/${job.refid}`}
+											>
+												<i className="fa-brands fa-telegram hover:text-black"></i>
+											</TelegramShareButton>
+											</li>
+											<li className="w-[33.33%] px-[10px] mb-2">
+												<button
+													type="button"
+													className="hover:text-black"
+												>
+													<i className="fa-regular fa-copy"></i>
+												</button>
+											</li>
+										</ul>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

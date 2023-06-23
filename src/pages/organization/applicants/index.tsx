@@ -25,6 +25,7 @@ import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import { useNovusStore } from "@/utils/novus";
 
 export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
@@ -34,7 +35,6 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const cancelButtonRef = useRef(null);
 	const [createBoard, setCreateBoard] = useState(false);
-	const [editSchdInter, setEditSchdInter] = useState(false);
 
 	const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
 	const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
@@ -46,6 +46,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
 	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
 	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
+	const setkanbanAID = useNovusStore((state: { setkanbanAID: any }) => state.setkanbanAID);
 
 	var jobs = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
 
@@ -143,105 +145,22 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 		}
 	}, [applicantlist]);
 
-	const [orgpro, setorgpro] = useState([]);
 	const [cardarefid, setcardarefid] = useState("");
 	const [cardstatus, setcardstatus] = useState("");
-	const [notify, setnotify] = useState(false);
-	const [freeslotdata, setfreeslotdata] = useState({});
-	const [intername, setintername] = useState("");
-	const [interdesc, setinterdesc] = useState("");
-	const [interdate, setinterdate] = useState("");
-	const [interstime, setinterstime] = useState("");
-	const [interetime, setinteretime] = useState("");
-	const [change, setchange] = useState(false);
 
-	function checkForm() {
-		return (
-			intername.length > 0 &&
-			interdesc.length > 0 &&
-			interdate.length > 0 &&
-			interstime.length > 0 &&
-			interetime.length > 0
-		);
-	}
-
-	async function loadInd_OrgProfile() {
-		await axiosInstanceAuth2
-			.get(`/organization/listorganizationprofile/`)
-			.then(async (res) => {
-				console.log("#", res.data);
-				setorgpro(res.data);
-				freeSlot(res.data[0]["unique_id"]);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
-	async function freeSlot(uid) {
-		await axiosInstanceAuth2
-			.get(`/organization/integrations/calendar_get_free_slots/${uid}/`)
-			.then(async (res) => {
-				console.log("#", "freeslot", res.data);
-				setfreeslotdata(res.data);
-				setnotify(true);
-				// setorgpro(res.data)
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
-	async function loadFeedback(appList: any) {
-		let canid = appList["arefid"];
-		let url = "";
-		if (appList["type"] === "career") {
-			url = `/job/listfeedback/${canid}/`;
-		}
-		if (appList["type"] === "vendor") {
-			url = `/job/listvfeedback/${canid}/`;
-		}
-
-		await axiosInstanceAuth2.get(url).then(async (res) => {
-			let data = res.data;
-			if (data.length > 0) {
-				let ch = true;
-				for (let i = 0; i < data.length; i++) {
-					if (data[i]["status"] != "Shortlist") {
-						ch = false;
-					}
-				}
-				if (ch) {
-					setnotify(true);
-					loadInd_OrgProfile();
-					setTimeout(() => {
-						setnotify(false);
-					}, 10000);
-				}
-			}
-		});
-	}
+	//work
 	useEffect(() => {
 		if (cardstatus.length > 0) {
-			if (cardstatus === "Phone Screen" || cardstatus === "Interview") {
-				setnotify(true);
-				loadInd_OrgProfile();
+			if (cardstatus === "Interview") {
+				setanimation(true);
+				setkanbanAID(cardarefid);
 				setTimeout(() => {
-					setnotify(false);
+					setanimation(false);
+					setkanbanAID("");
 				}, 10000);
 			}
 		}
 	}, [cardstatus]);
-
-	useEffect(() => {
-		if (applicantList.length > 0) {
-			for (let i = 0; i < applicantList.length; i++) {
-				if (applicantList[i]["status"] === "Interview") {
-					loadFeedback(applicantList[i]);
-				}
-			}
-		}
-	}, [applicantList]);
 
 	function getAverage(num: any) {
 		return (num / tApp) * 100;
@@ -266,32 +185,6 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{session && atsVersion === "enterprise" && userRole != "Hiring Manager" && (
-					<ChatAssistance
-						accessToken={session.accessToken}
-						notifyStatus={notify}
-						setnotify={setnotify}
-						setfreeslotdata={setfreeslotdata}
-						freeslotdata={freeslotdata}
-						setEditSchdInter={setEditSchdInter}
-						cardarefid={cardarefid}
-						cardstatus={cardstatus}
-						orgpro={orgpro}
-						change={change}
-						setchange={setchange}
-						intername={intername}
-						interdesc={interdesc}
-						interdate={interdate}
-						interstime={interstime}
-						interetime={interetime}
-						setintername={setintername}
-						setinterdesc={setinterdesc}
-						setinterdate={setinterdate}
-						setinterstime={setinterstime}
-						setinteretime={setinteretime}
-						loadApplicant={loadApplicant}
-					/>
-				)}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -616,107 +509,6 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 										<div className="text-center">
 											<Button label={t("Btn.Save")} />
 										</div>
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
-						</div>
-					</div>
-				</Dialog>
-			</Transition.Root>
-			<Transition.Root show={editSchdInter} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setEditSchdInter}>
-					<Transition.Child
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-					</Transition.Child>
-
-					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-								enterTo="opacity-100 translate-y-0 sm:scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
-									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">{t("Words.ScheduleInterview")}</h4>
-										<button
-											type="button"
-											className="leading-none hover:text-gray-700"
-											onClick={() => setEditSchdInter(false)}
-										>
-											<i className="fa-solid fa-xmark"></i>
-										</button>
-									</div>
-									<div className="p-8">
-										<FormField
-											label={t("Form.InterviewName")}
-											fieldType="input"
-											inputType="text"
-											value={intername}
-											handleChange={(e) => setintername(e.target.value)}
-										/>
-										{/* <FormField label="Date & Time" fieldType="date" singleSelect showTimeSelect showHours /> */}
-										{/* <FormField label="Platform" fieldType="select" /> */}
-										<FormField
-											label={t("Form.Description")}
-											fieldType="textarea"
-											value={interdesc}
-											handleChange={(e) => setinterdesc(e.target.value)}
-										/>
-										{/* <FormField label="Add Interviewer" fieldType="select" /> */}
-
-										<div className="mb-4 last:mb-0">
-											<div>
-												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{t("Form.StartDate")}
-												</label>
-												<div className="relative">
-													<input type="date" value={interdate} onChange={(e) => setinterdate(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
-												</div>
-											</div>
-										</div>
-										<div className="mb-4 last:mb-0">
-											<div>
-												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{t("Form.StartTime")}
-												</label>
-												<div className="relative">
-													<input type="time" value={interstime} onChange={(e) => setinterstime(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
-												</div>
-											</div>
-										</div>
-										<div className="mb-4 last:mb-0">
-											<div>
-												<label htmlFor={`field_start_date`} className="mb-1 inline-block font-bold">
-													{t("Form.EndTime")}
-												</label>
-												<div className="relative">
-													<input type="time" value={interetime} onChange={(e) => setinteretime(e.target.value)} className="min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700" />
-												</div>
-											</div>
-										</div>
-
-										<Button
-											label={t("Btn.Confirm")}
-											disabled={!checkForm()}
-											btnType={"button"}
-											handleClick={() => {
-												setEditSchdInter(false);
-												setchange(true);
-											}}
-										/>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -675,7 +675,7 @@ export default function VendorClients() {
 
 													<aside className="mb-4">
 														<h3 className="mb-2 font-bold">Job Description</h3>
-														<article className="text-darkGray dark:text-gray-400">
+														<article className="jd_article">
 															{vjdata[vjobclick]["jobDescription"] ? (
 																<>
 																	<div dangerouslySetInnerHTML={{ __html: vjdata[vjobclick]["jobDescription"] }}></div>

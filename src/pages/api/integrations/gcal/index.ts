@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
 		)
 		.catch((err) => {
-			console.log(err);
+			// console.log(err);
 			return { data: { success: false } };
 		});
 
