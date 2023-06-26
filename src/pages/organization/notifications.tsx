@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { axiosInstanceAuth } from "../api/axiosApi";
 import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function OrgNotifications() {
 	const router = useRouter();
@@ -83,6 +85,16 @@ export default function OrgNotifications() {
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[1100px] px-4 py-4">
+							{
+								Array(6).fill(
+									<>
+									<div className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600 px-8 py-4">
+										<Skeleton width={600} style={{maxWidth: '100%'}} />
+										<Skeleton width={170} style={{maxWidth: '100%'}} />
+									</div>
+									</>
+								)
+							}
 							{notification &&
 								notification.length > 0 &&
 								notification.map((data, i) =>
