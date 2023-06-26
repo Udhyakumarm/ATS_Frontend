@@ -16,6 +16,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export default function OrgNotifications() {
 	const router = useRouter();
 	const { data: session } = useSession();
+	const [loader, setloader] = useState(true);
 	const [token, settoken] = useState("");
 	const [notification, setnotification] = useState([]);
 
@@ -40,9 +41,11 @@ export default function OrgNotifications() {
 				.then(async (res) => {
 					console.log("!", res.data);
 					setnotification(res.data);
+					setloader(false);
 				})
 				.catch((err) => {
 					console.log("!", err);
+					setloader(false);
 				});
 		} else {
 			await axiosInstanceAuth2
@@ -50,9 +53,11 @@ export default function OrgNotifications() {
 				.then(async (res) => {
 					console.log("!", res.data);
 					setnotification(res.data);
+					setloader(false);
 				})
 				.catch((err) => {
 					console.log("!", err);
+					setloader(false);
 				});
 		}
 	}
@@ -85,93 +90,102 @@ export default function OrgNotifications() {
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[1100px] px-4 py-4">
-							{
+							{loader ? (
 								Array(6).fill(
 									<>
-									<div className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600 px-8 py-4">
-										<Skeleton width={600} style={{maxWidth: '100%'}} />
-										<Skeleton width={170} style={{maxWidth: '100%'}} />
-									</div>
+										<div className="mb-4 overflow-hidden rounded-normal bg-lightBlue px-8 py-4 last:mb-0 dark:bg-gray-600">
+											<Skeleton width={600} style={{ maxWidth: "100%" }} />
+											<Skeleton width={170} style={{ maxWidth: "100%" }} />
+										</div>
 									</>
 								)
-							}
-							{notification &&
-								notification.length > 0 &&
-								notification.map((data, i) =>
-									data["notification_type"] === null || data["notification_type"] === "" ? (
-										<div
-											className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600"
-											key={i}
-										>
-											<div className="px-8 py-4">
-												<h3 className="mb-1 font-bold">{data["title"]}</h3>
-												<p className="text-sm text-darkGray dark:text-gray-400">
-													{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
-													{moment(data["timestamp"]).format("h:mm a")}
-												</p>
-											</div>
-										</div>
-									) : (
-										<>
-											{data["notification_type"] === "Job" && (
+							) : (
+								<>
+									{notification && notification.length > 0 ? (
+										notification.map((data, i) =>
+											data["notification_type"] === null || data["notification_type"] === "" ? (
 												<div
 													className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600"
 													key={i}
 												>
-													<div className="border-b px-8 py-4 dark:border-gray-500">
+													<div className="px-8 py-4">
 														<h3 className="mb-1 font-bold">{data["title"]}</h3>
 														<p className="text-sm text-darkGray dark:text-gray-400">
-															{moment(data["timestamp"]).format("MMMM DD, YYYY")} at
-															{moment(data["timestamp"]).format("h:mm a")}
-														</p>
-													</div>
-													<div className="px-8 py-4">
-														<div className="mb-4 flex flex-wrap">
-															<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
-																<h6 className="text-sm font-bold">Scheduled by</h6>
-																<p className="text-[12px] text-darkGray dark:text-gray-400">
-																	{data["to_user"]["email"]}
-																</p>
-															</div>
-															<div className="w-full pl-4 lg:max-w-[20%]">
-																<h6 className="text-sm font-bold">Job ID</h6>
-																<p className="text-[12px] text-darkGray dark:text-gray-400">{data["job"]["refid"]}</p>
-															</div>
-														</div>
-													</div>
-												</div>
-											)}
-
-											{data["notification_type"] === "Applicant" && (
-												<div className="mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0" key={i}>
-													<div className="border-b border-green-200 px-8 py-4">
-														<h3 className="mb-1 font-bold dark:text-black">{data["title"]}</h3>
-														<p className="text-sm text-darkGray">
 															{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
 															{moment(data["timestamp"]).format("h:mm a")}
 														</p>
 													</div>
-													<div className="px-8 py-4">
-														<div className="mb-4 flex flex-wrap">
-															<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
-																<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
-																<p className="text-[12px] text-darkGray">{data["to_user"]["email"]}</p>
+												</div>
+											) : (
+												<>
+													{data["notification_type"] === "Job" && (
+														<div
+															className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600"
+															key={i}
+														>
+															<div className="border-b px-8 py-4 dark:border-gray-500">
+																<h3 className="mb-1 font-bold">{data["title"]}</h3>
+																<p className="text-sm text-darkGray dark:text-gray-400">
+																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at
+																	{moment(data["timestamp"]).format("h:mm a")}
+																</p>
 															</div>
-															<div className="mr-4 w-full pl-4 lg:max-w-[20%]">
-																<h6 className="text-sm font-bold dark:text-black">Job ID</h6>
-																<p className="text-[12px] text-darkGray">{data["applicant"]["job"]["refid"]}</p>
-															</div>
-															<div className="w-full pl-4 lg:max-w-[20%]">
-																<h6 className="text-sm font-bold dark:text-black">Applicant ID</h6>
-																<p className="text-[12px] text-darkGray">{data["applicant"]["arefid"]}</p>
+															<div className="px-8 py-4">
+																<div className="mb-4 flex flex-wrap">
+																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold">Scheduled by</h6>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			{data["to_user"]["email"]}
+																		</p>
+																	</div>
+																	<div className="w-full pl-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold">Job ID</h6>
+																		<p className="text-[12px] text-darkGray dark:text-gray-400">
+																			{data["job"]["refid"]}
+																		</p>
+																	</div>
+																</div>
 															</div>
 														</div>
-													</div>
-												</div>
-											)}
+													)}
+
+													{data["notification_type"] === "Applicant" && (
+														<div className="mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0" key={i}>
+															<div className="border-b border-green-200 px-8 py-4">
+																<h3 className="mb-1 font-bold dark:text-black">{data["title"]}</h3>
+																<p className="text-sm text-darkGray">
+																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
+																	{moment(data["timestamp"]).format("h:mm a")}
+																</p>
+															</div>
+															<div className="px-8 py-4">
+																<div className="mb-4 flex flex-wrap">
+																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
+																		<p className="text-[12px] text-darkGray">{data["to_user"]["email"]}</p>
+																	</div>
+																	<div className="mr-4 w-full pl-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Job ID</h6>
+																		<p className="text-[12px] text-darkGray">{data["applicant"]["job"]["refid"]}</p>
+																	</div>
+																	<div className="w-full pl-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Applicant ID</h6>
+																		<p className="text-[12px] text-darkGray">{data["applicant"]["arefid"]}</p>
+																	</div>
+																</div>
+															</div>
+														</div>
+													)}
+												</>
+											)
+										)
+									) : (
+										<>
+											<div>No Notification</div>
 										</>
-									)
-								)}
+									)}
+								</>
+							)}
 
 							{/* <div className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600">
 								<div className="border-b px-8 py-4 dark:border-gray-500">
