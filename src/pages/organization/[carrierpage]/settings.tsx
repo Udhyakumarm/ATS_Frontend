@@ -14,7 +14,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 			<main className="py-8">
 				<div className="container">
 					<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
-						{upcomingSoon ? (
+						{!upcomingSoon ? (
 							<UpcomingComp />
 						) : (
 							<>
