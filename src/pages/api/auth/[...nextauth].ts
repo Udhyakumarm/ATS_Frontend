@@ -49,24 +49,6 @@ export const authOptions: NextAuthOptions = {
 	},
 	debug: process.env.NODE_ENV === "development",
 	providers: [
-		GoogleProvider({
-			clientId: process.env.GOOGLE_CLIENT_ID as string,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
-		}),
-		LinkedInProvider({
-			clientId: process.env.LINKEDIN_CLIENT_ID as string,
-			clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string
-		}),
-		GitHubProvider({
-			clientId:
-				process.env.NODE_ENV === "production"
-					? (process.env.GITHUB_CLIENT_PROD_ID as string)
-					: (process.env.GITHUB_CLIENT_DEV_ID as string),
-			clientSecret:
-				process.env.NODE_ENV === "production"
-					? (process.env.GITHUB_CLIENT_PROD_SECRET as string)
-					: (process.env.GITHUB_CLIENT_DEV_SECRET as string)
-		}),
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {
