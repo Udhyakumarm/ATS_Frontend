@@ -654,7 +654,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											<p className="mb-2 text-sm text-darkGray">{appdata["arefid"]}</p>
 											<p className="mb-2 text-sm text-darkGray">
 												{t("Words.Source")} - &nbsp;
-												<span className="font-semibold uppercase text-primary">{type}</span>
+												<span className="font-semibold uppercase text-primary dark:text-white">{type}</span>
 											</p>
 										</div>
 										<div className="flex flex-wrap items-center justify-between">
@@ -704,7 +704,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										{profileData["skills"] && profileData["skills"].length > 0 ? (
 											<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
 												{profileData["skills"].split(",").map((data: any, i: React.Key) => (
-													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center" key={i}>
+													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 dark:bg-gray-700 px-4 py-2 text-center" key={i}>
 														{data}
 													</li>
 												))}
@@ -883,7 +883,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -898,7 +898,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -913,7 +913,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -928,7 +928,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -943,7 +943,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -957,7 +957,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
 													{profileData["resume"] && profileData["resume"].length > 0 && (
 														<>
-															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
+															<div className="flex flex-wrap items-center justify-between bg-lightBlue dark:bg-gray-900 p-2 px-8 text-sm">
 																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
 																	href={
@@ -965,7 +965,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																			? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																	}
-																	className="my-2 inline-block font-bold text-primary hover:underline"
+																	className="my-2 inline-block font-bold text-primary hover:underline dark:text-white"
 																	download={profileData["resume"].split("/").pop()}
 																>
 																	<i className="fa-solid fa-download mr-2"></i>
@@ -978,7 +978,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
-																className="h-[50vh] w-[100%]"
+																className="h-[50vh] w-[100%] max-w-[800px] mx-auto"
 															></iframe>
 														</>
 													)}
@@ -1942,10 +1942,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	{aiquestion &&
 																		aiquestion.map((data, i) => (
 																			<div
-																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-700"
+																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800"
 																				key={i}
 																			>
-																				<h5 className="text-sm text-darkGray dark:text-gray-400">{data}</h5>
+																				<h5 className="text-sm text-darkGray dark:text-gray-100">{data}</h5>
 																			</div>
 																		))}
 																</div>

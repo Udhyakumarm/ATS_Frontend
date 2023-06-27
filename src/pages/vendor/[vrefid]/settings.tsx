@@ -164,7 +164,7 @@ export default function VendorSettings() {
 														"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 														" " +
 														(selected
-															? "border-primary text-primary"
+															? "border-primary text-primary dark:border-white dark:text-white"
 															: "border-transparent text-darkGray dark:text-gray-400")
 													}
 												>

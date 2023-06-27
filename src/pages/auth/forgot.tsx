@@ -48,7 +48,7 @@ export default function AuthForgot() {
 					<div className="mb-4 text-center">
 						<Logo width={180} />
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
+					<div className="rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						<h1 className="mb-6 text-3xl font-bold">
 							{srcLang === "ja" ? (
 								"パスワードを忘れた方"
@@ -80,7 +80,7 @@ export default function AuthForgot() {
 						</div>
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Already have an Account?"}{" "}
-							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline">
+							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === "ja" ? "こちら" : "Sign In"}
 							</Link>
 						</p>

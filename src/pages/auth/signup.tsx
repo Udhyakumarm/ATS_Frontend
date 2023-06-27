@@ -284,7 +284,7 @@ export default function AuthSignUp() {
 						</div>
 						<p className="text-center text-darkGray">
 							{srcLang === 'ja' ? 'アカウント作成がまだの方は' : 'Already have an Account?'}{" "}
-							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline">
+							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === 'ja' ? 'こちら' : 'Sign In'}
 							</Link>
 						</p>

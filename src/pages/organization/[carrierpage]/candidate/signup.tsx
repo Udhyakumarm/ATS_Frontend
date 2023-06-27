@@ -281,7 +281,7 @@ export default function CandSignUp() {
 						</div>
 						<p className="text-center text-darkGray">
 							Already have an Account?{" "}
-							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline dark:text-white">
 								Sign In
 							</Link>
 						</p>

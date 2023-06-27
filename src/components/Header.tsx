@@ -115,7 +115,7 @@ export default function Header() {
 								<Link
 									href={"/organization/" + cname + "/candidate/signin"}
 									className={
-										`ml-4 inline-block border-b-2 px-2 py-[10px] hover:text-primary` +
+										`ml-4 inline-block border-b-2 px-2 py-[10px] hover:text-primary dark:hover:text-white dark:hover:underline` +
 										" " +
 										(router.pathname == "/organization/" + cname + "/candidate/signin"
 											? "border-b-primary text-primary"
@@ -154,7 +154,7 @@ export default function Header() {
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
 												<li>
-													<Link href={`/organization/${cname}/settings`} className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200">
+													<Link href={`/organization/${cname}/settings`} className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200 dark:hover:text-black">
 														<i className="fa-solid fa-gear mr-3"></i>
 														{srcLang==='ja' ? '設定' : 'Settings'}
 													</Link>

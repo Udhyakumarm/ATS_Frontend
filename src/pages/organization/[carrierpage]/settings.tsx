@@ -4,8 +4,13 @@ import UploadProfile from "@/components/UploadProfile";
 import { Dialog, Transition } from "@headlessui/react";
 import { useState, useRef, Fragment } from "react";
 import UpcomingComp from "@/components/organization/upcomingComp";
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useCarrierStore, useLangStore } from "@/utils/code";
 
 export default function CandSettings({ upcomingSoon }: any) {
+	const { t } = useTranslation('common')
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const [changePass, setChangePass] = useState(false);
 	const [accountDelete, setAccountDelete] = useState(false);
@@ -23,17 +28,17 @@ export default function CandSettings({ upcomingSoon }: any) {
 								</div>
 								<div className="-mx-4 flex flex-wrap">
 									<div className="mb-4 w-full px-4 md:max-w-[50%]">
-										<FormField fieldType="input" inputType="input" label="First Name" />
+										<FormField fieldType="input" inputType="input" label={t('Form.FirstName')} />
 									</div>
 									<div className="mb-4 w-full px-4 md:max-w-[50%]">
-										<FormField fieldType="input" inputType="input" label="Last Name" />
+										<FormField fieldType="input" inputType="input" label={t('Form.LastName')} />
 									</div>
 								</div>
-								<FormField fieldType="input" inputType="email" label="Email" required />
+								<FormField fieldType="input" inputType="email" label={t('Form.Email')} required />
 								<div className="mb-4">
 									<h6 className="mb-1 inline-block font-bold">Unique ID</h6>
 									<div className="flex w-full items-center rounded-normal border border-borderColor p-1 dark:border-gray-600 dark:bg-gray-700">
-										<input type="text" className="grow border-0 text-sm focus:ring-0" />
+										<input type="text" className="grow border-0 text-sm focus:ring-0 dark:bg-gray-700" />
 										<button type="button" className="w-[50px] py-2">
 											<i className="fa-solid fa-copy"></i>
 										</button>
@@ -41,14 +46,14 @@ export default function CandSettings({ upcomingSoon }: any) {
 								</div>
 								<hr className="my-4" />
 								<div>
-									<h6 className="mb-1 font-bold">Password Settings</h6>
-									<Button btnType="button" label="Change Password" handleClick={() => setChangePass(true)} />
+									<h6 className="mb-1 font-bold">{t('Form.Password')} {t('Words.Settings')}</h6>
+									<Button btnType="button" label={t('Btn.ChangePassword')} handleClick={() => setChangePass(true)} />
 								</div>
 								<hr className="my-4" />
 								<Button
 									btnType="submit"
 									btnStyle="danger"
-									label="Delete Account"
+									label={t('Btn.DeleteAccount')}
 									handleClick={() => setAccountDelete(true)}
 								/>
 							</>
@@ -83,7 +88,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Change Password</h4>
+										<h4 className="flex items-center font-semibold leading-none">{t("Btn.ChangePassword")}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -93,11 +98,11 @@ export default function CandSettings({ upcomingSoon }: any) {
 										</button>
 									</div>
 									<div className="p-8">
-										<FormField fieldType="input" inputType="password" label="Old Password" required />
-										<FormField fieldType="input" inputType="password" label="New Password" required />
-										<FormField fieldType="input" inputType="password" label="Confirm Password" required />
+										<FormField fieldType="input" inputType="password" label={t("Form.OldPassword")} required />
+										<FormField fieldType="input" inputType="password" label={t("Form.NewPassword")} required />
+										<FormField fieldType="input" inputType="password" label={t("Form.ConfirmPassword")} required />
 										<div className="text-center">
-											<Button label="Submit" />
+											<Button label={t("Btn.Submit")} />
 										</div>
 									</div>
 								</Dialog.Panel>
@@ -133,7 +138,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Delete Account</h4>
+										<h4 className="flex items-center font-semibold leading-none">{t('Btn.DeleteAccount')}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -143,13 +148,13 @@ export default function CandSettings({ upcomingSoon }: any) {
 										</button>
 									</div>
 									<div className="p-8">
-										<h3 className="mb-4 text-center text-lg font-bold">Are you sure want to delete your account?</h3>
+										<h3 className="mb-4 text-center text-lg font-bold">{srcLang==='ja' ? 'アカウントを削除してもよろしいですか?' : 'Are you sure want to delete your account?'}</h3>
 										<div className="flex flex-wrap justify-center">
 											<div className="my-1 mr-4 last:mr-0">
-												<Button btnStyle="gray" label="No" />
+												<Button btnStyle="gray" label={t('Select.No')} />
 											</div>
 											<div className="my-1 mr-4 last:mr-0">
-												<Button btnStyle="danger" label="Yes" />
+												<Button btnStyle="danger" label={t('Select.Yes')} />
 											</div>
 										</div>
 									</div>
@@ -161,4 +166,12 @@ export default function CandSettings({ upcomingSoon }: any) {
 			</Transition.Root>
 		</>
 	);
+}
+export async function getServerSideProps({ context, locale }:any) {
+	const translations = await serverSideTranslations(locale, ['common']);
+	return {
+		props: {
+		...translations
+		},
+	};
 }

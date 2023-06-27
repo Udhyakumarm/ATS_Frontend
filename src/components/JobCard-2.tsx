@@ -186,7 +186,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								>
 									<Menu.Items
 										className={
-											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
+											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
 										}
 									>
 										{job.jobStatus === "Active" && (

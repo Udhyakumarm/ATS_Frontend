@@ -993,7 +993,7 @@ export default function OfferManagement() {
 															"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary"
+																? "border-primary text-primary dark:text-white dark:border-white"
 																: "border-transparent text-darkGray dark:text-gray-400")
 														}
 													>
@@ -1008,7 +1008,7 @@ export default function OfferManagement() {
 															"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary"
+																? "border-primary text-primary dark:text-white dark:border-white"
 																: "border-transparent text-darkGray dark:text-gray-400")
 														}
 													>

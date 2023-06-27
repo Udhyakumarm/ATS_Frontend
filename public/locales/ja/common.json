@@ -62,7 +62,9 @@
         "Rejected": "拒否されました",
         "Approved": "承認済み",
         "Platform": "使用ツール",
-        "InterviewDuration": "インタビュー時間"
+        "InterviewDuration": "インタビュー時間",
+        "CollegeName": "大学名",
+        "CompanyIssuedName": "会社発行名"
     },
     "Btn": {
         "SignIn": "ログイン",
@@ -103,7 +105,8 @@
         "ComingSoon": "準備中",
         "GoPremium": "プレミアムプランにアップグレード",
         "Upgrade": "アップグレード",
-        "LoadMore": "もっと読み込む"
+        "LoadMore": "もっと読み込む",
+        "DeleteAccount": "アカウントを削除する"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -266,7 +269,8 @@
         "Hiring": "採用決定率",
         "ApplicantSourced": "採用実績",
         "BasicInformation": "基本情報",
-        "GenerateDescription": "説明の生成"
+        "GenerateDescription": "説明の生成",
+        "ApplyJob": "求人に応募する"
     },
     "Plans": {
         "Starter": "スターター",

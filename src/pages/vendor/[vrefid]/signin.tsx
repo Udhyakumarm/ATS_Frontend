@@ -95,14 +95,17 @@ export default function CanCareerSignIn({ providers }: any) {
 				console.log(err);
 				if (err.response.data.non_field_errors) {
 					err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+					setBtnLoader(false);
 					return false;
 				}
 				if (err.response.data.detail) {
 					toastcomp(err.response.data.detail, "error");
+					setBtnLoader(false);
 					return false;
 				}
 				if (err.response.data.errors.email) {
 					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+					setBtnLoader(false);
 					return false;
 				}
 			});
@@ -157,7 +160,7 @@ export default function CanCareerSignIn({ providers }: any) {
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
 								</label>
 							</div>
-							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline">
+							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === "ja" ? "パスワードを忘れた方" : "Forgot Password?"}
 							</Link>
 						</div>
@@ -171,7 +174,7 @@ export default function CanCareerSignIn({ providers }: any) {
 						)}
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
-							<Link href={`/vendor/${vrefid}/signup`} className="font-bold text-primary hover:underline">
+							<Link href={`/vendor/${vrefid}/signup`} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === "ja" ? "こちら" : "Create Account"}
 							</Link>
 						</p>

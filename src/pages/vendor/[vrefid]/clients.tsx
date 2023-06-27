@@ -625,7 +625,7 @@ export default function VendorClients() {
 																	"mr-16 border-b-4 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -658,8 +658,8 @@ export default function VendorClients() {
 													</aside>
 													<hr className="my-4" />
 													<aside className="mb-4">
-														<h3 className="mb-2 font-bold">Department Description</h3>
-														<article className="text-darkGray dark:text-gray-400">
+														<h3 className="mb-2 font-bold">{t('Words.Department')} {t('Form.Description')}</h3>
+														<article className="text-darkGray dark:text-gray-400 text-sm">
 															{vjdata[vjobclick]["jobDeptDescription"] ? (
 																<>
 																	<div
@@ -674,8 +674,8 @@ export default function VendorClients() {
 													<hr className="my-4" />
 
 													<aside className="mb-4">
-														<h3 className="mb-2 font-bold">Job Description</h3>
-														<article className="jd_article">
+														<h3 className="mb-2 font-bold">{t('Words.JobDescription')}</h3>
+														<article className="jd_article text-sm">
 															{vjdata[vjobclick]["jobDescription"] ? (
 																<>
 																	<div dangerouslySetInnerHTML={{ __html: vjdata[vjobclick]["jobDescription"] }}></div>
@@ -893,7 +893,7 @@ export default function VendorClients() {
 																			<td className="px-3 py-2 text-left">{data["status"]}</td>
 																			<td className="px-3 py-2 text-left">{moment(data["timestamp"]).fromNow()}</td>
 																			<td className="px-3 py-2 text-left">
-																				<button type="button" className="text-primary hover:underline">
+																				<button type="button" className="text-primary hover:underline dark:text-white">
 																					{t("Btn.View")}
 																				</button>
 																			</td>
@@ -965,7 +965,7 @@ export default function VendorClients() {
 												>
 													<h5 className="mb-2 text-darkGray">{t("Words.DragDropResumeHere")}</h5>
 													<p className="mb-2 text-sm">
-														<span className="font-semibold text-primary">{t("Words.ClickHereToUpload")}</span>
+														<span className="font-semibold text-primary dark:text-white">{t("Words.ClickHereToUpload")}</span>
 													</p>
 													<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
 													<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
@@ -1150,7 +1150,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -1174,7 +1174,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Form.CompanyName")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
@@ -1182,7 +1182,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Words.JobType")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`jtype${data}`}
 																				/>
 																			</div>
@@ -1192,7 +1192,7 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
@@ -1200,14 +1200,14 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
 																		</div>
 																		<textarea
 																			placeholder={t("Form.Description")}
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																			id={`desc${data}`}
 																		></textarea>
 																	</article>
@@ -1245,7 +1245,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Words.Education") + " " + t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -1269,7 +1269,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Words.Education") + " " + t("Form.FullName")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
@@ -1277,7 +1277,7 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
@@ -1285,14 +1285,14 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
 																		</div>
 																		<textarea
 																			placeholder={t("Form.Description")}
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																			id={`desc${data}`}
 																		></textarea>
 																	</article>
@@ -1329,7 +1329,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -1353,7 +1353,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Form.CompanyName")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
@@ -1361,7 +1361,7 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
@@ -1369,7 +1369,7 @@ export default function VendorClients() {
 																				<input
 																					type="date"
 																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
@@ -1379,7 +1379,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Form.CredentialsID")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cid${data}`}
 																				/>
 																			</div>
@@ -1387,7 +1387,7 @@ export default function VendorClients() {
 																				<input
 																					type="text"
 																					placeholder={t("Form.CredentialURL")}
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`curl${data}`}
 																				/>
 																			</div>
@@ -1424,14 +1424,14 @@ export default function VendorClients() {
 																		<input
 																			type="text"
 																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[60%] pl-4">
 																		<input
 																			type="text"
 																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[10%] pl-4 text-right">
@@ -1469,14 +1469,14 @@ export default function VendorClients() {
 																		<input
 																			type="text"
 																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[60%] pl-4">
 																		<input
 																			type="text"
 																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[10%] pl-4 text-right">

@@ -306,7 +306,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 															"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary"
+																? "border-primary text-primary dark:text-white dark:border-white"
 																: "border-transparent text-darkGray dark:text-gray-400")
 														}
 													>

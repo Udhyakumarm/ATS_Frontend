@@ -55,7 +55,6 @@ export default function CandSignIn({ providers }: any) {
 						})
 						.then(async (response) => {
 							console.log("@", res.data);
-							setBtnLoader(false);
 							setSuccess(true);
 							if (response.data.role) {
 								setrole(response.data.role);
@@ -94,14 +93,17 @@ export default function CandSignIn({ providers }: any) {
 							console.log(err);
 							if (err.response.data.non_field_errors) {
 								err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+								setBtnLoader(false);
 								return false;
 							}
 							if (err.response.data.detail) {
 								toastcomp(err.response.data.detail, "error");
+								setBtnLoader(false);
 								return false;
 							}
 							if (err.response.data.errors.email) {
 								err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+								setBtnLoader(false);
 								return false;
 							}
 						});
@@ -110,6 +112,7 @@ export default function CandSignIn({ providers }: any) {
 					setrole("");
 					setuser([]);
 					toastcomp(res.data.error, "error");
+					setBtnLoader(false);
 				}
 			})
 			.catch((err) => {
@@ -117,6 +120,7 @@ export default function CandSignIn({ providers }: any) {
 				setrole("");
 				setuser([]);
 				console.log(err);
+				setBtnLoader(false);
 			});
 	};
 	return (
@@ -179,7 +183,7 @@ export default function CandSignIn({ providers }: any) {
 									Remember Me
 								</label>
 							</div>
-							<Link href={`/organization/${cname}/candidate/forgot`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/forgot`} className="font-bold text-primary hover:underline dark:text-white">
 								Forgot Password?
 							</Link>
 						</div>
@@ -193,7 +197,7 @@ export default function CandSignIn({ providers }: any) {
 						)}
 						<p className="text-center text-darkGray">
 							Not sign up yet ?{" "}
-							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline dark:text-white">
 								Create Account
 							</Link>
 						</p>

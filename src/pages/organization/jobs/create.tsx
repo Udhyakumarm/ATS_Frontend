@@ -716,7 +716,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary"
+																? "border-primary text-primary dark:text-white dark:border-white"
 																: "border-transparent text-darkGray dark:text-gray-400") +
 															" " +
 															(!item.hide && "display-none")
@@ -1160,7 +1160,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																			"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
 																			" " +
 																			(selected
-																				? "border-primary text-primary"
+																				? "border-primary text-primary dark:text-white dark:border-white"
 																				: "border-transparent text-darkGray dark:text-gray-400")
 																		}
 																	>
@@ -1461,7 +1461,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 											</h4>
 											<ul className="flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold">
 												<li className="mr-3 list-none">{jetype ? jetype : <>Employment Type Not Disclosed</>}</li>
-												<li className="mr-3">
+												{/* <li className="mr-3">
 													{jcurr && jfsalary && jesalary ? (
 														<>
 															{jcurr} {jfsalary} to {jesalary}
@@ -1469,7 +1469,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													) : (
 														<>Salary Not Disclosed</>
 													)}
-												</li>
+												</li> */}
 												<li className="mr-3">Vacancy - {jvac ? jvac : <>Not Disclosed</>}</li>
 											</ul>
 										</aside>
@@ -1485,7 +1485,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										<div>
 											<div className="border-b py-4 last:border-b-0 dark:border-b-gray-600">
 												<h5 className="mb-2 font-bold">{t("Words.JobDescription")}</h5>
-												<article>
+												<article className="jd_article">
 													{jdesc ? (
 														<>
 															<div dangerouslySetInnerHTML={{ __html: jdesc }}></div>
@@ -1648,7 +1648,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													<Link
 														href="/organization/jobs/active"
 														onClick={() => setPublishThanks(false)}
-														className="font-bold text-primary hover:underline"
+														className="font-bold text-primary hover:underline dark:text-white"
 													>
 														公開中の求人を確認する
 													</Link>
@@ -1658,7 +1658,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													<Link
 														href="/organization/jobs/active"
 														onClick={() => setPublishThanks(false)}
-														className="font-bold text-primary hover:underline"
+														className="font-bold text-primary hover:underline dark:text-white"
 													>
 														Check open jobs
 													</Link>
