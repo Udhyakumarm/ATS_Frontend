@@ -1,4 +1,4 @@
-import { useState, Fragment, useRef } from "react";
+import { useState, Fragment, useRef, useEffect } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Button from "./Button";
 import { useRouter } from "next/router";
@@ -11,12 +11,7 @@ import moment from "moment";
 import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
 import UpcomingComp from "./organization/upcomingComp";
 import { useLangStore } from "@/utils/code";
-import {
-	LinkedinShareButton,
-	TwitterShareButton,
-	FacebookShareButton,
-	TelegramShareButton,
-  } from "react-share"
+import { LinkedinShareButton, TwitterShareButton, FacebookShareButton, TelegramShareButton } from "react-share";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -24,7 +19,9 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
 	const [addCand, setAddCand] = useState(false);
-	const [shareJob, shareJobPopupOpen] = useState(false)
+	const [shareJob, shareJobPopupOpen] = useState(false);
+	const [count1, setcount1] = useState(0);
+	const [count2, setcount2] = useState(0);
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
@@ -134,6 +131,23 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		);
 	}
 
+	async function getCount() {
+		await axiosInstanceAuth2
+			.post(`/job/jobCard-applicant-count/${job.refid}/`)
+			.then((res) => {
+				setcount1(res.data.total);
+				setcount2(res.data.active);
+			})
+			.catch((err) => {
+				setcount1(0);
+				setcount2(0);
+			});
+	}
+
+	useEffect(() => {
+		getCount();
+	}, []);
+
 	return (
 		<>
 			<div className="h-full rounded-normal bg-white px-5 py-2 shadow-normal dark:bg-gray-700">
@@ -150,14 +164,13 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 					{!dashbaord && (
 						<div className="text-right text-gray-400">
-							{
-								job.jobStatus === "Active" &&
+							{job.jobStatus === "Active" && (
 								<>
 									<button type="button" className="mr-2 text-sm" onClick={() => shareJobPopupOpen(true)}>
 										<i className="fa-solid fa-share"></i>
 									</button>
 								</>
-							}
+							)}
 							<Menu as="div" className="relative inline-block">
 								<Menu.Button className={"p-2"}>
 									<i className="fa-solid fa-ellipsis-vertical"></i>
@@ -340,7 +353,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								</>
 							)}
 						</h5>
-						<h6 className="text-lg font-semibold">50</h6>
+						<h6 className="text-lg font-semibold">{count1}</h6>
 					</div>
 					<div className="mb-2 grow border-r px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
@@ -353,7 +366,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								</>
 							)}
 						</h5>
-						<h6 className="text-lg font-semibold">50</h6>
+						<h6 className="text-lg font-semibold">{count2}</h6>
 					</div>
 					<div className="mb-2 grow px-[15px]">
 						<h5 className="mb-1 text-darkGray dark:text-gray-400">
@@ -467,7 +480,9 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													</li>
 												</ul>
 												<article className="mt-3">
-													<h5 className="mb-2 font-bold">{srcLang === "ja" ? "部門案内文" : "Department Description"}</h5>
+													<h5 className="mb-2 font-bold">
+														{srcLang === "ja" ? "部門案内文" : "Department Description"}
+													</h5>
 													{job.jobDeptDescription ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: job.jobDeptDescription }}></p>
@@ -878,7 +893,9 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">{srcLang === 'ja' ? 'ジョブを共有する' : 'Share Job Via'}</h4>
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "ジョブを共有する" : "Share Job Via"}
+										</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -888,40 +905,29 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										</button>
 									</div>
 									<div className="p-8">
-										<ul className="flex items-center flex-wrap justify-center text-center text-[#6D27F9] dark:text-[#fff] text-xl">
-											<li className="w-[33.33%] px-[10px] mb-2">
-											<LinkedinShareButton
-												url={`http://localhost:3000/organization/jobs/${job.refid}`}
-											>
-												<i className="fa-brands fa-linkedin-in hover:text-black"></i>
-											</LinkedinShareButton>
+										<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<LinkedinShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+													<i className="fa-brands fa-linkedin-in hover:text-black"></i>
+												</LinkedinShareButton>
 											</li>
-											<li className="w-[33.33%] px-[10px] mb-2">
-											<TwitterShareButton
-												url={`http://localhost:3000/organization/jobs/${job.refid}`}
-											>
-												<i className="fa-brands fa-twitter hover:text-black"></i>
-											</TwitterShareButton>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<TwitterShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+													<i className="fa-brands fa-twitter hover:text-black"></i>
+												</TwitterShareButton>
 											</li>
-											<li className="w-[33.33%] px-[10px] mb-2">
-											<FacebookShareButton
-												url={`http://localhost:3000/organization/jobs/${job.refid}`}
-											>
-												<i className="fa-brands fa-facebook-f hover:text-black"></i>
-											</FacebookShareButton>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<FacebookShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+													<i className="fa-brands fa-facebook-f hover:text-black"></i>
+												</FacebookShareButton>
 											</li>
-											<li className="w-[33.33%] px-[10px] mb-2">
-											<TelegramShareButton
-												url={`http://localhost:3000/organization/jobs/${job.refid}`}
-											>
-												<i className="fa-brands fa-telegram hover:text-black"></i>
-											</TelegramShareButton>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<TelegramShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+													<i className="fa-brands fa-telegram hover:text-black"></i>
+												</TelegramShareButton>
 											</li>
-											<li className="w-[33.33%] px-[10px] mb-2">
-												<button
-													type="button"
-													className="hover:text-black"
-												>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<button type="button" className="hover:text-black">
 													<i className="fa-regular fa-copy"></i>
 												</button>
 											</li>

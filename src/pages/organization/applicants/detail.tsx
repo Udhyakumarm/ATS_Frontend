@@ -64,6 +64,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	const [selectedPerson, setSelectedPerson] = useState(people[3]);
 
+	//tiemline
+	const [timeline, settimeline] = useState([]);
+
 	//ai interview question
 	const [aires, setaires] = useState("");
 	const [aiquestion, setaiquestion] = useState([]);
@@ -127,6 +130,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Status Changed", "success");
 					loadNEWAPPDATA(arefid);
+					loadTimeLine();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -141,6 +145,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Status Changed", "success");
 					loadNEWAPPDATA(arefid);
+					loadTimeLine();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -152,6 +157,19 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	function moveApplicant(v) {
 		setSelectedPerson(v);
 		chnageStatus(v["name"], appid);
+	}
+
+	async function loadTimeLine() {
+		await axiosInstanceAuth21
+			.get(`/job/list-candidate-timeline/${appdata["arefid"]}/`)
+			.then(async (res) => {
+				settimeline(res.data);
+				console.log("$", "timeline", res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				settimeline([]);
+			});
 	}
 
 	async function loadAIInterviewQuestion() {
@@ -249,6 +267,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		if (token && token.length > 0 && aiquestion.length <= 0) {
 			loadApplicantDetail();
 			loadFeedback();
+			loadTimeLine();
 			loadAIInterviewQuestion();
 		}
 	}, [token]);
@@ -278,6 +297,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
+				loadTimeLine();
 				if (feedbackStatus === "Reject") {
 					// chnageStatus("Rejected", appdata["arefid"]);
 				}
@@ -1821,11 +1841,41 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													{upcomingSoon ? (
+													{!upcomingSoon ? (
 														<UpcomingComp />
 													) : (
 														<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
-															<div className="flex items-start">
+															{timeline && timeline.length > 0 ? (
+																<>
+																	{timeline.map((data, i) => (
+																		<div className="flex items-start" key={i}>
+																			<div className="w-[80px] px-2 py-4">
+																				<p className="text-sm text-darkGray dark:text-gray-400">
+																					{moment(data["timestamp"]).format("D MMM")}
+																					<br />
+																					<small>{moment(data["timestamp"]).format("h:mm A")}</small>
+																				</p>
+																			</div>
+																			<div className="w-[calc(100%-80px)] pl-6">
+																				<div className="border-b dark:border-b-gray-600">
+																					<article className="py-4">
+																						<h6 className="mb-2 text-sm font-bold">{data["message"]}</h6>
+																						<p className="text-[12px] text-darkGray dark:text-gray-400">
+																							By - {data["user"]["email"]}
+																						</p>
+																					</article>
+																				</div>
+																			</div>
+																		</div>
+																	))}
+																</>
+															) : (
+																<>
+																	<div className="text-center">No Data</div>
+																</>
+															)}
+
+															{/* <div className="flex items-start">
 																<div className="w-[80px] px-2 py-4">
 																	<p className="text-sm text-darkGray dark:text-gray-400">
 																		8 Feb
@@ -1835,6 +1885,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																</div>
 																<div className="w-[calc(100%-80px)] pl-6">
 																	<div className="border-b dark:border-b-gray-600">
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
 																		<article className="py-4">
 																			<h6 className="mb-2 text-sm font-bold">
 																				Applicant has been shifted to new Job -Software Engineer
@@ -1864,38 +1922,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				By - Steve Paul : Collaborator
 																			</p>
 																		</article>
-																		<article className="py-4">
-																			<h6 className="mb-2 text-sm font-bold">
-																				Applicant has been shifted to new Job -Software Engineer
-																			</h6>
-																			<p className="text-[12px] text-darkGray dark:text-gray-400">
-																				By - Steve Paul : Collaborator
-																			</p>
-																		</article>
 																	</div>
 																</div>
-															</div>
-															<div className="flex items-start">
-																<div className="w-[80px] px-2 py-4">
-																	<p className="text-sm text-darkGray dark:text-gray-400">
-																		8 Feb
-																		<br />
-																		<small>2:30 PM</small>
-																	</p>
-																</div>
-																<div className="w-[calc(100%-80px)] pl-6">
-																	<div className="border-b dark:border-b-gray-600">
-																		<article className="py-4">
-																			<h6 className="mb-2 text-sm font-bold">
-																				Applicant has been shifted to new Job -Software Engineer
-																			</h6>
-																			<p className="text-[12px] text-darkGray dark:text-gray-400">
-																				By - Steve Paul : Collaborator
-																			</p>
-																		</article>
-																	</div>
-																</div>
-															</div>
+															</div> */}
 														</div>
 													)}
 												</Tab.Panel>

@@ -37,6 +37,7 @@ import { useLangStore } from "@/utils/code";
 export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const currentUser = useUserStore((state: { user: any }) => state.user);
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
 	const [addSocial, setAddSocial] = useState(false);
@@ -193,12 +194,21 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const [ofounder, setofounder] = useState([]);
 
 	const [ofounderimg, setofounderimg] = useState();
+	const [ofounderimgURL, setofounderimgURL] = useState("");
 	const [ofoundername, setofoundername] = useState("");
 	const [ofounderdes, setofounderdes] = useState("");
 
 	function verifyFounderPopup() {
 		return ofounderimg && ofoundername.length > 0 && ofounderdes.length > 0;
 	}
+
+	useEffect(() => {
+		if (ofounderimg) {
+			setofounderimgURL(URL.createObjectURL(ofounderimg));
+		} else {
+			setofounderimgURL("");
+		}
+	}, [ofounderimg]);
 
 	//Org Gallery
 	const [ogallery, setoGallery] = useState([]);
@@ -1075,10 +1085,28 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 													fieldType="input"
 													inputType="text"
 													label={t("Form.OrgName")}
-													value={oname}
-													handleChange={(e) => setoname(e.target.value)}
-													handleOnBlur={(e) => setbluroname(e.target.value)}
+													value={
+														oprofile &&
+														oprofile.length > 0 &&
+														oprofile[0]["user"] &&
+														oprofile[0]["user"]["company_name"]
+													}
+													// handleChange={(e) => setoname(e.target.value)}
+													// handleOnBlur={(e) => setbluroname(e.target.value)}
 													id={""}
+													readOnly
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<FormField
+													fieldType="input"
+													inputType="email"
+													label={t("Form.Email")}
+													value={currentUser[0]["email"]}
+													required
+													id={""}
+													readOnly
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -1100,18 +1128,6 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 													value={contact}
 													handleChange={(e) => setcontact(e.target.value)}
 													handleOnBlur={(e) => setblurcontact(e.target.value)}
-													id={""}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="email"
-													label={t("Form.Email")}
-													value={email}
-													handleChange={(e) => setemail(e.target.value)}
-													handleOnBlur={(e) => setbluremail(e.target.value)}
-													required
 													id={""}
 												/>
 											</div>
@@ -1286,32 +1302,22 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 														</div>
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
 															<FormField
-																fieldType="select"
+																fieldType="select2"
 																label={t("Form.CompanySize")}
-																value={[{ name: ocsize }]}
+																value={ocsize}
 																handleChange={setocsize}
 																singleSelect
-																options={[
-																	{ name: "1-10" },
-																	{ name: "10-50" },
-																	{ name: "50-100" },
-																	{ name: "100-500" },
-																	{ name: "500+" }
-																]}
+																options={["1-10", "10-50", "50-100", "100-500", "500+"]}
 															/>
 														</div>
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
 															<FormField
-																fieldType="select"
+																fieldType="select2"
 																label={t("Form.WorkplaceType")}
-																value={[{ name: owplace }]}
+																value={owplace}
 																handleChange={setowplace}
 																singleSelect
-																options={[
-																	{ name: t("Select.Remote") },
-																	{ name: t("Select.Office") },
-																	{ name: t("Select.Hybrid") }
-																]}
+																options={[t("Select.Remote"), t("Select.Office"), t("Select.Hybrid")]}
 															/>
 														</div>
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -1480,14 +1486,14 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 													)}
 												</Tab.Panel>
 												<Tab.Panel>
-													{upcomingSoon ? (
+													{!upcomingSoon ? (
 														<UpcomingComp />
 													) : (
 														<>
 															<h6 className="mb-2 font-bold">{t("Words.AddWidget")}</h6>
 															<div className="flex rounded-normal border">
 																<div className="flex w-[80%] items-center p-4">
-																	<p>{t("Words.AllJobsCustomizedCareerPage")}</p>
+																	<p>Link ATS Career Page with External Career Page</p>
 																</div>
 																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600">
 																	<Button
@@ -1812,7 +1818,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 									<div className="p-8">
 										<div className="mb-4 text-center">
-											<UploadProfile handleChange={(e) => setofounderimg(e.target.files[0])} />
+											<UploadProfile handleChange={(e) => setofounderimg(e.target.files[0])} purl={ofounderimgURL} />
 										</div>
 										<FormField
 											fieldType="input"
@@ -1883,51 +1889,45 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 									</div>
 									<div className="bg-primary p-8">
 										<p className="text-sm text-white">
-											{srcLang === "ja"
-												? "このウィジェットは、採用ページを含むお持ちのウェブページに利用できます。利用方法については、コンテンツ管理システム(CMS)にアクセスいただき、以下の手順をご確認ください。"
-												: "The careers widget is a simple list of your jobs embedded on a dedicated page on your website, such as your careers page. All you will need is access to the Content Management System (CMS) of your website, then follow the easy and simple steps mentioned below:"}
+											The careers widget is a simple giving ATS Career Page Url of your jobs embedded on a dedicated
+											page on your website, such as your careers page. All you will need is access to the Content
+											Management System (CMS) of your website, then follow the easy and simple steps mentioned below:
 										</p>
 									</div>
 									<div className="p-8">
 										<ul className="list-disc pl-4 text-sm">
 											<li className="mb-4">
-												{srcLang === "ja"
-													? "求人情報を掲載したいウェブページのHTMLにアクセス"
-													: "Access the HTML on the webpage where you want the jobs to display."}
+												Access the HTML on the webpage where you want the display search jobs button.
 											</li>
-											<li className="mb-4">
-												{srcLang === "ja"
-													? "以下のスクリプトタグをコピーし、該当するウェブページのヘッド部に貼り付け"
-													: "Copy the script tag mentioned below and paste it into the head section of your website."}
-												<div className="mt-2 flex rounded border">
-													<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
-														<p className="text-[12px]">
-															&#60;script
-															src=&ldquo;https://app.somhakoats.com/asset-objects/careers-page-integration.js&rdquo;&#62;&#60;/script&#62;
-														</p>
+											{oprofile && oprofile.length > 0 && oprofile[0]["user"] && (
+												<li className="mb-4">
+													Copy the below URL tag and paste it into your website.
+													<div className="mt-2 flex rounded border">
+														<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
+															<p className="text-[12px]">
+																{/* {`https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`} */}
+																&#60;a href=&ldquo;
+																{`https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																&rdquo; target=&ldquo;_blank&rdquo;&#62;Search Jobs&#60;/a&#62;
+															</p>
+														</div>
+
+														<button
+															type="button"
+															className="w-[50px] p-3"
+															onClick={() => {
+																navigator.clipboard.writeText(
+																	`<a href=“https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}” target=“_blank”>Search Jobs</a>`
+																);
+																toastcomp("URL tag Copied to clipboard", "success");
+															}}
+														>
+															<i className="fa-solid fa-copy"></i>
+														</button>
 													</div>
-													<button type="button" className="w-[50px] p-3">
-														<i className="fa-solid fa-copy"></i>
-													</button>
-												</div>
-											</li>
-											<li className="mb-4">
-												{srcLang === "ja"
-													? "以下のタグをコピーし、求人を反映させたい場所のHTMLに貼り付け"
-													: "Copy the Somhako ATS jobs tag below and paste it within your HTML where you want the job list to display."}
-												<div className="mt-2 flex rounded border">
-													<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
-														<p className="text-[12px]">
-															&#60;somhakoats-jobs data-company-name=&ldquo;xyz&rdquo;
-															data-company-uuid=&ldquo;F0DADE07A7&rdquo; data-careers-page=&ldquo;true&rdquo;&#62;
-															&#60;/somhakoats-jobs&#62;
-														</p>
-													</div>
-													<button type="button" className="w-[50px] p-3">
-														<i className="fa-solid fa-copy"></i>
-													</button>
-												</div>
-											</li>
+												</li>
+											)}
+											<li className="mb-4">Addtional Note : available to modify CSS of above URL tag.</li>
 											<li className="mb-4">
 												{srcLang === "ja" ? "ページをプレビュー・公開" : "Preview the page and publish."}
 											</li>
