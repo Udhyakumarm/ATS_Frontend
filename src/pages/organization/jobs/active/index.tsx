@@ -156,7 +156,7 @@ export default function JobsActive() {
 										/>
 									</div>
 									<h5 className="mb-4 text-lg font-semibold">
-										{t("Select.No")} {t("Words.ActiveJob")}
+										{t("Select.No")} {t("Words.ActiveJobs")}
 									</h5>
 									<p className="mb-2 text-sm text-darkGray">
 										{srcLang === "ja"

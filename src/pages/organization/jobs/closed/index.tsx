@@ -34,7 +34,9 @@ export default function JobsDrafted() {
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
-	const [draftedJobs, setDraftedJobs] = useState([]);
+	const [closedJobs, setClosedJobs] = useState([]);
+	const [filterJobs, setFilterJobs] = useState([]);
+	const [search, setsearch] = useState("");
 
 	useEffect(() => {
 		const getDraftedJobs = async () => {
@@ -45,18 +47,34 @@ export default function JobsDrafted() {
 
 					response.data.map((job: any) => job.jobStatus === "Closed" && arr.push(job));
 
-					setDraftedJobs(arr);
+					setClosedJobs(arr);
+					setFilterJobs(arr);
 				})
 				.catch((error) => {
 					console.log({ error });
 					return null;
 				});
 
-			// setDraftedJobs(newDraftedJobs);
+			// setClosedJobs(newDraftedJobs);
 		};
 
 		session && getDraftedJobs();
 	}, [session]);
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < closedJobs.length; i++) {
+				if (closedJobs[i]["jobTitle"].toLowerCase().includes(localSearch)) {
+					arr.push(closedJobs[i]);
+				}
+			}
+			setFilterJobs(arr);
+		} else {
+			setFilterJobs(closedJobs);
+		}
+	}, [search]);
 
 	return (
 		<>
@@ -98,13 +116,14 @@ export default function JobsDrafted() {
 									inputType="search"
 									placeholder={t('Words.Search')}
 									icon={<i className="fa-solid fa-search"></i>}
-									readOnly
+									value={search}
+									handleChange={(e) => setsearch(e.target.value)}
 								/>
 							</div>
-							{draftedJobs && draftedJobs.length > 0 ? (
+							{filterJobs && filterJobs.length > 0 ? (
 								<div className="mx-[-15px] flex flex-wrap">
-									{draftedJobs &&
-										draftedJobs.map(
+									{filterJobs &&
+										filterJobs.map(
 											(job: any, i) =>
 												job && (
 													<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]" key={i}>

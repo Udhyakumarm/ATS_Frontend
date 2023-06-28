@@ -98,6 +98,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	const [token, settoken] = useState("");
 	//Load TM
 	const [tm, settm] = useState([]);
+	const [filterTeam, setFilterTeam] = useState([]);
+	const [search, setsearch] = useState("");
 
 	useEffect(() => {
 		if (session) {
@@ -115,11 +117,27 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			.then(async (res) => {
 				console.log("@", "listorguser", res.data);
 				settm(res.data);
+				setFilterTeam(res.data);
 			})
 			.catch((err) => {
 				console.log("@", "listorguser", err);
 			});
 	}
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < tm.length; i++) {
+				if (tm[i]["name"].toLowerCase().includes(localSearch) || tm[i]["email"].toLowerCase().includes(localSearch)) {
+					arr.push(tm[i]);
+				}
+			}
+			setFilterTeam(arr);
+		} else {
+			setFilterTeam(tm);
+		}
+	}, [search]);
 
 	const [vendors, setvendors] = useState([]);
 	const [pvendors, setpvendors] = useState([]);
@@ -1180,36 +1198,41 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																		inputType="search"
 																		placeholder={t("Words.Search")}
 																		icon={<i className="fa-solid fa-magnifying-glass"></i>}
+																		value={search}
+																		handleChange={(e) => setsearch(e.target.value)}
 																	/>
 																</div>
-																<div className="flex grow items-center justify-end">
-																	<div className="mr-3 w-[150px]">
-																		<FormField
-																			fieldType="select"
-																			placeholder={t("Words.Sort")}
-																			singleSelect={true}
-																			options={[
-																				{
-																					id: "A-to-Z",
-																					name: "A to Z"
-																				},
-																				{
-																					id: "Z-to-A",
-																					name: "Z to A"
-																				}
-																			]}
-																		/>
+																{
+																	!upcomingSoon &&
+																	<div className="flex grow items-center justify-end">
+																		<div className="mr-3 w-[150px]">
+																			<FormField
+																				fieldType="select"
+																				placeholder={t("Words.Sort")}
+																				singleSelect={true}
+																				options={[
+																					{
+																						id: "A-to-Z",
+																						name: "A to Z"
+																					},
+																					{
+																						id: "Z-to-A",
+																						name: "Z to A"
+																					}
+																				]}
+																			/>
+																		</div>
+																		<div className="w-[150px]">
+																			<label
+																				htmlFor="teamSelectAll"
+																				className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+																			>
+																				<span>{t("Words.SelectAll")}</span>
+																				<input type="checkbox" id="teamSelectAll" />
+																			</label>
+																		</div>
 																	</div>
-																	<div className="w-[150px]">
-																		<label
-																			htmlFor="teamSelectAll"
-																			className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																		>
-																			<span>{t("Words.SelectAll")}</span>
-																			<input type="checkbox" id="teamSelectAll" />
-																		</label>
-																	</div>
-																</div>
+																}
 															</div>
 															<div className="overflow-x-auto">
 																<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -1223,8 +1246,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																		</tr>
 																	</thead>
 																	<tbody>
-																		{tm &&
-																			tm.map(
+																		{filterTeam &&
+																			filterTeam.map(
 																				(data, i) =>
 																					data["verified"] !== false && (
 																						<tr key={i}>
