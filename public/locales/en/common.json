@@ -62,7 +62,9 @@
         "Rejected": "Rejected",
         "Approved": "Approved",
         "Platform": "Platform",
-        "InterviewDuration": "Interview Duration"
+        "InterviewDuration": "Interview Duration",
+        "CollegeName": "College Name",
+        "CompanyIssuedName": "Company Issued Name"
     },
     "Btn": {
         "SignIn": "Sign In",
@@ -103,7 +105,8 @@
         "ComingSoon": "Coming Soon",
         "GoPremium": "Go Premium",
         "Upgrade": "Upgrade",
-        "LoadMore": "Load More"
+        "LoadMore": "Load More",
+        "DeleteAccount": "Delete Account"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -266,7 +269,8 @@
         "Hiring": "Hiring",
         "ApplicantSourced": "Applicant Sourced",
         "BasicInformation": "Basic Information",
-        "GenerateDescription": "Generate Description"
+        "GenerateDescription": "Generate Description",
+        "ApplyJob": "Apply Job"
     },
     "Plans": {
         "Starter": "Starter",

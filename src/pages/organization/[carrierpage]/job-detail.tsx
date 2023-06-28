@@ -404,6 +404,21 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 		else if (check === 3) toastcomp("Fill Up Cert", "error");
 	}
 
+	
+	async function loadSettings() {
+		const axiosInstanceAuth2 = axiosInstanceAuth(token);
+		await axiosInstanceAuth2
+			.get(`/candidate/get-candidate-settings/`)
+			.then(async (res) => {
+				console.log("&", "Settings", res.data);
+				setfname(res.data[0]["first_name"]);
+				setlname(res.data[0]["last_name"]);
+			})
+			.catch((err) => {
+				console.log("&", "Settings", err);
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -493,6 +508,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 												btnType="button"
 												handleClick={() => {
 													if (session) {
+														loadSettings();
 														setAddCand(true);
 													} else {
 														router.push(`/organization/${cname}/candidate/signin`);
@@ -517,8 +533,10 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 									</aside>
 									<hr className="my-4" />
 									<aside className="mb-4">
-										<h3 className="mb-2 text-lg font-bold">Department Description</h3>
-										<article className="text-darkGray dark:text-gray-400">
+										<h3 className="mb-2 text-lg font-bold">
+											{t("Words.Department")} {t("Form.Description")}
+										</h3>
+										<article className="text-sm text-darkGray dark:text-gray-400">
 											{jdata["jobDeptDescription"] ? (
 												<>
 													<div dangerouslySetInnerHTML={{ __html: jdata["jobDeptDescription"] }}></div>
@@ -531,8 +549,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 									<hr className="my-4" />
 
 									<aside className="mb-4">
-										<h3 className="mb-2 text-lg font-bold">Job Description</h3>
-										<article className="text-darkGray dark:text-gray-400">
+										<h3 className="mb-2 text-lg font-bold">{t("Words.JobDescription")}</h3>
+										<article className="jd_article text-sm text-darkGray dark:text-gray-400">
 											{jdata["jobDescription"] ? (
 												<>
 													<div dangerouslySetInnerHTML={{ __html: jdata["jobDescription"] }}></div>
@@ -672,7 +690,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="font-semibold leading-none">Apply Job</h4>
+										<h4 className="font-semibold leading-none">{t("Words.ApplyJob")}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -694,12 +712,21 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													htmlFor="uploadCV"
 													className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
 												>
-													<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
+													<h5 className="mb-2 text-darkGray">{t("Words.DragDropResumeHere")}</h5>
 													<p className="mb-2 text-sm">
-														Or <span className="font-semibold text-primary">Click Here To Upload</span>
+														Or{" "}
+														<span className="font-semibold text-primary dark:text-white">
+															{t("Words.ClickHereToUpload")}
+														</span>
 													</p>
 													<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-													<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
+													<input
+														type="file"
+														accept=".doc, .docx,.pdf"
+														className="hidden"
+														id="uploadCV"
+														onChange={handleFileInputChange}
+													/>
 												</label>
 											) : (
 												<div className="my-2 mb-5 flex pb-5">
@@ -762,22 +789,24 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label="First Name"
+														label={t("Form.FirstName")}
 														value={fname}
-														handleChange={(e) => setfname(e.target.value)}
-														placeholder="First Name"
+														// handleChange={(e) => setfname(e.target.value)}
+														placeholder={t("Form.FirstName")}
 														required
+														readOnly
 													/>
 												</div>
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label="Last Name"
-														placeholder="Last Name"
+														label={t("Form.LastName")}
+														placeholder={t("Form.LastName")}
 														value={lname}
-														handleChange={(e) => setlname(e.target.value)}
+														// handleChange={(e) => setlname(e.target.value)}
 														required
+														readOnly
 													/>
 												</div>
 											</div>
@@ -806,7 +835,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											</div> */}
 											<div className="mb-4">
 												<div className="mb-2 flex flex-wrap items-center justify-between">
-													<label className="mb-1 inline-block font-bold">Social Links</label>
+													<label className="mb-1 inline-block font-bold">{t("Words.AddSocialLogins")}</label>
 													<button
 														type="button"
 														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
@@ -821,7 +850,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 															<div className="relative mb-4 mr-6 p-1" key={i}>
 																<Link href={data} target="_blank" className="text-center">
 																	<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
-																		<i className={`fa-brand fa-link`}></i>
+																		<i className={`fa-solid fa-link`}></i>
 																	</span>
 																	{/* <p className="text-[12px] font-bold capitalize">Link {i}</p> */}
 																</Link>
@@ -838,8 +867,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											</div>
 											<FormField
 												fieldType="textarea"
-												label="Summary"
-												placeholder="Summary"
+												label={t("Words.Summary")}
+												placeholder={t("Words.Summary")}
 												value={summary}
 												handleChange={(e) => setsummary(e.target.value)}
 											/>
@@ -849,7 +878,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 												fieldType="select2"
 												id="skills"
 												handleChange={setskill}
-												label="Skills"
+												label={t("Words.Skills")}
 												required
 											/>
 
@@ -865,11 +894,11 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 														checked={newgre}
 														onChange={(e) => setnewgre(e.target.checked)}
 													/>
-													New Graduate
+													{t("Words.NewGraduate")}
 												</label>
 												<div className="mb-0">
 													<label className="mb-1 inline-block font-bold">
-														Experience <sup className="text-red-500">*</sup>
+														{t("Words.Experience")} <sup className="text-red-500">*</sup>
 													</label>
 													<div className="flex" style={{ display: newgre === true ? "none" : "flex" }}>
 														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
@@ -880,8 +909,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[90%]">
 																				<input
 																					type="text"
-																					placeholder="Title"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Words.Title")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -904,16 +933,16 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[50%]">
 																				<input
 																					type="text"
-																					placeholder="Company Name"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.CompanyName")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[50%] pl-4">
 																				<input
 																					type="text"
-																					placeholder="Job Type"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Words.JobType")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`jtype${data}`}
 																				/>
 																			</div>
@@ -922,23 +951,23 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[50%]">
 																				<input
 																					type="date"
-																					placeholder="Start Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.StartDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[50%] pl-4">
 																				<input
 																					type="date"
-																					placeholder="End Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.EndDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
 																		</div>
 																		<textarea
-																			placeholder="Description"
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			placeholder={t("Form.Description")}
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																			id={`desc${data}`}
 																		></textarea>
 																	</article>
@@ -965,7 +994,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											<hr className="mb-4 mt-8" />
 											<div className="relative mb-4">
 												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">Education</label>
+													<label className="mb-1 inline-block font-bold">{t("Words.Education")}</label>
 													<div className="flex">
 														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 															{eduid &&
@@ -975,8 +1004,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[90%]">
 																				<input
 																					type="text"
-																					placeholder="Degree Title"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Words.Title")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -999,31 +1028,31 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[33%]">
 																				<input
 																					type="text"
-																					placeholder="College Name"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.CollegeName")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[33%] pl-4">
 																				<input
 																					type="date"
-																					placeholder="Start Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.StartDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[33%] pl-4">
 																				<input
 																					type="date"
-																					placeholder="End Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.EndDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
 																		</div>
 																		<textarea
-																			placeholder="Description"
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm"
+																			placeholder={t("Form.Description")}
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																			id={`desc${data}`}
 																		></textarea>
 																	</article>
@@ -1049,7 +1078,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											<hr className="mb-4 mt-8" />
 											<div className="relative mb-4">
 												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">Certificate</label>
+													<label className="mb-1 inline-block font-bold">{t("Form.Certificate")}</label>
 													<div className="flex">
 														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
 															{certid &&
@@ -1059,8 +1088,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[90%]">
 																				<input
 																					type="text"
-																					placeholder="Title"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Words.Title")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`title${data}`}
 																				/>
 																			</div>
@@ -1083,24 +1112,24 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[33%]">
 																				<input
 																					type="text"
-																					placeholder="Company Issued Name"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.CompanyIssuedName")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cname${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[33%] pl-4">
 																				<input
 																					type="date"
-																					placeholder="Start Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.StartDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`sdate${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[33%] pl-4">
 																				<input
 																					type="date"
-																					placeholder="End Date"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.EndDate")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`edate${data}`}
 																				/>
 																			</div>
@@ -1109,16 +1138,16 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																			<div className="my-2 w-[50%]">
 																				<input
 																					type="text"
-																					placeholder="Creditanls ID"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.CredentialsID")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`cid${data}`}
 																				/>
 																			</div>
 																			<div className="my-2 w-[50%] pl-4">
 																				<input
 																					type="text"
-																					placeholder="Creditanls URL"
-																					className="w-full rounded-normal border border-borderColor text-sm"
+																					placeholder={t("Form.CredentialURL")}
+																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																					id={`curl${data}`}
 																				/>
 																			</div>
@@ -1155,14 +1184,14 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																		<input
 																			type="text"
 																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[60%] pl-4">
 																		<input
 																			type="text"
 																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[10%] pl-4 text-right">
@@ -1200,14 +1229,14 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 																		<input
 																			type="text"
 																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[60%] pl-4">
 																		<input
 																			type="text"
 																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm"
+																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
 																		/>
 																	</div>
 																	<div className="my-2 w-[10%] pl-4 text-right">
@@ -1239,8 +1268,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label="Current Salary"
-														placeholder="Current Salary"
+														label={t("Form.CurrentSalary")}
+														placeholder={t("Form.CurrentSalary")}
 														value={csalary}
 														handleChange={(e) => setcsalary(e.target.value)}
 														disabled={newgre}
@@ -1250,8 +1279,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label="Expected Salary"
-														placeholder="Expected Salary"
+														label={t("Form.ExpectedSalary")}
+														placeholder={t("Form.ExpectedSalary")}
 														value={esalary}
 														handleChange={(e) => setesalary(e.target.value)}
 													/>
@@ -1262,8 +1291,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="number"
-														label="Phone Number"
-														placeholder="Phone Number"
+														label={t("Form.PhoneNumber")}
+														placeholder={t("Form.PhoneNumber")}
 														value={phone}
 														handleChange={(e) => setphone(e.target.value)}
 													/>
@@ -1272,8 +1301,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label="Notice Period"
-														placeholder="Notice Period"
+														label={t("Form.NoticePeriod")}
+														placeholder={t("Form.NoticePeriod")}
 														value={notice}
 														handleChange={(e) => setnotice(e.target.value)}
 														readOnly={newgre}
@@ -1282,13 +1311,12 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											</div>
 											<FormField
 												fieldType="reactquill"
-												label="Any Message to Recruiter"
-												placeholder="Notice Period"
+												label={srcLang === "ja" ? "採用担当者へのメッセージ" : "Any Message to Recruiter"}
 												value={msg}
 												handleChange={setmsg}
 												handleOnBlur={setmsg}
 											/>
-											<Button label="Add" loader={false} btnType={"submit"} />
+											<Button label={t("Btn.Add")} loader={false} btnType={"submit"} />
 										</div>
 									</form>
 								</Dialog.Panel>
@@ -1325,7 +1353,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Add Social Login</h4>
+										<h4 className="flex items-center font-semibold leading-none">{t("Words.AddSocialLogins")}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -1353,7 +1381,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 											handleChange={(e) => setlink(e.target.value)}
 										/>
 										<div className="text-center">
-											<Button label="Add" btnType={"button"} disabled={!verifylink()} handleClick={addlink} />
+											<Button label={t("Btn.Add")} btnType={"button"} disabled={!verifylink()} handleClick={addlink} />
 										</div>
 									</div>
 								</Dialog.Panel>

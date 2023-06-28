@@ -19,10 +19,10 @@ const nextConfig = {
 	reactStrictMode: true,
 	images: {
 		domains: ["localhost", "127.0.0.1", "atsapi.somhako.com"]
-	},
-	env: {
-		OPENAI_API: process.env.OPENAI_API
 	}
+	// env: {
+	// 	OPENAI_API: process.env.OPENAI_API
+	// }
 };
 
 module.exports = nextConfig;

@@ -1768,7 +1768,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<Link
 														href="/organization/jobs/active"
 														onClick={() => setPublishThanks(false)}
-														className="font-bold text-primary hover:underline"
+														className="font-bold text-primary hover:underline dark:text-white"
 													>
 														公開中の求人を確認する
 													</Link>
@@ -1778,7 +1778,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													<Link
 														href="/organization/jobs/active"
 														onClick={() => setPublishThanks(false)}
-														className="font-bold text-primary hover:underline"
+														className="font-bold text-primary hover:underline dark:text-white"
 													>
 														Check open jobs
 													</Link>

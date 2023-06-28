@@ -246,7 +246,7 @@ input[type=number] {
   background: #374151;
 }
 .ql-container {
-  font-family: 'Nunito';
+  font-family: 'Nunito' !important;
 }
 .ql-editor {
   min-height: 180px;

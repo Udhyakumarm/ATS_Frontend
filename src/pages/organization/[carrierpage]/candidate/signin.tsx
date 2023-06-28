@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCarrierStore, useUserStore } from "@/utils/code";
@@ -37,9 +37,12 @@ export default function CandSignIn({ providers }: any) {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
+	const [btnLoader, setBtnLoader] = useState(false);
+	const [success, setSuccess] = useState(false);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setBtnLoader(true);
 
 		await axiosInstance
 			.post(`/candidate/candidatecheck/${loginInfo.email}/${cid}/`)
@@ -52,6 +55,7 @@ export default function CandSignIn({ providers }: any) {
 						})
 						.then(async (response) => {
 							console.log("@", res.data);
+							setSuccess(true);
 							if (response.data.role) {
 								setrole(response.data.role);
 							}
@@ -82,20 +86,24 @@ export default function CandSignIn({ providers }: any) {
 								});
 						})
 						.catch((err) => {
+							setBtnLoader(false);
 							settype("");
 							setrole("");
 							setuser([]);
 							console.log(err);
 							if (err.response.data.non_field_errors) {
 								err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+								setBtnLoader(false);
 								return false;
 							}
 							if (err.response.data.detail) {
 								toastcomp(err.response.data.detail, "error");
+								setBtnLoader(false);
 								return false;
 							}
 							if (err.response.data.errors.email) {
 								err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+								setBtnLoader(false);
 								return false;
 							}
 						});
@@ -104,6 +112,7 @@ export default function CandSignIn({ providers }: any) {
 					setrole("");
 					setuser([]);
 					toastcomp(res.data.error, "error");
+					setBtnLoader(false);
 				}
 			})
 			.catch((err) => {
@@ -111,6 +120,7 @@ export default function CandSignIn({ providers }: any) {
 				setrole("");
 				setuser([]);
 				console.log(err);
+				setBtnLoader(false);
 			});
 	};
 	return (
@@ -122,30 +132,26 @@ export default function CandSignIn({ providers }: any) {
 			<main className="py-8">
 				<form className="mx-auto w-full max-w-[550px] px-4" onSubmit={handleSubmit}>
 					<div className="mb-4 text-center">
-						{
-							orgdetail["OrgProfile"] 
-							? 
-							(
-								<Image
-									src={
-										process.env.NODE_ENV === "production"
-											? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
-											: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
-									}
-									alt={"Somhako"}
-									width={200}
-									height={200}
-									className="mx-auto max-h-[80px] w-auto"
-									onClick={() => {
-										router.push("/organization/" + cname);
-									}}
-								/>
-							)
-							:
+						{orgdetail["OrgProfile"] ? (
+							<Image
+								src={
+									process.env.NODE_ENV === "production"
+										? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+										: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+								}
+								alt={"Somhako"}
+								width={200}
+								height={200}
+								className="mx-auto max-h-[80px] w-auto"
+								onClick={() => {
+									router.push("/organization/" + cname);
+								}}
+							/>
+						) : (
 							<>
-							<Logo width={180} />
+								<Logo width={180} />
 							</>
-						}
+						)}
 					</div>
 					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						<h1 className="mb-6 text-3xl font-bold">
@@ -177,21 +183,26 @@ export default function CandSignIn({ providers }: any) {
 									Remember Me
 								</label>
 							</div>
-							<Link href={`/organization/${cname}/candidate/forgot`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/forgot`} className="font-bold text-primary hover:underline dark:text-white">
 								Forgot Password?
 							</Link>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label="Sign In" full={true} loader={false} disabled={false} />
+							<Button btnType="submit" label="Sign In" full={true} loader={btnLoader} disabled={btnLoader} />
 						</div>
+						{success && (
+							<p className="mb-4 text-center text-sm text-green-600">
+								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+							</p>
+						)}
 						<p className="text-center text-darkGray">
 							Not sign up yet ?{" "}
-							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline dark:text-white">
 								Create Account
 							</Link>
 						</p>
 					</div>
-					<div className="text-right pt-2">
+					<div className="pt-2 text-right">
 						<ToggleLang />
 					</div>
 				</form>

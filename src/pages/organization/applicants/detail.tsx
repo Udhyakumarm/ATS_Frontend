@@ -64,6 +64,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	const [selectedPerson, setSelectedPerson] = useState(people[3]);
 
+	//tiemline
+	const [timeline, settimeline] = useState([]);
+
 	//ai interview question
 	const [aires, setaires] = useState("");
 	const [aiquestion, setaiquestion] = useState([]);
@@ -127,6 +130,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Status Changed", "success");
 					loadNEWAPPDATA(arefid);
+					loadTimeLine();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -141,6 +145,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Status Changed", "success");
 					loadNEWAPPDATA(arefid);
+					loadTimeLine();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -152,6 +157,19 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	function moveApplicant(v) {
 		setSelectedPerson(v);
 		chnageStatus(v["name"], appid);
+	}
+
+	async function loadTimeLine() {
+		await axiosInstanceAuth21
+			.get(`/job/list-candidate-timeline/${appdata["arefid"]}/`)
+			.then(async (res) => {
+				settimeline(res.data);
+				console.log("$", "timeline", res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				settimeline([]);
+			});
 	}
 
 	async function loadAIInterviewQuestion() {
@@ -249,6 +267,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		if (token && token.length > 0 && aiquestion.length <= 0) {
 			loadApplicantDetail();
 			loadFeedback();
+			loadTimeLine();
 			loadAIInterviewQuestion();
 		}
 	}, [token]);
@@ -278,6 +297,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
+				loadTimeLine();
 				if (feedbackStatus === "Reject") {
 					// chnageStatus("Rejected", appdata["arefid"]);
 				}
@@ -634,7 +654,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											<p className="mb-2 text-sm text-darkGray">{appdata["arefid"]}</p>
 											<p className="mb-2 text-sm text-darkGray">
 												{t("Words.Source")} - &nbsp;
-												<span className="font-semibold uppercase text-primary">{type}</span>
+												<span className="font-semibold uppercase text-primary dark:text-white">{type}</span>
 											</p>
 										</div>
 										<div className="flex flex-wrap items-center justify-between">
@@ -684,7 +704,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										{profileData["skills"] && profileData["skills"].length > 0 ? (
 											<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
 												{profileData["skills"].split(",").map((data: any, i: React.Key) => (
-													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center" key={i}>
+													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 dark:bg-gray-700 px-4 py-2 text-center" key={i}>
 														{data}
 													</li>
 												))}
@@ -863,7 +883,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -878,7 +898,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -893,7 +913,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -908,7 +928,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -923,7 +943,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary"
+																		? "border-primary text-primary dark:text-white dark:border-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -937,7 +957,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
 													{profileData["resume"] && profileData["resume"].length > 0 && (
 														<>
-															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm">
+															<div className="flex flex-wrap items-center justify-between bg-lightBlue dark:bg-gray-900 p-2 px-8 text-sm">
 																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
 																	href={
@@ -945,7 +965,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																			? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																	}
-																	className="my-2 inline-block font-bold text-primary hover:underline"
+																	className="my-2 inline-block font-bold text-primary hover:underline dark:text-white"
 																	download={profileData["resume"].split("/").pop()}
 																>
 																	<i className="fa-solid fa-download mr-2"></i>
@@ -958,7 +978,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
-																className="h-[50vh] w-[100%]"
+																className="h-[50vh] w-[100%] max-w-[800px] mx-auto"
 															></iframe>
 														</>
 													)}
@@ -1821,11 +1841,41 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													{upcomingSoon ? (
+													{!upcomingSoon ? (
 														<UpcomingComp />
 													) : (
 														<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
-															<div className="flex items-start">
+															{timeline && timeline.length > 0 ? (
+																<>
+																	{timeline.map((data, i) => (
+																		<div className="flex items-start" key={i}>
+																			<div className="w-[80px] px-2 py-4">
+																				<p className="text-sm text-darkGray dark:text-gray-400">
+																					{moment(data["timestamp"]).format("D MMM")}
+																					<br />
+																					<small>{moment(data["timestamp"]).format("h:mm A")}</small>
+																				</p>
+																			</div>
+																			<div className="w-[calc(100%-80px)] pl-6">
+																				<div className="border-b dark:border-b-gray-600">
+																					<article className="py-4">
+																						<h6 className="mb-2 text-sm font-bold">{data["message"]}</h6>
+																						<p className="text-[12px] text-darkGray dark:text-gray-400">
+																							By - {data["user"]["email"]}
+																						</p>
+																					</article>
+																				</div>
+																			</div>
+																		</div>
+																	))}
+																</>
+															) : (
+																<>
+																	<div className="text-center">No Data</div>
+																</>
+															)}
+
+															{/* <div className="flex items-start">
 																<div className="w-[80px] px-2 py-4">
 																	<p className="text-sm text-darkGray dark:text-gray-400">
 																		8 Feb
@@ -1835,6 +1885,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																</div>
 																<div className="w-[calc(100%-80px)] pl-6">
 																	<div className="border-b dark:border-b-gray-600">
+																		<article className="py-4">
+																			<h6 className="mb-2 text-sm font-bold">
+																				Applicant has been shifted to new Job -Software Engineer
+																			</h6>
+																			<p className="text-[12px] text-darkGray dark:text-gray-400">
+																				By - Steve Paul : Collaborator
+																			</p>
+																		</article>
 																		<article className="py-4">
 																			<h6 className="mb-2 text-sm font-bold">
 																				Applicant has been shifted to new Job -Software Engineer
@@ -1864,38 +1922,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				By - Steve Paul : Collaborator
 																			</p>
 																		</article>
-																		<article className="py-4">
-																			<h6 className="mb-2 text-sm font-bold">
-																				Applicant has been shifted to new Job -Software Engineer
-																			</h6>
-																			<p className="text-[12px] text-darkGray dark:text-gray-400">
-																				By - Steve Paul : Collaborator
-																			</p>
-																		</article>
 																	</div>
 																</div>
-															</div>
-															<div className="flex items-start">
-																<div className="w-[80px] px-2 py-4">
-																	<p className="text-sm text-darkGray dark:text-gray-400">
-																		8 Feb
-																		<br />
-																		<small>2:30 PM</small>
-																	</p>
-																</div>
-																<div className="w-[calc(100%-80px)] pl-6">
-																	<div className="border-b dark:border-b-gray-600">
-																		<article className="py-4">
-																			<h6 className="mb-2 text-sm font-bold">
-																				Applicant has been shifted to new Job -Software Engineer
-																			</h6>
-																			<p className="text-[12px] text-darkGray dark:text-gray-400">
-																				By - Steve Paul : Collaborator
-																			</p>
-																		</article>
-																	</div>
-																</div>
-															</div>
+															</div> */}
 														</div>
 													)}
 												</Tab.Panel>
@@ -1913,10 +1942,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	{aiquestion &&
 																		aiquestion.map((data, i) => (
 																			<div
-																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-700"
+																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800"
 																				key={i}
 																			>
-																				<h5 className="text-sm text-darkGray dark:text-gray-400">{data}</h5>
+																				<h5 className="text-sm text-darkGray dark:text-gray-100">{data}</h5>
 																			</div>
 																		))}
 																</div>

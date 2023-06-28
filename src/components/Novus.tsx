@@ -721,7 +721,7 @@ function Novus(props: any) {
 				>
 					<div
 						className={
-							`overflow-hidden rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600` +
+							`overflow-hidden rounded-normal bg-lightBlue shadow-normal dark:bg-black` +
 							" " +
 							(click ? "block" : "hidden") +
 							" " +

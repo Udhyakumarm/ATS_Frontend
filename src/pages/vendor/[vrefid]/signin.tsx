@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCarrierStore, useUserStore } from "@/utils/code";
@@ -41,9 +41,12 @@ export default function CanCareerSignIn({ providers }: any) {
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+	const [btnLoader, setBtnLoader] = useState(false);
+	const [success, setSuccess] = useState(false);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setBtnLoader(true);
 
 		await axiosInstance2
 			.post("/vendors/vendor_login/", {
@@ -52,6 +55,8 @@ export default function CanCareerSignIn({ providers }: any) {
 			})
 			.then(async (response) => {
 				console.log("@", response.data);
+				setBtnLoader(false);
+				setSuccess(true);
 				if (response.data.role) {
 					setrole(response.data.role);
 				}
@@ -83,20 +88,24 @@ export default function CanCareerSignIn({ providers }: any) {
 					});
 			})
 			.catch((err) => {
+				setBtnLoader(false);
 				settype("");
 				setrole("");
 				setuser([]);
 				console.log(err);
 				if (err.response.data.non_field_errors) {
 					err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+					setBtnLoader(false);
 					return false;
 				}
 				if (err.response.data.detail) {
 					toastcomp(err.response.data.detail, "error");
+					setBtnLoader(false);
 					return false;
 				}
 				if (err.response.data.errors.email) {
 					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
+					setBtnLoader(false);
 					return false;
 				}
 			});
@@ -151,16 +160,21 @@ export default function CanCareerSignIn({ providers }: any) {
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
 								</label>
 							</div>
-							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline">
+							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === "ja" ? "パスワードを忘れた方" : "Forgot Password?"}
 							</Link>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t("Btn.SignIn")} full={true} loader={false} disabled={false} />
+							<Button btnType="submit" label={t("Btn.SignIn")} full={true} loader={btnLoader} disabled={btnLoader} />
 						</div>
+						{success && (
+							<p className="mb-4 text-center text-sm text-green-600">
+								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+							</p>
+						)}
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
-							<Link href={`/vendor/${vrefid}/signup`} className="font-bold text-primary hover:underline">
+							<Link href={`/vendor/${vrefid}/signup`} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === "ja" ? "こちら" : "Create Account"}
 							</Link>
 						</p>

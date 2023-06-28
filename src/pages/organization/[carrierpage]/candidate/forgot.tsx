@@ -50,7 +50,7 @@ export default function CandForgot() {
 							</>
 						}
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
+					<div className="rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12">
 						<h1 className="mb-6 text-3xl font-bold">
 							{srcLang === 'ja' ? 'パスワードを忘れた方' : <>Forgot <span className="text-primary">Password</span></>}
 						</h1>
@@ -70,7 +70,7 @@ export default function CandForgot() {
 						</div>
 						<p className="text-center text-darkGray">
 							{srcLang === 'ja' ? 'アカウント作成がまだの方は' : 'Already have an Account?'}{" "}
-							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline">
+							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline dark:text-white">
 								{srcLang === 'ja' ? 'こちら' : 'Sign In'}
 							</Link>
 						</p>
