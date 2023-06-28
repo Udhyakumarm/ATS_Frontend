@@ -1006,11 +1006,15 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			.then(async (res) => {
 				toastcomp("Password Change SucessFully", "success");
 				setChangePass(false);
+				setpass("");
+				setcpass("");
 			})
 			.catch((err) => {
 				console.log("@", "gallery", err);
 				toastcomp("Password Not Change", "error");
 				setChangePass(false);
+				setpass("");
+				setcpass("");
 			});
 	}
 
@@ -1056,7 +1060,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
 																" " +
 																(selected
-																	? "border-primary text-primary dark:text-white dark:border-white"
+																	? "border-primary text-primary dark:border-white dark:text-white"
 																	: "border-transparent text-darkGray dark:text-gray-400") +
 																" " +
 																(item.blur ? "display-none" : "")
@@ -1207,7 +1211,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400") +
 																	" " +
 																	(item.blur ? "display-none" : "")

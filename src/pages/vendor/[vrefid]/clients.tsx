@@ -256,6 +256,27 @@ export default function VendorClients() {
 			.post(`/vendors/vendor-applicant-apply/${refid}/${vrefid}/${vcrefid}/`)
 			.then((res) => {
 				toastcomp(res.data.Message, "success");
+				setresume(null);
+				setfname("");
+				setlname("");
+				setemail("");
+				setphone("");
+				setlinks([]);
+				setlink("");
+				setsummary("");
+				setcsalary("");
+				setesalary("");
+				setnotice("");
+				setmsg("");
+				setskill("");
+				setski([]);
+				setnewgre(false);
+				setexpcount(1);
+				setexpid(["expBlock1"]);
+				seteducount(0);
+				seteduid([]);
+				setcertcount(0);
+				setcertid([]);
 			})
 			.catch((err) => {
 				toastcomp("Vendor Candidate Applicant Not Created", "error");
@@ -606,7 +627,7 @@ export default function VendorClients() {
 											</ul>
 										</aside>
 										<Button
-											label={t("Btn.AddCandidate")}
+											label={"Recommend Candidate"}
 											btnType="button"
 											handleClick={() => {
 												setAddCand(true);
@@ -658,8 +679,10 @@ export default function VendorClients() {
 													</aside>
 													<hr className="my-4" />
 													<aside className="mb-4">
-														<h3 className="mb-2 font-bold">{t('Words.Department')} {t('Form.Description')}</h3>
-														<article className="text-darkGray dark:text-gray-400 text-sm">
+														<h3 className="mb-2 font-bold">
+															{t("Words.Department")} {t("Form.Description")}
+														</h3>
+														<article className="text-sm text-darkGray dark:text-gray-400">
 															{vjdata[vjobclick]["jobDeptDescription"] ? (
 																<>
 																	<div
@@ -674,7 +697,7 @@ export default function VendorClients() {
 													<hr className="my-4" />
 
 													<aside className="mb-4">
-														<h3 className="mb-2 font-bold">{t('Words.JobDescription')}</h3>
+														<h3 className="mb-2 font-bold">{t("Words.JobDescription")}</h3>
 														<article className="jd_article text-sm">
 															{vjdata[vjobclick]["jobDescription"] ? (
 																<>
@@ -743,22 +766,9 @@ export default function VendorClients() {
 													orgdetail["OrgProfile"] &&
 													orgdetail["OrgProfile"].map((data: any, j: React.Key | null | undefined) => (
 														<div className="mx-auto w-full max-w-[800px] px-4 py-4" key={j}>
-															<div className="mb-3 flex flex-wrap rounded-normal border p-4 pb-0">
-																{orgdetail["Founder"].map(
-																	(
-																		data: {
-																			[x: string]:
-																				| string
-																				| number
-																				| boolean
-																				| React.ReactElement<any, string | React.JSXElementConstructor<any>>
-																				| React.ReactFragment
-																				| React.ReactPortal
-																				| null
-																				| undefined;
-																		},
-																		i: React.Key | null | undefined
-																	) => (
+															{orgdetail["Founder"].length > 0 && (
+																<div className="mb-3 flex flex-wrap rounded-normal border p-4 pb-0">
+																	{orgdetail["Founder"].map((data: any, i: any) => (
 																		<div
 																			className="mb-3 w-full pr-4 text-center md:max-w-[calc(100%/3)] lg:max-w-[calc(100%/4)] xl:max-w-[calc(100%/5)]"
 																			key={i}
@@ -777,62 +787,112 @@ export default function VendorClients() {
 																			<p className="mb-1 text-sm font-bold">{data["name"]}</p>
 																			<p className="text-sm text-darkGray">{data["designation"]}</p>
 																		</div>
-																	)
-																)}
-															</div>
-															{data["org_Url"] && data["org_Url"] != "" && (
-																<p className="mb-3">
-																	<Link
-																		href={`${data["org_Url"]}`}
-																		target="_blank"
-																		className="text-primary hover:underline dark:text-white"
-																	>
-																		<i className="fa-solid fa-globe mr-2"></i> {data["org_Url"]}
-																	</Link>
-																</p>
+																	))}
+																</div>
 															)}
-															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center font-semibold text-darkGray dark:text-gray-400">
-																{data["company_Size"] && data["company_Size"] != "" && (
-																	<li className="mr-3 list-none">{data["company_Size"]} Employees</li>
-																)}
-																{data["headquarter_Location"] && data["headquarter_Location"] != "" && (
-																	<li className="mr-3">{data["headquarter_Location"]}</li>
-																)}
-																{data["funding_Details"] && data["funding_Details"] != "" && (
-																	<li className="mr-3">{data["funding_Details"]}</li>
-																)}
+															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center justify-center font-semibold text-darkGray dark:text-gray-400">
+																<li className="mr-3 list-none">
+																	{data["org_Url"] && data["org_Url"] != "" ? (
+																		<Link
+																			href={`${data["org_Url"]}`}
+																			target="_blank"
+																			className="text-primary hover:underline dark:text-white"
+																		>
+																			<i className="fa-solid fa-globe mr-2"></i> {data["org_Url"]}
+																		</Link>
+																	) : (
+																		<>
+																			Company URL <small>Not Disclosed</small>
+																		</>
+																	)}
+																</li>
+																<li className="mr-3">
+																	{data["contact_Number"] && data["contact_Number"] != "" ? (
+																		<>Company Contact : {data["contact_Number"]}</>
+																	) : (
+																		<>
+																			Company Contact <small>Not Disclosed</small>
+																		</>
+																	)}
+																</li>
+																<li className="mr-3">
+																	{data["company_Size"] && data["company_Size"] != "" ? (
+																		<>Company Size : {data["company_Size"]} Employees</>
+																	) : (
+																		<>
+																			Company Size <small>Not Disclosed</small>
+																		</>
+																	)}
+																</li>
+																<li className="mr-3">
+																	{data["workplace_Type"] && data["workplace_Type"] != "" ? (
+																		<>Workplace Culture : {data["workplace_Type"]}</>
+																	) : (
+																		<>
+																			Workplace Culture <small>Not Disclosed</small>
+																		</>
+																	)}
+																</li>
 															</ul>
 															<hr className="mb-6" />
 															<h2 className="mb-3 text-lg font-bold">{t("Words.AboutOrganization")}</h2>
-															{data["about_org"] && data["about_org"] != "" && (
+															{data["about_org"] && data["about_org"] != "" ? (
 																<article
 																	className="mb-6"
 																	dangerouslySetInnerHTML={{ __html: data["about_org"] }}
 																></article>
+															) : (
+																<small>Not Disclosed</small>
 															)}
 															<hr className="mb-6" />
 															<h2 className="mb-3 text-lg font-bold">{t("Form.AboutTheFounder")}</h2>
-															{data["about_founder"] && data["about_founder"] != "" && (
-																<p className="mb-6">{data["about_founder"]}</p>
+															{data["about_founder"] && data["about_founder"] != "" ? (
+																<article
+																	className="mb-6"
+																	dangerouslySetInnerHTML={{ __html: data["about_founder"] }}
+																></article>
+															) : (
+																<small>Not Disclosed</small>
 															)}
 															<hr className="mb-6" />
-															{data["organization_Benefits"] && data["organization_Benefits"] != "" && (
-																<div className="mb-6">
-																	<h2 className="mb-3 text-lg font-bold">{t("Words.Benefits")}</h2>
-																	<p>{data["organization_Benefits"]}</p>
-																	{/* <ul className="mb-6 list-disc list-inside text-darkGray dark:text-gray-400 font-semibold">
-                                                                        <li className="mr-3">
-                                                                        Medical Insurance
-                                                                        </li>
-                                                                        <li className="mr-3">
-                                                                        Quarterly Bonus
-                                                                        </li>
-                                                                        <li className="mr-3">
-                                                                        Meals
-                                                                        </li>
-                                                                    </ul> */}
-																</div>
-															)}
+															<h2 className="mb-3 text-lg font-bold">Other Information</h2>
+															<h4 className="mb-2">
+																{data["headquarter_Location"] && data["headquarter_Location"] != "" ? (
+																	<>Headquarter Location : {data["headquarter_Location"]}</>
+																) : (
+																	<>
+																		Headquarter Location : <small>Not Disclosed</small>
+																	</>
+																)}
+															</h4>
+															<h4 className="mb-2">
+																{data["branch_Office"] && data["branch_Office"] != "" ? (
+																	<>Branch Office : {data["branch_Office"]}</>
+																) : (
+																	<>
+																		Branch Office : <small>Not Disclosed</small>
+																	</>
+																)}
+															</h4>
+															<h4 className="mb-2">
+																{data["funding_Details"] && data["funding_Details"] != "" ? (
+																	<>Funding Details : {data["funding_Details"]}</>
+																) : (
+																	<>
+																		Funding Details : <small>Not Disclosed</small>
+																	</>
+																)}
+															</h4>
+															<h4 className="mb-2">
+																{data["organization_Benefits"] && data["organization_Benefits"] != "" ? (
+																	<>Organization Benefits : {data["organization_Benefits"]}</>
+																) : (
+																	<>
+																		Organization Benefits : <small>Not Disclosed</small>
+																	</>
+																)}
+															</h4>
+
 															<hr className="mb-6" />
 															{orgdetail["Gallery"] && (
 																<div>
@@ -965,10 +1025,18 @@ export default function VendorClients() {
 												>
 													<h5 className="mb-2 text-darkGray">{t("Words.DragDropResumeHere")}</h5>
 													<p className="mb-2 text-sm">
-														<span className="font-semibold text-primary dark:text-white">{t("Words.ClickHereToUpload")}</span>
+														<span className="font-semibold text-primary dark:text-white">
+															{t("Words.ClickHereToUpload")}
+														</span>
 													</p>
 													<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-													<input type="file" className="hidden" id="uploadCV" onChange={handleFileInputChange} />
+													<input
+														type="file"
+														accept=".doc, .docx,.pdf"
+														className="hidden"
+														id="uploadCV"
+														onChange={handleFileInputChange}
+													/>
 												</label>
 											) : (
 												<div className="my-2 mb-5 flex pb-5">

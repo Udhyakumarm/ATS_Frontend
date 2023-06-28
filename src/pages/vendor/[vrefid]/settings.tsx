@@ -127,11 +127,15 @@ export default function VendorSettings() {
 			.then(async (res) => {
 				toastcomp("Password Change SucessFully", "success");
 				setChangePass(false);
+				setpass("");
+				setcpass("");
 			})
 			.catch((err) => {
 				console.log("@", "gallery", err);
 				toastcomp("Password Not Change", "error");
 				setChangePass(false);
+				setpass("");
+				setcpass("");
 			});
 	}
 
