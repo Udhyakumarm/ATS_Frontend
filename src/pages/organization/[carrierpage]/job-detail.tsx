@@ -496,7 +496,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 												label={t("Btn.AlreadyApplied")}
 												loader={false}
 												btnType="button"
-												// disabled={btndis}
+												disabled={btndis}
 											/>
 										</>
 									) : (

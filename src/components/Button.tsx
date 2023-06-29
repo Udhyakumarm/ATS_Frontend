@@ -21,7 +21,7 @@ export default function Button({ btnStyle, btnType, label, loader, disabled, ful
 			<button
 				type={btnType ? btnType : "button"}
 				className={
-					`my-2 min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200` +
+					`my-2 min-w-[60px] rounded py-1 px-2 text-white text-[12px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200 disabled:text-gray-400` +
 					" " +
 					(full ? "w-full" : "w-auto")
 				}

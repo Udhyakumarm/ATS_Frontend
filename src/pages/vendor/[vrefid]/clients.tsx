@@ -790,7 +790,7 @@ export default function VendorClients() {
 																	))}
 																</div>
 															)}
-															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center justify-center font-semibold text-darkGray dark:text-gray-400">
+															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center font-semibold text-darkGray dark:text-gray-400">
 																<li className="mr-3 list-none">
 																	{data["org_Url"] && data["org_Url"] != "" ? (
 																		<Link
