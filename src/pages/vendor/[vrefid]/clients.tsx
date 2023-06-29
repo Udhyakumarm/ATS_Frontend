@@ -12,14 +12,14 @@ import userImg from "public/images/user-image.png";
 import gall2 from "public/images/gall-2.png";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addExternalNotifyLog, axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { debounce } from "lodash";
 import { axiosInstance as axis } from "@/utils";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore } from "@/utils/code";
+import { useLangStore, useNotificationStore } from "@/utils/code";
 
 const people = [
 	{ id: 1, name: "Wade Cooper" },
@@ -44,6 +44,7 @@ export default function VendorClients() {
 	const [vjdata, setvjdata] = useState([]);
 	const [addSocial, setAddSocial] = useState(false);
 	const [vjobclick, setvjobclick] = useState(-1);
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	useEffect(() => {
 		if (session) {
@@ -256,6 +257,9 @@ export default function VendorClients() {
 			.post(`/vendors/vendor-applicant-apply/${refid}/${vrefid}/${vcrefid}/`)
 			.then((res) => {
 				toastcomp(res.data.Message, "success");
+				let title = `${fname} ${lname} (${email}) Suceessfully Applied On ${vjdata[0]["jobTitle"]} (${vjdata[0]["refid"]})`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
 				setresume(null);
 				setfname("");
 				setlname("");
@@ -790,7 +794,7 @@ export default function VendorClients() {
 																	))}
 																</div>
 															)}
-															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center justify-center font-semibold text-darkGray dark:text-gray-400">
+															<ul className="mb-6 flex list-inside list-disc flex-wrap items-center font-semibold text-darkGray dark:text-gray-400">
 																<li className="mr-3 list-none">
 																	{data["org_Url"] && data["org_Url"] != "" ? (
 																		<Link

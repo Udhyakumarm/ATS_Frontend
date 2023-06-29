@@ -7,11 +7,11 @@ import UploadProfile from "@/components/UploadProfile";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import { useSession } from "next-auth/react";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addExternalNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore } from "@/utils/code";
+import { useLangStore, useNotificationStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
 
 export default function VendorSettings() {
@@ -44,6 +44,7 @@ export default function VendorSettings() {
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
+	const [purl, setpurl] = useState("");
 	const [email, setemail] = useState("");
 	const [cname, setcname] = useState("");
 	const [phone, setphone] = useState("");
@@ -58,19 +59,30 @@ export default function VendorSettings() {
 	// const [check1, setcheck1] = useState(false);
 	// const [file, setfile] = useState(false);
 
+	const [vdata1, setvdata1] = useState({});
+	const [vdata2, setvdata2] = useState({});
+	const [img, setimage] = useState();
+	const [bphone, setbphone] = useState("");
+	const [baname, setbaname] = useState("");
+	const [bophone, setbophone] = useState("");
+	const [badd, setbadd] = useState("");
+
 	async function loadVendorData(id: string) {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data/${id}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				console.log("!", "vendor", res.data);
 				if (res.data && res.data.length > 0) {
-					setvdata(res.data[0]);
+					// setvdata(res.data[0]);
+					setvdata1(res.data[0]);
 					const data = res.data;
 					for (let i = 0; i < data.length; i++) {
 						setemail(data[i]["email"]);
 						setcname(data[i]["company_name"]);
 						setphone(data[i]["contact_number"]);
+						setbphone(data[i]["contact_number"]);
 						setaname(data[i]["agent_name"]);
+						setbaname(data[i]["agent_name"]);
 						// setmsg(data[i]["message"]);
 						setsdate(data[i]["agreement_valid_start_date"]);
 						setedate(data[i]["agreement_valid_end_date"]);
@@ -87,14 +99,18 @@ export default function VendorSettings() {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data2/${id}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				console.log("!", "vendor", res.data);
 				if (res.data && res.data.length > 0) {
 					setvdata(res.data[0]);
+					setvdata2(res.data[0]);
 					const data = res.data;
 					for (let i = 0; i < data.length; i++) {
 						setlno(data[i]["license_number"]);
 						setophone(data[i]["contact_2"]);
 						setadd(data[i]["headquater_address"]);
+						setbophone(data[i]["contact_2"]);
+						setbadd(data[i]["headquater_address"]);
+						setpurl(data[i]["vendor_logo"]);
 					}
 				}
 			})
@@ -138,6 +154,78 @@ export default function VendorSettings() {
 				setcpass("");
 			});
 	}
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
+	async function saveNewVendor(formData: any, vid: any) {
+		await axiosInstanceAuth2
+			.put(`/vendors/newvendor-update/${vid}/`, formData)
+			.then(async (res) => {
+				toastcomp("Settings Updated", "success");
+				loadVendorData(vid);
+				loadVendorData2(vid);
+
+				let title = `Settings Updated`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
+			})
+			.catch((err) => {
+				console.log(err);
+				if (err.message != "Request failed with status code 401") {
+					toastcomp("Settings Not Updated", "error");
+				}
+			});
+	}
+	async function saveVendorReg(formData: any, vid: any) {
+		await axiosInstanceAuth2
+			.put(`/vendors/regvendor-update/`, formData)
+			.then(async (res) => {
+				toastcomp("Settings Updated", "success");
+				loadVendorData(vid);
+				loadVendorData2(vid);
+
+				let title = `Settings Updated`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
+			})
+			.catch((err) => {
+				console.log(err);
+				if (err.message != "Request failed with status code 401") {
+					toastcomp("Settings Not Updated", "error");
+				}
+			});
+	}
+
+	useEffect(() => {
+		//img,bophone,badd vdata2
+
+		const fd1 = new FormData();
+		const fd2 = new FormData();
+		if (img) {
+			fd1.append("vendor_logo", img);
+		}
+		if (vdata2["contact_2"] != bophone) {
+			fd1.append("contact_2", bophone);
+		}
+		if (vdata2["headquater_address"] != badd) {
+			fd1.append("headquater_address", badd);
+		}
+
+		if (vdata1["contact_number"] != bphone) {
+			fd2.append("contact_number", bphone);
+		}
+		if (vdata2["agent_name"] != baname) {
+			fd2.append("agent_name", baname);
+		}
+
+		if (Array.from(fd1.keys()).length > 0) {
+			saveVendorReg(fd1, vrefid);
+		}
+
+		if (Array.from(fd2.keys()).length > 0) {
+			saveNewVendor(fd2, vrefid);
+		}
+	}, [img, bphone, bophone, baname, badd]);
 
 	return (
 		<>
@@ -183,7 +271,11 @@ export default function VendorSettings() {
 								<Tab.Panel>
 									<div className="mx-auto w-full max-w-[1150px] px-4 py-6">
 										<div className="mb-4">
-											<UploadProfile note="Supported Formats 2 mb  : Png , Jpeg" />
+											<UploadProfile
+												note="Supported Formats 2 mb  : Png , Jpeg"
+												purl={purl}
+												handleChange={(e) => setimage(e.target.files[0])}
+											/>
 										</div>
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -213,7 +305,8 @@ export default function VendorSettings() {
 											inputType="text"
 											value={aname}
 											handleChange={(e) => setaname(e.target.value)}
-											readOnly
+											handleOnBlur={(e) => setbaname(e.target.value)}
+											// readOnly
 										/>
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -223,7 +316,8 @@ export default function VendorSettings() {
 													inputType="number"
 													value={phone}
 													handleChange={(e) => setphone(e.target.value)}
-													readOnly
+													handleOnBlur={(e) => setbphone(e.target.value)}
+													// readOnly
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -233,7 +327,8 @@ export default function VendorSettings() {
 													inputType="number"
 													value={ophone}
 													handleChange={(e) => setophone(e.target.value)}
-													readOnly
+													handleOnBlur={(e) => setbophone(e.target.value)}
+													// readOnly
 												/>
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -251,9 +346,10 @@ export default function VendorSettings() {
 													label={t("Form.HeadquarterLocation")}
 													fieldType="input"
 													inputType="text"
-													readOnly
+													// readOnly
 													value={add}
 													handleChange={(e) => setadd(e.target.value)}
+													handleOnBlur={(e) => setbadd(e.target.value)}
 												/>
 											</div>
 										</div>

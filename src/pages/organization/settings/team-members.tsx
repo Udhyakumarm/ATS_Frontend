@@ -55,6 +55,8 @@ export default function TeamMembers({ upcomingSoon }: any) {
 
 	//Load TM
 	const [tm, settm] = useState([]);
+	const [filterTeam, setFilterTeam] = useState([]);
+	const [search, setsearch] = useState("");
 
 	const userState = useUserStore((state: { user: any }) => state.user);
 
@@ -68,11 +70,27 @@ export default function TeamMembers({ upcomingSoon }: any) {
 			.then(async (res) => {
 				console.log("@", "listorguser", res.data);
 				settm(res.data);
+				setFilterTeam(res.data);
 			})
 			.catch((err) => {
 				console.log("@", "listorguser", err);
 			});
 	}
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < tm.length; i++) {
+				if (tm[i]["name"].toLowerCase().includes(localSearch) || tm[i]["email"].toLowerCase().includes(localSearch)) {
+					arr.push(tm[i]);
+				}
+			}
+			setFilterTeam(arr);
+		} else {
+			setFilterTeam(tm);
+		}
+	}, [search]);
 
 	async function addTeamMember() {
 		const fd = new FormData();
@@ -326,7 +344,8 @@ export default function TeamMembers({ upcomingSoon }: any) {
 													inputType="search"
 													placeholder={t("Words.Search")}
 													icon={<i className="fa-solid fa-magnifying-glass"></i>}
-													readOnly
+													value={search}
+													handleChange={(e) => setsearch(e.target.value)}
 												/>
 											</div>
 											<div className="flex grow items-center justify-end">
@@ -380,8 +399,8 @@ export default function TeamMembers({ upcomingSoon }: any) {
 													</tr>
 												</thead>
 												<tbody>
-													{tm &&
-														tm.map((data, i) => (
+													{filterTeam &&
+														filterTeam.map((data, i) => (
 															<tr key={i}>
 																<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
 																<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>

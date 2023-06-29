@@ -124,3 +124,16 @@ export async function addNotifyInterviewLog(axiosInstanceAuth2: any, title: any,
 			toastcomp("Notify Not Add", "error");
 		});
 }
+
+export async function addExternalNotifyLog(axiosInstanceAuth2: any, title: any) {
+	const fd = new FormData();
+	fd.append("title", title);
+	await axiosInstanceAuth2
+		.post(`/chatbot/external-notification/`, fd)
+		.then((res: any) => {
+			toastcomp("External Notify Add", "success");
+		})
+		.catch((err: any) => {
+			toastcomp("External Notify Not Add", "error");
+		});
+}

@@ -112,6 +112,9 @@ export default function OfferManagement() {
 	const [interetime, setinteretime] = useState("");
 	const [change, setchange] = useState(false);
 
+	const [filterApplicants, setFilterApplicants] = useState([]);
+	const [search, setsearch] = useState("");
+
 	function checkForm() {
 		return (
 			intername.length > 0 &&
@@ -254,6 +257,7 @@ export default function OfferManagement() {
 			.then(async (res) => {
 				console.log("@", "Applicant Load", res.data);
 				setapplicantlist(res.data);
+				setFilterApplicants(res.data);
 				setrefersh(0);
 			})
 			.catch((err) => {
@@ -262,6 +266,21 @@ export default function OfferManagement() {
 				setrefersh(0);
 			});
 	}
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < applicantlist.length; i++) {
+				if (applicantlist[i]["user"]["first_name"].toLowerCase().includes(localSearch) || applicantlist[i]["user"]["last_name"].toLowerCase().includes(localSearch)) {
+					arr.push(applicantlist[i]);
+				}
+			}
+			setFilterApplicants(arr);
+		} else {
+			setFilterApplicants(applicantlist);
+		}
+	}, [search]);
 
 	async function loadTeamMember() {
 		await axiosInstanceAuth2
@@ -900,10 +919,12 @@ export default function OfferManagement() {
 								inputType="search"
 								placeholder={t('Words.Search')}
 								icon={<i className="fa-solid fa-magnifying-glass"></i>}
+								value={search}
+								handleChange={(e) => setsearch(e.target.value)}
 							/>
 							<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
-								{applicantlist ? (
-									applicantlist.map(
+								{filterApplicants ? (
+									filterApplicants.map(
 										(data, i) =>
 											data["status"] === "Offer" && (
 												<div

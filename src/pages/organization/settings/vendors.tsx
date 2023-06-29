@@ -177,12 +177,16 @@ export default function Vendors() {
 	const [pvendors, setpvendors] = useState([]);
 	const [fvendors, setfvendors] = useState([]);
 
+	const [filterVendors, setFilterVendors] = useState([]);
+	const [search, setsearch] = useState("");
+
 	async function loadVendors() {
 		await axiosInstanceAuth2
 			.get(`/vendors/list_vendors/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				console.log("!-", res.data);
 				setvendors(res.data);
+				setFilterVendors(res.data);
 				const data = res.data;
 				var arr = [];
 				var arr2 = [];
@@ -200,6 +204,21 @@ export default function Vendors() {
 				console.log("!", err);
 			});
 	}
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < vendors.length; i++) {
+				if (vendors[i]["company_name"].toLowerCase().includes(localSearch) || vendors[i]["email"].toLowerCase().includes(localSearch) || vendors[i]["agent_name"].toLowerCase().includes(localSearch)) {
+					arr.push(vendors[i]);
+				}
+			}
+			setFilterVendors(arr);
+		} else {
+			setFilterVendors(vendors);
+		}
+	}, [search]);
 
 	useEffect(() => {
 		if (token && token.length > 0) loadVendors();
@@ -570,6 +589,8 @@ export default function Vendors() {
 															inputType="search"
 															placeholder={t("Words.Search")}
 															icon={<i className="fa-solid fa-magnifying-glass"></i>}
+															value={search}
+															handleChange={(e) => setsearch(e.target.value)}
 														/>
 													</div>
 													<div className="flex grow items-center justify-end">
@@ -602,7 +623,7 @@ export default function Vendors() {
 													</div>
 												</div>
 												<div className="mx-[-15px] flex flex-wrap">
-													{vendors.map((data, i) => (
+													{filterVendors.map((data, i) => (
 														<VCard
 															data={data}
 															onBoardVendor={onBoardVendor}

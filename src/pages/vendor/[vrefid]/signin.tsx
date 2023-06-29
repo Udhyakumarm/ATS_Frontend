@@ -68,6 +68,26 @@ export default function CanCareerSignIn({ providers }: any) {
 				}
 				setvid(vrefid);
 
+				try {
+					let title = `${response.data.userObj[0]["email"]} has logged in as an ${response.data.role}`;
+					// let notification_type = `${}`
+
+					await axiosInstance2
+						.post("/chatbot/external-notification/unauth/", {
+							email: loginInfo.email,
+							title: title
+							// notification_type: notification_type
+						})
+						.then((res) => {
+							toastcomp("Notify Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Notify Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Notify Not Add", "error");
+				}
+
 				const callback = `${
 					process.env.NODE_ENV === "production"
 						? process.env.NEXT_PUBLIC_PROD_FRONTEND + "vendor/" + vrefid + "/clients/"
@@ -174,7 +194,10 @@ export default function CanCareerSignIn({ providers }: any) {
 						)}
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
-							<Link href={`/vendor/${vrefid}/signup`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link
+								href={`/vendor/${vrefid}/signup`}
+								className="font-bold text-primary hover:underline dark:text-white"
+							>
 								{srcLang === "ja" ? "こちら" : "Create Account"}
 							</Link>
 						</p>

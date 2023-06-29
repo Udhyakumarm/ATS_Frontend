@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { sign } from "crypto";
 import toastcomp from "@/components/toast";
 import { useCarrierStore } from "@/utils/code";
-import { axiosInstance as axiosInstance22 } from "@/pages/api/axiosApi";
+import { axiosInstance2, axiosInstance as axiosInstance22 } from "@/pages/api/axiosApi";
 import Image from "next/image";
 import ToggleLang from "@/components/ToggleLang";
 
@@ -132,7 +132,26 @@ export default function CandSignUp() {
 				password2: signUpInfo.passwordConfirm,
 				mobile: signUpInfo.phone_number
 			})
-			.then((response) => {
+			.then(async (response) => {
+				try {
+					let title = `${signUpInfo.first_name} ${signUpInfo.last_name} (${signUpInfo.email}) has signup in as an ${response.data.role}`;
+					// let notification_type = `${}`
+
+					await axiosInstance2
+						.post("/chatbot/notification/unauth/", {
+							email: signUpInfo.email,
+							title: title
+							// notification_type: notification_type
+						})
+						.then((res) => {
+							toastcomp("Notify Add", "success");
+						})
+						.catch((err) => {
+							toastcomp("Notify Not Add", "error");
+						});
+				} catch (error) {
+					toastcomp("Notify Not Add", "error");
+				}
 				console.log(response);
 				router.push(`/organization/${cname}/`);
 				setTimeout(() => {
@@ -165,33 +184,29 @@ export default function CandSignUp() {
 			<main className="py-8">
 				<div className="mx-auto w-full max-w-[550px] px-4">
 					<div className="mb-4 text-center">
-						{
-							orgdetail["OrgProfile"] 
-							? 
-							(
-								<Image
-									src={
-										process.env.NODE_ENV === "production"
-											? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
-											: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
-									}
-									alt={"Somhako"}
-									width={200}
-									height={200}
-									className="mx-auto max-h-[80px] w-auto"
-									onClick={() => {
-										router.push("/organization/" + cname);
-									}}
-								/>
-							)
-							:
+						{orgdetail["OrgProfile"] ? (
+							<Image
+								src={
+									process.env.NODE_ENV === "production"
+										? process.env.NEXT_PUBLIC_PROD_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+										: process.env.NEXT_PUBLIC_DEV_BACKEND + orgdetail["OrgProfile"][0]["logo"]
+								}
+								alt={"Somhako"}
+								width={200}
+								height={200}
+								className="mx-auto max-h-[80px] w-auto"
+								onClick={() => {
+									router.push("/organization/" + cname);
+								}}
+							/>
+						) : (
 							<>
-							<Logo width={180} />
+								<Logo width={180} />
 							</>
-						}
+						)}
 					</div>
 					<form
-						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:py-8 md:px-12"
+						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8"
 						onSubmit={handleSignUp}
 					>
 						<h1 className="mb-6 text-3xl font-bold">
@@ -281,12 +296,15 @@ export default function CandSignUp() {
 						</div>
 						<p className="text-center text-darkGray">
 							Already have an Account?{" "}
-							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link
+								href={`/organization/${cname}/candidate/signin`}
+								className="font-bold text-primary hover:underline dark:text-white"
+							>
 								Sign In
 							</Link>
 						</p>
 					</form>
-					<div className="text-right pt-2">
+					<div className="pt-2 text-right">
 						<ToggleLang />
 					</div>
 				</div>

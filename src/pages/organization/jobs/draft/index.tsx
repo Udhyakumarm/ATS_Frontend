@@ -35,6 +35,8 @@ export default function JobsDrafted() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const [draftedJobs, setDraftedJobs] = useState([]);
+	const [filterJobs, setFilterJobs] = useState([]);
+	const [search, setsearch] = useState("");
 
 	useEffect(() => {
 		const getDraftedJobs = async () => {
@@ -46,6 +48,7 @@ export default function JobsDrafted() {
 					response.data.map((job: any) => job.jobStatus === "Draft" && arr.push(job));
 
 					setDraftedJobs(arr);
+					setFilterJobs(arr);
 				})
 				.catch((error) => {
 					console.log({ error });
@@ -56,6 +59,21 @@ export default function JobsDrafted() {
 		};
 		session && getDraftedJobs();
 	}, [session]);
+
+	useEffect(() => {
+		if (search.length > 0) {
+			let localSearch = search.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < draftedJobs.length; i++) {
+				if (draftedJobs[i]["jobTitle"].toLowerCase().includes(localSearch)) {
+					arr.push(draftedJobs[i]);
+				}
+			}
+			setFilterJobs(arr);
+		} else {
+			setFilterJobs(draftedJobs);
+		}
+	}, [search]);
 
 	return (
 		<>
@@ -97,13 +115,14 @@ export default function JobsDrafted() {
 									inputType="search"
 									placeholder={t('Words.Search')}
 									icon={<i className="fa-solid fa-search"></i>}
-									readOnly
+									value={search}
+									handleChange={(e) => setsearch(e.target.value)}
 								/>
 							</div>
-							{draftedJobs && draftedJobs.length > 0 ? (
+							{filterJobs && filterJobs.length > 0 ? (
 								<div className="mx-[-15px] flex flex-wrap">
-									{draftedJobs &&
-										draftedJobs.map(
+									{filterJobs &&
+										filterJobs.map(
 											(job: any, i) =>
 												job && (
 													<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]" key={i}>
@@ -129,7 +148,7 @@ export default function JobsDrafted() {
 											className="mx-auto max-h-[200px] w-auto max-w-[200px]"
 										/>
 									</div>
-									<h5 className="mb-4 text-lg font-semibold">{t('Select.No')} {t('Words.DraftJob')}</h5>
+									<h5 className="mb-4 text-lg font-semibold">{t('Select.No')} {t('Words.DraftJobs')}</h5>
 									<p className="mb-2 text-sm text-darkGray">
 										{
 											srcLang === 'ja' ? 'ドラフト ジョブはありません。ドラフト ジョブを管理するには、新しいジョブを投稿してください' : 'There are no Draft Jobs , Post a New Job to manage draft Jobs'
