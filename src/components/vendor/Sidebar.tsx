@@ -130,7 +130,7 @@ export default function VendorSideBar() {
 											className={
 												`flex cursor-pointer items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
 												" " +
-												(router.pathname == menuItem.url
+												(router.route.includes(menuItem.url)
 													? "border-r-gradDarkBlue bg-lightBlue text-primary dark:bg-gray-900 dark:text-white"
 													: "border-r-transparent bg-transparent") +
 												" " +
