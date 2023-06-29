@@ -1,13 +1,14 @@
 import Logo from "@/components/Logo";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useCarrierStore, useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import Image from "next/image";
 import ThemeChange from "./ThemeChange";
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ToggleLang from "./ToggleLang";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 export default function Header() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -41,6 +42,54 @@ export default function Header() {
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const setorgdetail = useCarrierStore((state: { setorgdetail: any }) => state.setorgdetail);
 
+	const [token, settoken] = useState("");
+	const [count, setcount] = useState(0);
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	async function loadNotificationCount() {
+		const axiosInstanceAuth2 = axiosInstanceAuth(token);
+		await axiosInstanceAuth2
+			.get(`/chatbot/external-get-notification-count/`)
+			.then(async (res) => {
+				// console.log("!", res.data);
+				setcount(res.data.length);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	async function notification() {
+		const axiosInstanceAuth2 = axiosInstanceAuth(token);
+		await axiosInstanceAuth2
+			.get(`/chatbot/external-read-notification-count/`)
+			.then(async (res) => {
+				// console.log("!", res.data);
+				setcount(res.data.length);
+				router.push(`/organization/${cname}/notifications`);
+			})
+			.catch((err) => {
+				console.log("!", err);
+			});
+	}
+
+	const load = useNotificationStore((state: { load: any }) => state.load);
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
+	useEffect(() => {
+		if ((token && token.length > 0) || load) {
+			loadNotificationCount();
+			if (load) toggleLoadMode(false);
+		}
+	}, [token, load]);
+
 	if (
 		cname &&
 		cname.length > 0 &&
@@ -49,6 +98,7 @@ export default function Header() {
 			router.asPath == "/organization/" + cname + "/dashboard" ||
 			router.asPath == "/organization/" + cname + "/job-detail" ||
 			router.asPath == "/organization/" + cname + "/job-apply" ||
+			router.asPath == "/organization/" + cname + "/notifications" ||
 			router.asPath == "/organization/" + cname + "/settings")
 	) {
 		return (
@@ -84,7 +134,7 @@ export default function Header() {
 												: "border-b-transparent")
 										}
 									>
-										{srcLang==='ja' ? '求人検索' : 'Search Jobs'}
+										{srcLang === "ja" ? "求人検索" : "Search Jobs"}
 									</Link>
 								</li>
 								{auth && (
@@ -99,7 +149,7 @@ export default function Header() {
 													: "border-b-transparent")
 											}
 										>
-											{srcLang==='ja' ? 'ダッシュボード' : 'Dashboard'}
+											{srcLang === "ja" ? "ダッシュボード" : "Dashboard"}
 										</Link>
 									</li>
 								)}
@@ -127,7 +177,16 @@ export default function Header() {
 							)}
 							{auth && (
 								<>
-									<Popover className="relative ml-4 mr-6">
+									<div
+										className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
+										onClick={() => notification()}
+									>
+										<i className="fa-regular fa-bell text-[20px]"></i>
+										<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
+											{count}
+										</span>
+									</div>
+									{/* <Popover className="relative ml-4 mr-6">
 										<Popover.Button>
 											<button type="button" className="relative uppercase text-darkGray dark:text-gray-400">
 												<i className="fa-regular fa-bell text-[20px]"></i>
@@ -144,7 +203,8 @@ export default function Header() {
 												<li className="py-2">Your Profile has been Rejected for this Job</li>
 											</ul>
 										</Popover.Panel>
-									</Popover>
+									</Popover> */}
+
 									<Popover className="relative">
 										<Popover.Button>
 											<button type="button" className="h-[35px] w-[35px] rounded-full bg-darkGray text-white">
@@ -154,15 +214,18 @@ export default function Header() {
 										<Popover.Panel className="absolute right-0 z-10 w-[150px] overflow-hidden rounded bg-white shadow-normal dark:bg-gray-700">
 											<ul className="text-sm">
 												<li>
-													<Link href={`/organization/${cname}/settings`} className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200 dark:hover:text-black">
+													<Link
+														href={`/organization/${cname}/settings`}
+														className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200 dark:hover:text-black"
+													>
 														<i className="fa-solid fa-gear mr-3"></i>
-														{srcLang==='ja' ? '設定' : 'Settings'}
+														{srcLang === "ja" ? "設定" : "Settings"}
 													</Link>
 												</li>
 												<li>
 													<button
 														type="button"
-														className="block w-full text-red-500 px-4 py-1 py-2 text-left font-bold hover:bg-gray-200"
+														className="block w-full px-4 py-1 py-2 text-left font-bold text-red-500 hover:bg-gray-200"
 														onClick={() => {
 															signOut({ callbackUrl: `/organization/${cname}` });
 
@@ -171,7 +234,8 @@ export default function Header() {
 															setuser([]);
 														}}
 													>
-														<i className="fa-solid fa-right-from-bracket mr-3"></i> {srcLang==='ja' ? 'ログアウト' : 'Logout'}
+														<i className="fa-solid fa-right-from-bracket mr-3"></i>{" "}
+														{srcLang === "ja" ? "ログアウト" : "Logout"}
 													</button>
 												</li>
 											</ul>
@@ -200,7 +264,7 @@ export default function Header() {
 							<ToggleLang />
 							<button
 								type="button"
-								className="ml-4 text-xl rounded text-red-500 hover:text-red-600"
+								className="ml-4 rounded text-xl text-red-500 hover:text-red-600"
 								onClick={() => {
 									signOut();
 
@@ -216,7 +280,7 @@ export default function Header() {
 				</header>
 			</>
 		);
-	} 
+	}
 	// else if (
 	// 	vid &&
 	// 	vid.length > 0 &&
@@ -256,9 +320,5 @@ export default function Header() {
 	// 		</>
 	// 	);
 	// }
-	return (
-		<>
-			
-		</>
-	);
+	return <></>;
 }

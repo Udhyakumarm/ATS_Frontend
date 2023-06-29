@@ -11,8 +11,8 @@ import Validator, { Rules } from "validatorjs";
 import toastcomp from "@/components/toast";
 import { axiosInstance2 } from "../api/axiosApi";
 import moment from "moment";
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import ToggleLang from "@/components/ToggleLang";
 
@@ -47,7 +47,7 @@ export default function AuthSignUp() {
 	const router = useRouter();
 	const { error } = useRouter().query;
 
-	const { t } = useTranslation('common')
+	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const [formError, setFormError] = useState({
@@ -125,9 +125,9 @@ export default function AuthSignUp() {
 				let aname = "";
 				let title = "";
 				try {
-					aname = `${response.data.userObj[0]["name"]} (${
-						response.data.userObj[0]["email"]
-					}) has newly sign up at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+					aname = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up at ${moment().format(
+						"MMMM Do YYYY, h:mm:ss a"
+					)}`;
 
 					await axiosInstance2
 						.post("/organization/activity-log/unauth/", {
@@ -145,7 +145,7 @@ export default function AuthSignUp() {
 				}
 
 				try {
-					title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has newly sign up`;
+					title = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up`;
 					// let notification_type = `${}`
 
 					await axiosInstance2
@@ -190,7 +190,7 @@ export default function AuthSignUp() {
 	return (
 		<>
 			<Head>
-				<title>{srcLang === 'ja' ? 'アカウント作成' : 'Sign Up'}</title>
+				<title>{srcLang === "ja" ? "アカウント作成" : "Sign Up"}</title>
 				<meta name="description" />
 			</Head>
 			<main className="py-8">
@@ -203,14 +203,20 @@ export default function AuthSignUp() {
 						onSubmit={handleSignUp}
 					>
 						<h1 className="mb-6 text-3xl font-bold">
-						{srcLang === 'ja' ? 'アカウント作成' : <>Sign <span className="text-primary">Up</span></>}
+							{srcLang === "ja" ? (
+								"アカウント作成"
+							) : (
+								<>
+									Sign <span className="text-primary">Up</span>
+								</>
+							)}
 						</h1>
 						<AuthError error={error} />
 
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label={t('Form.OrgName')}
+							label={t("Form.OrgName")}
 							id="organizationName"
 							handleChange={dispatch}
 							value={signUpInfo.organizationName}
@@ -220,7 +226,7 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label={t('Form.FullName')}
+							label={t("Form.FullName")}
 							id="fullName"
 							value={signUpInfo.fullName}
 							error={formError.fullName}
@@ -230,7 +236,7 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="email"
-							label={t('Form.Email')}
+							label={t("Form.Email")}
 							id="email"
 							value={signUpInfo.email}
 							handleChange={dispatch}
@@ -241,14 +247,14 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="select"
 							inputType="text"
-							label={t('Form.OrgType')}
+							label={t("Form.OrgType")}
 							id="companyType"
 							singleSelect
 							value={signUpInfo.companyType}
 							options={[
-								{ name: t('Select.Sole_Proprietorship') },
-								{ name: t('Select.Corporation') },
-								{ name: t('Select.Limited_Liability_Company') }
+								{ name: t("Select.Sole_Proprietorship") },
+								{ name: t("Select.Corporation") },
+								{ name: t("Select.Limited_Liability_Company") }
 							]}
 							handleChange={dispatch}
 							error={formError.companyType}
@@ -260,7 +266,7 @@ export default function AuthSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label={t('Form.Password')}
+									label={t("Form.Password")}
 									id="password"
 									value={signUpInfo.password}
 									error={formError.password}
@@ -271,7 +277,7 @@ export default function AuthSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label={t('Form.ConfirmPassword')}
+									label={t("Form.ConfirmPassword")}
 									id="passwordConfirm"
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
@@ -280,16 +286,16 @@ export default function AuthSignUp() {
 							</div>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t('Btn.CreateAccount')} full={true} loader={false} disabled={false} />
+							<Button btnType="submit" label={t("Btn.CreateAccount")} full={true} loader={false} disabled={false} />
 						</div>
 						<p className="text-center text-darkGray">
-							{srcLang === 'ja' ? 'アカウント作成がまだの方は' : 'Already have an Account?'}{" "}
+							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Already have an Account?"}{" "}
 							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline dark:text-white">
-								{srcLang === 'ja' ? 'こちら' : 'Sign In'}
+								{srcLang === "ja" ? "こちら" : "Sign In"}
 							</Link>
 						</p>
 					</form>
-					<div className="text-right pt-2">
+					<div className="pt-2 text-right">
 						<ToggleLang />
 					</div>
 				</div>
@@ -298,12 +304,12 @@ export default function AuthSignUp() {
 	);
 }
 
-export async function getStaticProps({ context, locale }:any) {
-	const translations = await serverSideTranslations(locale, ['common']);
+export async function getStaticProps({ context, locale }: any) {
+	const translations = await serverSideTranslations(locale, ["common"]);
 	return {
 		props: {
-		...translations
-		},
+			...translations
+		}
 	};
 }
 

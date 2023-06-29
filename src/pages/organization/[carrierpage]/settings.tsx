@@ -7,9 +7,9 @@ import UpcomingComp from "@/components/organization/upcomingComp";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import toastcomp from "@/components/toast";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addExternalNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { signOut, useSession } from "next-auth/react";
-import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useCarrierStore, useLangStore, useUserStore, useVersionStore, useNotificationStore } from "@/utils/code";
 
 export default function CandSettings({ upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -23,6 +23,8 @@ export default function CandSettings({ upcomingSoon }: any) {
 	const [changePass, setChangePass] = useState(false);
 	const [accountDelete, setAccountDelete] = useState(false);
 	const [profileimg, setProfileImg] = useState();
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -61,6 +63,9 @@ export default function CandSettings({ upcomingSoon }: any) {
 				setChangePass(false);
 				setpass("");
 				setcpass("");
+				let title = `Password Changed`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
 			})
 			.catch((err) => {
 				console.log("@", "gallery", err);
@@ -97,6 +102,10 @@ export default function CandSettings({ upcomingSoon }: any) {
 			.then(async (res) => {
 				toastcomp("Settings Updated", "success");
 				loadSettings();
+
+				let title = `Settings Updated`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -109,10 +118,10 @@ export default function CandSettings({ upcomingSoon }: any) {
 	useEffect(() => {
 		if (data) {
 			var formData = new FormData();
-			if (data["first_name"] != bfname && bfname.length > 0 ) {
+			if (data["first_name"] != bfname && bfname.length > 0) {
 				formData.append("first_name", bfname);
 			}
-			if (data["last_name"] != blname && blname.length > 0 ) {
+			if (data["last_name"] != blname && blname.length > 0) {
 				formData.append("last_name", blname);
 			}
 			if (profileimg) {

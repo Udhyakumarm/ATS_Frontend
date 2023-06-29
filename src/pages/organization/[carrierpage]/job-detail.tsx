@@ -2,12 +2,12 @@ import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
 import Link from "next/link";
-import { axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addExternalNotifyLog, axiosInstance, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { debounce } from "lodash";
 import { axiosInstance as axis } from "@/utils";
 import moment from "moment";
-import { useCarrierStore } from "@/utils/code";
+import { useCarrierStore, useNotificationStore } from "@/utils/code";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getProviders, useSession } from "next-auth/react";
@@ -46,6 +46,8 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 	const setjid = useCarrierStore((state: { setjid: any }) => state.setjid);
 	const jdata = useCarrierStore((state: { jdata: any }) => state.jdata);
 	const setjdata = useCarrierStore((state: { setjdata: any }) => state.setjdata);
+
+	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
 	const [token, settoken] = useState("");
 	const [btndis, setbtndis] = useState(false);
@@ -193,6 +195,9 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 			.post(`/job/applicant/apply/${refid}/`)
 			.then((res) => {
 				toastcomp(res.data.Message, "success");
+				let title = `Suceessfully Applied On ${jdata["jobTitle"]} (${jdata["refid"]})`;
+				addExternalNotifyLog(axiosInstanceAuth2, title);
+				toggleLoadMode(true);
 			})
 			.catch((err) => {
 				toastcomp("Candidate Applicant Not Created", "error");
@@ -404,7 +409,6 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 		else if (check === 3) toastcomp("Fill Up Cert", "error");
 	}
 
-	
 	async function loadSettings() {
 		const axiosInstanceAuth2 = axiosInstanceAuth(token);
 		await axiosInstanceAuth2

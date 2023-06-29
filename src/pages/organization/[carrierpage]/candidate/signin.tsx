@@ -66,6 +66,26 @@ export default function CandSignIn({ providers }: any) {
 								setuser(response.data.userObj);
 							}
 
+							try {
+								let title = `${response.data.userObj[0]["first_name"]} ${response.data.userObj[0]["last_name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
+								// let notification_type = `${}`
+
+								await axiosInstance2
+									.post("/chatbot/external-notification/unauth/", {
+										email: loginInfo.email,
+										title: title
+										// notification_type: notification_type
+									})
+									.then((res) => {
+										toastcomp("Notify Add", "success");
+									})
+									.catch((err) => {
+										toastcomp("Notify Not Add", "error");
+									});
+							} catch (error) {
+								toastcomp("Notify Not Add", "error");
+							}
+
 							const callback = `${
 								process.env.NODE_ENV === "production"
 									? process.env.NEXT_PUBLIC_PROD_FRONTEND + "organization/" + cname + "/"
@@ -183,7 +203,7 @@ export default function CandSignIn({ providers }: any) {
 									Remember Me
 								</label>
 							</div>
-							<Link href={`/organization/${cname}/candidate/forgot`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline dark:text-white">
 								Forgot Password?
 							</Link>
 						</div>
@@ -197,7 +217,10 @@ export default function CandSignIn({ providers }: any) {
 						)}
 						<p className="text-center text-darkGray">
 							Not sign up yet ?{" "}
-							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link
+								href={`/organization/${cname}/candidate/signup`}
+								className="font-bold text-primary hover:underline dark:text-white"
+							>
 								Create Account
 							</Link>
 						</p>
