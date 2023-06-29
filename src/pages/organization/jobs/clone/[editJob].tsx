@@ -88,6 +88,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	const [jcollaborator, setjcollaborator] = useState(false);
 	const [jtm, setjtm] = useState([]);
 	const [ujtm, setujtm] = useState([]);
+	const [jfv, setjfv] = useState([]);
 
 	const [integrationList, setIntegrationList] = useState({
 		LinkedIn: { access: null },
@@ -242,6 +243,13 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 						setjtm(abc2);
 					}
 					setujtm(arr);
+					var arr2 = [];
+					if (jobData["vendor"] && jobData["vendor"].length > 0) {
+						for (let j = 0; j < jobData["vendor"].length; j++) {
+							arr2.push(jobData["vendor"][j]["id"].toString());
+						}
+					}
+					setjfv(arr2);
 				} else {
 					router.back();
 				}
@@ -469,6 +477,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
 			}
+			if (jfv.length > 0) {
+				fd.append("vendorID", jfv.join("|"));
+			}
 			// console.log("jtitle", jtitle);
 			// console.log("jfunction", jfunction);
 			// console.log("jdept", jdept);
@@ -586,6 +597,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			fd.append("jobStatus", "Draft");
 			if (jtm.length > 0) {
 				fd.append("teamID", jtm.join("|"));
+			}
+			if (jfv.length > 0) {
+				fd.append("vendorID", jfv.join("|"));
 			}
 			// console.log("jtitle", jtitle);
 			// console.log("jfunction", jfunction);
@@ -713,6 +727,29 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		setjtm(arr);
 	}
 
+	function onChnageCheck2(e) {
+		e.preventDefault();
+		let arr = jfv;
+		if (e.target.checked) {
+			let value2 = e.target.dataset.pk2;
+
+			if (e.target.dataset.id === "Vendor") {
+			}
+
+			arr.push(value2);
+		} else {
+			let value2 = e.target.dataset.pk2;
+
+			if (e.target.dataset.id === "Vendor") {
+			}
+			arr = arr.filter((item) => item !== value2);
+		}
+
+		console.log("!", arr);
+		// console.log("!", e.target.dataset.pk);
+		setjfv(arr);
+	}
+
 	useEffect(() => {
 		console.log("#", router.query);
 	}, [router]);
@@ -802,6 +839,20 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		{
 			title: t("Words.Divison"),
 			icon: <i className="fa-solid fa-table-cells"></i>
+		}
+	];
+	const VendorTableHead = [
+		{
+			title: "Agent Name"
+		},
+		{
+			title: "Company Name"
+		},
+		{
+			title: "Email"
+		},
+		{
+			title: " "
 		}
 	];
 
@@ -1063,9 +1114,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												<button
 													type="button"
 													onClick={() => onAIGenerateHandler()}
-													className="ml-auto md:mt-[-45px] min-h-[46px] flex items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700"
+													className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
 												>
-													<span className="mr-3">{t('Words.GenerateDescription')}</span>
+													<span className="mr-3">{t("Words.GenerateDescription")}</span>
 													{aiLoader ? (
 														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
 													) : (
@@ -1320,8 +1371,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																		handleChange={(e) => setsearch(e.target.value)}
 																	/>
 																</div>
-																{
-																	!upcomingSoon &&
+																{!upcomingSoon && (
 																	<div className="flex grow items-center justify-end">
 																		<div className="mr-3 w-[150px]">
 																			<FormField
@@ -1350,7 +1400,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																			</label>
 																		</div>
 																	</div>
-															}
+																)}
 															</div>
 															<div className="overflow-x-auto">
 																<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -1516,7 +1566,40 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 														</div>
 													</div>
 												</div>
-												<div className="mx-[-15px] flex flex-wrap">
+												<div className="overflow-x-auto">
+													<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
+														<thead>
+															<tr>
+																{VendorTableHead.map((item, i) => (
+																	<th className="border-b px-3 py-2 text-left" key={i}>
+																		{item.title}
+																	</th>
+																))}
+															</tr>
+														</thead>
+														<tbody>
+															{fvendors &&
+																fvendors.map((data, i) => (
+																	<tr key={i}>
+																		<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																		<td className="border-b px-3 py-2 text-right">
+																			<input
+																				type="checkbox"
+																				value={data["email"]}
+																				data-id={"vendor"}
+																				data-pk2={data["id"]}
+																				checked={jfv.includes(data["id"].toString())}
+																				onChange={(e) => onChnageCheck2(e)}
+																			/>
+																		</td>
+																	</tr>
+																))}
+														</tbody>
+													</table>
+												</div>
+												{/* <div className="mx-[-15px] flex flex-wrap">
 													{sklLoad
 														? fvendors &&
 														  fvendors.map((data, i) => (
@@ -1529,7 +1612,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																	<CardLayout_2 sklLoad={true} />
 																</div>
 														  )}
-												</div>
+												</div> */}
 											</div>
 										</div>
 									)}
@@ -1659,7 +1742,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 													</li>
 												</ul>
 												<article className="mt-3">
-													<h5 className="mb-2 font-bold">{t('Words.Department')} {t('Form.Description')}</h5>
+													<h5 className="mb-2 font-bold">
+														{t("Words.Department")} {t("Form.Description")}
+													</h5>
 													{jdeptinfo ? (
 														<>
 															<p dangerouslySetInnerHTML={{ __html: jdeptinfo }}></p>
