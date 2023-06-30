@@ -22,6 +22,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const [shareJob, shareJobPopupOpen] = useState(false);
 	const [count1, setcount1] = useState(0);
 	const [count2, setcount2] = useState(0);
+	const [shareCN, setshareCN] = useState("");
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
@@ -144,8 +145,20 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			});
 	}
 
+	async function loadOrganizationProfile() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorganizationprofile/`)
+			.then(async (res) => {
+				setshareCN(res.data[0]["user"]["company_name"]);
+			})
+			.catch((err) => {
+				console.log("@", "oprofile", err);
+			});
+	}
+
 	useEffect(() => {
 		getCount();
+		loadOrganizationProfile();
 	}, []);
 
 	return (
@@ -907,27 +920,48 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									<div className="p-8">
 										<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<LinkedinShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+												<LinkedinShareButton
+													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+												>
 													<i className="fa-brands fa-linkedin-in hover:text-black"></i>
 												</LinkedinShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TwitterShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+												<TwitterShareButton
+													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+												>
 													<i className="fa-brands fa-twitter hover:text-black"></i>
 												</TwitterShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<FacebookShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+												<FacebookShareButton
+													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+												>
 													<i className="fa-brands fa-facebook-f hover:text-black"></i>
 												</FacebookShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TelegramShareButton url={`http://localhost:3000/organization/jobs/${job.refid}`}>
+												<TelegramShareButton
+													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+												>
 													<i className="fa-brands fa-telegram hover:text-black"></i>
 												</TelegramShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<button type="button" className="hover:text-black">
+												<button
+													type="button"
+													className="hover:text-black"
+													onClick={(e) => {
+														navigator.clipboard
+															.writeText(`https://www.jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`)
+															.then((e) => {
+																toastcomp("Copid Successfully", "Success");
+															})
+															.catch((e) => {
+																toastcomp("Copid Unsuccessfully", "error");
+															});
+													}}
+												>
 													<i className="fa-regular fa-copy"></i>
 												</button>
 											</li>
