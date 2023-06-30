@@ -508,13 +508,9 @@ export default function CanCareerJobDetail2(props) {
 							<div className="mb-6 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
-									<button
-										type="button"
-										className="mr-8 flex cursor-pointer items-center"
-										onClick={() => mainShareJobOpen(true)}
-									>
+									<button type="button" className="mr-6 text-sm text-gray-400 flex items-center" onClick={() => mainShareJobOpen(true)}>
 										<span className="mr-2">Share Job</span>
-										<i className="fa-solid fa-share text-[#6D27F9] dark:text-white"></i>
+										<i className="fa-solid fa-share"></i>
 									</button>
 								</div>
 								<div className="px-8 py-4">
@@ -1439,9 +1435,8 @@ export default function CanCareerJobDetail2(props) {
 					</div>
 				</Dialog>
 			</Transition.Root>
-
 			<Transition.Root show={mainShareJob} as={Fragment}>
-				<Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={mainShareJobOpen}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={mainShareJobOpen}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -1455,7 +1450,7 @@ export default function CanCareerJobDetail2(props) {
 					</Transition.Child>
 
 					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<Transition.Child
 								as={Fragment}
 								enter="ease-out duration-300"
@@ -1465,76 +1460,80 @@ export default function CanCareerJobDetail2(props) {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "ジョブを共有する" : "Share Job Via"}
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => mainShareJobOpen(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
 									<div className="p-8">
-										<div className="mb-8 flex items-center justify-between">
-											<h4 className="text-xl font-semibold leading-none">Share Job Via</h4>
-											<button type="button" className="leading-none" onClick={() => mainShareJobOpen(false)}>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
-										</div>
-										<div className="rounded-[20px] p-6 shadow-md">
-											<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
-												<li className="mb-2 w-[33.33%] px-[10px]">
-													<LinkedinShareButton
-														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
-														title="LOREM"
-														summary="LOREM2"
-														source="LOREM333"
-													>
-														<i className="fa-brands fa-linkedin-in hover:text-black"></i>
-													</LinkedinShareButton>
-												</li>
-												<li className="mb-2 w-[33.33%] px-[10px]">
-													<TwitterShareButton
-														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
-													>
-														<i className="fa-brands fa-twitter hover:text-black"></i>
-													</TwitterShareButton>
-													{/* <button type="button" className="hover:text-black">
-                                                <i className="fa-brands fa-twitter"></i>
-                                            </button> */}
-												</li>
-												<li className="mb-2 w-[33.33%] px-[10px]">
-													<FacebookShareButton
-														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
-													>
-														<i className="fa-brands fa-facebook-f hover:text-black"></i>
-													</FacebookShareButton>
-													{/* <button type="button" className="hover:text-black">
-                                                <i className="fa-brands fa-facebook-f"></i>
-                                            </button> */}
-												</li>
-												<li className="mb-2 w-[33.33%] px-[10px]">
-													<TelegramShareButton
-														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
-													>
-														<i className="fa-brands fa-telegram hover:text-black"></i>
-													</TelegramShareButton>
-													{/* <button type="button" className="hover:text-black">
-                                                <i className="fa-brands fa-telegram"></i>
-                                            </button> */}
-												</li>
-												<li className="mb-2 w-[33.33%] px-[10px]">
-													<button
-														type="button"
-														className="hover:text-black"
-														onClick={(e) => {
-															navigator.clipboard
-																.writeText(`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`)
-																.then((e) => {
-																	toastcomp("Copid Successfully", "Success");
-																})
-																.catch((e) => {
-																	toastcomp("Copid Unsuccessfully", "error");
-																});
-														}}
-													>
-														<i className="fa-regular fa-copy"></i>
-													</button>
-												</li>
-											</ul>
-										</div>
+										<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<LinkedinShareButton
+													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													title="LOREM"
+													summary="LOREM2"
+													source="LOREM333"
+												>
+													<i className="fa-brands fa-linkedin-in hover:text-black"></i>
+												</LinkedinShareButton>
+											</li>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<TwitterShareButton
+													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+												>
+													<i className="fa-brands fa-twitter hover:text-black"></i>
+												</TwitterShareButton>
+												{/* <button type="button" className="hover:text-black">
+											<i className="fa-brands fa-twitter"></i>
+										</button> */}
+											</li>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<FacebookShareButton
+													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+												>
+													<i className="fa-brands fa-facebook-f hover:text-black"></i>
+												</FacebookShareButton>
+												{/* <button type="button" className="hover:text-black">
+											<i className="fa-brands fa-facebook-f"></i>
+										</button> */}
+											</li>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<TelegramShareButton
+													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+												>
+													<i className="fa-brands fa-telegram hover:text-black"></i>
+												</TelegramShareButton>
+												{/* <button type="button" className="hover:text-black">
+											<i className="fa-brands fa-telegram"></i>
+										</button> */}
+											</li>
+											<li className="mb-2 w-[33.33%] px-[10px]">
+												<button
+													type="button"
+													className="hover:text-black"
+													onClick={(e) => {
+														navigator.clipboard
+															.writeText(`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`)
+															.then((e) => {
+																toastcomp("Copid Successfully", "Success");
+															})
+															.catch((e) => {
+																toastcomp("Copid Unsuccessfully", "error");
+															});
+													}}
+												>
+													<i className="fa-regular fa-copy"></i>
+												</button>
+											</li>
+										</ul>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
