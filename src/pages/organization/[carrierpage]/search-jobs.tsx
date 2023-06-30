@@ -127,8 +127,8 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 																btnType="button"
 																handleClick={() => {
 																	setjid(data["refid"]);
-																	setjdata(data);
-																	router.push(`/organization/${cname}/job-detail`);
+																	// setjdata(data);
+																	router.push(`/organization/${cname}/job-detail/${data["refid"]}`);
 																}}
 															/>
 														</div>

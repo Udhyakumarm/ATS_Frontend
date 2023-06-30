@@ -126,8 +126,8 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																	className="mb-3 cursor-pointer text-lg font-bold"
 																	onClick={() => {
 																		setjid(data["job"]["refid"]);
-																		setjdata(data["job"]);
-																		router.push(`/organization/${cname}/job-detail`);
+																		// setjdata(data["job"]);
+																		router.push(`/organization/${cname}/job-detail/${data["job"]["refid"]}`);
 																	}}
 																>
 																	{data["job"]["jobTitle"]}

@@ -36,6 +36,7 @@ export default function Header() {
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
+	const jid = useCarrierStore((state: { jid: any }) => state.jid);
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
 	const vid = useCarrierStore((state: { vid: any }) => state.vid);
 	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
@@ -97,6 +98,7 @@ export default function Header() {
 			router.asPath == "/organization/" + cname + "/search-jobs" ||
 			router.asPath == "/organization/" + cname + "/dashboard" ||
 			router.asPath == "/organization/" + cname + "/job-detail" ||
+			router.asPath == "/organization/" + cname + "/job-detail/" + jid ||
 			router.asPath == "/organization/" + cname + "/job-apply" ||
 			router.asPath == "/organization/" + cname + "/notifications" ||
 			router.asPath == "/organization/" + cname + "/settings")
