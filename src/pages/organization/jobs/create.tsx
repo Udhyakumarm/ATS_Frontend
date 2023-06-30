@@ -100,6 +100,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	const [tm, settm] = useState([]);
 	const [filterTeam, setFilterTeam] = useState([]);
 	const [search, setsearch] = useState("");
+	const [filterVendors, setFilterVendors] = useState([]);
+	const [search2, setsearch2] = useState("");
 
 	useEffect(() => {
 		if (session) {
@@ -148,7 +150,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		await axiosInstanceAuth2
 			.get(`/vendors/list_vendors/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				console.log("!=>", res.data);
 				setvendors(res.data);
 				const data = res.data;
 				var arr = [];
@@ -162,11 +164,27 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				}
 				setpvendors(arr);
 				setfvendors(arr2);
+				setFilterVendors(arr2);
 			})
 			.catch((err) => {
 				console.log("!", err);
 			});
 	}
+
+	useEffect(() => {
+		if (search2.length > 0) {
+			let localSearch = search2.toLowerCase();
+			let arr = [];
+			for (let i = 0; i < fvendors.length; i++) {
+				if (fvendors[i]["agent_name"].toLowerCase().includes(localSearch) || fvendors[i]["company_name"].toLowerCase().includes(localSearch) || fvendors[i]["email"].toLowerCase().includes(localSearch)) {
+					arr.push(fvendors[i]);
+				}
+			}
+			setFilterVendors(arr);
+		} else {
+			setFilterVendors(fvendors);
+		}
+	}, [search2]);
 
 	useEffect(() => {
 		if (token && token.length > 0) {
@@ -722,13 +740,13 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	];
 	const VendorTableHead = [
 		{
-			title: "Agent Name"
+			title: t('Form.AgentName')
 		},
 		{
-			title: "Company Name"
+			title: t('Form.CompanyName')
 		},
 		{
-			title: "Email"
+			title: t('Form.Email')
 		},
 		{
 			title: " "
@@ -1417,6 +1435,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															inputType="search"
 															placeholder={t("Words.Search")}
 															icon={<i className="fa-solid fa-magnifying-glass"></i>}
+															value={search2}
+															handleChange={(e) => setsearch2(e.target.value)}
 														/>
 													</div>
 													{!upcomingSoon && (
@@ -1462,8 +1482,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 															</tr>
 														</thead>
 														<tbody>
-															{fvendors &&
-																fvendors.map((data, i) => (
+															{filterVendors &&
+																filterVendors.map((data, i) => (
 																	<tr key={i}>
 																		<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
 																		<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>

@@ -93,14 +93,14 @@ export default function CreatePassword() {
 						<FormField
 							fieldType="input"
 							inputType="password"
-							label={t("NewPassword")}
+							label={t("Form.NewPassword")}
 							value={password}
 							handleChange={(e) => setpassword(e.target.value)}
 						/>
 						<FormField
 							fieldType="input"
 							inputType="password"
-							label={t("ConfirmPassword")}
+							label={t("Form.ConfirmPassword")}
 							value={password2}
 							handleChange={(e) => setpassword2(e.target.value)}
 						/>
