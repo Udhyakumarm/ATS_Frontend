@@ -399,7 +399,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					btnStyle="outlined"
 					btnType="button"
 					label={srcLang === "ja" ? "みる" : "View"}
-					handleClick={() => setPreviewPopup(true)}
+					handleClick={() => router.push(`/organization/jobs/preview/${shareCN}/${job.refid}`)}
 				/>
 			</div>
 
