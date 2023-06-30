@@ -61,11 +61,11 @@ export default function CanCareerJobDetail2(props) {
 	const [mainShareJob, mainShareJobOpen] = useState(false);
 
 	useEffect(() => {
-		if ((orgdetail && Object.keys(orgdetail).length === 0) || (jid && jid == "")) {
+		if (orgdetail && Object.keys(orgdetail).length === 0) {
 			if (cname == "" || cid == "") router.replace(`/organization/${cname}`);
 			else router.back();
 		}
-	}, [cid, orgdetail, jid, cname]);
+	}, [cid, orgdetail, cname]);
 
 	// useEffect(() => {
 	// 	if (jdata) console.log(jdata);
@@ -82,7 +82,7 @@ export default function CanCareerJobDetail2(props) {
 	async function checkApplicant() {
 		const axiosInstanceAuth2 = axiosInstanceAuth(token);
 		await axiosInstanceAuth2
-			.get(`/job/applicant/check/${jid}/`)
+			.get(`/job/applicant/check/${detail}/`)
 			.then(async (res) => {
 				console.log("!", res.data);
 				if (res.data["Message"] == 1) {
@@ -97,10 +97,10 @@ export default function CanCareerJobDetail2(props) {
 	}
 
 	useEffect(() => {
-		if (token && token.length > 0 && jid && jid.length > 0) {
+		if (token && token.length > 0 && detail && detail.length > 0) {
 			checkApplicant();
 		}
-	}, [token, jid]);
+	}, [token, detail]);
 
 	useEffect(() => {
 		// setjid(detail)
@@ -427,7 +427,7 @@ export default function CanCareerJobDetail2(props) {
 		}
 
 		console.log(check);
-		if (check === 0) addCandidateProfile(jid);
+		if (check === 0) addCandidateProfile(detail);
 		else if (check === 4) toastcomp("Fill Up Required Fields", "error");
 		else if (check === 1) toastcomp("Fill Up Exp", "error");
 		else if (check === 2) toastcomp("Fill Up Edu", "error");
@@ -1477,7 +1477,7 @@ export default function CanCareerJobDetail2(props) {
 											<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
 												<li className="mb-2 w-[33.33%] px-[10px]">
 													<LinkedinShareButton
-														url={window.location.href}
+														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
 														title="LOREM"
 														summary="LOREM2"
 														source="LOREM333"
@@ -1486,7 +1486,9 @@ export default function CanCareerJobDetail2(props) {
 													</LinkedinShareButton>
 												</li>
 												<li className="mb-2 w-[33.33%] px-[10px]">
-													<TwitterShareButton url={window.location.href}>
+													<TwitterShareButton
+														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													>
 														<i className="fa-brands fa-twitter hover:text-black"></i>
 													</TwitterShareButton>
 													{/* <button type="button" className="hover:text-black">
@@ -1494,7 +1496,9 @@ export default function CanCareerJobDetail2(props) {
                                             </button> */}
 												</li>
 												<li className="mb-2 w-[33.33%] px-[10px]">
-													<FacebookShareButton url={window.location.href}>
+													<FacebookShareButton
+														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													>
 														<i className="fa-brands fa-facebook-f hover:text-black"></i>
 													</FacebookShareButton>
 													{/* <button type="button" className="hover:text-black">
@@ -1502,7 +1506,9 @@ export default function CanCareerJobDetail2(props) {
                                             </button> */}
 												</li>
 												<li className="mb-2 w-[33.33%] px-[10px]">
-													<TelegramShareButton url={window.location.href}>
+													<TelegramShareButton
+														url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													>
 														<i className="fa-brands fa-telegram hover:text-black"></i>
 													</TelegramShareButton>
 													{/* <button type="button" className="hover:text-black">
@@ -1515,7 +1521,7 @@ export default function CanCareerJobDetail2(props) {
 														className="hover:text-black"
 														onClick={(e) => {
 															navigator.clipboard
-																.writeText(window.location.href)
+																.writeText(`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`)
 																.then((e) => {
 																	toastcomp("Copid Successfully", "Success");
 																})
@@ -1554,7 +1560,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	var ttitle = "";
 	var tdesc = "";
 	var timg = "";
-
+	const translations = await serverSideTranslations(context.locale, ["common"]);
 	await axiosInstance
 		.get(`/job/detail-job/${detail}/`)
 		.then(async (res) => {
@@ -1591,6 +1597,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 
 	return {
 		props: {
+			...translations,
 			title: ftitle,
 			ogtitle: otitle,
 			ogdescription: odescription,
@@ -1604,14 +1611,5 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 		}
 	};
 };
-
-// export async function getServerSideProps({ context, locale }: any) {
-// 	const translations = await serverSideTranslations(locale, ["common"]);
-// 	return {
-// 		props: {
-// 			...translations
-// 		}
-// 	};
-// }
 
 CanCareerJobDetail2.noAuth = true;
