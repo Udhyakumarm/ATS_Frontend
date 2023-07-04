@@ -14,6 +14,9 @@ import { useCarrierStore } from "@/utils/code";
 import { axiosInstance2, axiosInstance as axiosInstance22 } from "@/pages/api/axiosApi";
 import Image from "next/image";
 import ToggleLang from "@/components/ToggleLang";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useLangStore } from "@/utils/code";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -26,6 +29,8 @@ const signUpInfoRules: Rules = {
 };
 
 export default function CandSignUp() {
+	const { t } = useTranslation("common");
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
@@ -178,7 +183,7 @@ export default function CandSignUp() {
 	return (
 		<>
 			<Head>
-				<title>Candidate | Sign Up</title>
+				<title>{srcLang === "ja" ? "アカウント作成" : "Sign Up"}</title>
 				<meta name="description" />
 			</Head>
 			<main className="py-8">
@@ -210,12 +215,18 @@ export default function CandSignUp() {
 						onSubmit={handleSignUp}
 					>
 						<h1 className="mb-6 text-3xl font-bold">
-							Sign <span className="text-primary">Up</span>
+							{srcLang === "ja" ? (
+								"アカウント作成"
+							) : (
+								<>
+									Sign <span className="text-primary">Up</span>
+								</>
+							)}
 						</h1>
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label="First Name"
+							label={t("Form.FirstName")}
 							id="first_name"
 							handleChange={dispatch}
 							value={signUpInfo.first_name}
@@ -226,7 +237,7 @@ export default function CandSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label="Last Name"
+							label={t("Form.LastName")}
 							id="last_name"
 							value={signUpInfo.last_name}
 							error={formError.last_name}
@@ -237,7 +248,7 @@ export default function CandSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="email"
-							label="Email"
+							label={t("Form.Email")}
 							id="email"
 							value={signUpInfo.email}
 							handleChange={dispatch}
@@ -248,7 +259,7 @@ export default function CandSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label="Phone Number"
+							label={t("Form.PhoneNumber")}
 							id="phone_number"
 							value={signUpInfo.phone_number}
 							handleChange={dispatch}
@@ -272,7 +283,7 @@ export default function CandSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label="Password"
+									label={t("Form.Password")}
 									id="password"
 									value={signUpInfo.password}
 									error={formError.password}
@@ -283,7 +294,7 @@ export default function CandSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label="Confirm Password"
+									label={t("Form.CoonfirmPassword")}
 									id="passwordConfirm"
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
@@ -292,15 +303,12 @@ export default function CandSignUp() {
 							</div>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label="Create Account" full={true} loader={false} disabled={false} />
+							<Button btnType="submit" label={t("Btn.CreateAccount")} full={true} loader={false} disabled={false} />
 						</div>
 						<p className="text-center text-darkGray">
-							Already have an Account?{" "}
-							<Link
-								href={`/organization/${cname}/candidate/signin`}
-								className="font-bold text-primary hover:underline dark:text-white"
-							>
-								Sign In
+							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Already have an Account?"}{" "}
+							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline dark:text-white">
+								{srcLang === "ja" ? "こちら" : "Sign In"}
 							</Link>
 						</p>
 					</form>
@@ -312,5 +320,15 @@ export default function CandSignUp() {
 		</>
 	);
 }
+
+export async function getServerSideProps({ context, locale }: any) {
+	const translations = await serverSideTranslations(locale, ["common"]);
+	return {
+		props: {
+			...translations
+		}
+	};
+}
+
 
 CandSignUp.noAuth = true;

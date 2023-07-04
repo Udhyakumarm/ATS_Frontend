@@ -82,67 +82,71 @@ export default function AuthSignIn({ providers }: any) {
 			})
 			.then(async (response) => {
 				setBtnLoader(false);
-				setSuccess(true);
-				console.log("@", response.data);
-				if (response.data.role) {
-					setrole(response.data.role);
-				}
-				if (response.data.type) {
-					settype(response.data.type);
-				}
-				if (response.data.userObj && response.data["userObj"].length > 0) {
-					setuser(response.data.userObj);
-				}
-				let aname = "";
-				try {
-					aname = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${
-						response.data.role
-					} at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+				if (response.data.Message) {
+					toastcomp(response.data.Message, "error");
+				} else {
+					setSuccess(true);
+					console.log("@", response.data);
+					if (response.data.role) {
+						setrole(response.data.role);
+					}
+					if (response.data.type) {
+						settype(response.data.type);
+					}
+					if (response.data.userObj && response.data["userObj"].length > 0) {
+						setuser(response.data.userObj);
+					}
+					let aname = "";
+					try {
+						aname = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${
+							response.data.role
+						} at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
 
-					await axiosInstance2
-						.post("/organization/activity-log/unauth/", {
-							email: loginInfo.email,
-							aname: aname
-						})
-						.then((res) => {
-							toastcomp("Log Add", "success");
-						})
-						.catch((err) => {
-							toastcomp("Log Not Add", "error");
-						});
-				} catch (error) {
-					toastcomp("Log Not Add", "error");
+						await axiosInstance2
+							.post("/organization/activity-log/unauth/", {
+								email: loginInfo.email,
+								aname: aname
+							})
+							.then((res) => {
+								toastcomp("Log Add", "success");
+							})
+							.catch((err) => {
+								toastcomp("Log Not Add", "error");
+							});
+					} catch (error) {
+						toastcomp("Log Not Add", "error");
+					}
+
+					try {
+						let title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
+						// let notification_type = `${}`
+
+						await axiosInstance2
+							.post("/chatbot/notification/unauth/", {
+								email: loginInfo.email,
+								title: title
+								// notification_type: notification_type
+							})
+							.then((res) => {
+								toastcomp("Notify Add", "success");
+							})
+							.catch((err) => {
+								toastcomp("Notify Not Add", "error");
+							});
+					} catch (error) {
+						toastcomp("Notify Not Add", "error");
+					}
+
+					await signIn("credentials", {
+						email: loginInfo.email,
+						password: loginInfo.password,
+						//For NextAuth
+						user_type: "organization",
+						callbackUrl: callback
+					})
+						.then(async (res) => console.log({ res }))
+						.then(async () => await router.push("/"));
 				}
-
-				try {
-					let title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
-					// let notification_type = `${}`
-
-					await axiosInstance2
-						.post("/chatbot/notification/unauth/", {
-							email: loginInfo.email,
-							title: title
-							// notification_type: notification_type
-						})
-						.then((res) => {
-							toastcomp("Notify Add", "success");
-						})
-						.catch((err) => {
-							toastcomp("Notify Not Add", "error");
-						});
-				} catch (error) {
-					toastcomp("Notify Not Add", "error");
-				}
-
-				await signIn("credentials", {
-					email: loginInfo.email,
-					password: loginInfo.password,
-					//For NextAuth
-					user_type: "organization",
-					callbackUrl: callback
-				})
-					.then(async (res) => console.log({ res }))
-					.then(async () => await router.push("/"));
 			})
 			.catch((err) => {
 				setBtnLoader(false);
