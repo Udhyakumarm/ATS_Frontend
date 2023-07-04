@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ToggleLang from "./ToggleLang";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import moment from "moment";
 
 export default function Header() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -16,6 +17,7 @@ export default function Header() {
 	const { data: session, status: sessionStatus } = useSession();
 
 	const [auth, setauth] = useState(false);
+	const [rdate, setrdate] = useState("");
 
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
@@ -33,6 +35,18 @@ export default function Header() {
 			setauth(false);
 		}
 	}, [session]);
+
+	useEffect(() => {
+		if (role === "Super Admin" && user && user.length > 0) {
+			if (user[0]["register_date"]) {
+				setrdate(user[0]["register_date"]);
+			} else {
+				setrdate("");
+			}
+		} else {
+			setrdate("");
+		}
+	}, [user, role]);
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
@@ -158,9 +172,6 @@ export default function Header() {
 							</ul>
 						</div>
 						<div className="flex items-center">
-							<p className="bg-blue-500 p-1 text-white">
-								{type}&nbsp;{role}
-							</p>
 							<ThemeChange />
 							<ToggleLang />
 							{!auth && (
@@ -256,12 +267,14 @@ export default function Header() {
 				<header className="test bg-white shadow-normal dark:bg-gray-800">
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 						<Logo url="/" width={205} />
-						<div className="flex items-center">
-							<p className="bg-blue-500 p-1 text-white">
-								{type} | {role}
-							</p>
 
-							<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
+						<div className="flex items-center">
+							{rdate.length > 0 && role === "Super Admin" && (
+								<p className="rounded-lg bg-blue-500 p-1 text-white">
+									{/* {moment("2023-06-01").add(30, "days").diff(moment(), "days")} Days Left */}
+									{moment(rdate).add(30, "days").diff(moment(), "days")} Days Left
+								</p>
+							)}
 							<ThemeChange />
 							<ToggleLang />
 							<button
@@ -299,9 +312,6 @@ export default function Header() {
 	// 				<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 md:px-10 lg:px-14">
 	// 					<Logo url="/" width={205} />
 	// 					<div className="flex items-center">
-	// 						<p className="bg-blue-500 p-1 text-white">
-	// 							{type}&nbsp;{role}
-	// 						</p>
 	// 						<ThemeChange />
 	// 						<button
 	// 							type="button"

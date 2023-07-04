@@ -306,17 +306,11 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 				id="topbar"
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
-				<p className="bg-blue-500 p-1 text-white">
-					{type}&nbsp;{role}
-				</p>
-				<p className="bg-green-500 p-1 uppercase text-white">{version}</p>
-
-				{role === "Super Admin" && (
+				{/* {role === "Super Admin" && (
 					<div className="ms-3">
 						<Listbox value={selectedPreVersion} onChange={setPreVersion}>
 							<div className="relative">
 								<Listbox.Button className="flex items-center justify-center rounded-l bg-secondary px-2 py-2 text-white">
-									{/* <span className="block truncate uppercase leading-1 mr-2">{lang}</span> */}
 									<i className="fa-solid fa-code-compare"></i>
 								</Listbox.Button>
 								<Transition
@@ -357,7 +351,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 							</div>
 						</Listbox>
 					</div>
-				)}
+				)} */}
 
 				<ThemeChange />
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>

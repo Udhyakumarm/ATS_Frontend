@@ -70,9 +70,6 @@ export default function VendorTopBar() {
 				id="topbar"
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
-				<p className="bg-blue-500 p-1 text-white">
-					{type}&nbsp;{role}
-				</p>
 				<ThemeChange />
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
