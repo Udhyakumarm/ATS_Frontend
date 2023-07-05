@@ -20,6 +20,12 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ToggleLang from "@/components/ToggleLang";
 import Novus from "@/components/Novus";
+import Validator, { Rules } from "validatorjs";
+
+const signInInfoRules: Rules = {
+	email: "required|email",
+	password: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"]
+};
 
 const errorMessages = {
 	Signin: "Try signing with a different account.",
@@ -36,19 +42,55 @@ const errorMessages = {
 
 const AuthError = ({ error }: { error: any }) => {
 	const errorMessage = error && (errorMessages[error as keyof typeof errorMessages] ?? errorMessages.default);
-	return <div className="mb-4 text-center text-sm text-red-600">{errorMessage}</div>;
+	if (errorMessage) {
+		return (
+			<p className="mb-4 text-center text-sm text-red-600">
+				<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMessage}
+			</p>
+		);
+	}
 };
 
 export default function AuthSignIn({ providers }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
+
+	const [formError, setFormError] = useState({
+		email: null,
+		password: null
+	});
+
 	const updateLoginInfo = (
 		prevState: { email: string; password: string },
 		event: { target: { id: string; value: any } }
 	) => {
-		return { ...prevState, [event.target.id]: event.target.value };
+		const { id: key, value } = event.target;
+
+		const validation = new Validator(
+			{ [key]: value },
+			{ [key]: signInInfoRules[key] },
+			{
+				min: "The password must be at least 8 characters long",
+				required: "This field is required",
+				regex: "Your password must be alphanumeric with at least one upper case letter"
+			}
+		);
+
+		if (!validation.passes()) setFormError((prev) => ({ ...prev, [key]: validation.errors.first(key) }));
+		else setFormError((prev) => ({ ...prev, [key]: null }));
+
+		return { ...prevState, [key]: value };
 	};
+
+	function checkLoginFun() {
+		return (
+			loginInfo.email.length > 0 &&
+			loginInfo.password.length > 0 &&
+			formError.email === null &&
+			formError.password === null
+		);
+	}
 
 	const type = useUserStore((state: { type: any }) => state.type);
 	const role = useUserStore((state: { role: any }) => state.role);
@@ -57,7 +99,10 @@ export default function AuthSignIn({ providers }: any) {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const [btnLoader, setBtnLoader] = useState(false);
+	const [rememberMe, setrememberMe] = useState(true);
 	const [success, setSuccess] = useState(false);
+	const [wrong, setWrong] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const { error } = useRouter().query;
 
@@ -66,110 +111,144 @@ export default function AuthSignIn({ providers }: any) {
 		password: ""
 	});
 
+	useEffect(() => {
+		const storedEmail = localStorage.getItem("myapp-email");
+		const storedPassword = localStorage.getItem("myapp-password");
+		if (storedEmail) {
+			dispatch({
+				target: { id: "email", value: storedEmail }
+			});
+		}
+		if (storedPassword) {
+			dispatch({
+				target: { id: "password", value: storedPassword }
+			});
+		}
+	}, []);
+
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		if (rememberMe) {
+			localStorage.setItem("myapp-email", loginInfo.email);
+			localStorage.setItem("myapp-password", loginInfo.password);
+		} else {
+			localStorage.removeItem("myapp-email");
+			localStorage.removeItem("myapp-password");
+		}
 		setBtnLoader(true);
-		const callback = `${
-			process.env.NODE_ENV === "production"
-				? process.env.NEXT_PUBLIC_PROD_FRONTEND
-				: process.env.NEXT_PUBLIC_DEV_FRONTEND
-		}`;
 
-		await axiosInstance2
-			.post("/organization/login/", {
-				email: loginInfo.email,
-				password: loginInfo.password
-			})
-			.then(async (response) => {
-				setBtnLoader(false);
-				if (response.data.Message) {
-					toastcomp(response.data.Message, "error");
-				} else {
-					setSuccess(true);
-					console.log("@", response.data);
-					if (response.data.role) {
-						setrole(response.data.role);
-					}
-					if (response.data.type) {
-						settype(response.data.type);
-					}
-					if (response.data.userObj && response.data["userObj"].length > 0) {
-						setuser(response.data.userObj);
-					}
-					let aname = "";
-					try {
-						aname = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${
-							response.data.role
-						} at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+		if (loginInfo.email.length > 0 && loginInfo.password.length > 0) {
+			const callback = `${
+				process.env.NODE_ENV === "production"
+					? process.env.NEXT_PUBLIC_PROD_FRONTEND
+					: process.env.NEXT_PUBLIC_DEV_FRONTEND
+			}`;
 
-						await axiosInstance2
-							.post("/organization/activity-log/unauth/", {
-								email: loginInfo.email,
-								aname: aname
-							})
-							.then((res) => {
-								toastcomp("Log Add", "success");
-							})
-							.catch((err) => {
-								toastcomp("Log Not Add", "error");
-							});
-					} catch (error) {
-						toastcomp("Log Not Add", "error");
-					}
-
-					try {
-						let title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
-						// let notification_type = `${}`
-
-						await axiosInstance2
-							.post("/chatbot/notification/unauth/", {
-								email: loginInfo.email,
-								title: title
-								// notification_type: notification_type
-							})
-							.then((res) => {
-								toastcomp("Notify Add", "success");
-							})
-							.catch((err) => {
-								toastcomp("Notify Not Add", "error");
-							});
-					} catch (error) {
-						toastcomp("Notify Not Add", "error");
-					}
-
-					await signIn("credentials", {
-						email: loginInfo.email,
-						password: loginInfo.password,
-						//For NextAuth
-						user_type: "organization",
-						callbackUrl: callback
-					})
-						.then(async (res) => console.log({ res }))
-						.then(async () => await router.push("/"));
-				}
-			})
-			.catch((err) => {
-				setBtnLoader(false);
-				settype("");
-				setrole("");
-				setuser([]);
-				console.log(err);
-				if (err.response.data.non_field_errors) {
-					err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
+			await axiosInstance2
+				.post("/organization/login/", {
+					email: loginInfo.email,
+					password: loginInfo.password
+				})
+				.then(async (response) => {
 					setBtnLoader(false);
-					return false;
-				}
-				if (err.response.data.detail) {
-					toastcomp(err.response.data.detail, "error");
+					if (response.data.Message) {
+						// toastcomp(response.data.Message, "error");
+						setWrong(true);
+						setErrorMsg(response.data.Message);
+						setSuccess(false);
+					} else {
+						setSuccess(true);
+						setWrong(false);
+						setErrorMsg("");
+						console.log("@", response.data);
+						if (response.data.role) {
+							setrole(response.data.role);
+						}
+						if (response.data.type) {
+							settype(response.data.type);
+						}
+						if (response.data.userObj && response.data["userObj"].length > 0) {
+							setuser(response.data.userObj);
+						}
+						let aname = "";
+						try {
+							aname = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${
+								response.data.role
+							} at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+
+							await axiosInstance2
+								.post("/organization/activity-log/unauth/", {
+									email: loginInfo.email,
+									aname: aname
+								})
+								.then((res) => {
+									// toastcomp("Log Add", "success");
+								})
+								.catch((err) => {
+									toastcomp("Log Not Add", "error");
+								});
+						} catch (error) {
+							toastcomp("Log Not Add", "error");
+						}
+
+						try {
+							let title = `${response.data.userObj[0]["name"]} (${response.data.userObj[0]["email"]}) has logged in as an ${response.data.role}`;
+							// let notification_type = `${}`
+
+							await axiosInstance2
+								.post("/chatbot/notification/unauth/", {
+									email: loginInfo.email,
+									title: title
+									// notification_type: notification_type
+								})
+								.then((res) => {
+									// toastcomp("Notify Add", "success");
+								})
+								.catch((err) => {
+									toastcomp("Notify Not Add", "error");
+								});
+						} catch (error) {
+							toastcomp("Notify Not Add", "error");
+						}
+
+						await signIn("credentials", {
+							email: loginInfo.email,
+							password: loginInfo.password,
+							//For NextAuth
+							user_type: "organization",
+							callbackUrl: callback
+						})
+							.then(async (res) => console.log({ res }))
+							.then(async () => await router.push("/"));
+					}
+				})
+				.catch((err) => {
 					setBtnLoader(false);
+					settype("");
+					setrole("");
+					setuser([]);
+					console.log(err);
+
+					setWrong(true);
+					setSuccess(false);
+					if (err.response.data.non_field_errors) {
+						err.response.data.non_field_errors.map((text: any) => setErrorMsg(text));
+					} else if (err.response.data.detail) {
+						// toastcomp(err.response.data.detail, "error");
+						setErrorMsg(err.response.data.detail);
+					} else if (err.response.data.errors.email) {
+						err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+					}
 					return false;
-				}
-				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
-					setBtnLoader(false);
-					return false;
-				}
-			});
+				});
+		} else {
+			setBtnLoader(false);
+			setWrong(true);
+			setSuccess(false);
+
+			if (loginInfo.email.length <= 0) setErrorMsg("Fill Up Email");
+			else if (loginInfo.password.length <= 0) setErrorMsg("Fill Up Password");
+		}
 	};
 	return (
 		<>
@@ -201,6 +280,7 @@ export default function AuthSignIn({ providers }: any) {
 							value={loginInfo.email}
 							handleChange={dispatch}
 							icon={<i className="fa-regular fa-envelope"></i>}
+							error={formError.email}
 							required
 						/>
 						<FormField
@@ -210,6 +290,7 @@ export default function AuthSignIn({ providers }: any) {
 							id="password"
 							value={loginInfo.password}
 							handleChange={dispatch}
+							error={formError.password}
 							required
 						/>
 						<div className="mb-4 flex flex-wrap items-center justify-between">
@@ -219,7 +300,8 @@ export default function AuthSignIn({ providers }: any) {
 										type="checkbox"
 										id="rememberMe"
 										className="mb-1 mr-2 rounded border-lightGray"
-										defaultChecked
+										checked={rememberMe}
+										onChange={(e) => setrememberMe(!rememberMe)}
 									/>
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
 								</label>
@@ -229,12 +311,23 @@ export default function AuthSignIn({ providers }: any) {
 							</Link>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t("Btn.SignIn")} full={true} loader={btnLoader} disabled={btnLoader} />
+							<Button
+								btnType="submit"
+								label={t("Btn.SignIn")}
+								full={true}
+								loader={btnLoader}
+								disabled={btnLoader || !checkLoginFun()}
+							/>
 						</div>
 						<AuthError error={error} />
 						{success && (
 							<p className="mb-4 text-center text-sm text-green-600">
 								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+							</p>
+						)}
+						{wrong && (
+							<p className="mb-4 text-center text-sm text-red-600">
+								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
 							</p>
 						)}
 						<p className="text-center text-darkGray">
