@@ -143,7 +143,7 @@ export default function AuthSignUp() {
 				company_type: signUpInfo.companyType
 			})
 			.then(async (response) => {
-				console.log(response);
+				// console.log(response);
 				setBtnLoader(false);
 				setSuccess(true);
 				setWrong(false);
@@ -165,10 +165,10 @@ export default function AuthSignUp() {
 							// toastcomp("Log Add", "success");
 						})
 						.catch((err) => {
-							toastcomp("Log Not Add", "error");
+							// toastcomp("Log Not Add", "error");
 						});
 				} catch (error) {
-					toastcomp("Log Not Add", "error");
+					// toastcomp("Log Not Add", "error");
 				}
 
 				try {
@@ -185,16 +185,16 @@ export default function AuthSignUp() {
 							// toastcomp("Notify Add", "success");
 						})
 						.catch((err) => {
-							toastcomp("Notify Not Add", "error");
+							// toastcomp("Notify Not Add", "error");
 						});
 				} catch (error) {
-					toastcomp("Notify Not Add", "error");
+					// toastcomp("Notify Not Add", "error");
 				}
 
 				router.push("/auth/signin");
-				setTimeout(() => {
-					console.log("Send verification email");
-				}, 100);
+				// setTimeout(() => {
+				// 	console.log("Send verification email");
+				// }, 100);
 
 				// toastcomp("Successfully Registerd", "success");
 				// setTimeout(() => {
@@ -207,7 +207,7 @@ export default function AuthSignUp() {
 				setWrong(true);
 				setErrorMsg("");
 
-				console.log(err);
+				// console.log(err);
 				if (err.response.data.errors.non_field_errors) {
 					err.response.data.errors.non_field_errors.map((text: any) => setErrorMsg(text));
 				} else if (err.response.data.errors.email) {

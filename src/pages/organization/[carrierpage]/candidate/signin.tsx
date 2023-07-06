@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCarrierStore, useUserStore } from "@/utils/code";
@@ -15,22 +15,73 @@ import ToggleLang from "@/components/ToggleLang";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import Validator, { Rules } from "validatorjs";
+
+const signInInfoRules: Rules = {
+	email: "required|email",
+	password: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"]
+};
 
 export default function CandSignIn({ providers }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
+
+	const [formError, setFormError] = useState({
+		email: null,
+		password: null
+	});
+
 	const updateLoginInfo = (
 		prevState: { email: string; password: string },
 		event: { target: { id: string; value: any } }
 	) => {
-		return { ...prevState, [event.target.id]: event.target.value };
+		const { id: key, value } = event.target;
+
+		const validation = new Validator(
+			{ [key]: value },
+			{ [key]: signInInfoRules[key] },
+			{
+				min: "The password must be at least 8 characters long",
+				required: "This field is required",
+				regex: "Your password must be alphanumeric with at least one upper case letter"
+			}
+		);
+
+		if (!validation.passes()) setFormError((prev) => ({ ...prev, [key]: validation.errors.first(key) }));
+		else setFormError((prev) => ({ ...prev, [key]: null }));
+
+		return { ...prevState, [key]: value };
 	};
 
 	const [loginInfo, dispatch] = useReducer(updateLoginInfo, {
 		email: "",
 		password: ""
 	});
+
+	function checkLoginFun() {
+		return (
+			loginInfo.email.length > 0 &&
+			loginInfo.password.length > 0 &&
+			formError.email === null &&
+			formError.password === null
+		);
+	}
+
+	useEffect(() => {
+		const storedEmail = localStorage.getItem("myapp-email");
+		const storedPassword = localStorage.getItem("myapp-password");
+		if (storedEmail) {
+			dispatch({
+				target: { id: "email", value: storedEmail }
+			});
+		}
+		if (storedPassword) {
+			dispatch({
+				target: { id: "password", value: storedPassword }
+			});
+		}
+	}, []);
 
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
@@ -43,10 +94,20 @@ export default function CandSignIn({ providers }: any) {
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const orgdetail: any = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
 	const [btnLoader, setBtnLoader] = useState(false);
+	const [rememberMe, setrememberMe] = useState(true);
 	const [success, setSuccess] = useState(false);
+	const [wrong, setWrong] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		if (rememberMe) {
+			localStorage.setItem("myapp-email", loginInfo.email);
+			localStorage.setItem("myapp-password", loginInfo.password);
+		} else {
+			localStorage.removeItem("myapp-email");
+			localStorage.removeItem("myapp-password");
+		}
 		setBtnLoader(true);
 
 		await axiosInstance
@@ -59,6 +120,11 @@ export default function CandSignIn({ providers }: any) {
 							password: loginInfo.password
 						})
 						.then(async (response) => {
+							setBtnLoader(false);
+
+							setSuccess(true);
+							setWrong(false);
+							setErrorMsg("");
 							console.log("@", res.data);
 							setSuccess(true);
 							if (response.data.role) {
@@ -82,13 +148,13 @@ export default function CandSignIn({ providers }: any) {
 										// notification_type: notification_type
 									})
 									.then((res) => {
-										toastcomp("Notify Add", "success");
+										// toastcomp("Notify Add", "success");
 									})
 									.catch((err) => {
-										toastcomp("Notify Not Add", "error");
+										// toastcomp("Notify Not Add", "error");
 									});
 							} catch (error) {
-								toastcomp("Notify Not Add", "error");
+								// toastcomp("Notify Not Add", "error");
 							}
 
 							const callback = `${
@@ -116,28 +182,27 @@ export default function CandSignIn({ providers }: any) {
 							setrole("");
 							setuser([]);
 							console.log(err);
+							setWrong(true);
+							setSuccess(false);
 							if (err.response.data.non_field_errors) {
-								err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
-								setBtnLoader(false);
-								return false;
+								err.response.data.non_field_errors.map((text: any) => setErrorMsg(text));
+							} else if (err.response.data.detail) {
+								setErrorMsg(err.response.data.detail);
+							} else if (err.response.data.errors.email) {
+								err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+							} else {
+								setErrorMsg("Server Error, Try Again After Few Min ...");
 							}
-							if (err.response.data.detail) {
-								toastcomp(err.response.data.detail, "error");
-								setBtnLoader(false);
-								return false;
-							}
-							if (err.response.data.errors.email) {
-								err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
-								setBtnLoader(false);
-								return false;
-							}
+							return false;
 						});
 				} else if (res.data.error) {
 					settype("");
 					setrole("");
 					setuser([]);
-					toastcomp(res.data.error, "error");
 					setBtnLoader(false);
+					setWrong(true);
+					setSuccess(false);
+					setErrorMsg(res.data.error);
 				}
 			})
 			.catch((err) => {
@@ -146,6 +211,9 @@ export default function CandSignIn({ providers }: any) {
 				setuser([]);
 				console.log(err);
 				setBtnLoader(false);
+				setWrong(true);
+				setSuccess(false);
+				setErrorMsg("User Not Exist");
 			});
 	};
 	return (
@@ -196,6 +264,7 @@ export default function CandSignIn({ providers }: any) {
 							value={loginInfo.email}
 							handleChange={dispatch}
 							icon={<i className="fa-regular fa-envelope"></i>}
+							error={formError.email}
 							required
 						/>
 						<FormField
@@ -204,13 +273,20 @@ export default function CandSignIn({ providers }: any) {
 							label={t("Form.Password")}
 							id="password"
 							value={loginInfo.password}
+							error={formError.password}
 							handleChange={dispatch}
 							required
 						/>
 						<div className="mb-4 flex flex-wrap items-center justify-between">
 							<div className="flex items-center">
 								<label htmlFor="rememberMe" className="text-darkGray">
-									<input type="checkbox" id="rememberMe" className="mb-1 mr-2 rounded border-lightGray" />
+									<input
+										type="checkbox"
+										id="rememberMe"
+										className="mb-1 mr-2 rounded border-lightGray"
+										checked={rememberMe}
+										onChange={(e) => setrememberMe(!rememberMe)}
+									/>
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
 								</label>
 							</div>
@@ -219,16 +295,30 @@ export default function CandSignIn({ providers }: any) {
 							</Link>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t("Btn.SignIn")} full={true} loader={btnLoader} disabled={btnLoader} />
+							<Button
+								btnType="submit"
+								label={t("Btn.SignIn")}
+								full={true}
+								loader={btnLoader}
+								disabled={btnLoader || !checkLoginFun()}
+							/>
 						</div>
 						{success && (
 							<p className="mb-4 text-center text-sm text-green-600">
 								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
 							</p>
 						)}
+						{wrong && (
+							<p className="mb-4 text-center text-sm capitalize text-red-600">
+								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
+							</p>
+						)}
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
-							<Link href={`/organization/${cname}/candidate/signup`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link
+								href={`/organization/${cname}/candidate/signup`}
+								className="font-bold text-primary hover:underline dark:text-white"
+							>
 								{srcLang === "ja" ? "こちら" : "Create Account"}
 							</Link>
 						</p>
