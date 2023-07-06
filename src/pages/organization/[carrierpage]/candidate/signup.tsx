@@ -294,7 +294,7 @@ export default function CandSignUp() {
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label={t("Form.CoonfirmPassword")}
+									label={t("Form.ConfirmPassword")}
 									id="passwordConfirm"
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
