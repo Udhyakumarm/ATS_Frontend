@@ -31,7 +31,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
-import { FacebookShareButton, LinkedinShareButton } from "react-share";
+import { EmailShareButton, FacebookShareButton, LinkedinShareButton } from "react-share";
 import TwitterShareButton from "react-share/lib/TwitterShareButton";
 import TelegramShareButton from "react-share/lib/TelegramShareButton";
 
@@ -508,7 +508,11 @@ export default function CanCareerJobDetail2(props) {
 							<div className="mb-6 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
-									<button type="button" className="mr-6 text-sm text-gray-400 flex items-center" onClick={() => mainShareJobOpen(true)}>
+									<button
+										type="button"
+										className="mr-6 flex items-center text-sm text-gray-400"
+										onClick={() => mainShareJobOpen(true)}
+									>
 										<span className="mr-2">Share Job</span>
 										<i className="fa-solid fa-share"></i>
 									</button>
@@ -1486,9 +1490,7 @@ export default function CanCareerJobDetail2(props) {
 												</LinkedinShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TwitterShareButton
-													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
-												>
+												<TwitterShareButton url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}>
 													<i className="fa-brands fa-twitter hover:text-black"></i>
 												</TwitterShareButton>
 												{/* <button type="button" className="hover:text-black">
@@ -1498,6 +1500,7 @@ export default function CanCareerJobDetail2(props) {
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<FacebookShareButton
 													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													hashtag={jdata.jobSkill}
 												>
 													<i className="fa-brands fa-facebook-f hover:text-black"></i>
 												</FacebookShareButton>
@@ -1506,11 +1509,12 @@ export default function CanCareerJobDetail2(props) {
 										</button> */}
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TelegramShareButton
+												<EmailShareButton
+													subject={jdata.jobTitle}
 													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
 												>
-													<i className="fa-brands fa-telegram hover:text-black"></i>
-												</TelegramShareButton>
+													<i className="fa-solid fa-envelope hover:text-black"></i>
+												</EmailShareButton>
 												{/* <button type="button" className="hover:text-black">
 											<i className="fa-brands fa-telegram"></i>
 										</button> */}

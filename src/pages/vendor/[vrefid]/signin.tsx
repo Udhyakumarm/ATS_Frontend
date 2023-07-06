@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 import { getProviders } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCarrierStore, useUserStore } from "@/utils/code";
@@ -13,22 +13,73 @@ import toastcomp from "@/components/toast";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import Validator, { Rules } from "validatorjs";
+
+const signInInfoRules: Rules = {
+	email: "required|email",
+	password: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"]
+};
 
 export default function CanCareerSignIn({ providers }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
+
+	const [formError, setFormError] = useState({
+		email: null,
+		password: null
+	});
+
 	const updateLoginInfo = (
 		prevState: { email: string; password: string },
 		event: { target: { id: string; value: any } }
 	) => {
-		return { ...prevState, [event.target.id]: event.target.value };
+		const { id: key, value } = event.target;
+
+		const validation = new Validator(
+			{ [key]: value },
+			{ [key]: signInInfoRules[key] },
+			{
+				min: "The password must be at least 8 characters long",
+				required: "This field is required",
+				regex: "Your password must be alphanumeric with at least one upper case letter"
+			}
+		);
+
+		if (!validation.passes()) setFormError((prev) => ({ ...prev, [key]: validation.errors.first(key) }));
+		else setFormError((prev) => ({ ...prev, [key]: null }));
+
+		return { ...prevState, [key]: value };
 	};
 
 	const [loginInfo, dispatch] = useReducer(updateLoginInfo, {
 		email: "",
 		password: ""
 	});
+
+	function checkLoginFun() {
+		return (
+			loginInfo.email.length > 0 &&
+			loginInfo.password.length > 0 &&
+			formError.email === null &&
+			formError.password === null
+		);
+	}
+
+	useEffect(() => {
+		const storedEmail = localStorage.getItem("myapp-email");
+		const storedPassword = localStorage.getItem("myapp-password");
+		if (storedEmail) {
+			dispatch({
+				target: { id: "email", value: storedEmail }
+			});
+		}
+		if (storedPassword) {
+			dispatch({
+				target: { id: "password", value: storedPassword }
+			});
+		}
+	}, []);
 
 	const { vrefid } = router.query;
 
@@ -42,10 +93,20 @@ export default function CanCareerSignIn({ providers }: any) {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const [btnLoader, setBtnLoader] = useState(false);
+	const [rememberMe, setrememberMe] = useState(true);
 	const [success, setSuccess] = useState(false);
+	const [wrong, setWrong] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		if (rememberMe) {
+			localStorage.setItem("myapp-email", loginInfo.email);
+			localStorage.setItem("myapp-password", loginInfo.password);
+		} else {
+			localStorage.removeItem("myapp-email");
+			localStorage.removeItem("myapp-password");
+		}
 		setBtnLoader(true);
 
 		await axiosInstance2
@@ -56,7 +117,9 @@ export default function CanCareerSignIn({ providers }: any) {
 			.then(async (response) => {
 				console.log("@", response.data);
 				setBtnLoader(false);
+				setWrong(false);
 				setSuccess(true);
+				setErrorMsg("");
 				if (response.data.role) {
 					setrole(response.data.role);
 				}
@@ -79,13 +142,13 @@ export default function CanCareerSignIn({ providers }: any) {
 							// notification_type: notification_type
 						})
 						.then((res) => {
-							toastcomp("Notify Add", "success");
+							// toastcomp("Notify Add", "success");
 						})
 						.catch((err) => {
-							toastcomp("Notify Not Add", "error");
+							// toastcomp("Notify Not Add", "error");
 						});
 				} catch (error) {
-					toastcomp("Notify Not Add", "error");
+					// toastcomp("Notify Not Add", "error");
 				}
 
 				const callback = `${
@@ -105,29 +168,30 @@ export default function CanCareerSignIn({ providers }: any) {
 					})
 					.catch((err) => {
 						console.log(err);
+						setBtnLoader(false);
+						setWrong(true);
+						setSuccess(false);
+						setErrorMsg("Server Error, Try Again After Few Min ...");
 					});
 			})
 			.catch((err) => {
-				setBtnLoader(false);
 				settype("");
 				setrole("");
 				setuser([]);
 				console.log(err);
+				setBtnLoader(false);
+				setWrong(true);
+				setSuccess(false);
 				if (err.response.data.non_field_errors) {
-					err.response.data.non_field_errors.map((text: any) => toastcomp(text, "error"));
-					setBtnLoader(false);
-					return false;
+					err.response.data.non_field_errors.map((text: any) => setErrorMsg(text));
+				} else if (err.response.data.detail) {
+					setErrorMsg(err.response.data.detail);
+				} else if (err.response.data.errors.email) {
+					err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+				} else {
+					setErrorMsg("Server Error, Try Again After Few Min ...");
 				}
-				if (err.response.data.detail) {
-					toastcomp(err.response.data.detail, "error");
-					setBtnLoader(false);
-					return false;
-				}
-				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
-					setBtnLoader(false);
-					return false;
-				}
+				return false;
 			});
 	};
 
@@ -160,6 +224,7 @@ export default function CanCareerSignIn({ providers }: any) {
 							label={t("Form.Email")}
 							id="email"
 							value={loginInfo.email}
+							error={formError.email}
 							handleChange={dispatch}
 							icon={<i className="fa-regular fa-envelope"></i>}
 							required
@@ -170,13 +235,20 @@ export default function CanCareerSignIn({ providers }: any) {
 							label={t("Form.Password")}
 							id="password"
 							value={loginInfo.password}
+							error={formError.password}
 							handleChange={dispatch}
 							required
 						/>
 						<div className="mb-4 flex flex-wrap items-center justify-between">
 							<div className="flex items-center">
 								<label htmlFor="rememberMe" className="text-darkGray">
-									<input type="checkbox" id="rememberMe" className="mb-1 mr-2 rounded border-lightGray" />
+									<input
+										type="checkbox"
+										id="rememberMe"
+										className="mb-1 mr-2 rounded border-lightGray"
+										checked={rememberMe}
+										onChange={(e) => setrememberMe(!rememberMe)}
+									/>
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
 								</label>
 							</div>
@@ -185,11 +257,22 @@ export default function CanCareerSignIn({ providers }: any) {
 							</Link>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t("Btn.SignIn")} full={true} loader={btnLoader} disabled={btnLoader} />
+							<Button
+								btnType="submit"
+								label={t("Btn.SignIn")}
+								full={true}
+								loader={btnLoader}
+								disabled={btnLoader || !checkLoginFun()}
+							/>
 						</div>
 						{success && (
 							<p className="mb-4 text-center text-sm text-green-600">
 								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+							</p>
+						)}
+						{wrong && (
+							<p className="mb-4 text-center text-sm capitalize text-red-600">
+								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
 							</p>
 						)}
 						<p className="text-center text-darkGray">

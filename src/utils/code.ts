@@ -32,7 +32,9 @@ let settingsStore: any = (set: any) => ({
 
 let notificationStore: any = (set: any) => ({
 	load: false,
-	toggleLoadMode: (id: any) => set(() => ({ load: id }))
+	toggleLoadMode: (id: any) => set(() => ({ load: id })),
+	reminder: "",
+	togglereminderMode: (id: any) => set(() => ({ reminder: id }))
 });
 
 let versionStore: any = (set: any) => ({
