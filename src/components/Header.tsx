@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import ToggleLang from "./ToggleLang";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
+import toast from "react-hot-toast";
 
 export default function Header() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -17,7 +18,6 @@ export default function Header() {
 	const { data: session, status: sessionStatus } = useSession();
 
 	const [auth, setauth] = useState(false);
-	const [rdate, setrdate] = useState("");
 
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
@@ -35,18 +35,6 @@ export default function Header() {
 			setauth(false);
 		}
 	}, [session]);
-
-	useEffect(() => {
-		if (role === "Super Admin" && user && user.length > 0) {
-			if (user[0]["register_date"]) {
-				setrdate(user[0]["register_date"]);
-			} else {
-				setrdate("");
-			}
-		} else {
-			setrdate("");
-		}
-	}, [user, role]);
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
 	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
@@ -97,13 +85,34 @@ export default function Header() {
 
 	const load = useNotificationStore((state: { load: any }) => state.load);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	const reminder = useNotificationStore((state: { reminder: any }) => state.reminder);
+	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
 
 	useEffect(() => {
 		if ((token && token.length > 0) || load) {
 			loadNotificationCount();
 			if (load) toggleLoadMode(false);
+			if (reminder.length > 0) reminderPopUp(reminder);
 		}
-	}, [token, load]);
+	}, [token, load, reminder]);
+
+	function reminderPopUp(rdate: any) {
+		let daysCOunt = moment(rdate).add(30, "days").diff(moment(), "days") + " Days Left";
+		toast(daysCOunt, {
+			duration: 4000,
+			position: "top-right",
+			style: {
+				background: "#363636",
+				color: "#fff"
+			},
+			icon: <i className="fa-solid fa-bell"></i>,
+			ariaProps: {
+				role: "status",
+				"aria-live": "polite"
+			}
+		});
+		togglereminderMode("");
+	}
 
 	if (
 		cname &&
@@ -269,12 +278,11 @@ export default function Header() {
 						<Logo url="/" width={205} />
 
 						<div className="flex items-center">
-							{rdate.length > 0 && role === "Super Admin" && (
+							{/* {rdate.length > 0 && role === "Super Admin" && (
 								<p className="rounded-lg bg-blue-500 p-1 text-white">
-									{/* {moment("2023-06-01").add(30, "days").diff(moment(), "days")} Days Left */}
 									{moment(rdate).add(30, "days").diff(moment(), "days")} Days Left
 								</p>
-							)}
+							)} */}
 							<ThemeChange />
 							<ToggleLang />
 							<button

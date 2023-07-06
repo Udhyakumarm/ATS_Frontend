@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import toastcomp from "@/components/toast";
 import { axiosInstance2 } from "../api/axiosApi";
-import { useLangStore, useUserStore } from "@/utils/code";
+import { useLangStore, useUserStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
 const Toaster = dynamic(() => import("../../components/Toaster"), {
 	ssr: false
@@ -98,6 +98,8 @@ export default function AuthSignIn({ providers }: any) {
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+	const reminder = useNotificationStore((state: { reminder: any }) => state.reminder);
+	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
 	const [btnLoader, setBtnLoader] = useState(false);
 	const [rememberMe, setrememberMe] = useState(true);
 	const [success, setSuccess] = useState(false);
@@ -169,6 +171,9 @@ export default function AuthSignIn({ providers }: any) {
 						}
 						if (response.data.userObj && response.data["userObj"].length > 0) {
 							setuser(response.data.userObj);
+							if (response.data.role === "Super Admin") {
+								togglereminderMode(response.data.userObj[0]["register_date"]);
+							}
 						}
 						let aname = "";
 						try {
@@ -238,6 +243,8 @@ export default function AuthSignIn({ providers }: any) {
 						setErrorMsg(err.response.data.detail);
 					} else if (err.response.data.errors.email) {
 						err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+					} else {
+						setErrorMsg("Server Error, Try Again After Few Min ...");
 					}
 					return false;
 				});
@@ -326,7 +333,7 @@ export default function AuthSignIn({ providers }: any) {
 							</p>
 						)}
 						{wrong && (
-							<p className="mb-4 text-center text-sm text-red-600">
+							<p className="mb-4 text-center text-sm capitalize text-red-600">
 								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
 							</p>
 						)}

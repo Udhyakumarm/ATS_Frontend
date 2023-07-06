@@ -49,6 +49,10 @@ export default function AuthSignUp() {
 
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const [btnLoader, setBtnLoader] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const [wrong, setWrong] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const [formError, setFormError] = useState({
 		organizationName: null,
@@ -96,6 +100,24 @@ export default function AuthSignUp() {
 		companyType: ""
 	});
 
+	function checkRegFun() {
+		return (
+			signUpInfo.organizationName.length > 0 &&
+			signUpInfo.fullName.length > 0 &&
+			signUpInfo.email.length > 0 &&
+			signUpInfo.password.length > 0 &&
+			signUpInfo.passwordConfirm.length > 0 &&
+			signUpInfo.companyType.length > 0 &&
+			signUpInfo.passwordConfirm === signUpInfo.password &&
+			formError.email === null &&
+			formError.password === null &&
+			formError.organizationName === null &&
+			formError.fullName === null &&
+			formError.companyType === null &&
+			formError.passwordConfirm === null
+		);
+	}
+
 	useEffect(() => {
 		if (
 			!formError.passwordConfirm &&
@@ -106,6 +128,7 @@ export default function AuthSignUp() {
 	}, [formError.passwordConfirm, signUpInfo.password, signUpInfo.passwordConfirm]);
 
 	async function handleSignUp(event: { preventDefault: () => void }) {
+		setBtnLoader(true);
 		const form = new FormData();
 		Object.keys(signUpInfo).map((key) => form.append(key, signUpInfo[key as keyof typeof signUpInfo]));
 
@@ -121,6 +144,10 @@ export default function AuthSignUp() {
 			})
 			.then(async (response) => {
 				console.log(response);
+				setBtnLoader(false);
+				setSuccess(true);
+				setWrong(false);
+				setErrorMsg("");
 
 				let aname = "";
 				let title = "";
@@ -135,7 +162,7 @@ export default function AuthSignUp() {
 							aname: aname
 						})
 						.then((res) => {
-							toastcomp("Log Add", "success");
+							// toastcomp("Log Add", "success");
 						})
 						.catch((err) => {
 							toastcomp("Log Not Add", "error");
@@ -155,7 +182,7 @@ export default function AuthSignUp() {
 							// notification_type: notification_type
 						})
 						.then((res) => {
-							toastcomp("Notify Add", "success");
+							// toastcomp("Notify Add", "success");
 						})
 						.catch((err) => {
 							toastcomp("Notify Not Add", "error");
@@ -169,21 +196,26 @@ export default function AuthSignUp() {
 					console.log("Send verification email");
 				}, 100);
 
-				toastcomp("Successfully Registerd", "success");
-				setTimeout(() => {
-					toastcomp("We Send Verification Email", "info");
-				}, 100);
+				// toastcomp("Successfully Registerd", "success");
+				// setTimeout(() => {
+				// 	toastcomp("We Send Verification Email", "info");
+				// }, 100);
 			})
 			.catch((err) => {
+				setBtnLoader(false);
+				setSuccess(false);
+				setWrong(true);
+				setErrorMsg("");
+
 				console.log(err);
 				if (err.response.data.errors.non_field_errors) {
-					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"));
-					return false;
+					err.response.data.errors.non_field_errors.map((text: any) => setErrorMsg(text));
+				} else if (err.response.data.errors.email) {
+					err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+				} else {
+					setErrorMsg("Server Error, Try Again After Few Min ...");
 				}
-				if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => toastcomp(text, "error"));
-					return false;
-				}
+				return false;
 			});
 	}
 
@@ -221,6 +253,7 @@ export default function AuthSignUp() {
 							handleChange={dispatch}
 							value={signUpInfo.organizationName}
 							error={formError.organizationName}
+							icon={<i className="fa-regular fa-user"></i>}
 							required
 						/>
 						<FormField
@@ -232,6 +265,7 @@ export default function AuthSignUp() {
 							error={formError.fullName}
 							handleChange={dispatch}
 							icon={<i className="fa-regular fa-user"></i>}
+							required
 						/>
 						<FormField
 							fieldType="input"
@@ -271,6 +305,7 @@ export default function AuthSignUp() {
 									value={signUpInfo.password}
 									error={formError.password}
 									handleChange={dispatch}
+									required
 								/>
 							</div>
 							<div className="mb-4 w-full px-3 md:max-w-[50%]">
@@ -282,12 +317,30 @@ export default function AuthSignUp() {
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
 									handleChange={dispatch}
+									required
 								/>
 							</div>
 						</div>
 						<div className="mb-4">
-							<Button btnType="submit" label={t("Btn.CreateAccount")} full={true} loader={false} disabled={false} />
+							<Button
+								btnType="submit"
+								label={t("Btn.CreateAccount")}
+								full={true}
+								loader={btnLoader}
+								disabled={btnLoader || !checkRegFun()}
+							/>
 						</div>
+						{success && (
+							<p className="mb-4 text-center text-sm text-green-600">
+								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Register Successfully - Verification
+								E-Mail Send...
+							</p>
+						)}
+						{wrong && (
+							<p className="mb-4 text-center text-sm capitalize text-red-600">
+								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
+							</p>
+						)}
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Already have an Account?"}{" "}
 							<Link href={"/auth/signin"} className="font-bold text-primary hover:underline dark:text-white">

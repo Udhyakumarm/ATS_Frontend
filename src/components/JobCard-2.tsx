@@ -11,7 +11,13 @@ import moment from "moment";
 import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
 import UpcomingComp from "./organization/upcomingComp";
 import { useLangStore } from "@/utils/code";
-import { LinkedinShareButton, TwitterShareButton, FacebookShareButton, TelegramShareButton } from "react-share";
+import {
+	LinkedinShareButton,
+	TwitterShareButton,
+	FacebookShareButton,
+	TelegramShareButton,
+	EmailShareButton
+} from "react-share";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -936,16 +942,18 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<FacebookShareButton
 													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+													hashtag={job.jobSkill}
 												>
 													<i className="fa-brands fa-facebook-f hover:text-black"></i>
 												</FacebookShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TelegramShareButton
+												<EmailShareButton
+													subject={job.jobTitle}
 													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
 												>
-													<i className="fa-brands fa-telegram hover:text-black"></i>
-												</TelegramShareButton>
+													<i className="fa-solid fa-envelope hover:text-black"></i>
+												</EmailShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<button
