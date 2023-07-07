@@ -2,7 +2,13 @@ import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
 import Link from "next/link";
-import { addExternalNotifyLog, axiosInstance, axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import {
+	addExternalNotifyLog,
+	axiosInstance,
+	axiosInstance2,
+	axiosInstanceAuth,
+	axiosInstanceOCR
+} from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { debounce } from "lodash";
 import { axiosInstance as axis } from "@/utils";
@@ -181,12 +187,13 @@ export default function CanCareerJobDetail2(props) {
 
 	const [certcount, setcertcount] = useState(0);
 	const [certid, setcertid] = useState([]);
+	const [ocrLoader, setocrLoader] = useState(false);
 
 	async function loadJobDetail(refid: any) {
 		await axiosInstance2
 			.get(`/job/detail-job/${refid}/`)
 			.then((res) => {
-				toastcomp("job load", "success");
+				// toastcomp("job load", "success");
 				setjdata(res.data[0]);
 			})
 			.catch((err) => {
@@ -447,6 +454,184 @@ export default function CanCareerJobDetail2(props) {
 				console.log("&", "Settings", err);
 			});
 	}
+
+	//ocr
+
+	async function oceFun1(fd: any) {
+		setocrLoader(true);
+
+		console.log("$", "OCR", "In progress...");
+		await axiosInstanceOCR
+			.post(`/job/parse_resume/`, fd)
+			.then(async (res) => {
+				var data = res.data;
+				console.log("$", "OCR Result", data);
+				// if (data["firstName"] && data["firstName"].length > 0) setfname(data["firstName"]);
+				// if (data["lastName"] && data["lastName"].length > 0) setlname(data["lastName"]);
+				// if (data["email"] && data["email"].length > 0) setemail(data["email"]);
+				if (data["phone"] && data["phone"].length > 0) setphone(data["phone"]);
+				if (data["summary"] && data["summary"].length > 0) setsummary(data["summary"]);
+
+				try {
+					if (data["links"] && data["links"].length > 0) {
+						setlinks(data["links"]);
+					}
+				} catch {
+					setlinks([]);
+				}
+				try {
+					if (data["skills"] && data["skills"].length > 0) {
+						setskill(data["skills"].join().toLowerCase());
+					}
+				} catch {
+					setskill("");
+				}
+
+				try {
+					if (data["experience"] && data["experience"].length > 0) {
+						setnewgre(false);
+						let arr = [];
+						data["experience"].map((data, i) => {
+							arr.push(`expBlock${i + 1}`);
+						});
+						setexpid(arr);
+						setexpcount(data["experience"].length + 1);
+
+						setTimeout(() => {
+							data["experience"].map((data2, i) => {
+								if (data2["title"]) document.getElementById(`titleexpBlock${i + 1}`).value = data2["title"];
+								if (data2["company"]) document.getElementById(`cnameexpBlock${i + 1}`).value = data2["company"];
+								if (data2["description"]) document.getElementById(`descexpBlock${i + 1}`).value = data2["description"];
+
+								if (data2["start_date"]) {
+									try {
+										document.getElementById(`sdateexpBlock${i + 1}`).value = moment(data2["start_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Exp SDATE Catch", err);
+									}
+								}
+								if (data2["end_date"]) {
+									try {
+										document.getElementById(`edateexpBlock${i + 1}`).value = moment(data2["end_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Exp EDATE Catch", err);
+									}
+								}
+							});
+						}, 1000);
+					} else {
+						setnewgre(true);
+					}
+				} catch (err) {
+					console.log("$", "Exp Catch", err);
+					// setnewgre(false);
+					// setexpid(["expBlock1"]);
+					// setexpcount(1);
+				}
+
+				try {
+					if (data["education"] && data["education"].length > 0) {
+						let arr = [];
+						data["education"].map((data, i) => {
+							arr.push(`eduBlock${i + 1}`);
+						});
+						seteduid(arr);
+						seteducount(data["education"].length + 1);
+
+						setTimeout(() => {
+							data["education"].map((data2, i) => {
+								if (data2["title"]) document.getElementById(`titleeduBlock${i + 1}`).value = data2["title"];
+								if (data2["college"]) document.getElementById(`cnameeduBlock${i + 1}`).value = data2["college"];
+								if (data2["description"]) document.getElementById(`desceduBlock${i + 1}`).value = data2["description"];
+								if (data2["start_date"]) {
+									try {
+										document.getElementById(`sdateeduBlock${i + 1}`).value = moment(data2["start_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Edu SDATE Catch", err);
+									}
+								}
+								if (data2["end_date"]) {
+									try {
+										document.getElementById(`edateeduBlock${i + 1}`).value = moment(data2["end_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Edu EDATE Catch", err);
+									}
+								}
+							});
+						}, 1000);
+					}
+				} catch (err) {
+					console.log("$", "Edu Catch", err);
+					// seteduid([]);
+					// seteducount(0);
+				}
+
+				try {
+					if (data["certificates"] && data["certificates"].length > 0) {
+						let arr = [];
+						data["certificates"].map((data, i) => {
+							arr.push(`certBlock${i + 1}`);
+						});
+						setcertid(arr);
+						setcertcount(data["certificates"].length + 1);
+
+						setTimeout(() => {
+							data["certificates"].map((data2, i) => {
+								if (data2["title"]) document.getElementById(`titlecertBlock${i + 1}`).value = data2["title"];
+								if (data2["issuedCompany"])
+									document.getElementById(`cnamecertBlock${i + 1}`).value = data2["issuedCompany"];
+								if (data2["start_date"]) {
+									try {
+										document.getElementById(`sdatecertBlock${i + 1}`).value = moment(data2["start_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Cert SDATE Catch", err);
+									}
+								}
+								if (data2["end_date"]) {
+									try {
+										document.getElementById(`edatecertBlock${i + 1}`).value = moment(data2["end_date"]).format(
+											"YYYY-MM-DD"
+										);
+									} catch (err) {
+										console.log("$", "Cert EDATE Catch", err);
+									}
+								}
+							});
+						}, 1000);
+					}
+				} catch (err) {
+					console.log("$", "Cert Catch", err);
+					// setcertid([]);
+					// setcertcount(0);
+				}
+
+				setocrLoader(false);
+			})
+			.catch((err) => {
+				console.log("$", "OCR Result", err);
+
+				setocrLoader(false);
+			});
+	}
+
+	useEffect(() => {
+		if (resume != null) {
+			console.log("$", "OCR", "Resume Changed Useeffect...");
+			const fd = new FormData();
+			fd.append("resume", resume);
+			oceFun1(fd);
+		}
+	}, [resume]);
 
 	return (
 		<>
@@ -738,6 +923,15 @@ export default function CanCareerJobDetail2(props) {
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									{ocrLoader && (
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-20 backdrop-blur-md">
+											<div className="text-center">
+												<i className="fa-solid fa-spinner fa-spin"></i>
+												<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
+											</div>
+										</div>
+									)}
+
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 										<h4 className="font-semibold leading-none">{t("Words.ApplyJob")}</h4>
 										<button
@@ -926,6 +1120,7 @@ export default function CanCareerJobDetail2(props) {
 												onSearch={searchSkill}
 												fieldType="select2"
 												id="skills"
+												value={skill}
 												handleChange={setskill}
 												label={t("Words.Skills")}
 												required
@@ -1339,7 +1534,7 @@ export default function CanCareerJobDetail2(props) {
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 													<FormField
 														fieldType="input"
-														inputType="number"
+														inputType="text"
 														label={t("Form.PhoneNumber")}
 														placeholder={t("Form.PhoneNumber")}
 														value={phone}
@@ -1439,6 +1634,7 @@ export default function CanCareerJobDetail2(props) {
 					</div>
 				</Dialog>
 			</Transition.Root>
+
 			<Transition.Root show={mainShareJob} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={mainShareJobOpen}>
 					<Transition.Child
