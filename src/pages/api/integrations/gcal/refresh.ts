@@ -17,15 +17,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
 		.then((response) => response.data[0]);
 
+	// const { integrations }: { integrations: Array<any> } = await axiosInstance.api
+	// 	.get("/organization/integrations/calendar/" + unique_id + "/", {
+	// 		headers: { authorization: "Bearer " + session?.accessToken }
+	// 	})
+	// 	.then((response) => response.data)
+	// 	.catch((err) => {
+	// 		console.log({ err: err.data });
+	// 		return { data: { success: false } };
+	// 	});
 	const { integrations }: { integrations: Array<any> } = await axiosInstance.api
-		.get("/organization/integrations/calendar/" + unique_id + "/", {
+		.get("/organization/gcal_integrations/calendar/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
+		// .then((response) => {
+		// 	if (response.data && response.data.length > 0) {
+		// 		console.log("$", "gcla", response.data[0]);
+		// 		response.data[0];
+		// 	} else {
+		// 		return { data: { success: false } };
+		// 	}
+		// })
 		.then((response) => response.data)
 		.catch((err) => {
-			console.log({ err: err.data });
+			console.log(err);
 			return { data: { success: false } };
 		});
+
+	console.log("$", "gcla", "integrations", integrations);
 
 	const googleCalendarIntegration = integrations.find(
 		(integration: { provider: string }) => integration.provider == "google"
@@ -49,8 +68,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 
 	if (!refreshedToken) {
+		// const response = await axiosInstance.api
+		// 	.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+		// 		headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
+		// 	})
+		// 	.then((res) => res.data)
+		// 	.catch((err) => {
+		// 		// console.log(err);
+		// 		return { data: { success: false } };
+		// 	});
 		const response = await axiosInstance.api
-			.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+			.delete("/organization/gcal_delete_calendar_integration/", {
 				headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
 			})
 			.then((res) => res.data)
@@ -63,9 +91,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 	const expires_in = Number(refreshedToken.expiry_date) - Date.now();
 
+	// const response = await axiosInstance.api
+	// 	.post(
+	// 		"/organization/create_calendar_integration/" + unique_id + "/",
+	// 		{
+	// 			access_token: refreshedToken.access_token,
+	// 			refresh_token: refreshedToken.refresh_token,
+	// 			expires_in: expires_in,
+	// 			scope: refreshedToken.scope,
+	// 			provider: "google",
+	// 			calendar_id: googleCalendarIntegration.calendar_id
+	// 		},
+	// 		{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
+	// 	)
+	// 	.then((res) => res.data)
+	// 	.catch((err) => {
+	// 		// console.log(err);
+	// 		return { data: { creationSuccess: false } };
+	// 	});
 	const response = await axiosInstance.api
 		.post(
-			"/organization/create_calendar_integration/" + unique_id + "/",
+			"/organization/gcal_create_calendar_integration/",
 			{
 				access_token: refreshedToken.access_token,
 				refresh_token: refreshedToken.refresh_token,

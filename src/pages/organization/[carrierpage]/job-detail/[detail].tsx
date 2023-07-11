@@ -463,7 +463,7 @@ export default function CanCareerJobDetail2(props) {
 
 		console.log("$", "OCR", "In progress...");
 		await axiosInstanceOCR
-			.post(`/job/parse_resume/`, fd)
+			.post(`/ocr/parse_resume/`, fd)
 			.then(async (res) => {
 				var data = res.data;
 				console.log("$", "OCR Result", data);
