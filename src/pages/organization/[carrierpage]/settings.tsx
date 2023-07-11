@@ -10,6 +10,7 @@ import toastcomp from "@/components/toast";
 import { addExternalNotifyLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { signOut, useSession } from "next-auth/react";
 import { useCarrierStore, useLangStore, useUserStore, useVersionStore, useNotificationStore } from "@/utils/code";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CandSettings({ upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -232,6 +233,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 					</div>
 				</div>
 			</main>
+			<CandFooter />
 			<Transition.Root show={changePass} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setChangePass}>
 					<Transition.Child

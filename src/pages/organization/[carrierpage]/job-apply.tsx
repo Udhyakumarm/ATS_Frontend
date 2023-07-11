@@ -8,6 +8,7 @@ import router from "next/router";
 import { useState, Fragment, useRef, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import toastcomp from "@/components/toast";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanCareerApplyJob() {
 	const { data: session } = useSession();
@@ -400,6 +401,7 @@ export default function CanCareerApplyJob() {
 					</div>
 				</div>
 			</main>
+			<CandFooter />
 			<Transition.Root show={socialPopup} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setSocialPopup}>
 					<Transition.Child

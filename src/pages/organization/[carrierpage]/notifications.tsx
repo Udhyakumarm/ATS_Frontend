@@ -10,6 +10,7 @@ import moment from "moment";
 import { useNotificationStore, useUserStore } from "@/utils/code";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanNotifications() {
 	const router = useRouter();
@@ -258,6 +259,7 @@ export default function CanNotifications() {
 					</div>
 				</div>
 			</main>
+			<CandFooter />
 		</>
 	);
 }
