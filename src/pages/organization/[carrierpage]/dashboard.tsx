@@ -15,6 +15,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import Head from "next/head";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanCareerDashboard({ upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -273,6 +274,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 					</div>
 				</div>
 			</main>
+			<CandFooter />
 		</>
 	);
 }

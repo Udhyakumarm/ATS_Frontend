@@ -17,6 +17,7 @@ import ToggleLang from "@/components/ToggleLang";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import CandFooter from "@/components/candidate/footer";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -317,6 +318,7 @@ export default function CandSignUp() {
 					</div>
 				</div>
 			</main>
+			<CandFooter />
 		</>
 	);
 }

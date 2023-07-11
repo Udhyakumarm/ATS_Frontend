@@ -40,6 +40,7 @@ import { useLangStore } from "@/utils/code";
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton } from "react-share";
 import TwitterShareButton from "react-share/lib/TwitterShareButton";
 import TelegramShareButton from "react-share/lib/TelegramShareButton";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanCareerJobDetail2(props) {
 	const { t } = useTranslation("common");
@@ -462,7 +463,7 @@ export default function CanCareerJobDetail2(props) {
 
 		console.log("$", "OCR", "In progress...");
 		await axiosInstanceOCR
-			.post(`/job/parse_resume/`, fd)
+			.post(`/ocr/parse_resume/`, fd)
 			.then(async (res) => {
 				var data = res.data;
 				console.log("$", "OCR Result", data);
@@ -896,6 +897,7 @@ export default function CanCareerJobDetail2(props) {
 					)}
 				</div>
 			</main>
+			<CandFooter />
 
 			<Transition.Root show={addCand} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddCand}>

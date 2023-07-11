@@ -16,6 +16,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import Validator, { Rules } from "validatorjs";
+import CandFooter from "@/components/candidate/footer";
 
 const signInInfoRules: Rules = {
 	email: "required|email",
@@ -328,6 +329,7 @@ export default function CandSignIn({ providers }: any) {
 					</div>
 				</form>
 			</main>
+			<CandFooter />
 		</>
 	);
 }

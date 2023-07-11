@@ -16,15 +16,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
 		.then((response) => response.data[0]);
 
+	// const { integrations }: { integrations: Array<any> } = await axiosInstance.api
+	// 	.get("/organization/integrations/calendar/" + unique_id + "/", {
+	// 		headers: { authorization: "Bearer " + session?.accessToken }
+	// 	})
+	// 	.then((response) => response.data)
+	// 	.catch((err) => {
+	// 		console.log({ err: err.data });
+	// 		return { data: { success: false } };
+	// 	});
 	const { integrations }: { integrations: Array<any> } = await axiosInstance.api
-		.get("/organization/integrations/calendar/" + unique_id + "/", {
+		.get("/organization/gcal_integrations/calendar/", {
 			headers: { authorization: "Bearer " + session?.accessToken }
 		})
 		.then((response) => response.data)
 		.catch((err) => {
-			console.log({ err: err.data });
+			console.log(err);
 			return { data: { success: false } };
 		});
+
+	console.log("$", "gcla", "integrations", integrations);
 
 	const googleCalendarIntegration = integrations.find(
 		(integration: { provider: string }) => integration.provider == "google"
@@ -55,8 +66,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	await Integration.googleCalendarOAuth2Client.revokeCredentials();
 
+	// const response = await axiosInstance.api
+	// 	.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+	// 		headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
+	// 	})
+	// 	.then((res) => res.data)
+	// 	.catch((err) => {
+	// 		console.log(err);
+	// 		return { data: { success: false } };
+	// 	});
 	const response = await axiosInstance.api
-		.post("/organization/delete_calendar_integration/" + googleCalendarIntegration.id + "/", {
+		.delete("/organization/delete_calendar_integration/", {
 			headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" }
 		})
 		.then((res) => res.data)

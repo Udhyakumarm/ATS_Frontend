@@ -495,7 +495,7 @@ export default function VendorClients() {
 
 		console.log("$", "OCR", "In progress...");
 		await axiosInstanceOCR
-			.post(`/job/parse_resume/`, fd)
+			.post(`/ocr/parse_resume/`, fd)
 			.then(async (res) => {
 				var data = res.data;
 				console.log("$", "OCR Result", data);
@@ -1376,6 +1376,7 @@ export default function VendorClients() {
 												onSearch={searchSkill}
 												fieldType="select2"
 												id="skills"
+												value={skill}
 												handleChange={setskill}
 												label={t("Words.Skills")}
 												required

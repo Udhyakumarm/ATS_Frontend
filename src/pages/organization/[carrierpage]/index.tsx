@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanCareer() {
 	const { t } = useTranslation("common");
@@ -304,6 +305,7 @@ export default function CanCareer() {
 						</>
 					))}
 			</main>
+			<CandFooter />
 		</>
 	);
 }

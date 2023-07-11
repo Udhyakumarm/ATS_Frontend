@@ -31,6 +31,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import CandFooter from "@/components/candidate/footer";
 
 export default function CanCareerJobDetail({ upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -666,6 +667,7 @@ export default function CanCareerJobDetail({ upcomingSoon }: any) {
 					)}
 				</div>
 			</main>
+			<CandFooter />
 
 			<Transition.Root show={addCand} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddCand}>
