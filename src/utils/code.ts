@@ -10,6 +10,11 @@ let userStore: any = (set: any) => ({
 	setuser: (id: any) => set(() => ({ user: id }))
 });
 
+let calStore: any = (set: any) => ({
+	integration: [],
+	setIntegration: (id: any) => set(() => ({ integration: id }))
+});
+
 let dashboardStore: any = (set: any) => ({
 	check1: true,
 	check2: true,
@@ -109,6 +114,7 @@ carrierStore = persist(carrierStore, { name: "carrier_settings" });
 applicantStore = devtools(applicantStore);
 applicantStore = persist(applicantStore, { name: "applicantStore" });
 
+export const useCalStore = create(calStore);
 export const useUserStore = create(userStore);
 export const useDashboardStore = create(dashboardStore);
 export const useNotificationStore = create(notificationStore);

@@ -9,7 +9,7 @@ import OrganizationCalendar from "./OrganizationCalendar";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import { useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useCalStore, useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
 import Button from "../Button";
@@ -43,7 +43,9 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
-	const [integration, setIntegration] = useState([]);
+	const integration = useCalStore((state: { integration: any }) => state.integration);
+	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
+	// const [integration, setIntegration] = useState([]);
 	const [toDoPopup, setToDoPopup] = useState(false);
 	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
