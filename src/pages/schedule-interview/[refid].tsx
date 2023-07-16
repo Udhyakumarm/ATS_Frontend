@@ -7,7 +7,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { axiosInstance } from "../api/axiosApi";
+import { axiosInstance, axiosInstance2 } from "../api/axiosApi";
 import moment from "moment";
 import toastcomp from "@/components/toast";
 
@@ -71,8 +71,19 @@ export default function CandSchedule() {
 		setloader(true);
 		const fd = new FormData();
 		fd.append("selectedSlot", data[select]);
-		await axiosInstance
-			.put(`/job/can/slot/update/${refid}/`, fd)
+		fd.append("email", email);
+		fd.append("start_time", moment(data[select]).format());
+		fd.append("end_time", moment(data[select]).add(parseInt(data["duration"]), "minutes").format());
+		if (data["capplicant"]) {
+			fd.append("arefid", data["capplicant"]["arefid"]);
+			fd.append("jobpk", parseInt(data["capplicant"]["job"]["id"]));
+		}
+		if (data["vapplicant"]) {
+			fd.append("arefid", data["vapplicant"]["arefid"]);
+			fd.append("jobpk", parseInt(data["vapplicant"]["job"]["id"]));
+		}
+		await axiosInstance2
+			.post(`/job/can/slot/update/${refid}/`, fd)
 			.then((res) => {
 				setloader(false);
 				toastcomp("Interview Slot Selected Successfully", "success");
