@@ -7,17 +7,15 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { addNotifyLog, axiosInstance2, axiosInstanceAuth, axiosInstanceAuth22 } from "@/pages/api/axiosApi";
-import { useEffect, useState, Fragment } from "react";
-import { useApplicantStore, useNotificationStore, useUserStore } from "@/utils/code";
+import { useEffect, useState, useRef, Fragment } from "react";
+import { useApplicantStore, useCalStore, useNotificationStore, useUserStore } from "@/utils/code";
 import Button from "@/components/Button";
 import Image from "next/image";
-import { Tab, Transition } from "@headlessui/react";
 import jobIcon from "/public/images/icons/jobs.png";
 import TeamMembers from "@/components/TeamMembers";
 import userImg from "/public/images/user-image.png";
 import moment from "moment";
 import CardLayout_1 from "@/components/CardLayout-1";
-import { Listbox } from "@headlessui/react";
 import toastcomp from "@/components/toast";
 import favIcon from "/public/favicon-white.ico";
 import UpcomingComp from "@/components/organization/upcomingComp";
@@ -25,6 +23,13 @@ import userImg1 from "/public/images/user-image1.jpeg";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import googleIcon from "/public/images/social/google-icon.png";
+import TImeSlot from "@/components/TimeSlot";
+import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
+
+const CalendarIntegrationOptions = [
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+];
 
 const people = [
 	{ name: "Sourced", unavailable: false },
@@ -58,6 +63,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			settoken("");
 		}
 	}, [session]);
+
+	//int
+	const integration = useCalStore((state: { integration: any }) => state.integration);
+	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
+	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+	const cancelButtonRef = useRef(null);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	const axiosInstanceAuth21 = axiosInstanceAuth22(token);
@@ -299,7 +310,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				loadFeedback();
 				loadTimeLine();
 				if (feedbackStatus === "Reject") {
-					// chnageStatus("Rejected", appdata["arefid"]);
+					chnageStatus("Rejected", appdata["arefid"]);
 				}
 				if (feedbackStatus === "Shortlist") {
 					if (feedbackList.length > 0) {
@@ -310,10 +321,15 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							}
 						}
 						if (ch) {
-							// chnageStatus("Interview", appdata["arefid"]);
+							chnageStatus("Interview", appdata["arefid"]);
+							//GCAL
+
+							setIsCalendarOpen(true);
 						}
 					} else {
-						// chnageStatus("Interview", appdata["arefid"]);
+						chnageStatus("Interview", appdata["arefid"]);
+
+						setIsCalendarOpen(true);
 					}
 				}
 			})
@@ -414,200 +430,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}, [feedbackList, currentUser]);
 
-	// const applicantlist = useApplicantStore((state: { applicantlist: any }) => state.applicantlist);
-	// const setapplicantlist = useApplicantStore((state: { setapplicantlist: any }) => state.setapplicantlist);
-	// const applicantdetail = useApplicantStore((state: { applicantdetail: any }) => state.applicantdetail);
-	// const setapplicantdetail = useApplicantStore((state: { setapplicantdetail: any }) => state.setapplicantdetail);
-	// const jobid = useApplicantStore((state: { jobid: any }) => state.jobid);
-	// const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
-	// const canid = useApplicantStore((state: { canid: any }) => state.canid);
-	// const setcanid = useApplicantStore((state: { setcanid: any }) => state.setcanid);
-	// const appid = useApplicantStore((state: { appid: any }) => state.appid);
-	// const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
-	// const type = useApplicantStore((state: { type: any }) => state.type);
-	// const settype = useApplicantStore((state: { settype: any }) => state.settype);
-
-	// const [refersh, setrefersh] = useState(1);
-	// const [refersh1, setrefersh1] = useState(0);
-	// const [refersh2, setrefersh2] = useState(0);
-	// const [jtitle, setjtitle] = useState("");
-	// const [aid, setaid] = useState("");
-
-	// const [selectedFeedBack, setSelectedFeedBack] = useState(false);
-	// const [feedBack, setFeedBack] = useState(true);
-	// const [updateFeedBack, setUpdateFeedBack] = useState(false);
-
-	//feedback
-	// const [currentUser, setcurrentUser] = useState([]);
-	// const [feedbackList, setfeedbackList] = useState([]);
-	// const [editfeedback, seteditfeedback] = useState(false);
-	// const [editfeedbackTA, seteditfeedbackTA] = useState("");
-	// const [feedbackreload, setfeedbackreload] = useState(true);
-	// const [currentUserFeedback, setcurrentUserFeedback] = useState(false);
-
-	// useEffect(() => {
-	// 	if (session) {
-	// 		settoken(session.accessToken as string);
-	// 	} else if (!session) {
-	// 		settoken("");
-	// 	}
-	// }, [session]);
-
-	// const axiosInstanceAuth2 = axiosInstanceAuth(token);
-	// const axiosInstanceAuth21 = axiosInstanceAuth22(token);
-
-	// async function loadApplicantDetail() {
-	// 	if(type === "carrier"){
-	// 		let candidateId = ""
-	// 		for(let i=0;i<applicantlist.length;i++){
-	// 			if(appid === applicantlist[i]["arefid"]){
-	// 				candidateId=applicantlist[i]["user"]["erefid"]
-	// 			}
-	// 		}
-	// 		await axiosInstanceAuth2
-	// 			.get(`/candidate/listuser/${candidateId}/${jobid}`)
-	// 			.then(async (res) => {
-	// 				console.log(res.data);
-	// 				setapplicantdetail(res.data);
-	// 				setrefersh(0);
-	// 			})
-	// 			.catch((err) => {
-	// 				console.log(err);
-	// 				setrefersh(0);
-	// 			});
-	// 	}
-	// }
-
-	// async function loadApplicant() {
-	// 	await axiosInstanceAuth2
-	// 		.get(`/job/listapplicant/`)
-	// 		.then(async (res) => {
-	// 			// console.log(res.data)
-	// 			setapplicantlist(res.data);
-	// 			setrefersh1(0);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 			setrefersh1(0);
-	// 		});
-	// }
-
-	// useEffect(() => {
-	// 	if (refersh1 != 0) {
-	// 		loadApplicant();
-	// 	}
-	// }, [refersh1]);
-
-	// async function chnageStatus(status: string | Blob, arefid: any) {
-	// 	const fdata = new FormData();
-	// 	fdata.append("status", status);
-	// 	await axiosInstanceAuth2
-	// 		.put(`/job/applicant/${arefid}/update/`, fdata)
-	// 		.then((res) => {
-	// 			setrefersh1(1);
-	// 			toastcomp("Status Changed", "success");
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 			toastcomp("Status Not Change", "error");
-	// 			setrefersh1(1);
-	// 		});
-	// }
-
-	// useEffect(() => {
-	// 	if (applicantdetail && applicantlist && refersh2 <= 0) {
-	// 		for (let i = 0; i < applicantlist.length; i++) {
-	// 			if (applicantlist[i]["user"]["erefid"] === applicantdetail["CandidateProfile"][0]["user"]["erefid"]) {
-	// 				console.log("*", applicantlist[i]);
-	// 				setjtitle(applicantlist[i]["job"]["job_title"]);
-	// 				for (let j = 0; j < people.length; j++) {
-	// 					if (people[j]["name"] === applicantlist[i]["status"]) {
-	// 						setSelectedPerson(people[j]);
-	// 						setaid(applicantlist[i]["arefid"]);
-	// 						setrefersh2(1);
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	console.log(applicantdetail);
-	// }, [applicantdetail, applicantlist, refersh2]);
-
-	// async function loadFeedback(arefid: any) {
-	// 	await axiosInstance2
-	// 		.get(`/job/listfeedback/${arefid}/`)
-	// 		.then((res) => {
-	// 			setfeedbackList(res.data);
-	// 			console.log("@", res.data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }
-
-	// async function getcurrentUser() {
-	// 	await axiosInstanceAuth2
-	// 		.get(`/job/currentuser/`)
-	// 		.then((res) => {
-	// 			setcurrentUser(res.data);
-	// 			console.log("@", res.data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }
-
-	// async function updateFeedback(pk) {
-	// 	const fdata = new FormData();
-	// 	fdata.append("feedback", editfeedbackTA);
-	// 	await axiosInstanceAuth2
-	// 		.put(`/job/feedback/${pk}/update/`, fdata)
-	// 		.then((res) => {
-	// 			toastcomp("Feedback Updated", "success");
-	// 			seteditfeedback(false);
-	// 			setfeedbackreload(true);
-	// 		})
-	// 		.catch((err) => {
-	// 			toastcomp("Feedback Not Updated", "error");
-	// 			seteditfeedback(false);
-	// 			setfeedbackreload(true);
-	// 		});
-	// }
-
-	// const userState = useUserStore((state: { user: any }) => state.user);
-
-	// const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
-
-	// async function createFeedback(status) {
-	// 	const fdata = new FormData();
-	// 	fdata.append("status", status);
-	// 	await axiosInstanceAuth2
-	// 		.post(`/job/feedback/${aid}/create/`, fdata)
-	// 		.then((res) => {
-	// 			toastcomp("Feedback Created", "success");
-	// 			let title = `Feedback Added By ${userState[0]["name"]} (${userState[0]["email"]}) to Applicant ${canid})`;
-
-	// 			addNotifyLog(axiosInstanceAuth2, title, "");
-	// 			toggleLoadMode(true);
-
-	// 			seteditfeedback(false);
-	// 			setfeedbackreload(true);
-	// 		})
-	// 		.catch((err) => {
-	// 			toastcomp("Feedback Not Created", "error");
-	// 			seteditfeedback(false);
-	// 			setfeedbackreload(true);
-	// 		});
-	// }
-
-	// useEffect(() => {
-	// 	if (aid.length > 0 && feedbackreload) {
-	// 		loadFeedback(aid);
-	// 		getcurrentUser();
-	// 		setfeedbackreload(false);
-	// 	}
-	// }, [aid, feedbackreload]);
-
 	return (
 		<>
 			<Head>
@@ -704,7 +526,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										{profileData["skills"] && profileData["skills"].length > 0 ? (
 											<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
 												{profileData["skills"].split(",").map((data: any, i: React.Key) => (
-													<li className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 dark:bg-gray-700 px-4 py-2 text-center" key={i}>
+													<li
+														className="m-1 min-w-[75px] rounded-[30px] bg-gray-100 px-4 py-2 text-center dark:bg-gray-700"
+														key={i}
+													>
 														{data}
 													</li>
 												))}
@@ -883,7 +708,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -898,7 +723,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -913,7 +738,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -928,7 +753,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -943,7 +768,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
@@ -957,7 +782,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
 													{profileData["resume"] && profileData["resume"].length > 0 && (
 														<>
-															<div className="flex flex-wrap items-center justify-between bg-lightBlue dark:bg-gray-900 p-2 px-8 text-sm">
+															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-900">
 																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
 																<Link
 																	href={
@@ -978,7 +803,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
 																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
 																}
-																className="h-[50vh] w-[100%] max-w-[800px] mx-auto"
+																className="mx-auto h-[50vh] w-[100%] max-w-[800px]"
 															></iframe>
 														</>
 													)}
@@ -2073,6 +1898,93 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					</div>
 				</div>
 			</main>
+
+			<Transition.Root show={isCalendarOpen} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setIsCalendarOpen}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								{integration && integration.length <= 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full overflow-hidden rounded-normal border">
+														<Link
+															href={integration.link}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</Link>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Schedule Interview</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<TImeSlot
+												cardarefid={appdata["arefid"]}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+											/>
+										</div>
+									</Dialog.Panel>
+								)}
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }

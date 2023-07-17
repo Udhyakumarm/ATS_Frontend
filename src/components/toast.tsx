@@ -15,6 +15,6 @@ export default function toastcomp(title, type) {
 		// 	color: "#fff"
 		// },
 		className:
-			" border-t border-l-2 dark:border-lightBlue border-gray-500 text-xs bg-lightBlue dark:bg-gray-800 text-black dark:text-white capitalize"
+			" border-t-2 border-l-4 dark:border-lightBlue border-primary text-xs bg-lightBlue dark:bg-gray-800 text-black dark:text-white capitalize"
 	});
 }

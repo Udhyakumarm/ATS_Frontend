@@ -11,7 +11,7 @@ export default function CustomToaster() {
 			toastOptions={{
 				// Define default options
 				className:
-					" border-t border-l-2 dark:border-lightBlue border-gray-500 text-xs bg-lightBlue dark:bg-gray-800 text-black dark:text-white capitalize",
+					" border-t-2 border-l-4 dark:border-lightBlue border-primary text-xs bg-lightBlue dark:bg-gray-800 text-black dark:text-white capitalize",
 				duration: 5000,
 				style: {
 					background: "#363636",
