@@ -146,7 +146,7 @@ export default function CandSchedule() {
 											<i className="fa-solid fa-user"></i>
 										</div>
 										<div className="py-1 pl-6">
-											<h6 className="mb-2 text-lg text-darkGray">Interviewer</h6>
+											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">Interviewer</h6>
 											<p>{data["user"] && data["user"]["email"] && data["user"]["email"]}</p>
 										</div>
 									</div>
@@ -155,7 +155,7 @@ export default function CandSchedule() {
 											<i className="fa-solid fa-user"></i>
 										</div>
 										<div className="py-1 pl-6">
-											<h6 className="mb-2 text-lg text-darkGray">Event Duration</h6>
+											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">Event Duration</h6>
 											<p>{data["duration"] && data["duration"]} min</p>
 										</div>
 									</div>
@@ -164,7 +164,7 @@ export default function CandSchedule() {
 											<i className="fa-solid fa-user"></i>
 										</div>
 										<div className="py-1 pl-6">
-											<h6 className="mb-2 text-lg text-darkGray">Job Title</h6>
+											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">Job Title</h6>
 											{data["capplicant"] && data["capplicant"]["job"] && data["capplicant"]["job"]["jobTitle"] && (
 												<>
 													<p>{data["capplicant"]["job"]["jobTitle"]}</p>
@@ -182,7 +182,7 @@ export default function CandSchedule() {
 											<i className="fa-solid fa-user"></i>
 										</div>
 										<div className="py-1 pl-6">
-											<h6 className="mb-2 text-lg text-darkGray">Platform</h6>
+											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">Platform</h6>
 											<p>Google Meet</p>
 										</div>
 									</div>
@@ -210,7 +210,7 @@ export default function CandSchedule() {
 													className={`mt-1 w-full cursor-pointer rounded-normal border border-borderColor p-3 text-sm focus:shadow-none focus:outline-none focus:ring-0 ${
 														select === "slot1"
 															? "bg-gradDarkBlue text-white"
-															: "group-hover:bg-gradLightBlue group-hover:text-white"
+															: "bg-transparent group-hover:bg-gradLightBlue group-hover:text-white"
 													}`}
 												/>
 											</label>
@@ -234,7 +234,7 @@ export default function CandSchedule() {
 													className={`mt-1 w-full cursor-pointer rounded-normal border border-borderColor p-3 text-sm focus:shadow-none focus:outline-none focus:ring-0 ${
 														select === "slot2"
 															? "bg-gradDarkBlue text-white"
-															: "group-hover:bg-gradLightBlue group-hover:text-white"
+															: "bg-transparent group-hover:bg-gradLightBlue group-hover:text-white"
 													}`}
 												/>
 											</label>
@@ -258,7 +258,7 @@ export default function CandSchedule() {
 													className={`mt-1 w-full cursor-pointer rounded-normal border border-borderColor p-3 text-sm focus:shadow-none focus:outline-none focus:ring-0 ${
 														select === "slot3"
 															? "bg-gradDarkBlue text-white"
-															: "group-hover:bg-gradLightBlue group-hover:text-white"
+															: "bg-transparent group-hover:bg-gradLightBlue group-hover:text-white"
 													}`}
 												/>
 											</label>
@@ -282,7 +282,7 @@ export default function CandSchedule() {
 													className={`mt-1 w-full cursor-pointer rounded-normal border border-borderColor p-3 text-sm focus:shadow-none focus:outline-none focus:ring-0 ${
 														select === "slot4"
 															? "bg-gradDarkBlue text-white"
-															: "group-hover:bg-gradLightBlue group-hover:text-white"
+															: "bg-transparent group-hover:bg-gradLightBlue group-hover:text-white"
 													}`}
 												/>
 											</label>
@@ -306,7 +306,7 @@ export default function CandSchedule() {
 													className={`mt-1 w-full cursor-pointer rounded-normal border border-borderColor p-3 text-sm focus:shadow-none focus:outline-none focus:ring-0 ${
 														select === "slot5"
 															? "bg-gradDarkBlue text-white"
-															: "group-hover:bg-gradLightBlue group-hover:text-white"
+															: "bg-transparent group-hover:bg-gradLightBlue group-hover:text-white"
 													}`}
 												/>
 											</label>
