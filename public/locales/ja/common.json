@@ -106,7 +106,9 @@
         "GoPremium": "プレミアムプランにアップグレード",
         "Upgrade": "アップグレード",
         "LoadMore": "もっと読み込む",
-        "DeleteAccount": "アカウントを削除する"
+        "DeleteAccount": "アカウントを削除する",
+        "Schedule": "スケジュール",
+        "AlreadyScheduled": "すでに予定されています"
     },
     "Select": {
         "Sole_Proprietorship": "個人事業主",
@@ -270,7 +272,9 @@
         "ApplicantSourced": "採用実績",
         "BasicInformation": "基本情報",
         "GenerateDescription": "説明の生成",
-        "ApplyJob": "求人に応募する"
+        "ApplyJob": "求人に応募する",
+        "InterviewDetails": "インタビューの詳細",
+        "EventDuration": "イベント期間"
     },
     "Plans": {
         "Starter": "スターター",

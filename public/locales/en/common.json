@@ -106,7 +106,9 @@
         "GoPremium": "Go Premium",
         "Upgrade": "Upgrade",
         "LoadMore": "Load More",
-        "DeleteAccount": "Delete Account"
+        "DeleteAccount": "Delete Account",
+        "Schedule": "Schedule",
+        "AlreadyScheduled": "Already Scheduled"
     },
     "Select": {
         "Sole_Proprietorship": "Sole Proprietorship",
@@ -270,7 +272,9 @@
         "ApplicantSourced": "Applicant Sourced",
         "BasicInformation": "Basic Information",
         "GenerateDescription": "Generate Description",
-        "ApplyJob": "Apply Job"
+        "ApplyJob": "Apply Job",
+        "InterviewDetails": "Interview Details",
+        "EventDuration": "Event Duration"
     },
     "Plans": {
         "Starter": "Starter",
