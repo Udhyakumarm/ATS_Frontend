@@ -213,6 +213,9 @@ function Novus(props: any) {
 			.get(`/chatbot/listchat/`)
 			.then(async (res) => {
 				setchat(res.data);
+				if (router.pathname === "/organization/applicants") {
+					loadListOfApplicant();
+				}
 				// setdes(false);
 				// console.log("$", res);
 				// console.log("@", res.data);

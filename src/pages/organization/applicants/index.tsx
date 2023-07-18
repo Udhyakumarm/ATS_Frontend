@@ -55,6 +55,9 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
 	const setkanbanAID = useNovusStore((state: { setkanbanAID: any }) => state.setkanbanAID);
 
+	const listOfApplicant = useNovusStore((state: { listOfApplicant: any }) => state.listOfApplicant);
+	const setlistOfApplicant = useNovusStore((state: { setlistOfApplicant: any }) => state.setlistOfApplicant);
+
 	//int
 	const integration = useCalStore((state: { integration: any }) => state.integration);
 	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
@@ -137,23 +140,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	}, [applicantdetail, applicantlist]);
 
 	useEffect(() => {
-		if (applicantlist.length > 0) {
-			let arr = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
-			for (let i = 0; i < applicantlist.length; i++) {
-				let dic: any = {};
-				dic["id"] = i + 2;
-				dic["name"] = applicantlist[i]["job"]["job_title"];
-				dic["refid"] = applicantlist[i]["job"]["refid"];
-				dic["unavailable"] = false;
-				arr.push(dic);
-			}
-			setjobd(arr);
-			setjoblist(1);
-			console.log(jobd);
-		} else {
-			setjoblist(2);
-		}
-	}, [applicantlist]);
+		setrefresh(0);
+	}, [listOfApplicant]);
 
 	const [cardarefid, setcardarefid] = useState("");
 	const [cardstatus, setcardstatus] = useState("");
@@ -605,7 +593,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 											</button>
 										</div>
 										<div className="p-8">
-											<TImeSlot cardarefid={cardarefid} axiosInstanceAuth2={axiosInstanceAuth2} setIsCalendarOpen={setIsCalendarOpen}/>
+											<TImeSlot
+												cardarefid={cardarefid}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+											/>
 										</div>
 									</Dialog.Panel>
 								)}
