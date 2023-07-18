@@ -8,7 +8,7 @@ import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useEffect, Fragment, useRef, useState, Key } from "react";
-import { useApplicantStore } from "@/utils/code";
+import { useApplicantStore, useCalStore } from "@/utils/code";
 import Button from "@/components/Button";
 import { Listbox, Transition, Dialog } from "@headlessui/react";
 import Image from "next/image";
@@ -26,6 +26,12 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNovusStore } from "@/utils/novus";
+import googleIcon from "/public/images/social/google-icon.png";
+import TImeSlot from "@/components/TimeSlot";
+
+const CalendarIntegrationOptions = [
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+];
 
 export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
@@ -48,6 +54,13 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const settype = useApplicantStore((state: { settype: any }) => state.settype);
 	const setanimation = useNovusStore((state: { setanimation: any }) => state.setanimation);
 	const setkanbanAID = useNovusStore((state: { setkanbanAID: any }) => state.setkanbanAID);
+
+	const listOfApplicant = useNovusStore((state: { listOfApplicant: any }) => state.listOfApplicant);
+	const setlistOfApplicant = useNovusStore((state: { setlistOfApplicant: any }) => state.setlistOfApplicant);
+
+	//int
+	const integration = useCalStore((state: { integration: any }) => state.integration);
+	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
 
 	var jobs = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
 
@@ -127,23 +140,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	}, [applicantdetail, applicantlist]);
 
 	useEffect(() => {
-		if (applicantlist.length > 0) {
-			let arr = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
-			for (let i = 0; i < applicantlist.length; i++) {
-				let dic: any = {};
-				dic["id"] = i + 2;
-				dic["name"] = applicantlist[i]["job"]["job_title"];
-				dic["refid"] = applicantlist[i]["job"]["refid"];
-				dic["unavailable"] = false;
-				arr.push(dic);
-			}
-			setjobd(arr);
-			setjoblist(1);
-			console.log(jobd);
-		} else {
-			setjoblist(2);
-		}
-	}, [applicantlist]);
+		setrefresh(0);
+	}, [listOfApplicant]);
 
 	const [cardarefid, setcardarefid] = useState("");
 	const [cardstatus, setcardstatus] = useState("");
@@ -151,13 +149,14 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	//work
 	useEffect(() => {
 		if (cardstatus.length > 0) {
-			if (cardstatus === "Interview") {
-				setanimation(true);
-				setkanbanAID(cardarefid);
-				setTimeout(() => {
-					setanimation(false);
-					setkanbanAID("");
-				}, 10000);
+			if (cardstatus === "Interview" && cardarefid.length > 0) {
+				setIsCalendarOpen(true);
+				// setanimation(true);
+				// setkanbanAID(cardarefid);
+				// setTimeout(() => {
+				// 	setanimation(false);
+				// 	setkanbanAID("");
+				// }, 10000);
 			}
 		}
 	}, [cardstatus]);
@@ -175,6 +174,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			return "#FE8F66";
 		}
 	}
+
+	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+	// const [integration, setIntegration] = useState([]);
+
+	//timeslot
 
 	return (
 		<>
@@ -511,6 +515,92 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									</div>
 								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={isCalendarOpen} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setIsCalendarOpen}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								{integration && integration.length <= 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full overflow-hidden rounded-normal border">
+														<Link
+															href={integration.link}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</Link>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Schedule Interview</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<TImeSlot
+												cardarefid={cardarefid}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+											/>
+										</div>
+									</Dialog.Panel>
+								)}
 							</Transition.Child>
 						</div>
 					</div>

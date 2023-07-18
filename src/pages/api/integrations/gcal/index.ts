@@ -18,10 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	//Get user tokens from google
 	const { tokens } = await Integration.googleCalendarOAuth2Client.getToken(code as string);
 
-	const { unique_id } = await axiosInstance.api
-		.get("/organization/listorganizationprofile/", { headers: { authorization: "Bearer " + session.accessToken } })
-		.then((response) => response.data[0]);
-
 	Integration.googleCalendarOAuth2Client.setCredentials(tokens);
 
 	google.options({
@@ -29,6 +25,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	});
 
 	await Integration.googleCalendarOAuth2Client.refreshAccessToken();
+	// .catch((err) => {
+	// 	console.log("$", err);
+	// });
 
 	const calendar = google.calendar({ version: "v3" });
 
@@ -41,23 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const expires_in = Number(tokens.expiry_date) - Date.now();
 
-	// const response = await axiosInstance.api
-	// 	.post(
-	// 		"/organization/create_calendar_integration/" + unique_id + "/",
-	// 		{
-	// 			access_token: tokens.access_token,
-	// 			refresh_token: tokens.refresh_token,
-	// 			expires_in: expires_in,
-	// 			scope: tokens.scope,
-	// 			provider: "google",
-	// 			calendar_id: somhakoCalendar.id
-	// 		},
-	// 		{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
-	// 	)
-	// 	.catch((err) => {
-	// 		console.log(err);
-	// 		return { data: { success: false } };
-	// 	});
 	const response = await axiosInstance.api
 		.post(
 			"/organization/gcal_create_calendar_integration/",
