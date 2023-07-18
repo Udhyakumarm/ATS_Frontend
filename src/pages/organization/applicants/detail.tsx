@@ -646,7 +646,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													label={t("Words.ScheduleInterview")}
 													iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
 													handleClick={() => {
-														router.push("/organization/applicants/schedule-interview");
+														if (atsVersion === "starter") {
+															router.push("/organization/applicants/schedule-interview");
+														} else {
+															setIsCalendarOpen(true);
+														}
 													}}
 												/>
 											</div>

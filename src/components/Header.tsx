@@ -97,7 +97,7 @@ export default function Header() {
 	}, [token, load, reminder]);
 
 	function reminderPopUp(rdate: any) {
-		let daysCOunt = moment(rdate).add(30, "days").diff(moment(), "days") + " Days Left";
+		let daysCOunt = moment(rdate).add(60, "days").diff(moment(), "days") + " Days Left";
 		toast(daysCOunt, {
 			duration: 4000,
 			position: "top-right",
@@ -278,11 +278,6 @@ export default function Header() {
 						<Logo url="/" width={205} />
 
 						<div className="flex items-center">
-							{/* {rdate.length > 0 && role === "Super Admin" && (
-								<p className="rounded-lg bg-blue-500 p-1 text-white">
-									{moment(rdate).add(30, "days").diff(moment(), "days")} Days Left
-								</p>
-							)} */}
 							<ThemeChange />
 							<ToggleLang />
 							<button

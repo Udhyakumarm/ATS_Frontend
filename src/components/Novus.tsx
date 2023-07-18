@@ -21,6 +21,7 @@ import { axiosInstance } from "@/utils";
 const promptsList = [
 	{ id: 1, name: "Start", desc: "Basic Conversion" },
 	{ id: 2, name: "Applicant", desc: "Applicant Related Prompts (Use Case 1)" },
+	{ id: 2, name: "Best Of", desc: "Find Top Applicant Of Specific Job" },
 	{ id: 3, name: "Offer Management", desc: "Offer of Applicant Related Prompts (Use Case 2)" },
 	{ id: 4, name: "Jobs", desc: "Jobs Related Prompts" },
 	{ id: 5, name: "Interviews", desc: "Interviews Related Prompts" }
@@ -29,7 +30,7 @@ const promptsList = [
 const subPromptsList = {
 	Start: [],
 	Applicant: [
-		{ name: "all applicant", prompt: ["show me all applicant"], sprompt: ["show me all c applicant"] },
+		{ name: "all applicant", prompt: ["show me all applicant"], sprompt: ["show me all applicant"] },
 		{
 			name: "search applicant",
 			prompt: [
@@ -50,6 +51,14 @@ const subPromptsList = {
 				"applicant [12345] move to previous phase",
 				"applicant [12345] move to specific {Interview}"
 			]
+		}
+	],
+
+	"Best Of": [
+		{
+			name: "top applicants",
+			prompt: ["show me top applicant of Job [12345]"],
+			sprompt: ["show me top applicant of Job [refid]"]
 		}
 	],
 	"Offer Management": [],
@@ -274,6 +283,27 @@ function Novus(props: any) {
 			});
 	}
 
+	//best of option chat res
+	async function bestofChat(prompt: any) {
+		setdisablechat(true);
+		const fd = new FormData();
+		fd.append("prompt", prompt);
+		await axiosInstanceAuth2
+			.post(`/chatbot/bestof/`, fd)
+			.then(async (res) => {
+				if (res.data.response && res.data.response === "Success") {
+					loadChat();
+				}
+				setdisablechat(false);
+				setfinalquery("");
+			})
+			.catch((err) => {
+				console.log(err);
+				setdisablechat(false);
+				setfinalquery("");
+			});
+	}
+
 	//handle btn event
 	function submitQuery() {
 		if (finalquery.length > 0) {
@@ -284,6 +314,10 @@ function Novus(props: any) {
 			} else if (selected["name"] === "Applicant") {
 				toastcomp("Start", "success");
 				applicantChat(finalquery);
+				setfinalquery("Loading...");
+			} else if (selected["name"] === "Best Of") {
+				toastcomp("Start", "success");
+				bestofChat(finalquery);
 				setfinalquery("Loading...");
 			} else {
 				toastcomp("Under Development Yet Else Start Basic Conversion", "success");
