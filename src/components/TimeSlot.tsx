@@ -8,7 +8,14 @@ import { useCalStore } from "@/utils/code";
 import { axiosInstance } from "@/utils";
 import toastcomp from "./toast";
 
-export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendarOpen }: any) {
+export default function TImeSlot({
+	cardarefid,
+	axiosInstanceAuth2,
+	setIsCalendarOpen,
+	type,
+	updateStep,
+	omrefid
+}: any) {
 	const [eventList, setEventList] = useState<Array<any>>([]);
 	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
 	const integration = useCalStore((state: { integration: any }) => state.integration);
@@ -105,10 +112,17 @@ export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendar
 		fd.append("slot4", moment(date4 + " " + time4).format("YYYY-MM-DD HH:mm"));
 		fd.append("slot5", moment(date5 + " " + time5).format("YYYY-MM-DD HH:mm"));
 		fd.append("duration", interDuration);
+		fd.append("type", type);
+		if (type === "offer" && omrefid) {
+			fd.append("omrefid", omrefid);
+		}
 		axiosInstanceAuth2
 			.post(`/job/slot/create/${cardarefid}/`, fd)
 			.then((res) => {
 				toastcomp("Slot Created Successfully", "success");
+				if (type === "offer") {
+					updateStep(4);
+				}
 				setIsCalendarOpen(false);
 			})
 			.catch((err) => {
@@ -419,7 +433,7 @@ export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendar
 				<Button
 					btnStyle=""
 					btnType="button"
-					label="Generate Interview Call"
+					label={`Generate ${type} call`}
 					disabled={!checkDis()}
 					handleClick={createSlot}
 				/>

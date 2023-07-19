@@ -1980,6 +1980,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												cardarefid={appdata["arefid"]}
 												axiosInstanceAuth2={axiosInstanceAuth2}
 												setIsCalendarOpen={setIsCalendarOpen}
+												type={"interview"}
 											/>
 										</div>
 									</Dialog.Panel>
