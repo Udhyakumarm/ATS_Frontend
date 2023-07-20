@@ -2451,8 +2451,6 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 												axiosInstanceAuth2={axiosInstanceAuth2}
 												setIsCalendarOpen={setIsCalendarOpen}
 												type={"offer"}
-												updateStep={updateStep}
-												omrefid={omrefid}
 											/>
 										</div>
 									</Dialog.Panel>

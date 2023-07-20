@@ -12,9 +12,7 @@ export default function TImeSlot({
 	cardarefid,
 	axiosInstanceAuth2,
 	setIsCalendarOpen,
-	type,
-	updateStep,
-	omrefid
+	type
 }: any) {
 	const [eventList, setEventList] = useState<Array<any>>([]);
 	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
@@ -113,16 +111,10 @@ export default function TImeSlot({
 		fd.append("slot5", moment(date5 + " " + time5).format("YYYY-MM-DD HH:mm"));
 		fd.append("duration", interDuration);
 		fd.append("type", type);
-		if (type === "offer" && omrefid) {
-			fd.append("omrefid", omrefid);
-		}
 		axiosInstanceAuth2
 			.post(`/job/slot/create/${cardarefid}/`, fd)
 			.then((res) => {
 				toastcomp("Slot Created Successfully", "success");
-				if (type === "offer") {
-					updateStep(4);
-				}
 				setIsCalendarOpen(false);
 			})
 			.catch((err) => {
