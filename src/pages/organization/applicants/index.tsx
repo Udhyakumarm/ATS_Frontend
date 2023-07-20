@@ -597,6 +597,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 												cardarefid={cardarefid}
 												axiosInstanceAuth2={axiosInstanceAuth2}
 												setIsCalendarOpen={setIsCalendarOpen}
+												type={"interview"}
 											/>
 										</div>
 									</Dialog.Panel>

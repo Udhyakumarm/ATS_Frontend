@@ -136,12 +136,11 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 												<div>
 													{t("Words.GoTo")} <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
 												</div>
-												{links.link === "/organization/settings/pricing" && (
+												{/* {links.link === "/organization/settings/pricing" && (
 													<p className="rounded-lg bg-blue-500 p-1 text-center font-bold text-white">
-														{/* {moment("2023-06-01").add(30, "days").diff(moment(), "days")} Days Left */}
-														{moment(rdate).add(30, "days").diff(moment(), "days")} Days Left
+														{moment(rdate).add(60, "days").diff(moment(), "days")} Days Left
 													</p>
-												)}
+												)} */}
 											</span>
 											{links.blur && (
 												<>

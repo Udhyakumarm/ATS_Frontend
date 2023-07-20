@@ -88,31 +88,31 @@ export default function Header() {
 	const reminder = useNotificationStore((state: { reminder: any }) => state.reminder);
 	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
 
-	useEffect(() => {
-		if ((token && token.length > 0) || load) {
-			loadNotificationCount();
-			if (load) toggleLoadMode(false);
-			if (reminder.length > 0) reminderPopUp(reminder);
-		}
-	}, [token, load, reminder]);
+	// useEffect(() => {
+	// 	if ((token && token.length > 0) || load) {
+	// 		loadNotificationCount();
+	// 		if (load) toggleLoadMode(false);
+	// 		if (reminder.length > 0) reminderPopUp(reminder);
+	// 	}
+	// }, [token, load, reminder]);
 
-	function reminderPopUp(rdate: any) {
-		let daysCOunt = moment(rdate).add(30, "days").diff(moment(), "days") + " Days Left";
-		toast(daysCOunt, {
-			duration: 4000,
-			position: "top-right",
-			style: {
-				background: "#363636",
-				color: "#fff"
-			},
-			icon: <i className="fa-solid fa-bell"></i>,
-			ariaProps: {
-				role: "status",
-				"aria-live": "polite"
-			}
-		});
-		togglereminderMode("");
-	}
+	// function reminderPopUp(rdate: any) {
+	// 	let daysCOunt = moment(rdate).add(60, "days").diff(moment(), "days") + " Days Left";
+	// 	toast(daysCOunt, {
+	// 		duration: 4000,
+	// 		position: "top-right",
+	// 		style: {
+	// 			background: "#363636",
+	// 			color: "#fff"
+	// 		},
+	// 		icon: <i className="fa-solid fa-bell"></i>,
+	// 		ariaProps: {
+	// 			role: "status",
+	// 			"aria-live": "polite"
+	// 		}
+	// 	});
+	// 	togglereminderMode("");
+	// }
 
 	if (
 		cname &&
@@ -278,11 +278,6 @@ export default function Header() {
 						<Logo url="/" width={205} />
 
 						<div className="flex items-center">
-							{/* {rdate.length > 0 && role === "Super Admin" && (
-								<p className="rounded-lg bg-blue-500 p-1 text-white">
-									{moment(rdate).add(30, "days").diff(moment(), "days")} Days Left
-								</p>
-							)} */}
 							<ThemeChange />
 							<ToggleLang />
 							<button
