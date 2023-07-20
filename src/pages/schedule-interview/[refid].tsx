@@ -81,12 +81,15 @@ export default function CandSchedule() {
 		fd.append("email", email);
 		fd.append("start_time", moment(data[select]).format());
 		fd.append("end_time", moment(data[select]).add(parseInt(data["duration"]), "minutes").format());
+		fd.append("type", data["type"]);
 		if (data["capplicant"]) {
 			fd.append("arefid", data["capplicant"]["arefid"]);
 			fd.append("jobpk", parseInt(data["capplicant"]["job"]["id"]));
 			fd.append(
 				"title",
-				`Interview with ${data["capplicant"]["user"]["first_name"]} ${data["capplicant"]["user"]["last_name"]} for ${data["capplicant"]["job"]["jobTitle"]}`
+				`${data["type"][0].toUpperCase() + data["type"].slice(1)} with ${data["capplicant"]["user"]["first_name"]} ${
+					data["capplicant"]["user"]["last_name"]
+				} for ${data["capplicant"]["job"]["jobTitle"]}`
 			);
 		}
 		if (data["vapplicant"]) {
@@ -94,7 +97,9 @@ export default function CandSchedule() {
 			fd.append("jobpk", parseInt(data["vapplicant"]["job"]["id"]));
 			fd.append(
 				"title",
-				`Interview with ${data["vapplicant"]["applicant"]["first_name"]} ${data["vapplicant"]["applicant"]["last_name"]} for ${data["vapplicant"]["job"]["jobTitle"]}`
+				`${data["type"][0].toUpperCase() + data["type"].slice(1)} with ${
+					data["vapplicant"]["applicant"]["first_name"]
+				} ${data["vapplicant"]["applicant"]["last_name"]} for ${data["vapplicant"]["job"]["jobTitle"]}`
 			);
 		}
 
@@ -105,13 +110,23 @@ export default function CandSchedule() {
 			.post(`/job/can/slot/update/${refid}/`, fd)
 			.then((res) => {
 				setloader(false);
-				toastcomp("Interview Slot Selected Successfully", "success");
+				toastcomp(
+					`${
+						data["type"].length > 0 && data["type"][0].toUpperCase() + data["type"].slice(1)
+					} Slot Selected Successfully`,
+					"success"
+				);
 				loadInterviewDetail(refid);
 			})
 			.catch((err) => {
 				setloader(false);
 				console.log("$", "err", err);
-				toastcomp("Interview Slot Not Selected Successfully", "error");
+				toastcomp(
+					`${
+						data["type"].length > 0 && data["type"][0].toUpperCase() + data["type"].slice(1)
+					}  Slot Not Selected Successfully`,
+					"error"
+				);
 				loadInterviewDetail(refid);
 			});
 	}
@@ -161,7 +176,9 @@ export default function CandSchedule() {
 							</div>
 						) : (
 							<>
-								<h1 className="mb-6 text-3xl font-bold">{t("Words.InterviewDetails")}</h1>
+								<h1 className="mb-6 text-3xl font-bold capitalize">
+									{data["type"].length > 0 ? <>{data["type"]} Details</> : <>Interview Details</>}
+								</h1>
 								<div className="-mx-6 flex flex-wrap">
 									<div className="flex w-full p-6 md:max-w-[50%]">
 										<div className="flex h-[30px] w-[30px] items-center justify-center rounded bg-gradient-to-r from-[#5236FF] to-[#85C5FF] text-sm text-white">
@@ -205,14 +222,14 @@ export default function CandSchedule() {
 										</div>
 										<div className="py-1 pl-6">
 											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">{t("Form.Platform")}</h6>
-											<p>Google Meet</p>
+											<p className="capitalize">Google Meet</p>
 										</div>
 									</div>
 								</div>
 								<hr className="mb-4" />
 								<div>
-									<h6 className="mb-3 inline-block font-bold">
-										{srcLang === "ja" ? "面接の日時を選択してください" : "Select Date and Time for Interview"}
+									<h6 className="mb-3 inline-block font-bold capitalize">
+										Select Date and Time for {data["type"]} Call
 									</h6>
 									<div className="-mx-4 mb-2 flex flex-wrap">
 										<div className="mb-4 w-[50%] px-4 md:max-w-[33.33%]">

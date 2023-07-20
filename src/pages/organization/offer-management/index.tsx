@@ -1908,6 +1908,41 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																) : (
 																	<></>
 																)}
+
+																{(offer.length > 0 && offer[0]["step"] === 4) || (offer.length <= 0 && step === 4) ? (
+																	<section className="px-10 py-6">
+																		{ocstatus === "Pending" && (
+																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																				<p className="text-lg">{t("Words.OfferPending")}</p>
+																				<small className="font-semibold">{t("Words.OfferStatusApplicant")}</small>
+																			</div>
+																		)}
+																		{ocstatus === "Accepted" && (
+																			<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																				<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																				<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
+																				<button
+																					onClick={() => {
+																						if (
+																							offer[0]["finalofferLetter"] &&
+																							offer[0]["finalofferLetter"].length > 0
+																						) {
+																							window.open(offer[0]["finalofferLetter"], "_blank");
+																						} else {
+																							toastcomp("Under proccessing", "error");
+																						}
+																					}}
+																					className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																				>
+																					{t("Btn.Download")} {t("Words.OfferLetter")}
+																				</button>
+																			</div>
+																		)}
+																	</section>
+																) : (
+																	<></>
+																)}
 															</>
 														)}
 													</Tab.Panel>
