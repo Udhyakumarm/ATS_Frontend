@@ -381,13 +381,13 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 																	key={item.id}
 																	value={item}
 																	disabled={item.unavailable}
-																	className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																>
 																	{({ selected }) => (
 																		<>
-																			<span className={` ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
+																			<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
 																			{selected ? (
-																				<span className="absolute left-3">
+																				<span className="absolute top-[10px] left-3">
 																					<i className="fa-solid fa-check"></i>
 																				</span>
 																			) : null}
