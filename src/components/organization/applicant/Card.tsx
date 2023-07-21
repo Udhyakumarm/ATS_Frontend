@@ -51,7 +51,7 @@ export default function Card(props: any) {
 		props.connectDropTarget
 	)(
 		<div
-			className={cn("Card", {
+			className={cn("Card pb-1 ", {
 				"Card--dragging": props.isDragging,
 				"Card--spacer": props.isSpacer
 			})}

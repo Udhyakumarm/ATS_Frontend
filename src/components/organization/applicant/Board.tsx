@@ -8,7 +8,7 @@ import { useLangStore } from "@/utils/code";
 export function Board({ cards, columns, moveCard, applicantlist }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	return (
-		<div className="flex h-[calc(100vh-65px)] overflow-auto p-4 py-10 lg:p-8">
+		<div className="flex h-[calc(100vh-132px)] overflow-auto p-4 py-10 lg:p-8">
 			{columns.map((column) => (
 				<Column
 					key={column.id}
