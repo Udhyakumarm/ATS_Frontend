@@ -356,7 +356,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 						) : (
 							<div className="layoutWrap">
 								{upcomingSoon && (
-									<div className="flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+									<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
 										<div className="mr-3">
 											<Listbox value={selectedJob} onChange={setSelectedJob}>
 												<Listbox.Button className={"text-lg font-bold"}>
