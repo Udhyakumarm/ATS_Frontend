@@ -62,8 +62,6 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const integration = useCalStore((state: { integration: any }) => state.integration);
 	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
 
-	var jobs = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
-
 	const [jobd, setjobd] = useState([{ id: 1, name: "All", refid: "ALL", unavailable: false }]);
 
 	const { data: session } = useSession();
@@ -83,53 +81,71 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const [applicantList, setapplicantList] = useState([]);
-	async function loadApplicant() {
-		let arr2 = [];
-		await axiosInstanceAuth2
-			.get(`/job/listapplicant/`)
-			.then(async (res) => {
-				console.log("!", "applicant", res.data);
-				let arr = res.data;
-				for (let i = 0; i < arr.length; i++) {
-					let dic = arr[i];
-					dic["type"] = "career";
-					arr2.push(dic);
-				}
-				console.log("!", "applicant2", arr2);
-				setapplicantlist(arr2);
-				setapplicantList(arr2);
-				setrefresh(1);
-			})
-			.catch((err) => {
-				console.log(err);
-				setrefresh(1);
-				// setapplicantlist([]);
-			});
+	// await axiosInstance.api
+	// 			.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
+	// 			.then((response) => {
+	// 				let arr = [];
 
-		await axiosInstanceAuth2
-			.get(`/job/listvendorapplicant/`)
-			.then(async (res) => {
-				console.log("!", "vendorapplicant", res.data);
-				let arr = res.data;
-				for (let i = 0; i < arr.length; i++) {
-					let dic = arr[i];
-					dic["type"] = "vendor";
-					arr2.push(dic);
-				}
-				console.log("!", "vendorapplicant2", arr2);
-				setapplicantlist(arr2);
-				setapplicantList(arr2);
-				setrefresh(2);
-			})
-			.catch((err) => {
-				console.log(err);
-				setrefresh(2);
-				// setapplicantlist([]);
-			});
+	// 				response.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
+
+	// 				setActiveJobs(arr);
+	// 				setFActiveJobs(arr);
+	// 				console.log("&", "jobs", arr);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.log({ error });
+	// 				return null;
+	// 			});
+
+	async function loadJobFiter() {
+		try {
+			let arr = [];
+			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-job/`)]);
+
+			let jobsArr = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
+			res.data.map(
+				(job: any, i: any) =>
+					job.jobStatus === "Active" &&
+					jobsArr.push({ id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false })
+			);
+
+			console.info("data", "applicant filter", jobsArr);
+			setjobd(jobsArr);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}
+
+	async function loadApplicant() {
+		try {
+			let arr = [];
+			var [res1, res2] = await Promise.all([
+				axiosInstanceAuth2.get(`/job/listapplicant/`),
+				axiosInstanceAuth2.get(`/job/listvendorapplicant/`)
+			]);
+
+			arr = res1.data
+				.map((data: any) => ({ ...data, type: "career" }))
+				.concat(res2.data.map((data: any) => ({ ...data, type: "vendor" })));
+
+			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+
+			console.info("data", "applicant list", arr);
+			setapplicantlist(arr);
+			setapplicantList(arr);
+			setrefresh(2);
+		} catch (error) {
+			setapplicantlist([]);
+			setapplicantList([]);
+			setrefresh(2);
+
+			console.error("Error fetching data:", error);
+		}
 	}
 
 	useEffect(() => {
 		if (token && token.length > 0 && refresh === 0) {
+			loadJobFiter();
 			loadApplicant();
 		}
 	}, [token, refresh]);
@@ -339,7 +355,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 							</div>
 						) : (
 							<div className="layoutWrap">
-								{!upcomingSoon && (
+								{upcomingSoon && (
 									<div className="flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
 										<div className="mr-3">
 											<Listbox value={selectedJob} onChange={setSelectedJob}>
@@ -359,7 +375,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 															"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
 														}
 													>
-														{joblist > 0 &&
+														{jobd.length > 0 &&
 															jobd.map((item) => (
 																<Listbox.Option
 																	key={item.id}
