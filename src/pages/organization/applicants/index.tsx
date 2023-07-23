@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
-import { useEffect, Fragment, useRef, useState, Key } from "react";
+import { useEffect, Fragment, useRef, useState, Key, useMemo } from "react";
 import { useApplicantStore, useCalStore } from "@/utils/code";
 import Button from "@/components/Button";
 import { Listbox, Transition, Dialog } from "@headlessui/react";
@@ -28,10 +28,28 @@ import { useLangStore } from "@/utils/code";
 import { useNovusStore } from "@/utils/novus";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
+import { debounce } from "lodash";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
 ];
+
+const useDebounce = (value, delay) => {
+	const [debouncedValue, setDebouncedValue] = useState(value);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedValue(value);
+		}, delay);
+
+		// Clean up the timer on each value change (cleanup function)
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [value, delay]);
+
+	return debouncedValue;
+};
 
 export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
@@ -80,37 +98,25 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
-	const [applicantList, setapplicantList] = useState([]);
-	// await axiosInstance.api
-	// 			.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-	// 			.then((response) => {
-	// 				let arr = [];
-
-	// 				response.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
-
-	// 				setActiveJobs(arr);
-	// 				setFActiveJobs(arr);
-	// 				console.log("&", "jobs", arr);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.log({ error });
-	// 				return null;
-	// 			});
+	const [fapplicantList, setfapplicantList] = useState([]);
 
 	async function loadJobFiter() {
 		try {
-			let arr = [];
 			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-job/`)]);
 
-			let jobsArr = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
-			res.data.map(
-				(job: any, i: any) =>
-					job.jobStatus === "Active" &&
-					jobsArr.push({ id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false })
-			);
+			res.data.map((job: any, i: any) => {
+				if (job.jobStatus === "Active" && !jobd.some((item) => item.refid === job.refid)) {
+					setjobd((oldArray) => [...oldArray, { id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false }]);
+				}
+			});
 
-			console.info("data", "applicant filter", jobsArr);
-			setjobd(jobsArr);
+			// res.data.map(
+			// 	(job: any, i: any) =>
+			// 		job.jobStatus === "Active" &&
+			// 		setjobd((oldArray) => [...oldArray, { id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false }])
+			// );
+
+			console.info("data", "applicant filter", jobd);
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
@@ -132,11 +138,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 			console.info("data", "applicant list", arr);
 			setapplicantlist(arr);
-			setapplicantList(arr);
+			setfapplicantList(arr);
 			setrefresh(2);
 		} catch (error) {
 			setapplicantlist([]);
-			setapplicantList([]);
+			setfapplicantList([]);
 			setrefresh(2);
 
 			console.error("Error fetching data:", error);
@@ -149,6 +155,28 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			loadApplicant();
 		}
 	}, [token, refresh]);
+
+	useEffect(() => {
+		if (selectedJob && fapplicantList.length > 0) {
+			setrefresh(1);
+			if (selectedJob.name === "All") {
+				console.log("data old f", applicantlist);
+				setapplicantlist(fapplicantList);
+				console.log("data new f", fapplicantList);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			} else {
+				console.log("data old f", fapplicantList);
+				const filteredArray = fapplicantList.filter((item) => item.job.refid.includes(selectedJob.refid));
+				console.log("data new f", filteredArray);
+				setapplicantlist(filteredArray);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			}
+		}
+	}, [selectedJob]);
 
 	useEffect(() => {
 		console.log("applicantdetail", applicantdetail);
@@ -196,6 +224,52 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 	//timeslot
 
+	const [search, setsearch] = useState("");
+	const debouncedSearchTerm = useDebounce(search, 500);
+
+	useEffect(() => {
+		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		performSearch(debouncedSearchTerm);
+	}, [debouncedSearchTerm]);
+
+	const handleInputChange = (event) => {
+		const { value } = event.target;
+		setsearch(value);
+	};
+
+	function performSearch(query) {
+		if (query.length > 0) {
+			setrefresh(1);
+			let localSearch = query.toLowerCase();
+
+			const fApplicants = applicantlist.filter((applicant) => {
+				const type = applicant.type;
+				const firstName = type === "career" ? applicant.user.first_name : applicant.applicant.first_name;
+				const lastName = type === "career" ? applicant.user.last_name : applicant.applicant.last_name;
+
+				return (
+					(type === "career" || type === "vendor") && // Optionally add more types if needed
+					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
+				);
+			});
+
+			setapplicantlist(fApplicants);
+
+			setTimeout(() => {
+				setrefresh(2);
+			}, 500);
+		} else {
+			if (selectedJob.name === "All") {
+				setrefresh(1);
+				setapplicantlist(fapplicantList);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			} else {
+				setSelectedJob(jobd[0]);
+			}
+		}
+	}
 	return (
 		<>
 			<Head>
@@ -355,125 +429,88 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 							</div>
 						) : (
 							<div className="layoutWrap">
-								{upcomingSoon && (
-									<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-										<div className="mr-3">
-											<Listbox value={selectedJob} onChange={setSelectedJob}>
-												<Listbox.Button className={"text-lg font-bold"}>
-													{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-												</Listbox.Button>
-												<Transition
-													enter="transition duration-100 ease-out"
-													enterFrom="transform scale-95 opacity-0"
-													enterTo="transform scale-100 opacity-100"
-													leave="transition duration-75 ease-out"
-													leaveFrom="transform scale-100 opacity-100"
-													leaveTo="transform scale-95 opacity-0"
-												>
-													<Listbox.Options
-														className={
-															"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-														}
-													>
-														{jobd.length > 0 &&
-															jobd.map((item) => (
-																<Listbox.Option
-																	key={item.id}
-																	value={item}
-																	disabled={item.unavailable}
-																	className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-																>
-																	{({ selected }) => (
-																		<>
-																			<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
-																			{selected ? (
-																				<span className="absolute top-[10px] left-3">
-																					<i className="fa-solid fa-check"></i>
-																				</span>
-																			) : null}
-																		</>
-																	)}
-																</Listbox.Option>
-															))}
-													</Listbox.Options>
-												</Transition>
-											</Listbox>
-										</div>
-										<aside className="flex items-center">
-											<div className="mr-4 flex items-center">
-												<p className="mr-3 font-semibold">Add Board</p>
-												<button
-													type="button"
-													className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
-													onClick={() => setCreateBoard(true)}
-												>
-													<i className="fa-solid fa-plus"></i>
-												</button>
-											</div>
-											<TeamMembers alen={applicantlist.length} />
-											{/* <div className="flex items-center">
-									<div className="-mr-4">
-										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-									</div>
-									<div className="-mr-4">
-										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-									</div>
-									<Menu as="div" className="relative flex">
-										<Menu.Button className={"relative"}>
-											<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-											<span className="absolute left-0 top-0 block flex h-full w-full items-center justify-center rounded-full bg-[rgba(0,0,0,0.5)] text-sm text-white">
-												{applicantlist && <>+{applicantlist.length}</>}
-											</span>
-										</Menu.Button>
-										<Transition
-											as={Fragment}
-											enter="transition ease-out duration-100"
-											enterFrom="transform opacity-0 scale-95"
-											enterTo="transform opacity-100 scale-100"
-											leave="transition ease-in duration-75"
-											leaveFrom="transform opacity-100 scale-100"
-											leaveTo="transform opacity-0 scale-95"
-										>
-											<Menu.Items
-												className={
-													"absolute right-0 top-[100%] mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white py-2 shadow-normal"
-												}
-											>
-												<Menu.Item>
-													<div className="p-3">
-														<h6 className="border-b pb-2 font-bold">Team Members</h6>
-														<div>
-															{Array(5).fill(
-																<div className="mt-4 flex items-center">
-																	<Image
-																		src={userImg}
-																		alt="User"
-																		width={40}
-																		className="h-[40px] rounded-full object-cover"
-																	/>
-																	<aside className="pl-4 text-sm">
-																		<h5 className="font-bold">Anne Jacob</h5>
-																		<p className="text-darkGray">Hiring Manager</p>
-																	</aside>
-																</div>
-															)}
-														</div>
-													</div>
-												</Menu.Item>
-											</Menu.Items>
-										</Transition>
-									</Menu>
-								</div> */}
-										</aside>
-									</div>
-								)}
 								{refresh === 2 && (
-									<Canban
-										applicantlist={applicantlist}
-										token={token}
-										setcardarefid={setcardarefid}
-										setcardstatus={setcardstatus}
-									/>
+									<>
+										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+											<div className="mr-3">
+												<Listbox value={selectedJob} onChange={setSelectedJob}>
+													<Listbox.Button className={"text-lg font-bold"}>
+														{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+													</Listbox.Button>
+													<Transition
+														enter="transition duration-100 ease-out"
+														enterFrom="transform scale-95 opacity-0"
+														enterTo="transform scale-100 opacity-100"
+														leave="transition duration-75 ease-out"
+														leaveFrom="transform scale-100 opacity-100"
+														leaveTo="transform scale-95 opacity-0"
+													>
+														<Listbox.Options
+															className={
+																"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+															}
+														>
+															{jobd.length > 0 &&
+																jobd.map((item) => (
+																	<Listbox.Option
+																		key={item.id}
+																		value={item}
+																		disabled={item.unavailable}
+																		className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	>
+																		{({ selected }) => (
+																			<>
+																				<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
+																					{item.name}
+																				</span>
+																				{selected ? (
+																					<span className="absolute left-3 top-[10px]">
+																						<i className="fa-solid fa-check"></i>
+																					</span>
+																				) : null}
+																			</>
+																		)}
+																	</Listbox.Option>
+																))}
+														</Listbox.Options>
+													</Transition>
+												</Listbox>
+											</div>
+											<div className="mr-3">
+												<FormField
+													fieldType="input"
+													inputType="search"
+													placeholder={t("Words.Search")}
+													icon={<i className="fa-solid fa-magnifying-glass"></i>}
+													value={search}
+													// handleChange={(e) => setsearch(e.target.value)}
+													handleChange={handleInputChange}
+												/>
+											</div>
+											<aside className="flex items-center">
+												{!upcomingSoon && (
+													<div className="mr-4 flex items-center">
+														<p className="mr-3 font-semibold">Add Board</p>
+														<button
+															type="button"
+															className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
+															onClick={() => setCreateBoard(true)}
+														>
+															<i className="fa-solid fa-plus"></i>
+														</button>
+													</div>
+												)}
+												<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+											</aside>
+										</div>
+
+										<Canban
+											applicantlist={applicantlist}
+											token={token}
+											setcardarefid={setcardarefid}
+											setcardstatus={setcardstatus}
+										/>
+									</>
 								)}
 							</div>
 						)}
