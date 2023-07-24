@@ -432,7 +432,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 								{refresh === 2 && (
 									<>
 										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-											<div className="mr-3">
+											<div className="mr-3 flex">
 												<Listbox value={selectedJob} onChange={setSelectedJob}>
 													<Listbox.Button className={"text-lg font-bold"}>
 														{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
@@ -475,17 +475,17 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 														</Listbox.Options>
 													</Transition>
 												</Listbox>
-											</div>
-											<div className="mr-3">
-												<FormField
-													fieldType="input"
-													inputType="search"
-													placeholder={t("Words.Search")}
-													icon={<i className="fa-solid fa-magnifying-glass"></i>}
-													value={search}
-													// handleChange={(e) => setsearch(e.target.value)}
-													handleChange={handleInputChange}
-												/>
+												<div className="ml-3">
+													<FormField
+														fieldType="input"
+														inputType="search"
+														placeholder={t("Words.Search")}
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														value={search}
+														// handleChange={(e) => setsearch(e.target.value)}
+														handleChange={handleInputChange}
+													/>
+												</div>
 											</div>
 											<aside className="flex items-center">
 												{!upcomingSoon && (
