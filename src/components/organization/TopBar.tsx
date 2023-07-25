@@ -24,7 +24,7 @@ const CalendarIntegrationOptions = [
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
-export default function OrgTopBar({ todoLoadMore }: any) {
+export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -136,7 +136,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 	useEffect(() => {
 		if ((token && token.length > 0 && role && role.length > 0) || load) {
 			loadNotificationCount();
-			loadTodo();
+			loadTodo2();
 			if (load) toggleLoadMode(false);
 		}
 	}, [token, role, load]);
@@ -187,12 +187,14 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.post(`/chatbot/todo/create/`, fd)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
+				loadTodo();
 				toastcomp("Todo Created", "success");
 			})
 			.catch((err) => {
 				console.log("!", err);
+				loadTodo();
 				toastcomp("Todo Not Created", "error");
 			});
 	}
@@ -223,6 +225,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		setpriority(data["priority"]);
 		setdeadline(moment(data["deadline"]).format("YYYY-MM-DD").toString());
 		setToDoAddTaskPopup(true);
+		loadTodo();
 	}
 
 	useEffect(() => {
@@ -238,13 +241,15 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.put(`/chatbot/todo/${pk}/update/`, fd)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
 				toastcomp("Todo Updated", "success");
+				loadTodo();
 			})
 			.catch((err) => {
 				console.log("!", err);
 				toastcomp("Todo Not Updted", "error");
+				loadTodo();
 			});
 	}
 
@@ -252,9 +257,10 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.delete(`/chatbot/todo/${pk}/delete/`)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
 				toastcomp("Todo Deleted", "success");
+				loadTodo();
 			})
 			.catch((err) => {
 				console.log("!", err);
@@ -262,7 +268,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 			});
 	}
 
-	async function loadTodo() {
+	async function loadTodo2() {
 		await axiosInstanceAuth2
 			.get(`/chatbot/list-todo/`)
 			.then(async (res) => {

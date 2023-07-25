@@ -264,10 +264,10 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 							<Tab.Panels>
 								<Tab.Panel>
 									<div className="bg-white p-6 dark:bg-gray-800">
-										<div className="mx-[-7px] flex flex-wrap">
-											{sklLoad
-												? loadash &&
-												  loadash.map((data, i) => (
+										{loadash && loadash.length > 0 ? (
+											<>
+												<div className="mx-[-7px] flex flex-wrap">
+													{loadash.map((data, i) => (
 														<div className="mb-[15px] w-full px-[7px] md:max-w-[50%] lg:max-w-[calc(100%/3)]" key={i}>
 															<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-700">
 																<button
@@ -318,55 +318,33 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																	</li>
 																</ul>
 																{/* <div className="flex flex-wrap items-center justify-between">
-																<div className="mr-4">
-																	<Button
-																		btnStyle="sm"
-																		label="View"
-																		loader={false}
-																		btnType="button"
-																		handleClick={() => {
-																			setjid(data["job"]["refid"]);
-																			setjdata(data["job"]);
-																			router.push(`/organization/${cname}/job-detail`);
-																		}}
-																	/>
-																</div>
-																<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
-																	{moment(data["timestamp"]).fromNow()}
-																</p>
-															</div> */}
+														<div className="mr-4">
+															<Button
+																btnStyle="sm"
+																label="View"
+																loader={false}
+																btnType="button"
+																handleClick={() => {
+																	setjid(data["job"]["refid"]);
+																	setjdata(data["job"]);
+																	router.push(`/organization/${cname}/job-detail`);
+																}}
+															/>
+														</div>
+														<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
+															{moment(data["timestamp"]).fromNow()}
+														</p>
+													</div> */}
 															</div>
 														</div>
-												  ))
-												: Array(5).fill(
-														<div className="mb-[15px] w-full px-[7px] md:max-w-[50%] lg:max-w-[calc(100%/3)]">
-															<div className="h-full rounded-[10px] bg-white p-5 shadow-normal dark:bg-gray-700">
-																<h4 className="mb-3 text-lg font-bold">
-																	<Skeleton width={160} />
-																</h4>
-																<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-																	<li className="mr-8">
-																		<Skeleton width={40} />
-																	</li>
-																	<li className="mr-8">
-																		<Skeleton width={40} />
-																	</li>
-																	<li>
-																		<Skeleton width={40} />
-																	</li>
-																</ul>
-																<div className="flex flex-wrap items-center justify-between">
-																	<div className="mr-4">
-																		<Skeleton width={80} height={25} />
-																	</div>
-																	<p className="text-[12px] font-bold text-darkGray dark:text-gray-400">
-																		<Skeleton width={60} />
-																	</p>
-																</div>
-															</div>
-														</div>
-												  )}
-										</div>
+													))}
+												</div>
+											</>
+										) : (
+											<>
+												<p className="text-center">No Applied Jobs Found</p>
+											</>
+										)}
 									</div>
 								</Tab.Panel>
 								<Tab.Panel>

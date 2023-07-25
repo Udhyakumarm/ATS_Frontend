@@ -323,7 +323,7 @@ export default function CanCareerJobDetail2(props) {
 					// let vcrefid = res.data.data[0]["vcrefid"];
 					toastcomp("Candidate Profile Created", "success");
 					for (let i = 0; i < links.length; i++) {
-						addCandidateLink(refid, links[i]);
+						addCandidateLink(refid, checkurl(links[i]));
 					}
 
 					if (!newgre) {
@@ -633,6 +633,38 @@ export default function CanCareerJobDetail2(props) {
 			oceFun1(fd);
 		}
 	}, [resume]);
+
+	function geticon(param1) {
+		if (param1.toLowerCase().includes("facebook")) {
+			return "fa-brands fa-facebook";
+		} else if (param1.toLowerCase().includes("twitter")) {
+			return "fa-brands fa-twitter";
+		} else if (param1.toLowerCase().includes("instagram")) {
+			return "fa-brands fa-instagram";
+		} else if (param1.toLowerCase().includes("linkedin")) {
+			return "fa-brands fa-linkedin";
+		} else if (param1.toLowerCase().includes("github")) {
+			return "fa-brands fa-github";
+		} else if (param1.toLowerCase().includes("discord")) {
+			return "fa-brands fa-discord";
+		} else if (param1.toLowerCase().includes("youtube")) {
+			return "fa-brands fa-youtube";
+		} else if (param1.toLowerCase().includes("behance")) {
+			return "fa-brands fa-behance";
+		} else if (param1.toLowerCase().includes("behance")) {
+			return "fa-brands fa-behance";
+		} else {
+			return "fa-solid fa-link";
+		}
+	}
+
+	function checkurl(param1) {
+		if (param1.toLowerCase().includes("http://") || param1.toLowerCase().includes("https://")) {
+			return param1;
+		} else {
+			return "https://" + param1;
+		}
+	}
 
 	return (
 		<>
@@ -1055,29 +1087,6 @@ export default function CanCareerJobDetail2(props) {
 													/>
 												</div>
 											</div>
-											{/* <div className="mx-[-10px] flex flex-wrap">
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="email"
-														label="Email"
-														placeholder="Email"
-														value={email}
-														handleChange={(e) => setemail(e.target.value)}
-														required
-													/>
-												</div>
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="number"
-														label="Phone Number"
-														placeholder="Phone Number"
-														value={phone}
-														handleChange={(e) => setphone(e.target.value)}
-													/>
-												</div>
-											</div> */}
 											<div className="mb-4">
 												<div className="mb-2 flex flex-wrap items-center justify-between">
 													<label className="mb-1 inline-block font-bold">{t("Words.AddSocialLogins")}</label>
@@ -1093,9 +1102,9 @@ export default function CanCareerJobDetail2(props) {
 													{links &&
 														links.map((data, i) => (
 															<div className="relative mb-4 mr-6 p-1" key={i}>
-																<Link href={data} target="_blank" className="text-center">
+																<Link href={`${checkurl(data)}`} target="_blank" className="text-center">
 																	<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
-																		<i className={`fa-solid fa-link`}></i>
+																		<i className={`${geticon(data)}`}></i>
 																	</span>
 																	{/* <p className="text-[12px] font-bold capitalize">Link {i}</p> */}
 																</Link>
@@ -1417,105 +1426,13 @@ export default function CanCareerJobDetail2(props) {
 												</div>
 											</div>
 
-											{/* edu */}
-											{/* <hr className="mt-8 mb-4" />
-											<div className="mb-4">
-												<label className="mb-1 inline-block font-bold">Education</label>
-												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)]">
-														{Array(2).fill(
-															<article className="mb-2 border-b pb-2 last:border-b-0">
-																<div className="flex flex-wrap items-center text-sm">
-																	<div className="my-2 w-[30%]">
-																		<input
-																			type="text"
-																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[60%] pl-4">
-																		<input
-																			type="text"
-																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[10%] pl-4 text-right">
-																		<button type="button" className="pr-4 text-red-500">
-																			<i className="fa-solid fa-trash-can"></i>
-																		</button>
-																	</div>
-																</div>
-																<textarea
-																	placeholder="Description"
-																	className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-																></textarea>
-															</article>
-														)}
-													</div>
-													<div className="w-[40px] text-right">
-														<button
-															type="button"
-															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														>
-															<i className="fa-regular fa-plus"></i>
-														</button>
-													</div>
-												</div>
-											</div>
-
-											<div className="mb-4">
-												<label className="mb-1 inline-block font-bold">Certifications</label>
-												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
-														{Array(2).fill(
-															<article className="border-b last:border-b-0">
-																<div className="flex flex-wrap items-center text-sm">
-																	<div className="my-2 w-[30%]">
-																		<input
-																			type="text"
-																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[60%] pl-4">
-																		<input
-																			type="text"
-																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[10%] pl-4 text-right">
-																		<button type="button" className="pr-4 text-red-500">
-																			<i className="fa-solid fa-trash-can"></i>
-																		</button>
-																	</div>
-																</div>
-																<textarea
-																	placeholder="Description"
-																	className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-																></textarea>
-															</article>
-														)}
-													</div>
-													<div className="w-[40px] text-right">
-														<button
-															type="button"
-															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														>
-															<i className="fa-regular fa-plus"></i>
-														</button>
-													</div>
-												</div>
-											</div> */}
-
 											<div className="mx-[-10px] flex flex-wrap">
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t("Form.CurrentSalary")}
-														placeholder={t("Form.CurrentSalary")}
+														label={"Current Salary Per Annum"}
+														placeholder={"150000 INR"}
 														value={csalary}
 														handleChange={(e) => setcsalary(e.target.value)}
 														disabled={newgre}
@@ -1525,8 +1442,8 @@ export default function CanCareerJobDetail2(props) {
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={t("Form.ExpectedSalary")}
-														placeholder={t("Form.ExpectedSalary")}
+														label={"Expected Salary Per Annum"}
+														placeholder={"350000 INR"}
 														value={esalary}
 														handleChange={(e) => setesalary(e.target.value)}
 													/>

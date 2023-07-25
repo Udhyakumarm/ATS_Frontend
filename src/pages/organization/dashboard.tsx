@@ -268,7 +268,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				<Novus />
 				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
-				<Orgtopbar todoLoadMore={todoLoadMore} />
+				<Orgtopbar todoLoadMore={todoLoadMore} loadTodo={loadTodo} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
