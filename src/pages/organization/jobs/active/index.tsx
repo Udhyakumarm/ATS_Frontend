@@ -37,28 +37,26 @@ export default function JobsActive() {
 	}, [session]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	const getActiveJobs = async () => {
+		await axiosInstance.api
+			.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
+			.then((response) => {
+				let arr = [];
 
+				response.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
+
+				setActiveJobs(arr);
+				setFActiveJobs(arr);
+				console.log("&", "jobs", arr);
+			})
+			.catch((error) => {
+				console.log({ error });
+				return null;
+			});
+
+		// setDraftedJobs(newDraftedJobs);
+	};
 	useEffect(() => {
-		const getActiveJobs = async () => {
-			await axiosInstance.api
-				.get("/job/list-job", { headers: { authorization: "Bearer " + session?.accessToken } })
-				.then((response) => {
-					let arr = [];
-
-					response.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
-
-					setActiveJobs(arr);
-					setFActiveJobs(arr);
-					console.log("&", "jobs", arr);
-				})
-				.catch((error) => {
-					console.log({ error });
-					return null;
-				});
-
-			// setDraftedJobs(newDraftedJobs);
-		};
-
 		session && getActiveJobs();
 	}, [session]);
 
@@ -123,27 +121,22 @@ export default function JobsActive() {
 							</div>
 							{factive && factive.length > 0 ? (
 								<div className="mx-[-15px] flex flex-wrap">
-									{sklLoad
-										? factive.map(
-												(job: any, i) =>
-													job && (
-														<div className="mb-[30px] w-full px-[15px] filter xl:max-w-[50%]" key={i}>
-															<JobCard_2
-																key={i}
-																job={job}
-																// handleView={() => {
-																// 	router.push("/organization/jobs/active/" + job.refid);
-																// }}
-																axiosInstanceAuth2={axiosInstanceAuth2}
-															/>
-														</div>
-													)
-										  )
-										: Array(4).fill(
-												<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
-													<JobCard_2 sklLoad={true} />
+									{factive.map(
+										(job: any, i) =>
+											job && (
+												<div className="mb-[30px] w-full px-[15px] filter xl:max-w-[50%]" key={i}>
+													<JobCard_2
+														key={i}
+														job={job}
+														// handleView={() => {
+														// 	router.push("/organization/jobs/active/" + job.refid);
+														// }}
+														axiosInstanceAuth2={axiosInstanceAuth2}
+														loadJob={getActiveJobs}
+													/>
 												</div>
-										  )}
+											)
+									)}
 								</div>
 							) : (
 								<div className="mx-auto w-full max-w-[300px] py-8 text-center">

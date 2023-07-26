@@ -701,7 +701,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 													))} */}
 													{recentJob.slice(0, 5).map((data, i) => (
 														<div className="mb-[15px] w-full px-[7px] py-1 xl:max-w-[100%]" key={i}>
-															<JobCard_2 job={data} dashbaord={true} axiosInstanceAuth2={axiosInstanceAuth2} />
+															<JobCard_2
+																job={data}
+																dashbaord={true}
+																axiosInstanceAuth2={axiosInstanceAuth2}
+																loadJob={loadAnalytics}
+															/>
 														</div>
 													))}
 												</div>

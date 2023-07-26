@@ -19,7 +19,7 @@ import {
 	EmailShareButton
 } from "react-share";
 
-export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord }: any) {
+export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [starred, setStarred] = useState(false);
 	const cancelButtonRef = useRef(null);
@@ -167,15 +167,30 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		loadOrganizationProfile();
 	}, []);
 
+	async function updateJob(star: any, refid: any) {
+		const fd = new FormData();
+		fd.append("star", star);
+		await axiosInstanceAuth2
+			.put(`/job/update-job/${refid}/`, fd)
+			.then(async (res) => {
+				toastcomp("Bookmarked Successfully", "success");
+				loadJob();
+			})
+			.catch((err) => {
+				toastcomp("Bookmarked Not Succeessfully", "error");
+				loadJob();
+			});
+	}
+
 	return (
 		<>
 			<div className="h-full rounded-normal bg-white px-5 py-2 shadow-normal dark:bg-gray-700">
 				<div className="mb-2 flex flex-wrap items-center justify-between">
 					<div className="my-2 flex items-center">
-						<button type="button" onClick={() => setStarred((prev) => !prev)}>
+						<button type="button" onClick={() => updateJob(!job.star, job.refid)}>
 							<i
 								className={
-									"mr-2" + " " + (starred ? "fa-solid fa-star text-yellow-400" : "fa-solid fa-star text-gray-200")
+									"mr-2" + " " + (job.star ? "fa-solid fa-star text-yellow-400" : "fa-solid fa-star text-gray-200")
 								}
 							/>
 						</button>

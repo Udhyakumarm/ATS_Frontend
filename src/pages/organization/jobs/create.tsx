@@ -28,8 +28,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import FetchHelper from "@/utils/fetchHelper";
+import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 
-const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
+const JobActionButton = ({ label, handleClick, icon, iconBg, dis }: any) => {
 	return (
 		<button
 			onClick={handleClick}
@@ -176,7 +177,11 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			let localSearch = search2.toLowerCase();
 			let arr = [];
 			for (let i = 0; i < fvendors.length; i++) {
-				if (fvendors[i]["agent_name"].toLowerCase().includes(localSearch) || fvendors[i]["company_name"].toLowerCase().includes(localSearch) || fvendors[i]["email"].toLowerCase().includes(localSearch)) {
+				if (
+					fvendors[i]["agent_name"].toLowerCase().includes(localSearch) ||
+					fvendors[i]["company_name"].toLowerCase().includes(localSearch) ||
+					fvendors[i]["email"].toLowerCase().includes(localSearch)
+				) {
 					arr.push(fvendors[i]);
 				}
 			}
@@ -219,6 +224,31 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	const [jcollaborator, setjcollaborator] = useState(false);
 	const [jtm, setjtm] = useState([]);
 	const [jfv, setjfv] = useState([]);
+
+	function previewJobDis() {
+		return (
+			jtitle.length > 0 ||
+			jskill.length > 0 ||
+			jfsalary.length > 0 ||
+			jesalary.length > 0 ||
+			jcurr.length > 0 ||
+			jdesc.length > 0 ||
+			jfunction.length > 0 ||
+			jdept.length > 0 ||
+			jind.length > 0 ||
+			jgrp.length > 0 ||
+			jdeptinfo.length > 0 ||
+			jetype.length > 0 ||
+			jexp.length > 0 ||
+			jedu.length > 0 ||
+			jlang.length > 0 ||
+			jvac.length > 0 ||
+			jloc.length > 0 ||
+			jreloc.length > 0 ||
+			jvisa.length > 0 ||
+			jwtype.length > 0
+		);
+	}
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
@@ -512,7 +542,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	}
 
 	function previewJob() {
-		setPreviewPopup(true);
+		if (previewJobDis()) {
+			setPreviewPopup(true);
+		} else {
+			toastcomp("At This Moment Job Preview Not Visible, Please Fill Up Job Detail Page.", "error");
+			setPreviewPopup(false);
+		}
 	}
 
 	//advance filter
@@ -740,13 +775,13 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	];
 	const VendorTableHead = [
 		{
-			title: t('Form.AgentName')
+			title: t("Form.AgentName")
 		},
 		{
-			title: t('Form.CompanyName')
+			title: t("Form.CompanyName")
 		},
 		{
-			title: t('Form.Email')
+			title: t("Form.Email")
 		},
 		{
 			title: " "
@@ -1304,19 +1339,19 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																)}
 															</div>
 															<div className="overflow-x-auto">
-																<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableTM">
-																	<thead>
-																		<tr>
-																			{TeamTableHead.map((item, i) => (
-																				<th className="border-b px-3 py-2 text-left" key={i}>
-																					{item.title}
-																				</th>
-																			))}
-																		</tr>
-																	</thead>
-																	<tbody>
-																		{filterTeam &&
-																			filterTeam.map(
+																{filterTeam && filterTeam.length > 0 ? (
+																	<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableTM">
+																		<thead>
+																			<tr>
+																				{TeamTableHead.map((item, i) => (
+																					<th className="border-b px-3 py-2 text-left" key={i}>
+																						{item.title}
+																					</th>
+																				))}
+																			</tr>
+																		</thead>
+																		<tbody>
+																			{filterTeam.map(
 																				(data, i) =>
 																					data["verified"] !== false && (
 																						<tr key={i}>
@@ -1337,8 +1372,28 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																						</tr>
 																					)
 																			)}
-																	</tbody>
-																</table>
+																		</tbody>
+																	</table>
+																) : (
+																	<>
+																		<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+																			<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+																				<div className="mb-6 p-2">
+																					<Image
+																						src={noApplicantdata}
+																						alt="No Data"
+																						width={300}
+																						className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																					/>
+																				</div>
+																				<h5 className="mb-4 text-lg font-semibold">No Team Memeber</h5>
+																				<p className="mb-2 text-sm text-darkGray">
+																					There are no Team Memebers as of now ...
+																				</p>
+																			</div>
+																		</div>
+																	</>
+																)}
 															</div>
 														</Tab.Panel>
 														<Tab.Panel>
@@ -1471,37 +1526,56 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													)}
 												</div>
 												<div className="overflow-x-auto">
-													<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
-														<thead>
-															<tr>
-																{VendorTableHead.map((item, i) => (
-																	<th className="border-b px-3 py-2 text-left" key={i}>
-																		{item.title}
-																	</th>
-																))}
-															</tr>
-														</thead>
-														<tbody>
-															{filterVendors &&
-																filterVendors.map((data, i) => (
-																	<tr key={i}>
-																		<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																		<td className="border-b px-3 py-2 text-right">
-																			<input
-																				type="checkbox"
-																				value={data["email"]}
-																				data-id={"vendor"}
-																				data-pk2={data["id"]}
-																				checked={jfv.includes(data["id"].toString())}
-																				onChange={(e) => onChnageCheck2(e)}
-																			/>
-																		</td>
-																	</tr>
-																))}
-														</tbody>
-													</table>
+													{filterVendors && filterVendors.length > 0 ? (
+														<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
+															<thead>
+																<tr>
+																	{VendorTableHead.map((item, i) => (
+																		<th className="border-b px-3 py-2 text-left" key={i}>
+																			{item.title}
+																		</th>
+																	))}
+																</tr>
+															</thead>
+															<tbody>
+																{filterVendors &&
+																	filterVendors.map((data, i) => (
+																		<tr key={i}>
+																			<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
+																			<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
+																			<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																			<td className="border-b px-3 py-2 text-right">
+																				<input
+																					type="checkbox"
+																					value={data["email"]}
+																					data-id={"vendor"}
+																					data-pk2={data["id"]}
+																					checked={jfv.includes(data["id"].toString())}
+																					onChange={(e) => onChnageCheck2(e)}
+																				/>
+																			</td>
+																		</tr>
+																	))}
+															</tbody>
+														</table>
+													) : (
+														<>
+															<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+																<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+																	<div className="mb-6 p-2">
+																		<Image
+																			src={noApplicantdata}
+																			alt="No Data"
+																			width={300}
+																			className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																		/>
+																	</div>
+																	<h5 className="mb-4 text-lg font-semibold">No Vendor</h5>
+																	<p className="mb-2 text-sm text-darkGray">There are no Vendors as of now ...</p>
+																</div>
+															</div>
+														</>
+													)}
 												</div>
 
 												{/* <div className="mx-[-15px] flex flex-wrap">
