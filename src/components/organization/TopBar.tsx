@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
 import OrganizationCalendar from "./OrganizationCalendar";
+import OrganizationCalendar2 from "./OrganizationCalendar2";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
@@ -17,9 +18,10 @@ import FormField from "../FormField";
 import ToggleLang from "../ToggleLang";
 import toastcomp from "../toast";
 import moment from "moment";
+import gcalIcon from "/public/images/social/google-cal-icon2.png";
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
 ];
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
@@ -43,29 +45,26 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
-	// const [integration, setIntegration] = useState([]);
 	const [toDoPopup, setToDoPopup] = useState(false);
 	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
-	useEffect(() => {
-		async function loadIntegrations() {
-			if (!session) return;
+	// useEffect(() => {
+	// 	async function loadIntegrations() {
+	// 		if (!session) return;
 
-			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
-				.get("/api/integrations/calendar")
-				.then((response) => response.data)
-				.catch((err) => {
-					// console.log(err);
-					return { data: { success: false } };
-				});
+	// 		const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+	// 			.get("/api/integrations/calendar")
+	// 			.then((response) => response.data)
+	// 			.catch((err) => {
+	// 				// console.log(err);
+	// 				return { data: { success: false } };
+	// 			});
 
-			setIntegration(newIntegrations);
-		}
+	// 		setIntegration(newIntegrations);
+	// 	}
 
-		loadIntegrations();
-	}, [router, session]);
+	// 	loadIntegrations();
+	// }, [router, session]);
 
 	const [token, settoken] = useState("");
 	const [count, setcount] = useState(0);
@@ -308,6 +307,70 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 		}
 	}, [todoLoadMore]);
 
+	const [gcall, setgcall] = useState(false);
+
+	async function checkGCAL() {
+		setgcall(false);
+		await axiosInstanceAuth2
+			.post("gcal/connect-google/")
+			.then((res) => {
+				if (res.data.res === "success") {
+					setgcall(true);
+				}
+				setIsCalendarOpen(true);
+			})
+			.catch(() => {
+				setIsCalendarOpen(true);
+			});
+	}
+
+	async function coonectGoogleCal() {
+		setgcall(false);
+		await axiosInstanceAuth2.post("gcal/connect-google/").then((res) => {
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+				// setIsCalendarOpen(true);
+				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+
+	const { gcal } = router.query;
+	const { res } = router.query;
+
+	useEffect(() => {
+		if (gcal && gcal === "success") {
+			toastcomp("google calendar integreated", "success");
+			checkGCAL();
+		} else if (gcal && gcal === "error") {
+			toastcomp("google calendar not integreated", "error");
+			if (res) {
+				if (res === "1") {
+					toastcomp("Reason : One GoogleCalander Object Found, Try Again after some time.", "error");
+				}
+				if (res === "2") {
+					toastcomp("Reason : Email not found in Org Data of ATS, Try Again after some time.", "error");
+				}
+				if (res === "3") {
+					toastcomp("Reason : Use current user email, Try Again after some time.", "error");
+				}
+				if (res === "4") {
+					toastcomp("Reason : Refresh token error, Try Again after some time.", "error");
+				}
+			}
+			setIsCalendarOpen(false);
+		}
+	}, [gcal, res]);
+
 	return (
 		<>
 			<div
@@ -365,12 +428,13 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
+				{/* {version != "starter" && (
+					<button type="button" className="mr-5 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
+						<Image src={gcalIcon} alt={"gcal"} width={30} className="max-h-[30px]" />
+					</button>
+				)} */}
 				{version != "starter" && (
-					<button
-						type="button"
-						className="mr-6 text-darkGray dark:text-gray-400"
-						onClick={() => setIsCalendarOpen(true)}
-					>
+					<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
 					</button>
 				)}
@@ -423,7 +487,50 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{integration && integration.length > 0 ? (
+								{gcall ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar2
+											axiosInstanceAuth2={axiosInstanceAuth2}
+											setIsCalendarOpen={setIsCalendarOpen}
+										/>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
+														<div
+															onClick={coonectGoogleCal}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</div>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
+								{/* {integration && integration.length > 0 ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
 										<OrganizationCalendar integration={integration[0]} />
 									</Dialog.Panel>
@@ -462,7 +569,7 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 											</div>
 										</div>
 									</Dialog.Panel>
-								)}
+								)} */}
 							</Transition.Child>
 						</div>
 					</div>

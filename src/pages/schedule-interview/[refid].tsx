@@ -33,7 +33,7 @@ export default function CandSchedule() {
 
 	async function loadInterviewDetail(refid: any) {
 		await axiosInstance
-			.get(`/job/slot/detail/${refid}/`)
+			.get(`/gcal/slot/detail/${refid}/`)
 			.then((res) => {
 				console.log("$", "res", res.data);
 				setdata(res.data[0]);
@@ -107,7 +107,7 @@ export default function CandSchedule() {
 		// 	console.log("$", "fd", `${key}: ${value}`);
 		// }
 		await axiosInstance2
-			.post(`/job/can/slot/update/${refid}/`, fd)
+			.post(`/gcal/can/slot/update/${refid}/`, fd)
 			.then((res) => {
 				setloader(false);
 				toastcomp(
