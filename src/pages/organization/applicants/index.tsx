@@ -645,7 +645,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 										<div className="p-8">
 											<TImeSlot
-												cardarefid={appdata["arefid"]}
+												cardarefid={cardarefid}
 												axiosInstanceAuth2={axiosInstanceAuth2}
 												setIsCalendarOpen={setIsCalendarOpen}
 												type={"interview"}

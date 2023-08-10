@@ -168,8 +168,8 @@ export default function CandSchedule() {
 					</div>
 					<div className="rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
 						{loader ? (
-							<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-20 backdrop-blur-md">
-								<div className="text-center">
+							<div className="absolute left-0 top-0 z-[1] flex h-[100vh] w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
+								<div className="flex h-[100vh] flex-col items-center justify-center text-center">
 									<i className="fa-solid fa-spinner fa-spin"></i>
 									<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
 								</div>
@@ -375,8 +375,8 @@ export default function CandSchedule() {
 						<ToggleLang />
 					</div>
 				</div>
+				<CandFooter />
 			</main>
-			<CandFooter />
 		</>
 	);
 }

@@ -8,7 +8,14 @@ import { useCalStore } from "@/utils/code";
 import { axiosInstance } from "@/utils";
 import toastcomp from "./toast";
 
-export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendarOpen, type }: any) {
+export default function TImeSlot({
+	cardarefid,
+	axiosInstanceAuth2,
+	setIsCalendarOpen,
+	type,
+	eventID,
+	loadUpcomingInterview
+}: any) {
 	const [eventList, setEventList] = useState<Array<any>>([]);
 	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
 
@@ -125,11 +132,17 @@ export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendar
 		fd.append("slot5", moment(date5 + " " + time5).format("YYYY-MM-DD HH:mm"));
 		fd.append("duration", interDuration);
 		fd.append("type", type);
+		fd.append("eventID", eventID);
 		axiosInstanceAuth2
 			.post(`/gcal/slot/create/${cardarefid}/`, fd)
 			.then((res) => {
 				toastcomp("Slot Created Successfully", "success");
 				setIsCalendarOpen(false);
+				try {
+					loadUpcomingInterview();
+				} catch {
+					console.log("error");
+				}
 			})
 			.catch((err) => {
 				toastcomp("Slot Not Created", "error");
@@ -170,14 +183,20 @@ export default function TImeSlot({ cardarefid, axiosInstanceAuth2, setIsCalendar
 			let currentdayEvent = [];
 			let dateParam2 = moment(dateParam);
 			for (let i = 0; i < eventList.length; i++) {
-				if (
-					dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day") &&
-					dateParam2.isSame(moment(eventList[i]["end"]["dateTime"]), "day")
-				) {
-					currentdayEvent.push(eventList[i]);
+				if (eventList[i]["start"]) {
+					console.log("allevent", "$", eventList[i]);
+					if (
+						dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day")
+						// &&
+						// dateParam2.isSame(moment(eventList[i]["end"]["dateTime"]), "day")
+					) {
+						currentdayEvent.push(eventList[i]);
+						console.log("currentdayEvent", "$", eventList[i]);
+					}
+				} else {
+					console.log("allcccevent", "$", eventList[i]);
 				}
 			}
-			// console.log("currentdayEvent", "$", currentdayEvent);
 
 			let timeSlots = [];
 			for (let i = 0; i < currentdayEvent.length; i++) {

@@ -2592,10 +2592,10 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 										</div>
 										<div className="p-8">
 											<TImeSlot
-												cardarefid={appdata["arefid"]}
+												cardarefid={currentApplicant["arefid"]}
 												axiosInstanceAuth2={axiosInstanceAuth2}
 												setIsCalendarOpen={setIsCalendarOpen}
-												type={"interview"}
+												type={"offer"}
 											/>
 										</div>
 									</Dialog.Panel>
