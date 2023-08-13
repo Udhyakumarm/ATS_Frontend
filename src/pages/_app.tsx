@@ -95,7 +95,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 								</>
 							)}
 
-							{!Component.noAuth && <Novus />}
+							{/* {!Component.noAuth && <Novus />} */}
 
 							<Transition.Root show={upgradePlan} as={Fragment}>
 								<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setUpgradePlan}>

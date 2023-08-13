@@ -19,6 +19,8 @@ import ToggleLang from "../ToggleLang";
 import toastcomp from "../toast";
 import moment from "moment";
 import gcalIcon from "/public/images/social/google-cal-icon2.png";
+import novusIcon from "/public/images/novus1.png";
+import { useNewNovusStore } from "@/utils/novus";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
@@ -37,6 +39,9 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	const type = useUserStore((state: { type: any }) => state.type);
 	const role = useUserStore((state: { role: any }) => state.role);
@@ -448,9 +453,9 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 					</span>
 				</div>
 				<ToggleLang />
-				<button
+				{/* <button
 					type="button"
-					className="ml-4 rounded text-xl text-red-500 hover:text-red-600"
+					className=" rounded text-xl text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut();
 
@@ -460,6 +465,9 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 					}}
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
+				</button> */}
+				<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
+					<Image src={novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
 				</button>
 			</div>
 			<Transition.Root show={isCalendarOpen} as={Fragment}>

@@ -1,0 +1,422 @@
+import { useState, Fragment, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useNewNovusStore } from "@/utils/novus";
+import favIcon from "/public/favicon-white.ico";
+import novusIcon1 from "/public/images/novus1.png";
+import novusIcon2 from "/public/images/novus2.png";
+import novusIcon3 from "/public/images/novus3.png";
+import { useUserStore, useVersionStore } from "@/utils/code";
+import AutoTextarea from "./AutoTextarea";
+import ReactReadMoreReadLess from "react-read-more-read-less";
+
+export default function OrgRSideBar() {
+	const router = useRouter();
+	const [chat, setchat] = useState([]);
+	const [text, settext] = useState("");
+	const [step1, setstep1] = useState(false);
+
+	const cancelButtonRef = useRef(null);
+	const chatContainerRef = useRef(null);
+
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+	const nloader = useNewNovusStore((state: { nloader: any }) => state.nloader);
+	const tnloader = useNewNovusStore((state: { tnloader: any }) => state.tnloader);
+	const type = useUserStore((state: { type: any }) => state.type);
+	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
+	const version = useVersionStore((state: { version: any }) => state.version);
+
+	useEffect(() => {
+		if (chatContainerRef && chat.length > 0 && role != "Hiring Manager" && version === "enterprise") {
+			chatContainerRef.current?.scrollTo({
+				top: chatContainerRef.current.scrollHeight,
+				behavior: "smooth"
+			});
+		}
+	}, [chat]);
+
+	useEffect(() => {
+		if (chatContainerRef && !nloader) {
+			chatContainerRef.current?.scrollTo({
+				top: chatContainerRef.current.scrollHeight,
+				behavior: "smooth"
+			});
+		}
+	}, [nloader]);
+
+	useEffect(() => {
+		if (visible) {
+			setTimeout(() => {
+				if (nloader) {
+					tnloader();
+				}
+			}, 5000);
+		} else {
+			if (!nloader) {
+				tnloader();
+			}
+		}
+	}, [visible]);
+
+	return (
+		<>
+			<div className="transition duration-[1000ms]">
+				{visible ? (
+					<div
+						id="sidebar"
+						className={`bg-lightblue fixed right-10 top-[calc(65px+2rem)] z-[33] mr-[2rem] h-full w-[530px] rounded-normal dark:bg-gray-900 lg:right-0`}
+						style={{ boxShadow: "0px 0px 10px 5px rgba(167, 167, 167, 0.25)" }}
+					>
+						<div
+							className="flex h-[70px] items-center justify-between rounded-tl-normal rounded-tr-normal px-6 py-3"
+							style={{ background: "var(--linear, linear-gradient(180deg, #9290FC 0%, #6A67EA 100%))" }}
+						>
+							<div className="flex pl-3">
+								<Image src={novusIcon2} alt="Somhako" width={31} height={31} />
+								<h4 className="loader-lg flex items-center justify-center text-center text-xl font-bold text-white">
+									Novus
+								</h4>
+							</div>
+							<div className="pr-3">
+								<button type="button" className="text-white dark:text-gray-100" onClick={() => tvisible()}>
+									<i className="fa-solid fa-x"></i>
+								</button>
+							</div>
+						</div>
+
+						<div
+							className={`h-[calc(100vh-calc(60px+70px+65px+2rem))] overflow-y-auto px-4 py-7`}
+							ref={chatContainerRef}
+						>
+							{nloader ? (
+								<>
+									<div className="flex h-full w-full flex-col items-center justify-center">
+										{/* <Image src={novusIcon1} alt="novus" width={200} height={200} />
+										<div className="loader1 dark:border-lightblue bg-transpert border border-gray-900">
+											<div className="shape1"></div>
+										</div> */}
+
+										{/* <div className="loader2">
+											<span className="loader2-text">
+												<Image src={novusIcon1} alt="novus" width={50} height={50} />
+											</span>
+											<span className="load2"></span>
+										</div> */}
+
+										<div className="loader3">
+											<svg className="pl" width="240" height="240" viewBox="0 0 240 240">
+												<circle
+													className="pl__ring pl__ring--a"
+													cx="120"
+													cy="120"
+													r="105"
+													fill="none"
+													stroke="#000"
+													stroke-width="20"
+													stroke-dasharray="0 660"
+													stroke-dashoffset="-330"
+													stroke-linecap="round"
+												></circle>
+												<circle
+													className="pl__ring pl__ring--b"
+													cx="120"
+													cy="120"
+													r="35"
+													fill="none"
+													stroke="#000"
+													stroke-width="20"
+													stroke-dasharray="0 220"
+													stroke-dashoffset="-110"
+													stroke-linecap="round"
+												></circle>
+												<circle
+													className="pl__ring pl__ring--c"
+													cx="85"
+													cy="120"
+													r="70"
+													fill="none"
+													stroke="#000"
+													stroke-width="20"
+													stroke-dasharray="0 440"
+													stroke-linecap="round"
+												></circle>
+												<circle
+													className="pl__ring pl__ring--d"
+													cx="155"
+													cy="120"
+													r="70"
+													fill="none"
+													stroke="#000"
+													stroke-width="20"
+													stroke-dasharray="0 440"
+													stroke-linecap="round"
+												></circle>
+											</svg>
+										</div>
+
+										{/* <div className="loader4">
+											 <Image
+												src={novusIcon1}
+												alt="novus"
+												width={50}
+												height={50}
+												className="t-0 absolute z-[5] h-[6em] w-[6em] p-1"
+											/> 
+											<div className="spinner">
+												<div className="spinnerin"></div>
+											</div>
+										</div> */}
+
+										{/* <div className="loader5 shadow-lg">
+											<Image
+												src={novusIcon1}
+												alt="novus"
+												width={50}
+												height={50}
+												className="t-0 growIcon2 absolute z-[5] h-[3em] w-[3em] p-1"
+											/>
+											<span className="border-black dark:border-white"></span>
+										</div> */}
+
+										{/* typing animation */}
+										{/* <span className="typeLoader1"></span> */}
+									</div>
+								</>
+							) : (
+								<>
+									{step1 ? (
+										<>
+											<div className="m-0 flex h-full flex-wrap items-end p-0">
+												<div className="flex flex-wrap justify-center gap-2 text-xs">
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">
+														Lorem ipsumit amet.
+													</span>
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">
+														Lorem ipsum sit.
+													</span>
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">Lorem ipsum.</span>
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">colrow abc 1</span>
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">Lorem, ipsum.</span>
+													<span className="rounded-full border border-borderColor px-4 py-2 shadow">col 3</span>
+												</div>
+											</div>
+										</>
+									) : (
+										<div className="text-sm" id="append_div">
+											{/* user chat */}
+											<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+												<div className="flex justify-between gap-4">
+													<span className="text-justify text-base font-bold text-white">Give Me Top 5 Applicant</span>
+													<span className="my-auto whitespace-nowrap text-center text-xs text-white">3:01 PM</span>
+												</div>
+											</div>
+											{/* novus res */}
+											<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
+												<div className="flex flex-nowrap justify-between gap-4">
+													<span className="text-justify text-base font-bold">Sure here are 5 applicants</span>
+													<span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span>
+												</div>
+											</div>
+											{/* applicant */}
+											<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+												<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<label className="novusCheck px-2">
+																<input type="checkbox" />
+																<div className="checkmark"></div>
+															</label>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
+																Naman Doshi
+															</button>
+														</div>
+													</span>
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<label className="novusCheck px-2">
+																<input type="checkbox" />
+																<div className="checkmark"></div>
+															</label>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
+																Som SIR
+															</button>
+														</div>
+													</span>
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<label className="novusCheck px-2">
+																<input type="checkbox" />
+																<div className="checkmark"></div>
+															</label>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
+																Rahber LOREM
+															</button>
+														</div>
+													</span>
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<label className="novusCheck px-2">
+																<input type="checkbox" />
+																<div className="checkmark"></div>
+															</label>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
+																Vivek Sheetwal
+															</button>
+														</div>
+													</span>
+												</div>
+												<div className=" px-5 py-3">
+													<p className="text-sm font-bold">Suggestions</p>
+													<div className="mt-2 flex flex-wrap gap-2">
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+															Lorem, ipsum.
+														</span>
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+															Lorem, ipsum.
+														</span>
+														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+													</div>
+												</div>
+											</div>
+											{/* Suggestions 2 */}
+											<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 ">
+												Move Candidates to next stage
+											</div>
+											<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white">
+												Reject Candidates
+											</div>
+											{/* simple notify */}
+											<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
+												<div className="flex items-center">
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="15"
+														height="11"
+														viewBox="0 0 15 11"
+														fill="none"
+													>
+														<path
+															fill-rule="evenodd"
+															clip-rule="evenodd"
+															d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
+															fill="#00FF29"
+														/>
+													</svg>
+													<span className="ml-2 text-sm">Review notification has been sent to Hiring Manager</span>
+												</div>
+											</div>
+											<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
+												<div className="flex items-center">
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="15"
+														height="11"
+														viewBox="0 0 15 11"
+														fill="none"
+													>
+														<path
+															fill-rule="evenodd"
+															clip-rule="evenodd"
+															d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
+															fill="#00FF29"
+														/>
+													</svg>
+													<span className="ml-2 text-sm">Review notification Recieved</span>
+												</div>
+											</div>
+											{/* usecase1 feedback */}
+											<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+												<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
+													<div className="flex items-center gap-2">
+														<Image src={novusIcon1} alt="" width={23} height={23} />
+														<p className="text-sm">Hiring Manager1</p>
+													</div>
+													<div className="my-auto rounded bg-[#BEFDD4] px-3 py-1 text-center text-xs font-bold dark:text-black">
+														Shortlisted
+													</div>
+												</div>
+												<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs">
+													<div>Candidate-</div>
+													<div className="cursor-pointer bg-lightBlue p-2 font-bold dark:bg-gray-800">Josh Rynn</div>
+													<div>5542136</div>
+												</div>
+												<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
+													<i className="fa-solid fa-info rounded-full border border-black/75 px-1.5 py-0.5 text-[8px] dark:border-white/75"></i>
+													<p>Interview process will be handle by Steve Adam</p>
+												</div>
+												<div className="flex flex-col gap-2 px-5 py-3 text-sm">
+													<div className="font-bold">Feedback</div>
+													<div>
+														<ReactReadMoreReadLess
+															charLimit={80}
+															readMoreText={"Read more ▼"}
+															readLessText={"Read less ▲"}
+														>
+															Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium assumenda cum
+															explicabo ratione modi aut dolorum deleniti quia! Molestiae aspernatur quam fugiat,
+															accusamus vero adipisci ducimus eos commodi dignissimos iusto?
+														</ReactReadMoreReadLess>
+													</div>
+												</div>
+											</div>
+
+											<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
+										</div>
+									)}
+								</>
+							)}
+						</div>
+
+						<div className="fixed bottom-0 z-[45] w-[530px] bg-white p-3 dark:bg-gray-800">
+							<div className="flex">
+								<AutoTextarea
+									value={text}
+									onChange={settext}
+									// extra="dark:text-white dark:bg-gray-700 bg-lightblue"
+									extra=""
+									place="Type here for Results ..."
+									disable={nloader}
+								/>
+								{text.length > 0 && (
+									<button
+										type="button"
+										className="ml-3 block flex w-[40px] items-center justify-center border-l border-black text-center text-[19px] leading-normal"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+											<path
+												d="M19.8914 1.43809L17.4042 17.578C17.3762 17.7659 17.3054 17.9448 17.1975 18.101C17.0895 18.2573 16.9472 18.3867 16.7815 18.4794C16.6158 18.5721 16.431 18.6255 16.2414 18.6356C16.0518 18.6458 15.8624 18.6123 15.6877 18.5378L10.9314 16.5495L8.95397 19.5148C8.88679 19.6351 8.78863 19.7351 8.66969 19.8046C8.55076 19.874 8.41539 19.9103 8.27767 19.9097C8.06325 19.9097 7.85762 19.8245 7.706 19.6728C7.55438 19.5212 7.46921 19.3155 7.46921 19.101V15.3631C7.46827 15.0866 7.55947 14.8178 7.72839 14.599L16.1735 3.73717L4.75888 14.0135L0.771483 12.3549C0.550561 12.2628 0.360768 12.1091 0.224728 11.9121C0.0886891 11.7152 0.0121429 11.4832 0.00421474 11.2439C-0.0153253 11.0112 0.0333627 10.7778 0.144325 10.5722C0.255288 10.3667 0.423716 10.198 0.629015 10.0867L18.0462 0.16407C18.2492 0.0478976 18.4809 -0.00860405 18.7146 0.00106148C18.9483 0.010727 19.1745 0.0861673 19.3672 0.218709C19.56 0.35125 19.7114 0.535512 19.8042 0.75031C19.8969 0.965107 19.9271 1.20172 19.8914 1.43294V1.43809Z"
+												fill="url(#paint0_linear_564_920)"
+											/>
+											<defs>
+												<linearGradient
+													id="paint0_linear_564_920"
+													x1="1.59285e-07"
+													y1="20.4451"
+													x2="22.5456"
+													y2="2.57596"
+													gradientUnits="userSpaceOnUse"
+												>
+													<stop stop-color="#5236FF" />
+													<stop offset="0.0001" stop-color="#5236FF" />
+													<stop offset="1" stop-color="#85C5FF" />
+												</linearGradient>
+											</defs>
+										</svg>
+									</button>
+								)}
+							</div>
+						</div>
+					</div>
+				) : (
+					<></>
+				)}
+			</div>
+		</>
+	);
+}

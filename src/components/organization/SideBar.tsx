@@ -6,6 +6,7 @@ import Favicon from "/public/favicon.ico";
 import FaviconWhite from "/public/favicon-white.ico";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import { signOut, useSession } from "next-auth/react";
 import dashboardIcon from "/public/images/icons/dashboard.png";
 import interviewsIcon from "/public/images/icons/interviews.png";
 import jobsIcon from "/public/images/icons/jobs.png";
@@ -31,21 +32,40 @@ import toastcomp from "../toast";
 import { useTranslation } from "next-i18next";
 import { useLangStore } from "@/utils/code";
 import Button from "../Button";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from "react-device-detect";
+import { useNewNovusStore } from "@/utils/novus";
 
 export default function OrgSideBar() {
 	const router = useRouter();
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
+
+	const settype = useUserStore((state: { settype: any }) => state.settype);
+	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+
+	useEffect(() => {
+		if (visible) {
+			setShow(true);
+			document.querySelector("main")?.classList.add("desktopSidebar");
+		} else {
+			setShow(false);
+			document.querySelector("main")?.classList.remove("desktopSidebar");
+		}
+	}, [visible]);
+
 	function toggleSidebar() {
-		if(!isMobile) {
+		if (!isMobile) {
 			document.querySelector("main")?.classList.toggle("desktopSidebar");
 			setShow(!show);
 		}
 	}
 	function mobileSidebarToggle() {
-		if(isMobile) {
+		if (isMobile) {
 			document.querySelector("main")?.classList.toggle("mobileSidebar");
 		}
 	}
@@ -184,7 +204,7 @@ export default function OrgSideBar() {
 					)}
 				</div>
 				<div className="h-[calc(100%-65px)] overflow-y-auto p-3">
-					<ul className={'sideMenu' + ' ' + show ? "" : "border-b pb-4"}>
+					<ul className={"sideMenu" + " " + show ? "" : "border-b pb-4"}>
 						{menu.map((menuItem, i) => (
 							<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
 								<div
@@ -213,6 +233,30 @@ export default function OrgSideBar() {
 								</div>
 							</li>
 						))}
+
+						<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}>
+							<div
+								onClick={() => {
+									signOut();
+
+									settype("");
+									setrole("");
+									setuser([]);
+								}}
+								className={
+									`flex cursor-pointer items-center rounded-[8px] border-r-transparent bg-transparent font-semibold text-red-500 hover:bg-lightBlue hover:text-red-600 dark:hover:bg-gray-900` +
+									" " +
+									(show
+										? "justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+										: "border-r-[10px] px-4 py-2")
+								}
+							>
+								<span className={`inline-block h-[20px] w-[20px]` + " " + (show ? "text-center" : "mr-4")}>
+									<i className="fa-solid fa-right-from-bracket mx-auto h-[20px] w-auto"></i>
+								</span>
+								{show ? "" : srcLang === "ja" ? "ログアウト" : "Logout"}
+							</div>
+						</li>
 					</ul>
 					{version != "enterprise" && !show && (
 						<div className="py-4">
