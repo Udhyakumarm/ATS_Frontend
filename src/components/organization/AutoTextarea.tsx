@@ -6,9 +6,10 @@ interface AutoTextareaProps {
 	extra: string;
 	place: string;
 	disable: boolean;
+	setcepress: any;
 }
 
-const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, place, disable }) => {
+const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, place, disable, setcepress }) => {
 	const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		onChange(event.target.value);
 	};
@@ -18,6 +19,15 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, pla
 		textarea.style.height = "auto";
 		textarea.style.height = textarea.scrollHeight + "px";
 	}, [value]);
+
+	function handleKeyPress(event) {
+		if ((event.ctrlKey && event.key === "Enter") || event.key === "Enter") {
+			// Handle Ctrl+Enter event here
+			console.log("Ctrl+Enter pressed");
+			event.preventDefault(); // Prevent the default behavior (new line)
+			setcepress(true);
+		}
+	}
 
 	return (
 		<textarea
@@ -39,6 +49,7 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, pla
 			onChange={handleChange}
 			placeholder={place}
 			disabled={disable}
+			onKeyDown={handleKeyPress}
 		/>
 	);
 };

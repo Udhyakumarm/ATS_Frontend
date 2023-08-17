@@ -29,6 +29,7 @@ import { useNovusStore } from "@/utils/novus";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
 import { debounce } from "lodash";
+import toastcomp from "@/components/toast";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -132,23 +133,23 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
 
-			console.info("data", "applicant list", arr);
+			console.log("data", "applicant list", arr);
 			setapplicantlist(arr);
 			setfapplicantList(arr);
 			setrefresh(2);
 		} catch (error) {
+			toastcomp("2", "error");
+			console.log("Error fetching data:", error);
 			setapplicantlist([]);
 			setfapplicantList([]);
 			setrefresh(2);
-
-			console.error("Error fetching data:", error);
 		}
 	}
 
 	useEffect(() => {
 		if (token && token.length > 0 && refresh === 0) {
-			loadJobFiter();
 			loadApplicant();
+			loadJobFiter();
 		}
 	}, [token, refresh]);
 
@@ -171,6 +172,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 					setrefresh(2);
 				}, 500);
 			}
+		} else {
+			setrefresh(0);
 		}
 	}, [selectedJob]);
 
@@ -256,7 +259,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			}, 500);
 		} else {
 			if (selectedJob.name === "All") {
-				setrefresh(1);
+				// setrefresh(1);
 				setapplicantlist(fapplicantList);
 				setTimeout(() => {
 					setrefresh(2);

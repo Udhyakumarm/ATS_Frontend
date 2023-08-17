@@ -274,12 +274,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
 				<Orgtopbar todoLoadMore={todoLoadMore} loadTodo={loadTodo} />
-				<OrgRSideBar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(530px+2rem)]")}>
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
 						<div className="mx-[-15px] flex flex-wrap">
 							{check1 ? (

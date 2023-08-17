@@ -7,12 +7,16 @@ import favIcon from "/public/favicon-white.ico";
 import novusIcon1 from "/public/images/novus1.png";
 import novusIcon2 from "/public/images/novus2.png";
 import novusIcon3 from "/public/images/novus3.png";
-import { useUserStore, useVersionStore } from "@/utils/code";
+import { useApplicantStore, useUserStore, useVersionStore } from "@/utils/code";
 import AutoTextarea from "./AutoTextarea";
 import ReactReadMoreReadLess from "react-read-more-read-less";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "../toast";
+import moment from "moment";
 
-export default function OrgRSideBar() {
+export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const router = useRouter();
+
 	const [chat, setchat] = useState([]);
 	const [text, settext] = useState("");
 	const [step1, setstep1] = useState(false);
@@ -29,6 +33,24 @@ export default function OrgRSideBar() {
 	const user = useUserStore((state: { user: any }) => state.user);
 	const version = useVersionStore((state: { version: any }) => state.version);
 
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+
+	//load embding
+	async function orgEmbedding() {
+		await axiosInstanceAuth2
+			.post(`/chatbot/org-embedding/`)
+			.then(async (res) => {
+				toastcomp("success org---", "success");
+			})
+			.catch((err) => {
+				console.log(err);
+				toastcomp("error", "error");
+			});
+	}
+
 	useEffect(() => {
 		if (chatContainerRef && chat.length > 0 && role != "Hiring Manager" && version === "enterprise") {
 			chatContainerRef.current?.scrollTo({
@@ -38,22 +60,36 @@ export default function OrgRSideBar() {
 		}
 	}, [chat]);
 
-	useEffect(() => {
-		if (chatContainerRef && !nloader) {
-			chatContainerRef.current?.scrollTo({
-				top: chatContainerRef.current.scrollHeight,
-				behavior: "smooth"
+	// useEffect(() => {
+	// 	if (chatContainerRef && !nloader) {
+	// 		chatContainerRef.current?.scrollTo({
+	// 			top: chatContainerRef.current.scrollHeight,
+	// 			behavior: "smooth"
+	// 		});
+	// 	}
+	// }, [nloader]);
+
+	//load chat
+	async function loadChat() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/listchat/`)
+			.then(async (res) => {
+				console.log("&&", "chat", res.data);
+				setchat(res.data);
+				setSelectedCheckboxes([]);
+				getAllUserName();
+				getAllProfile();
+			})
+			.catch((err) => {
+				console.log(err);
 			});
-		}
-	}, [nloader]);
+	}
 
 	useEffect(() => {
 		if (visible) {
-			setTimeout(() => {
-				if (nloader) {
-					tnloader();
-				}
-			}, 5000);
+			if (nloader) {
+				orgEmbedding().then(() => loadChat().then(() => tnloader()));
+			}
 		} else {
 			if (!nloader) {
 				tnloader();
@@ -61,13 +97,152 @@ export default function OrgRSideBar() {
 		}
 	}, [visible]);
 
+	function filterBase1(param1: any, param2: any) {
+		// Combine the two arrays
+		const combinedArray = [...param1, ...param2];
+
+		// Sort the combined array in descending order based on "percentage_fit"
+		combinedArray.sort((a, b) => b.percentage_fit - a.percentage_fit);
+
+		return combinedArray;
+	}
+
+	// const [ftext, setftext] = useState("");
+	const [tmpLoader, settmpLoader] = useState(false);
+	async function submitPrompt() {
+		// setftext(text);
+		// settext("");
+		settmpLoader(true);
+		// chatContainerRef.current?.scrollTo({
+		// 	top: chatContainerRef.current.scrollHeight,
+		// 	behavior: "smooth"
+		// });
+
+		toastcomp(text, "success");
+		const fd = new FormData();
+		fd.append("prompt", text);
+		await axiosInstanceAuth2
+			.post(`/chatbot/applicant-flow/`, fd)
+			.then(async (res) => {
+				settmpLoader(false);
+				settext("");
+
+				if (res.data.response && res.data.response === "Success") {
+					loadChat();
+				}
+			})
+			.catch((err) => {
+				settmpLoader(false);
+				settext("");
+
+				console.log(err);
+			});
+	}
+
+	const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+
+	const handleCheckboxChange = (value) => {
+		if (selectedCheckboxes.includes(value)) {
+			setSelectedCheckboxes(selectedCheckboxes.filter((item) => item !== value));
+		} else {
+			setSelectedCheckboxes([...selectedCheckboxes, value]);
+		}
+	};
+
+	const [cepress, setcepress] = useState(false);
+
+	useEffect(() => {
+		if (cepress && text.length > 0) {
+			submitPrompt();
+		}
+	}, [cepress]);
+
+	async function handleSuggestion2(baseText: any) {
+		if (baseText === "Reject Candidates") {
+			var prompt = `[${selectedCheckboxes.toString()}] move to specific {Rejected}`;
+			toastcomp(prompt, "success");
+			settmpLoader(true);
+			settext("Reject Candidates");
+			setSelectedCheckboxes([]);
+			const fd = new FormData();
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/chatbot/applicant-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
+		} else if (baseText === "Move Candidates to next stage") {
+			var prompt = `[${selectedCheckboxes.toString()}] move to next`;
+			toastcomp(prompt, "success");
+			settmpLoader(true);
+			settext("Move Candidates to Next Stage");
+			setSelectedCheckboxes([]);
+			const fd = new FormData();
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/chatbot/applicant-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
+		}
+	}
+
+	const [dataname, setdataname] = useState([]);
+	const [dataprofile, setdataprofile] = useState([]);
+
+	async function getAllUserName() {
+		await axiosInstanceAuth2.get(`/organization/list/org/all/`).then((res) => {
+			console.log("&&", "data name", res.data);
+			setdataname(res.data);
+		});
+	}
+
+	async function getAllProfile() {
+		await axiosInstanceAuth2.get(`/organization/list/ind/all/`).then((res) => {
+			console.log("&&", "data profile", res.data);
+			setdataprofile(res.data);
+		});
+	}
+
+	function getColor(s) {
+		if (s === "Shortlist") {
+			return "bg-[#BEFDD4]";
+		} else if (s === "On Hold") {
+			return "bg-[#F8EE00]";
+		} else if (s === "Reject") {
+			return "bg-[#FF5858]";
+		}
+	}
+
 	return (
 		<>
 			<div className="transition duration-[1000ms]">
 				{visible ? (
 					<div
 						id="sidebar"
-						className={`bg-lightblue fixed right-10 top-[calc(65px+2rem)] z-[33] mr-[2rem] h-full w-[530px] rounded-normal dark:bg-gray-900 lg:right-0`}
+						className={`bg-lightblue fixed right-10 top-[calc(65px+2rem)] z-[33] mr-[2rem] h-full w-[33%] rounded-normal dark:bg-gray-900 lg:right-0`}
 						style={{ boxShadow: "0px 0px 10px 5px rgba(167, 167, 167, 0.25)" }}
 					>
 						<div
@@ -180,14 +355,11 @@ export default function OrgRSideBar() {
 											/>
 											<span className="border-black dark:border-white"></span>
 										</div> */}
-
-										{/* typing animation */}
-										{/* <span className="typeLoader1"></span> */}
 									</div>
 								</>
 							) : (
 								<>
-									{step1 ? (
+									{chat && chat.length <= 0 ? (
 										<>
 											<div className="m-0 flex h-full flex-wrap items-end p-0">
 												<div className="flex flex-wrap justify-center gap-2 text-xs">
@@ -205,175 +377,513 @@ export default function OrgRSideBar() {
 											</div>
 										</>
 									) : (
-										<div className="text-sm" id="append_div">
-											{/* user chat */}
-											<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
-												<div className="flex justify-between gap-4">
-													<span className="text-justify text-base font-bold text-white">Give Me Top 5 Applicant</span>
-													<span className="my-auto whitespace-nowrap text-center text-xs text-white">3:01 PM</span>
+										<>
+											<div id="append_div2" className="hidden">
+												{/* user chat */}
+												<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+													<div className="flex justify-between gap-4">
+														<span className="text-justify text-base font-bold text-white">Give Me Top 5 Applicant</span>
+														<span className="my-auto whitespace-nowrap text-center text-xs text-white">3:01 PM</span>
+													</div>
 												</div>
-											</div>
-											{/* novus res */}
-											<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
-												<div className="flex flex-nowrap justify-between gap-4">
-													<span className="text-justify text-base font-bold">Sure here are 5 applicants</span>
-													<span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span>
+												{/* novus res */}
+												<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
+													<div className="flex flex-nowrap justify-between gap-4">
+														<span className="text-justify text-base font-bold">Sure here are 5 applicants</span>
+														<span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span>
+													</div>
 												</div>
-											</div>
-											{/* applicant */}
-											<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
-												<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
-													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
-														<div className="flex items-center">
-															<label className="novusCheck px-2">
-																<input type="checkbox" />
-																<div className="checkmark"></div>
-															</label>
-															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
-																Naman Doshi
-															</button>
-														</div>
-													</span>
-													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
-														<div className="flex items-center">
-															<label className="novusCheck px-2">
-																<input type="checkbox" />
-																<div className="checkmark"></div>
-															</label>
-															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
-																Som SIR
-															</button>
-														</div>
-													</span>
-													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
-														<div className="flex items-center">
-															<label className="novusCheck px-2">
-																<input type="checkbox" />
-																<div className="checkmark"></div>
-															</label>
-															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
-																Rahber LOREM
-															</button>
-														</div>
-													</span>
-													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
-														<div className="flex items-center">
-															<label className="novusCheck px-2">
-																<input type="checkbox" />
-																<div className="checkmark"></div>
-															</label>
-															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l-2 border-gray-700 p-2 dark:border-white">
-																Vivek Sheetwal
-															</button>
-														</div>
-													</span>
-												</div>
-												<div className=" px-5 py-3">
-													<p className="text-sm font-bold">Suggestions</p>
-													<div className="mt-2 flex flex-wrap gap-2">
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-															Lorem, ipsum.
+												{/* applicant */}
+												<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+													<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
+														<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+															<div className="flex items-center">
+																<label className="novusCheck px-2">
+																	<input type="checkbox" />
+																	<div className="checkmark"></div>
+																</label>
+																<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white">
+																	Naman Doshi
+																</button>
+															</div>
 														</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-															Lorem, ipsum.
+														<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+															<div className="flex items-center">
+																<label className="novusCheck px-2">
+																	<input type="checkbox" />
+																	<div className="checkmark"></div>
+																</label>
+																<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white">
+																	Som SIR
+																</button>
+															</div>
 														</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+														<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+															<div className="flex items-center">
+																<label className="novusCheck px-2">
+																	<input type="checkbox" />
+																	<div className="checkmark"></div>
+																</label>
+																<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white">
+																	Rahber LOREM
+																</button>
+															</div>
+														</span>
+														<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+															<div className="flex items-center">
+																<label className="novusCheck px-2">
+																	<input type="checkbox" />
+																	<div className="checkmark"></div>
+																</label>
+																<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white">
+																	Vivek Sheetwal
+																</button>
+															</div>
+														</span>
+													</div>
+													<div className=" px-5 py-3">
+														<p className="text-sm font-bold">Suggestions</p>
+														<div className="mt-2 flex flex-wrap gap-2">
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																Lorem, ipsum.
+															</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																Lorem, ipsum.
+															</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">Lorem.</span>
+														</div>
 													</div>
 												</div>
-											</div>
-											{/* Suggestions 2 */}
-											<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 ">
-												Move Candidates to next stage
-											</div>
-											<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white">
-												Reject Candidates
-											</div>
-											{/* simple notify */}
-											<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
-												<div className="flex items-center">
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="15"
-														height="11"
-														viewBox="0 0 15 11"
-														fill="none"
-													>
-														<path
-															fill-rule="evenodd"
-															clip-rule="evenodd"
-															d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
-															fill="#00FF29"
-														/>
-													</svg>
-													<span className="ml-2 text-sm">Review notification has been sent to Hiring Manager</span>
+												{/* Suggestions 2 */}
+												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 ">
+													Move Candidates to next stage
 												</div>
-											</div>
-											<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
-												<div className="flex items-center">
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="15"
-														height="11"
-														viewBox="0 0 15 11"
-														fill="none"
-													>
-														<path
-															fill-rule="evenodd"
-															clip-rule="evenodd"
-															d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
-															fill="#00FF29"
-														/>
-													</svg>
-													<span className="ml-2 text-sm">Review notification Recieved</span>
+												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white">
+													Reject Candidates
 												</div>
-											</div>
-											{/* usecase1 feedback */}
-											<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
-												<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
-													<div className="flex items-center gap-2">
-														<Image src={novusIcon1} alt="" width={23} height={23} />
-														<p className="text-sm">Hiring Manager1</p>
-													</div>
-													<div className="my-auto rounded bg-[#BEFDD4] px-3 py-1 text-center text-xs font-bold dark:text-black">
-														Shortlisted
-													</div>
-												</div>
-												<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs">
-													<div>Candidate-</div>
-													<div className="cursor-pointer bg-lightBlue p-2 font-bold dark:bg-gray-800">Josh Rynn</div>
-													<div>5542136</div>
-												</div>
-												<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
-													<i className="fa-solid fa-info rounded-full border border-black/75 px-1.5 py-0.5 text-[8px] dark:border-white/75"></i>
-													<p>Interview process will be handle by Steve Adam</p>
-												</div>
-												<div className="flex flex-col gap-2 px-5 py-3 text-sm">
-													<div className="font-bold">Feedback</div>
-													<div>
-														<ReactReadMoreReadLess
-															charLimit={80}
-															readMoreText={"Read more ▼"}
-															readLessText={"Read less ▲"}
+												{/* simple notify */}
+												<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
+													<div className="flex items-center">
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="15"
+															height="11"
+															viewBox="0 0 15 11"
+															fill="none"
 														>
-															Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium assumenda cum
-															explicabo ratione modi aut dolorum deleniti quia! Molestiae aspernatur quam fugiat,
-															accusamus vero adipisci ducimus eos commodi dignissimos iusto?
-														</ReactReadMoreReadLess>
+															<path
+																fill-rule="evenodd"
+																clip-rule="evenodd"
+																d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
+																fill="#00FF29"
+															/>
+														</svg>
+														<span className="ml-2 text-sm">Review notification has been sent to Hiring Manager</span>
 													</div>
 												</div>
+												<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left hover:border-2">
+													<div className="flex items-center">
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="15"
+															height="11"
+															viewBox="0 0 15 11"
+															fill="none"
+														>
+															<path
+																fill-rule="evenodd"
+																clip-rule="evenodd"
+																d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
+																fill="#00FF29"
+															/>
+														</svg>
+														<span className="ml-2 text-sm">Review notification Recieved</span>
+													</div>
+												</div>
+												{/* usecase1 feedback */}
+												<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+													<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
+														<div className="flex items-center gap-2">
+															<Image src={novusIcon1} alt="" width={23} height={23} />
+															<p className="text-sm">Hiring Manager1</p>
+														</div>
+														<div className="my-auto rounded bg-[#BEFDD4] px-3 py-1 text-center text-xs font-bold dark:text-black">
+															Shortlisted
+														</div>
+													</div>
+													<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs">
+														<div>Candidate-</div>
+														<div className="cursor-pointer bg-lightBlue p-2 font-bold dark:bg-gray-800">Josh Rynn</div>
+														<div>5542136</div>
+													</div>
+													<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
+														<i className="fa-solid fa-info rounded-full border border-black/75 px-1.5 py-0.5 text-[8px] dark:border-white/75"></i>
+														<p>Interview process will be handle by Steve Adam</p>
+													</div>
+													<div className="flex flex-col gap-2 px-5 py-3 text-sm">
+														<div className="font-bold">Feedback</div>
+														<div>
+															<ReactReadMoreReadLess
+																charLimit={80}
+																readMoreText={"Read more ▼"}
+																readLessText={"Read less ▲"}
+															>
+																Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium assumenda cum
+																explicabo ratione modi aut dolorum deleniti quia! Molestiae aspernatur quam fugiat,
+																accusamus vero adipisci ducimus eos commodi dignissimos iusto?
+															</ReactReadMoreReadLess>
+														</div>
+													</div>
+												</div>
+												{/* lodaer animation */}
+												<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
 											</div>
+											{/* <br />
+											<hr />
+											<br /> */}
+											<div id="append_div">
+												{chat.map((data, i) => (
+													<div key={i}>
+														{data["message"] && data["message"].length > 0 ? (
+															<>
+																{/* user chat */}
+																<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+																	<div className="flex justify-between gap-4">
+																		<span className="text-base font-bold text-white">{data["message"]}</span>
+																		<span className="my-auto whitespace-nowrap text-center text-xs text-white">
+																			{moment(data["timestamp"]).format("h:mm a")}
+																		</span>
+																	</div>
+																</div>
+																{/* novus res */}
+																<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
+																	<div className="flex flex-nowrap justify-between gap-4">
+																		<span className="text-base font-bold">{data["response"]}</span>
+																		<span className="my-auto whitespace-nowrap text-center text-xs">
+																			{moment(data["timestamp"]).format("h:mm a")}
+																		</span>
+																	</div>
+																</div>
+																{/* applicant */}
+																{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
+																	<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+																		<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
+																			{filterBase1(data["capplicant"], data["vapplicant"]).map((data2, j) => (
+																				<span className="rounded bg-lightBlue text-sm dark:bg-gray-900" key={j}>
+																					{i === chat.length - 1 && data["suggestion"] ? (
+																						<div className="flex items-center">
+																							<label className="novusCheck px-2">
+																								<input
+																									type="checkbox"
+																									onChange={() => handleCheckboxChange(data2["arefid"])}
+																								/>
+																								<div className="checkmark"></div>
+																							</label>
+																							<button
+																								className="relative overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white"
+																								onClick={() => {
+																									setjobid(data2["job"]["refid"]);
+																									setappid(data2["arefid"]);
+																									if (data2["user"]) {
+																										settype("vendor");
+																									} else {
+																										settype("career");
+																									}
+																									setappdata(data2);
+																									router.push("/organization/applicants/detail");
+																								}}
+																							>
+																								{/* <span className="z-3 absolute right-0 top-0 text-[10px]">
+																								{data["percentage_fit"]}
+																							</span> */}
+																								{data2["user"] ? (
+																									<>
+																										{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
+																									</>
+																								) : (
+																									<>
+																										{data2["applicant"]["first_name"]}&nbsp;
+																										{data2["applicant"]["last_name"]}
+																									</>
+																								)}
+																								<span
+																									className=" 
+																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
+																								>
+																									<span className="relative text-xs text-black">
+																										{data2["percentage_fit"]}
+																									</span>
+																								</span>
+																							</button>
+																						</div>
+																					) : (
+																						<>
+																							<button
+																								className="relative overflow-hidden text-ellipsis whitespace-nowrap p-2 "
+																								onClick={() => {
+																									setjobid(data2["job"]["refid"]);
+																									setappid(data2["arefid"]);
+																									if (data2["user"]) {
+																										settype("vendor");
+																									} else {
+																										settype("career");
+																									}
+																									setappdata(data2);
+																									router.push("/organization/applicants/detail");
+																								}}
+																							>
+																								{/* <span className="z-3 absolute right-0 top-0 text-[10px]">
+																								{data["percentage_fit"]}
+																							</span> */}
+																								{data2["user"] ? (
+																									<>
+																										{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
+																									</>
+																								) : (
+																									<>
+																										{data2["applicant"]["first_name"]}&nbsp;
+																										{data2["applicant"]["last_name"]}
+																									</>
+																								)}
+																								<span
+																									className=" 
+																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
+																								>
+																									<span className="relative text-xs text-black">
+																										{data2["percentage_fit"]}
+																									</span>
+																								</span>
+																							</button>
+																						</>
+																					)}
+																				</span>
+																			))}
+																		</div>
+																		{i === chat.length - 1 && data["suggestion"] && (
+																			<div className=" px-5 py-3">
+																				<p className="text-sm font-bold">Suggestions</p>
+																				<div className="mt-2 flex flex-wrap gap-2">
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem, ipsum.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem, ipsum.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																				</div>
+																			</div>
+																		)}
+																	</div>
+																) : (
+																	<></>
+																)}
 
-											<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
-										</div>
+																{i === chat.length - 1 && selectedCheckboxes.length > 0 && (
+																	<>
+																		{/* Suggestions 2 */}
+																		<div
+																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 "
+																			onClick={() => handleSuggestion2("Move Candidates to next stage")}
+																		>
+																			Move Candidates to next stage
+																		</div>
+																		<div
+																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white"
+																			onClick={() => handleSuggestion2("Reject Candidates")}
+																		>
+																			Reject Candidates
+																		</div>
+																	</>
+																)}
+															</>
+														) : (
+															<>
+																{data["response"] === "@feedback" ? (
+																	<>
+																		<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+																			<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
+																				<div className="flex items-center gap-2">
+																					{dataprofile &&
+																						dataprofile.length > 0 &&
+																						dataprofile
+																							.filter((obj) => obj.user.id === data["feedback"]["user"]["id"])
+																							.map((data, i) => (
+																								<Image
+																									src={data["profile"]}
+																									alt=""
+																									width={26}
+																									height={26}
+																									key={i}
+																									className="rounded-full"
+																								/>
+																							))}
+
+																					{dataname &&
+																						dataname.length > 0 &&
+																						dataname
+																							.filter((obj) => obj.id === data["feedback"]["user"]["id"])
+																							.map((data, i) => (
+																								<p className="text-sm" key={i}>
+																									{data["name"]}
+																								</p>
+																							))}
+																				</div>
+																				<div
+																					className={
+																						`my-auto rounded px-3 py-1 text-center text-xs font-bold dark:text-black` +
+																						" " +
+																						`${getColor(data["feedback"]["status"])}`
+																					}
+																				>
+																					{data["feedback"]["status"]}
+																				</div>
+																			</div>
+																			<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-sm">
+																				<div>Candidate-</div>
+																				<div
+																					className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
+																					onClick={() => {
+																						if (data["capplicant"].length > 0) {
+																							setjobid(data["capplicant"][0]["job"]["refid"]);
+																							setappid(data["capplicant"][0]["arefid"]);
+																							settype("career");
+																							setappdata(data["capplicant"][0]);
+																						} else {
+																							setjobid(data["vapplicant"][0]["job"]["refid"]);
+																							setappid(data["vapplicant"][0]["arefid"]);
+																							settype("vendor");
+																							setappdata(data["vapplicant"][0]);
+																						}
+
+																						router.push("/organization/applicants/detail");
+																					}}
+																				>
+																					{data["capplicant"].length > 0 && (
+																						<>
+																							{data["capplicant"][0]["user"]["first_name"]}{" "}
+																							{data["capplicant"][0]["user"]["last_name"]}
+																						</>
+																					)}
+																					{data["vapplicant"].length > 0 && (
+																						<>
+																							{data["vapplicant"][0]["applicant"]["first_name"]}{" "}
+																							{data["vapplicant"][0]["applicant"]["last_name"]}
+																						</>
+																					)}
+																					<span
+																						className=" 
+																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
+																					>
+																						<span className="relative text-xs text-black">
+																							{data["capplicant"].length > 0
+																								? data["capplicant"][0]["percentage_fit"]
+																								: data["vapplicant"][0]["percentage_fit"]}
+																						</span>
+																					</span>
+																				</div>
+																				<div>
+																					{data["capplicant"].length > 0
+																						? data["capplicant"][0]["arefid"]
+																						: data["vapplicant"][0]["arefid"]}
+																				</div>
+																			</div>
+																			<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
+																				<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
+
+																				{data["feedback"]["status"] === "Shortlist" && (
+																					<>
+																						{dataname &&
+																							dataname.length > 0 &&
+																							dataname
+																								.filter((obj) => obj.id === data["feedback"]["user"]["id"])
+																								.map((data, i) => (
+																									<p key={i}>Interview process will be handle by {data["name"]}</p>
+																								))}
+																					</>
+																				)}
+																				{data["feedback"]["status"] === "On Hold" && (
+																					<p>Candidate Stay in Review Stage</p>
+																				)}
+																				{data["feedback"]["status"] === "Reject" && (
+																					<p>Candidate Moved to Rejected Stage</p>
+																				)}
+																			</div>
+																			<div className="flex flex-col gap-2 px-5 py-3 text-sm">
+																				<div className="font-bold">Feedback</div>
+																				<div>
+																					<ReactReadMoreReadLess
+																						charLimit={80}
+																						readMoreText={"Read more ▼"}
+																						readLessText={"Read less ▲"}
+																						readMoreClassName="font-bold"
+																						readLessClassName="font-bold"
+																					>
+																						{data["feedback"]["feedback"]}
+																					</ReactReadMoreReadLess>
+																				</div>
+																			</div>
+																		</div>
+																	</>
+																) : (
+																	<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left">
+																		<div className="flex items-center">
+																			<svg
+																				xmlns="http://www.w3.org/2000/svg"
+																				width="15"
+																				height="11"
+																				viewBox="0 0 15 11"
+																				fill="none"
+																			>
+																				<path
+																					fill-rule="evenodd"
+																					clip-rule="evenodd"
+																					d="M5.26899 6.66339L13.0538 0L15 1.70643L5.26907 10.0358L0 5.52574L1.99369 3.81924L5.26899 6.66339Z"
+																					fill="#00FF29"
+																				/>
+																			</svg>
+																			<span className="ml-2 text-sm">{data["response"]}</span>
+																		</div>
+																	</div>
+																)}
+															</>
+														)}
+													</div>
+												))}
+												{tmpLoader && (
+													<>
+														<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+															<div className="flex justify-between gap-4">
+																<span className="text-base font-bold text-white">{text}</span>
+																<span className="my-auto whitespace-nowrap text-center text-xs text-white">
+																	{moment().format("h:mm a")}
+																</span>
+															</div>
+														</div>
+														<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
+													</>
+												)}
+											</div>
+										</>
 									)}
 								</>
 							)}
 						</div>
 
-						<div className="fixed bottom-0 z-[45] w-[530px] bg-white p-3 dark:bg-gray-800">
+						<div className="fixed bottom-0 z-[45] w-[33%] bg-white p-3 dark:bg-gray-800">
 							<div className="flex">
 								<AutoTextarea
 									value={text}
@@ -381,12 +891,14 @@ export default function OrgRSideBar() {
 									// extra="dark:text-white dark:bg-gray-700 bg-lightblue"
 									extra=""
 									place="Type here for Results ..."
-									disable={nloader}
+									disable={nloader || tmpLoader}
+									setcepress={setcepress}
 								/>
 								{text.length > 0 && (
 									<button
 										type="button"
 										className="ml-3 block flex w-[40px] items-center justify-center border-l border-black text-center text-[19px] leading-normal"
+										onClick={() => submitPrompt()}
 									>
 										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
 											<path
