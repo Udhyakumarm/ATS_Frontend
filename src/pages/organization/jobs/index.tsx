@@ -18,6 +18,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
+import { useEffect, useState } from "react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 export default function JobsDashboard() {
 	const { t } = useTranslation("common");
@@ -26,6 +28,17 @@ export default function JobsDashboard() {
 	const router = useRouter();
 
 	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const quicklinks = [
 		{
@@ -71,9 +84,9 @@ export default function JobsDashboard() {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				<OrgRSideBar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
-				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(530px+2rem)]")}>
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
 						<h1 className="mb-6 text-xl font-bold">{t("Words.Jobs")}</h1>
 						<div className="-mx-4 flex flex-wrap items-center">

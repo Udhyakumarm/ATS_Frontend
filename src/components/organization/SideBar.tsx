@@ -181,18 +181,20 @@ export default function OrgSideBar() {
 				}
 			>
 				<div className="relative flex h-[65px] items-center p-3">
-					<button
-						type="button"
-						id="btnToggle"
-						className={
-							`absolute right-[-16px] top-[50%] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
-							" " +
-							(show ? "right-[-31px] rounded-[6px] rounded-bl-[0] rounded-tl-[0]" : <></>)
-						}
-						onClick={isMobile ? mobileSidebarToggle : toggleSidebar}
-					>
-						<i className={`fa-solid fa-chevron-left` + " " + (show ? "fa-chevron-right" : <></>)}></i>
-					</button>
+					{(!visible || isMobile) && (
+						<button
+							type="button"
+							id="btnToggle"
+							className={
+								`absolute right-[-16px] top-[50%] h-[30px] w-[30px] translate-y-[-50%] rounded-full bg-white shadow dark:bg-gray-700` +
+								" " +
+								(show ? "right-[-31px] rounded-[6px] rounded-bl-[0] rounded-tl-[0]" : <></>)
+							}
+							onClick={isMobile ? mobileSidebarToggle : toggleSidebar}
+						>
+							<i className={`fa-solid fa-chevron-left` + " " + (show ? "fa-chevron-right" : <></>)}></i>
+						</button>
+					)}
 					{show ? (
 						<>
 							<Image src={theme === "dark" ? FaviconWhite : Favicon} alt="Somhako" />
@@ -206,7 +208,15 @@ export default function OrgSideBar() {
 				<div className="h-[calc(100%-65px)] overflow-y-auto p-3">
 					<ul className={"sideMenu" + " " + show ? "" : "border-b pb-4"}>
 						{menu.map((menuItem, i) => (
-							<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
+							<li
+								className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}
+								key={i}
+								data-te-toggle="tooltip"
+								data-te-placement="right"
+								data-te-ripple-init
+								data-te-ripple-color="light"
+								title={show ? menuItem.title : ""}
+							>
 								<div
 									onClick={() => handleClickLink(menuItem.url, menuItem.com, menuItem.pre, menuItem.title)}
 									className={

@@ -26,6 +26,8 @@ import { useLangStore } from "@/utils/code";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
 import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -463,6 +465,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		// 	}
 		// });
 	}
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	return (
 		<>
@@ -473,11 +477,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="relative">
 						<div className="flex flex-wrap">
 							<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px]">

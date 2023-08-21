@@ -32,6 +32,8 @@ import UpcomingComp from "@/components/organization/upcomingComp";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
 import { debounce } from "lodash";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const useDebounce = (value, delay) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -891,6 +893,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 		// 	}
 		// });
 	}
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	return (
 		<>
@@ -901,11 +905,12 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					{applicantlist && applicantlist.length > 0 ? (
 						<>
 							<div className="relative z-[10] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
@@ -965,7 +970,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 									<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
 								</aside>
 							</div>
-							<div className="relative z-[9] flex flex-wrap p-4 lg:p-8">
+							<div className="relative z-[9] flex flex-wrap py-4 lg:py-8">
 								<div className="mb-4 w-full xl:max-w-[280px]">
 									<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
 										{filterApplicants ? (

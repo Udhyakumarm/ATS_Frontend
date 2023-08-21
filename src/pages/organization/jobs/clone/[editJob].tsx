@@ -27,6 +27,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import Link from "next/link";
 import favIcon from "/public/favicon-white.ico";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg }: any) => {
 	return (
@@ -61,6 +63,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	const { editJob } = router.query;
 
 	const [accordionOpen, setAccordionOpen] = useState(false);
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	//job create state
 	const [jtitle, setjtitle] = useState("");
@@ -334,7 +338,11 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			let localSearch = search2.toLowerCase();
 			let arr = [];
 			for (let i = 0; i < fvendors.length; i++) {
-				if (fvendors[i]["agent_name"].toLowerCase().includes(localSearch) || fvendors[i]["company_name"].toLowerCase().includes(localSearch) || fvendors[i]["email"].toLowerCase().includes(localSearch)) {
+				if (
+					fvendors[i]["agent_name"].toLowerCase().includes(localSearch) ||
+					fvendors[i]["company_name"].toLowerCase().includes(localSearch) ||
+					fvendors[i]["email"].toLowerCase().includes(localSearch)
+				) {
 					arr.push(fvendors[i]);
 				}
 			}
@@ -861,13 +869,13 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	];
 	const VendorTableHead = [
 		{
-			title: t('Form.AgentName')
+			title: t("Form.AgentName")
 		},
 		{
-			title: t('Form.CompanyName')
+			title: t("Form.CompanyName")
 		},
 		{
-			title: t('Form.Email')
+			title: t("Form.Email")
 		},
 		{
 			title: " "
@@ -883,11 +891,12 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="relative">
 						<Tab.Group>
 							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
@@ -1557,36 +1566,36 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 															handleChange={(e) => setsearch2(e.target.value)}
 														/>
 													</div>
-													{!upcomingSoon &&
-													<div className="flex grow items-center justify-end">
-														<div className="mr-3 w-[150px]">
-															<FormField
-																fieldType="select"
-																placeholder={t("Words.Sort")}
-																singleSelect={true}
-																options={[
-																	{
-																		id: "A-to-Z",
-																		name: "A to Z"
-																	},
-																	{
-																		id: "Z-to-A",
-																		name: "Z to A"
-																	}
-																]}
-															/>
+													{!upcomingSoon && (
+														<div className="flex grow items-center justify-end">
+															<div className="mr-3 w-[150px]">
+																<FormField
+																	fieldType="select"
+																	placeholder={t("Words.Sort")}
+																	singleSelect={true}
+																	options={[
+																		{
+																			id: "A-to-Z",
+																			name: "A to Z"
+																		},
+																		{
+																			id: "Z-to-A",
+																			name: "Z to A"
+																		}
+																	]}
+																/>
+															</div>
+															<div className="w-[150px]">
+																<label
+																	htmlFor="teamSelectAll"
+																	className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+																>
+																	<span>{t("Words.SelectAll")}</span>
+																	<input type="checkbox" id="teamSelectAll" />
+																</label>
+															</div>
 														</div>
-														<div className="w-[150px]">
-															<label
-																htmlFor="teamSelectAll"
-																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-															>
-																<span>{t("Words.SelectAll")}</span>
-																<input type="checkbox" id="teamSelectAll" />
-															</label>
-														</div>
-													</div>
-													}
+													)}
 												</div>
 												<div className="overflow-x-auto">
 													<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">

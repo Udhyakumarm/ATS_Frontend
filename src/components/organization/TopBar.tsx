@@ -20,6 +20,7 @@ import toastcomp from "../toast";
 import moment from "moment";
 import gcalIcon from "/public/images/social/google-cal-icon2.png";
 import novusIcon from "/public/images/novus1.png";
+import novusIcon12 from "/public/images/novus12.png";
 import { useNewNovusStore } from "@/utils/novus";
 
 const CalendarIntegrationOptions = [
@@ -467,7 +468,7 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 					<i className="fa-solid fa-right-from-bracket"></i>
 				</button> */}
 				<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
-					<Image src={novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
+					<Image src={visible ? novusIcon12 : novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
 				</button>
 			</div>
 			<Transition.Root show={isCalendarOpen} as={Fragment}>

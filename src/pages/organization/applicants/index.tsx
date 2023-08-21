@@ -25,11 +25,12 @@ import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
-import { useNovusStore } from "@/utils/novus";
+import { useNewNovusStore, useNovusStore } from "@/utils/novus";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -84,6 +85,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const [refresh, setrefresh] = useState(0);
 	const [joblist, setjoblist] = useState(0);
 	const [selectedJob, setSelectedJob] = useState(jobd[0]);
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	useEffect(() => {
 		if (session) {
@@ -315,13 +318,14 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 
 				{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
-					<div className="layoutWrap p-4 lg:p-8">
+					<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 						<div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
 							<div className="mx-auto w-full max-w-[300px] py-8 text-center">
 								<div className="mb-6 p-2">
@@ -349,7 +353,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				) : (
 					<>
 						{atsVersion === "starter" && refresh === 2 ? (
-							<div className="layoutWrap p-4 lg:p-8">
+							<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -464,7 +468,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 								</div>
 							</div>
 						) : (
-							<div className="layoutWrap">
+							<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 								{refresh === 2 && (
 									<>
 										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">

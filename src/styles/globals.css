@@ -1044,3 +1044,10 @@ input[type="number"] {
 	border-width: 0 0.17em 0.17em 0;
 	transform: rotate(45deg);
 }
+
+.csug label input[type="checkbox"]:checked ~ span {
+	border-color: var(--primary);
+	/* border-width: 3px; */
+	color: var(--primary);
+	/* font-weight: 700; */
+}

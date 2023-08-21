@@ -16,6 +16,8 @@ import noActivedata from "/public/images/no-data/iconGroup-1.png";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 export default function JobsDrafted() {
 	const { t } = useTranslation("common");
@@ -74,6 +76,8 @@ export default function JobsDrafted() {
 			setFilterJobs(closedJobs);
 		}
 	}, [search]);
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	return (
 		<>
@@ -84,11 +88,12 @@ export default function JobsDrafted() {
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b py-4">
 							<div className="mx-auto w-full max-w-[1100px] px-4">

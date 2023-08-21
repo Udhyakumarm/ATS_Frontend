@@ -15,6 +15,10 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore, useUserStore } from "@/utils/code";
 import moment from "moment";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
+import { useSession } from "next-auth/react";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -45,6 +49,18 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			setrdate("");
 		}
 	}, [currentuser, userRole]);
+
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const quicklinks = [
 		{
@@ -97,6 +113,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			blur: blurOrNot("Plans & Pricing")
 		}
 	];
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 	return (
 		<>
 			<Head>
@@ -106,11 +124,12 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
 						<h1 className="mb-6 text-xl font-bold">{t("Words.Settings")}</h1>
 						<div className="-mx-4 flex flex-wrap items-center">

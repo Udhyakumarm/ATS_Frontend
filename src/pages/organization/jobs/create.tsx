@@ -29,6 +29,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import FetchHelper from "@/utils/fetchHelper";
 import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg, dis }: any) => {
 	return (
@@ -97,6 +99,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	//naman
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 	//Load TM
 	const [tm, settm] = useState([]);
 	const [filterTeam, setFilterTeam] = useState([]);
@@ -797,11 +801,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
 					<div className="relative">
 						<Tab.Group>
 							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">

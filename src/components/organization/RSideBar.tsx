@@ -7,7 +7,7 @@ import favIcon from "/public/favicon-white.ico";
 import novusIcon1 from "/public/images/novus1.png";
 import novusIcon2 from "/public/images/novus2.png";
 import novusIcon3 from "/public/images/novus3.png";
-import { useApplicantStore, useUserStore, useVersionStore } from "@/utils/code";
+import { useApplicantStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
 import AutoTextarea from "./AutoTextarea";
 import ReactReadMoreReadLess from "react-read-more-read-less";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
@@ -32,6 +32,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const role = useUserStore((state: { role: any }) => state.role);
 	const user = useUserStore((state: { user: any }) => state.user);
 	const version = useVersionStore((state: { version: any }) => state.version);
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
 	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
@@ -77,6 +78,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 				console.log("&&", "chat", res.data);
 				setchat(res.data);
 				setSelectedCheckboxes([]);
+				setssuggestion([]);
+				setsuggSkill("");
+				setsuggYear("");
 				getAllUserName();
 				getAllProfile();
 			})
@@ -149,6 +153,69 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 		}
 	};
 
+	const [ssuggestion, setssuggestion] = useState([]);
+	const [suggSkill, setsuggSkill] = useState("");
+	const [suggYear, setsuggYear] = useState("");
+	const handlesuggestionChange = (value) => {
+		if (ssuggestion.includes(value)) {
+			setssuggestion(ssuggestion.filter((item) => item !== value));
+		} else {
+			setssuggestion([...ssuggestion, value]);
+		}
+	};
+
+	async function handleSuggestionFinal() {
+		console.log("&&&", "pre defined suggstion", ssuggestion);
+		console.log("&&&", "other skill", suggSkill);
+		console.log("&&&", "other year", suggYear);
+		let finalSkill = "";
+		var prompt = "";
+		if (ssuggestion.length > 0) {
+			finalSkill = finalSkill + ssuggestion.toString();
+		}
+		if (suggSkill.length > 0) {
+			if (finalSkill.length > 0) {
+				finalSkill = finalSkill + "," + suggSkill;
+			} else {
+				finalSkill = suggSkill;
+			}
+		}
+		if (finalSkill.length > 0 || suggYear.length > 0) {
+			if (finalSkill.length > 0 && suggYear.length <= 0) {
+				prompt = `show me top applicants who are having ${finalSkill} skills`;
+				console.log("&&&", "prompt", prompt);
+			} else if (finalSkill.length <= 0 && suggYear.length > 0) {
+				prompt = `show me top applicants who are having greater than or equal to ${suggYear} years of experience`;
+				console.log("&&&", "prompt", prompt);
+			} else if (finalSkill.length > 0 && suggYear.length > 0) {
+				prompt = `show me top applicants who are having ${finalSkill} skills and having greater than or equal to ${suggYear} years of experience`;
+				console.log("&&&", "prompt", prompt);
+			}
+		}
+		if (prompt.length > 0) {
+			settmpLoader(true);
+			settext(prompt);
+			const fd = new FormData();
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/chatbot/applicant-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
+		}
+	}
+
 	const [cepress, setcepress] = useState(false);
 
 	useEffect(() => {
@@ -206,7 +273,78 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 
 					console.log(err);
 				});
+		} else if (baseText === "Show me Top Applicants") {
+			if (srcLang === "ja") {
+				var prompt = `上位 5 件の応募者を表示する`;
+			} else {
+				var prompt = `Show me Top 5 Applicants`;
+			}
+			settmpLoader(true);
+			settext(prompt);
+			const fd = new FormData();
+			fd.append("prompt", prompt);
+			await axiosInstanceAuth2
+				.post(`/chatbot/applicant-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
 		}
+		// else if (baseText === "Python") {
+		// 	var prompt = `show me applicants having skills python`;
+		// 	settmpLoader(true);
+		// 	settext(prompt);
+		// 	const fd = new FormData();
+		// 	fd.append("prompt", prompt);
+		// 	await axiosInstanceAuth2
+		// 		.post(`/chatbot/applicant-flow/`, fd)
+		// 		.then(async (res) => {
+		// 			settmpLoader(false);
+		// 			settext("");
+
+		// 			if (res.data.response && res.data.response === "Success") {
+		// 				loadChat();
+		// 			}
+		// 		})
+		// 		.catch((err) => {
+		// 			settmpLoader(false);
+		// 			settext("");
+
+		// 			console.log(err);
+		// 		});
+		// } else if (baseText === "HTML, CSS") {
+		// 	var prompt = `show me applicants having skills html, css`;
+		// 	settmpLoader(true);
+		// 	settext(prompt);
+		// 	const fd = new FormData();
+		// 	fd.append("prompt", prompt);
+		// 	await axiosInstanceAuth2
+		// 		.post(`/chatbot/applicant-flow/`, fd)
+		// 		.then(async (res) => {
+		// 			settmpLoader(false);
+		// 			settext("");
+
+		// 			if (res.data.response && res.data.response === "Success") {
+		// 				loadChat();
+		// 			}
+		// 		})
+		// 		.catch((err) => {
+		// 			settmpLoader(false);
+		// 			settext("");
+
+		// 			console.log(err);
+		// 		});
+		// }
 	}
 
 	const [dataname, setdataname] = useState([]);
@@ -242,18 +380,17 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 				{visible ? (
 					<div
 						id="sidebar"
-						className={`bg-lightblue fixed right-10 top-[calc(65px+2rem)] z-[33] mr-[2rem] h-full w-[33%] rounded-normal dark:bg-gray-900 lg:right-0`}
+						className={`bg-lightblue fixed right-10 top-[calc(65px+2rem)] z-[10] mr-[2rem] h-full w-[33%] rounded-normal dark:bg-gray-900 lg:right-0`}
 						style={{ boxShadow: "0px 0px 10px 5px rgba(167, 167, 167, 0.25)" }}
 					>
 						<div
 							className="flex h-[70px] items-center justify-between rounded-tl-normal rounded-tr-normal px-6 py-3"
 							style={{ background: "var(--linear, linear-gradient(180deg, #9290FC 0%, #6A67EA 100%))" }}
 						>
-							<div className="flex pl-3">
+							<div className="flex items-center gap-1 pl-3">
 								<Image src={novusIcon2} alt="Somhako" width={31} height={31} />
-								<h4 className="loader-lg flex items-center justify-center text-center text-xl font-bold text-white">
-									Novus
-								</h4>
+								<h4 className="text-center text-xl font-bold text-white">{srcLang === "ja" ? "ノーバス" : "Novus"} </h4>
+								<span className="text-center text-base font-normal tracking-tighter text-white">1.2</span>
 							</div>
 							<div className="pr-3">
 								<button type="button" className="text-white dark:text-gray-100" onClick={() => tvisible()}>
@@ -274,14 +411,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 											<div className="shape1"></div>
 										</div> */}
 
-										{/* <div className="loader2">
-											<span className="loader2-text">
+										<div className="loader2">
+											{/* <span className="loader2-text">
 												<Image src={novusIcon1} alt="novus" width={50} height={50} />
-											</span>
+											</span> */}
 											<span className="load2"></span>
-										</div> */}
+										</div>
 
-										<div className="loader3">
+										{/* <div className="loader3">
 											<svg className="pl" width="240" height="240" viewBox="0 0 240 240">
 												<circle
 													className="pl__ring pl__ring--a"
@@ -330,16 +467,16 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													stroke-linecap="round"
 												></circle>
 											</svg>
-										</div>
+										</div> */}
 
 										{/* <div className="loader4">
-											 <Image
+											<Image
 												src={novusIcon1}
 												alt="novus"
 												width={50}
 												height={50}
 												className="t-0 absolute z-[5] h-[6em] w-[6em] p-1"
-											/> 
+											/>
 											<div className="spinner">
 												<div className="spinnerin"></div>
 											</div>
@@ -361,20 +498,49 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 								<>
 									{chat && chat.length <= 0 ? (
 										<>
-											<div className="m-0 flex h-full flex-wrap items-end p-0">
-												<div className="flex flex-wrap justify-center gap-2 text-xs">
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">
-														Lorem ipsumit amet.
+											{tmpLoader ? (
+												<>
+													<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+														<div className="flex justify-between gap-4">
+															<span className="text-base font-medium text-white">{text}</span>
+															<span className="my-auto whitespace-nowrap text-center text-xs text-white">
+																{moment().format("h:mm a")}
+															</span>
+														</div>
+													</div>
+													<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
+												</>
+											) : (
+												<div className="m-0 flex h-full w-full flex-wrap items-end p-0">
+													<span
+														className="cursor-pointer rounded-full border border-borderColor px-4 py-2 text-xs shadow"
+														onClick={() => handleSuggestion2("Show me Top Applicants")}
+													>
+														{srcLang === "ja" ? "上位 5 件の応募者を表示する" : "Show me Top 5 Applicants"}
 													</span>
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">
-														Lorem ipsum sit.
-													</span>
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">Lorem ipsum.</span>
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">colrow abc 1</span>
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">Lorem, ipsum.</span>
-													<span className="rounded-full border border-borderColor px-4 py-2 shadow">col 3</span>
+
+													{/* <div className="mx-auto flex flex-wrap items-center justify-center gap-2 text-xs">
+														<span
+															className="cursor-pointer rounded-full border border-borderColor px-4 py-2 shadow"
+															onClick={() => handleSuggestion2("Show me Top Applicants")}
+														>
+															Show me Top Applicants
+														</span>
+														<span
+															className="cursor-pointer rounded-full border border-borderColor px-4 py-2 shadow"
+															onClick={() => handleSuggestion2("Python")}
+														>
+															Python
+														</span>
+														<span
+															className="cursor-pointer rounded-full border border-borderColor px-4 py-2 shadow"
+															onClick={() => handleSuggestion2("HTML, CSS")}
+														>
+															HTML, CSS
+														</span>
+													</div> */}
 												</div>
-											</div>
+											)}
 										</>
 									) : (
 										<>
@@ -382,14 +548,16 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 												{/* user chat */}
 												<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
 													<div className="flex justify-between gap-4">
-														<span className="text-justify text-base font-bold text-white">Give Me Top 5 Applicant</span>
+														<span className="text-justify text-base font-medium text-white">
+															Give Me Top 5 Applicant
+														</span>
 														<span className="my-auto whitespace-nowrap text-center text-xs text-white">3:01 PM</span>
 													</div>
 												</div>
 												{/* novus res */}
 												<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
 													<div className="flex flex-nowrap justify-between gap-4">
-														<span className="text-justify text-base font-bold">Sure here are 5 applicants</span>
+														<span className="text-justify text-base font-medium">Sure here are 5 applicants</span>
 														<span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span>
 													</div>
 												</div>
@@ -458,10 +626,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</div>
 												</div>
 												{/* Suggestions 2 */}
-												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 ">
+												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-medium text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 ">
 													Move Candidates to next stage
 												</div>
-												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white">
+												<div className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-medium text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white">
 													Reject Candidates
 												</div>
 												{/* simple notify */}
@@ -516,10 +684,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</div>
 													<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs">
 														<div>Candidate-</div>
-														<div className="cursor-pointer bg-lightBlue p-2 font-bold dark:bg-gray-800">Josh Rynn</div>
+														<div className="cursor-pointer bg-lightBlue p-2 font-medium dark:bg-gray-800">
+															Josh Rynn
+														</div>
 														<div>5542136</div>
 													</div>
-													<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
+													<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
 														<i className="fa-solid fa-info rounded-full border border-black/75 px-1.5 py-0.5 text-[8px] dark:border-white/75"></i>
 														<p>Interview process will be handle by Steve Adam</p>
 													</div>
@@ -552,7 +722,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																{/* user chat */}
 																<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
 																	<div className="flex justify-between gap-4">
-																		<span className="text-base font-bold text-white">{data["message"]}</span>
+																		<span className="text-base font-medium text-white">{data["message"]}</span>
 																		<span className="my-auto whitespace-nowrap text-center text-xs text-white">
 																			{moment(data["timestamp"]).format("h:mm a")}
 																		</span>
@@ -561,7 +731,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																{/* novus res */}
 																<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
 																	<div className="flex flex-nowrap justify-between gap-4">
-																		<span className="text-base font-bold">{data["response"]}</span>
+																		<span className="text-base font-medium">{data["response"]}</span>
 																		<span className="my-auto whitespace-nowrap text-center text-xs">
 																			{moment(data["timestamp"]).format("h:mm a")}
 																		</span>
@@ -665,26 +835,80 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																		{i === chat.length - 1 && data["suggestion"] && (
 																			<div className=" px-5 py-3">
 																				<p className="text-sm font-bold">Suggestions</p>
-																				<div className="mt-2 flex flex-wrap gap-2">
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem.
-																					</span>
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem, ipsum.
-																					</span>
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem.
-																					</span>
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem.
-																					</span>
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem, ipsum.
-																					</span>
-																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																						Lorem.
-																					</span>
+
+																				<div className="flex items-end justify-center">
+																					<div className="csug mt-2 flex flex-wrap gap-2">
+																						{data["suggestion"].split(",").map((data, i) => (
+																							<label key={i}>
+																								<input
+																									type="checkbox"
+																									className="hidden"
+																									onChange={() => handlesuggestionChange(data)}
+																								/>
+																								<span className="cursor-pointer rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																									{data}
+																								</span>
+																							</label>
+																						))}
+																						<input
+																							type="search"
+																							value={suggSkill}
+																							onChange={(e) => setsuggSkill(e.target.value)}
+																							placeholder="Other Skills Comma Seperated"
+																							className={
+																								`w-[48%] min-w-[15px] rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
+																								" " +
+																								`${suggSkill.length > 0 ? "border-primary" : "border-gray-500"}`
+																							}
+																						/>
+																						<input
+																							type="search"
+																							onInput={(e) => {
+																								e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 4);
+																							}}
+																							value={suggYear}
+																							onChange={(e) => setsuggYear(e.target.value)}
+																							placeholder="No of Min Experience Year"
+																							className={
+																								`w-[46%] min-w-[15px] rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
+																								" " +
+																								`${suggYear.length > 0 ? "border-primary" : "border-gray-500"}`
+																							}
+																						/>
+																					</div>
+																					{(suggSkill.length > 0 || suggYear.length > 0 || ssuggestion.length > 0) && (
+																						<div
+																							className="cursor-pointer whitespace-nowrap text-primary dark:text-lightBlue"
+																							onClick={() => handleSuggestionFinal()}
+																						>
+																							Go <i className="fa-solid fa-chevron-right"></i>
+																						</div>
+																					)}
 																				</div>
+
+																				{/* <br />
+																				<br /> */}
+
+																				{/* <div className="mt-2 flex flex-wrap gap-2">
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem, ipsum.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem, ipsum.
+																					</span>
+																					<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																						Lorem.
+																					</span>
+																				</div> */}
 																			</div>
 																		)}
 																	</div>
@@ -696,13 +920,13 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																	<>
 																		{/* Suggestions 2 */}
 																		<div
-																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 "
+																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-medium text-primary hover:bg-primary/50 hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue  dark:hover:bg-secondary/50 "
 																			onClick={() => handleSuggestion2("Move Candidates to next stage")}
 																		>
 																			Move Candidates to next stage
 																		</div>
 																		<div
-																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-bold text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white"
+																			className="my-2 mb-3 ml-auto w-fit max-w-[85%] cursor-pointer items-end whitespace-pre-line rounded border border-gray-400 bg-white px-6 py-3 text-justify text-base font-medium text-primary hover:bg-secondary/50 hover:text-white dark:bg-gray-700 dark:text-lightBlue dark:hover:bg-secondary/50 dark:hover:text-white"
 																			onClick={() => handleSuggestion2("Reject Candidates")}
 																		>
 																			Reject Candidates
@@ -801,7 +1025,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																						: data["vapplicant"][0]["arefid"]}
 																				</div>
 																			</div>
-																			<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-bold">
+																			<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
 																				<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
 
 																				{data["feedback"]["status"] === "Shortlist" && (
@@ -829,8 +1053,8 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																						charLimit={80}
 																						readMoreText={"Read more ▼"}
 																						readLessText={"Read less ▲"}
-																						readMoreClassName="font-bold"
-																						readLessClassName="font-bold"
+																						readMoreClassName="font-medium"
+																						readLessClassName="font-medium"
 																					>
 																						{data["feedback"]["feedback"]}
 																					</ReactReadMoreReadLess>
@@ -867,7 +1091,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													<>
 														<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
 															<div className="flex justify-between gap-4">
-																<span className="text-base font-bold text-white">{text}</span>
+																<span className="text-base font-medium text-white">{text}</span>
 																<span className="my-auto whitespace-nowrap text-center text-xs text-white">
 																	{moment().format("h:mm a")}
 																</span>
@@ -890,7 +1114,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 									onChange={settext}
 									// extra="dark:text-white dark:bg-gray-700 bg-lightblue"
 									extra=""
-									place="Type here for Results ..."
+									place={srcLang === "ja" ? "ここに結果を入力してください..." : "Type here for Results ..."}
 									disable={nloader || tmpLoader}
 									setcepress={setcepress}
 								/>
@@ -898,6 +1122,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 									<button
 										type="button"
 										className="ml-3 block flex w-[40px] items-center justify-center border-l border-black text-center text-[19px] leading-normal"
+										disabled={nloader || tmpLoader}
 										onClick={() => submitPrompt()}
 									>
 										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
