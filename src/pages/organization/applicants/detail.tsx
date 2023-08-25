@@ -482,7 +482,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="relative">
 						<div className="flex flex-wrap">
 							<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px]">

@@ -279,11 +279,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+				<div className={`layoutWrap p-4 xl:pl-4 xl:pr-0 xl:pt-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
-						<div className="mx-[-15px] flex flex-wrap">
+						<div className="flex flex-wrap gap-4">
 							{check1 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className=" w-full xl:max-w-[calc(50%-1rem)] ">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ApplicantDetails")}</h2>
@@ -362,7 +362,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check2 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
 									{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
@@ -430,7 +430,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check3 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
@@ -542,7 +542,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check4 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
 									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
@@ -672,7 +672,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{check5 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
@@ -740,7 +740,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								<></>
 							)}
 							{atsVersion && atsVersion != "enterprise" && (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)]">
 									<div className="flex h-full items-center justify-center rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
 										<div className="mx-auto w-full max-w-[400px]">
 											<div className="mb-2 flex items-center">
@@ -778,7 +778,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								</div>
 							)}
 							{check6 ? (
-								<div className="mb-[30px] w-full px-[15px] xl:max-w-[50%]">
+								<div className="w-full xl:max-w-[calc(50%-1rem)]">
 									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 										<div className="flex items-center justify-between p-6">
 											<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>

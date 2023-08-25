@@ -16,7 +16,9 @@ let newNovusStore: any = (set: any) => ({
 	visible: false,
 	tvisible: () => set((state: any) => ({ visible: !state.visible })),
 	nloader: true,
-	tnloader: () => set((state: any) => ({ nloader: !state.nloader }))
+	tnloader: () => set((state: any) => ({ nloader: !state.nloader })),
+	tab: 0,
+	settab: (id: any) => set(() => ({ tab: id }))
 });
 
 //#######

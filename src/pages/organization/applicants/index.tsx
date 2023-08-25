@@ -325,7 +325,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				></div>
 
 				{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
-					<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 						<div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
 							<div className="mx-auto w-full max-w-[300px] py-8 text-center">
 								<div className="mb-6 p-2">
@@ -353,7 +353,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				) : (
 					<>
 						{atsVersion === "starter" && refresh === 2 ? (
-							<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -468,7 +468,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 								</div>
 							</div>
 						) : (
-							<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 								{refresh === 2 && (
 									<>
 										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">

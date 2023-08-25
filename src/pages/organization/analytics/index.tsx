@@ -241,7 +241,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className={`layoutWrap p-4 lg:p-8` + " " + (visible && "mr-[calc(33%+2rem)]")}>
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<Tab.Group>
 							<div className={"border-b px-4 pt-3"}>
