@@ -604,6 +604,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																</span>
 															</div>
 														</div>
+														<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
 													</>
 												) : (
 													<div className="m-0 flex h-full w-full flex-wrap items-end p-0">
@@ -1320,21 +1321,21 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 														view
 													</a>
 												</div>
-												<div className="flex justify-center gap-2 pb-3 text-xs">
-													<div className="border border-borderColor p-1 font-bold">
-														<span className="pr-0.5">04</span>
+												<div className="flex flex-wrap justify-center gap-2 pb-3 text-xs">
+													<div className="border border-borderColor p-1 font-bold dark:bg-lightBlue">
+														<span className="pr-0.5 dark:text-black">04</span>
 														<span className="pl-0.5 text-[#197D00]">Hired</span>
 													</div>
-													<div className="border border-borderColor p-1 font-bold">
-														<span className="pr-0.5">04</span>
+													<div className="border border-borderColor p-1 font-bold dark:bg-lightBlue">
+														<span className="pr-0.5 dark:text-black">04</span>
 														<span className="pl-0.5 text-[#CB5805]">In Process</span>
 													</div>
-													<div className="border border-borderColor p-1 font-bold">
-														<span className="pr-0.5">04</span>
+													<div className="border border-borderColor p-1 font-bold dark:bg-lightBlue">
+														<span className="pr-0.5 dark:text-black">04</span>
 														<span className="pl-0.5 text-[#1A73E8]">In Pipeline</span>
 													</div>
-													<div className="border border-borderColor p-1 font-bold">
-														<span className="pr-0.5">04</span>
+													<div className="border border-borderColor p-1 font-bold dark:bg-lightBlue">
+														<span className="pr-0.5 dark:text-black">04</span>
 														<span className="pl-0.5 text-[#FF1515]">Rejected</span>
 													</div>
 												</div>
