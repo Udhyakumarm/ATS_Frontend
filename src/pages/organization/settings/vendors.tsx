@@ -17,6 +17,8 @@ import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 export default function Vendors() {
 	const { t } = useTranslation("common");
@@ -210,7 +212,11 @@ export default function Vendors() {
 			let localSearch = search.toLowerCase();
 			let arr = [];
 			for (let i = 0; i < vendors.length; i++) {
-				if (vendors[i]["company_name"].toLowerCase().includes(localSearch) || vendors[i]["email"].toLowerCase().includes(localSearch) || vendors[i]["agent_name"].toLowerCase().includes(localSearch)) {
+				if (
+					vendors[i]["company_name"].toLowerCase().includes(localSearch) ||
+					vendors[i]["email"].toLowerCase().includes(localSearch) ||
+					vendors[i]["agent_name"].toLowerCase().includes(localSearch)
+				) {
 					arr.push(vendors[i]);
 				}
 			}
@@ -297,6 +303,9 @@ export default function Vendors() {
 			});
 	}
 
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+
 	return (
 		<>
 			<Head>
@@ -306,11 +315,12 @@ export default function Vendors() {
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
 							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
@@ -338,7 +348,7 @@ export default function Vendors() {
 															"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary dark:text-white dark:border-white"
+																? "border-primary text-primary dark:border-white dark:text-white"
 																: "border-transparent text-darkGray dark:text-gray-400")
 														}
 													>
@@ -361,7 +371,7 @@ export default function Vendors() {
 																	"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
 																	" " +
 																	(selected
-																		? "border-primary text-primary dark:text-white dark:border-white"
+																		? "border-primary text-primary dark:border-white dark:text-white"
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>

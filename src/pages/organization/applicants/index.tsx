@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
-import { useEffect, Fragment, useRef, useState, Key } from "react";
+import { useEffect, Fragment, useRef, useState, Key, useMemo } from "react";
 import { useApplicantStore, useCalStore } from "@/utils/code";
 import Button from "@/components/Button";
 import { Listbox, Transition, Dialog } from "@headlessui/react";
@@ -25,13 +25,33 @@ import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
-import { useNovusStore } from "@/utils/novus";
+import { useNewNovusStore, useNovusStore } from "@/utils/novus";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
+import { debounce } from "lodash";
+import toastcomp from "@/components/toast";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
 ];
+
+const useDebounce = (value, delay) => {
+	const [debouncedValue, setDebouncedValue] = useState(value);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedValue(value);
+		}, delay);
+
+		// Clean up the timer on each value change (cleanup function)
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [value, delay]);
+
+	return debouncedValue;
+};
 
 export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
@@ -58,12 +78,6 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const listOfApplicant = useNovusStore((state: { listOfApplicant: any }) => state.listOfApplicant);
 	const setlistOfApplicant = useNovusStore((state: { setlistOfApplicant: any }) => state.setlistOfApplicant);
 
-	//int
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
-
-	var jobs = [{ id: 1, name: "All", refid: "ALL", unavailable: false }];
-
 	const [jobd, setjobd] = useState([{ id: 1, name: "All", refid: "ALL", unavailable: false }]);
 
 	const { data: session } = useSession();
@@ -71,6 +85,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const [refresh, setrefresh] = useState(0);
 	const [joblist, setjoblist] = useState(0);
 	const [selectedJob, setSelectedJob] = useState(jobd[0]);
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	useEffect(() => {
 		if (session) {
@@ -82,57 +98,87 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
-	const [applicantList, setapplicantList] = useState([]);
-	async function loadApplicant() {
-		let arr2 = [];
-		await axiosInstanceAuth2
-			.get(`/job/listapplicant/`)
-			.then(async (res) => {
-				console.log("!", "applicant", res.data);
-				let arr = res.data;
-				for (let i = 0; i < arr.length; i++) {
-					let dic = arr[i];
-					dic["type"] = "career";
-					arr2.push(dic);
+	const [fapplicantList, setfapplicantList] = useState([]);
+
+	async function loadJobFiter() {
+		try {
+			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-job/`)]);
+
+			res.data.map((job: any, i: any) => {
+				if (job.jobStatus === "Active" && !jobd.some((item) => item.refid === job.refid)) {
+					setjobd((oldArray) => [...oldArray, { id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false }]);
 				}
-				console.log("!", "applicant2", arr2);
-				setapplicantlist(arr2);
-				setapplicantList(arr2);
-				setrefresh(1);
-			})
-			.catch((err) => {
-				console.log(err);
-				setrefresh(1);
-				// setapplicantlist([]);
 			});
 
-		await axiosInstanceAuth2
-			.get(`/job/listvendorapplicant/`)
-			.then(async (res) => {
-				console.log("!", "vendorapplicant", res.data);
-				let arr = res.data;
-				for (let i = 0; i < arr.length; i++) {
-					let dic = arr[i];
-					dic["type"] = "vendor";
-					arr2.push(dic);
-				}
-				console.log("!", "vendorapplicant2", arr2);
-				setapplicantlist(arr2);
-				setapplicantList(arr2);
-				setrefresh(2);
-			})
-			.catch((err) => {
-				console.log(err);
-				setrefresh(2);
-				// setapplicantlist([]);
-			});
+			// res.data.map(
+			// 	(job: any, i: any) =>
+			// 		job.jobStatus === "Active" &&
+			// 		setjobd((oldArray) => [...oldArray, { id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false }])
+			// );
+
+			console.info("data", "applicant filter", jobd);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}
+
+	async function loadApplicant() {
+		try {
+			let arr = [];
+			var [res1, res2] = await Promise.all([
+				axiosInstanceAuth2.get(`/job/listapplicant/`),
+				axiosInstanceAuth2.get(`/job/listvendorapplicant/`)
+			]);
+
+			arr = res1.data
+				.map((data: any) => ({ ...data, type: "career" }))
+				.concat(res2.data.map((data: any) => ({ ...data, type: "vendor" })));
+
+			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+
+			console.log("data", "applicant list", arr);
+			setapplicantlist(arr);
+			setfapplicantList(arr);
+			setrefresh(2);
+		} catch (error) {
+			toastcomp("2", "error");
+			console.log("Error fetching data:", error);
+			setapplicantlist([]);
+			setfapplicantList([]);
+			setrefresh(2);
+		}
 	}
 
 	useEffect(() => {
 		if (token && token.length > 0 && refresh === 0) {
 			loadApplicant();
+			loadJobFiter();
 		}
 	}, [token, refresh]);
+
+	useEffect(() => {
+		if (selectedJob && fapplicantList.length > 0) {
+			setrefresh(1);
+			if (selectedJob.name === "All") {
+				console.log("data old f", applicantlist);
+				setapplicantlist(fapplicantList);
+				console.log("data new f", fapplicantList);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			} else {
+				console.log("data old f", fapplicantList);
+				const filteredArray = fapplicantList.filter((item) => item.job.refid.includes(selectedJob.refid));
+				console.log("data new f", filteredArray);
+				setapplicantlist(filteredArray);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			}
+		} else {
+			setrefresh(0);
+		}
+	}, [selectedJob]);
 
 	useEffect(() => {
 		console.log("applicantdetail", applicantdetail);
@@ -150,7 +196,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	useEffect(() => {
 		if (cardstatus.length > 0) {
 			if (cardstatus === "Interview" && cardarefid.length > 0) {
-				setIsCalendarOpen(true);
+				checkGCAL();
 				// setanimation(true);
 				// setkanbanAID(cardarefid);
 				// setTimeout(() => {
@@ -180,6 +226,89 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 
 	//timeslot
 
+	const [search, setsearch] = useState("");
+	const debouncedSearchTerm = useDebounce(search, 500);
+
+	useEffect(() => {
+		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		performSearch(debouncedSearchTerm);
+	}, [debouncedSearchTerm]);
+
+	const handleInputChange = (event) => {
+		const { value } = event.target;
+		setsearch(value);
+	};
+
+	function performSearch(query) {
+		if (query.length > 0) {
+			setrefresh(1);
+			let localSearch = query.toLowerCase();
+
+			const fApplicants = applicantlist.filter((applicant) => {
+				const type = applicant.type;
+				const firstName = type === "career" ? applicant.user.first_name : applicant.applicant.first_name;
+				const lastName = type === "career" ? applicant.user.last_name : applicant.applicant.last_name;
+
+				return (
+					(type === "career" || type === "vendor") && // Optionally add more types if needed
+					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
+				);
+			});
+
+			setapplicantlist(fApplicants);
+
+			setTimeout(() => {
+				setrefresh(2);
+			}, 500);
+		} else {
+			if (selectedJob.name === "All") {
+				// setrefresh(1);
+				setapplicantlist(fapplicantList);
+				setTimeout(() => {
+					setrefresh(2);
+				}, 500);
+			} else {
+				setSelectedJob(jobd[0]);
+			}
+		}
+	}
+
+	const [gcall, setgcall] = useState(false);
+
+	async function checkGCAL() {
+		setgcall(false);
+		await axiosInstanceAuth2
+			.post("gcal/connect-google/")
+			.then((res) => {
+				if (res.data.res === "success") {
+					setgcall(true);
+				}
+				setIsCalendarOpen(true);
+			})
+			.catch(() => {
+				setIsCalendarOpen(true);
+			});
+	}
+
+	async function coonectGoogleCal() {
+		setgcall(false);
+		await axiosInstanceAuth2.post("gcal/connect-google/").then((res) => {
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+				// setIsCalendarOpen(true);
+				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
 	return (
 		<>
 			<Head>
@@ -189,13 +318,14 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 
 				{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
-					<div className="layoutWrap p-4 lg:p-8">
+					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 						<div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
 							<div className="mx-auto w-full max-w-[300px] py-8 text-center">
 								<div className="mb-6 p-2">
@@ -223,7 +353,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 				) : (
 					<>
 						{atsVersion === "starter" && refresh === 2 ? (
-							<div className="layoutWrap p-4 lg:p-8">
+							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
@@ -338,126 +468,89 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 								</div>
 							</div>
 						) : (
-							<div className="layoutWrap">
-								{!upcomingSoon && (
-									<div className="flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-										<div className="mr-3">
-											<Listbox value={selectedJob} onChange={setSelectedJob}>
-												<Listbox.Button className={"text-lg font-bold"}>
-													{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-												</Listbox.Button>
-												<Transition
-													enter="transition duration-100 ease-out"
-													enterFrom="transform scale-95 opacity-0"
-													enterTo="transform scale-100 opacity-100"
-													leave="transition duration-75 ease-out"
-													leaveFrom="transform scale-100 opacity-100"
-													leaveTo="transform scale-95 opacity-0"
-												>
-													<Listbox.Options
-														className={
-															"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-														}
-													>
-														{joblist > 0 &&
-															jobd.map((item) => (
-																<Listbox.Option
-																	key={item.id}
-																	value={item}
-																	disabled={item.unavailable}
-																	className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-																>
-																	{({ selected }) => (
-																		<>
-																			<span className={` ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
-																			{selected ? (
-																				<span className="absolute left-3">
-																					<i className="fa-solid fa-check"></i>
-																				</span>
-																			) : null}
-																		</>
-																	)}
-																</Listbox.Option>
-															))}
-													</Listbox.Options>
-												</Transition>
-											</Listbox>
-										</div>
-										<aside className="flex items-center">
-											<div className="mr-4 flex items-center">
-												<p className="mr-3 font-semibold">Add Board</p>
-												<button
-													type="button"
-													className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
-													onClick={() => setCreateBoard(true)}
-												>
-													<i className="fa-solid fa-plus"></i>
-												</button>
-											</div>
-											<TeamMembers alen={applicantlist.length} />
-											{/* <div className="flex items-center">
-									<div className="-mr-4">
-										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-									</div>
-									<div className="-mr-4">
-										<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-									</div>
-									<Menu as="div" className="relative flex">
-										<Menu.Button className={"relative"}>
-											<Image src={userImg} alt="User" width={40} className="h-[40px] rounded-full object-cover" />
-											<span className="absolute left-0 top-0 block flex h-full w-full items-center justify-center rounded-full bg-[rgba(0,0,0,0.5)] text-sm text-white">
-												{applicantlist && <>+{applicantlist.length}</>}
-											</span>
-										</Menu.Button>
-										<Transition
-											as={Fragment}
-											enter="transition ease-out duration-100"
-											enterFrom="transform opacity-0 scale-95"
-											enterTo="transform opacity-100 scale-100"
-											leave="transition ease-in duration-75"
-											leaveFrom="transform opacity-100 scale-100"
-											leaveTo="transform opacity-0 scale-95"
-										>
-											<Menu.Items
-												className={
-													"absolute right-0 top-[100%] mt-2 max-h-[400px] w-[250px] overflow-y-auto rounded-normal bg-white py-2 shadow-normal"
-												}
-											>
-												<Menu.Item>
-													<div className="p-3">
-														<h6 className="border-b pb-2 font-bold">Team Members</h6>
-														<div>
-															{Array(5).fill(
-																<div className="mt-4 flex items-center">
-																	<Image
-																		src={userImg}
-																		alt="User"
-																		width={40}
-																		className="h-[40px] rounded-full object-cover"
-																	/>
-																	<aside className="pl-4 text-sm">
-																		<h5 className="font-bold">Anne Jacob</h5>
-																		<p className="text-darkGray">Hiring Manager</p>
-																	</aside>
-																</div>
-															)}
-														</div>
-													</div>
-												</Menu.Item>
-											</Menu.Items>
-										</Transition>
-									</Menu>
-								</div> */}
-										</aside>
-									</div>
-								)}
+							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 								{refresh === 2 && (
-									<Canban
-										applicantlist={applicantlist}
-										token={token}
-										setcardarefid={setcardarefid}
-										setcardstatus={setcardstatus}
-									/>
+									<>
+										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+											<div className="mr-3 flex">
+												<Listbox value={selectedJob} onChange={setSelectedJob}>
+													<Listbox.Button className={"text-lg font-bold"}>
+														{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+													</Listbox.Button>
+													<Transition
+														enter="transition duration-100 ease-out"
+														enterFrom="transform scale-95 opacity-0"
+														enterTo="transform scale-100 opacity-100"
+														leave="transition duration-75 ease-out"
+														leaveFrom="transform scale-100 opacity-100"
+														leaveTo="transform scale-95 opacity-0"
+													>
+														<Listbox.Options
+															className={
+																"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+															}
+														>
+															{jobd.length > 0 &&
+																jobd.map((item) => (
+																	<Listbox.Option
+																		key={item.id}
+																		value={item}
+																		disabled={item.unavailable}
+																		className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	>
+																		{({ selected }) => (
+																			<>
+																				<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
+																					{item.name}
+																				</span>
+																				{selected ? (
+																					<span className="absolute left-3 top-[10px]">
+																						<i className="fa-solid fa-check"></i>
+																					</span>
+																				) : null}
+																			</>
+																		)}
+																	</Listbox.Option>
+																))}
+														</Listbox.Options>
+													</Transition>
+												</Listbox>
+												<div className="ml-3">
+													<FormField
+														fieldType="input"
+														inputType="search"
+														placeholder={t("Words.Search")}
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														value={search}
+														// handleChange={(e) => setsearch(e.target.value)}
+														handleChange={handleInputChange}
+													/>
+												</div>
+											</div>
+											<aside className="flex items-center">
+												{!upcomingSoon && (
+													<div className="mr-4 flex items-center">
+														<p className="mr-3 font-semibold">Add Board</p>
+														<button
+															type="button"
+															className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
+															onClick={() => setCreateBoard(true)}
+														>
+															<i className="fa-solid fa-plus"></i>
+														</button>
+													</div>
+												)}
+												<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+											</aside>
+										</div>
+
+										<Canban
+											applicantlist={applicantlist}
+											token={token}
+											setcardarefid={setcardarefid}
+											setcardstatus={setcardstatus}
+										/>
+									</>
 								)}
 							</div>
 						)}
@@ -545,7 +638,68 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{integration && integration.length <= 0 ? (
+								{gcall ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Schedule Interview</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<TImeSlot
+												cardarefid={cardarefid}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+												type={"interview"}
+											/>
+										</div>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
+														<div
+															onClick={coonectGoogleCal}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</div>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
+								{/* {integration && integration.length > 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar integration={integration[0]} />
+									</Dialog.Panel>
+								) : (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
@@ -580,28 +734,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 											</div>
 										</div>
 									</Dialog.Panel>
-								) : (
-									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
-										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-											<h4 className="font-semibold leading-none">Schedule Interview</h4>
-											<button
-												type="button"
-												className="leading-none hover:text-gray-700"
-												onClick={() => setIsCalendarOpen(false)}
-											>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
-										</div>
-										<div className="p-8">
-											<TImeSlot
-												cardarefid={cardarefid}
-												axiosInstanceAuth2={axiosInstanceAuth2}
-												setIsCalendarOpen={setIsCalendarOpen}
-												type={"interview"}
-											/>
-										</div>
-									</Dialog.Panel>
-								)}
+								)} */}
 							</Transition.Child>
 						</div>
 					</div>

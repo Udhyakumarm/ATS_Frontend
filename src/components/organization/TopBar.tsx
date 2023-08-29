@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
 import OrganizationCalendar from "./OrganizationCalendar";
+import OrganizationCalendar2 from "./OrganizationCalendar2";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
@@ -17,14 +18,18 @@ import FormField from "../FormField";
 import ToggleLang from "../ToggleLang";
 import toastcomp from "../toast";
 import moment from "moment";
+import gcalIcon from "/public/images/social/google-cal-icon2.png";
+import novusIcon from "/public/images/novus1.png";
+import novusIcon12 from "/public/images/novus12.png";
+import { useNewNovusStore } from "@/utils/novus";
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
 ];
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
-export default function OrgTopBar({ todoLoadMore }: any) {
+export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -36,6 +41,9 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+
 	const type = useUserStore((state: { type: any }) => state.type);
 	const role = useUserStore((state: { role: any }) => state.role);
 	const user = useUserStore((state: { user: any }) => state.user);
@@ -43,29 +51,26 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
-	// const [integration, setIntegration] = useState([]);
 	const [toDoPopup, setToDoPopup] = useState(false);
 	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
-	useEffect(() => {
-		async function loadIntegrations() {
-			if (!session) return;
+	// useEffect(() => {
+	// 	async function loadIntegrations() {
+	// 		if (!session) return;
 
-			const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
-				.get("/api/integrations/calendar")
-				.then((response) => response.data)
-				.catch((err) => {
-					// console.log(err);
-					return { data: { success: false } };
-				});
+	// 		const { validatedIntegrations: newIntegrations } = await axiosInstance.next_api
+	// 			.get("/api/integrations/calendar")
+	// 			.then((response) => response.data)
+	// 			.catch((err) => {
+	// 				// console.log(err);
+	// 				return { data: { success: false } };
+	// 			});
 
-			setIntegration(newIntegrations);
-		}
+	// 		setIntegration(newIntegrations);
+	// 	}
 
-		loadIntegrations();
-	}, [router, session]);
+	// 	loadIntegrations();
+	// }, [router, session]);
 
 	const [token, settoken] = useState("");
 	const [count, setcount] = useState(0);
@@ -136,7 +141,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 	useEffect(() => {
 		if ((token && token.length > 0 && role && role.length > 0) || load) {
 			loadNotificationCount();
-			loadTodo();
+			loadTodo2();
 			if (load) toggleLoadMode(false);
 		}
 	}, [token, role, load]);
@@ -187,12 +192,14 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.post(`/chatbot/todo/create/`, fd)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
+				loadTodo();
 				toastcomp("Todo Created", "success");
 			})
 			.catch((err) => {
 				console.log("!", err);
+				loadTodo();
 				toastcomp("Todo Not Created", "error");
 			});
 	}
@@ -223,6 +230,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		setpriority(data["priority"]);
 		setdeadline(moment(data["deadline"]).format("YYYY-MM-DD").toString());
 		setToDoAddTaskPopup(true);
+		loadTodo();
 	}
 
 	useEffect(() => {
@@ -238,13 +246,15 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.put(`/chatbot/todo/${pk}/update/`, fd)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
 				toastcomp("Todo Updated", "success");
+				loadTodo();
 			})
 			.catch((err) => {
 				console.log("!", err);
 				toastcomp("Todo Not Updted", "error");
+				loadTodo();
 			});
 	}
 
@@ -252,9 +262,10 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 		await axiosInstanceAuth2
 			.delete(`/chatbot/todo/${pk}/delete/`)
 			.then(async (res) => {
-				loadTodo();
+				loadTodo2();
 				setToDoAddTaskPopup(false);
 				toastcomp("Todo Deleted", "success");
+				loadTodo();
 			})
 			.catch((err) => {
 				console.log("!", err);
@@ -262,7 +273,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 			});
 	}
 
-	async function loadTodo() {
+	async function loadTodo2() {
 		await axiosInstanceAuth2
 			.get(`/chatbot/list-todo/`)
 			.then(async (res) => {
@@ -301,6 +312,70 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 			setToDoPopup(true);
 		}
 	}, [todoLoadMore]);
+
+	const [gcall, setgcall] = useState(false);
+
+	async function checkGCAL() {
+		setgcall(false);
+		await axiosInstanceAuth2
+			.post("gcal/connect-google/")
+			.then((res) => {
+				if (res.data.res === "success") {
+					setgcall(true);
+				}
+				setIsCalendarOpen(true);
+			})
+			.catch(() => {
+				setIsCalendarOpen(true);
+			});
+	}
+
+	async function coonectGoogleCal() {
+		setgcall(false);
+		await axiosInstanceAuth2.post("gcal/connect-google/").then((res) => {
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+				// setIsCalendarOpen(true);
+				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+
+	const { gcal } = router.query;
+	const { res } = router.query;
+
+	useEffect(() => {
+		if (gcal && gcal === "success") {
+			toastcomp("google calendar integreated", "success");
+			checkGCAL();
+		} else if (gcal && gcal === "error") {
+			toastcomp("google calendar not integreated", "error");
+			if (res) {
+				if (res === "1") {
+					toastcomp("Reason : One GoogleCalander Object Found, Try Again after some time.", "error");
+				}
+				if (res === "2") {
+					toastcomp("Reason : Email not found in Org Data of ATS, Try Again after some time.", "error");
+				}
+				if (res === "3") {
+					toastcomp("Reason : Use current user email, Try Again after some time.", "error");
+				}
+				if (res === "4") {
+					toastcomp("Reason : Refresh token error, Try Again after some time.", "error");
+				}
+			}
+			setIsCalendarOpen(false);
+		}
+	}, [gcal, res]);
 
 	return (
 		<>
@@ -359,12 +434,13 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
 				</button>
+				{/* {version != "starter" && (
+					<button type="button" className="mr-5 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
+						<Image src={gcalIcon} alt={"gcal"} width={30} className="max-h-[30px]" />
+					</button>
+				)} */}
 				{version != "starter" && (
-					<button
-						type="button"
-						className="mr-6 text-darkGray dark:text-gray-400"
-						onClick={() => setIsCalendarOpen(true)}
-					>
+					<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
 					</button>
 				)}
@@ -378,9 +454,9 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 					</span>
 				</div>
 				<ToggleLang />
-				<button
+				{/* <button
 					type="button"
-					className="ml-4 rounded text-xl text-red-500 hover:text-red-600"
+					className=" rounded text-xl text-red-500 hover:text-red-600"
 					onClick={() => {
 						signOut();
 
@@ -390,6 +466,9 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 					}}
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
+				</button> */}
+				<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
+					<Image src={visible ? novusIcon12 : novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
 				</button>
 			</div>
 			<Transition.Root show={isCalendarOpen} as={Fragment}>
@@ -417,7 +496,50 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{integration && integration.length > 0 ? (
+								{gcall ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar2
+											axiosInstanceAuth2={axiosInstanceAuth2}
+											setIsCalendarOpen={setIsCalendarOpen}
+										/>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
+														<div
+															onClick={coonectGoogleCal}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</div>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
+								{/* {integration && integration.length > 0 ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
 										<OrganizationCalendar integration={integration[0]} />
 									</Dialog.Panel>
@@ -456,7 +578,7 @@ export default function OrgTopBar({ todoLoadMore }: any) {
 											</div>
 										</div>
 									</Dialog.Panel>
-								)}
+								)} */}
 							</Transition.Child>
 						</div>
 					</div>

@@ -12,36 +12,57 @@ export default function TImeSlot({
 	cardarefid,
 	axiosInstanceAuth2,
 	setIsCalendarOpen,
-	type
+	type,
+	eventID,
+	loadUpcomingInterview
 }: any) {
 	const [eventList, setEventList] = useState<Array<any>>([]);
 	const [currentDayEvents, setCurrentDayEvents] = useState<Array<any>>([]);
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
 
-	const getEventsList = useCallback(
-		async () =>
-			await axiosInstance.next_api
-				.post("/api/integrations/gcal/getEvents", {
-					googleCalendarIntegration: integration[0]
-				})
-				.then((response) => response.data)
-				.then((data) => {
-					setEventList(data.items);
-					// console.log("$", data.items);
-				})
-				.catch((err) => {
-					// console.log("$", err);
-				}),
-		[integration]
-	);
+	async function getEventsList() {
+		await axiosInstanceAuth2
+			.post("gcal/get-events/")
+			.then((res) => {
+				if (res.data.current && res.data.primary) {
+					const newArray = [...res.data.current.items, ...res.data.primary.items];
+					setEventList(newArray);
+					console.log("$", res.data);
+					// toastcomp("load success", "success");
+				} else {
+					setEventList([]);
+					// toastcomp("load partial success", "success");
+				}
+			})
+			.catch((err) => {
+				console.log("$", "err", err);
+				setEventList([]);
+				toastcomp("load error", "error");
+			});
+	}
+
+	// const integration = useCalStore((state: { integration: any }) => state.integration);
+	// const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
+
+	// const getEventsList = useCallback(
+	// 	async () =>
+	// 		await axiosInstance.next_api
+	// 			.post("/api/integrations/gcal/getEvents", {
+	// 				googleCalendarIntegration: integration[0]
+	// 			})
+	// 			.then((response) => response.data)
+	// 			.then((data) => {
+	// 				setEventList(data.items);
+	// 				// console.log("$", data.items);
+	// 			})
+	// 			.catch((err) => {
+	// 				// console.log("$", err);
+	// 			}),
+	// 	[integration]
+	// );
 
 	useEffect(() => {
-		integration && getEventsList();
-		if (integration && integration.length > 0) {
-			getEventsList();
-		}
-	}, [getEventsList, integration]);
+		getEventsList();
+	}, []);
 
 	const [date1, setdate1] = useState("");
 	const [time1, settime1] = useState("");
@@ -111,11 +132,17 @@ export default function TImeSlot({
 		fd.append("slot5", moment(date5 + " " + time5).format("YYYY-MM-DD HH:mm"));
 		fd.append("duration", interDuration);
 		fd.append("type", type);
+		fd.append("eventID", eventID);
 		axiosInstanceAuth2
-			.post(`/job/slot/create/${cardarefid}/`, fd)
+			.post(`/gcal/slot/create/${cardarefid}/`, fd)
 			.then((res) => {
 				toastcomp("Slot Created Successfully", "success");
 				setIsCalendarOpen(false);
+				try {
+					loadUpcomingInterview();
+				} catch {
+					console.log("error");
+				}
 			})
 			.catch((err) => {
 				toastcomp("Slot Not Created", "error");
@@ -156,14 +183,20 @@ export default function TImeSlot({
 			let currentdayEvent = [];
 			let dateParam2 = moment(dateParam);
 			for (let i = 0; i < eventList.length; i++) {
-				if (
-					dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day") &&
-					dateParam2.isSame(moment(eventList[i]["end"]["dateTime"]), "day")
-				) {
-					currentdayEvent.push(eventList[i]);
+				if (eventList[i]["start"]) {
+					console.log("allevent", "$", eventList[i]);
+					if (
+						dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day")
+						// &&
+						// dateParam2.isSame(moment(eventList[i]["end"]["dateTime"]), "day")
+					) {
+						currentdayEvent.push(eventList[i]);
+						console.log("currentdayEvent", "$", eventList[i]);
+					}
+				} else {
+					console.log("allcccevent", "$", eventList[i]);
 				}
 			}
-			// console.log("currentdayEvent", "$", currentdayEvent);
 
 			let timeSlots = [];
 			for (let i = 0; i < currentdayEvent.length; i++) {

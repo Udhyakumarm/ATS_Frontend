@@ -17,6 +17,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import UpcomingComp from "@/components/organization/upcomingComp";
+import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const people = [{ name: "Recruiter" }, { name: "Collaborator" }, { name: "Hiring Manager" }];
 
@@ -252,7 +255,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 							leaveTo="opacity-0"
 						>
 							<div className="border-t">
-								<div className="overflow-x-auto two">
+								<div className="two overflow-x-auto">
 									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 										<thead>
 											<tr>
@@ -283,6 +286,9 @@ export default function TeamMembers({ upcomingSoon }: any) {
 			</>
 		);
 	}
+
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 	return (
 		<>
 			<Head>
@@ -292,11 +298,12 @@ export default function TeamMembers({ upcomingSoon }: any) {
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
 							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
@@ -324,7 +331,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 															"mr-16 border-b-4 py-2 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary dark:text-white dark:border-white"
+																? "border-primary text-primary dark:border-white dark:text-white"
 																: "border-transparent text-darkGray dark:text-gray-400")
 														}
 													>
@@ -386,21 +393,21 @@ export default function TeamMembers({ upcomingSoon }: any) {
 												</div> */}
 											</div>
 										</div>
-										<div className="overflow-x-auto three">
-											<table cellPadding={"0"} cellSpacing={"0"} className="w-full min-w-[948px]">
-												<thead>
-													<tr>
-														{TeamTableHead.map((item, i) => (
-															<th className="border-b px-3 py-2 text-left" key={i}>
-																{item.title}
-															</th>
-														))}
-														<th className="border-b px-3 py-2 text-left"></th>
-													</tr>
-												</thead>
-												<tbody>
-													{filterTeam &&
-														filterTeam.map((data, i) => (
+										<div className="three overflow-x-auto">
+											{filterTeam && filterTeam.length > 0 ? (
+												<table cellPadding={"0"} cellSpacing={"0"} className="w-full min-w-[948px]">
+													<thead>
+														<tr>
+															{TeamTableHead.map((item, i) => (
+																<th className="border-b px-3 py-2 text-left" key={i}>
+																	{item.title}
+																</th>
+															))}
+															<th className="border-b px-3 py-2 text-left"></th>
+														</tr>
+													</thead>
+													<tbody>
+														{filterTeam.map((data, i) => (
 															<tr key={i}>
 																<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
 																<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
@@ -483,14 +490,36 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																	<input type="checkbox" />
 																</td> */}
 																<td className="border-b px-3 py-2 text-right">
-																	<button type="button" className="ml-2 text-red-500 hover:text-red-700" onClick={() => delTeamMember(data["id"], data["email"])}>
+																	<button
+																		type="button"
+																		className="ml-2 text-red-500 hover:text-red-700"
+																		onClick={() => delTeamMember(data["id"], data["email"])}
+																	>
 																		<i className={"fa-solid fa-trash"}></i>
 																	</button>
 																</td>
 															</tr>
 														))}
-												</tbody>
-											</table>
+													</tbody>
+												</table>
+											) : (
+												<>
+													<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+														<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+															<div className="mb-6 p-2">
+																<Image
+																	src={noApplicantdata}
+																	alt="No Data"
+																	width={300}
+																	className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																/>
+															</div>
+															<h5 className="mb-4 text-lg font-semibold">No Team Member</h5>
+															<p className="mb-2 text-sm text-darkGray">There are no Team Members as of now ...</p>
+														</div>
+													</div>
+												</>
+											)}
 										</div>
 									</Tab.Panel>
 									<Tab.Panel>
@@ -693,7 +722,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 									</div>
 									<div className="p-8">
 										<FormField fieldType="input" inputType="text" label={t("Words.Title")} />
-										<div className="overflow-x-auto one">
+										<div className="one overflow-x-auto">
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 												<thead>
 													<tr>

@@ -8,9 +8,27 @@ import calendarSetting from "/public/images/calendar-setting.png";
 import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import UpcomingComp from "@/components/organization/upcomingComp";
+import { useNewNovusStore } from "@/utils/novus";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 export default function Notifications({ atsVersion, userRole, upcomingSoon }: any) {
 	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
 	return (
 		<>
@@ -21,11 +39,12 @@ export default function Notifications({ atsVersion, userRole, upcomingSoon }: an
 			<main>
 				<OrgSideBar />
 				<OrgTopBar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b py-4">
 							<div className="mx-auto flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">

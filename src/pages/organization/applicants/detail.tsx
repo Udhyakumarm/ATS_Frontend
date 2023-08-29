@@ -26,6 +26,8 @@ import { useLangStore } from "@/utils/code";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
 import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -64,9 +66,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}, [session]);
 
-	//int
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 	const cancelButtonRef = useRef(null);
 
@@ -324,12 +323,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							chnageStatus("Interview", appdata["arefid"]);
 							//GCAL
 
-							setIsCalendarOpen(true);
+							checkGCAL();
 						}
 					} else {
 						chnageStatus("Interview", appdata["arefid"]);
 
-						setIsCalendarOpen(true);
+						checkGCAL();
 					}
 				}
 			})
@@ -430,6 +429,45 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}, [feedbackList, currentUser]);
 
+	const [gcall, setgcall] = useState(false);
+
+	async function checkGCAL() {
+		setgcall(false);
+		await axiosInstanceAuth2
+			.post("gcal/connect-google/")
+			.then((res) => {
+				if (res.data.res === "success") {
+					setgcall(true);
+				}
+				setIsCalendarOpen(true);
+			})
+			.catch(() => {
+				setIsCalendarOpen(true);
+			});
+	}
+
+	async function coonectGoogleCal() {
+		setgcall(false);
+		await axiosInstanceAuth2.post("gcal/connect-google/").then((res) => {
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+				// setIsCalendarOpen(true);
+				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+
 	return (
 		<>
 			<Head>
@@ -439,11 +477,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="relative">
 						<div className="flex flex-wrap">
 							<div className="w-full xl:max-w-[300px] 2xl:max-w-[400px]">
@@ -649,7 +688,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 														if (atsVersion === "starter") {
 															router.push("/organization/applicants/schedule-interview");
 														} else {
-															setIsCalendarOpen(true);
+															checkGCAL();
 														}
 													}}
 												/>
@@ -1928,7 +1967,68 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{integration && integration.length <= 0 ? (
+								{gcall ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Schedule Interview</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<TImeSlot
+												cardarefid={appdata["arefid"]}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+												type={"interview"}
+											/>
+										</div>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
+														<div
+															onClick={coonectGoogleCal}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</div>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
+								{/* {integration && integration.length > 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar integration={integration[0]} />
+									</Dialog.Panel>
+								) : (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
@@ -1963,28 +2063,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											</div>
 										</div>
 									</Dialog.Panel>
-								) : (
-									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
-										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-											<h4 className="font-semibold leading-none">Schedule Interview</h4>
-											<button
-												type="button"
-												className="leading-none hover:text-gray-700"
-												onClick={() => setIsCalendarOpen(false)}
-											>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
-										</div>
-										<div className="p-8">
-											<TImeSlot
-												cardarefid={appdata["arefid"]}
-												axiosInstanceAuth2={axiosInstanceAuth2}
-												setIsCalendarOpen={setIsCalendarOpen}
-												type={"interview"}
-											/>
-										</div>
-									</Dialog.Panel>
-								)}
+								)} */}
 							</Transition.Child>
 						</div>
 					</div>

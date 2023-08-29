@@ -3,7 +3,7 @@ import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
 import TeamMembers from "@/components/TeamMembers";
 import { Dialog, Listbox, Tab, Transition } from "@headlessui/react";
-import { ChangeEvent, Fragment, useRef, useState, useEffect } from "react";
+import { ChangeEvent, Fragment, useRef, useState, useEffect, useMemo } from "react";
 import FormField from "@/components/FormField";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -31,17 +31,29 @@ import noInterviewdata from "/public/images/no-data/iconGroup-3.png";
 import UpcomingComp from "@/components/organization/upcomingComp";
 import googleIcon from "/public/images/social/google-icon.png";
 import TImeSlot from "@/components/TimeSlot";
+import { debounce } from "lodash";
+import { useNewNovusStore } from "@/utils/novus";
+import OrgRSideBar from "@/components/organization/RSideBar";
+
+const useDebounce = (value, delay) => {
+	const [debouncedValue, setDebouncedValue] = useState(value);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedValue(value);
+		}, delay);
+
+		// Clean up the timer on each value change (cleanup function)
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [value, delay]);
+
+	return debouncedValue;
+};
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
-];
-
-const people = [
-	{ id: 1, name: "All", unavailable: false },
-	{ id: 2, name: "Software Developer", unavailable: false },
-	{ id: 3, name: "PHP Developer", unavailable: false },
-	{ id: 4, name: "ReactJS Developer", unavailable: true },
-	{ id: 5, name: "Web Designer", unavailable: false }
 ];
 
 export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: any) {
@@ -49,9 +61,6 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
 	const router = useRouter();
-	//int
-	const integration = useCalStore((state: { integration: any }) => state.integration);
-	const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -60,6 +69,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	const [editDetails, seteditDetails] = useState(false);
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+	const [jobd, setjobd] = useState([{ id: 1, name: "All", refid: "ALL", unavailable: false }]);
+
 	useEffect(() => {
 		if (session) {
 			settoken(session.accessToken as string);
@@ -67,12 +78,12 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 			settoken("");
 		}
 	}, [session]);
+	const [selectedJob, setSelectedJob] = useState(jobd[0]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const [applicantlist, setapplicantlist] = useState([]);
 	const [filterApplicants, setFilterApplicants] = useState([]);
-	const [search, setsearch] = useState("");
 	const [stepform, setstepform] = useState(false);
 	const [feedreject, setfeedreject] = useState(false);
 	const [offer, setoffer] = useState([]);
@@ -113,6 +124,22 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	const [bvalue, setbvalue] = useState("");
 	const htmlRef = useRef<HTMLDivElement>(null);
 
+	async function loadJobFiter() {
+		try {
+			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-job/`)]);
+
+			res.data.map((job: any, i: any) => {
+				if (job.jobStatus === "Active" && !jobd.some((item) => item.refid === job.refid)) {
+					setjobd((oldArray) => [...oldArray, { id: i + 2, name: job.jobTitle, refid: job.refid, unavailable: false }]);
+				}
+			});
+
+			console.info("data", "applicant filter", jobd);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}
+
 	async function loadApplicant() {
 		try {
 			let arr = [];
@@ -129,6 +156,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 					res2.data.filter((data: any) => data.status === "Offer").map((data: any) => ({ ...data, type: "vendor" }))
 				);
 
+			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+
 			console.info("data", "offer applicant", arr);
 			setapplicantlist(arr);
 			setFilterApplicants(arr);
@@ -141,6 +170,22 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 			console.error("Error fetching data:", error);
 		}
 	}
+
+	useEffect(() => {
+		if (selectedJob && applicantlist.length > 0) {
+			setstepform(false);
+			if (selectedJob.name === "All") {
+				console.log("old data", filterApplicants);
+				setFilterApplicants(applicantlist);
+				console.log("new data", applicantlist);
+			} else {
+				console.log("old data", applicantlist);
+				const filteredArray = applicantlist.filter((item) => item.job.refid.includes(selectedJob.refid));
+				setFilterApplicants(filteredArray);
+				console.log("new data", filteredArray);
+			}
+		}
+	}, [selectedJob]);
 
 	async function loadTeamMember() {
 		await axiosInstanceAuth2
@@ -300,35 +345,46 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 		}
 	}, [wordpath, currentApplicant]);
 
+	const [search, setsearch] = useState("");
+	const debouncedSearchTerm = useDebounce(search, 500);
+
 	useEffect(() => {
-		if (search.length > 0) {
-			// setshowOffer(false);
+		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		performSearch(debouncedSearchTerm);
+	}, [debouncedSearchTerm]);
+
+	const handleInputChange = (event) => {
+		const { value } = event.target;
+		setsearch(value);
+	};
+
+	function performSearch(query) {
+		setstepform(false);
+		if (query.length > 0) {
 			let localSearch = search.toLowerCase();
 			let arr = [];
-			for (let i = 0; i < applicantlist.length; i++) {
-				if (
-					applicantlist[i]["type"] === "career" &&
-					(applicantlist[i]["user"]["first_name"].toLowerCase().includes(localSearch) ||
-						applicantlist[i]["user"]["last_name"].toLowerCase().includes(localSearch))
-				) {
-					arr.push(applicantlist[i]);
-				}
-				if (
-					applicantlist[i]["type"] === "vendor" &&
-					(applicantlist[i]["applicant"]["first_name"].toLowerCase().includes(localSearch) ||
-						applicantlist[i]["applicant"]["last_name"].toLowerCase().includes(localSearch))
-				) {
-					arr.push(applicantlist[i]);
-				}
-			}
-			setFilterApplicants(arr);
+
+			const fApplicants = filterApplicants.filter((applicant) => {
+				const type = applicant.type;
+				const firstName = type === "career" ? applicant.user.first_name : applicant.applicant.first_name;
+				const lastName = type === "career" ? applicant.user.last_name : applicant.applicant.last_name;
+
+				return (
+					(type === "career" || type === "vendor") && // Optionally add more types if needed
+					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
+				);
+			});
+
+			setFilterApplicants(fApplicants);
 		} else {
+			setSelectedJob(jobd[0]);
 			setFilterApplicants(applicantlist);
 		}
-	}, [search]);
+	}
 
 	useEffect(() => {
 		if (token && token.length > 0) {
+			loadJobFiter();
 			loadApplicant();
 			loadTeamMember();
 			loadOrganizationProfile();
@@ -777,6 +833,69 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 		});
 	};
 
+	const getColorCode = (number) => {
+		// Function to convert an RGB array to a hex color code
+		const rgbToHex = (rgb) =>
+			"#" + rgb.map((value) => Math.min(255, Math.max(0, value)).toString(16).padStart(2, "0")).join("");
+
+		let colorVariant = [255, 0, 0]; // Default red color
+
+		if (number > 70) {
+			const greenValue = Math.round((number - 70) * 5.1); // Map 70-100 to 0-255
+			colorVariant = [255 - greenValue, 255, 0]; // Bright green variant
+		} else if (number > 50) {
+			const yellowValue = Math.round((number - 50) * 5.1); // Map 50-70 to 0-255
+			colorVariant = [255, 255 - yellowValue, 0]; // Yellow variant
+		} else {
+			// const redValue = Math.round((75 - number) * 5.1); // Map 0-50 to 0-255
+			const redValue = Math.round((number - 0) * 5.1); // Map 0-40 to 0-255
+			colorVariant = [255, 255 - redValue, 0]; // Yellow variant
+		}
+
+		// Convert the RGB array to a hex color code
+		const hexColor = rgbToHex(colorVariant);
+		return hexColor;
+	};
+
+	const [gcall, setgcall] = useState(false);
+
+	async function checkGCAL() {
+		setgcall(false);
+		await axiosInstanceAuth2
+			.post("gcal/connect-google/")
+			.then((res) => {
+				if (res.data.res === "success") {
+					setgcall(true);
+				}
+				setIsCalendarOpen(true);
+			})
+			.catch(() => {
+				setIsCalendarOpen(true);
+			});
+	}
+
+	async function coonectGoogleCal() {
+		setgcall(false);
+		await axiosInstanceAuth2.post("gcal/connect-google/").then((res) => {
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+				// setIsCalendarOpen(true);
+				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
+	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+
 	return (
 		<>
 			<Head>
@@ -786,77 +905,83 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
-					{!upcomingSoon && (
-						<div className="relative z-[10] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-							<div className="mr-3">
-								<Listbox value={selectedPerson} onChange={setSelectedPerson}>
-									<Listbox.Button className={"text-lg font-bold"}>
-										{selectedPerson["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-									</Listbox.Button>
-									<Transition
-										enter="transition duration-100 ease-out"
-										enterFrom="transform scale-95 opacity-0"
-										enterTo="transform scale-100 opacity-100"
-										leave="transition duration-75 ease-out"
-										leaveFrom="transform scale-100 opacity-100"
-										leaveTo="transform scale-95 opacity-0"
-									>
-										<Listbox.Options
-											className={
-												"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-											}
-										>
-											{people.map((item) => (
-												<Listbox.Option
-													key={item.id}
-													value={item}
-													disabled={item.unavailable}
-													className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-												>
-													{({ selected }) => (
-														<>
-															<span className={` ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
-															{selected ? (
-																<span className="absolute left-3">
-																	<i className="fa-solid fa-check"></i>
-																</span>
-															) : null}
-														</>
-													)}
-												</Listbox.Option>
-											))}
-										</Listbox.Options>
-									</Transition>
-								</Listbox>
-							</div>
-							<aside className="flex items-center">
-								<TeamMembers alen={"5"} />
-							</aside>
-						</div>
-					)}
-
+				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					{applicantlist && applicantlist.length > 0 ? (
 						<>
-							<div className="relative z-[9] flex flex-wrap p-4 lg:p-8">
+							<div className="relative z-[10] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+								<div className="mr-3 flex">
+									<Listbox value={selectedJob} onChange={setSelectedJob}>
+										<Listbox.Button className={"text-lg font-bold"}>
+											{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+										</Listbox.Button>
+										<Transition
+											enter="transition duration-100 ease-out"
+											enterFrom="transform scale-95 opacity-0"
+											enterTo="transform scale-100 opacity-100"
+											leave="transition duration-75 ease-out"
+											leaveFrom="transform scale-100 opacity-100"
+											leaveTo="transform scale-95 opacity-0"
+										>
+											<Listbox.Options
+												className={
+													"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+												}
+											>
+												{jobd.map((item) => (
+													<Listbox.Option
+														key={item.id}
+														value={item}
+														disabled={item.unavailable}
+														className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+													>
+														{({ selected }) => (
+															<>
+																<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
+																{selected ? (
+																	<span className="absolute left-3 top-[10px]">
+																		<i className="fa-solid fa-check"></i>
+																	</span>
+																) : null}
+															</>
+														)}
+													</Listbox.Option>
+												))}
+											</Listbox.Options>
+										</Transition>
+									</Listbox>
+									<div className="ml-3">
+										<FormField
+											fieldType="input"
+											inputType="search"
+											placeholder={t("Words.Search")}
+											icon={<i className="fa-solid fa-magnifying-glass"></i>}
+											value={search}
+											// handleChange={(e) => setsearch(e.target.value)}
+											handleChange={handleInputChange}
+										/>
+									</div>
+								</div>
+								<aside className="flex items-center">
+									<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+								</aside>
+							</div>
+							<div className="relative z-[9] flex flex-wrap py-4 lg:py-8">
 								<div className="mb-4 w-full xl:max-w-[280px]">
-									<FormField
-										fieldType="input"
-										inputType="search"
-										placeholder={t("Words.Search")}
-										icon={<i className="fa-solid fa-magnifying-glass"></i>}
-										value={search}
-										handleChange={(e) => setsearch(e.target.value)}
-									/>
 									<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
 										{filterApplicants ? (
 											filterApplicants.map((data, i) => (
 												<div
-													className="mb-4 cursor-pointer rounded-normal bg-white px-4 py-2 shadow-normal last:mb-0 dark:bg-gray-800"
+													className=" mb-4  cursor-pointer rounded-normal bg-white px-4 py-2 shadow-normal dark:bg-gray-800 "
+													style={{
+														// boxShadow: `0px -1px 5px 0px  ${getColorCode(data.percentage_fit)}`, //shadow
+														borderColor: getColorCode(data.percentage_fit),
+														borderWidth: ".20rem 0 0 0"
+													}}
 													key={i}
 													onClick={() => {
 														offerDetail(data["arefid"], data);
@@ -888,15 +1013,18 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 															{data["type"]}
 														</aside>
 													</div>
-													<p
-														className="mb-2 cursor-pointer text-[12px] text-darkGray dark:text-gray-400"
-														onClick={() => {
-															navigator.clipboard.writeText(data["arefid"]);
-															toastcomp("ID Copied to clipboard", "success");
-														}}
-													>
-														ID - {data["arefid"]}
-													</p>
+													<div className="flex justify-between">
+														<p
+															className="mb-2 cursor-pointer text-[12px] text-darkGray dark:text-gray-400"
+															onClick={() => {
+																navigator.clipboard.writeText(data["arefid"]);
+																toastcomp("ID Copied to clipboard", "success");
+															}}
+														>
+															ID - {data["arefid"]}
+														</p>
+														<p className="text-[12px] ">{data["percentage_fit"]}%</p>
+													</div>
 													<div className="flex items-center justify-between">
 														<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
@@ -913,6 +1041,28 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 										)}
 									</div>
 								</div>
+								{!stepform && filterApplicants.length <= 0 && (
+									<div className="w-full xl:max-w-[calc(100%)] xl:pl-6">
+										<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
+											<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
+												<div className="flex min-h-full items-center justify-center">
+													<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+														<div className="mb-6 p-2">
+															<Image
+																src={noInterviewdata}
+																alt="No Data"
+																width={300}
+																className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+															/>
+														</div>
+														<h5 className="mb-4 text-lg font-semibold">No Applicants Found</h5>
+														<p className="mb-2 text-sm text-darkGray">There are no Applicants according filters</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								)}
 								{stepform && (
 									<div className="w-full xl:max-w-[calc(100%-280px)] xl:pl-6">
 										<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
@@ -931,7 +1081,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 														</>
 													)}
 												</span>
-												<button onClick={() => toastcomp(step, "success")}>STEP</button>
+												{/* <button onClick={() => toastcomp(step, "success")}>STEP</button> */}
 												<span>Source : {currentApplicant["type"]}</span>
 											</h2>
 
@@ -1899,7 +2049,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																					<Button
 																						label={"Schedule Offer Call"}
 																						btnType="button"
-																						handleClick={() => setIsCalendarOpen(true)}
+																						handleClick={() => checkGCAL()}
 																					/>
 																				</div>
 																			</>
@@ -2433,7 +2583,68 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{integration && integration.length <= 0 ? (
+								{gcall ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Schedule Interview</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<TImeSlot
+												cardarefid={currentApplicant["arefid"]}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												setIsCalendarOpen={setIsCalendarOpen}
+												type={"offer"}
+											/>
+										</div>
+									</Dialog.Panel>
+								) : (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
+											<button
+												type="button"
+												className="leading-none hover:text-gray-700"
+												onClick={() => setIsCalendarOpen(false)}
+											>
+												<i className="fa-solid fa-xmark"></i>
+											</button>
+										</div>
+										<div className="p-8">
+											<div className="flex flex-wrap">
+												{CalendarIntegrationOptions.map((integration, i) => (
+													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
+														<div
+															onClick={coonectGoogleCal}
+															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
+														>
+															<Image
+																src={integration.icon}
+																alt={integration.provider}
+																width={150}
+																className="mr-4 max-h-[24px] w-auto"
+															/>
+															<span className="min-w-[60px] rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-2 py-1 text-[12px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue">
+																{`Integrate ${integration.provider}`}
+															</span>
+														</div>
+													</div>
+												))}
+											</div>
+										</div>
+									</Dialog.Panel>
+								)}
+								{/* {integration && integration.length > 0 ? (
+									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
+										<OrganizationCalendar integration={integration[0]} />
+									</Dialog.Panel>
+								) : (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Integrate Calendar</h4>
@@ -2468,28 +2679,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 											</div>
 										</div>
 									</Dialog.Panel>
-								) : (
-									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
-										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-											<h4 className="font-semibold leading-none">Schedule Offer Call</h4>
-											<button
-												type="button"
-												className="leading-none hover:text-gray-700"
-												onClick={() => setIsCalendarOpen(false)}
-											>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
-										</div>
-										<div className="p-8">
-											<TImeSlot
-												cardarefid={currentApplicant["arefid"]}
-												axiosInstanceAuth2={axiosInstanceAuth2}
-												setIsCalendarOpen={setIsCalendarOpen}
-												type={"offer"}
-											/>
-										</div>
-									</Dialog.Panel>
-								)}
+								)} */}
 							</Transition.Child>
 						</div>
 					</div>
