@@ -274,7 +274,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
 				<Orgtopbar todoLoadMore={todoLoadMore} loadTodo={loadTodo} />
-				<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />
+				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"

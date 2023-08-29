@@ -112,7 +112,7 @@ export default function Card(props: any) {
 								toastcomp("ID Copied to clipboard", "success");
 							}}
 						>
-							ID - {props["data"]["arefid"]}
+							{props["data"]["arefid"]}
 						</p>
 						<p className="text-[12px] ">{props["data"]["percentage_fit"]}%</p>
 					</div>

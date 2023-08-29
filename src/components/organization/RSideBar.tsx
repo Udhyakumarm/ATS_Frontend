@@ -13,17 +13,24 @@ import ReactReadMoreReadLess from "react-read-more-read-less";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "../toast";
 import moment from "moment";
+import AnalyticsComp from "./AnalyticsComp";
 
 export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const router = useRouter();
 
-	const [chat, setchat] = useState([]);
+	// const [chat, setchat] = useState([]);
+	// const [achat, setachat] = useState([]);
 	const [text, settext] = useState("");
 	const [step1, setstep1] = useState(false);
 
 	const cancelButtonRef = useRef(null);
 	const chatContainerRef = useRef(null);
+	const analyticsChatContainerRef = useRef(null);
 
+	const chat = useNewNovusStore((state: { chat: any }) => state.chat);
+	const setchat = useNewNovusStore((state: { setchat: any }) => state.setchat);
+	const achat = useNewNovusStore((state: { achat: any }) => state.achat);
+	const setachat = useNewNovusStore((state: { setachat: any }) => state.setachat);
 	const tab = useNewNovusStore((state: { tab: any }) => state.tab);
 	const settab = useNewNovusStore((state: { settab: any }) => state.settab);
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
@@ -63,14 +70,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 		}
 	}, [chat]);
 
-	// useEffect(() => {
-	// 	if (chatContainerRef && !nloader) {
-	// 		chatContainerRef.current?.scrollTo({
-	// 			top: chatContainerRef.current.scrollHeight,
-	// 			behavior: "smooth"
-	// 		});
-	// 	}
-	// }, [nloader]);
+	useEffect(() => {
+		if (analyticsChatContainerRef && achat.length > 0 && role != "Hiring Manager" && version === "enterprise") {
+			analyticsChatContainerRef.current?.scrollTo({
+				top: analyticsChatContainerRef.current.scrollHeight,
+				behavior: "smooth"
+			});
+		}
+	}, [achat]);
 
 	//load chat
 	async function loadChat() {
@@ -88,13 +95,47 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 			})
 			.catch((err) => {
 				console.log(err);
+				setchat([]);
+			});
+	}
+
+	//load Analytics chat
+	async function loadAnalyticsChat() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/listachat/`)
+			.then(async (res) => {
+				console.log("&&", "Analytics chat", res.data);
+				setachat(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setachat([]);
+			});
+	}
+
+	const [analyticsdata, setanalyticsdata] = useState({});
+
+	//load Analytics chat
+	async function loadAnalyticsNumber1() {
+		await axiosInstanceAuth2
+			.post(`/chatbot/all-analytics/`)
+			.then(async (res) => {
+				console.log("&&", "analytics", res.data);
+				setanalyticsdata(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
 			});
 	}
 
 	useEffect(() => {
 		if (visible) {
 			if (nloader) {
-				orgEmbedding().then(() => loadChat().then(() => tnloader()));
+				if (tab === 0) {
+					orgEmbedding().then(() => loadChat().then(() => tnloader()));
+				} else if (tab === 1) {
+					orgEmbedding().then(() => loadAnalyticsChat().then(() => tnloader()));
+				}
 			}
 		} else {
 			if (!nloader) {
@@ -102,6 +143,16 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 			}
 		}
 	}, [visible]);
+
+	useEffect(() => {
+		if (!nloader) {
+			if (tab === 0) {
+				loadChat();
+			} else if (tab === 1) {
+				loadAnalyticsChat().then(() => loadAnalyticsNumber1());
+			}
+		}
+	}, [tab]);
 
 	function filterBase1(param1: any, param2: any) {
 		// Combine the two arrays
@@ -126,24 +177,45 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 		// });
 
 		toastcomp(text, "success");
-		const fd = new FormData();
-		fd.append("prompt", text);
-		await axiosInstanceAuth2
-			.post(`/chatbot/applicant-flow/`, fd)
-			.then(async (res) => {
-				settmpLoader(false);
-				settext("");
+		if (tab === 0) {
+			const fd = new FormData();
+			fd.append("prompt", text);
+			await axiosInstanceAuth2
+				.post(`/chatbot/applicant-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
 
-				if (res.data.response && res.data.response === "Success") {
-					loadChat();
-				}
-			})
-			.catch((err) => {
-				settmpLoader(false);
-				settext("");
+					if (res.data.response && res.data.response === "Success") {
+						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
 
-				console.log(err);
-			});
+					console.log(err);
+				});
+		} else if (tab === 1) {
+			const fd = new FormData();
+			fd.append("prompt", text);
+			await axiosInstanceAuth2
+				.post(`/chatbot/analytics-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadAnalyticsChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
+		}
 	}
 
 	const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -304,51 +376,6 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 					console.log(err);
 				});
 		}
-		// else if (baseText === "Python") {
-		// 	var prompt = `show me applicants having skills python`;
-		// 	settmpLoader(true);
-		// 	settext(prompt);
-		// 	const fd = new FormData();
-		// 	fd.append("prompt", prompt);
-		// 	await axiosInstanceAuth2
-		// 		.post(`/chatbot/applicant-flow/`, fd)
-		// 		.then(async (res) => {
-		// 			settmpLoader(false);
-		// 			settext("");
-
-		// 			if (res.data.response && res.data.response === "Success") {
-		// 				loadChat();
-		// 			}
-		// 		})
-		// 		.catch((err) => {
-		// 			settmpLoader(false);
-		// 			settext("");
-
-		// 			console.log(err);
-		// 		});
-		// } else if (baseText === "HTML, CSS") {
-		// 	var prompt = `show me applicants having skills html, css`;
-		// 	settmpLoader(true);
-		// 	settext(prompt);
-		// 	const fd = new FormData();
-		// 	fd.append("prompt", prompt);
-		// 	await axiosInstanceAuth2
-		// 		.post(`/chatbot/applicant-flow/`, fd)
-		// 		.then(async (res) => {
-		// 			settmpLoader(false);
-		// 			settext("");
-
-		// 			if (res.data.response && res.data.response === "Success") {
-		// 				loadChat();
-		// 			}
-		// 		})
-		// 		.catch((err) => {
-		// 			settmpLoader(false);
-		// 			settext("");
-
-		// 			console.log(err);
-		// 		});
-		// }
 	}
 
 	const [dataname, setdataname] = useState([]);
@@ -467,7 +494,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 											" " +
 											`${tab === 0 ? "border-b-2 border-[#5500FF]" : ""}`
 										}
-										onClick={() => settab(0)}
+										onClick={() => {
+											if (!tmpLoader) settab(0);
+										}}
 									>
 										{tab === 0 ? (
 											<>
@@ -509,7 +538,8 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 														background: "linear-gradient(45deg, #2200F5 0%, #5236FF 0.01%, #168FFF 100%)",
 														backgroundClip: "text",
 														WebkitBackgroundClip: "text",
-														WebkitTextFillColor: "transparent"
+														WebkitTextFillColor: "transparent",
+														fontWeight: "900"
 													}}
 												>
 													Flow
@@ -534,9 +564,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 											" " +
 											`${tab === 1 ? "border-b-2 border-[#5500FF]" : ""}`
 										}
-										onClick={() => settab(1)}
+										onClick={() => {
+											if (!tmpLoader) settab(1);
+										}}
 									>
-										{/* <div className={`my-auto flex h-full items-center gap-1 px-4 cursor-pointer` + " " + ${tab === 1 && "border-b-2 border-[#5500FF]"}} onClick={()=>settab(1)}> */}
 										{tab === 1 ? (
 											<>
 												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 18 20" fill="none">
@@ -565,7 +596,8 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 														background: "linear-gradient(45deg, #2200F5 0%, #5236FF 0.01%, #168FFF 100%)",
 														backgroundClip: "text",
 														WebkitBackgroundClip: "text",
-														WebkitTextFillColor: "transparent"
+														WebkitTextFillColor: "transparent",
+														fontWeight: "900"
 													}}
 												>
 													Analytics
@@ -1206,14 +1238,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 								{tab === 1 && (
 									<div
 										className={`h-[calc(100vh-calc(58px+45px+0.25rem+60px+70px+1rem))] overflow-y-auto px-4 py-7`}
-										ref={chatContainerRef}
+										ref={analyticsChatContainerRef}
 									>
 										<div id="append_div_2">
 											{/* novus res */}
 											<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
 												<div className="flex flex-nowrap justify-between gap-4">
-													<span className="text-justify text-base font-medium">Showing Hiring Analytics</span>
-													<span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span>
+													<span className="text-left text-base font-medium">Showing Hiring Analytics</span>
+													{/* <span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span> */}
 												</div>
 											</div>
 											{/* applicant */}
@@ -1221,7 +1253,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 												<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["hired"] ? analyticsdata["hired"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Hired
 															</button>
@@ -1229,7 +1263,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["shortlist"] ? analyticsdata["shortlist"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Shortlisted
 															</button>
@@ -1237,7 +1273,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["offered"] ? analyticsdata["offered"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Offered
 															</button>
@@ -1245,7 +1283,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["rejected"] ? analyticsdata["rejected"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Rejected
 															</button>
@@ -1253,7 +1293,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["hiring"] ? analyticsdata["hiring"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Hiring %
 															</button>
@@ -1261,7 +1303,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["decline"] ? analyticsdata["decline"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Decline
 															</button>
@@ -1269,49 +1313,101 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													</span>
 													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
 														<div className="flex items-center">
-															<span className="px-1.5 font-semibold">34</span>
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["interview"] ? analyticsdata["interview"] : <>0</>}
+															</span>
 															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
 																Interview
 															</button>
 														</div>
 													</span>
 												</div>
-												<div className=" px-5 py-3">
-													<p className="text-sm font-bold">Hiring Analytics for Jobs</p>
-													<div className="mt-2 flex flex-wrap gap-2">
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-															Software Developer
-														</span>
-														<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-															Product Manager
-														</span>
-														<input
-															type="search"
-															// value={suggSkill}
-															// onChange={(e) => setsuggSkill(e.target.value)}
-															placeholder="Search by Job Title"
-															className={
-																`w-[48%] min-w-[15px] rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
-																" " +
-																`${suggSkill.length > 0 ? "border-primary" : "border-gray-500"}`
-															}
-														/>
+												{achat.length <= 0 && (
+													<div className=" px-5 py-3">
+														<p className="text-sm font-bold">Hiring Analytics for Jobs</p>
+														<div className="mt-2 flex flex-wrap gap-2">
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																Software Developer
+															</span>
+															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
+																Product Manager
+															</span>
+															<input
+																type="search"
+																// value={suggSkill}
+																// onChange={(e) => setsuggSkill(e.target.value)}
+																placeholder="Search by Job Title"
+																className={
+																	`w-[48%] min-w-[15px] rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
+																	" " +
+																	`${suggSkill.length > 0 ? "border-primary" : "border-gray-500"}`
+																}
+															/>
+														</div>
 													</div>
-												</div>
+												)}
 											</div>
 
+											{achat.length > 0 &&
+												achat.map((data, i) => (
+													<>
+														{data["message"] && data["message"].length > 0 && (
+															<>
+																<div
+																	className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg"
+																	key={i}
+																>
+																	<div className="flex justify-between gap-4">
+																		<span className="text-left text-base font-medium text-white">
+																			{data["message"]}
+																		</span>
+																		<span className="my-auto whitespace-nowrap text-center text-xs text-white">
+																			{moment(data["timestamp"]).format("h:mm a")}
+																		</span>
+																	</div>
+																</div>
+
+																{!data["response"] && data["job"] && (
+																	<>
+																		{data["job"].length > 0 &&
+																			data["job"].map((data2, j) => (
+																				<div key={j}>
+																					<AnalyticsComp data2={data2} axiosInstanceAuth2={axiosInstanceAuth2} />
+																				</div>
+																			))}
+																	</>
+																)}
+															</>
+														)}
+													</>
+												))}
+
+											{tmpLoader && (
+												<>
+													<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+														<div className="flex justify-between gap-4">
+															<span className="text-base font-medium text-white">{text}</span>
+															<span className="my-auto whitespace-nowrap text-center text-xs text-white">
+																{moment().format("h:mm a")}
+															</span>
+														</div>
+													</div>
+													<div className="typeLoader1 my-2 mb-3 bg-white text-left shadow-lg dark:bg-gray-700"></div>
+												</>
+											)}
+
 											{/* user chat */}
-											<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+											{/* <div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
 												<div className="flex justify-between gap-4">
 													<span className="text-justify text-base font-medium text-white">
 														Show Hiring Analytics for Software Developer Job
 													</span>
 													<span className="my-auto whitespace-nowrap text-center text-xs text-white">3:01 PM</span>
 												</div>
-											</div>
+											</div> */}
 
 											{/* job */}
-											<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+											{/* <div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
 												<div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3 text-xs">
 													<div className="flex items-center gap-2">
 														<span className="text-sm font-bold">Software Developer</span>
@@ -1339,7 +1435,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 														<span className="pl-0.5 text-[#FF1515]">Rejected</span>
 													</div>
 												</div>
-											</div>
+											</div> */}
 										</div>
 									</div>
 								)}

@@ -18,7 +18,11 @@ let newNovusStore: any = (set: any) => ({
 	nloader: true,
 	tnloader: () => set((state: any) => ({ nloader: !state.nloader })),
 	tab: 0,
-	settab: (id: any) => set(() => ({ tab: id }))
+	settab: (id: any) => set(() => ({ tab: id })),
+	chat: [],
+	setchat: (id: any) => set(() => ({ chat: id })),
+	achat: [],
+	setachat: (id: any) => set(() => ({ achat: id }))
 });
 
 //#######
