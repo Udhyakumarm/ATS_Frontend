@@ -124,6 +124,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	const [bvalue, setbvalue] = useState("");
 	const htmlRef = useRef<HTMLDivElement>(null);
 
+	const offerArefid = useNewNovusStore((state: { offerArefid: any }) => state.offerArefid);
+	const setofferArefid = useNewNovusStore((state: { setofferArefid: any }) => state.setofferArefid);
+	const offerData = useNewNovusStore((state: { offerData: any }) => state.offerData);
+	const setofferData = useNewNovusStore((state: { setofferData: any }) => state.setofferData);
+
 	async function loadJobFiter() {
 		try {
 			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-job/`)]);
@@ -385,7 +390,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	useEffect(() => {
 		if (token && token.length > 0) {
 			loadJobFiter();
-			loadApplicant();
+			loadApplicant().then(() => {
+				if (offerArefid && offerArefid.length > 0) {
+					offerDetail(offerArefid, offerData);
+				}
+			});
 			loadTeamMember();
 			loadOrganizationProfile();
 		}
@@ -493,21 +502,48 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 					setapproval(fstring.join(","));
 				}
 			} else {
+				console.log("data", "Zustand", "current_data", current_data);
 				setstep(1);
 				setomf([]);
-				setdesignation("");
-				setdept("");
+				if (current_data["job"]["jobTitle"]) {
+					setdesignation(current_data["job"]["jobTitle"]);
+				} else {
+					setdesignation("");
+				}
+				if (current_data["job"]["jobDepartment"]) {
+					setdept(current_data["job"]["jobDepartment"]);
+				} else {
+					setdept("");
+				}
+				if (current_data["job"]["jobGroupDivision"]) {
+					setdiv(current_data["job"]["jobGroupDivision"]);
+				} else {
+					setdiv("");
+				}
+				if (current_data["job"]["jobEmploymentType"]) {
+					setctype(current_data["job"]["jobEmploymentType"]);
+				} else {
+					setctype("");
+				}
+
+				if (current_data["job"]["jobVisa"]) {
+					setvisa(current_data["job"]["jobVisa"]);
+				} else {
+					setvisa("");
+				}
+				if (current_data["job"]["jobRelocation"]) {
+					setrelocation(current_data["job"]["jobRelocation"]);
+				} else {
+					setrelocation("");
+				}
 				setsection("");
-				setdiv("");
 				setgrade("");
 				setlocation("");
 				setcurr("");
 				settype("");
 				setfrom("");
 				setto("");
-				setctype("");
-				setvisa("");
-				setrelocation("");
+
 				setapproval("");
 				setomrefid("");
 				setostatus("");

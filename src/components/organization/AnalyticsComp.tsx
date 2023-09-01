@@ -25,7 +25,7 @@ export default function AnalyticsComp({ data2, axiosInstanceAuth2 }: any) {
 		<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
 			<div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3 text-xs">
 				<div className="flex flex-wrap items-center gap-1">
-					<span className="max-w-[40%] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold">
+					<span className="min-w-[70%] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold">
 						{data2["jobTitle"]}
 					</span>
 					<span>({data2["refid"]})</span>

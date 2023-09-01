@@ -668,7 +668,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									)}
 								</div>
 							</div>
-							<div className="w-full xl:max-w-[calc(100%-300px)] xl:pl-8 2xl:max-w-[calc(100%-400px)]">
+							<div className="w-full xl:max-w-[calc(100%-300px)] xl:pl-4 2xl:max-w-[calc(100%-400px)]">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
 									<div className="relative z-10 flex flex-wrap items-center justify-between p-5 shadow">
 										<aside className="flex items-center">

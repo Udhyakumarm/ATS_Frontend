@@ -131,7 +131,8 @@ export default function Card(props: any) {
 								setappid(props["data"]["arefid"]);
 								settype(props["data"]["type"]);
 								setappdata(props["data"]);
-								router.push("applicants/detail");
+								console.log("&&&&", "click ", props["data"]);
+								// router.push("applicants/detail");
 							}}
 						/>
 					</div>

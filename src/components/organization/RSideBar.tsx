@@ -14,6 +14,7 @@ import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "../toast";
 import moment from "moment";
 import AnalyticsComp from "./AnalyticsComp";
+import AnalyticsChart from "./AnalyticsChart";
 
 export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const router = useRouter();
@@ -27,6 +28,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const chatContainerRef = useRef(null);
 	const analyticsChatContainerRef = useRef(null);
 
+	const offerArefid = useNewNovusStore((state: { offerArefid: any }) => state.offerArefid);
+	const setofferArefid = useNewNovusStore((state: { setofferArefid: any }) => state.setofferArefid);
+	const offerData = useNewNovusStore((state: { offerData: any }) => state.offerData);
+	const setofferData = useNewNovusStore((state: { setofferData: any }) => state.setofferData);
 	const chat = useNewNovusStore((state: { chat: any }) => state.chat);
 	const setchat = useNewNovusStore((state: { setchat: any }) => state.setchat);
 	const achat = useNewNovusStore((state: { achat: any }) => state.achat);
@@ -156,6 +161,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 
 	function filterBase1(param1: any, param2: any) {
 		// Combine the two arrays
+		param1 = param1.map((item) => {
+			return { ...item, type: "career" };
+		});
+		param2 = param2.map((item) => {
+			return { ...item, type: "vendor" };
+		});
 		const combinedArray = [...param1, ...param2];
 
 		// Sort the combined array in descending order based on "percentage_fit"
@@ -231,6 +242,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	const [ssuggestion, setssuggestion] = useState([]);
 	const [suggSkill, setsuggSkill] = useState("");
 	const [suggYear, setsuggYear] = useState("");
+	const [suggJtitle, setsuggJtitle] = useState("");
 
 	const handlesuggestionChange = (value) => {
 		if (ssuggestion.includes(value)) {
@@ -246,6 +258,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 		console.log("&&&", "other year", suggYear);
 		let finalSkill = "";
 		var prompt = "";
+		var prompt2 = "";
 		if (ssuggestion.length > 0) {
 			finalSkill = finalSkill + ssuggestion.toString();
 		}
@@ -268,6 +281,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 				console.log("&&&", "prompt", prompt);
 			}
 		}
+		if (suggJtitle.length > 0) {
+			prompt2 = `show hiring anytics for ${suggJtitle} job`;
+		}
 		if (prompt.length > 0) {
 			settmpLoader(true);
 			settext(prompt);
@@ -281,6 +297,28 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 
 					if (res.data.response && res.data.response === "Success") {
 						loadChat();
+					}
+				})
+				.catch((err) => {
+					settmpLoader(false);
+					settext("");
+
+					console.log(err);
+				});
+		}
+		if (prompt2.length > 0) {
+			settmpLoader(true);
+			settext(prompt2);
+			const fd = new FormData();
+			fd.append("prompt", prompt2);
+			await axiosInstanceAuth2
+				.post(`/chatbot/analytics-flow/`, fd)
+				.then(async (res) => {
+					settmpLoader(false);
+					settext("");
+
+					if (res.data.response && res.data.response === "Success") {
+						loadAnalyticsChat();
 					}
 				})
 				.catch((err) => {
@@ -396,13 +434,21 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 	}
 
 	function getColor(s) {
-		if (s === "Shortlist") {
+		if (s === "Shortlist" || s === "Approve") {
 			return "bg-[#BEFDD4]";
 		} else if (s === "On Hold") {
-			return "bg-[#F8EE00]";
+			return "bg-[#F8EE00]/[.35]";
 		} else if (s === "Reject") {
-			return "bg-[#FF5858]";
+			return "bg-[#FF5858]/[.35]";
 		}
+	}
+
+	function sendTOOfferPage(data: any, type: any) {
+		let data2 = data;
+		data2["type"] = type;
+		setofferArefid(data2["arefid"]);
+		setofferData(data2);
+		router.push("/organization/offer-management");
 	}
 
 	return (
@@ -883,14 +929,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																								<button
 																									className="relative overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white"
 																									onClick={() => {
+																										console.log("&&&&", "Other", data2["status"]);
 																										setjobid(data2["job"]["refid"]);
 																										setappid(data2["arefid"]);
-																										if (data2["user"]) {
-																											settype("vendor");
-																										} else {
-																											settype("career");
-																										}
+																										settype(data2["type"]);
 																										setappdata(data2);
+																										console.log("&&&&", "Novus click", data2);
 																										router.push("/organization/applicants/detail");
 																									}}
 																								>
@@ -916,20 +960,36 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																										</span>
 																									</span>
 																								</button>
+																								{data2["status"] === "Offer" && (
+																									<span
+																										className="cursor-pointer pr-1"
+																										onClick={() => {
+																											setofferArefid(data2["arefid"]);
+																											setofferData(data2);
+																											router.push("/organization/offer-management");
+																										}}
+																										data-te-toggle="tooltip"
+																										data-te-placement="right"
+																										data-te-ripple-init
+																										data-te-ripple-color="light"
+																										title={"View Offer"}
+																									>
+																										<i className="fa-solid fa-arrow-up-right-from-square"></i>
+																									</span>
+																								)}
 																							</div>
 																						) : (
 																							<>
 																								<button
 																									className="relative overflow-hidden text-ellipsis whitespace-nowrap p-2 "
 																									onClick={() => {
+																										console.log("&&&&", "Other", data2["status"]);
 																										setjobid(data2["job"]["refid"]);
 																										setappid(data2["arefid"]);
-																										if (data2["user"]) {
-																											settype("vendor");
-																										} else {
-																											settype("career");
-																										}
+																										settype(data2["type"]);
+
 																										setappdata(data2);
+																										console.log("&&&&", "Novus click", data2);
 																										router.push("/organization/applicants/detail");
 																									}}
 																								>
@@ -955,6 +1015,23 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																										</span>
 																									</span>
 																								</button>
+																								{data2["status"] === "Offer" && (
+																									<span
+																										className="cursor-pointer pr-1"
+																										onClick={() => {
+																											setofferArefid(data2["arefid"]);
+																											setofferData(data2);
+																											router.push("/organization/offer-management");
+																										}}
+																										data-te-toggle="tooltip"
+																										data-te-placement="right"
+																										data-te-ripple-init
+																										data-te-ripple-color="light"
+																										title={"View Offer"}
+																									>
+																										<i className="fa-solid fa-arrow-up-right-from-square"></i>
+																									</span>
+																								)}
 																							</>
 																						)}
 																					</span>
@@ -1066,131 +1143,264 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																</>
 															) : (
 																<>
-																	{data["response"] === "@feedback" ? (
+																	{data["response"] === "@feedback" || data["response"] === "@offerfeedback" ? (
 																		<>
-																			<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
-																				<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
-																					<div className="flex items-center gap-2">
-																						{dataprofile &&
-																							dataprofile.length > 0 &&
-																							dataprofile
-																								.filter((obj) => obj.user.id === data["feedback"]["user"]["id"])
-																								.map((data, i) => (
-																									<Image
-																										src={data["profile"]}
-																										alt=""
-																										width={26}
-																										height={26}
-																										key={i}
-																										className="rounded-full"
-																									/>
-																								))}
+																			{data["response"] === "@feedback" && (
+																				<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+																					<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
+																						<div className="flex items-center gap-2">
+																							{dataprofile &&
+																								dataprofile.length > 0 &&
+																								dataprofile
+																									.filter((obj) => obj.user.id === data["feedback"]["user"]["id"])
+																									.map((data, i) => (
+																										<Image
+																											src={data["profile"]}
+																											alt=""
+																											width={26}
+																											height={26}
+																											key={i}
+																											className="h-[26px] w-[26px] rounded-full object-cover"
+																										/>
+																									))}
 
-																						{dataname &&
-																							dataname.length > 0 &&
-																							dataname
-																								.filter((obj) => obj.id === data["feedback"]["user"]["id"])
-																								.map((data, i) => (
-																									<p className="text-sm" key={i}>
-																										{data["name"]}
-																									</p>
-																								))}
-																					</div>
-																					<div
-																						className={
-																							`my-auto rounded px-3 py-1 text-center text-xs font-bold dark:text-black` +
-																							" " +
-																							`${getColor(data["feedback"]["status"])}`
-																						}
-																					>
-																						{data["feedback"]["status"]}
-																					</div>
-																				</div>
-																				<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-sm">
-																					<div>Candidate-</div>
-																					<div
-																						className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
-																						onClick={() => {
-																							if (data["capplicant"].length > 0) {
-																								setjobid(data["capplicant"][0]["job"]["refid"]);
-																								setappid(data["capplicant"][0]["arefid"]);
-																								settype("career");
-																								setappdata(data["capplicant"][0]);
-																							} else {
-																								setjobid(data["vapplicant"][0]["job"]["refid"]);
-																								setappid(data["vapplicant"][0]["arefid"]);
-																								settype("vendor");
-																								setappdata(data["vapplicant"][0]);
-																							}
-
-																							router.push("/organization/applicants/detail");
-																						}}
-																					>
-																						{data["capplicant"].length > 0 && (
-																							<>
-																								{data["capplicant"][0]["user"]["first_name"]}{" "}
-																								{data["capplicant"][0]["user"]["last_name"]}
-																							</>
-																						)}
-																						{data["vapplicant"].length > 0 && (
-																							<>
-																								{data["vapplicant"][0]["applicant"]["first_name"]}{" "}
-																								{data["vapplicant"][0]["applicant"]["last_name"]}
-																							</>
-																						)}
-																						<span
-																							className=" 
-																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
-																						>
-																							<span className="relative text-xs text-black">
-																								{data["capplicant"].length > 0
-																									? data["capplicant"][0]["percentage_fit"]
-																									: data["vapplicant"][0]["percentage_fit"]}
-																							</span>
-																						</span>
-																					</div>
-																					<div>
-																						{data["capplicant"].length > 0
-																							? data["capplicant"][0]["arefid"]
-																							: data["vapplicant"][0]["arefid"]}
-																					</div>
-																				</div>
-																				<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
-																					<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
-
-																					{data["feedback"]["status"] === "Shortlist" && (
-																						<>
 																							{dataname &&
 																								dataname.length > 0 &&
 																								dataname
 																									.filter((obj) => obj.id === data["feedback"]["user"]["id"])
 																									.map((data, i) => (
-																										<p key={i}>Interview process will be handle by {data["name"]}</p>
+																										<p className="text-sm" key={i}>
+																											{data["name"]}
+																										</p>
 																									))}
-																						</>
-																					)}
-																					{data["feedback"]["status"] === "On Hold" && (
-																						<p>Candidate Stay in Review Stage</p>
-																					)}
-																					{data["feedback"]["status"] === "Reject" && (
-																						<p>Candidate Moved to Rejected Stage</p>
-																					)}
-																				</div>
-																				<div className="flex flex-col gap-2 px-5 py-3 text-sm">
-																					<div className="font-bold">Feedback</div>
-																					<div>
-																						<ReactReadMoreReadLess
-																							charLimit={80}
-																							readMoreText={"Read more ▼"}
-																							readLessText={"Read less ▲"}
-																							readMoreClassName="font-medium"
-																							readLessClassName="font-medium"
+																						</div>
+																						<div
+																							className={
+																								`my-auto rounded px-3 py-1 text-center text-xs font-bold dark:text-black` +
+																								" " +
+																								`${getColor(data["feedback"]["status"])}`
+																							}
 																						>
-																							{data["feedback"]["feedback"]}
-																						</ReactReadMoreReadLess>
+																							{data["feedback"]["status"]}
+																						</div>
+																					</div>
+																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-sm">
+																						<div>Candidate-</div>
+																						<div
+																							className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
+																							onClick={() => {
+																								if (data["capplicant"].length > 0) {
+																									setjobid(data["capplicant"][0]["job"]["refid"]);
+																									setappid(data["capplicant"][0]["arefid"]);
+																									settype("career");
+																									setappdata(data["capplicant"][0]);
+																								} else {
+																									setjobid(data["vapplicant"][0]["job"]["refid"]);
+																									setappid(data["vapplicant"][0]["arefid"]);
+																									settype("vendor");
+																									setappdata(data["vapplicant"][0]);
+																								}
+
+																								router.push("/organization/applicants/detail");
+																							}}
+																						>
+																							{data["capplicant"].length > 0 && (
+																								<>
+																									{data["capplicant"][0]["user"]["first_name"]}{" "}
+																									{data["capplicant"][0]["user"]["last_name"]}
+																								</>
+																							)}
+																							{data["vapplicant"].length > 0 && (
+																								<>
+																									{data["vapplicant"][0]["applicant"]["first_name"]}{" "}
+																									{data["vapplicant"][0]["applicant"]["last_name"]}
+																								</>
+																							)}
+																							<span
+																								className=" 
+																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
+																							>
+																								<span className="relative text-xs text-black">
+																									{data["capplicant"].length > 0
+																										? data["capplicant"][0]["percentage_fit"]
+																										: data["vapplicant"][0]["percentage_fit"]}
+																								</span>
+																							</span>
+																						</div>
+																						<div>
+																							{data["capplicant"].length > 0
+																								? data["capplicant"][0]["arefid"]
+																								: data["vapplicant"][0]["arefid"]}
+																						</div>
+																					</div>
+																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
+																						<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
+
+																						{data["feedback"]["status"] === "Shortlist" && (
+																							<>
+																								{dataname &&
+																									dataname.length > 0 &&
+																									dataname
+																										.filter((obj) => obj.id === data["feedback"]["user"]["id"])
+																										.map((data, i) => (
+																											<p key={i}>Interview process will be handle by {data["name"]}</p>
+																										))}
+																							</>
+																						)}
+																						{data["feedback"]["status"] === "On Hold" && (
+																							<p>Candidate Stay in Review Stage</p>
+																						)}
+																						{data["feedback"]["status"] === "Reject" && (
+																							<p>Candidate Moved to Rejected Stage</p>
+																						)}
+																					</div>
+																					<div className="flex flex-col gap-2 px-5 py-3 text-sm">
+																						<div className="font-bold">Feedback</div>
+																						<div>
+																							<ReactReadMoreReadLess
+																								charLimit={80}
+																								readMoreText={"Read more ▼"}
+																								readLessText={"Read less ▲"}
+																								readMoreClassName="font-medium"
+																								readLessClassName="font-medium"
+																							>
+																								{data["feedback"]["feedback"]}
+																							</ReactReadMoreReadLess>
+																						</div>
 																					</div>
 																				</div>
-																			</div>
+																			)}
+																			{data["response"] === "@offerfeedback" && (
+																				<div className="my-2 mb-3 max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
+																					<div className="flex flex-wrap justify-between gap-4 px-5 py-3 pb-0">
+																						<div className="flex items-center gap-2">
+																							{dataprofile &&
+																								dataprofile.length > 0 &&
+																								dataprofile
+																									.filter(
+																										(obj) => obj.user.id === data["offerfeedback"]["organization"]["id"]
+																									)
+																									.map((data, i) => (
+																										<Image
+																											src={data["profile"]}
+																											alt=""
+																											width={26}
+																											height={26}
+																											key={i}
+																											className="h-[26px] w-[26px] rounded-full object-cover"
+																										/>
+																									))}
+
+																							{dataname &&
+																								dataname.length > 0 &&
+																								dataname
+																									.filter(
+																										(obj) => obj.id === data["offerfeedback"]["organization"]["id"]
+																									)
+																									.map((data, i) => (
+																										<p className="text-sm" key={i}>
+																											{data["name"]}
+																										</p>
+																									))}
+																						</div>
+																						<div
+																							className={
+																								`my-auto rounded px-3 py-1 text-center text-xs font-bold dark:text-black` +
+																								" " +
+																								`${getColor(data["offerfeedback"]["status"])}`
+																							}
+																						>
+																							{data["offerfeedback"]["status"]}
+																						</div>
+																					</div>
+																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-sm">
+																						<div>Candidate-</div>
+																						<div
+																							className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
+																							onClick={() => {
+																								if (data["offerfeedback"]["offer"]["capplicant"]) {
+																									sendTOOfferPage(
+																										data["offerfeedback"]["offer"]["capplicant"],
+																										"career"
+																									);
+																								} else {
+																									sendTOOfferPage(
+																										data["offerfeedback"]["offer"]["vapplicant"],
+																										"vendor"
+																									);
+																								}
+																							}}
+																						>
+																							{data["offerfeedback"]["offer"]["capplicant"] && (
+																								<>
+																									{data["offerfeedback"]["offer"]["capplicant"]["user"]["first_name"]}{" "}
+																									{data["offerfeedback"]["offer"]["capplicant"]["user"]["last_name"]}
+																								</>
+																							)}
+																							{data["offerfeedback"]["offer"]["vapplicant"] && (
+																								<>
+																									{
+																										data["offerfeedback"]["offer"]["vapplicant"]["applicant"][
+																											"first_name"
+																										]
+																									}{" "}
+																									{
+																										data["offerfeedback"]["offer"]["vapplicant"]["applicant"][
+																											"last_name"
+																										]
+																									}
+																								</>
+																							)}
+																							<span
+																								className=" 
+																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
+																							>
+																								<span className="relative text-xs text-black">
+																									{data["offerfeedback"]["offer"]["capplicant"]
+																										? data["offerfeedback"]["offer"]["capplicant"]["percentage_fit"]
+																										: data["offerfeedback"]["offer"]["vapplicant"]["percentage_fit"]}
+																								</span>
+																							</span>
+																						</div>
+																						<div>
+																							{data["offerfeedback"]["offer"]["capplicant"]
+																								? data["offerfeedback"]["offer"]["capplicant"]["arefid"]
+																								: data["offerfeedback"]["offer"]["vapplicant"]["arefid"]}
+																						</div>
+																					</div>
+																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
+																						<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
+
+																						{dataname &&
+																							dataname.length > 0 &&
+																							dataname
+																								.filter((obj) => obj.id === data["offerfeedback"]["organization"]["id"])
+																								.map((data, i) => (
+																									<p key={i}>
+																										<span className="font-bold">Offer Feedback</span> given by{" "}
+																										{data["name"]}
+																									</p>
+																								))}
+																					</div>
+																					{data["offerfeedback"]["feedback"] &&
+																						data["offerfeedback"]["feedback"].length > 0 && (
+																							<div className="flex flex-col gap-2 px-5 py-3 text-sm">
+																								<div className="font-bold">Feedback</div>
+																								<div>
+																									<ReactReadMoreReadLess
+																										charLimit={80}
+																										readMoreText={"Read more ▼"}
+																										readLessText={"Read less ▲"}
+																										readMoreClassName="font-medium"
+																										readLessClassName="font-medium"
+																									>
+																										{data["offerfeedback"]["feedback"]}
+																									</ReactReadMoreReadLess>
+																								</div>
+																							</div>
+																						)}
+																				</div>
+																			)}
 																		</>
 																	) : (
 																		<div className="bg-transpert my-2 mb-3 w-fit max-w-[85%] rounded text-left text-left">
@@ -1241,6 +1451,17 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 										ref={analyticsChatContainerRef}
 									>
 										<div id="append_div_2">
+											{/* <div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
+												<div className="flex justify-between gap-4">
+													<span className="text-base font-medium text-white">Show Hiring Analytics In Graph Form</span>
+													
+												</div>
+											</div>
+
+											<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
+												<AnalyticsChart data={[1, 2, 3, 0, 0, 0, 0, 0, 0, 2, 5]} />
+											</div> */}
+
 											{/* novus res */}
 											<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
 												<div className="flex flex-nowrap justify-between gap-4">
@@ -1248,6 +1469,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 													{/* <span className="my-auto whitespace-nowrap text-center text-xs">3:02 PM</span> */}
 												</div>
 											</div>
+
 											{/* applicant */}
 											<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
 												<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
@@ -1321,28 +1543,50 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 															</button>
 														</div>
 													</span>
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["pipeline"] ? analyticsdata["pipeline"] : <>0</>}
+															</span>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
+																Pipeline
+															</button>
+														</div>
+													</span>
+													<span className="rounded bg-lightBlue text-sm dark:bg-gray-900">
+														<div className="flex items-center">
+															<span className="px-1.5 font-semibold">
+																{analyticsdata["process"] ? analyticsdata["process"] : <>0</>}
+															</span>
+															<button className="overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-500/50 p-2 dark:border-white/50">
+																In Process
+															</button>
+														</div>
+													</span>
 												</div>
 												{achat.length <= 0 && (
 													<div className=" px-5 py-3">
 														<p className="text-sm font-bold">Hiring Analytics for Jobs</p>
-														<div className="mt-2 flex flex-wrap gap-2">
-															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																Software Developer
-															</span>
-															<span className="rounded-full border-2 border-gray-500 px-3 py-1 text-xs">
-																Product Manager
-															</span>
+														<div className="mt-2 flex items-end justify-center gap-2">
 															<input
 																type="search"
-																// value={suggSkill}
-																// onChange={(e) => setsuggSkill(e.target.value)}
+																value={suggJtitle}
+																onChange={(e) => setsuggJtitle(e.target.value)}
 																placeholder="Search by Job Title"
 																className={
-																	`w-[48%] min-w-[15px] rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
+																	`w-full rounded-full border-2  px-3 py-1 text-xs focus:border-primary active:border-primary dark:bg-gray-700 dark:text-lightBlue` +
 																	" " +
-																	`${suggSkill.length > 0 ? "border-primary" : "border-gray-500"}`
+																	`${suggJtitle.length > 0 ? "border-primary" : "border-gray-500"}`
 																}
 															/>
+															{suggJtitle.length > 0 && (
+																<div
+																	className="cursor-pointer whitespace-nowrap text-base text-primary dark:text-lightBlue"
+																	onClick={() => handleSuggestionFinal()}
+																>
+																	Go <i className="fa-solid fa-chevron-right"></i>
+																</div>
+															)}
 														</div>
 													</div>
 												)}
