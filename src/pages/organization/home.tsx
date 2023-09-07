@@ -52,7 +52,7 @@ export default function HomePage() {
 		},
 		{
 			title: "lorem ABCD",
-			desc: "desc text is 124"
+			desc: "desc text is "
 		}
 	];
 	const settings = {
