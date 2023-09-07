@@ -39,7 +39,7 @@ export default function HomePage() {
             desc: 'desc text is here'
         },
         {
-            title: 'lorem impsum 2',
+            title: 'lorem ABCD',
             desc: 'desc text is here 3'
         }
     ]
