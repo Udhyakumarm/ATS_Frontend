@@ -4,18 +4,19 @@ import Head from "next/head";
 import { Dialog, Tab, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import FormField from "@/components/FormField";
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Image from "next/image";
-import userImg from "/public/images/user-image.png";
+import userImg1 from "/public/images/user-image1.jpeg";
 import Button from "@/components/Button";
-import { Menu } from '@headlessui/react'
-import startNewChat from "/public/images/no-data/iconGroup-4.png";
+import { Menu } from "@headlessui/react";
+import InboxSideBar from "@/components/organization/inbox/sidebar";
+import InboxFrame from "@/components/organization/inbox/frame";
 
 export default function Inbox() {
 	const [sklLoad] = useState(true);
 	const cancelButtonRef = useRef(null);
-    const [addMembers, setAddMembers] = useState(false);
+	const [addMembers, setAddMembers] = useState(false);
 	const [createGroup, setCreateGroup] = useState(false);
 	const [exitGroup, setExitGroup] = useState(false);
 	const [deleteGroup, setDeleteGroup] = useState(false);
@@ -28,8 +29,8 @@ export default function Inbox() {
 		setTogglePages(false);
 	}
 
-	const MessageCards = ({sklLoad}:any) => {
-		if(sklLoad === true) {
+	const MessageCards = ({ sklLoad }: any) => {
+		if (sklLoad === true) {
 			return (
 				<>
 					<div
@@ -38,7 +39,7 @@ export default function Inbox() {
 						}
 					>
 						<Skeleton circle width={50} height={50} />
-						<div className="w-[calc(100%-50px)] pt-1 pl-3">
+						<div className="w-[calc(100%-50px)] pl-3 pt-1">
 							<div className="mb-2 flex justify-between">
 								<h5 className="text-sm font-semibold">
 									<Skeleton width={100} />
@@ -49,36 +50,9 @@ export default function Inbox() {
 						</div>
 					</div>
 				</>
-			)
+			);
 		}
-		return (
-			<>
-				<div
-					className={
-						"flex border border-transparent border-b-slate-200 px-3 py-4 last:border-b-0 hover:shadow-highlight dark:border-b-gray-600 dark:hover:bg-gray-900"
-					}
-				>
-					<Image
-						src={userImg}
-						alt="User"
-						width={150}
-						className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-					/>
-					<div className="w-[calc(100%-50px)] pt-1 pl-3">
-						<div className="mb-2 flex justify-between">
-							<h5 className="text-sm font-semibold">Jack Paul</h5>
-							<span className="block rounded bg-gray-200 py-1 px-2 text-[10px] font-semibold dark:bg-gray-600">
-								3:30 PM
-							</span>
-						</div>
-						<p className="clamp_2 text-[12px] text-darkGray">
-							Your Interview has been scheduled for Software Developer Job at Organization Name Software Developer Job
-							at Organization Name
-						</p>
-					</div>
-				</div>
-			</>
-		);
+		return <></>;
 	};
 
 	return (
@@ -94,563 +68,13 @@ export default function Inbox() {
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
-				<div className="layoutWrap p-4 lg:p-8">
+				<div className="layoutWrap p-4">
 					<div className="flex flex-wrap">
-						<div className="w-full xl:max-w-[32%] mb-4 xl:mb-0">
-							<div className="overflow-hidden rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
-								<Tab.Group>
-									<Tab.List className={"border-b px-6 pt-2 dark:border-gray-600"}>
-										<Tab as={Fragment}>
-											{({ selected }) => (
-												<button
-													className={
-														"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
-														" " +
-														(selected
-															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400")
-													}
-													onClick={() => handleInboxPage()}
-												>
-													Inbox
-												</button>
-											)}
-										</Tab>
-										<Tab as={Fragment}>
-											{({ selected }) => (
-												<button
-													className={
-														"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
-														" " +
-														(selected
-															? "border-primary text-primary"
-															: "border-transparent text-darkGray dark:text-gray-400")
-													}
-													onClick={() => handleChatPage()}
-												>
-													Chats
-												</button>
-											)}
-										</Tab>
-									</Tab.List>
-									<Tab.Panels>
-										<Tab.Panel>
-											<Tab.Group>
-												<Tab.List className={"px-6"}>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 py-3 text-sm font-semibold focus:outline-none" +
-																	" " +
-																	(selected ? "text-primary" : "text-darkGray dark:text-gray-400")
-																}
-															>
-																Applicants
-															</button>
-														)}
-													</Tab>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 py-3 text-sm font-semibold focus:outline-none" +
-																	" " +
-																	(selected ? "text-primary" : "text-darkGray dark:text-gray-400")
-																}
-															>
-																Vendors
-															</button>
-														)}
-													</Tab>
-												</Tab.List>
-												<Tab.Panels>
-													<Tab.Panel>
-														<div className="p-4 pt-0">
-															<FormField
-																fieldType="input"
-																inputType="search"
-																placeholder="Search applicants"
-																icon={<i className="fa-solid fa-magnifying-glass"></i>}
-															/>
-														</div>
-														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{
-																sklLoad
-																?
-																Array(5).fill(<MessageCards />)
-																:
-																Array(5).fill(<MessageCards sklLoad={true} />)
-															}
-														</div>
-													</Tab.Panel>
-													<Tab.Panel>
-														<div className="p-4 pt-0">
-															<FormField
-																fieldType="input"
-																inputType="search"
-																placeholder="Search vendors"
-																icon={<i className="fa-solid fa-magnifying-glass"></i>}
-															/>
-														</div>
-														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{
-																sklLoad
-																?
-																Array(5).fill(<MessageCards />)
-																:
-																Array(5).fill(<MessageCards sklLoad={true} />)
-															}
-														</div>
-													</Tab.Panel>
-												</Tab.Panels>
-											</Tab.Group>
-										</Tab.Panel>
-										<Tab.Panel>
-											<Tab.Group>
-												<Tab.List className={"px-6"}>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 py-3 text-sm font-semibold focus:outline-none" +
-																	" " +
-																	(selected ? "text-primary" : "text-darkGray dark:text-gray-400")
-																}
-															>
-																Internal Team
-															</button>
-														)}
-													</Tab>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 py-3 text-sm font-semibold focus:outline-none" +
-																	" " +
-																	(selected ? "text-primary" : "text-darkGray dark:text-gray-400")
-																}
-															>
-																Vendors
-															</button>
-														)}
-													</Tab>
-												</Tab.List>
-												<Tab.Panels>
-													<Tab.Panel>
-														<div className="p-4 pt-0 flex items-center">
-															<div className="grow">
-																<FormField
-																	fieldType="input"
-																	inputType="search"
-																	placeholder="Search team"
-																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
-																/>
-															</div>
-															<button type="button" className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400" onClick={() => setAddMembers(true)}>
-																<i className="fa-solid fa-user-plus"></i>
-															</button>
-															<Menu as="div" className="relative">
-																<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-																	<i className="fa-solid fa-ellipsis-vertical"></i>
-																</Menu.Button>
-																<Transition
-																as={Fragment}
-																enter="transition ease-out duration-100"
-																enterFrom="transform opacity-0 scale-95"
-																enterTo="transform opacity-100 scale-100"
-																leave="transition ease-in duration-75"
-																leaveFrom="transform opacity-100 scale-100"
-																leaveTo="transform opacity-0 scale-95"
-																>
-																	<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-2 shadow-normal dark:bg-gray-700'}>
-																		<Menu.Item>
-																			<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={()=> setCreateGroup(true)}>
-																				<i className="fa-solid fa-users mr-2"></i> Create Group
-																			</button>
-																		</Menu.Item>
-																	</Menu.Items>
-																</Transition>
-															</Menu>
-														</div>
-														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{
-																sklLoad
-																?
-																Array(5).fill(<MessageCards />)
-																:
-																Array(5).fill(<MessageCards sklLoad={true} />)
-															}
-														</div>
-													</Tab.Panel>
-													<Tab.Panel>
-														<div className="p-4 pt-0 flex items-center">
-															<div className="grow">
-																<FormField
-																	fieldType="input"
-																	inputType="search"
-																	placeholder="Search vendors"
-																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
-																/>
-															</div>
-															<button type="button" className="ml-2 w-6 text-darkGray dark:text-gray-400" onClick={() => setAddMembers(true)}>
-																<i className="fa-solid fa-user-plus"></i>
-															</button>
-														</div>
-														<div className="h-[calc(100vh-300px)] overflow-y-auto p-4 pt-0">
-															{
-																sklLoad
-																?
-																Array(5).fill(<MessageCards />)
-																:
-																Array(5).fill(<MessageCards sklLoad={true} />)
-															}
-														</div>
-													</Tab.Panel>
-												</Tab.Panels>
-											</Tab.Group>
-										</Tab.Panel>
-									</Tab.Panels>
-								</Tab.Group>
-							</div>
+						<div className="mb-4 w-full xl:mb-0 xl:max-w-[27%]">
+							<InboxSideBar togglePages={togglePages} setTogglePages={setTogglePages} />
 						</div>
-						<div className="w-full xl:pl-6 xl:max-w-[68%]">
-							<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
-								{togglePages ? (
-									<>
-										{
-											sklLoad
-											?
-											<>
-												<div className="h-[calc(100vh-212px)] overflow-y-auto">
-													<div className="group">
-														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
-															<div className="mx-auto w-full max-w-[90%]">
-																<div className="mb-4 flex items-center justify-between">
-																	<Image
-																		src={userImg}
-																		alt="User"
-																		width={150}
-																		className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-																	/>
-																	<p className="text-right text-[12px] text-darkGray dark:text-gray-400">
-																		10 Feb 2023
-																		<br />
-																		3:30 PM
-																	</p>
-																</div>
-																<article className="text-sm text-darkGray dark:text-gray-400">
-																	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-																	been the industry standard dummy text ever since the 1500s, when an unknown printer took
-																	a galley of type and scrambled it to make a type specimen book. It has survived not only
-																	five centuries, but also the leap into electronic typesetting, remaining essentially
-																	unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-																	Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-																	PageMaker including versions of Lorem Ipsum.
-																</article>
-															</div>
-														</div>
-													</div>
-													<div className="group">
-														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
-															<div className="mx-auto w-full max-w-[90%]">
-																<div className="overflow-hidden rounded-large border dark:border-gray-500">
-																	<div className="bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-center text-white">
-																		<h3 className="mb-2 text-lg">Interview has been Scheduled</h3>
-																		<p>You can find the details below</p>
-																	</div>
-																	<div className="py-6 px-10">
-																		<h2 className="mb-4 text-lg font-bold">Hi Recruiter Name,</h2>
-																		<p className="mb-6 text-sm text-darkGray dark:text-gray-400">
-																			Your Interview has been scheduled for Software Developer Job at Organization Name
-																		</p>
-																		<div className="mb-2 flex flex-wrap">
-																			<div className="w-full md:max-w-[75%]">
-																				<ul>
-																					<li className="mb-6 flex items-start">
-																						<span className="w-30px mr-4 inline-block">
-																							<i className="fa-solid fa-user text-[14px]"></i>
-																						</span>
-																						<aside className="grow">
-																							<h5 className="font-bold">Interviewer</h5>
-																							<p className="text-sm text-darkGray dark:text-gray-400">Adam Smith</p>
-																						</aside>
-																					</li>
-																					<li className="mb-6 flex items-start">
-																						<span className="w-30px mr-4 inline-block">
-																							<i className="fa-solid fa-street-view text-[14px]"></i>
-																						</span>
-																						<aside className="grow">
-																							<h5 className="font-bold">Interview Name</h5>
-																							<p className="text-sm text-darkGray dark:text-gray-400">Software Developer</p>
-																						</aside>
-																					</li>
-																					<li className="mb-6 flex items-start">
-																						<span className="w-30px mr-4 inline-block">
-																							<i className="fa-solid fa-clock text-[14px]"></i>
-																						</span>
-																						<aside className="grow">
-																							<h5 className="font-bold">Event Duration</h5>
-																							<p className="text-sm text-darkGray dark:text-gray-400">30 min</p>
-																						</aside>
-																					</li>
-																				</ul>
-																			</div>
-																			<div className="w-full md:max-w-[25%]">
-																				<aside className="mb-6 flex items-center">
-																					<h5 className="mr-4 font-bold">Date:</h5>
-																					<p className="text-sm text-darkGray dark:text-gray-400">05 Dec 2022</p>
-																				</aside>
-																				<aside className="mb-4 flex items-center">
-																					<h5 className="mr-4 font-bold">Time:</h5>
-																					<p className="text-sm text-darkGray dark:text-gray-400">02:00 PM</p>
-																				</aside>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap">
-																			<div className="my-1 mr-4 last:mr-0">
-																				<Button btnStyle="success" label="Reschedule" />
-																			</div>
-																			<div className="my-1 mr-4 last:mr-0">
-																				<Button btnStyle="danger" label="Cancel" />
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
-													<div className="flex items-center rounded bg-white p-2 shadow-normal dark:bg-gray-800">
-														<textarea
-															name=""
-															id=""
-															className="h-[40px] w-[calc(100%-50px)] resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
-															placeholder="Type something..."
-														></textarea>
-														<button
-															type="button"
-															className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"
-														>
-															<i className="fa-solid fa-paper-plane"></i>
-														</button>
-													</div>
-												</div>
-											</>
-											:
-											<>
-												<div className="h-[calc(100vh-212px)] overflow-y-auto">
-													{Array(3).fill(
-													<div className="group">
-														<div className="border-b py-6 px-4 group-last:border-b-0 dark:border-b-gray-600">
-															<div className="mx-auto w-full max-w-[90%]">
-																<div className="mb-4 flex items-center justify-between">
-																	<Skeleton circle width={50} height={50} />
-																	<p className="text-right text-[12px] text-darkGray dark:text-gray-400">
-																		<Skeleton width={100} />
-																		<Skeleton width={50} />
-																	</p>
-																</div>
-																<Skeleton count={6} />
-																<Skeleton width={40 + '%'} />
-															</div>
-														</div>
-													</div>
-													)}
-												</div>
-												<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
-													<Skeleton height={50} />
-												</div>
-											</>
-										}
-									</>
-								) : (
-									<>
-										<div className="border-b dark:border-b-gray-600">
-											<div className="mx-auto w-full max-w-[90%] py-2 px-4 flex items-center">
-												<Image
-													src={userImg}
-													alt="User"
-													width={150}
-													className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight mr-4"
-												/>
-												<aside>
-													<h4 className="font-bold text-lg flex items-center jusitfy-between">
-														<span className="grow">Jack Paul</span>
-														<Menu as="div" className="relative">
-															<Menu.Button className="ml-2 w-6 text-darkGray dark:text-gray-400">
-																<i className="fa-solid fa-ellipsis-vertical"></i>
-															</Menu.Button>
-															<Transition
-															as={Fragment}
-															enter="transition ease-out duration-100"
-															enterFrom="transform opacity-0 scale-95"
-															enterTo="transform opacity-100 scale-100"
-															leave="transition ease-in duration-75"
-															leaveFrom="transform opacity-100 scale-100"
-															leaveTo="transform opacity-0 scale-95"
-															>
-																<Menu.Items className={'absolute right-0 top-[100%] text-darkGray dark:text-gray-400 w-[200px] rounded bg-white py-2 shadow-normal dark:bg-gray-700'}>
-																	<Menu.Item>
-																		<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={()=> setCreateGroup(true)}>
-																			Edit Group
-																		</button>
-																	</Menu.Item>
-																	<Menu.Item>
-																		<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center" onClick={() => setExitGroup(true)}>
-																			Exit Group
-																		</button>
-																	</Menu.Item>
-																	<div className="border-t dark:border-t-gray-500">
-																		<p className="text-[10px] px-4 pt-2 pb-1 font-semibold">Created by Steven on 04 Feb 2021</p>
-																		<Menu.Item>
-																			<button type="button" className="w-full text-left relative cursor-pointer px-4 py-2 text-sm font-bold hover:bg-red-500 hover:text-white flex items-center" onClick={() => setDeleteGroup(true)}>
-																				Delete Group
-																			</button>
-																		</Menu.Item>
-																	</div>
-																</Menu.Items>
-															</Transition>
-														</Menu>
-													</h4>
-													<p className="clamp_1 text-[12px] text-darkGray dark:text-gray-400">Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem.</p>
-												</aside>
-											</div>
-										</div>
-										<div className="h-[calc(100vh-280px)] overflow-y-auto">
-											<div className="mx-auto w-full max-w-[90%] px-4">
-												<div className="min-h-[400px] flex items-center justify-center">
-													<div className="text-center py-8 w-full max-w-[300px] mx-auto">
-														<div className="mb-6 p-2">
-															<Image src={startNewChat} alt="No Data" width={300} className="w-auto max-w-[150px] max-h-[150px] mx-auto" />
-														</div>
-														<h5 className="font-bold">Start New Chat</h5>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Jack Paul
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Me
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Jack Paul
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Me
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Jack Paul
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-												<div className="flex items-start py-4">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
-													/>
-													<div className="pl-4 pt-1">
-														<h4 className="font-bold mb-2">
-															Me
-															<span className="text-[10px] text-darkGray dark:text-gray-400 pl-3">4:27 PM</span>
-														</h4>
-														<article className="text-sm text-darkGray dark:text-gray-400">
-															Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit vestibulum 
-														</article>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div className="absolute left-0 bottom-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
-											<div className="flex items-center rounded bg-white p-2 shadow-normal dark:bg-gray-800">
-												<textarea
-													name=""
-													id=""
-													className="h-[40px] w-[calc(100%-50px)] resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
-													placeholder="Type something..."
-												></textarea>
-												<button
-													type="button"
-													className="block w-[50px] border-l-2 border-gray-400 text-sm leading-normal"
-												>
-													<i className="fa-solid fa-paper-plane"></i>
-												</button>
-											</div>
-										</div>
-									</>
-								)}
-							</div>
+						<div className="w-full xl:max-w-[73%] xl:pl-4">
+							<InboxFrame togglePages={togglePages} setTogglePages={setTogglePages} />
 						</div>
 					</div>
 				</div>
@@ -682,9 +106,7 @@ export default function Inbox() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Add new memeber to chat
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Add new memeber to chat</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -704,20 +126,22 @@ export default function Inbox() {
 									<div className="py-2">
 										<div className="max-h-[300px] overflow-y-auto px-8">
 											{Array(20).fill(
-											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
-												<div className="flex items-center grow pr-2">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight mr-4"
-													/>
-													<h6 className="font-semibold text-sm">Jacob Adam</h6>
+												<div className="my-1 flex items-center justify-between rounded border px-4 py-2 dark:border-gray-600">
+													<div className="flex grow items-center pr-2">
+														<Image
+															src={userImg1}
+															alt="User"
+															width={150}
+															className="mr-4 h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
+														/>
+														<h6 className="text-sm font-semibold">Jacob Adam</h6>
+													</div>
+													<aside>
+														<button type="button" className="text-sm text-darkGray dark:text-gray-400">
+															Chat
+														</button>
+													</aside>
 												</div>
-												<aside>
-													<button type="button" className="text-darkGray dark:text-gray-400 text-sm">Chat</button>
-												</aside>
-											</div>
 											)}
 										</div>
 									</div>
@@ -754,9 +178,7 @@ export default function Inbox() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Create Group
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Create Group</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -770,42 +192,46 @@ export default function Inbox() {
 										<FormField fieldType="textarea" label="Group Description" />
 									</div>
 									<div className="py-2">
-										<h5 className="px-8 mb-1 font-bold">Select Members</h5>
+										<h5 className="mb-1 px-8 font-bold">Select Members</h5>
 										<div className="max-h-[300px] overflow-y-auto px-8">
-											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
-												<div className="flex items-center grow pr-2">
+											<div className="my-1 flex items-center justify-between rounded border px-4 py-2 dark:border-gray-600">
+												<div className="flex grow items-center pr-2">
 													<Image
-														src={userImg}
+														src={userImg1}
 														alt="User"
 														width={150}
-														className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight mr-4"
+														className="mr-4 h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
 													/>
-													<h6 className="font-semibold text-sm">Jacob Adam</h6>
+													<h6 className="text-sm font-semibold">Jacob Adam</h6>
 												</div>
 												<aside>
-													<button type="button" className="text-red-500 text-sm">Remove</button>
+													<button type="button" className="text-sm text-red-500">
+														Remove
+													</button>
 												</aside>
 											</div>
 											{Array(10).fill(
-											<div className="my-1 border dark:border-gray-600 rounded py-2 px-4 flex items-center justify-between">
-												<div className="flex items-center grow pr-2">
-													<Image
-														src={userImg}
-														alt="User"
-														width={150}
-														className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight mr-4"
-													/>
-													<h6 className="font-semibold text-sm">Jacob Adam</h6>
+												<div className="my-1 flex items-center justify-between rounded border px-4 py-2 dark:border-gray-600">
+													<div className="flex grow items-center pr-2">
+														<Image
+															src={userImg1}
+															alt="User"
+															width={150}
+															className="mr-4 h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
+														/>
+														<h6 className="text-sm font-semibold">Jacob Adam</h6>
+													</div>
+													<aside>
+														<button type="button" className="text-sm text-darkGray dark:text-gray-400">
+															Add
+														</button>
+													</aside>
 												</div>
-												<aside>
-													<button type="button" className="text-darkGray dark:text-gray-400 text-sm">Add</button>
-												</aside>
-											</div>
 											)}
 										</div>
-                                        <div className="text-center">
-                                            <Button label="Done" />
-                                        </div>
+										<div className="text-center">
+											<Button label="Done" />
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
@@ -840,9 +266,7 @@ export default function Inbox() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Exit Group
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Exit Group</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -852,15 +276,15 @@ export default function Inbox() {
 										</button>
 									</div>
 									<div className="p-8">
-										<h3 className="text-center font-bold text-lg mb-4">Are you sure want to exit from this group?</h3>
+										<h3 className="mb-4 text-center text-lg font-bold">Are you sure want to exit from this group?</h3>
 										<div className="flex flex-wrap justify-center">
 											<div className="my-1 mr-4 last:mr-0">
-                                                <Button btnStyle="danger" label="No" />
-                                            </div>
-                                            <div className="my-1 mr-4 last:mr-0">
-                                                <Button label="Yes" />
-                                            </div>
-                                        </div>
+												<Button btnStyle="danger" label="No" />
+											</div>
+											<div className="my-1 mr-4 last:mr-0">
+												<Button label="Yes" />
+											</div>
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
@@ -895,9 +319,7 @@ export default function Inbox() {
 							>
 								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">
-											Delete Group
-										</h4>
+										<h4 className="flex items-center font-semibold leading-none">Delete Group</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -907,15 +329,15 @@ export default function Inbox() {
 										</button>
 									</div>
 									<div className="p-8">
-										<h3 className="text-center font-bold text-lg mb-4">Are you sure want to delete this group?</h3>
+										<h3 className="mb-4 text-center text-lg font-bold">Are you sure want to delete this group?</h3>
 										<div className="flex flex-wrap justify-center">
 											<div className="my-1 mr-4 last:mr-0">
-                                                <Button btnStyle="danger" label="No" />
-                                            </div>
-                                            <div className="my-1 mr-4 last:mr-0">
-                                                <Button label="Yes" />
-                                            </div>
-                                        </div>
+												<Button btnStyle="danger" label="No" />
+											</div>
+											<div className="my-1 mr-4 last:mr-0">
+												<Button label="Yes" />
+											</div>
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
