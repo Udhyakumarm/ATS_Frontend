@@ -22,7 +22,11 @@ let newNovusStore: any = (set: any) => ({
 	chat: [],
 	setchat: (id: any) => set(() => ({ chat: id })),
 	achat: [],
-	setachat: (id: any) => set(() => ({ achat: id }))
+	setachat: (id: any) => set(() => ({ achat: id })),
+	offerArefid: "",
+	setofferArefid: (id: any) => set(() => ({ offerArefid: id })),
+	offerData: {},
+	setofferData: (id: any) => set(() => ({ offerData: id }))
 });
 
 //#######

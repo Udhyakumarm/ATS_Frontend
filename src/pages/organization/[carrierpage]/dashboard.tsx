@@ -130,6 +130,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 	function rejectOffer(omrefid: any) {
 		const fd = new FormData();
 		fd.append("step", "2");
+		fd.append("novus", "reject");
 		updateOffer(omrefid, fd, "Reject");
 	}
 
@@ -212,6 +213,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 			fd.append("step", 5);
 			fd.append("finalofferLetter", pdfFile, "merged.pdf");
 			fd.append("candidate_status", "Accepted");
+			fd.append("novus", "accept");
 			updateOffer(omrefid, fd, "Approve");
 		} catch (error) {
 			console.error("Error while merging and submitting PDF:", error);
