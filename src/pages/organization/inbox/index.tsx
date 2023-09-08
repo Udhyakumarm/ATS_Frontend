@@ -21,7 +21,7 @@ export default function Inbox() {
 	const [exitGroup, setExitGroup] = useState(false);
 	const [deleteGroup, setDeleteGroup] = useState(false);
 
-	const [togglePages, setTogglePages] = useState(true);
+	const [togglePages, setTogglePages] = useState(false);
 	function handleInboxPage() {
 		setTogglePages(true);
 	}
