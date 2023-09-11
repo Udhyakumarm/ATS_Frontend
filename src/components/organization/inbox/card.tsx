@@ -6,8 +6,18 @@ import userImg1 from "/public/images/user-image1.jpeg";
 import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+import moment from "moment";
 
-export default function InboxCard({ active, pin, count, online }: any) {
+export default function InboxCard({
+	pin,
+	count,
+	online,
+	data,
+	setcardActive,
+	setcardActiveData,
+	cardActive,
+	cardActiveData
+}: any) {
 	function contextClick(e: any, data: any) {
 		var data = data.copy;
 		setmuteChat(true);
@@ -16,39 +26,63 @@ export default function InboxCard({ active, pin, count, online }: any) {
 	}
 	const cancelButtonRef = useRef(null);
 	const [muteChat, setmuteChat] = useState(false);
+	// const [cardActive, setcardActive] = useState(false);
+
+	function clickCard(data: any) {
+		if (cardActiveData["id"] != data["id"]) {
+			console.log("&&&", "click", data);
+			// setcardActive(true);
+			setcardActive(true);
+			setcardActiveData(data);
+		} else {
+			setcardActive(false);
+			setcardActiveData({});
+		}
+	}
 
 	return (
 		<>
-			<ContextMenuTrigger id={`${active ? "contextmenu" : ""}`}>
+			<ContextMenuTrigger id={`${cardActive && cardActiveData["id"] === data["id"] ? "contextmenu" : ""}`}>
 				<div
 					className={
 						"group mb-3 flex cursor-pointer  rounded-2xl px-3 py-4 " +
 						`${
-							active
+							cardActive && cardActiveData["id"] === data["id"]
 								? "border border-slate-200 bg-white drop-shadow-lg  dark:bg-gray-900"
 								: "border border-transparent border-b-slate-200 last:border-b-0 hover:shadow-highlight dark:border-b-gray-600 dark:hover:bg-gray-900"
 						}`
 					}
+					onClick={() => clickCard(data)}
 				>
 					<div className="relative h-[50px] w-[50px]">
 						<Image
-							src={userImg1}
+							src={
+								process.env.NODE_ENV === "production"
+									? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["profile"]}`
+									: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["profile"]}`
+							}
 							alt="User"
-							width={150}
-							className={" rounded-full object-cover" + `${active ? "drop-shadow-lg" : "group-hover:shadow-highlight"}`}
+							width={1500}
+							height={1500}
+							className={
+								"h-[50px] w-[50px] rounded-full object-cover" +
+								`${
+									cardActive && cardActiveData["id"] === data["id"] ? "drop-shadow-lg" : "group-hover:shadow-highlight"
+								}`
+							}
 						/>
-						{count && count > 0 && (
-							<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
-								{count}
-							</span>
-						)}
+						{/* {data["unread_count"] && data["unread_count"] > 0 && ( */}
+						<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
+							{count}
+						</span>
+						{/* )} */}
 						{online && (
 							<span className="absolute left-[-5px] top-[-5px] flex h-[10px] w-[10px] items-center justify-center rounded-full bg-cyan-500 text-center text-xs font-bold text-white"></span>
 						)}
 					</div>
 					<div className="w-[calc(100%-50px)] pl-3 pt-1">
 						<div className="mb-2 flex justify-between">
-							<h5 className="text-sm font-semibold">Jack Paul</h5>
+							<h5 className="text-sm font-semibold">{data["username"]}</h5>
 							<div className="flex flex-nowrap gap-2">
 								{pin ? (
 									<span className="rounded-md bg-primary p-1">
@@ -77,18 +111,26 @@ export default function InboxCard({ active, pin, count, online }: any) {
 									</span>
 								)}
 								<span className="block rounded bg-gray-200 px-2 py-1 text-[10px] font-semibold dark:bg-gray-600">
-									3:30 PM
+									{/* {moment(data["modified"]).format("h:mm a")} */}
+									{moment(data["modified"]).fromNow()}
 								</span>
 							</div>
 						</div>
-						<p className="clamp_2 text-[12px] text-darkGray">
-							Your Interview has been scheduled for Software Developer Job at Organization Name Software Developer Job
-							at Organization Name
-						</p>
+						{data["last_message"] && (
+							<p className="clamp_2 text-[12px] text-darkGray">
+								{data["last_message"]["file"] ? (
+									<>
+										<i className="fa-solid fa-file"></i>&nbsp;{data["last_message"]["file"]["name"]}
+									</>
+								) : (
+									data["last_message"]["text"]
+								)}
+							</p>
+						)}
 					</div>
 				</div>
 			</ContextMenuTrigger>
-			{active && (
+			{cardActive && cardActiveData["id"] === data["id"] && (
 				<ContextMenu id="contextmenu" className="rounded-lg border-2 bg-white py-4 shadow-lg dark:bg-gray-700">
 					<MenuItem
 						data={{ text: "Mute" }}

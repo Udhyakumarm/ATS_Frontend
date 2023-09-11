@@ -3,27 +3,69 @@ import Image from "next/image";
 import FormField from "@/components/FormField";
 import userImg1 from "/public/images/user-image1.jpeg";
 import { Dialog, Menu, Tab, Transition } from "@headlessui/react";
+import moment from "moment";
 
-export default function InboxChatMsg({ type }: any) {
+export default function InboxChatMsg({ type, data }: any) {
 	return (
 		<>
 			{type === "user" && (
 				<div className="flex items-start py-4">
 					<Image
-						src={userImg1}
+						src={
+							process.env.NODE_ENV === "production"
+								? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
+								: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["sender_profile"]}`
+						}
 						alt="User"
 						width={150}
+						height={150}
 						className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
 					/>
-					<div className="ml-2 rounded-2xl bg-[#E1E1E1]/[0.2] py-4 pl-2">
+					<div className="ml-2 w-full rounded-2xl bg-[#E1E1E1]/[0.2] py-4 pl-2">
 						<h4 className="mb-2 font-bold">
-							Jack Paul
-							<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">4:27 PM</span>
+							{data["sender_username"]}
+							<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">
+								{moment(data["sent"]).format("h:mm a")}
+							</span>
 						</h4>
 						<article className="text-sm text-darkGray dark:text-gray-400 ">
-							Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus dolor
-							risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor sit
-							vestibulum
+							{data["file"] && (
+								// <div className="h-auto w-auto">
+								// 	<Image
+								// 		src={
+								// 			process.env.NODE_ENV === "production"
+								// 				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+								// 				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`
+								// 		}
+								// 		// src={data["file"]["name"]}
+								// 		alt="profile"
+								// 		width={150}
+								// 		height={150}
+								// 		className="h-auto w-auto rounded-2xl object-cover"
+								// 	/>
+								// </div>
+								<>
+									<button
+										onClick={() => {
+											window.open(
+												process.env.NODE_ENV === "production"
+													? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+													: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
+												"_blank"
+											);
+										}}
+										className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+									>
+										<b>
+											<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
+										</b>
+									</button>
+									<br />
+									<br />
+								</>
+							)}
+
+							{data["text"]}
 						</article>
 					</div>
 				</div>
@@ -32,22 +74,43 @@ export default function InboxChatMsg({ type }: any) {
 			{type === "me" && (
 				<div className="group flex items-start py-4">
 					<Image
-						src={userImg1}
+						src={
+							process.env.NODE_ENV === "production"
+								? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
+								: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["sender_profile"]}`
+						}
 						alt="User"
 						width={150}
+						height={150}
 						className="h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
 					/>
-					<div className="ml-2 rounded-2xl bg-[#F2FAFF]/[0.5] py-4 pl-2 dark:bg-[#F2FAFF]/[0.1]">
-						<div className="flex items-center">
+					<div className="ml-2 w-full rounded-2xl bg-[#F2FAFF]/[0.5] py-4 pl-2 dark:bg-[#F2FAFF]/[0.1]">
+						<div className="flex items-center justify-between">
 							<div>
 								<h4 className="mb-2 font-bold">
 									Me
-									<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">4:27 PM</span>
+									<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">
+										{moment(data["sent"]).format("h:mm a")}
+									</span>
 								</h4>
-								<article className="text-sm text-darkGray dark:text-gray-400">
-									Lorem ipsum dolor sit amet consectetur. Pellentesque sagittis sed dictum lorem. Neque eget faucibus
-									dolor risus posuere vitae sodales. Sit odio morbi dolor egestas sit aliquam velit cum. Pharetra tortor
-									sit vestibulum
+								<article className="w-full text-sm text-darkGray dark:text-gray-400">
+									{data["file"] && (
+										<div className="h-auto w-auto">
+											<Image
+												src={
+													process.env.NODE_ENV === "production"
+														? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+														: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`
+												}
+												// src={data["file"]["name"]}
+												alt="profile"
+												width={150}
+												height={150}
+												className="h-auto w-auto rounded-2xl object-cover"
+											/>
+										</div>
+									)}
+									{data["text"]}
 								</article>
 							</div>
 							<Menu as="div" className="hidden group-hover:relative group-hover:block">
@@ -65,7 +128,7 @@ export default function InboxChatMsg({ type }: any) {
 								>
 									<Menu.Items
 										className={
-											"absolute bottom-5 right-0 whitespace-nowrap rounded bg-white py-2 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
+											"absolute right-0 top-5 whitespace-nowrap rounded bg-white py-2 text-darkGray shadow-normal dark:bg-gray-700 dark:text-gray-400"
 										}
 									>
 										<Menu.Item>

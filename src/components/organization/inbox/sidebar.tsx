@@ -7,7 +7,37 @@ import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import InboxCard from "./card";
 
-export default function InboxSideBar({ togglePages, setTogglePages }: any) {
+export default function InboxSideBar({
+	togglePages,
+	setTogglePages,
+	axiosInstanceAuth2,
+	setcardActive,
+	setcardActiveData,
+	cardActive,
+
+	cardActiveData
+}: any) {
+	const [sidebarData, setsidebarData] = useState([]);
+
+	async function loadSidebar() {
+		await axiosInstanceAuth2
+			.get(`/inbox/dialogs/`)
+			.then(async (res) => {
+				console.log("&&&", "dialogs", res.data);
+				setsidebarData(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setsidebarData([]);
+			});
+	}
+
+	useEffect(() => {
+		if (axiosInstanceAuth2) {
+			loadSidebar();
+		}
+	}, [axiosInstanceAuth2]);
+
 	return (
 		<div
 			className="overflow-hidden rounded-normal border bg-white/50 shadow-normal dark:border-gray-600 dark:bg-gray-800/50"
@@ -259,10 +289,24 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											</svg> */}
 										</div>
 									</div>
-									<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0">
-										<InboxCard pin={true} active={true} online={true} />
-										<InboxCard pin={false} count={15} />
-									</div>
+									{sidebarData && sidebarData.length > 0 && (
+										<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0">
+											{sidebarData.map((data, i) => (
+												<div key={i}>
+													<InboxCard
+														pin={false}
+														setcardActive={setcardActive}
+														setcardActiveData={setcardActiveData}
+														cardActive={cardActive}
+														cardActiveData={cardActiveData}
+														online={false}
+														count={data["unread_count"]}
+														data={data}
+													/>
+												</div>
+											))}
+										</div>
+									)}
 								</Tab.Panel>
 								{/* <Tab.Panel>
 									<div className="flex items-center p-4 pt-0">

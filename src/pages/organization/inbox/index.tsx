@@ -2,7 +2,7 @@ import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
 import { Dialog, Tab, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef, useState, useEffect } from "react";
 import FormField from "@/components/FormField";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -12,6 +12,9 @@ import Button from "@/components/Button";
 import { Menu } from "@headlessui/react";
 import InboxSideBar from "@/components/organization/inbox/sidebar";
 import InboxFrame from "@/components/organization/inbox/frame";
+import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export default function Inbox() {
 	const [sklLoad] = useState(true);
@@ -55,6 +58,21 @@ export default function Inbox() {
 		return <></>;
 	};
 
+	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+	const [cardActive, setcardActive] = useState(false);
+	const [cardActiveData, setcardActiveData] = useState({});
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
 	return (
 		<>
 			<Head>
@@ -71,11 +89,29 @@ export default function Inbox() {
 				<div className="layoutWrap p-4">
 					<div className="flex flex-wrap">
 						<div className="mb-4 w-full xl:mb-0 xl:max-w-[27%]">
-							<InboxSideBar togglePages={togglePages} setTogglePages={setTogglePages} />
+							<InboxSideBar
+								togglePages={togglePages}
+								setTogglePages={setTogglePages}
+								axiosInstanceAuth2={axiosInstanceAuth2}
+								cardActive={cardActive}
+								cardActiveData={cardActiveData}
+								setcardActive={setcardActive}
+								setcardActiveData={setcardActiveData}
+							/>
 						</div>
-						<div className="w-full xl:max-w-[73%] xl:pl-4">
-							<InboxFrame togglePages={togglePages} setTogglePages={setTogglePages} />
-						</div>
+						{cardActive && (
+							<div className="w-full xl:max-w-[73%] xl:pl-4">
+								<InboxFrame
+									togglePages={togglePages}
+									setTogglePages={setTogglePages}
+									axiosInstanceAuth2={axiosInstanceAuth2}
+									cardActive={cardActive}
+									cardActiveData={cardActiveData}
+									setcardActive={setcardActive}
+									setcardActiveData={setcardActiveData}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 			</main>

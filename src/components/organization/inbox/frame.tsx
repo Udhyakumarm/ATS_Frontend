@@ -8,15 +8,44 @@ import AutoTextarea from "@/components/organization/AutoTextarea";
 import startNewChat from "/public/images/no-data/iconGroup-4.png";
 import InboxChatMsg from "./chatMsg";
 
-export default function InboxFrame({ togglePages, setTogglePages }: any) {
+export default function InboxFrame({
+	togglePages,
+	setTogglePages,
+	axiosInstanceAuth2,
+	cardActive,
+	cardActiveData,
+	setcardActive,
+	setcardActiveData
+}: any) {
 	const [toggle, setoggle] = useState(true);
-	const [reply, setreply] = useState(true);
+	const [reply, setreply] = useState(false);
 	const [text, settext] = useState("");
 	const [showPicker, setShowPicker] = useState(false);
 	const handleEmojiSelect = (emoji: any) => {
 		// onEmojiSelect(emoji.native);
 		setShowPicker(false);
 	};
+
+	const [msg, setmsg] = useState([]);
+	async function loadFrame(id: any) {
+		await axiosInstanceAuth2
+			.get(`/inbox/messages/${id}/`)
+			.then(async (res) => {
+				console.log("&&&", "msg", res.data);
+				setmsg(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setmsg([]);
+			});
+	}
+
+	useEffect(() => {
+		if (axiosInstanceAuth2 && cardActive) {
+			loadFrame(cardActiveData["other_user_id"]);
+		}
+	}, [axiosInstanceAuth2, cardActive, cardActiveData]);
+
 	return (
 		<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
 			{togglePages ? (
@@ -125,17 +154,25 @@ export default function InboxFrame({ togglePages, setTogglePages }: any) {
 					<div className="border-b dark:border-b-gray-600">
 						<div className="mx-auto flex w-full max-w-[90%] items-center px-4 py-2">
 							<Image
-								src={userImg1}
+								src={
+									process.env.NODE_ENV === "production"
+										? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${cardActiveData["profile"]}`
+										: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${cardActiveData["profile"]}`
+								}
 								alt="User"
-								width={150}
+								width={1500}
+								height={1500}
 								className="mr-4 h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
 							/>
 							<aside>
 								<h4 className="jusitfy-between flex items-center text-lg font-bold">
 									<span className="grow">
-										Jack Paul{" "}
+										{cardActiveData["username"]}
 										<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
-											Division Head-Engineering
+											{cardActiveData["title"]}
+										</span>
+										<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
+											{cardActiveData["dept"]}
 										</span>
 									</span>
 									{/* <Menu as="div" className="relative">
@@ -266,23 +303,38 @@ export default function InboxFrame({ togglePages, setTogglePages }: any) {
 					{toggle ? (
 						<div className="h-[calc(100vh-280px)] overflow-y-auto">
 							<div className="mx-auto w-full max-w-[90%] px-4">
-								<div className="flex min-h-[400px] items-center justify-center">
-									<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-										<div className="mb-6 p-2">
-											<Image
-												src={startNewChat}
-												alt="No Data"
-												width={300}
-												className="mx-auto max-h-[150px] w-auto max-w-[150px]"
-											/>
+								{msg.length <= 0 ? (
+									<div className="flex min-h-[400px] items-center justify-center">
+										<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+											<div className="mb-6 p-2">
+												<Image
+													src={startNewChat}
+													alt="No Data"
+													width={300}
+													className="mx-auto max-h-[150px] w-auto max-w-[150px]"
+												/>
+											</div>
+											<h5 className="font-bold">Start New Chat</h5>
 										</div>
-										<h5 className="font-bold">Start New Chat</h5>
 									</div>
-								</div>
+								) : (
+									<>
+										{msg.map((data, i) => (
+											<div key={i}>
+												{data["out"] ? (
+													<InboxChatMsg type="me" data={data} />
+												) : (
+													<InboxChatMsg type="user" data={data} />
+												)}
+												{/* <InboxChatMsg type="reply" /> */}
+											</div>
+										))}
+									</>
+								)}
 
-								<InboxChatMsg type="user" />
+								{/* <InboxChatMsg type="user" />
 								<InboxChatMsg type="me" />
-								<InboxChatMsg type="reply" />
+								<InboxChatMsg type="reply" /> */}
 							</div>
 						</div>
 					) : (
