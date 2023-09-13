@@ -15,6 +15,50 @@ import InboxFrame from "@/components/organization/inbox/frame";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import ReconnectingWebSocket from "reconnecting-websocket";
+// import {
+// 	uploadFile,
+// 	sendOutgoingFileMessage,
+// 	createNewDialogModelFromIncomingMessageBox,
+// 	getSubtitleTextFromMessageBox,
+// 	fetchSelfInfo,
+// 	handleIncomingWebsocketMessage,
+// 	sendOutgoingTextMessage,
+// 	filterMessagesForDialog,
+// 	fetchDialogs,
+// 	fetchMessages,
+// 	fetchUsersList,
+// 	sendIsTypingMessage,
+// 	markMessagesForDialogAsRead,
+// 	sendMessageReadMessage
+// } from "../../../../fs-src/App.fs.js";
+
+const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info: any) => {
+	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
+	const randomId = 1484;
+	const data = {
+		text,
+		user_pk,
+		random_id: randomId // Use snake_case for property names in JavaScript
+	};
+
+	socket.send(JSON.stringify({ msg_type: 3, data })); // Adjust the message structure as needed
+
+	console.log("Message Send Process DOne");
+
+	// if (self_info) {
+	//   const outgoingMessage = createMessageBoxFromOutgoingMessage(
+	// 	text,
+	// 	user_pk,
+	// 	self_info.pk,
+	// 	self_info.username,
+	// 	randomId,
+	// 	null // You should replace this with the appropriate value
+	//   );
+
+	//   // Now, you can use outgoingMessage in your React component.
+	// }
+};
 
 export default function Inbox() {
 	const [sklLoad] = useState(true);
@@ -72,6 +116,27 @@ export default function Inbox() {
 		}
 	}, [session]);
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			console.log("&&&", "token", token);
+			const rws = new ReconnectingWebSocket(`ws://127.0.0.1:8000/ws/chat/?access_token=${token}`);
+
+			rws.addEventListener("open", () => {
+				console.log("Connected to WebSocket server");
+				performSendingMessage("Hello New Messgae", rws);
+			});
+		}
+	}, [token]);
+
+	function performSendingMessage(text: any, socket: any) {
+		let userData = {
+			username: "naman",
+			pk: "3"
+		};
+		let user_pk = "6";
+		sendOutgoingTextMessage(socket, text, user_pk, userData);
+	}
 
 	return (
 		<>
