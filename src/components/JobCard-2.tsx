@@ -942,21 +942,21 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<LinkedinShareButton
-													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+													url={`https://ats.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
 												>
 													<i className="fa-brands fa-linkedin-in hover:text-black"></i>
 												</LinkedinShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<TwitterShareButton
-													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+													url={`https://ats.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
 												>
 													<i className="fa-brands fa-twitter hover:text-black"></i>
 												</TwitterShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<FacebookShareButton
-													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+													url={`https://ats.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
 													hashtag={job.jobSkill}
 												>
 													<i className="fa-brands fa-facebook-f hover:text-black"></i>
@@ -965,7 +965,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<EmailShareButton
 													subject={job.jobTitle}
-													url={`https://jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
+													url={`https://ats.somhako.com/organization/${shareCN}/job-detail/${job.refid}`}
 												>
 													<i className="fa-solid fa-envelope hover:text-black"></i>
 												</EmailShareButton>
@@ -976,7 +976,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													className="hover:text-black"
 													onClick={(e) => {
 														navigator.clipboard
-															.writeText(`https://www.jobs.somhako.com/organization/${shareCN}/job-detail/${job.refid}`)
+															.writeText(`https://www.ats.somhako.com/organization/${shareCN}/job-detail/${job.refid}`)
 															.then((e) => {
 																toastcomp("Copid Successfully", "Success");
 															})

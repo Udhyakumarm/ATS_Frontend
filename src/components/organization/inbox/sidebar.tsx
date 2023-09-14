@@ -7,7 +7,37 @@ import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import InboxCard from "./card";
 
-export default function InboxSideBar({ togglePages, setTogglePages }: any) {
+export default function InboxSideBar({
+	togglePages,
+	setTogglePages,
+	axiosInstanceAuth2,
+	setcardActive,
+	setcardActiveData,
+	cardActive,
+	cardActiveData,
+	socket
+}: any) {
+	const [sidebarData, setsidebarData] = useState([]);
+
+	async function loadSidebar() {
+		await axiosInstanceAuth2
+			.get(`/inbox/dialogs/`)
+			.then(async (res) => {
+				console.log("&&&", "dialogs", res.data);
+				setsidebarData(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setsidebarData([]);
+			});
+	}
+
+	useEffect(() => {
+		if (axiosInstanceAuth2) {
+			loadSidebar();
+		}
+	}, [axiosInstanceAuth2]);
+
 	return (
 		<div
 			className="overflow-hidden rounded-normal border bg-white/50 shadow-normal dark:border-gray-600 dark:bg-gray-800/50"
@@ -17,7 +47,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 		>
 			<Tab.Group>
 				<Tab.List className={"border-b px-6 pt-2 dark:border-gray-600"}>
-					<Tab as={Fragment}>
+					{/* <Tab as={Fragment}>
 						{({ selected }) => (
 							<button
 								className={
@@ -30,7 +60,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 								Inbox
 							</button>
 						)}
-					</Tab>
+					</Tab> */}
 					<Tab as={Fragment}>
 						{({ selected }) => (
 							<button
@@ -47,7 +77,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 					</Tab>
 				</Tab.List>
 				<Tab.Panels>
-					<Tab.Panel>
+					{/* <Tab.Panel>
 						<Tab.Group>
 							<Tab.List className={"px-6"}>
 								<Tab as={Fragment}>
@@ -134,15 +164,15 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											/>
 										</div>
 									</div>
-									<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0">{/* vendor inbox */}</div>
+									<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0"></div>
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>
-					</Tab.Panel>
+					</Tab.Panel> */}
 					<Tab.Panel>
 						<Tab.Group>
 							<Tab.List className={"px-6"}>
-								<Tab as={Fragment}>
+								{/* <Tab as={Fragment}>
 									{({ selected }) => (
 										<button
 											className={
@@ -154,8 +184,8 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											All Chats
 										</button>
 									)}
-								</Tab>
-								<Tab as={Fragment}>
+								</Tab> */}
+								{/* <Tab as={Fragment}>
 									{({ selected }) => (
 										<button
 											className={
@@ -167,7 +197,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											Groups
 										</button>
 									)}
-								</Tab>
+								</Tab> */}
 							</Tab.List>
 							<Tab.Panels>
 								<Tab.Panel>
@@ -218,7 +248,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											</Transition>
 										</Menu> 
 									</div> */}
-									<div className="p-4 pt-0">
+									<div className="p-4 pt-3">
 										<div className="flex items-center gap-1">
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +270,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 												placeholder={"Search Team Members ..."}
 												className={`min-h-[45px] w-full border-none bg-transparent p-3 text-sm `}
 											/>
-											<svg
+											{/* <svg
 												xmlns="http://www.w3.org/2000/svg"
 												width="20"
 												height="20"
@@ -256,15 +286,29 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 													d="M14.3071 9.07536H10.6116V5.38648C10.6116 4.9683 10.2715 4.62891 9.85243 4.62891C9.43339 4.62891 9.0933 4.9683 9.0933 5.38648V9.07536H5.39781C4.97877 9.07536 4.63867 9.41475 4.63867 9.83293C4.63867 10.2511 4.97877 10.5905 5.39781 10.5905H9.0933V14.2794C9.0933 14.6976 9.43339 15.037 9.85243 15.037C10.2715 15.037 10.6116 14.6976 10.6116 14.2794V10.5905H14.3071C14.7261 10.5905 15.0662 10.2511 15.0662 9.83293C15.0662 9.41475 14.7261 9.07536 14.3071 9.07536Z"
 													fill="#939393"
 												/>
-											</svg>
+											</svg> */}
 										</div>
 									</div>
-									<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0">
-										<InboxCard pin={true} active={true} online={true} />
-										<InboxCard pin={false} count={15} />
-									</div>
+									{sidebarData && sidebarData.length > 0 && (
+										<div className="h-[calc(100vh-264px)] overflow-y-auto p-4 pt-0">
+											{sidebarData.map((data, i) => (
+												<div key={i}>
+													<InboxCard
+														pin={false}
+														setcardActive={setcardActive}
+														setcardActiveData={setcardActiveData}
+														cardActive={cardActive}
+														cardActiveData={cardActiveData}
+														online={false}
+														count={data["unread_count"]}
+														data={data}
+													/>
+												</div>
+											))}
+										</div>
+									)}
 								</Tab.Panel>
-								<Tab.Panel>
+								{/* <Tab.Panel>
 									<div className="flex items-center p-4 pt-0">
 										<div className="grow">
 											<FormField
@@ -308,7 +352,7 @@ export default function InboxSideBar({ togglePages, setTogglePages }: any) {
 											</div>
 										</div>
 									</div>
-								</Tab.Panel>
+								</Tab.Panel> */}
 							</Tab.Panels>
 						</Tab.Group>
 					</Tab.Panel>

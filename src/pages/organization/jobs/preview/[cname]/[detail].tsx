@@ -343,7 +343,7 @@ export default function RecPreivew(props) {
 										<ul className="flex flex-wrap items-center justify-center text-center text-xl text-[#6D27F9] dark:text-[#fff]">
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<LinkedinShareButton
-													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													url={`https://ats.somhako.com/organization/${cname}/job-detail/${detail}`}
 													title="LOREM"
 													summary="LOREM2"
 													source="LOREM333"
@@ -352,7 +352,7 @@ export default function RecPreivew(props) {
 												</LinkedinShareButton>
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
-												<TwitterShareButton url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}>
+												<TwitterShareButton url={`https://ats.somhako.com/organization/${cname}/job-detail/${detail}`}>
 													<i className="fa-brands fa-twitter hover:text-black"></i>
 												</TwitterShareButton>
 												{/* <button type="button" className="hover:text-black">
@@ -361,7 +361,7 @@ export default function RecPreivew(props) {
 											</li>
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<FacebookShareButton
-													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													url={`https://ats.somhako.com/organization/${cname}/job-detail/${detail}`}
 													hashtag={jdata.jobSkill}
 												>
 													<i className="fa-brands fa-facebook-f hover:text-black"></i>
@@ -373,7 +373,7 @@ export default function RecPreivew(props) {
 											<li className="mb-2 w-[33.33%] px-[10px]">
 												<EmailShareButton
 													subject={jdata.jobTitle}
-													url={`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`}
+													url={`https://ats.somhako.com/organization/${cname}/job-detail/${detail}`}
 												>
 													<i className="fa-solid fa-envelope hover:text-black"></i>
 												</EmailShareButton>
@@ -387,7 +387,7 @@ export default function RecPreivew(props) {
 													className="hover:text-black"
 													onClick={(e) => {
 														navigator.clipboard
-															.writeText(`https://jobs.somhako.com/organization/${cname}/job-detail/${detail}`)
+															.writeText(`https://ats.somhako.com/organization/${cname}/job-detail/${detail}`)
 															.then((e) => {
 																toastcomp("Copid Successfully", "Success");
 															})
@@ -420,8 +420,8 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	var otitle = "";
 	var oimg = "";
 	var odescription = "";
-	var ourl = "https://jobs.somhako.com/organization/" + cname + "/job-detail/" + detail;
-	var tsite = "https://jobs.somhako.com/organization/" + cname + "/job-detail/" + detail;
+	var ourl = "https://ats.somhako.com/organization/" + cname + "/job-detail/" + detail;
+	var tsite = "https://ats.somhako.com/organization/" + cname + "/job-detail/" + detail;
 	var tcard = "photo";
 	var ttitle = "";
 	var tdesc = "";
