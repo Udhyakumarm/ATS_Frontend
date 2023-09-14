@@ -14,7 +14,8 @@ export default function InboxSideBar({
 	setcardActive,
 	setcardActiveData,
 	cardActive,
-	cardActiveData
+	cardActiveData,
+	socket
 }: any) {
 	const [sidebarData, setsidebarData] = useState([]);
 

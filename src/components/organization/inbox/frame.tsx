@@ -15,11 +15,14 @@ export default function InboxFrame({
 	cardActive,
 	cardActiveData,
 	setcardActive,
-	setcardActiveData
+	setcardActiveData,
+	text,
+	settext,
+	setclick
 }: any) {
 	const [toggle, setoggle] = useState(true);
 	const [reply, setreply] = useState(false);
-	const [text, settext] = useState("");
+	// const [text, settext] = useState("");
 	const [showPicker, setShowPicker] = useState(false);
 	const handleEmojiSelect = (emoji: any) => {
 		// onEmojiSelect(emoji.native);
@@ -523,7 +526,11 @@ export default function InboxFrame({
 											</Menu.Items>
 										</Transition>
 									</Menu>
-									<button type="button" className="block border-l-2 border-gray-400 px-2 text-sm leading-normal">
+									<button
+										type="button"
+										className="block border-l-2 border-gray-400 px-2 text-sm leading-normal"
+										onClick={() => setclick(true)}
+									>
 										<i className="fa-solid fa-paper-plane"></i>
 									</button>
 								</div>
@@ -695,7 +702,11 @@ export default function InboxFrame({
 											</Menu.Items>
 										</Transition>
 									</Menu>
-									<button type="button" className="block border-l-2 border-gray-400 px-2 text-sm leading-normal">
+									<button
+										type="button"
+										className="block border-l-2 border-gray-400 px-2 text-sm leading-normal"
+										onClick={() => setclick(true)}
+									>
 										<i className="fa-solid fa-paper-plane"></i>
 									</button>
 								</div>

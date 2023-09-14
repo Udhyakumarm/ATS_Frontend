@@ -1914,9 +1914,9 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 													<div className="mt-2 flex rounded border">
 														<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
 															<p className="text-[12px]">
-																{/* {`https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`} */}
+																{/* {`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`} */}
 																&#60;a href=&ldquo;
-																{`https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																{`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
 																&rdquo; target=&ldquo;_blank&rdquo;&#62;Search Jobs&#60;/a&#62;
 															</p>
 														</div>
@@ -1926,7 +1926,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 															className="w-[50px] p-3"
 															onClick={() => {
 																navigator.clipboard.writeText(
-																	`<a href=“https://jobs.somhako.com/organization/${oprofile[0]["user"]["company_name"]}” target=“_blank”>Search Jobs</a>`
+																	`<a href=“https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}” target=“_blank”>Search Jobs</a>`
 																);
 																toastcomp("URL tag Copied to clipboard", "success");
 															}}
