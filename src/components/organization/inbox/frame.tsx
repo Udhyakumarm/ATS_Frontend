@@ -18,10 +18,14 @@ export default function InboxFrame({
 	setcardActiveData,
 	text,
 	settext,
-	setclick
+	setclick,
+	socket,
+	isTypingFun,
+	isStopTypingFun
 }: any) {
 	const [toggle, setoggle] = useState(true);
 	const [reply, setreply] = useState(false);
+	const [isTyping, setisTyping] = useState(null);
 	// const [text, settext] = useState("");
 	const [showPicker, setShowPicker] = useState(false);
 	const handleEmojiSelect = (emoji: any) => {
@@ -35,7 +39,7 @@ export default function InboxFrame({
 			.get(`/inbox/messages/${id}/`)
 			.then(async (res) => {
 				console.log("&&&", "msg", res.data);
-				setmsg(res.data);
+				setmsg(res.data.reverse());
 			})
 			.catch((err) => {
 				console.log(err);
@@ -48,6 +52,16 @@ export default function InboxFrame({
 			loadFrame(cardActiveData["other_user_id"]);
 		}
 	}, [axiosInstanceAuth2, cardActive, cardActiveData]);
+
+	useEffect(() => {
+		if (isTyping != null) {
+			if (isTyping === true) {
+				isTypingFun(socket, cardActiveData["other_user_id"]);
+			} else {
+				isStopTypingFun(socket, cardActiveData["other_user_id"]);
+			}
+		}
+	}, [isTyping]);
 
 	return (
 		<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
@@ -369,7 +383,13 @@ export default function InboxFrame({
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
 									placeholder="Type something..."
 									value={text}
-									onChange={(e) => settext(e.target.value)}
+									onChange={(e) => {
+										settext(e.target.value);
+										setisTyping(true);
+									}}
+									onBlur={(e) => {
+										setisTyping(false);
+									}}
 								></textarea>
 								<div className="flex gap-2">
 									<button
@@ -545,7 +565,13 @@ export default function InboxFrame({
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
 									placeholder="Type something..."
 									value={text}
-									onChange={(e) => settext(e.target.value)}
+									onChange={(e) => {
+										settext(e.target.value);
+										setisTyping(true);
+									}}
+									onBlur={(e) => {
+										setisTyping(false);
+									}}
 								></textarea>
 								<div className="flex gap-2">
 									<button

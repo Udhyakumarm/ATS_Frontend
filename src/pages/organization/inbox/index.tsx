@@ -18,22 +18,6 @@ import { useSession } from "next-auth/react";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import { useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
-// import {
-// 	uploadFile,
-// 	sendOutgoingFileMessage,
-// 	createNewDialogModelFromIncomingMessageBox,
-// 	getSubtitleTextFromMessageBox,
-// 	fetchSelfInfo,
-// 	handleIncomingWebsocketMessage,
-// 	sendOutgoingTextMessage,
-// 	filterMessagesForDialog,
-// 	fetchDialogs,
-// 	fetchMessages,
-// 	fetchUsersList,
-// 	sendIsTypingMessage,
-// 	markMessagesForDialogAsRead,
-// 	sendMessageReadMessage
-// } from "../../../../fs-src/App.fs.js";
 
 const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info: any) => {
 	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
@@ -58,6 +42,14 @@ const isTyping = (socket: any, user_pk: any) => {
 	socket.send(JSON.stringify({ msg_type: 5, user_pk: user_pk })); // Adjust the message structure as needed
 
 	console.log("Message Typing Process DOne");
+};
+
+const isStopTyping = (socket: any, user_pk: any) => {
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 10, user_pk: user_pk }));
+
+	socket.send(JSON.stringify({ msg_type: 10, user_pk: user_pk })); // Adjust the message structure as needed
+
+	console.log("Message Stopped Typing Process DOne");
 };
 
 export default function Inbox() {
@@ -223,6 +215,9 @@ export default function Inbox() {
 											text={text}
 											settext={settext}
 											setclick={setclick}
+											isTypingFun={isTyping}
+											isStopTypingFun={isStopTyping}
+											socket={socket}
 										/>
 									</div>
 								)}

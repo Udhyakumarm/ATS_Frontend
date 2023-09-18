@@ -11,12 +11,13 @@ import moment from "moment";
 export default function InboxCard({
 	pin,
 	count,
-	online,
+	// online,
 	data,
 	setcardActive,
 	setcardActiveData,
 	cardActive,
-	cardActiveData
+	cardActiveData,
+	socket
 }: any) {
 	function contextClick(e: any, data: any) {
 		var data = data.copy;
@@ -26,7 +27,10 @@ export default function InboxCard({
 	}
 	const cancelButtonRef = useRef(null);
 	const [muteChat, setmuteChat] = useState(false);
-	// const [cardActive, setcardActive] = useState(false);
+	const [online, setonline] = useState(false);
+	const [isTyping, setisTyping] = useState(null);
+	const [newUnreadCount, setnewUnreadCount] = useState(null);
+	const [newLastMessage, setnewLastMessage] = useState(null);
 
 	function clickCard(data: any) {
 		if (cardActiveData["id"] != data["id"]) {
@@ -39,6 +43,32 @@ export default function InboxCard({
 			setcardActiveData({});
 		}
 	}
+
+	socket.onmessage = function (e) {
+		var fdata = JSON.parse(e.data);
+		console.log("^^^", "eee", fdata);
+		if (fdata["msg_type"] === 1 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+			setonline(true);
+		}
+		if (fdata["msg_type"] === 2 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+			setonline(false);
+		}
+		if (fdata["msg_type"] === 5 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+			setisTyping(true);
+		}
+		if (fdata["msg_type"] === 10 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+			setisTyping(false);
+			setTimeout(() => {
+				setisTyping(null);
+			}, 1000);
+		}
+		if (fdata["msg_type"] === 9 && parseInt(fdata["sender"]) === data["other_user_id"]) {
+			setnewUnreadCount(fdata["unread_count"]);
+		}
+		if (fdata["msg_type"] === 3 && parseInt(fdata["sender"]) === data["other_user_id"]) {
+			setnewLastMessage(fdata["text"]);
+		}
+	};
 
 	return (
 		<>
@@ -73,7 +103,7 @@ export default function InboxCard({
 						/>
 						{/* {data["unread_count"] && data["unread_count"] > 0 && ( */}
 						<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
-							{count}
+							{newUnreadCount != null ? newUnreadCount : data["unread_count"]}
 						</span>
 						{/* )} */}
 						{online && (
@@ -116,16 +146,29 @@ export default function InboxCard({
 								</span>
 							</div>
 						</div>
-						{data["last_message"] && (
-							<p className="clamp_2 text-[12px] text-darkGray">
-								{data["last_message"]["file"] ? (
-									<>
-										<i className="fa-solid fa-file"></i>&nbsp;{data["last_message"]["file"]["name"]}
-									</>
-								) : (
-									data["last_message"]["text"]
+						{isTyping != null ? (
+							<>
+								<p className="clamp_2 text-[12px] text-darkGray">
+									{isTyping === true && "User Is Typing ..."}
+									{isTyping === false && "User Stopped Typing ..."}
+								</p>
+							</>
+						) : (
+							<>
+								{data["last_message"] && (
+									<p className="clamp_2 text-[12px] text-darkGray">
+										{data["last_message"]["file"] ? (
+											<>
+												<i className="fa-solid fa-file"></i>&nbsp;{data["last_message"]["file"]["name"]}
+											</>
+										) : (
+											<p className="overflow-hidden truncate text-ellipsis ">
+												{newLastMessage != null ? newLastMessage : data["last_message"]["text"]}
+											</p>
+										)}
+									</p>
 								)}
-							</p>
+							</>
 						)}
 					</div>
 				</div>

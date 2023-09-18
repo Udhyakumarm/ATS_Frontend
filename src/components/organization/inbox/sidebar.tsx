@@ -302,6 +302,7 @@ export default function InboxSideBar({
 														online={false}
 														count={data["unread_count"]}
 														data={data}
+														socket={socket}
 													/>
 												</div>
 											))}
