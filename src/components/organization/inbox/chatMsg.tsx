@@ -96,20 +96,6 @@ export default function InboxChatMsg({ type, data }: any) {
 						</h4> */}
 									<article className="text-sm text-darkGray dark:text-gray-400 ">
 										{data["file"] && (
-											// <div className="h-auto w-auto">
-											// 	<Image
-											// 		src={
-											// 			process.env.NODE_ENV === "production"
-											// 				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
-											// 				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`
-											// 		}
-											// 		// src={data["file"]["name"]}
-											// 		alt="profile"
-											// 		width={150}
-											// 		height={150}
-											// 		className="h-auto w-auto rounded-2xl object-cover"
-											// 	/>
-											// </div>
 											<>
 												<button
 													onClick={() => {
@@ -124,6 +110,27 @@ export default function InboxChatMsg({ type, data }: any) {
 												>
 													<b>
 														<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
+													</b>
+												</button>
+												<br />
+												<br />
+											</>
+										)}
+										{data["media"] && (
+											<>
+												<button
+													onClick={() => {
+														window.open(
+															process.env.NODE_ENV === "production"
+																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
+																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
+															"_blank"
+														);
+													}}
+													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+												>
+													<b>
+														<i className="fa-solid fa-download"></i>&nbsp;{data["media"]["name"]}
 													</b>
 												</button>
 												<br />
@@ -434,6 +441,28 @@ export default function InboxChatMsg({ type, data }: any) {
 												>
 													<b>
 														<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
+													</b>
+												</button>
+												<br />
+												<br />
+											</>
+										)}
+
+										{data["media"] && (
+											<>
+												<button
+													onClick={() => {
+														window.open(
+															process.env.NODE_ENV === "production"
+																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
+																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
+															"_blank"
+														);
+													}}
+													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+												>
+													<b>
+														<i className="fa-solid fa-download"></i>&nbsp;{data["media"]["name"]}
 													</b>
 												</button>
 												<br />

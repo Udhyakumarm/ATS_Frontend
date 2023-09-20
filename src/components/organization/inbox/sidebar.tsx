@@ -32,6 +32,18 @@ export default function InboxSideBar({
 			});
 	}
 
+	async function pinnedClick(e: any, id: any) {
+		e.stopPropagation();
+		await axiosInstanceAuth2
+			.post(`/inbox/dialogs_pinned/${id}/`)
+			.then(async (res) => {
+				loadSidebar();
+			})
+			.catch((err) => {
+				loadSidebar();
+			});
+	}
+
 	useEffect(() => {
 		if (axiosInstanceAuth2) {
 			loadSidebar();
@@ -303,6 +315,7 @@ export default function InboxSideBar({
 														count={data["unread_count"]}
 														data={data}
 														socket={socket}
+														pinnedClick={pinnedClick}
 													/>
 												</div>
 											))}

@@ -19,13 +19,13 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 import { useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
 
-const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info: any) => {
+const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any) => {
 	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
 		user_pk,
-		random_id: randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId // Use snake_case for property names in JavaScript
 	};
 
 	console.log("^^", "final data", data);
@@ -34,6 +34,42 @@ const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info
 	socket.send(JSON.stringify({ msg_type: 3, data })); // Adjust the message structure as needed
 
 	console.log("Message Send Process DOne");
+};
+
+const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		text,
+		user_pk,
+		file_id: file_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+
+	socket.send(JSON.stringify({ msg_type: 4, data })); // Adjust the message structure as needed
+
+	console.log("File Message Send Process DOne");
+};
+
+const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		text,
+		user_pk,
+		media_id: file_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+
+	socket.send(JSON.stringify({ msg_type: 11, data })); // Adjust the message structure as needed
+
+	console.log("Mieda Message Send Process DOne");
 };
 
 const isTyping = (socket: any, user_pk: any) => {
@@ -154,24 +190,24 @@ export default function Inbox() {
 		}
 	}, [text]);
 
-	function performSendingMessage(text: any, socket: any, opk: any) {
-		let userData = {
-			username: currentUser[0]["name"],
-			pk: currentUser[0]["id"].toString()
-		};
-		let user_pk = opk.toString();
-		sendOutgoingTextMessage(socket, text, user_pk, userData);
-	}
+	// function performSendingMessage(text: any, socket: any, opk: any) {
+	// 	let userData = {
+	// 		username: currentUser[0]["name"],
+	// 		pk: currentUser[0]["id"].toString()
+	// 	};
+	// 	let user_pk = opk.toString();
+	// 	sendOutgoingTextMessage(socket, text, user_pk, userData);
+	// }
 
-	useEffect(() => {
-		console.log("^^", "rws socket", socket);
-		if (click && text.length > 0 && socket != null) {
-			toastcomp(text, "success");
-			performSendingMessage(text, socket, cardActiveData["other_user_id"]);
-			settext("");
-			setclick(false);
-		}
-	}, [click]);
+	// useEffect(() => {
+	// 	console.log("^^", "rws socket", socket);
+	// 	if (click && text.length > 0 && socket != null) {
+	// 		toastcomp(text, "success");
+	// 		performSendingMessage(text, socket, cardActiveData["other_user_id"]);
+	// 		settext("");
+	// 		setclick(false);
+	// 	}
+	// }, [click]);
 
 	return (
 		<>
@@ -218,6 +254,9 @@ export default function Inbox() {
 											isTypingFun={isTyping}
 											isStopTypingFun={isStopTyping}
 											socket={socket}
+											sendOutgoingTextMessage={sendOutgoingTextMessage}
+											sendOutgoingFileMessage={sendOutgoingFileMessage}
+											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
 										/>
 									</div>
 								)}

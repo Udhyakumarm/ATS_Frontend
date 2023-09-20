@@ -21,10 +21,15 @@ export default function InboxFrame({
 	setclick,
 	socket,
 	isTypingFun,
-	isStopTypingFun
+	isStopTypingFun,
+	sendOutgoingFileMessage,
+	sendOutgoingTextMessage,
+	sendOutgoingMediaMessage
 }: any) {
 	const [toggle, setoggle] = useState(true);
 	const [reply, setreply] = useState(false);
+	const [media, setmedia] = useState(null);
+	const [file, setfile] = useState(null);
 	const [isTyping, setisTyping] = useState(null);
 	// const [text, settext] = useState("");
 	const [showPicker, setShowPicker] = useState(false);
@@ -62,6 +67,74 @@ export default function InboxFrame({
 			}
 		}
 	}, [isTyping]);
+
+	const fileInputRef = useRef(null);
+	const mediaInputRef = useRef(null);
+	const handleDocumentButtonClick = () => {
+		// Trigger the file input's click event
+		fileInputRef.current.click();
+	};
+	const handleMediauttonClick = () => {
+		// Trigger the file input's click event
+		mediaInputRef.current.click();
+	};
+	function uploadFile(e) {
+		if (e.target.files) {
+			const file = e.target.files[0];
+			setfile(file);
+		} else {
+			setfile(null);
+		}
+	}
+	function uploadMedia(e) {
+		if (e.target.files) {
+			const file = e.target.files[0];
+			setmedia(file);
+		} else {
+			setmedia(null);
+		}
+	}
+
+	async function handleSendClick() {
+		if (file != null) {
+			const fd = new FormData();
+			fd.append("file", file);
+			await axiosInstanceAuth2.post(`/inbox/upload/`, fd).then(async (res) => {
+				var id = res.data["id"].toString();
+				console.log("id", id);
+				if (id != null && id.length > 0) {
+					let user_pk = cardActiveData["other_user_id"].toString();
+					sendOutgoingFileMessage(socket, id, text, user_pk);
+					setfile(null);
+					setmedia(null);
+					settext("");
+					loadFrame(cardActiveData["other_user_id"]);
+				}
+			});
+		} else if (media != null) {
+			const fd = new FormData();
+			fd.append("file", media);
+			await axiosInstanceAuth2.post(`/inbox/upload2/`, fd).then(async (res) => {
+				var id = res.data["id"].toString();
+				console.log("id", id);
+				if (id != null && id.length > 0) {
+					let user_pk = cardActiveData["other_user_id"].toString();
+					sendOutgoingMediaMessage(socket, id, text, user_pk);
+					setfile(null);
+					setmedia(null);
+					settext("");
+					loadFrame(cardActiveData["other_user_id"]);
+				}
+			});
+		} else {
+			let user_pk = cardActiveData["other_user_id"].toString();
+			sendOutgoingTextMessage(socket, text, user_pk);
+			setfile(null);
+			setmedia(null);
+			settext("");
+			loadFrame(cardActiveData["other_user_id"]);
+		}
+	}
 
 	return (
 		<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
@@ -558,6 +631,24 @@ export default function InboxFrame({
 						</div>
 					) : (
 						<div className="absolute bottom-0 left-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
+							{file && (
+								<div className="flex items-center gap-2">
+									<i className="fa-solid fa-xmark cursor-pointer p-3" onClick={() => setfile(null)}></i>
+									<span>
+										Selected File &nbsp;
+										<b>{file.name}</b>
+									</span>
+								</div>
+							)}
+							{media && (
+								<div className="flex items-center gap-2">
+									<i className="fa-solid fa-xmark cursor-pointer p-3" onClick={() => setmedia(null)}></i>
+									<span>
+										Selected Media &nbsp;
+										<b>{media.name}</b>
+									</span>
+								</div>
+							)}
 							<div className="flex items-center gap-2 rounded bg-white p-2 shadow-normal dark:bg-gray-800">
 								<textarea
 									name=""
@@ -585,6 +676,20 @@ export default function InboxFrame({
 									<button type="button" className="block px-0.5 text-sm leading-normal">
 										<i className="fa-solid fa-microphone"></i>
 									</button>
+									<input
+										type="file"
+										ref={fileInputRef}
+										accept=".pdf, .doc, .docx, .txt"
+										style={{ display: "none" }}
+										onChange={uploadFile}
+									/>
+									<input
+										type="file"
+										ref={mediaInputRef}
+										accept=".jpg, .jpeg, .png, .mp3, .mp4"
+										style={{ display: "none" }}
+										onChange={uploadMedia}
+									/>
 									<Menu as="div" className="relative">
 										<Menu.Button className="block px-0.5 text-sm leading-normal">
 											<i className="fa-solid fa-plus"></i>
@@ -607,7 +712,7 @@ export default function InboxFrame({
 													<button
 														type="button"
 														className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
-														// onClick={() => setCreateGroup(true)}
+														onClick={() => handleDocumentButtonClick()}
 													>
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -629,7 +734,7 @@ export default function InboxFrame({
 													<button
 														type="button"
 														className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
-														// onClick={() => setExitGroup(true)}
+														onClick={() => handleMediauttonClick()}
 													>
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -731,7 +836,7 @@ export default function InboxFrame({
 									<button
 										type="button"
 										className="block border-l-2 border-gray-400 px-2 text-sm leading-normal"
-										onClick={() => setclick(true)}
+										onClick={() => handleSendClick()}
 									>
 										<i className="fa-solid fa-paper-plane"></i>
 									</button>
