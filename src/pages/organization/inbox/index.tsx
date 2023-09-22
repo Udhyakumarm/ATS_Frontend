@@ -72,6 +72,14 @@ const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk:
 	console.log("Mieda Message Send Process DOne");
 };
 
+const markASRead = (socket: any, user_pk: any, mid: any) => {
+	socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
+};
+
+const callbackOnline = (socket: any, user_pk: any) => {
+	socket.send(JSON.stringify({ msg_type: 12, user_pk: user_pk })); // Adjust the message structure as needed
+};
+
 const isTyping = (socket: any, user_pk: any) => {
 	console.log("^^", "final data2", JSON.stringify({ msg_type: 5, user_pk: user_pk }));
 
@@ -161,20 +169,7 @@ export default function Inbox() {
 			});
 
 			rws.onmessage = function (e) {
-				console.log("^^^", "eee", e.data);
-				// that.setState({socketConnectionState: socket.readyState});
-
-				// let errMsg = handleIncomingWebsocketMessage(socket, e.data, {
-				// 	addMessage: that.addMessage,
-				// 	replaceMessageId: that.replaceMessageId,
-				// 	addPKToTyping: that.addPKToTyping,
-				// 	changePKOnlineStatus: that.changePKOnlineStatus,
-				// 	setMessageIdAsRead: that.setMessageIdAsRead,
-				// 	newUnreadCount: that.newUnreadCount
-				// });
-				// if (errMsg) {
-				// 	toast.error(errMsg)
-				// }
+				// console.log("^^^", "eee", e.data);
 			};
 
 			rws.addEventListener("close", () => {
@@ -236,6 +231,7 @@ export default function Inbox() {
 										setcardActive={setcardActive}
 										setcardActiveData={setcardActiveData}
 										socket={socket}
+										callbackOnline={callbackOnline}
 									/>
 								</div>
 								{cardActive && (
@@ -257,6 +253,7 @@ export default function Inbox() {
 											sendOutgoingTextMessage={sendOutgoingTextMessage}
 											sendOutgoingFileMessage={sendOutgoingFileMessage}
 											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
+											markASRead={markASRead}
 										/>
 									</div>
 								)}

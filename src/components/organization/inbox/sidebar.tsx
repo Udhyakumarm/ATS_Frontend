@@ -15,9 +15,11 @@ export default function InboxSideBar({
 	setcardActiveData,
 	cardActive,
 	cardActiveData,
-	socket
+	socket,
+	callbackOnline
 }: any) {
 	const [sidebarData, setsidebarData] = useState([]);
+	const [onlinePK, setonlinePK] = useState([]);
 
 	async function loadSidebar() {
 		await axiosInstanceAuth2
@@ -316,6 +318,10 @@ export default function InboxSideBar({
 														data={data}
 														socket={socket}
 														pinnedClick={pinnedClick}
+														callbackOnline={callbackOnline}
+														onlinePK={onlinePK}
+														setonlinePK={setonlinePK}
+														sidebarData={sidebarData}
 													/>
 												</div>
 											))}

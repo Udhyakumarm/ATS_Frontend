@@ -11,24 +11,28 @@ import moment from "moment";
 export default function InboxCard({
 	pin,
 	count,
-	// online,
 	data,
 	setcardActive,
 	setcardActiveData,
 	cardActive,
 	cardActiveData,
 	socket,
-	pinnedClick
+	pinnedClick,
+	callbackOnline,
+	onlinePK,
+	setonlinePK,
+	sidebarData
 }: any) {
 	function contextClick(e: any, data: any) {
-		var data = data.copy;
-		setmuteChat(true);
+		// var data = data.copy;
+		// setmuteChat(true);
 		// if (data === "Mute") {
 		// }
 	}
 	const cancelButtonRef = useRef(null);
 	const [muteChat, setmuteChat] = useState(false);
-	const [online, setonline] = useState(false);
+	const [one, setone] = useState(true);
+	// const [online, setonline] = useState(false);
 	const [isTyping, setisTyping] = useState(null);
 	const [newUnreadCount, setnewUnreadCount] = useState(null);
 	const [newLastMessage, setnewLastMessage] = useState(null);
@@ -45,14 +49,28 @@ export default function InboxCard({
 		}
 	}
 
+	// useEffect(() => {
 	socket.onmessage = function (e) {
 		var fdata = JSON.parse(e.data);
+		// console.log("^^^", "eee data", data);
 		console.log("^^^", "eee", fdata);
-		if (fdata["msg_type"] === 1 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
-			setonline(true);
+
+		if (fdata["msg_type"] === 1 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+			if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
+				setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
+				console.log("^^^", "**", onlinePK);
+			}
+			// setonline(true);
+			console.log("^^^", "** RUNNNNNNNNNNNNN");
+			callbackOnline(socket, fdata["user_pk"]);
 		}
-		if (fdata["msg_type"] === 2 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
-			setonline(false);
+		if (fdata["msg_type"] === 2 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+			// setonline(false);
+			if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
+				const updatedItems = onlinePK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
+				setonlinePK(updatedItems);
+				console.log("^^^", "**", onlinePK);
+			}
 		}
 		if (fdata["msg_type"] === 5 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
 			setisTyping(true);
@@ -70,6 +88,11 @@ export default function InboxCard({
 			setnewLastMessage(fdata["text"]);
 		}
 	};
+	// }, [socket]);
+
+	useEffect(() => {
+		console.log("^^^", "**", "onlinePK", onlinePK);
+	}, [onlinePK]);
 
 	function pinMessgae(e) {
 		e.stopPropagation();
@@ -112,7 +135,7 @@ export default function InboxCard({
 							{newUnreadCount != null ? newUnreadCount : data["unread_count"]}
 						</span>
 						{/* )} */}
-						{online && (
+						{onlinePK.includes(data["other_user_id"]) && (
 							<span className="absolute left-[-5px] top-[-5px] flex h-[10px] w-[10px] items-center justify-center rounded-full bg-cyan-500 text-center text-xs font-bold text-white"></span>
 						)}
 					</div>
@@ -166,9 +189,12 @@ export default function InboxCard({
 							<>
 								{data["last_message"] && (
 									<p className="clamp_2 text-[12px] text-darkGray">
-										{data["last_message"]["file"] ? (
+										{data["last_message"]["file"] || data["last_message"]["media"] ? (
 											<>
-												<i className="fa-solid fa-file"></i>&nbsp;{data["last_message"]["file"]["name"]}
+												<i className="fa-solid fa-file"></i>&nbsp;
+												{data["last_message"]["file"]
+													? data["last_message"]["file"]["name"]
+													: data["last_message"]["media"]["name"]}
 											</>
 										) : (
 											<p className="overflow-hidden truncate text-ellipsis ">

@@ -24,7 +24,8 @@ export default function InboxFrame({
 	isStopTypingFun,
 	sendOutgoingFileMessage,
 	sendOutgoingTextMessage,
-	sendOutgoingMediaMessage
+	sendOutgoingMediaMessage,
+	markASRead
 }: any) {
 	const [toggle, setoggle] = useState(true);
 	const [reply, setreply] = useState(false);
@@ -51,6 +52,28 @@ export default function InboxFrame({
 				setmsg([]);
 			});
 	}
+
+	socket.onmessage = function (e) {
+		var fdata = JSON.parse(e.data);
+		// console.log("^^^", "eee data", data);
+		if (cardActive) {
+			if (fdata["msg_type"] === 3 || fdata["msg_type"] === 4 || fdata["msg_type"] === 11 || fdata["msg_type"] === 13) {
+				loadFrame(cardActiveData["other_user_id"]);
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (msg && msg.length > 0) {
+			var unreadItems1 = msg.filter((item) => item.read === false);
+			const unreadItems = unreadItems1.filter((item) => item.out === false);
+			for (let i = 0; i < unreadItems.length; i++) {
+				console.log("^^^", "MAR", i);
+
+				markASRead(socket, unreadItems[i]["sender"], unreadItems[i]["id"]);
+			}
+		}
+	}, [msg]);
 
 	useEffect(() => {
 		if (axiosInstanceAuth2 && cardActive) {
