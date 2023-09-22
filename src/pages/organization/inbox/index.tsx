@@ -72,6 +72,22 @@ const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk:
 	console.log("Mieda Message Send Process DOne");
 };
 
+const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any) => {
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		user_pk,
+		card_id: contact_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 13, data }));
+
+	socket.send(JSON.stringify({ msg_type: 13, data })); // Adjust the message structure as needed
+
+	console.log("Contact Message Send Process DOne");
+};
+
 const markASRead = (socket: any, user_pk: any, mid: any) => {
 	socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
 };
@@ -254,6 +270,7 @@ export default function Inbox() {
 											sendOutgoingFileMessage={sendOutgoingFileMessage}
 											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
 											markASRead={markASRead}
+											sendOutgoingContactMessage={sendOutgoingContactMessage}
 										/>
 									</div>
 								)}

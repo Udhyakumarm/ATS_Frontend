@@ -130,11 +130,13 @@ export default function InboxCard({
 								}`
 							}
 						/>
-						{/* {data["unread_count"] && data["unread_count"] > 0 && ( */}
-						<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
-							{newUnreadCount != null ? newUnreadCount : data["unread_count"]}
-						</span>
-						{/* )} */}
+						{(data["unread_count"] && data["unread_count"] > 0) || newUnreadCount != null ? (
+							<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
+								{newUnreadCount != null ? newUnreadCount : data["unread_count"]}
+							</span>
+						) : (
+							<></>
+						)}
 						{onlinePK.includes(data["other_user_id"]) && (
 							<span className="absolute left-[-5px] top-[-5px] flex h-[10px] w-[10px] items-center justify-center rounded-full bg-cyan-500 text-center text-xs font-bold text-white"></span>
 						)}
