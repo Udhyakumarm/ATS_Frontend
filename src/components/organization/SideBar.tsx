@@ -90,7 +90,7 @@ export default function OrgSideBar() {
 
 	function comOrNot(name: any) {
 		// return name === "Inboxes" || name === "Analytics";
-		return name === "Inboxes";
+		return false;
 	}
 
 	const menu = [

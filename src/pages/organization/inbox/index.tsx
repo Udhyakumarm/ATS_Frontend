@@ -18,30 +18,14 @@ import { useSession } from "next-auth/react";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import { useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
-// import {
-// 	uploadFile,
-// 	sendOutgoingFileMessage,
-// 	createNewDialogModelFromIncomingMessageBox,
-// 	getSubtitleTextFromMessageBox,
-// 	fetchSelfInfo,
-// 	handleIncomingWebsocketMessage,
-// 	sendOutgoingTextMessage,
-// 	filterMessagesForDialog,
-// 	fetchDialogs,
-// 	fetchMessages,
-// 	fetchUsersList,
-// 	sendIsTypingMessage,
-// 	markMessagesForDialogAsRead,
-// 	sendMessageReadMessage
-// } from "../../../../fs-src/App.fs.js";
 
-const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info: any) => {
+const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any) => {
 	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
 		user_pk,
-		random_id: randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId // Use snake_case for property names in JavaScript
 	};
 
 	console.log("^^", "final data", data);
@@ -52,12 +36,80 @@ const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, self_info
 	console.log("Message Send Process DOne");
 };
 
+const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		text,
+		user_pk,
+		file_id: file_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+
+	socket.send(JSON.stringify({ msg_type: 4, data })); // Adjust the message structure as needed
+
+	console.log("File Message Send Process DOne");
+};
+
+const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		text,
+		user_pk,
+		media_id: file_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+
+	socket.send(JSON.stringify({ msg_type: 11, data })); // Adjust the message structure as needed
+
+	console.log("Mieda Message Send Process DOne");
+};
+
+const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any) => {
+	const randomId = Math.floor(1000 + Math.random() * 9000);
+	const data = {
+		user_pk,
+		card_id: contact_id,
+		random_id: -randomId // Use snake_case for property names in JavaScript
+	};
+
+	console.log("^^", "final data", data);
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 13, data }));
+
+	socket.send(JSON.stringify({ msg_type: 13, data })); // Adjust the message structure as needed
+
+	console.log("Contact Message Send Process DOne");
+};
+
+const markASRead = (socket: any, user_pk: any, mid: any) => {
+	socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
+};
+
+const callbackOnline = (socket: any, user_pk: any) => {
+	socket.send(JSON.stringify({ msg_type: 12, user_pk: user_pk })); // Adjust the message structure as needed
+};
+
 const isTyping = (socket: any, user_pk: any) => {
 	console.log("^^", "final data2", JSON.stringify({ msg_type: 5, user_pk: user_pk }));
 
 	socket.send(JSON.stringify({ msg_type: 5, user_pk: user_pk })); // Adjust the message structure as needed
 
 	console.log("Message Typing Process DOne");
+};
+
+const isStopTyping = (socket: any, user_pk: any) => {
+	console.log("^^", "final data2", JSON.stringify({ msg_type: 10, user_pk: user_pk }));
+
+	socket.send(JSON.stringify({ msg_type: 10, user_pk: user_pk })); // Adjust the message structure as needed
+
+	console.log("Message Stopped Typing Process DOne");
 };
 
 export default function Inbox() {
@@ -133,20 +185,7 @@ export default function Inbox() {
 			});
 
 			rws.onmessage = function (e) {
-				console.log("^^^", "eee", e.data);
-				// that.setState({socketConnectionState: socket.readyState});
-
-				// let errMsg = handleIncomingWebsocketMessage(socket, e.data, {
-				// 	addMessage: that.addMessage,
-				// 	replaceMessageId: that.replaceMessageId,
-				// 	addPKToTyping: that.addPKToTyping,
-				// 	changePKOnlineStatus: that.changePKOnlineStatus,
-				// 	setMessageIdAsRead: that.setMessageIdAsRead,
-				// 	newUnreadCount: that.newUnreadCount
-				// });
-				// if (errMsg) {
-				// 	toast.error(errMsg)
-				// }
+				// console.log("^^^", "eee", e.data);
 			};
 
 			rws.addEventListener("close", () => {
@@ -162,24 +201,24 @@ export default function Inbox() {
 		}
 	}, [text]);
 
-	function performSendingMessage(text: any, socket: any, opk: any) {
-		let userData = {
-			username: currentUser[0]["name"],
-			pk: currentUser[0]["id"].toString()
-		};
-		let user_pk = opk.toString();
-		sendOutgoingTextMessage(socket, text, user_pk, userData);
-	}
+	// function performSendingMessage(text: any, socket: any, opk: any) {
+	// 	let userData = {
+	// 		username: currentUser[0]["name"],
+	// 		pk: currentUser[0]["id"].toString()
+	// 	};
+	// 	let user_pk = opk.toString();
+	// 	sendOutgoingTextMessage(socket, text, user_pk, userData);
+	// }
 
-	useEffect(() => {
-		console.log("^^", "rws socket", socket);
-		if (click && text.length > 0 && socket != null) {
-			toastcomp(text, "success");
-			performSendingMessage(text, socket, cardActiveData["other_user_id"]);
-			settext("");
-			setclick(false);
-		}
-	}, [click]);
+	// useEffect(() => {
+	// 	console.log("^^", "rws socket", socket);
+	// 	if (click && text.length > 0 && socket != null) {
+	// 		toastcomp(text, "success");
+	// 		performSendingMessage(text, socket, cardActiveData["other_user_id"]);
+	// 		settext("");
+	// 		setclick(false);
+	// 	}
+	// }, [click]);
 
 	return (
 		<>
@@ -208,6 +247,7 @@ export default function Inbox() {
 										setcardActive={setcardActive}
 										setcardActiveData={setcardActiveData}
 										socket={socket}
+										callbackOnline={callbackOnline}
 									/>
 								</div>
 								{cardActive && (
@@ -223,6 +263,14 @@ export default function Inbox() {
 											text={text}
 											settext={settext}
 											setclick={setclick}
+											isTypingFun={isTyping}
+											isStopTypingFun={isStopTyping}
+											socket={socket}
+											sendOutgoingTextMessage={sendOutgoingTextMessage}
+											sendOutgoingFileMessage={sendOutgoingFileMessage}
+											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
+											markASRead={markASRead}
+											sendOutgoingContactMessage={sendOutgoingContactMessage}
 										/>
 									</div>
 								)}

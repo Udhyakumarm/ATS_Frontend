@@ -15,9 +15,11 @@ export default function InboxSideBar({
 	setcardActiveData,
 	cardActive,
 	cardActiveData,
-	socket
+	socket,
+	callbackOnline
 }: any) {
 	const [sidebarData, setsidebarData] = useState([]);
+	const [onlinePK, setonlinePK] = useState([]);
 
 	async function loadSidebar() {
 		await axiosInstanceAuth2
@@ -29,6 +31,18 @@ export default function InboxSideBar({
 			.catch((err) => {
 				console.log(err);
 				setsidebarData([]);
+			});
+	}
+
+	async function pinnedClick(e: any, id: any) {
+		e.stopPropagation();
+		await axiosInstanceAuth2
+			.post(`/inbox/dialogs_pinned/${id}/`)
+			.then(async (res) => {
+				loadSidebar();
+			})
+			.catch((err) => {
+				loadSidebar();
 			});
 	}
 
@@ -302,6 +316,12 @@ export default function InboxSideBar({
 														online={false}
 														count={data["unread_count"]}
 														data={data}
+														socket={socket}
+														pinnedClick={pinnedClick}
+														callbackOnline={callbackOnline}
+														onlinePK={onlinePK}
+														setonlinePK={setonlinePK}
+														sidebarData={sidebarData}
 													/>
 												</div>
 											))}
