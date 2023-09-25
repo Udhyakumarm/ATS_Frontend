@@ -141,8 +141,8 @@ export default function InboxCard({
 							<span className="absolute left-[-5px] top-[-5px] flex h-[10px] w-[10px] items-center justify-center rounded-full bg-cyan-500 text-center text-xs font-bold text-white"></span>
 						)}
 					</div>
-					<div className="w-[calc(100%-50px)] pl-3 pt-1">
-						<div className="mb-2 flex justify-between">
+					<div className="flex w-[calc(100%-50px)] flex-col justify-center pl-3 pt-1">
+						<div className="mb-1 flex justify-between">
 							<h5 className="overflow-hidden truncate text-ellipsis text-sm font-semibold">{data["username"]}</h5>
 							<div className="flex flex-nowrap gap-2">
 								{data["is_pinned"] ? (
@@ -174,10 +174,12 @@ export default function InboxCard({
 										</svg>
 									</span>
 								)}
-								<span className="block overflow-hidden truncate text-ellipsis rounded bg-gray-200 px-2 py-1 text-[10px] font-semibold dark:bg-gray-600">
-									{/* {moment(data["modified"]).format("h:mm a")} */}
-									{moment(data["modified"]).fromNow()}
-								</span>
+								{data["last_message"] && (
+									<span className="block overflow-hidden truncate text-ellipsis rounded bg-gray-200 px-2 py-1 text-[10px] font-semibold dark:bg-gray-600">
+										{/* {moment(data["modified"]).format("h:mm a")} */}
+										{moment(data["modified"]).fromNow()}
+									</span>
+								)}
 							</div>
 						</div>
 						{isTyping != null ? (
@@ -191,12 +193,21 @@ export default function InboxCard({
 							<>
 								{data["last_message"] && (
 									<p className="clamp_2 text-[12px] text-darkGray">
-										{data["last_message"]["file"] || data["last_message"]["media"] ? (
+										{data["last_message"]["file"] ||
+										data["last_message"]["media"] ||
+										data["last_message"]["contact"] ? (
 											<>
-												<i className="fa-solid fa-file"></i>&nbsp;
-												{data["last_message"]["file"]
-													? data["last_message"]["file"]["name"]
-													: data["last_message"]["media"]["name"]}
+												{data["last_message"]["file"] && <i className="fa-solid fa-file"></i>}
+												{data["last_message"]["media"] && <i className="fa-regular fa-image"></i>}
+												{data["last_message"]["contact"] && <i className="fa-solid fa-id-card"></i>}
+												&nbsp;
+												{data["last_message"]["file"] ? (
+													data["last_message"]["file"]["name"]
+												) : (
+													<>
+														{data["last_message"]["media"] ? data["last_message"]["media"]["name"] : "Contact Card ..."}
+													</>
+												)}
 											</>
 										) : (
 											<p className="overflow-hidden truncate text-ellipsis ">

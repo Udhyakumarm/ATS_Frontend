@@ -2,11 +2,27 @@ import React, { useEffect, useState, Fragment, useRef } from "react";
 import Image from "next/image";
 import FormField from "@/components/FormField";
 import userImg1 from "/public/images/user-image1.jpeg";
-import { Dialog, Menu, Tab, Transition } from "@headlessui/react";
+import { Dialog, Menu, Tab, Transition, Popover } from "@headlessui/react";
 import moment from "moment";
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 export default function InboxChatMsg({ type, data }: any) {
+	const generateRandomGradient = () => {
+		// Generate random color values for a linear gradient
+		const color1 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+		const color2 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+		// Generate a random gradient direction
+		const directions = ["to right", "to left", "to top", "to bottom"];
+		const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+
+		// Create the linear gradient CSS property
+		const newGradient = `linear-gradient(${randomDirection}, ${color1}, ${color2})`;
+
+		// Update the state with the new gradient
+		return newGradient;
+	};
+
 	return (
 		<>
 			{/* {type === "user" && (
@@ -55,7 +71,7 @@ export default function InboxChatMsg({ type, data }: any) {
 												"_blank"
 											);
 										}}
-										className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+										className="inline-block rounded bg-primary/50 px-4 py-1 text-[12px] font-semibold text-white"
 									>
 										<b>
 											<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
@@ -87,14 +103,8 @@ export default function InboxChatMsg({ type, data }: any) {
 								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
 							/>
 							<ContextMenuTrigger id="contextmenu1" className="cursor-context-menu">
-								<div className="ml-2 mr-3 w-fit max-w-[80%] rounded-2xl bg-[#E1E1E1]/[0.3] px-3 py-2 dark:bg-[#E1E1E1]/[0.2]">
-									{/* <h4 className="mb-2 font-bold">
-							{data["sender_username"]}
-							<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">
-								{moment(data["sent"]).format("h:mm a")}
-							</span>
-						</h4> */}
-									<article className="text-sm text-darkGray dark:text-gray-400 ">
+								<div className="ml-2 mr-3 rounded-lg bg-stone-300/25 px-3 py-2">
+									<article className="text-sm text-darkGray dark:text-lightBlue ">
 										{data["file"] && (
 											<>
 												<button
@@ -106,14 +116,15 @@ export default function InboxChatMsg({ type, data }: any) {
 															"_blank"
 														);
 													}}
-													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
+													}
 												>
-													<b>
-														<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
-													</b>
+													<i className="fa-regular fa-file text-[30px]"></i>
+													<b>{data["file"]["name"]}</b>
 												</button>
-												<br />
-												<br />
 											</>
 										)}
 										{data["media"] && (
@@ -127,18 +138,19 @@ export default function InboxChatMsg({ type, data }: any) {
 															"_blank"
 														);
 													}}
-													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["text"] || data["contact"]) && "mb-2"}`
+													}
 												>
-													<b>
-														<i className="fa-solid fa-download"></i>&nbsp;{data["media"]["name"]}
-													</b>
+													<i className="fa-regular fa-image text-[30px]"></i>
+													<b>{data["media"]["name"]}</b>
 												</button>
-												<br />
-												<br />
 											</>
 										)}
 
-										{data["text"]}
+										{data["text"] && data["text"].length > 0 && <p className="text-left">{data["text"]}</p>}
 									</article>
 								</div>
 							</ContextMenuTrigger>
@@ -404,29 +416,9 @@ export default function InboxChatMsg({ type, data }: any) {
 								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
 							/>
 							<ContextMenuTrigger id="contextmenu2" className="cursor-context-menu">
-								<div className="ml-2 mr-3 rounded-2xl bg-primary/[0.1] px-3 py-2">
-									{/* <h4 className="mb-2 font-bold">
-					{data["sender_username"]}
-					<span className="pl-3 text-[10px] text-darkGray dark:text-gray-400">
-						{moment(data["sent"]).format("h:mm a")}
-					</span>
-				</h4> */}
-									<article className="text-sm text-darkGray dark:text-gray-400 ">
+								<div className="ml-2 mr-3 rounded-lg bg-sky-300/25 px-3 py-2">
+									<article className="text-sm text-darkGray dark:text-lightBlue ">
 										{data["file"] && (
-											// <div className="h-auto w-auto">
-											// 	<Image
-											// 		src={
-											// 			process.env.NODE_ENV === "production"
-											// 				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
-											// 				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`
-											// 		}
-											// 		// src={data["file"]["name"]}
-											// 		alt="profile"
-											// 		width={150}
-											// 		height={150}
-											// 		className="h-auto w-auto rounded-2xl object-cover"
-											// 	/>
-											// </div>
 											<>
 												<button
 													onClick={() => {
@@ -437,14 +429,15 @@ export default function InboxChatMsg({ type, data }: any) {
 															"_blank"
 														);
 													}}
-													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
+													}
 												>
-													<b>
-														<i className="fa-solid fa-download"></i>&nbsp;{data["file"]["name"]}
-													</b>
+													<i className="fa-regular fa-file text-[30px]"></i>
+													<b>{data["file"]["name"]}</b>
 												</button>
-												<br />
-												<br />
 											</>
 										)}
 
@@ -459,18 +452,113 @@ export default function InboxChatMsg({ type, data }: any) {
 															"_blank"
 														);
 													}}
-													className="inline-block rounded bg-primary/75 px-4 py-1 text-[12px] font-semibold text-white"
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["text"] || data["contact"]) && "mb-2"}`
+													}
 												>
-													<b>
-														<i className="fa-solid fa-download"></i>&nbsp;{data["media"]["name"]}
-													</b>
+													<i className="fa-regular fa-image text-[30px]"></i>
+													<b>{data["media"]["name"]}</b>
 												</button>
-												<br />
-												<br />
 											</>
 										)}
 
-										{data["text"]}
+										{data["contact"] && (
+											<>
+												<Popover className="relative">
+													{({ open }) => (
+														<>
+															<Popover.Button
+																className={
+																	`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+																	" " +
+																	`${data["text"] && "mb-2"}`
+																}
+															>
+																<i className="fa-solid fa-id-card text-[30px]"></i>
+																<b>ABCD</b>
+															</Popover.Button>
+															<Transition
+																as={Fragment}
+																enter="transition ease-out duration-200"
+																enterFrom="opacity-0 translate-y-1"
+																enterTo="opacity-100 translate-y-0"
+																leave="transition ease-in duration-150"
+																leaveFrom="opacity-100 translate-y-0"
+																leaveTo="opacity-0 translate-y-1"
+															>
+																<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																	<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																		<div
+																			className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																			// style={{ background: generateRandomGradient() }}
+																		>
+																			<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																				<Image
+																					src={userImg1}
+																					alt={"ABC"}
+																					width={100}
+																					height={100}
+																					className="h-[100px] w-[100px] rounded-full border-4 border-white"
+																				/>
+																			</div>
+																		</div>
+																		<div className="p-6">
+																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				Naman Doshi
+																			</h5>
+																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				Divison Head
+																			</p>
+																			<hr className="dark:border-lightBlue/50" />
+																			<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																				<div className="flex flex-col gap-2">
+																					<div className="flex justify-between gap-2">
+																						<b>Email</b>
+																						<p>abc@gmail.com</p>
+																					</div>
+																					<div className="flex justify-between gap-2">
+																						<b>Deparment</b>
+																						<p>HR-Tech</p>
+																					</div>
+																					<div className="flex justify-between gap-2">
+																						<b>Contact</b>
+																						<p>1234567890</p>
+																					</div>
+																				</div>
+																			</p>
+																		</div>
+																		{/* <div className="p-6 pt-0">
+																			<button
+																				data-ripple-light="true"
+																				type="button"
+																				className="select-none rounded-lg bg-blue-500 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+																			>
+																				Read More
+																			</button>
+																		</div> */}
+																	</div>
+																</Popover.Panel>
+															</Transition>
+														</>
+													)}
+												</Popover>
+
+												{/* <button
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${data["text"] && "mb-2"}`
+													}
+												>
+													<i className="fa-solid fa-id-card text-[30px]"></i>
+													<b>ABCD</b>
+												</button> */}
+											</>
+										)}
+
+										{data["text"] && data["text"].length > 0 && <p className="text-right">{data["text"]}</p>}
 									</article>
 								</div>
 							</ContextMenuTrigger>

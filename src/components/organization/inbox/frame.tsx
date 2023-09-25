@@ -7,6 +7,8 @@ import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import startNewChat from "/public/images/no-data/iconGroup-4.png";
 import InboxChatMsg from "./chatMsg";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 export default function InboxFrame({
 	togglePages,
@@ -31,6 +33,13 @@ export default function InboxFrame({
 	const cancelButtonRef = useRef(null);
 	const [showContact, setShowContact] = useState(false);
 	const [showContactData, setShowContactData] = useState([]);
+
+	const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+	const handleEmojiClick = (emoji) => {
+		settext(text + emoji.native);
+		setIsPickerOpen(false);
+	};
 
 	async function loadCData() {
 		await axiosInstanceAuth2
@@ -198,6 +207,16 @@ export default function InboxFrame({
 				console.log("^^^ error cdata2");
 			});
 	}
+
+	const msgContainerRef = useRef(null);
+	useEffect(() => {
+		if (msgContainerRef && msg.length > 0) {
+			msgContainerRef.current?.scrollTo({
+				top: msgContainerRef.current.scrollHeight,
+				behavior: "smooth"
+			});
+		}
+	}, [msg]);
 
 	return (
 		<>
@@ -455,7 +474,7 @@ export default function InboxFrame({
 							</div>
 						</div>
 						{toggle ? (
-							<div className="h-[calc(100vh-280px)] overflow-y-auto">
+							<div className="h-[calc(100vh-280px)] overflow-y-auto" ref={msgContainerRef}>
 								<div className="mx-auto w-full max-w-[90%] px-4">
 									{msg.length <= 0 ? (
 										<div className="flex min-h-[400px] items-center justify-center">
@@ -732,10 +751,16 @@ export default function InboxFrame({
 										<button
 											type="button"
 											className="block px-0.5 text-sm leading-normal"
-											onClick={() => setShowPicker(!showPicker)}
+											onClick={() => setIsPickerOpen(!isPickerOpen)}
 										>
 											<i className="fa-regular fa-face-smile"></i>
 										</button>
+
+										{isPickerOpen && (
+											<div style={{ position: "absolute", bottom: "50px", right: "10px" }}>
+												<Picker data={data} onEmojiSelect={handleEmojiClick} />
+											</div>
+										)}
 
 										<button type="button" className="block px-0.5 text-sm leading-normal">
 											<i className="fa-solid fa-microphone"></i>
@@ -937,9 +962,9 @@ export default function InboxFrame({
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-2xl bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">Select Person Contact Card</h4>
+										<h4 className="flex items-center font-semibold leading-none">Select Contact Card</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
