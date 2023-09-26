@@ -176,7 +176,11 @@ export default function Inbox() {
 	useEffect(() => {
 		if (token && token.length > 0) {
 			console.log("&&&", "token", token);
-			const rws = new ReconnectingWebSocket(`ws://127.0.0.1:8000/ws/chat/?access_token=${token}`);
+			const rws = new ReconnectingWebSocket(
+				process.env.NODE_ENV === "production"
+					? `wss://atsapi.somhako.com:8001/ws/chat/?access_token=${token}`
+					: `ws://http://127.0.0.1:8000/ws/chat/?access_token=${token}`
+			);
 
 			rws.addEventListener("open", () => {
 				toastcomp("Connected to WebSocket server", "success");

@@ -471,7 +471,7 @@ export default function InboxChatMsg({ type, data }: any) {
 														<>
 															<Popover.Button
 																className={
-																	`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+																	`flex items-center gap-2 rounded bg-secondary/[0.1] px-4 py-1 text-[15px]` +
 																	" " +
 																	`${data["text"] && "mb-2"}`
 																}
