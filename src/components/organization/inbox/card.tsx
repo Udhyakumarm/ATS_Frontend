@@ -72,19 +72,19 @@ export default function InboxCard({
 				console.log("^^^", "**", onlinePK);
 			}
 		}
-		if (fdata["msg_type"] === 5 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+		if (fdata["msg_type"] === 5 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
 			setisTyping(true);
 		}
-		if (fdata["msg_type"] === 10 && parseInt(fdata["user_pk"]) === data["other_user_id"]) {
+		if (fdata["msg_type"] === 10 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
 			setisTyping(false);
 			setTimeout(() => {
 				setisTyping(null);
 			}, 1000);
 		}
-		if (fdata["msg_type"] === 9 && parseInt(fdata["sender"]) === data["other_user_id"]) {
+		if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
 			setnewUnreadCount(fdata["unread_count"]);
 		}
-		if (fdata["msg_type"] === 3 && parseInt(fdata["sender"]) === data["other_user_id"]) {
+		if (fdata["msg_type"] === 3 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
 			setnewLastMessage(fdata["text"]);
 		}
 	};
