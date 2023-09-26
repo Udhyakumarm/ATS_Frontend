@@ -493,7 +493,7 @@ export default function InboxFrame({
 									) : (
 										<>
 											{msg.map((data, i) => (
-												<div key={i}>
+												<div key={i} className="mb-1">
 													{data["out"] ? (
 														<InboxChatMsg type="me" data={data} />
 													) : (
