@@ -104,7 +104,7 @@ export default function InboxChatMsg({ type, data }: any) {
 							/>
 							<ContextMenuTrigger id="contextmenu1" className="cursor-context-menu">
 								<div className="ml-2 mr-3 rounded-lg bg-stone-300/25 px-3 py-2">
-									<article className="text-sm text-darkGray dark:text-lightBlue ">
+									<article className="text-lg text-darkGray dark:text-lightBlue ">
 										{data["file"] && (
 											<>
 												<button
@@ -160,7 +160,7 @@ export default function InboxChatMsg({ type, data }: any) {
 						</div>
 					</div>
 
-					<ContextMenu id="contextmenu1" className="rounded-lg border-2 bg-white py-1 shadow dark:bg-gray-700">
+					<ContextMenu id="contextmenu1" className="z-10 rounded-lg border-2 bg-white py-1 shadow  dark:bg-gray-700">
 						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
 							<button
 								type="button"
@@ -417,7 +417,7 @@ export default function InboxChatMsg({ type, data }: any) {
 							/>
 							<ContextMenuTrigger id="contextmenu2" className="cursor-context-menu">
 								<div className="ml-2 mr-3 rounded-lg bg-sky-300/25 px-3 py-2">
-									<article className="text-sm text-darkGray dark:text-lightBlue ">
+									<article className="text-lg text-darkGray dark:text-lightBlue ">
 										{data["file"] && (
 											<>
 												<button
@@ -568,7 +568,7 @@ export default function InboxChatMsg({ type, data }: any) {
 						</div>
 					</div>
 
-					<ContextMenu id="contextmenu2" className="rounded-lg border-2 bg-white py-1 shadow dark:bg-gray-700">
+					<ContextMenu id="contextmenu2" className="z-10 rounded-lg border-2 bg-white py-1 shadow dark:bg-gray-700">
 						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
 							<button
 								type="button"
