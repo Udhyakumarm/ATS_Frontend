@@ -20,6 +20,7 @@ export default function InboxSideBar({
 }: any) {
 	const [sidebarData, setsidebarData] = useState([]);
 	const [onlinePK, setonlinePK] = useState([]);
+	const [typingPK, settypingPK] = useState([]);
 
 	async function loadSidebar() {
 		await axiosInstanceAuth2
@@ -321,6 +322,8 @@ export default function InboxSideBar({
 														callbackOnline={callbackOnline}
 														onlinePK={onlinePK}
 														setonlinePK={setonlinePK}
+														typingPK={typingPK}
+														settypingPK={settypingPK}
 														sidebarData={sidebarData}
 													/>
 												</div>

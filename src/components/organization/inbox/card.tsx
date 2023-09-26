@@ -21,6 +21,8 @@ export default function InboxCard({
 	callbackOnline,
 	onlinePK,
 	setonlinePK,
+	typingPK,
+	settypingPK,
 	sidebarData
 }: any) {
 	function contextClick(e: any, data: any) {
@@ -73,13 +75,22 @@ export default function InboxCard({
 			}
 		}
 		if (fdata["msg_type"] === 5 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			setisTyping(true);
+			if (!typingPK.includes(parseInt(fdata["user_pk"]))) {
+				settypingPK([...typingPK, parseInt(fdata["user_pk"])]);
+				console.log("^^^", "**", typingPK);
+			}
+			// setisTyping(true);
 		}
 		if (fdata["msg_type"] === 10 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			setisTyping(false);
-			setTimeout(() => {
-				setisTyping(null);
-			}, 1000);
+			// setisTyping(false);
+			// setTimeout(() => {
+			// 	setisTyping(null);
+			// }, 1000);
+			if (typingPK.includes(parseInt(fdata["user_pk"]))) {
+				const updatedItems = typingPK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
+				settypingPK(updatedItems);
+				console.log("^^^", "**", typingPK);
+			}
 		}
 		if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
 			setnewUnreadCount(fdata["unread_count"]);
@@ -182,11 +193,11 @@ export default function InboxCard({
 								)}
 							</div>
 						</div>
-						{isTyping != null ? (
+						{typingPK.includes(data["other_user_id"]) ? (
 							<>
 								<p className="clamp_2 text-[12px] text-darkGray">
-									{isTyping === true && "User Is Typing ..."}
-									{isTyping === false && "User Stopped Typing ..."}
+									User Is Typing ...
+									{/* {isTyping === false && "User Stopped Typing ..."} */}
 								</p>
 							</>
 						) : (
