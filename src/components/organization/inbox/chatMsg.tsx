@@ -87,132 +87,6 @@ export default function InboxChatMsg({ type, data }: any) {
 					</div>
 				</div>
 			)} */}
-			{type === "user" && (
-				<>
-					<div className="group flex w-full cursor-default items-end py-1">
-						<div className="flex max-w-[80%] cursor-default flex-row flex-nowrap items-end">
-							<Image
-								src={
-									process.env.NODE_ENV === "production"
-										? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
-										: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["sender_profile"]}`
-								}
-								alt="User"
-								width={150}
-								height={150}
-								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
-							/>
-							<ContextMenuTrigger id="contextmenu1" className="cursor-context-menu">
-								<div className="ml-2 mr-3 rounded-lg bg-stone-300/25 px-3 py-2">
-									<article className="text-lg text-darkGray dark:text-lightBlue ">
-										{data["file"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
-														" " +
-														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
-													}
-												>
-													<i className="fa-regular fa-file text-[30px]"></i>
-													<b>{data["file"]["name"]}</b>
-												</button>
-											</>
-										)}
-										{data["media"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
-														" " +
-														`${(data["text"] || data["contact"]) && "mb-2"}`
-													}
-												>
-													<i className="fa-regular fa-image text-[30px]"></i>
-													<b>{data["media"]["name"]}</b>
-												</button>
-											</>
-										)}
-
-										{data["text"] && data["text"].length > 0 && <p className="text-left">{data["text"]}</p>}
-									</article>
-								</div>
-							</ContextMenuTrigger>
-							<h4 className="mb-2 hidden whitespace-nowrap text-[10px] font-bold text-darkGray group-hover:block dark:text-gray-400">
-								{moment(data["sent"]).format("h:mm a")}
-							</h4>
-						</div>
-					</div>
-
-					<ContextMenu id="contextmenu1" className="z-10 rounded-lg border-2 bg-white py-1 shadow  dark:bg-gray-700">
-						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
-							<button
-								type="button"
-								className="relative flex flex w-full cursor-pointer items-center gap-1 px-2 py-1 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
-								// onClick={() => setCreateGroup(true)}
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="15"
-									height="13"
-									viewBox="0 0 15 13"
-									fill="none"
-									className="fill-[#484848] dark:fill-lightBlue/50"
-								>
-									<path
-										d="M13.5937 12.0656C13.4449 12.0637 13.3028 12.0037 13.1976 11.8985C13.0924 11.7933 13.0324 11.6512 13.0304 11.5024C13.0304 8.73857 9.31282 7.35667 6.81939 7.10882C6.77166 7.10386 6.72342 7.10935 6.67802 7.12491C6.63263 7.14048 6.59117 7.16574 6.55653 7.19895C6.51635 7.23157 6.48402 7.27281 6.46192 7.31961C6.43982 7.3664 6.42852 7.41757 6.42885 7.46932C6.42394 7.75172 6.33951 8.02701 6.18525 8.2636C6.03099 8.50019 5.81315 8.68849 5.55673 8.8069C5.30031 8.9253 5.0157 8.96902 4.73556 8.93302C4.45543 8.89702 4.19112 8.78277 3.97297 8.60338L0.518213 5.59925C0.35662 5.45918 0.226798 5.28622 0.13743 5.09194C0.0480611 4.89766 0.00120668 4.68654 0 4.4727C0.00120668 4.25885 0.0480611 4.04773 0.13743 3.85345C0.226798 3.65917 0.35662 3.48621 0.518213 3.34615L3.97297 0.34201C4.19063 0.162981 4.45426 0.0487959 4.73374 0.0125058C5.01322 -0.0237843 5.29727 0.0192845 5.55343 0.13679C5.80959 0.254295 6.02753 0.441496 6.18233 0.676999C6.33714 0.912502 6.42256 1.18681 6.42885 1.46856V1.73893C6.42747 1.81659 6.45175 1.89253 6.49792 1.95499C6.54408 2.01745 6.60956 2.06294 6.6842 2.08441C8.9373 2.64017 14.1945 4.68299 14.1945 11.4949C14.1946 11.5724 14.1789 11.6492 14.1484 11.7205C14.1179 11.7917 14.0731 11.8561 14.0169 11.9095C13.9607 11.9629 13.8941 12.0043 13.8214 12.0311C13.7486 12.058 13.6712 12.0697 13.5937 12.0656ZM6.78935 5.98227H6.93204C8.92339 6.13626 10.8288 6.85827 12.4221 8.06264C11.0928 4.73556 7.9159 3.55643 6.41383 3.17341C6.10306 3.08277 5.82988 2.89416 5.635 2.63567C5.44012 2.37718 5.33396 2.06265 5.33234 1.73893V1.50611C5.33486 1.43622 5.3161 1.36721 5.27855 1.3082C5.241 1.2492 5.18643 1.20298 5.12205 1.17566C5.05976 1.14516 4.98959 1.13456 4.92106 1.14531C4.85254 1.15606 4.78899 1.18763 4.73902 1.23574L1.28427 4.23988C1.24351 4.27366 1.21088 4.31617 1.18877 4.36427C1.16667 4.41237 1.15568 4.46483 1.15659 4.51776C1.15571 4.5696 1.16676 4.62095 1.1889 4.66783C1.21104 4.71472 1.24367 4.75588 1.28427 4.78813L4.73902 7.79227C4.79168 7.83681 4.85601 7.86532 4.92438 7.8744C4.99275 7.88348 5.06229 7.87276 5.12475 7.84351C5.18722 7.81425 5.23997 7.76769 5.27677 7.70936C5.31356 7.65102 5.33285 7.58335 5.33234 7.51438C5.33234 7.11601 5.49059 6.73395 5.77229 6.45226C6.05398 6.17057 6.43604 6.01231 6.83441 6.01231L6.78935 5.98227Z"
-										// fill="#484848"
-									/>
-								</svg>
-								<span>Reply</span>
-							</button>
-						</MenuItem>
-
-						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
-							<button
-								type="button"
-								className="relative flex flex w-full cursor-pointer items-center gap-1 px-2 py-1 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
-								// onClick={() => setCreateGroup(true)}
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="11"
-									height="11"
-									viewBox="0 0 11 11"
-									fill="none"
-									className="fill-[#484848] dark:fill-lightBlue/50"
-								>
-									<path
-										d="M8.5 0H2.5C2.1717 0 1.84661 0.0646644 1.54329 0.190301C1.23998 0.315938 0.96438 0.500087 0.732233 0.732233C0.263392 1.20107 5.21141e-08 1.83696 5.21141e-08 2.5V6.5C-0.000117575 7.07633 0.198892 7.63499 0.563347 8.08145C0.927802 8.52791 1.43532 8.83473 2 8.95V10C1.99959 10.1977 2.05779 10.3911 2.16726 10.5557C2.27672 10.7204 2.43253 10.8489 2.615 10.925C2.73738 10.9743 2.86806 10.9998 3 11C3.26479 10.9989 3.51832 10.8928 3.705 10.705L5.415 9H8.5C8.82831 9 9.15339 8.93534 9.45671 8.8097C9.76002 8.68406 10.0356 8.49991 10.2678 8.26777C10.4999 8.03562 10.6841 7.76002 10.8097 7.45671C10.9353 7.15339 11 6.82831 11 6.5V2.5C11 2.1717 10.9353 1.84661 10.8097 1.54329C10.6841 1.23998 10.4999 0.96438 10.2678 0.732233C10.0356 0.500087 9.76002 0.315938 9.45671 0.190301C9.15339 0.0646644 8.82831 0 8.5 0ZM10 6.5C10 6.89783 9.84196 7.27936 9.56066 7.56066C9.27936 7.84197 8.89783 8 8.5 8H5.205C5.07383 8.00055 4.94813 8.05263 4.855 8.145L3 10V8.5C3 8.36739 2.94732 8.24021 2.85355 8.14645C2.75979 8.05268 2.63261 8 2.5 8C2.10218 8 1.72064 7.84197 1.43934 7.56066C1.15804 7.27936 1 6.89783 1 6.5V2.5C1 2.10218 1.15804 1.72064 1.43934 1.43934C1.72064 1.15804 2.10218 1 2.5 1H8.5C8.89783 1 9.27936 1.15804 9.56066 1.43934C9.84196 1.72064 10 2.10218 10 2.5V6.5Z"
-										// fill="#484848"
-									/>
-									<path
-										d="M8 5.027C8 6.11555 6.87931 7 5.5 7C4.12069 7 3 6.11555 3 5.027C3 3.93845 4.122 3.054 5.5 3.054H7.24634L5.96891 2.18089C5.91536 2.14378 5.90883 2.07884 5.95585 2.03555C6.00418 1.99225 6.08647 1.98813 6.14002 2.02524L7.6826 3.07977C7.71134 3.09936 7.72832 3.12719 7.72832 3.15709C7.72832 3.18698 7.71134 3.21584 7.6826 3.23543L6.14002 4.28996C6.1152 4.30646 6.08516 4.3147 6.05512 4.3147C6.01855 4.3147 5.98197 4.30233 5.95585 4.27965C5.90883 4.23636 5.91536 4.17142 5.96891 4.13431L7.24765 3.26017H5.5C4.26567 3.26017 3.26123 4.05287 3.26123 5.027C3.26123 6.00113 4.26567 6.79384 5.5 6.79384C6.73433 6.79384 7.73877 6.00216 7.73877 5.027C7.73877 4.97031 7.79754 4.92392 7.86938 4.92392C7.94122 4.92392 8 4.97031 8 5.027Z"
-										fill="black"
-									/>
-								</svg>
-								<span>Recall</span>
-							</button>
-						</MenuItem>
-					</ContextMenu>
-				</>
-			)}
 
 			{/* {type === "me" && (
 				<div className="group flex items-start py-4">
@@ -400,6 +274,214 @@ export default function InboxChatMsg({ type, data }: any) {
 					</div>
 				</div>
 			)} */}
+
+			{type === "user" && (
+				<>
+					<div className="group flex w-full cursor-default items-end py-1">
+						<div className="flex max-w-[80%] cursor-default flex-row flex-nowrap items-end">
+							<Image
+								src={
+									process.env.NODE_ENV === "production"
+										? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
+										: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["sender_profile"]}`
+								}
+								alt="User"
+								width={150}
+								height={150}
+								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
+							/>
+							<ContextMenuTrigger id="contextmenu1" className="cursor-context-menu">
+								<div className="ml-2 mr-3 rounded-lg bg-stone-300/25 px-3 py-2">
+									<article className="text-lg text-darkGray dark:text-lightBlue ">
+										{data["file"] && (
+											<>
+												<button
+													onClick={() => {
+														window.open(
+															process.env.NODE_ENV === "production"
+																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
+															"_blank"
+														);
+													}}
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
+													}
+												>
+													<i className="fa-regular fa-file text-[30px]"></i>
+													<b>{data["file"]["name"]}</b>
+												</button>
+											</>
+										)}
+										{data["media"] && (
+											<>
+												<button
+													onClick={() => {
+														window.open(
+															process.env.NODE_ENV === "production"
+																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
+																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
+															"_blank"
+														);
+													}}
+													className={
+														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
+														" " +
+														`${(data["text"] || data["contact"]) && "mb-2"}`
+													}
+												>
+													<i className="fa-regular fa-image text-[30px]"></i>
+													<b>{data["media"]["name"]}</b>
+												</button>
+											</>
+										)}
+
+										{data["contact"] && (
+											<>
+												<Popover className="relative">
+													{({ open }) => (
+														<>
+															<Popover.Button
+																className={
+																	`flex items-center gap-2 rounded bg-secondary/[0.1] px-4 py-1 text-[15px]` +
+																	" " +
+																	`${data["text"] && "mb-2"}`
+																}
+															>
+																<i className="fa-solid fa-id-card text-[30px]"></i>
+																<b>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</b>
+															</Popover.Button>
+															<Transition
+																as={Fragment}
+																enter="transition ease-out duration-200"
+																enterFrom="opacity-0 translate-y-1"
+																enterTo="opacity-100 translate-y-0"
+																leave="transition ease-in duration-150"
+																leaveFrom="opacity-100 translate-y-0"
+																leaveTo="opacity-0 translate-y-1"
+															>
+																<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																	<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																		<div
+																			className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																			// style={{ background: generateRandomGradient() }}
+																		>
+																			<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																				<Image
+																					src={
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																					}
+																					alt={"ABC"}
+																					width={100}
+																					height={100}
+																					className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																				/>
+																			</div>
+																		</div>
+																		<div className="p-6">
+																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				{data["contact"]["name"]}
+																			</h5>
+																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				{data["contact"]["title"]}
+																			</p>
+																			<hr className="dark:border-lightBlue/50" />
+																			<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																				<div className="flex flex-col gap-2">
+																					<div className="flex justify-between gap-2">
+																						<b>Email</b>
+																						<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
+																					</div>
+																					<div className="flex justify-between gap-2">
+																						<b>Deparment</b>
+																						<p>
+																							{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																						</p>
+																					</div>
+																					<div className="flex justify-between gap-2">
+																						<b>Role</b>
+																						<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
+																					</div>
+																				</div>
+																			</p>
+																		</div>
+																	</div>
+																</Popover.Panel>
+															</Transition>
+														</>
+													)}
+												</Popover>
+											</>
+										)}
+
+										{data["text"] && data["text"].length > 0 && <p className="text-left">{data["text"]}</p>}
+									</article>
+								</div>
+							</ContextMenuTrigger>
+							<h4 className="mb-2 hidden whitespace-nowrap text-[10px] font-bold text-darkGray group-hover:block dark:text-gray-400">
+								{moment(data["sent"]).format("h:mm a")}
+							</h4>
+						</div>
+					</div>
+
+					<ContextMenu id="contextmenu1" className="z-10 rounded-lg border-2 bg-white py-1 shadow  dark:bg-gray-700">
+						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
+							<button
+								type="button"
+								className="relative flex flex w-full cursor-pointer items-center gap-1 px-2 py-1 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
+								// onClick={() => setCreateGroup(true)}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="15"
+									height="13"
+									viewBox="0 0 15 13"
+									fill="none"
+									className="fill-[#484848] dark:fill-lightBlue/50"
+								>
+									<path
+										d="M13.5937 12.0656C13.4449 12.0637 13.3028 12.0037 13.1976 11.8985C13.0924 11.7933 13.0324 11.6512 13.0304 11.5024C13.0304 8.73857 9.31282 7.35667 6.81939 7.10882C6.77166 7.10386 6.72342 7.10935 6.67802 7.12491C6.63263 7.14048 6.59117 7.16574 6.55653 7.19895C6.51635 7.23157 6.48402 7.27281 6.46192 7.31961C6.43982 7.3664 6.42852 7.41757 6.42885 7.46932C6.42394 7.75172 6.33951 8.02701 6.18525 8.2636C6.03099 8.50019 5.81315 8.68849 5.55673 8.8069C5.30031 8.9253 5.0157 8.96902 4.73556 8.93302C4.45543 8.89702 4.19112 8.78277 3.97297 8.60338L0.518213 5.59925C0.35662 5.45918 0.226798 5.28622 0.13743 5.09194C0.0480611 4.89766 0.00120668 4.68654 0 4.4727C0.00120668 4.25885 0.0480611 4.04773 0.13743 3.85345C0.226798 3.65917 0.35662 3.48621 0.518213 3.34615L3.97297 0.34201C4.19063 0.162981 4.45426 0.0487959 4.73374 0.0125058C5.01322 -0.0237843 5.29727 0.0192845 5.55343 0.13679C5.80959 0.254295 6.02753 0.441496 6.18233 0.676999C6.33714 0.912502 6.42256 1.18681 6.42885 1.46856V1.73893C6.42747 1.81659 6.45175 1.89253 6.49792 1.95499C6.54408 2.01745 6.60956 2.06294 6.6842 2.08441C8.9373 2.64017 14.1945 4.68299 14.1945 11.4949C14.1946 11.5724 14.1789 11.6492 14.1484 11.7205C14.1179 11.7917 14.0731 11.8561 14.0169 11.9095C13.9607 11.9629 13.8941 12.0043 13.8214 12.0311C13.7486 12.058 13.6712 12.0697 13.5937 12.0656ZM6.78935 5.98227H6.93204C8.92339 6.13626 10.8288 6.85827 12.4221 8.06264C11.0928 4.73556 7.9159 3.55643 6.41383 3.17341C6.10306 3.08277 5.82988 2.89416 5.635 2.63567C5.44012 2.37718 5.33396 2.06265 5.33234 1.73893V1.50611C5.33486 1.43622 5.3161 1.36721 5.27855 1.3082C5.241 1.2492 5.18643 1.20298 5.12205 1.17566C5.05976 1.14516 4.98959 1.13456 4.92106 1.14531C4.85254 1.15606 4.78899 1.18763 4.73902 1.23574L1.28427 4.23988C1.24351 4.27366 1.21088 4.31617 1.18877 4.36427C1.16667 4.41237 1.15568 4.46483 1.15659 4.51776C1.15571 4.5696 1.16676 4.62095 1.1889 4.66783C1.21104 4.71472 1.24367 4.75588 1.28427 4.78813L4.73902 7.79227C4.79168 7.83681 4.85601 7.86532 4.92438 7.8744C4.99275 7.88348 5.06229 7.87276 5.12475 7.84351C5.18722 7.81425 5.23997 7.76769 5.27677 7.70936C5.31356 7.65102 5.33285 7.58335 5.33234 7.51438C5.33234 7.11601 5.49059 6.73395 5.77229 6.45226C6.05398 6.17057 6.43604 6.01231 6.83441 6.01231L6.78935 5.98227Z"
+										// fill="#484848"
+									/>
+								</svg>
+								<span>Reply</span>
+							</button>
+						</MenuItem>
+
+						<MenuItem className="flex cursor-pointer items-center gap-1 p-1 hover:bg-lightBlue hover:dark:bg-gray-900">
+							<button
+								type="button"
+								className="relative flex flex w-full cursor-pointer items-center gap-1 px-2 py-1 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
+								// onClick={() => setCreateGroup(true)}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="11"
+									height="11"
+									viewBox="0 0 11 11"
+									fill="none"
+									className="fill-[#484848] dark:fill-lightBlue/50"
+								>
+									<path
+										d="M8.5 0H2.5C2.1717 0 1.84661 0.0646644 1.54329 0.190301C1.23998 0.315938 0.96438 0.500087 0.732233 0.732233C0.263392 1.20107 5.21141e-08 1.83696 5.21141e-08 2.5V6.5C-0.000117575 7.07633 0.198892 7.63499 0.563347 8.08145C0.927802 8.52791 1.43532 8.83473 2 8.95V10C1.99959 10.1977 2.05779 10.3911 2.16726 10.5557C2.27672 10.7204 2.43253 10.8489 2.615 10.925C2.73738 10.9743 2.86806 10.9998 3 11C3.26479 10.9989 3.51832 10.8928 3.705 10.705L5.415 9H8.5C8.82831 9 9.15339 8.93534 9.45671 8.8097C9.76002 8.68406 10.0356 8.49991 10.2678 8.26777C10.4999 8.03562 10.6841 7.76002 10.8097 7.45671C10.9353 7.15339 11 6.82831 11 6.5V2.5C11 2.1717 10.9353 1.84661 10.8097 1.54329C10.6841 1.23998 10.4999 0.96438 10.2678 0.732233C10.0356 0.500087 9.76002 0.315938 9.45671 0.190301C9.15339 0.0646644 8.82831 0 8.5 0ZM10 6.5C10 6.89783 9.84196 7.27936 9.56066 7.56066C9.27936 7.84197 8.89783 8 8.5 8H5.205C5.07383 8.00055 4.94813 8.05263 4.855 8.145L3 10V8.5C3 8.36739 2.94732 8.24021 2.85355 8.14645C2.75979 8.05268 2.63261 8 2.5 8C2.10218 8 1.72064 7.84197 1.43934 7.56066C1.15804 7.27936 1 6.89783 1 6.5V2.5C1 2.10218 1.15804 1.72064 1.43934 1.43934C1.72064 1.15804 2.10218 1 2.5 1H8.5C8.89783 1 9.27936 1.15804 9.56066 1.43934C9.84196 1.72064 10 2.10218 10 2.5V6.5Z"
+										// fill="#484848"
+									/>
+									<path
+										d="M8 5.027C8 6.11555 6.87931 7 5.5 7C4.12069 7 3 6.11555 3 5.027C3 3.93845 4.122 3.054 5.5 3.054H7.24634L5.96891 2.18089C5.91536 2.14378 5.90883 2.07884 5.95585 2.03555C6.00418 1.99225 6.08647 1.98813 6.14002 2.02524L7.6826 3.07977C7.71134 3.09936 7.72832 3.12719 7.72832 3.15709C7.72832 3.18698 7.71134 3.21584 7.6826 3.23543L6.14002 4.28996C6.1152 4.30646 6.08516 4.3147 6.05512 4.3147C6.01855 4.3147 5.98197 4.30233 5.95585 4.27965C5.90883 4.23636 5.91536 4.17142 5.96891 4.13431L7.24765 3.26017H5.5C4.26567 3.26017 3.26123 4.05287 3.26123 5.027C3.26123 6.00113 4.26567 6.79384 5.5 6.79384C6.73433 6.79384 7.73877 6.00216 7.73877 5.027C7.73877 4.97031 7.79754 4.92392 7.86938 4.92392C7.94122 4.92392 8 4.97031 8 5.027Z"
+										fill="black"
+									/>
+								</svg>
+								<span>Recall</span>
+							</button>
+						</MenuItem>
+					</ContextMenu>
+				</>
+			)}
+
 			{type === "me" && (
 				<>
 					<div className="group flex w-full cursor-default flex-row-reverse items-end py-1">
@@ -477,7 +559,7 @@ export default function InboxChatMsg({ type, data }: any) {
 																}
 															>
 																<i className="fa-solid fa-id-card text-[30px]"></i>
-																<b>ABCD</b>
+																<b>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</b>
 															</Popover.Button>
 															<Transition
 																as={Fragment}
@@ -496,65 +578,51 @@ export default function InboxChatMsg({ type, data }: any) {
 																		>
 																			<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
 																				<Image
-																					src={userImg1}
+																					src={
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																					}
 																					alt={"ABC"}
 																					width={100}
 																					height={100}
-																					className="h-[100px] w-[100px] rounded-full border-4 border-white"
+																					className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
 																				/>
 																			</div>
 																		</div>
 																		<div className="p-6">
-																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				Naman Doshi
+																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				{data["contact"]["name"]}
 																			</h5>
-																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				Divison Head
+																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																				{data["contact"]["title"]}
 																			</p>
 																			<hr className="dark:border-lightBlue/50" />
 																			<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
 																				<div className="flex flex-col gap-2">
 																					<div className="flex justify-between gap-2">
 																						<b>Email</b>
-																						<p>abc@gmail.com</p>
+																						<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
 																					</div>
 																					<div className="flex justify-between gap-2">
 																						<b>Deparment</b>
-																						<p>HR-Tech</p>
+																						<p>
+																							{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																						</p>
 																					</div>
 																					<div className="flex justify-between gap-2">
-																						<b>Contact</b>
-																						<p>1234567890</p>
+																						<b>Role</b>
+																						<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
 																					</div>
 																				</div>
 																			</p>
 																		</div>
-																		{/* <div className="p-6 pt-0">
-																			<button
-																				data-ripple-light="true"
-																				type="button"
-																				className="select-none rounded-lg bg-blue-500 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-																			>
-																				Read More
-																			</button>
-																		</div> */}
 																	</div>
 																</Popover.Panel>
 															</Transition>
 														</>
 													)}
 												</Popover>
-
-												{/* <button
-													className={
-														`flex items-center gap-2 rounded bg-primary/[0.1] px-4 py-1 text-[15px]` +
-														" " +
-														`${data["text"] && "mb-2"}`
-													}
-												>
-													<i className="fa-solid fa-id-card text-[30px]"></i>
-													<b>ABCD</b>
-												</button> */}
 											</>
 										)}
 
