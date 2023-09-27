@@ -16,50 +16,15 @@ export default function InboxSideBar({
 	cardActive,
 	cardActiveData,
 	socket,
-	callbackOnline
+	sidebarData,
+	setsidebarData,
+	pinnedClick,
+	typingPK,
+	settypingPK,
+	loadSidebar
 }: any) {
-	const [sidebarData, setsidebarData] = useState([]);
-	const [onlinePK, setonlinePK] = useState([]);
-	const [typingPK, settypingPK] = useState([]);
-
-	async function loadSidebar() {
-		await axiosInstanceAuth2
-			.get(`/inbox/dialogs/`)
-			.then(async (res) => {
-				console.log("&&&", "dialogs", res.data);
-				setsidebarData(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-				setsidebarData([]);
-			});
-	}
-
-	async function pinnedClick(e: any, id: any) {
-		e.stopPropagation();
-		await axiosInstanceAuth2
-			.post(`/inbox/dialogs_pinned/${id}/`)
-			.then(async (res) => {
-				loadSidebar();
-			})
-			.catch((err) => {
-				loadSidebar();
-			});
-	}
-
-	useEffect(() => {
-		if (axiosInstanceAuth2) {
-			loadSidebar();
-		}
-	}, [axiosInstanceAuth2]);
-
 	return (
-		<div
-			className="overflow-hidden rounded-normal border bg-white/50 shadow-normal dark:border-gray-600 dark:bg-gray-800/50"
-			// style={{
-			// 	background: "linear-gradient(168deg, rgba(255, 255, 255, 0.80) -9.27%, rgba(255, 255, 255, 0.20) 100%)"
-			// }}
-		>
+		<div className="overflow-hidden rounded-normal border bg-white/50 shadow-normal dark:border-gray-600 dark:bg-gray-800/50">
 			<Tab.Group>
 				<Tab.List className={"border-b px-6 pt-2 dark:border-gray-600"}>
 					{/* <Tab as={Fragment}>
@@ -314,17 +279,15 @@ export default function InboxSideBar({
 														setcardActiveData={setcardActiveData}
 														cardActive={cardActive}
 														cardActiveData={cardActiveData}
-														online={false}
+														online={data["other_user_online"]}
 														count={data["unread_count"]}
 														data={data}
 														socket={socket}
 														pinnedClick={pinnedClick}
-														callbackOnline={callbackOnline}
-														onlinePK={onlinePK}
-														setonlinePK={setonlinePK}
 														typingPK={typingPK}
 														settypingPK={settypingPK}
 														sidebarData={sidebarData}
+														loadSidebar={loadSidebar}
 													/>
 												</div>
 											))}

@@ -186,11 +186,35 @@ export default function Inbox() {
 				toastcomp("Connected to WebSocket server", "success");
 				console.log();
 				setSocket(rws);
+				loadSidebar();
 			});
 
-			rws.onmessage = function (e) {
-				// console.log("^^^", "eee", e.data);
-			};
+			// rws.onmessage = function (e:any) {
+			// 	var fdata = JSON.parse(e.data);
+			// 	console.log("***", "socket.onMsg", fdata);
+
+			// 	if (
+			// 		fdata["msg_type"] === 1 &&
+			// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
+			// 	) {
+			// 		if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
+			// 			setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
+			// 		}
+			// 		console.log("***", "Online PK Array", onlinePK);
+			// 		console.log("***", "Callback Online Function Called From ClientSide");
+			// 		callbackOnline(socket, fdata["user_pk"]);
+			// 	}
+			// 	if (
+			// 		fdata["msg_type"] === 2 &&
+			// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
+			// 	) {
+			// 		if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
+			// 			const updatedItems = onlinePK.filter((existingItem: any) => existingItem !== parseInt(fdata["user_pk"]));
+			// 			setonlinePK(updatedItems);
+			// 		}
+			// 		console.log("***", "Online PK Array", onlinePK);
+			// 	}
+			// };
 
 			rws.addEventListener("close", () => {
 				toastcomp("Disconnected to WebSocket server", "success");
@@ -205,24 +229,63 @@ export default function Inbox() {
 		}
 	}, [text]);
 
-	// function performSendingMessage(text: any, socket: any, opk: any) {
-	// 	let userData = {
-	// 		username: currentUser[0]["name"],
-	// 		pk: currentUser[0]["id"].toString()
-	// 	};
-	// 	let user_pk = opk.toString();
-	// 	sendOutgoingTextMessage(socket, text, user_pk, userData);
-	// }
+	//sidebar
+	const [sidebarData, setsidebarData] = useState([]);
+	const [typingPK, settypingPK] = useState([]);
+	const [loadS, setloadS] = useState(false);
 
-	// useEffect(() => {
-	// 	console.log("^^", "rws socket", socket);
-	// 	if (click && text.length > 0 && socket != null) {
-	// 		toastcomp(text, "success");
-	// 		performSendingMessage(text, socket, cardActiveData["other_user_id"]);
-	// 		settext("");
-	// 		setclick(false);
-	// 	}
-	// }, [click]);
+	useEffect(() => {
+		if (loadS) {
+			loadSidebar().then(() => {
+				setloadS(false);
+			});
+		}
+	}, [loadS]);
+
+	async function loadSidebar() {
+		await axiosInstanceAuth2
+			.get(`/inbox/dialogs/`)
+			.then(async (res) => {
+				console.log("&&&", "dialogs", res.data);
+				setsidebarData(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setsidebarData([]);
+			});
+	}
+
+	async function pinnedClick(e: any, id: any) {
+		e.stopPropagation();
+		await axiosInstanceAuth2
+			.post(`/inbox/dialogs_pinned/${id}/`)
+			.then(async (res) => {
+				loadSidebar();
+			})
+			.catch((err) => {
+				loadSidebar();
+			});
+	}
+
+	async function msgRead(id: any) {
+		await axiosInstanceAuth2
+			.post(`/inbox/dialogs_reads/${id}/`)
+			.then(async (res) => {
+				loadSidebar();
+			})
+			.catch((err) => {
+				loadSidebar();
+			});
+	}
+
+	//other
+
+	if (socket != null) {
+		socket.onmessage = function (e: any) {
+			loadSidebar();
+			console.log("***", "socket.onMsg", e.data);
+		};
+	}
 
 	return (
 		<>
@@ -252,6 +315,13 @@ export default function Inbox() {
 										setcardActiveData={setcardActiveData}
 										socket={socket}
 										callbackOnline={callbackOnline}
+										//sidebar
+										sidebarData={sidebarData}
+										setsidebarData={setsidebarData}
+										pinnedClick={pinnedClick}
+										typingPK={typingPK}
+										settypingPK={settypingPK}
+										loadSidebar={loadSidebar}
 									/>
 								</div>
 								{cardActive && (
@@ -275,6 +345,9 @@ export default function Inbox() {
 											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
 											markASRead={markASRead}
 											sendOutgoingContactMessage={sendOutgoingContactMessage}
+											msgRead={msgRead}
+											loadS={loadS}
+											setloadS={setloadS}
 										/>
 									</div>
 								)}

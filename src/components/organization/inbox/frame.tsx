@@ -9,6 +9,7 @@ import startNewChat from "/public/images/no-data/iconGroup-4.png";
 import InboxChatMsg from "./chatMsg";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import toastcomp from "@/components/toast";
 
 export default function InboxFrame({
 	togglePages,
@@ -28,7 +29,10 @@ export default function InboxFrame({
 	sendOutgoingTextMessage,
 	sendOutgoingMediaMessage,
 	markASRead,
-	sendOutgoingContactMessage
+	sendOutgoingContactMessage,
+
+	loadS,
+	setloadS
 }: any) {
 	const cancelButtonRef = useRef(null);
 	const [showContact, setShowContact] = useState(false);
@@ -67,6 +71,7 @@ export default function InboxFrame({
 	const [isTyping, setisTyping] = useState(null);
 	// const [text, settext] = useState("");
 	const [showPicker, setShowPicker] = useState(false);
+	const [loadSD, setloadSD] = useState(false);
 	const handleEmojiSelect = (emoji: any) => {
 		// onEmojiSelect(emoji.native);
 		setShowPicker(false);
@@ -86,6 +91,26 @@ export default function InboxFrame({
 			});
 	}
 
+	async function msgRead2(id: any) {
+		await axiosInstanceAuth2
+			.post(`/inbox/dialogs_reads/${id}/`)
+			.then(async (res) => {
+				toastcomp("API CALL", "success");
+				// setloadSD(true);
+			})
+			.catch((err) => {
+				setloadSD(false);
+				// setloadS(true);
+			});
+	}
+
+	// useEffect(() => {
+	// 	if (loadSD) {
+	// 		setloadS(true);
+	// 		// setloadSD(false);
+	// 	}
+	// }, [loadSD]);
+
 	socket.onmessage = function (e) {
 		var fdata = JSON.parse(e.data);
 		// console.log("^^^", "eee data", data);
@@ -102,7 +127,6 @@ export default function InboxFrame({
 			const unreadItems = unreadItems1.filter((item) => item.out === false);
 			for (let i = 0; i < unreadItems.length; i++) {
 				console.log("^^^", "MAR", i);
-
 				markASRead(socket, unreadItems[i]["sender"], unreadItems[i]["id"]);
 			}
 		}
@@ -111,6 +135,7 @@ export default function InboxFrame({
 	useEffect(() => {
 		if (axiosInstanceAuth2 && cardActive) {
 			loadFrame(cardActiveData["other_user_id"]);
+			// msgRead2(cardActiveData["other_user_id"]);
 		}
 	}, [axiosInstanceAuth2, cardActive, cardActiveData]);
 

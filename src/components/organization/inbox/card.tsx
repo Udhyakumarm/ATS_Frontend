@@ -11,6 +11,7 @@ import moment from "moment";
 export default function InboxCard({
 	pin,
 	count,
+	online,
 	data,
 	setcardActive,
 	setcardActiveData,
@@ -18,13 +19,12 @@ export default function InboxCard({
 	cardActiveData,
 	socket,
 	pinnedClick,
-	callbackOnline,
-	onlinePK,
-	setonlinePK,
 	typingPK,
 	settypingPK,
-	sidebarData
-}: any) {
+	sidebarData,
+	loadSidebar
+}: // msgRead
+any) {
 	function contextClick(e: any, data: any) {
 		// var data = data.copy;
 		// setmuteChat(true);
@@ -45,6 +45,9 @@ export default function InboxCard({
 			// setcardActive(true);
 			setcardActive(true);
 			setcardActiveData(data);
+			// msgRead(data["other_user_id"]).then(() => {
+			// 	loadSidebar();
+			// });
 		} else {
 			setcardActive(false);
 			setcardActiveData({});
@@ -53,27 +56,28 @@ export default function InboxCard({
 
 	// useEffect(() => {
 	socket.onmessage = function (e) {
+		loadSidebar();
 		var fdata = JSON.parse(e.data);
 		// console.log("^^^", "eee data", data);
-		console.log("^^^", "eee", fdata);
+		// console.log("^^^", "eee", fdata);
 
-		if (fdata["msg_type"] === 1 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
-				setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
-				console.log("^^^", "**", onlinePK);
-			}
-			// setonline(true);
-			console.log("^^^", "** RUNNNNNNNNNNNNN");
-			callbackOnline(socket, fdata["user_pk"]);
-		}
-		if (fdata["msg_type"] === 2 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			// setonline(false);
-			if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
-				const updatedItems = onlinePK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
-				setonlinePK(updatedItems);
-				console.log("^^^", "**", onlinePK);
-			}
-		}
+		// if (fdata["msg_type"] === 1 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+		// 	if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
+		// 		setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
+		// 		console.log("^^^", "**", onlinePK, "#", fdata["user_pk"]);
+		// 	}
+		// 	// setonline(true);
+		// 	// console.log("^^^", "** RUNNNNNNNNNNNNN");
+		// 	// callbackOnline(socket, fdata["user_pk"]);
+		// }
+		// if (fdata["msg_type"] === 2 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+		// 	// setonline(false);
+		// 	if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
+		// 		const updatedItems = onlinePK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
+		// 		setonlinePK(updatedItems);
+		// 		console.log("^^^", "**", onlinePK);
+		// 	}
+		// }
 		if (fdata["msg_type"] === 5 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
 			if (!typingPK.includes(parseInt(fdata["user_pk"]))) {
 				settypingPK([...typingPK, parseInt(fdata["user_pk"])]);
@@ -92,18 +96,14 @@ export default function InboxCard({
 				console.log("^^^", "**", typingPK);
 			}
 		}
-		if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
-			setnewUnreadCount(fdata["unread_count"]);
-		}
+		// if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
+		// 	setnewUnreadCount(fdata["unread_count"]);
+		// }
 		if (fdata["msg_type"] === 3 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
 			setnewLastMessage(fdata["text"]);
 		}
 	};
 	// }, [socket]);
-
-	useEffect(() => {
-		console.log("^^^", "**", "onlinePK", onlinePK);
-	}, [onlinePK]);
 
 	function pinMessgae(e) {
 		e.stopPropagation();
@@ -141,14 +141,14 @@ export default function InboxCard({
 								}`
 							}
 						/>
-						{(data["unread_count"] && data["unread_count"] > 0) || newUnreadCount != null ? (
+						{data["unread_count"] && data["unread_count"] > 0 ? (
 							<span className="absolute right-[-5px] top-[-5px] flex h-[21px] w-[21px] items-center justify-center rounded-full bg-primary text-center text-xs font-bold text-white">
 								{newUnreadCount != null ? newUnreadCount : data["unread_count"]}
 							</span>
 						) : (
 							<></>
 						)}
-						{onlinePK.includes(data["other_user_id"]) && (
+						{online && (
 							<span className="absolute left-[-5px] top-[-5px] flex h-[10px] w-[10px] items-center justify-center rounded-full bg-cyan-500 text-center text-xs font-bold text-white"></span>
 						)}
 					</div>
