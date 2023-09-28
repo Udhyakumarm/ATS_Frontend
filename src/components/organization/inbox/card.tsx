@@ -5,8 +5,11 @@ import FormField from "@/components/FormField";
 import userImg1 from "/public/images/user-image1.jpeg";
 import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import moment from "moment";
+import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
+import "@szhsin/react-menu/dist/index.css";
+import "@szhsin/react-menu/dist/theme-dark.css";
+import { useTheme } from "next-themes";
 
 export default function InboxCard({
 	pin,
@@ -25,12 +28,10 @@ export default function InboxCard({
 	loadSidebar
 }: // msgRead
 any) {
-	function contextClick(e: any, data: any) {
-		// var data = data.copy;
-		// setmuteChat(true);
-		// if (data === "Mute") {
-		// }
-	}
+	const { theme, setTheme } = useTheme();
+	const [isOpen, setOpen] = useState(false);
+	const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+
 	const cancelButtonRef = useRef(null);
 	const [muteChat, setmuteChat] = useState(false);
 	const [one, setone] = useState(true);
@@ -112,7 +113,20 @@ any) {
 
 	return (
 		<>
-			<ContextMenuTrigger id={`${cardActive && cardActiveData["id"] === data["id"] ? "contextmenu" : ""}`}>
+			<div
+				onContextMenu={(e) => {
+					if (
+						(typeof document.hasFocus === "function" && !document.hasFocus()) ||
+						!cardActive ||
+						cardActiveData["id"] != data["id"]
+					)
+						return;
+
+					e.preventDefault();
+					setAnchorPoint({ x: e.clientX, y: e.clientY });
+					setOpen(true);
+				}}
+			>
 				<div
 					className={
 						"group mb-3 flex cursor-pointer  rounded-2xl px-3 py-4 " +
@@ -231,97 +245,25 @@ any) {
 						)}
 					</div>
 				</div>
-			</ContextMenuTrigger>
-			{cardActive && cardActiveData["id"] === data["id"] && (
-				<ContextMenu id="contextmenu" className="rounded-lg border-2 bg-white py-4 shadow-lg dark:bg-gray-700">
-					<MenuItem
-						data={{ text: "Mute" }}
-						onClick={contextClick}
-						className="flex cursor-pointer items-center gap-2 p-2  px-3 hover:bg-lightBlue hover:dark:bg-gray-900"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="10"
-							viewBox="0 0 16 10"
-							fill="none"
-							className="fill-black dark:fill-white"
-						>
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M4.51268 7.85393C4.46382 7.86923 4.41188 7.8774 4.35788 7.8774H2.3007C1.44851 7.8774 0.757812 7.19222 0.757812 6.34685V3.28577C0.757812 2.4404 1.44851 1.75523 2.3007 1.75523H4.35788C4.41188 1.75523 4.46382 1.76339 4.51268 1.7787L8.4059 0.12367C8.88265 -0.0788714 9.42986 -0.0304089 9.8629 0.252741C10.2959 0.535892 10.5567 1.01598 10.5567 1.53024V8.10238C10.5567 8.61665 10.2959 9.09673 9.8629 9.37988C9.42986 9.66303 8.88265 9.7115 8.4059 9.50895L4.51268 7.85393ZM4.87217 6.89632L8.81116 8.57124C8.97008 8.63859 9.15214 8.62226 9.29665 8.52787C9.44117 8.43349 9.52809 8.2738 9.52809 8.10238V1.53024C9.52809 1.35882 9.44117 1.19913 9.29665 1.10475C9.15214 1.01037 8.97008 0.994037 8.81116 1.06138L4.87217 2.73631V6.89632ZM3.84358 2.77559H2.3007C2.01681 2.77559 1.7864 3.00415 1.7864 3.28577V6.34685C1.7864 6.62847 2.01681 6.85704 2.3007 6.85704H3.84358V2.77559ZM12.3737 4.81631L11.1944 3.64647C10.9938 3.4475 10.9938 3.12404 11.1944 2.92507C11.395 2.7261 11.721 2.7261 11.9216 2.92507L13.1009 4.09492L14.2802 2.92507C14.4808 2.7261 14.8068 2.7261 15.0074 2.92507C15.208 3.12404 15.208 3.4475 15.0074 3.64647L13.8281 4.81631L15.0074 5.98616C15.208 6.18513 15.208 6.50858 15.0074 6.70755C14.8068 6.90652 14.4808 6.90652 14.2802 6.70755L13.1009 5.53771L11.9216 6.70755C11.721 6.90652 11.395 6.90652 11.1944 6.70755C10.9938 6.50858 10.9938 6.18513 11.1944 5.98616L12.3737 4.81631Z"
-								// fill="#484848"
-							/>
-						</svg>
-						<span>Mute</span>
+
+				<ControlledMenu
+					anchorPoint={anchorPoint}
+					state={isOpen ? "open" : "closed"}
+					direction="right"
+					onClose={() => setOpen(false)}
+					theming={theme === "dark" ? "dark" : undefined}
+				>
+					<MenuItem value="Mute" onClick={(e) => console.log(`[MenuItem] ${e.value} clicked`)}>
+						<i className="fa-solid fa-volume-xmark"></i>&nbsp;&nbsp;Mute
 					</MenuItem>
-					<MenuItem
-						data={{ text: "Delete" }}
-						onClick={contextClick}
-						className="flex cursor-pointer items-center gap-2 p-2  px-3 hover:bg-lightBlue hover:dark:bg-gray-900"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="12"
-							height="12"
-							viewBox="0 0 12 12"
-							fill="none"
-							className="fill-black dark:fill-white"
-						>
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M1.59998 2.40155V10.0015C1.59998 10.5318 1.81078 11.0407 2.1856 11.4158C2.56077 11.7906 3.06961 12.0014 3.59996 12.0014H8.39991C8.93026 12.0014 9.4391 11.7906 9.81427 11.4158C10.1891 11.0407 10.3999 10.5318 10.3999 10.0015V2.40155H11.5999C11.8207 2.40155 11.9999 2.22236 11.9999 2.00156C11.9999 1.78076 11.8207 1.60156 11.5999 1.60156H0.399996C0.179193 1.60156 0 1.78076 0 2.00156C0 2.22236 0.179193 2.40155 0.399996 2.40155H1.59998ZM9.5999 2.40155V10.0015C9.5999 10.3199 9.47347 10.625 9.24829 10.8499C9.02347 11.075 8.71828 11.2015 8.39991 11.2015H3.59996C3.28156 11.2015 2.9764 11.075 2.75158 10.8499C2.5264 10.625 2.39997 10.3198 2.39997 10.0015V2.40155H9.5999Z"
-								// fill="#484848"
-							/>
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M3.99961 0.799991H7.99956C8.22036 0.799991 8.39956 0.620798 8.39956 0.399996C8.39956 0.179193 8.22036 0 7.99956 0H3.99961C3.7788 0 3.59961 0.179193 3.59961 0.399996C3.59961 0.620798 3.7788 0.799991 3.99961 0.799991Z"
-								// fill="#484848"
-							/>
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M4.40234 4.4039V9.20385C4.40234 9.42465 4.58154 9.60385 4.80234 9.60385C5.02314 9.60385 5.20234 9.42465 5.20234 9.20385V4.4039C5.20234 4.1831 5.02314 4.00391 4.80234 4.00391C4.58154 4.00391 4.40234 4.1831 4.40234 4.4039Z"
-								// fill="#484848"
-							/>
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M6.80078 4.4039V9.20385C6.80078 9.42465 6.97997 9.60385 7.20078 9.60385C7.42158 9.60385 7.60077 9.42465 7.60077 9.20385V4.4039C7.60077 4.1831 7.42158 4.00391 7.20078 4.00391C6.97997 4.00391 6.80078 4.1831 6.80078 4.4039Z"
-								// fill="#484848"
-							/>
-						</svg>
-						<span>Delete Chat</span>
+					<MenuItem value="Delete" onClick={(e) => console.log(`[MenuItem] ${e.value} clicked`)}>
+						<i className="fa-solid fa-trash"></i>&nbsp;&nbsp;Delete Chat
 					</MenuItem>
-					<MenuItem
-						data={{ text: "Read" }}
-						onClick={contextClick}
-						className="flex cursor-pointer items-center gap-2 p-2 px-3 hover:bg-lightBlue hover:dark:bg-gray-900"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="17"
-							height="11"
-							viewBox="0 0 17 11"
-							fill="none"
-							className="fill-black dark:fill-white"
-						>
-							<path
-								d="M11.3672 0.162361C11.0737 -0.0839503 10.6353 -0.0457015 10.3887 0.24781L3.58793 8.35246L1.22642 5.53834C0.979969 5.2451 0.542144 5.20658 0.24809 5.45289C-0.0456926 5.69947 -0.084077 6.13757 0.162505 6.43135L3.05598 9.87943C3.18795 10.0365 3.38272 10.1274 3.58793 10.1274C3.79315 10.1274 3.98792 10.0365 4.11989 9.87943L11.4527 1.14082C11.6992 0.847039 11.661 0.408943 11.3672 0.162361Z"
-								// fill="#484848"
-							/>
-							<path
-								d="M15.7628 0.162361C15.469 -0.0839503 15.0309 -0.0457015 14.7843 0.24781L7.98366 8.35274L7.70493 8.0207C7.45876 7.72665 7.02039 7.68813 6.72661 7.93498C6.43282 8.18129 6.39444 8.61939 6.64102 8.91317L7.45184 9.87943C7.58381 10.0368 7.77858 10.1274 7.98379 10.1274C8.18901 10.1274 8.38378 10.0365 8.51561 9.87943L15.8482 1.14082C16.0948 0.846768 16.0566 0.408943 15.7628 0.162361Z"
-								// fill="#484848"
-							/>
-						</svg>
-						<span>Mark as read</span>
+					<MenuItem value="MarkAsRead" onClick={(e) => console.log(`[MenuItem] ${e.value} clicked`)}>
+						<i className="fa-solid fa-check-double"></i>&nbsp;&nbsp;Mark As Read
 					</MenuItem>
-				</ContextMenu>
-			)}
+				</ControlledMenu>
+			</div>
 			<Transition.Root show={muteChat} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setmuteChat}>
 					<Transition.Child
