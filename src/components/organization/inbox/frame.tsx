@@ -299,7 +299,7 @@ export default function InboxFrame({
 				}
 			});
 		} else {
-			if (editText != null) {
+			if (editText.length > 0 && editId.length > 0) {
 				editMsg2();
 			} else {
 				let user_pk = cardActiveData["other_user_id"].toString();
