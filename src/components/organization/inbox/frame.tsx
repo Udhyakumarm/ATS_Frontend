@@ -10,6 +10,8 @@ import InboxChatMsg from "./chatMsg";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import toastcomp from "@/components/toast";
+import moment from "moment";
+import Link from "next/link";
 
 export default function InboxFrame({
 	togglePages,
@@ -66,6 +68,7 @@ export default function InboxFrame({
 	}, [showContact]);
 
 	const [toggle, setoggle] = useState(true);
+	const [toggle2, setoggle2] = useState(true);
 	const [reply, setreply] = useState(false);
 	const [media, setmedia] = useState(null);
 	const [file, setfile] = useState(null);
@@ -91,6 +94,52 @@ export default function InboxFrame({
 				setmsg([]);
 			});
 	}
+
+	const [dataFile, setdataFile] = useState([]);
+	const [dataMwdia, setdataMwdia] = useState([]);
+	async function loadMedia(id: any) {
+		await axiosInstanceAuth2
+			.get(`/inbox/get_media/${id}/`)
+			.then(async (res) => {
+				toastcomp("media load", "success");
+				if (res.data.length > 0) {
+					var flatArray = [].concat(...res.data);
+					console.log("media", flatArray);
+					setdataMwdia(flatArray);
+				} else {
+					setdataMwdia([]);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				setdataMwdia([]);
+			});
+	}
+	async function loadFile(id: any) {
+		await axiosInstanceAuth2
+			.get(`/inbox/get_file/${id}/`)
+			.then(async (res) => {
+				if (res.data.length > 0) {
+					var flatArray = [].concat(...res.data);
+					console.log("document", flatArray);
+					setdataFile(flatArray);
+				} else {
+					setdataFile([]);
+				}
+				toastcomp("file load", "success");
+			})
+			.catch((err) => {
+				console.log(err);
+				setdataFile([]);
+			});
+	}
+
+	useEffect(() => {
+		if (!toggle) {
+			loadMedia(cardActiveData["other_user_id"]);
+			loadFile(cardActiveData["other_user_id"]);
+		}
+	}, [toggle]);
 
 	async function msgRead2(id: any) {
 		await axiosInstanceAuth2
@@ -582,10 +631,142 @@ export default function InboxFrame({
 								</div>
 							</div>
 						) : (
-							<div className="flex h-full flex-wrap gap-2 border-2 border-red-500 p-2">
-								<div>1</div>
-								<div>2</div>
-								<div>3</div>
+							<div className="mx-2 h-full p-2">
+								<div className="flex items-center gap-4">
+									<div
+										className={
+											"flex w-fit cursor-pointer gap-1 py-2 text-xs " +
+											`${
+												toggle2
+													? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
+													: "text-gray-700/75 dark:text-lightBlue/75"
+											}`
+										}
+										onClick={() => setoggle2(true)}
+									>
+										<span>Document</span>
+									</div>
+									<div
+										className={
+											"flex w-fit cursor-pointer items-center gap-1 py-2 text-xs " +
+											`${
+												!toggle2
+													? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
+													: "text-gray-700/75 dark:text-lightBlue/75"
+											}`
+										}
+										onClick={() => setoggle2(false)}
+									>
+										<span>Media</span>
+									</div>
+								</div>
+								{toggle2 ? (
+									<div className="p-4">
+										{dataFile && dataFile.length > 0 ? (
+											<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+												<table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+														<tr>
+															<th scope="col" className="px-6 py-3">
+																Document name
+															</th>
+															<th scope="col" className="px-6 py-3">
+																Uploaded Date
+															</th>
+															<th scope="col" className="px-6 py-3">
+																<span className="sr-only">view</span>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														{dataFile.map((data, i) => (
+															<tr
+																key={i}
+																className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+															>
+																<th
+																	scope="row"
+																	className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+																>
+																	{data["file"].replace("file/", "")}
+																</th>
+																<td className="px-6 py-4">{moment(data["upload_date"]).format("DD/MM/YYYY")}</td>
+																<td className="px-6 py-4 text-right">
+																	<Link
+																		href={
+																			process.env.NODE_ENV === "production"
+																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["file"]}`
+																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["file"]}`
+																		}
+																		target="_blank"
+																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+																	>
+																		View
+																	</Link>
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+											</div>
+										) : (
+											<p className="text-center text-base">No Document Found</p>
+										)}
+									</div>
+								) : (
+									<div className="p-4">
+										{dataMwdia && dataMwdia.length > 0 ? (
+											<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+												<table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+														<tr>
+															<th scope="col" className="px-6 py-3">
+																Media name
+															</th>
+															<th scope="col" className="px-6 py-3">
+																Uploaded Date
+															</th>
+															<th scope="col" className="px-6 py-3">
+																<span className="sr-only">view</span>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														{dataMwdia.map((data, i) => (
+															<tr
+																key={i}
+																className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+															>
+																<th
+																	scope="row"
+																	className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+																>
+																	{data["media"].replace("media/", "")}
+																</th>
+																<td className="px-6 py-4">{moment(data["upload_date"]).format("DD/MM/YYYY")}</td>
+																<td className="px-6 py-4 text-right">
+																	<Link
+																		href={
+																			process.env.NODE_ENV === "production"
+																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["media"]}`
+																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["media"]}`
+																		}
+																		target="_blank"
+																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+																	>
+																		View
+																	</Link>
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+											</div>
+										) : (
+											<p className="text-center text-base">No Media Found</p>
+										)}
+									</div>
+								)}
 							</div>
 						)}
 					</>
@@ -626,7 +807,7 @@ export default function InboxFrame({
 										setisTyping(false);
 									}}
 								></textarea>
-								<div className="flex gap-2">
+								<div className="flex gap-4">
 									<button
 										type="button"
 										className="block px-0.5 text-lg leading-normal"
@@ -803,11 +984,11 @@ export default function InboxFrame({
 									</Menu>
 									<button
 										type="button"
-										className="block border-l-2 border-gray-400 px-2 text-lg leading-normal"
+										className={`block border-l-2 border-gray-400 px-4 text-lg leading-normal`}
 										onClick={() => handleSendClick()}
 										disabled={text === ""}
 									>
-										<i className="fa-solid fa-paper-plane"></i>
+										<i className={`fa-solid fa-paper-plane` + " " + `${text.length > 0 ? "text-primary" : ""}`}></i>
 									</button>
 								</div>
 							</div>
