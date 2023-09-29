@@ -225,11 +225,11 @@ export default function Inbox() {
 		}
 	}, [token]);
 
-	// useEffect(() => {
-	// 	if (text.length > 0 && socket != null) {
-	// 		isTyping(socket, cardActiveData["other_user_id"]);
-	// 	}
-	// }, [text]);
+	useEffect(() => {
+		if (text.length > 0 && socket != null) {
+			isTyping(socket, cardActiveData["other_user_id"]);
+		}
+	}, [text]);
 
 	//sidebar
 	const [sidebarData, setsidebarData] = useState([]);
@@ -249,7 +249,7 @@ export default function Inbox() {
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
 				console.log("&&&", "dialogs", res.data);
-				// toastcomp("sidebar loaded", "success");
+				toastcomp("sidebar loaded", "success");
 				setsidebarData(res.data);
 			})
 			.catch((err) => {
