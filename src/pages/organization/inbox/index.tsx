@@ -247,6 +247,7 @@ export default function Inbox() {
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
 				console.log("&&&", "dialogs", res.data);
+				toastcomp("sidebar loaded", "success");
 				setsidebarData(res.data);
 			})
 			.catch((err) => {
@@ -348,6 +349,7 @@ export default function Inbox() {
 											msgRead={msgRead}
 											loadS={loadS}
 											setloadS={setloadS}
+											loadSidebar={loadSidebar}
 										/>
 									</div>
 								)}
