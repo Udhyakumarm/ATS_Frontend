@@ -191,6 +191,7 @@ export default function Inbox() {
 			});
 
 			rws.onmessage = function (e: any) {
+				// toastcomp("On message " + e.data, "success");
 				loadSidebar();
 				// 	var fdata = JSON.parse(e.data);
 				// 	console.log("***", "socket.onMsg", fdata);
@@ -249,7 +250,7 @@ export default function Inbox() {
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
 				console.log("&&&", "dialogs", res.data);
-				toastcomp("sidebar loaded", "success");
+				
 				setsidebarData(res.data);
 			})
 			.catch((err) => {
