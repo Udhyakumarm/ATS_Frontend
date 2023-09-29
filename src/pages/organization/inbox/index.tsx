@@ -88,10 +88,6 @@ const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any) 
 	console.log("Contact Message Send Process DOne");
 };
 
-const markASRead = (socket: any, user_pk: any, mid: any) => {
-	socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
-};
-
 const callbackOnline = (socket: any, user_pk: any) => {
 	socket.send(JSON.stringify({ msg_type: 12, user_pk: user_pk })); // Adjust the message structure as needed
 };
@@ -113,6 +109,11 @@ const isStopTyping = (socket: any, user_pk: any) => {
 };
 
 export default function Inbox() {
+	const markASRead = (socket: any, user_pk: any, mid: any) => {
+		socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
+		loadSidebar();
+	};
+
 	const [sklLoad] = useState(true);
 	const cancelButtonRef = useRef(null);
 	const [addMembers, setAddMembers] = useState(false);
@@ -189,32 +190,33 @@ export default function Inbox() {
 				loadSidebar();
 			});
 
-			// rws.onmessage = function (e:any) {
-			// 	var fdata = JSON.parse(e.data);
-			// 	console.log("***", "socket.onMsg", fdata);
+			rws.onmessage = function (e: any) {
+				loadSidebar();
+				// 	var fdata = JSON.parse(e.data);
+				// 	console.log("***", "socket.onMsg", fdata);
 
-			// 	if (
-			// 		fdata["msg_type"] === 1 &&
-			// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
-			// 	) {
-			// 		if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
-			// 			setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
-			// 		}
-			// 		console.log("***", "Online PK Array", onlinePK);
-			// 		console.log("***", "Callback Online Function Called From ClientSide");
-			// 		callbackOnline(socket, fdata["user_pk"]);
-			// 	}
-			// 	if (
-			// 		fdata["msg_type"] === 2 &&
-			// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
-			// 	) {
-			// 		if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
-			// 			const updatedItems = onlinePK.filter((existingItem: any) => existingItem !== parseInt(fdata["user_pk"]));
-			// 			setonlinePK(updatedItems);
-			// 		}
-			// 		console.log("***", "Online PK Array", onlinePK);
-			// 	}
-			// };
+				// 	if (
+				// 		fdata["msg_type"] === 1 &&
+				// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
+				// 	) {
+				// 		if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
+				// 			setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
+				// 		}
+				// 		console.log("***", "Online PK Array", onlinePK);
+				// 		console.log("***", "Callback Online Function Called From ClientSide");
+				// 		callbackOnline(socket, fdata["user_pk"]);
+				// 	}
+				// 	if (
+				// 		fdata["msg_type"] === 2 &&
+				// 		sidebarData.find((item: any) => item.other_user_id === parseInt(fdata["user_pk"]))
+				// 	) {
+				// 		if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
+				// 			const updatedItems = onlinePK.filter((existingItem: any) => existingItem !== parseInt(fdata["user_pk"]));
+				// 			setonlinePK(updatedItems);
+				// 		}
+				// 		console.log("***", "Online PK Array", onlinePK);
+				// 	}
+			};
 
 			rws.addEventListener("close", () => {
 				toastcomp("Disconnected to WebSocket server", "success");
@@ -223,31 +225,31 @@ export default function Inbox() {
 		}
 	}, [token]);
 
-	useEffect(() => {
-		if (text.length > 0 && socket != null) {
-			isTyping(socket, cardActiveData["other_user_id"]);
-		}
-	}, [text]);
+	// useEffect(() => {
+	// 	if (text.length > 0 && socket != null) {
+	// 		isTyping(socket, cardActiveData["other_user_id"]);
+	// 	}
+	// }, [text]);
 
 	//sidebar
 	const [sidebarData, setsidebarData] = useState([]);
 	const [typingPK, settypingPK] = useState([]);
 	const [loadS, setloadS] = useState(false);
 
-	useEffect(() => {
-		if (loadS) {
-			loadSidebar().then(() => {
-				setloadS(false);
-			});
-		}
-	}, [loadS]);
+	// useEffect(() => {
+	// 	if (loadS) {
+	// 		loadSidebar().then(() => {
+	// 			setloadS(false);
+	// 		});
+	// 	}
+	// }, [loadS]);
 
 	async function loadSidebar() {
 		await axiosInstanceAuth2
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
 				console.log("&&&", "dialogs", res.data);
-				toastcomp("sidebar loaded", "success");
+				// toastcomp("sidebar loaded", "success");
 				setsidebarData(res.data);
 			})
 			.catch((err) => {
@@ -281,12 +283,12 @@ export default function Inbox() {
 
 	//other
 
-	if (socket != null) {
-		socket.onmessage = function (e: any) {
-			loadSidebar();
-			console.log("***", "socket.onMsg", e.data);
-		};
-	}
+	// if (socket != null) {
+	// 	socket.onmessage = function (e: any) {
+	// 		loadSidebar();
+	// 		console.log("***", "socket.onMsg", e.data);
+	// 	};
+	// }
 
 	return (
 		<>
