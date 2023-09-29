@@ -66,7 +66,7 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 									setOpen(true);
 								}}
 							>
-								<div className="ml-2 mr-3 rounded-xl bg-stone-300/25 px-3 py-2">
+								<div className="ml-2 mr-3 rounded-xl bg-stone-300/25 px-3 py-3">
 									<article className="text-lg text-darkGray dark:text-lightBlue ">
 										{data["file"] && (
 											<>
@@ -80,13 +80,13 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 														);
 													}}
 													className={
-														`flex items-center gap-2 rounded bg-stone-300/50 px-4 py-2 text-[15px]` +
+														`flex items-center gap-2 px-1 text-[15px]` +
 														" " +
-														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
+														`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
 													}
 												>
 													<i className="fa-regular fa-file text-[30px]"></i>
-													<b>{data["file"]["name"]}</b>
+													<p>{data["file"]["name"]}</p>
 												</button>
 											</>
 										)}
@@ -102,13 +102,13 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 														);
 													}}
 													className={
-														`flex items-center gap-2 rounded bg-stone-300/50 px-4 py-2 text-[15px]` +
+														`flex items-center gap-2 px-1 text-[15px]` +
 														" " +
-														`${(data["text"] || data["contact"]) && "mb-2"}`
+														`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
 													}
 												>
 													<i className="fa-regular fa-image text-[30px]"></i>
-													<b>{data["media"]["name"]}</b>
+													<p>{data["media"]["name"]}</p>
 												</button>
 											</>
 										)}
@@ -119,15 +119,26 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 													{({ open }) => (
 														<>
 															<Popover.Button
-																className={
-																	`flex items-center gap-2 rounded bg-stone-300/50 px-4 py-2 text-[15px]` +
-																	" " +
-																	`${data["text"] && "mb-2"}`
-																}
+																className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
 															>
-																<i className="fa-solid fa-id-card text-[30px]"></i>
-																<b>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</b>
+																<div className="flex items-center gap-2 px-1">
+																	<Image
+																		src={
+																			process.env.NODE_ENV === "production"
+																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																		}
+																		alt={"ABC"}
+																		width={100}
+																		height={100}
+																		className="h-[40px] w-[40px] rounded-full object-cover"
+																	/>
+																	<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																</div>
+																<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																<p className="ml-3 text-sm">Contact Card</p>
 															</Popover.Button>
+
 															<Transition
 																as={Fragment}
 																enter="transition ease-out duration-200"
@@ -260,13 +271,13 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 														);
 													}}
 													className={
-														`flex items-center gap-2 rounded-lg bg-sky-300/25 px-4 py-2 text-[15px]` +
+														`flex items-center gap-2 px-1 text-[15px]` +
 														" " +
-														`${(data["media"] || data["contact"] || data["text"]) && "mb-2"}`
+														`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
 													}
 												>
 													<i className="fa-regular fa-file text-[30px]"></i>
-													<b>{data["file"]["name"]}</b>
+													<p>{data["file"]["name"]}</p>
 												</button>
 											</>
 										)}
@@ -283,13 +294,13 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 														);
 													}}
 													className={
-														`flex items-center gap-2 rounded-lg bg-sky-300/25 px-4 py-2 text-[15px]` +
+														`flex items-center gap-2 px-1 text-[15px]` +
 														" " +
-														`${(data["text"] || data["contact"]) && "mb-2"}`
+														`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
 													}
 												>
 													<i className="fa-regular fa-image text-[30px]"></i>
-													<b>{data["media"]["name"]}</b>
+													<p>{data["media"]["name"]}</p>
 												</button>
 											</>
 										)}
@@ -300,14 +311,24 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 													{({ open }) => (
 														<>
 															<Popover.Button
-																className={
-																	`flex items-center gap-2 rounded-lg bg-sky-300/25 px-4 py-2 shadow-md  shadow-blue-400` +
-																	" " +
-																	`${data["text"] && "mb-2"}`
-																}
+																className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
 															>
-																<i className="fa-solid fa-id-card text-[30px]"></i>
-																<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																<div className="flex items-center gap-2 px-1">
+																	<Image
+																		src={
+																			process.env.NODE_ENV === "production"
+																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																		}
+																		alt={"ABC"}
+																		width={100}
+																		height={100}
+																		className="h-[40px] w-[40px] rounded-full object-cover"
+																	/>
+																	<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																</div>
+																<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																<p className="ml-3 text-sm">Contact Card</p>
 															</Popover.Button>
 															<Transition
 																as={Fragment}

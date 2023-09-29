@@ -808,6 +808,12 @@ export default function InboxFrame({
 									onBlur={(e) => {
 										setisTyping(false);
 									}}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											handleSendClick();
+										}
+									}}
 								></textarea>
 								<div className="flex gap-4">
 									<button
