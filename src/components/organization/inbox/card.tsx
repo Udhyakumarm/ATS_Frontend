@@ -56,54 +56,54 @@ any) {
 	}
 
 	// useEffect(() => {
-	socket.onmessage = function (e) {
-		loadSidebar();
-		var fdata = JSON.parse(e.data);
-		// console.log("^^^", "eee data", data);
-		// console.log("^^^", "eee", fdata);
+	// socket.onmessage = function (e) {
+	// 	loadSidebar();
+	// var fdata = JSON.parse(e.data);
+	// console.log("^^^", "eee data", data);
+	// console.log("^^^", "eee", fdata);
 
-		// if (fdata["msg_type"] === 1 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-		// 	if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
-		// 		setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
-		// 		console.log("^^^", "**", onlinePK, "#", fdata["user_pk"]);
-		// 	}
-		// 	// setonline(true);
-		// 	// console.log("^^^", "** RUNNNNNNNNNNNNN");
-		// 	// callbackOnline(socket, fdata["user_pk"]);
-		// }
-		// if (fdata["msg_type"] === 2 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-		// 	// setonline(false);
-		// 	if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
-		// 		const updatedItems = onlinePK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
-		// 		setonlinePK(updatedItems);
-		// 		console.log("^^^", "**", onlinePK);
-		// 	}
-		// }
-		if (fdata["msg_type"] === 5 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			if (!typingPK.includes(parseInt(fdata["user_pk"]))) {
-				settypingPK([...typingPK, parseInt(fdata["user_pk"])]);
-				console.log("^^^", "**", typingPK);
-			}
-			// setisTyping(true);
-		}
-		if (fdata["msg_type"] === 10 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
-			// setisTyping(false);
-			// setTimeout(() => {
-			// 	setisTyping(null);
-			// }, 1000);
-			if (typingPK.includes(parseInt(fdata["user_pk"]))) {
-				const updatedItems = typingPK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
-				settypingPK(updatedItems);
-				console.log("^^^", "**", typingPK);
-			}
-		}
-		// if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
-		// 	setnewUnreadCount(fdata["unread_count"]);
-		// }
-		if (fdata["msg_type"] === 3 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
-			setnewLastMessage(fdata["text"]);
-		}
-	};
+	// if (fdata["msg_type"] === 1 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+	// 	if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
+	// 		setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
+	// 		console.log("^^^", "**", onlinePK, "#", fdata["user_pk"]);
+	// 	}
+	// 	// setonline(true);
+	// 	// console.log("^^^", "** RUNNNNNNNNNNNNN");
+	// 	// callbackOnline(socket, fdata["user_pk"]);
+	// }
+	// if (fdata["msg_type"] === 2 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+	// 	// setonline(false);
+	// 	if (onlinePK.includes(parseInt(fdata["user_pk"]))) {
+	// 		const updatedItems = onlinePK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
+	// 		setonlinePK(updatedItems);
+	// 		console.log("^^^", "**", onlinePK);
+	// 	}
+	// }
+	// if (fdata["msg_type"] === 5 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+	// 	if (!typingPK.includes(parseInt(fdata["user_pk"]))) {
+	// 		settypingPK([...typingPK, parseInt(fdata["user_pk"])]);
+	// 		console.log("^^^", "**", typingPK);
+	// 	}
+	// 	// setisTyping(true);
+	// }
+	// if (fdata["msg_type"] === 10 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["user_pk"]))) {
+	// 	// setisTyping(false);
+	// 	// setTimeout(() => {
+	// 	// 	setisTyping(null);
+	// 	// }, 1000);
+	// 	if (typingPK.includes(parseInt(fdata["user_pk"]))) {
+	// 		const updatedItems = typingPK.filter((existingItem) => existingItem !== parseInt(fdata["user_pk"]));
+	// 		settypingPK(updatedItems);
+	// 		console.log("^^^", "**", typingPK);
+	// 	}
+	// }
+	// if (fdata["msg_type"] === 9 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
+	// 	setnewUnreadCount(fdata["unread_count"]);
+	// }
+	// if (fdata["msg_type"] === 3 && sidebarData.find((item) => item.other_user_id === parseInt(fdata["sender"]))) {
+	// 	setnewLastMessage(fdata["text"]);
+	// }
+	// };
 	// }, [socket]);
 
 	function pinMessgae(e) {
@@ -212,7 +212,7 @@ any) {
 								)}
 							</div>
 						</div>
-						{typingPK.includes(data["other_user_id"]) ? (
+						{data["other_user_type"] ? (
 							<>
 								<p className="clamp_2 text-[12px] text-darkGray">
 									User Is Typing ...

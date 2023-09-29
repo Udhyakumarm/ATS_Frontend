@@ -101,7 +101,7 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.get(`/inbox/get_media/${id}/`)
 			.then(async (res) => {
-				toastcomp("media load", "success");
+				// toastcomp("media load", "success");
 				if (res.data.length > 0) {
 					var flatArray = [].concat(...res.data);
 					console.log("media", flatArray);
@@ -126,7 +126,7 @@ export default function InboxFrame({
 				} else {
 					setdataFile([]);
 				}
-				toastcomp("file load", "success");
+				// toastcomp("file load", "success");
 			})
 			.catch((err) => {
 				console.log(err);
@@ -145,7 +145,7 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.post(`/inbox/dialogs_reads/${id}/`)
 			.then(async (res) => {
-				toastcomp("API CALL", "success");
+				// toastcomp("API CALL", "success");
 				// setloadSD(true);
 			})
 			.catch((err) => {
@@ -158,7 +158,7 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.post(`/inbox/messages_remove/${id}/`)
 			.then(async (res) => {
-				toastcomp("success del", "success");
+				// toastcomp("success del", "success");
 				loadSidebar();
 				loadFrame(cardActiveData["other_user_id"]);
 			})
@@ -171,19 +171,19 @@ export default function InboxFrame({
 	const [editId, seteditId] = useState("");
 
 	function editMsg(id: any, text: any) {
-		toastcomp("edit process start", "success");
+		// toastcomp("edit process start", "success");
 		seteditId(id);
 		seteditText(text);
 		settext(text);
 	}
 	async function editMsg2() {
-		toastcomp("edit process 2 start", "success");
+		// toastcomp("edit process 2 start", "success");
 		const fd = new FormData();
 		fd.append("text", text);
 		await axiosInstanceAuth2
 			.post(`/inbox/messages_update/${editId}/`, fd)
 			.then(async (res) => {
-				toastcomp("success update", "success");
+				// toastcomp("success update", "success");
 				loadSidebar();
 				loadFrame(cardActiveData["other_user_id"]);
 				settext("");
@@ -268,6 +268,7 @@ export default function InboxFrame({
 	}
 
 	async function handleSendClick() {
+		isStopTypingFun(socket, cardActiveData["other_user_id"]);
 		if (file != null) {
 			const fd = new FormData();
 			fd.append("file", file);
