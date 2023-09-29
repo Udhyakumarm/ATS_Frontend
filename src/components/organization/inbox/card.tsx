@@ -207,7 +207,7 @@ any) {
 								{data["last_message"] && (
 									<span className="block overflow-hidden truncate text-ellipsis rounded px-2 py-1 text-[10px] font-semibold dark:bg-gray-600">
 										{/* {moment(data["modified"]).format("h:mm a")} */}
-										{moment(data["modified"]).fromNow()}
+										{moment(data["last_message"]["sent"]).fromNow()}
 									</span>
 								)}
 							</div>

@@ -203,6 +203,7 @@ export default function InboxFrame({
 	// }, [loadSD]);
 
 	socket.onmessage = function (e) {
+		loadSidebar()
 		var fdata = JSON.parse(e.data);
 		// console.log("^^^", "eee data", data);
 		if (cardActive) {
