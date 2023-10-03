@@ -75,7 +75,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
 		// 	}
 		// }
-		return false;
+		return name === "Groups/Division";
 	}
 
 	const tabHeading_1 = [

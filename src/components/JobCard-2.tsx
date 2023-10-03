@@ -265,7 +265,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
 													</button>
 												</Menu.Item>
-												<Menu.Item>
+												{/* temp hide naman */}
+												{/* <Menu.Item>
 													<button
 														type="button"
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
@@ -274,7 +275,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													>
 														{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
 													</button>
-												</Menu.Item>
+												</Menu.Item> */}
 											</>
 										)}
 

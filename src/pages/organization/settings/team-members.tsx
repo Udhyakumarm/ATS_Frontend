@@ -201,10 +201,12 @@ export default function TeamMembers({ upcomingSoon }: any) {
 
 	const tabHeading_1 = [
 		{
-			title: t("Words.AllTeamMembers")
+			title: t("Words.AllTeamMembers"),
+			hide: false
 		},
 		{
-			title: t("Words.Divison")
+			title: t("Words.Divison"),
+			hide: true
 		}
 	];
 	const TeamTableHead = [
@@ -332,7 +334,9 @@ export default function TeamMembers({ upcomingSoon }: any) {
 															" " +
 															(selected
 																? "border-primary text-primary dark:border-white dark:text-white"
-																: "border-transparent text-darkGray dark:text-gray-400")
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(item.hide ? "display-none" : "")
 														}
 													>
 														{item.title}

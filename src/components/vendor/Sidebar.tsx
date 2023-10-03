@@ -15,7 +15,7 @@ import settingsIconWhite from "/public/images/icons-white/settings.png";
 import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/utils/code";
 import UpcomingComp from "../organization/upcomingComp";
 import { Dialog, Transition } from "@headlessui/react";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from "react-device-detect";
 
 export default function VendorSideBar() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -23,13 +23,13 @@ export default function VendorSideBar() {
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	function toggleSidebar() {
-		if(!isMobile) {
+		if (!isMobile) {
 			document.querySelector("main")?.classList.toggle("desktopSidebar");
 			setShow(!show);
 		}
 	}
 	function mobileSidebarToggle() {
-		if(isMobile) {
+		if (isMobile) {
 			document.querySelector("main")?.classList.toggle("mobileSidebar");
 		}
 	}
@@ -44,7 +44,7 @@ export default function VendorSideBar() {
 
 	const menu = [
 		{
-			title: srcLang === 'ja' ? 'クライアント' : 'Clients',
+			title: srcLang === "ja" ? "クライアント" : "Clients",
 			url: `/vendor/[vrefid]/clients`,
 			url2: `/vendor/${vid}/clients`,
 			img: clientsIcon,
@@ -52,7 +52,7 @@ export default function VendorSideBar() {
 			com: comOrNot("Clients")
 		},
 		{
-			title: srcLang === 'ja' ? 'インボックス' : 'Inboxes',
+			title: srcLang === "ja" ? "インボックス" : "Inboxes",
 			url: `/vendor/[vrefid]/inbox`,
 			url2: `/vendor/${vid}/inbox`,
 			img: inboxesIcon,
@@ -60,7 +60,7 @@ export default function VendorSideBar() {
 			com: comOrNot("Inboxes")
 		},
 		{
-			title: srcLang === 'ja' ? '設定' : 'Settings',
+			title: srcLang === "ja" ? "設定" : "Settings",
 			url: `/vendor/[vrefid]/settings`,
 			url2: `/vendor/${vid}/settings`,
 			img: settingsIcon,
@@ -124,32 +124,36 @@ export default function VendorSideBar() {
 						<div className="h-[calc(100%-65px)] overflow-y-auto p-3">
 							<ul>
 								{menu.map((menuItem, i) => (
-									<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
-										<div
-											onClick={() => handleClickLink(menuItem.url2, menuItem.com, menuItem.title)}
-											className={
-												`flex cursor-pointer items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
-												" " +
-												(router.route.includes(menuItem.url)
-													? "border-r-gradDarkBlue bg-lightBlue text-primary dark:bg-gray-900 dark:text-white"
-													: "border-r-transparent bg-transparent") +
-												" " +
-												(show
-													? "justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
-													: "border-r-[10px] px-4 py-2")
-											}
-										>
-											<span className={`inline-block h-[20px] w-[20px]` + " " + (show ? "text-center" : "mr-4")}>
-												<Image
-													src={theme === "dark" ? menuItem.imgWhite : menuItem.img}
-													alt={menuItem.title}
-													width={100}
-													className={"mx-auto max-h-[20px] w-auto"}
-												/>
-											</span>
-											{show ? "" : menuItem.title}
-										</div>
-									</li>
+									<>
+										{!menuItem.com && (
+											<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
+												<div
+													onClick={() => handleClickLink(menuItem.url2, menuItem.com, menuItem.title)}
+													className={
+														`flex cursor-pointer items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
+														" " +
+														(router.route.includes(menuItem.url)
+															? "border-r-gradDarkBlue bg-lightBlue text-primary dark:bg-gray-900 dark:text-white"
+															: "border-r-transparent bg-transparent") +
+														" " +
+														(show
+															? "justify-center bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+															: "border-r-[10px] px-4 py-2")
+													}
+												>
+													<span className={`inline-block h-[20px] w-[20px]` + " " + (show ? "text-center" : "mr-4")}>
+														<Image
+															src={theme === "dark" ? menuItem.imgWhite : menuItem.img}
+															alt={menuItem.title}
+															width={100}
+															className={"mx-auto max-h-[20px] w-auto"}
+														/>
+													</span>
+													{show ? "" : menuItem.title}
+												</div>
+											</li>
+										)}
+									</>
 								))}
 							</ul>
 						</div>

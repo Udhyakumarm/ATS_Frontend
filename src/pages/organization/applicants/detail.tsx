@@ -767,7 +767,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	" " +
 																	(selected
 																		? "border-primary text-primary dark:border-white dark:text-white"
-																		: "border-transparent text-darkGray dark:text-gray-400")
+																		: "border-transparent text-darkGray dark:text-gray-400") +
+																	" " +
+																	"display-none"
 																}
 															>
 																{t("Words.Assessment")}

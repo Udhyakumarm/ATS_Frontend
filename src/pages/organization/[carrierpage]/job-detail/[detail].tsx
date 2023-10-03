@@ -686,7 +686,8 @@ export default function CanCareerJobDetail2(props) {
 			</Head>
 			<main className="py-8">
 				<div className="container flex flex-wrap">
-					<div className="sticky top-0 h-[calc(100vh-120px)] w-[300px] rounded-normal border border-slate-300 bg-white shadow-normal dark:bg-gray-800">
+					{/* temp hide naman */}
+					{/* <div className="sticky top-0 h-[calc(100vh-120px)] w-[300px] rounded-normal border border-slate-300 bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b px-6 py-2">
 							<div className="relative">
 								<input
@@ -720,9 +721,11 @@ export default function CanCareerJobDetail2(props) {
 								</div>
 							</div>
 						)}
-					</div>
+					</div> */}
 					{jdata && (
-						<div className="w-[calc(100%-300px)] pl-8">
+						// temp hide naman
+						// <div className="w-[calc(100%-300px)] pl-8">
+						<div className="w-[calc(100%)] pl-8">
 							<div className="mb-6 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
