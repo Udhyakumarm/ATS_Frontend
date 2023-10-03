@@ -38,10 +38,12 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 	const [sklLoad] = useState(true);
 	const tabHeading_1 = [
 		{
-			title: t("Words.Overview")
+			title: t("Words.Overview"),
+			hide: false
 		},
 		{
-			title: t("Words.Performance")
+			title: t("Words.Performance"),
+			hide: true
 		}
 	];
 
@@ -255,7 +257,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 														" " +
 														(selected
 															? "border-primary text-primary dark:border-white dark:text-white"
-															: "border-transparent text-darkGray dark:text-gray-400")
+															: "border-transparent text-darkGray dark:text-gray-400") +
+														" " +
+														(item.hide && "display-none")
 													}
 												>
 													{item.title}
@@ -291,9 +295,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
 												<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
 													<h2 className="grow font-bold">{t("Words.ApplicantPipeline")}</h2>
-													<div className="w-[180px]">
+													{/* <div className="w-[180px]">
 														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
-													</div>
+													</div> */}
 												</div>
 												<div className="p-8">
 													{analyticsFunnel && analyticsFunnel.length > 0 && tapp > 0 ? (
@@ -390,9 +394,9 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 													<h2 className="grow font-bold">
 														{srcLang === "ja" ? "面接実施推移" : "Average Interviews Schedule"}
 													</h2>
-													<div className="w-[180px]">
+													{/* <div className="w-[180px]">
 														<FormField fieldType="select" placeholder={srcLang === "ja" ? "全期間" : "All Time"} />
-													</div>
+													</div> */}
 												</div>
 												<div className="p-8">
 													{analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (

@@ -681,6 +681,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		// } else if (atsVersion === "enterprise") {
 		// 	return true;
 		// }
+		if (title === "Assessment" || title === "Job Boards" || title === "Divison") {
+			return false;
+		}
 		return true;
 	}
 
@@ -753,11 +756,13 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	const tabHeading_2 = [
 		{
 			title: t("Words.AllTeamMembers"),
-			icon: <i className="fa-solid fa-users"></i>
+			icon: <i className="fa-solid fa-users"></i>,
+			hide: checkHideOrNot("AllTeamMembers")
 		},
 		{
 			title: t("Words.Divison"),
-			icon: <i className="fa-solid fa-table-cells"></i>
+			icon: <i className="fa-solid fa-table-cells"></i>,
+			hide: checkHideOrNot("Divison")
 		}
 	];
 	const TeamTableHead = [
@@ -1289,7 +1294,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																			" " +
 																			(selected
 																				? "border-primary text-primary dark:border-white dark:text-white"
-																				: "border-transparent text-darkGray dark:text-gray-400")
+																				: "border-transparent text-darkGray dark:text-gray-400") +
+																			" " +
+																			(!item.hide && "display-none")
 																		}
 																	>
 																		<div className="mr-2">{item.icon}</div>

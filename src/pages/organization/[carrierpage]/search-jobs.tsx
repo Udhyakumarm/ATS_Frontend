@@ -46,7 +46,8 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 			</Head>
 			<main className="py-8">
 				<div className="container flex flex-wrap">
-					<div className="sticky top-0 h-[calc(100vh-120px)] w-[300px] rounded-normal border border-slate-300 bg-white shadow-normal dark:bg-gray-800">
+					{/* temp hide naman */}
+					{/* <div className="sticky top-0 h-[calc(100vh-120px)] w-[300px] rounded-normal border border-slate-300 bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b px-6 py-2">
 							<div className="relative">
 								<input
@@ -80,9 +81,11 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 								</div>
 							</div>
 						)}
-					</div>
+					</div> */}
 					{orgdetail["Job"] && (
-						<div className="w-[calc(100%-300px)] pl-8">
+						// temp hide naman
+						// <div className="w-[calc(100%-300px)] pl-8">
+						<div className="w-[calc(100%)] pl-8">
 							<h3 className="mb-6 text-lg font-bold">
 								{sklLoad ? (
 									<>
