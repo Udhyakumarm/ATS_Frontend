@@ -34,16 +34,17 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, pla
 			id="auto-textarea"
 			// className={`w-full resize-none rounded-md border` + " " + extra}
 			className={
-				`w-full resize-none rounded-lg border border-borderColor text-base dark:border-gray-600 dark:bg-gray-700` +
+				`w-full resize-none rounded-lg border border-gray-700 text-base dark:border-gray-600 dark:bg-gray-700` +
 				" " +
 				extra
 			}
 			rows={1}
 			style={{
 				overflow: "hidden", // Hide vertical scrollbar
-				minHeight: "1em", // Set a minimum height for the cursor line
-				lineHeight: "1em", // Match line height with cursor height
-				maxHeight: "80vh" // Optional: Set a maximum height if needed
+				minHeight: "1.125em", // Set a minimum height for the cursor line
+				lineHeight: "1.125em", // Match line height with cursor height
+				maxHeight: "80vh", // Optional: Set a maximum height if needed
+				fontSize: "1.125rem"
 			}}
 			value={value}
 			onChange={handleChange}

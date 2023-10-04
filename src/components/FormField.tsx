@@ -186,7 +186,7 @@ export default function FormField({
 						<Multiselect
 							options={options} // Options to display in the dropdown
 							selectedValues={value} // Preselected value to persist in dropdown
-							singleSelect={singleSelect}
+							selectionLimit={singleSelect ? 1 : -1}
 							onSearch={onSearch}
 							closeOnSelect
 							showArrow={true}
@@ -224,7 +224,9 @@ export default function FormField({
 						<Multiselect
 							options={options} // Options to display in the dropdown
 							selectedValues={id === "location" ? value && value.split("|") : value && value.split(",")} // Preselected value to persist in dropdown
-							singleSelect={singleSelect}
+							// singleSelect={singleSelect}
+
+							selectionLimit={singleSelect ? 1 : -1}
 							isObject={false}
 							onSearch={onSearch}
 							closeOnSelect

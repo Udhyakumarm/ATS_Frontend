@@ -895,8 +895,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																<>
 																	{/* user chat */}
 																	<div className="my-2 mb-3 ml-auto  max-w-[85%] rounded bg-gradDarkBlue px-6 py-3 text-left shadow-lg">
-																		<div className="flex justify-between gap-4">
-																			<span className="text-base font-medium text-white">{data["message"]}</span>
+																		<div className="flex flex-nowrap justify-between gap-4">
+																			<span className="break-all text-base font-medium text-white">
+																				{data["message"]}
+																			</span>
 																			<span className="my-auto whitespace-nowrap text-center text-xs text-white">
 																				{moment(data["timestamp"]).format("h:mm a")}
 																			</span>
@@ -905,7 +907,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 																	{/* novus res */}
 																	<div className="my-2 mb-3  max-w-[85%] rounded bg-white px-6 py-3 text-left text-left shadow-lg dark:bg-gray-700">
 																		<div className="flex flex-nowrap justify-between gap-4">
-																			<span className="text-base font-medium">{data["response"]}</span>
+																			<span className="text-base font-medium ">{data["response"]}</span>
 																			<span className="my-auto whitespace-nowrap text-center text-xs">
 																				{moment(data["timestamp"]).format("h:mm a")}
 																			</span>
@@ -1684,7 +1686,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 									</div>
 								)}
 
-								<div className="fixed bottom-0 z-[45] w-[27.6%] bg-white p-3 dark:bg-gray-800">
+								<div className="fixed bottom-0 z-[45] w-[27.6%] bg-white px-3 py-4 dark:bg-gray-800">
 									<div className="flex">
 										<AutoTextarea
 											value={text}
