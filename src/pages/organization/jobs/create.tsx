@@ -814,56 +814,58 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 					<div className="relative">
 						<Tab.Group>
-							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
-								<div className="flex flex-wrap items-center justify-between p-6">
-									<div className="flex flex-wrap items-center justify-start py-2">
-										<button
-											className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
-											onClick={() => router.back()}
-										>
-											<i className="fa-solid fa-arrow-left text-xl"></i>
-										</button>
-										<h2 className="text-lg font-bold">
-											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
-										</h2>
+							<div className="fixed z-10 w-[calc(100%-270px-2rem)]">
+								<div className="mb-8 w-full rounded-t-normal bg-white/50 shadow-normal backdrop-blur-md dark:bg-gray-800/30">
+									<div className="flex flex-wrap items-center justify-between gap-2 p-4">
+										<div className="flex flex-wrap items-center justify-start py-2">
+											<button
+												className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
+												onClick={() => router.back()}
+											>
+												<i className="fa-solid fa-arrow-left text-xl"></i>
+											</button>
+											<h2 className="text-lg font-bold">
+												<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
+											</h2>
+										</div>
+										<div className="flex flex-wrap items-center">
+											{jobActions.map((action, i) => (
+												<JobActionButton
+													label={action.label}
+													handleClick={action.action}
+													icon={action.icon}
+													iconBg={action.iconBg}
+													key={i}
+												/>
+											))}
+										</div>
 									</div>
-									<div className="flex flex-wrap items-center">
-										{jobActions.map((action, i) => (
-											<JobActionButton
-												label={action.label}
-												handleClick={action.action}
-												icon={action.icon}
-												iconBg={action.iconBg}
-												key={i}
-											/>
-										))}
-									</div>
+									<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
+										<div className="flex w-[820px]">
+											{tabHeading_1.map((item, i) => (
+												<Tab key={i} as={Fragment}>
+													{({ selected }) => (
+														<button
+															className={
+																"border-b-4 px-10 py-1 font-semibold focus:outline-none" +
+																" " +
+																(selected
+																	? "border-primary text-primary dark:border-white dark:text-white"
+																	: "border-transparent text-darkGray dark:text-gray-400") +
+																" " +
+																(!item.hide && "display-none")
+															}
+														>
+															{item.title}
+														</button>
+													)}
+												</Tab>
+											))}
+										</div>
+									</Tab.List>
 								</div>
-								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
-									<div className="flex w-[820px]">
-										{tabHeading_1.map((item, i) => (
-											<Tab key={i} as={Fragment}>
-												{({ selected }) => (
-													<button
-														className={
-															"border-b-4 px-10 py-3 font-semibold focus:outline-none" +
-															" " +
-															(selected
-																? "border-primary text-primary dark:border-white dark:text-white"
-																: "border-transparent text-darkGray dark:text-gray-400") +
-															" " +
-															(!item.hide && "display-none")
-														}
-													>
-														{item.title}
-													</button>
-												)}
-											</Tab>
-										))}
-									</div>
-								</Tab.List>
 							</div>
-							<Tab.Panels>
+							<Tab.Panels className={"pt-[150px]"}>
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.BasicInformation")} />

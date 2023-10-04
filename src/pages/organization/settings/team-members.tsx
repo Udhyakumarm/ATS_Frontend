@@ -449,7 +449,13 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																			>
 																				<Listbox.Options
 																					className={
-																						"absolute right-0 top-[100%] mt-2 w-[250px] overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-700"
+																						"absolute  right-0 w-[250px] overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-700" +
+																						" " +
+																						`${
+																							i + 1 === filterTeam.length
+																								? "bottom-[100%] mb-[50px]"
+																								: "top-[100%] mt-2"
+																						}`
 																					}
 																				>
 																					{people.map((person, i) => (
