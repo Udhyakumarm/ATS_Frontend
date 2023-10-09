@@ -70,6 +70,7 @@ export default function InboxFrame({
 	const [toggle, setoggle] = useState(true);
 	const [toggle2, setoggle2] = useState(true);
 	const [reply, setreply] = useState(false);
+	const [replyC, setreplyC] = useState({});
 	const [media, setmedia] = useState(null);
 	const [file, setfile] = useState(null);
 	const [isTyping, setisTyping] = useState(null);
@@ -167,6 +168,19 @@ export default function InboxFrame({
 			});
 	}
 
+	async function recallMsg(id: any) {
+		await axiosInstanceAuth2
+			.post(`/inbox/recall/${id}/`)
+			.then(async (res) => {
+				toastcomp("success recall", "success");
+				loadSidebar();
+				loadFrame(cardActiveData["other_user_id"]);
+			})
+			.catch((err) => {
+				loadFrame(cardActiveData["other_user_id"]);
+			});
+	}
+
 	const [editText, seteditText] = useState("");
 	const [editId, seteditId] = useState("");
 
@@ -203,7 +217,7 @@ export default function InboxFrame({
 	// }, [loadSD]);
 
 	socket.onmessage = function (e) {
-		loadSidebar()
+		loadSidebar();
 		var fdata = JSON.parse(e.data);
 		// console.log("^^^", "eee data", data);
 		if (cardActive) {
@@ -278,7 +292,13 @@ export default function InboxFrame({
 				console.log("id", id);
 				if (id != null && id.length > 0) {
 					let user_pk = cardActiveData["other_user_id"].toString();
-					sendOutgoingFileMessage(socket, id, text, user_pk);
+					if (reply) {
+						sendOutgoingFileMessage(socket, id, text, user_pk, replyC["id"]);
+					} else {
+						sendOutgoingFileMessage(socket, id, text, user_pk, "-1");
+					}
+					setreply(false);
+					setreplyC({});
 					setfile(null);
 					setmedia(null);
 					settext("");
@@ -293,7 +313,13 @@ export default function InboxFrame({
 				console.log("id", id);
 				if (id != null && id.length > 0) {
 					let user_pk = cardActiveData["other_user_id"].toString();
-					sendOutgoingMediaMessage(socket, id, text, user_pk);
+					if (reply) {
+						sendOutgoingMediaMessage(socket, id, text, user_pk, replyC["id"]);
+					} else {
+						sendOutgoingMediaMessage(socket, id, text, user_pk, "-1");
+					}
+					setreply(false);
+					setreplyC({});
 					setfile(null);
 					setmedia(null);
 					settext("");
@@ -305,7 +331,13 @@ export default function InboxFrame({
 				editMsg2();
 			} else {
 				let user_pk = cardActiveData["other_user_id"].toString();
-				sendOutgoingTextMessage(socket, text, user_pk);
+				if (reply) {
+					sendOutgoingTextMessage(socket, text, user_pk, replyC["id"]);
+				} else {
+					sendOutgoingTextMessage(socket, text, user_pk, "-1");
+				}
+				setreply(false);
+				setreplyC({});
 				setfile(null);
 				setmedia(null);
 				settext("");
@@ -323,7 +355,13 @@ export default function InboxFrame({
 			.then(async (res) => {
 				console.log("^^^", "CDATA2", res.data);
 				let user_pk = cardActiveData["other_user_id"].toString();
-				sendOutgoingContactMessage(socket, res.data["id"], user_pk);
+				if (reply) {
+					sendOutgoingContactMessage(socket, res.data["id"], user_pk, replyC["id"]);
+				} else {
+					sendOutgoingContactMessage(socket, res.data["id"], user_pk, "-1");
+				}
+				setreply(false);
+				setreplyC({});
 			})
 			.catch((err) => {
 				console.log("^^^ error cdata2");
@@ -617,9 +655,28 @@ export default function InboxFrame({
 											{msg.map((data, i) => (
 												<div key={i} className="mb-1">
 													{data["out"] ? (
-														<InboxChatMsg type="me" data={data} delMsg={delMsg} editMsg={editMsg} />
+														<InboxChatMsg
+															type="me"
+															data={data}
+															delMsg={delMsg}
+															editMsg={editMsg}
+															recallMsg={recallMsg}
+															settext={settext}
+															setreply={setreply}
+															setreplyC={setreplyC}
+															axiosInstanceAuth2={axiosInstanceAuth2}
+														/>
 													) : (
-														<InboxChatMsg type="user" data={data} delMsg={delMsg} editMsg={editMsg} />
+														<InboxChatMsg
+															type="user"
+															data={data}
+															delMsg={delMsg}
+															editMsg={editMsg}
+															recallMsg={recallMsg}
+															setreply={setreply}
+															setreplyC={setreplyC}
+															axiosInstanceAuth2={axiosInstanceAuth2}
+														/>
 													)}
 													{/* <InboxChatMsg type="reply" /> */}
 												</div>
@@ -776,6 +833,77 @@ export default function InboxFrame({
 				{toggle && (
 					<>
 						<div className="absolute bottom-0 left-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
+							{reply && (
+								<div className="flex w-full items-center gap-2">
+									<i
+										className="fa-solid fa-xmark cursor-pointer p-3"
+										onClick={() => {
+											setreply(false);
+											setreplyC({});
+										}}
+									></i>
+									<span className="flex w-full flex-wrap items-center gap-2 border-2 border-borderColor bg-primary/[0.05] p-2 px-6">
+										<span className="whitespace-nowrap">Reply to {replyC["sender_username"]} :</span>
+										<div className="">
+											<article className="text-sm">
+												{replyC["file"] && (
+													<>
+														<button
+															onClick={() => {
+																window.open(
+																	process.env.NODE_ENV === "production"
+																		? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${replyC["file"]["url"]}`
+																		: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${replyC["file"]["url"]}`,
+																	"_blank"
+																);
+															}}
+															className={
+																`flex items-center gap-2 px-1 text-[15px]` +
+																" " +
+																`${(replyC["media"] || replyC["contact"] || replyC["text"]) && "mb-1 pb-2 shadow-md"}`
+															}
+														>
+															<i className="fa-regular fa-file text-[30px]"></i>
+															<p>{replyC["file"]["name"]}</p>
+														</button>
+													</>
+												)}
+												{replyC["media"] && (
+													<>
+														<button
+															onClick={() => {
+																window.open(
+																	process.env.NODE_ENV === "production"
+																		? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${replyC["media"]["url"]}`
+																		: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${replyC["media"]["url"]}`,
+																	"_blank"
+																);
+															}}
+															className={
+																`flex items-center gap-2 px-1 text-[15px]` +
+																" " +
+																`${(replyC["text"] || replyC["contact"]) && "mb-1 pb-2 shadow-md"}`
+															}
+														>
+															<i className="fa-regular fa-image text-[30px]"></i>
+															<p>{replyC["media"]["name"]}</p>
+														</button>
+													</>
+												)}
+
+												{replyC["contact"] && (
+													<>
+														<p className="ml-3 text-sm">Contact Card</p>
+													</>
+												)}
+
+												{replyC["text"] && replyC["text"].length > 0 && <p className="text-left">{replyC["text"]}</p>}
+											</article>
+										</div>
+									</span>
+								</div>
+							)}
+
 							{file && (
 								<div className="flex items-center gap-2">
 									<i className="fa-solid fa-xmark cursor-pointer p-3" onClick={() => setfile(null)}></i>

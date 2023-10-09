@@ -10,6 +10,7 @@ import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/theme-dark.css";
 import { useTheme } from "next-themes";
+import { useLangStore } from "@/utils/code";
 
 export default function InboxCard({
 	pin,
@@ -110,6 +111,8 @@ any) {
 		e.stopPropagation();
 		console.log("Pin CLick", data);
 	}
+
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	return (
 		<>
@@ -223,26 +226,42 @@ any) {
 							<>
 								{data["last_message"] && (
 									<p className="clamp_2 text-[12px] text-darkGray">
-										{data["last_message"]["file"] ||
-										data["last_message"]["media"] ||
-										data["last_message"]["contact"] ? (
+										{data["last_message"]["isRecall"] ? (
 											<>
-												{data["last_message"]["file"] && <i className="fa-solid fa-file"></i>}
-												{data["last_message"]["media"] && <i className="fa-regular fa-image"></i>}
-												{data["last_message"]["contact"] && <i className="fa-solid fa-id-card"></i>}
-												&nbsp;
-												{data["last_message"]["file"] ? (
-													data["last_message"]["file"]["name"]
+												{data["last_message"]["out"] ? (
+													<>{srcLang === "ja" ? "あなたはメッセージを取り消しました。" : "You recalled a message."}</>
 												) : (
 													<>
-														{data["last_message"]["media"] ? data["last_message"]["media"]["name"] : "Contact Card ..."}
+														{srcLang === "ja" ? "ユーザーがメッセージを取り消しました。" : "User recalled a message."}
 													</>
 												)}
 											</>
 										) : (
-											<p className="overflow-hidden truncate text-ellipsis ">
-												{newLastMessage != null ? newLastMessage : data["last_message"]["text"]}
-											</p>
+											<>
+												{data["last_message"]["file"] ||
+												data["last_message"]["media"] ||
+												data["last_message"]["contact"] ? (
+													<>
+														{data["last_message"]["file"] && <i className="fa-solid fa-file"></i>}
+														{data["last_message"]["media"] && <i className="fa-regular fa-image"></i>}
+														{data["last_message"]["contact"] && <i className="fa-solid fa-id-card"></i>}
+														&nbsp;
+														{data["last_message"]["file"] ? (
+															data["last_message"]["file"]["name"]
+														) : (
+															<>
+																{data["last_message"]["media"]
+																	? data["last_message"]["media"]["name"]
+																	: "Contact Card ..."}
+															</>
+														)}
+													</>
+												) : (
+													<p className="overflow-hidden truncate text-ellipsis ">
+														{newLastMessage != null ? newLastMessage : data["last_message"]["text"]}
+													</p>
+												)}
+											</>
 										)}
 									</p>
 								)}

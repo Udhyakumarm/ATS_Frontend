@@ -19,13 +19,14 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 import { useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
 
-const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any) => {
+const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, reply_id: any) => {
 	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
 		user_pk,
-		random_id: -randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId, // Use snake_case for property names in JavaScript
+		reply_id: reply_id
 	};
 
 	console.log("^^", "final data", data);
@@ -36,14 +37,15 @@ const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any) => {
 	console.log("Message Send Process DOne");
 };
 
-const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: any, reply_id: any) => {
 	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
 		user_pk,
 		file_id: file_id,
-		random_id: -randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId, // Use snake_case for property names in JavaScript
+		reply_id: reply_id
 	};
 
 	console.log("^^", "final data", data);
@@ -54,14 +56,15 @@ const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: 
 	console.log("File Message Send Process DOne");
 };
 
-const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk: any) => {
+const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk: any, reply_id: any) => {
 	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
 		user_pk,
 		media_id: file_id,
-		random_id: -randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId, // Use snake_case for property names in JavaScript
+		reply_id: reply_id
 	};
 
 	console.log("^^", "final data", data);
@@ -72,12 +75,13 @@ const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk:
 	console.log("Mieda Message Send Process DOne");
 };
 
-const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any) => {
+const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any, reply_id: any) => {
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		user_pk,
 		card_id: contact_id,
-		random_id: -randomId // Use snake_case for property names in JavaScript
+		random_id: -randomId, // Use snake_case for property names in JavaScript
+		reply_id: reply_id
 	};
 
 	console.log("^^", "final data", data);
@@ -250,7 +254,7 @@ export default function Inbox() {
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
 				console.log("&&&", "dialogs", res.data);
-				
+
 				setsidebarData(res.data);
 			})
 			.catch((err) => {

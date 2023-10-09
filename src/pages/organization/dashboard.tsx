@@ -273,7 +273,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				{/* <Novus /> */}
 				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
 				<Orgsidebar />
-				<Orgtopbar todoLoadMore={todoLoadMore} loadTodo={loadTodo} />
+				<Orgtopbar todoLoadMore={todoLoadMore} settodoLoadMore={settodoLoadMore} loadTodo={loadTodo} />
 				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
