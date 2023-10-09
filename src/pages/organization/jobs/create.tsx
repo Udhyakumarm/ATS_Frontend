@@ -797,6 +797,29 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		}
 	];
 
+	const [isVisible, setIsVisible] = useState(false);
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth"
+		});
+	};
+
+	useEffect(() => {
+		// Button is displayed after scrolling for 500 pixels
+		const toggleVisibility = () => {
+			if (window.pageYOffset > 300) {
+				setIsVisible(true);
+			} else {
+				setIsVisible(false);
+			}
+		};
+
+		window.addEventListener("scroll", toggleVisibility);
+
+		return () => window.removeEventListener("scroll", toggleVisibility);
+	}, []);
+
 	return (
 		<>
 			<Head>
@@ -812,60 +835,58 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					<div className="relative">
+					<div className="scroll-to-top relative">
 						<Tab.Group>
-							<div className="fixed z-10 w-[calc(100%-270px-2rem)]">
-								<div className="mb-8 w-full rounded-t-normal bg-white/50 shadow-normal backdrop-blur-md dark:bg-gray-800/30">
-									<div className="flex flex-wrap items-center justify-between gap-2 p-4">
-										<div className="flex flex-wrap items-center justify-start py-2">
-											<button
-												className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
-												onClick={() => router.back()}
-											>
-												<i className="fa-solid fa-arrow-left text-xl"></i>
-											</button>
-											<h2 className="text-lg font-bold">
-												<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
-											</h2>
-										</div>
-										<div className="flex flex-wrap items-center">
-											{jobActions.map((action, i) => (
-												<JobActionButton
-													label={action.label}
-													handleClick={action.action}
-													icon={action.icon}
-													iconBg={action.iconBg}
-													key={i}
-												/>
-											))}
-										</div>
+							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
+								<div className="flex flex-wrap items-center justify-between p-6">
+									<div className="flex flex-wrap items-center justify-start py-2">
+										<button
+											className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
+											onClick={() => router.back()}
+										>
+											<i className="fa-solid fa-arrow-left text-xl"></i>
+										</button>
+										<h2 className="text-lg font-bold">
+											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
+										</h2>
 									</div>
-									<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
-										<div className="flex w-[820px]">
-											{tabHeading_1.map((item, i) => (
-												<Tab key={i} as={Fragment}>
-													{({ selected }) => (
-														<button
-															className={
-																"border-b-4 px-10 py-1 font-semibold focus:outline-none" +
-																" " +
-																(selected
-																	? "border-primary text-primary dark:border-white dark:text-white"
-																	: "border-transparent text-darkGray dark:text-gray-400") +
-																" " +
-																(!item.hide && "display-none")
-															}
-														>
-															{item.title}
-														</button>
-													)}
-												</Tab>
-											))}
-										</div>
-									</Tab.List>
+									<div className="flex flex-wrap items-center">
+										{jobActions.map((action, i) => (
+											<JobActionButton
+												label={action.label}
+												handleClick={action.action}
+												icon={action.icon}
+												iconBg={action.iconBg}
+												key={i}
+											/>
+										))}
+									</div>
 								</div>
+								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
+									<div className="flex w-[820px]">
+										{tabHeading_1.map((item, i) => (
+											<Tab key={i} as={Fragment}>
+												{({ selected }) => (
+													<button
+														className={
+															"border-b-4 px-10 py-1 font-semibold focus:outline-none" +
+															" " +
+															(selected
+																? "border-primary text-primary dark:border-white dark:text-white"
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(!item.hide && "display-none")
+														}
+													>
+														{item.title}
+													</button>
+												)}
+											</Tab>
+										))}
+									</div>
+								</Tab.List>
 							</div>
-							<Tab.Panels className={"pt-[150px]"}>
+							<Tab.Panels>
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.BasicInformation")} />
@@ -1644,6 +1665,18 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>
+						{isVisible && (
+							<div
+								onClick={scrollToTop}
+								className={
+									`fixed bottom-0 right-0 z-[1000] m-6 cursor-pointer rounded-full bg-primary/75 px-3 py-2 text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-primary` +
+									" " +
+									`${visible ? "mr-[calc(27.6%+3rem)]" : "mr-6"}`
+								}
+							>
+								<i className="fa-solid fa-chevron-up"></i>
+							</div>
+						)}
 					</div>
 				</div>
 			</main>

@@ -788,6 +788,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		// } else if (atsVersion === "enterprise") {
 		// 	return true;
 		// }
+		if (title === "Assessment" || title === "Job Boards" || title === "Divison") {
+			return false;
+		}
 		return true;
 	}
 
@@ -881,6 +884,30 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			title: " "
 		}
 	];
+
+	
+	const [isVisible, setIsVisible] = useState(false);
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth"
+		});
+	};
+
+	useEffect(() => {
+		// Button is displayed after scrolling for 500 pixels
+		const toggleVisibility = () => {
+			if (window.pageYOffset > 300) {
+				setIsVisible(true);
+			} else {
+				setIsVisible(false);
+			}
+		};
+
+		window.addEventListener("scroll", toggleVisibility);
+
+		return () => window.removeEventListener("scroll", toggleVisibility);
+	}, []);
 
 	return (
 		<>
@@ -1682,6 +1709,19 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 								</Tab.Panel>
 							</Tab.Panels>
 						</Tab.Group>
+
+						{isVisible && (
+							<div
+								onClick={scrollToTop}
+								className={
+									`fixed bottom-0 right-0 z-[1000] m-6 cursor-pointer rounded-full bg-primary/75 px-3 py-2 text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-primary` +
+									" " +
+									`${visible ? "mr-[calc(27.6%+3rem)]" : "mr-6"}`
+								}
+							>
+								<i className="fa-solid fa-chevron-up"></i>
+							</div>
+						)}
 					</div>
 				</div>
 			</main>

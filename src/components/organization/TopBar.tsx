@@ -29,7 +29,7 @@ const CalendarIntegrationOptions = [
 
 const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
 
-export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
+export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -54,6 +54,11 @@ export default function OrgTopBar({ todoLoadMore, loadTodo }: any) {
 	const [toDoPopup, setToDoPopup] = useState(false);
 	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
 
+	useEffect(() => {
+		if (!toDoPopup && todoLoadMore) {
+			settodoLoadMore(false);
+		}
+	}, [toDoPopup]);
 	// useEffect(() => {
 	// 	async function loadIntegrations() {
 	// 		if (!session) return;

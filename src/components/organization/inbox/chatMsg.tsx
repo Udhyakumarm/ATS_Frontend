@@ -8,10 +8,22 @@ import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/theme-dark.css";
 import { useTheme } from "next-themes";
+import { useLangStore } from "@/utils/code";
 
-export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
+export default function InboxChatMsg({
+	type,
+	data,
+	delMsg,
+	editMsg,
+	recallMsg,
+	settext,
+	setreply,
+	setreplyC,
+	axiosInstanceAuth2
+}: any) {
 	const { theme, setTheme } = useTheme();
 	const [isOpen, setOpen] = useState(false);
+	const [replyMSG, setreplyMSG] = useState([]);
 	const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
 	function handleContextClick(e) {
@@ -22,7 +34,35 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 		if (e.value === "EditMe") {
 			editMsg(data["id"], data["text"]);
 		}
+		if (e.value === "RecallMe") {
+			recallMsg(data["id"]);
+		}
+		if (e.value === "ReplyMe" || e.value === "ReplyOther") {
+			setreply(true);
+			console.log("reply", data);
+			setreplyC(data);
+		}
 	}
+
+	async function loadReply(id: any) {
+		await axiosInstanceAuth2
+			.get(`/inbox/get_msg/${id}/`)
+			.then(async (res) => {
+				console.log("replyData", id, "+", res.data);
+				setreplyMSG(res.data);
+			})
+			.catch((err) => {
+				setreplyMSG([]);
+			});
+	}
+
+	useEffect(() => {
+		if (data["isReply"]) {
+			if (data["isReply"] != "-1") {
+				loadReply(parseInt(data["isReply"]));
+			}
+		}
+	}, [data]);
 
 	const generateRandomGradient = () => {
 		// Generate random color values for a linear gradient
@@ -39,6 +79,8 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 		// Update the state with the new gradient
 		return newGradient;
 	};
+
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	return (
 		<>
@@ -67,161 +109,328 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 								}}
 							>
 								<div className="ml-2 mr-3 rounded-xl bg-stone-300/25 px-3 py-3">
-									<article className="text-lg text-darkGray dark:text-lightBlue ">
-										{data["file"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 px-1 text-[15px]` +
-														" " +
-														`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
-													}
-												>
-													<i className="fa-regular fa-file text-[30px]"></i>
-													<p>{data["file"]["name"]}</p>
-												</button>
-											</>
-										)}
-										{data["media"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 px-1 text-[15px]` +
-														" " +
-														`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
-													}
-												>
-													<i className="fa-regular fa-image text-[30px]"></i>
-													<p>{data["media"]["name"]}</p>
-												</button>
-											</>
-										)}
-
-										{data["contact"] && (
-											<>
-												<Popover className="relative">
-													{({ open }) => (
-														<>
-															<Popover.Button
-																className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
-															>
-																<div className="flex items-center gap-2 px-1">
-																	<Image
-																		src={
-																			process.env.NODE_ENV === "production"
-																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
-																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+									{data["isRecall"] ? (
+										<article className="text-lg text-darkGray dark:text-lightBlue ">
+											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
+										</article>
+									) : (
+										<article className="text-lg text-darkGray dark:text-lightBlue ">
+											{replyMSG && replyMSG.length > 0 && (
+												<>
+													{replyMSG.map((data2, i) => (
+														<div
+															className="mb-2 rounded-xl border-2 border-stone-600/25 bg-stone-300/25 px-3 py-2 text-darkGray/75 dark:text-lightBlue/75 "
+															key={i}
+														>
+															{data2["file"] && (
+																<>
+																	<button
+																		onClick={() => {
+																			window.open(
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
+																				"_blank"
+																			);
+																		}}
+																		className={
+																			`flex items-center gap-2 px-1 text-[15px]` +
+																			" " +
+																			`${
+																				(data2["media"] || data2["contact"] || data2["text"]) && "mb-1 pb-2 shadow-md"
+																			}`
 																		}
-																		alt={"ABC"}
-																		width={100}
-																		height={100}
-																		className="h-[40px] w-[40px] rounded-full object-cover"
-																	/>
-																	<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
-																</div>
-																<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																<p className="ml-3 text-sm">Contact Card</p>
-															</Popover.Button>
+																	>
+																		<i className="fa-regular fa-file text-[30px]"></i>
+																		<p>{data2["file"]["name"]}</p>
+																	</button>
+																</>
+															)}
+															{data2["media"] && (
+																<>
+																	<button
+																		onClick={() => {
+																			window.open(
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
+																				"_blank"
+																			);
+																		}}
+																		className={
+																			`flex items-center gap-2 px-1 text-[15px]` +
+																			" " +
+																			`${(data2["text"] || data2["contact"]) && "mb-1 pb-2 shadow-md"}`
+																		}
+																	>
+																		<i className="fa-regular fa-image text-[30px]"></i>
+																		<p>{data2["media"]["name"]}</p>
+																	</button>
+																</>
+															)}
 
-															<Transition
-																as={Fragment}
-																enter="transition ease-out duration-200"
-																enterFrom="opacity-0 translate-y-1"
-																enterTo="opacity-100 translate-y-0"
-																leave="transition ease-in duration-150"
-																leaveFrom="opacity-100 translate-y-0"
-																leaveTo="opacity-0 translate-y-1"
-															>
-																<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
-																	<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
-																		<div
-																			className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
-																			// style={{ background: generateRandomGradient() }}
-																		>
-																			<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
-																				<Image
-																					src={
-																						process.env.NODE_ENV === "production"
-																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
-																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+															{data2["contact"] && (
+																<>
+																	<Popover className="relative">
+																		{({ open }) => (
+																			<>
+																				<Popover.Button
+																					className={
+																						`flex flex-col gap-2 ` + " " + `${data2["text"] && "mb-1 pb-2 shadow-md"}`
 																					}
-																					alt={"ABC"}
-																					width={100}
-																					height={100}
-																					className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
-																				/>
-																			</div>
-																		</div>
-																		<div className="p-6">
-																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				{data["contact"]["name"]}
-																			</h5>
-																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				{data["contact"]["title"]}
-																			</p>
-																			<hr className="dark:border-lightBlue/50" />
-																			<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
-																				<div className="flex flex-col gap-2">
-																					<div className="flex justify-between gap-2">
-																						<b>Email</b>
-																						<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
-																					</div>
-																					<div className="flex justify-between gap-2">
-																						<b>Deparment</b>
+																				>
+																					<div className="flex items-center gap-2 px-1">
+																						<Image
+																							src={
+																								process.env.NODE_ENV === "production"
+																									? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																									: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																							}
+																							alt={"ABC"}
+																							width={100}
+																							height={100}
+																							className="h-[40px] w-[40px] rounded-full object-cover"
+																						/>
 																						<p>
-																							{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																							{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
 																						</p>
 																					</div>
-																					<div className="flex justify-between gap-2">
-																						<b>Role</b>
-																						<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
-																					</div>
-																				</div>
-																			</p>
-																		</div>
+																					<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																					<p className="ml-3 text-sm">Contact Card</p>
+																				</Popover.Button>
+
+																				<Transition
+																					as={Fragment}
+																					enter="transition ease-out duration-200"
+																					enterFrom="opacity-0 translate-y-1"
+																					enterTo="opacity-100 translate-y-0"
+																					leave="transition ease-in duration-150"
+																					leaveFrom="opacity-100 translate-y-0"
+																					leaveTo="opacity-0 translate-y-1"
+																				>
+																					<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																						<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																							<div
+																								className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																								// style={{ background: generateRandomGradient() }}
+																							>
+																								<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																									<Image
+																										src={
+																											process.env.NODE_ENV === "production"
+																												? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																												: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																										}
+																										alt={"ABC"}
+																										width={100}
+																										height={100}
+																										className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																									/>
+																								</div>
+																							</div>
+																							<div className="p-6">
+																								<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																									{data2["contact"]["name"]}
+																								</h5>
+																								<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																									{data2["contact"]["title"]}
+																								</p>
+																								<hr className="dark:border-lightBlue/50" />
+																								<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																									<div className="flex flex-col gap-2">
+																										<div className="flex justify-between gap-2">
+																											<b>Email</b>
+																											<p>
+																												{data2["contact"]["email"] ? data2["contact"]["email"] : "N/A"}
+																											</p>
+																										</div>
+																										<div className="flex justify-between gap-2">
+																											<b>Deparment</b>
+																											<p>
+																												{data2["contact"]["department"]
+																													? data2["contact"]["department"]
+																													: "N/A"}
+																											</p>
+																										</div>
+																										<div className="flex justify-between gap-2">
+																											<b>Role</b>
+																											<p>
+																												{data2["contact"]["role"] ? data2["contact"]["role"] : "N/A"}
+																											</p>
+																										</div>
+																									</div>
+																								</p>
+																							</div>
+																						</div>
+																					</Popover.Panel>
+																				</Transition>
+																			</>
+																		)}
+																	</Popover>
+																</>
+															)}
+
+															{data2["text"] && data2["text"].length > 0 && (
+																<p className="text-left">{data2["text"]}</p>
+															)}
+															<p className="text-left text-xs font-bold">{data2["sender_username"]}~</p>
+														</div>
+													))}
+												</>
+											)}
+											{data["file"] && (
+												<>
+													<button
+														onClick={() => {
+															window.open(
+																process.env.NODE_ENV === "production"
+																	? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+																	: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
+																"_blank"
+															);
+														}}
+														className={
+															`flex items-center gap-2 px-1 text-[15px]` +
+															" " +
+															`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
+														}
+													>
+														<i className="fa-regular fa-file text-[30px]"></i>
+														<p>{data["file"]["name"]}</p>
+													</button>
+												</>
+											)}
+											{data["media"] && (
+												<>
+													<button
+														onClick={() => {
+															window.open(
+																process.env.NODE_ENV === "production"
+																	? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
+																	: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
+																"_blank"
+															);
+														}}
+														className={
+															`flex items-center gap-2 px-1 text-[15px]` +
+															" " +
+															`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
+														}
+													>
+														<i className="fa-regular fa-image text-[30px]"></i>
+														<p>{data["media"]["name"]}</p>
+													</button>
+												</>
+											)}
+
+											{data["contact"] && (
+												<>
+													<Popover className="relative">
+														{({ open }) => (
+															<>
+																<Popover.Button
+																	className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
+																>
+																	<div className="flex items-center gap-2 px-1">
+																		<Image
+																			src={
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																			}
+																			alt={"ABC"}
+																			width={100}
+																			height={100}
+																			className="h-[40px] w-[40px] rounded-full object-cover"
+																		/>
+																		<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
 																	</div>
-																</Popover.Panel>
-															</Transition>
-														</>
-													)}
-												</Popover>
-											</>
-										)}
+																	<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																	<p className="ml-3 text-sm">Contact Card</p>
+																</Popover.Button>
 
-										{data["text"] && data["text"].length > 0 && <p className="text-left">{data["text"]}</p>}
-									</article>
+																<Transition
+																	as={Fragment}
+																	enter="transition ease-out duration-200"
+																	enterFrom="opacity-0 translate-y-1"
+																	enterTo="opacity-100 translate-y-0"
+																	leave="transition ease-in duration-150"
+																	leaveFrom="opacity-100 translate-y-0"
+																	leaveTo="opacity-0 translate-y-1"
+																>
+																	<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																		<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																			<div
+																				className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																				// style={{ background: generateRandomGradient() }}
+																			>
+																				<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																					<Image
+																						src={
+																							process.env.NODE_ENV === "production"
+																								? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																								: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																						}
+																						alt={"ABC"}
+																						width={100}
+																						height={100}
+																						className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																					/>
+																				</div>
+																			</div>
+																			<div className="p-6">
+																				<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																					{data["contact"]["name"]}
+																				</h5>
+																				<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																					{data["contact"]["title"]}
+																				</p>
+																				<hr className="dark:border-lightBlue/50" />
+																				<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																					<div className="flex flex-col gap-2">
+																						<div className="flex justify-between gap-2">
+																							<b>Email</b>
+																							<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
+																						</div>
+																						<div className="flex justify-between gap-2">
+																							<b>Deparment</b>
+																							<p>
+																								{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																							</p>
+																						</div>
+																						<div className="flex justify-between gap-2">
+																							<b>Role</b>
+																							<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
+																						</div>
+																					</div>
+																				</p>
+																			</div>
+																		</div>
+																	</Popover.Panel>
+																</Transition>
+															</>
+														)}
+													</Popover>
+												</>
+											)}
+
+											{data["text"] && data["text"].length > 0 && <p className="text-left">{data["text"]}</p>}
+										</article>
+									)}
 								</div>
-
-								<ControlledMenu
-									anchorPoint={anchorPoint}
-									state={isOpen ? "open" : "closed"}
-									direction="right"
-									onClose={() => setOpen(false)}
-									theming={theme === "dark" ? "dark" : undefined}
-								>
-									<MenuItem value="ReplyOther" onClick={(e) => handleContextClick(e)}>
-										<i className="fa-solid fa-reply"></i>&nbsp;&nbsp;Reply
-									</MenuItem>
-									<MenuItem value="RecallOther" onClick={(e) => handleContextClick(e)}>
-										<i className="fa-regular fa-message"></i>&nbsp;&nbsp;Recall
-									</MenuItem>
-								</ControlledMenu>
+								{!data["isRecall"] && (
+									<ControlledMenu
+										anchorPoint={anchorPoint}
+										state={isOpen ? "open" : "closed"}
+										direction="right"
+										onClose={() => setOpen(false)}
+										theming={theme === "dark" ? "dark" : undefined}
+									>
+										<MenuItem value="ReplyOther" onClick={(e) => handleContextClick(e)}>
+											<i className="fa-solid fa-reply"></i>&nbsp;&nbsp;Reply
+										</MenuItem>
+									</ControlledMenu>
+								)}
 							</div>
 
 							{data["isEdit"] && <p className="pr-2 text-sm">edited</p>}
@@ -258,169 +467,350 @@ export default function InboxChatMsg({ type, data, delMsg, editMsg }: any) {
 								}}
 							>
 								<div className="ml-2 mr-3 rounded-xl bg-sky-300/25 px-3 py-3">
-									<article className="text-lg text-darkGray dark:text-lightBlue ">
-										{data["file"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 px-1 text-[15px]` +
-														" " +
-														`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
-													}
+									{data["isRecall"] ? (
+										<article className="text-lg text-darkGray dark:text-lightBlue ">
+											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
+											{data["text"] && data["text"].length > 0 && (
+												<span
+													className="ml-1 cursor-pointer text-primary/75 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:text-xl hover:text-primary"
+													onClick={() => settext(data["text"])}
 												>
-													<i className="fa-regular fa-file text-[30px]"></i>
-													<p>{data["file"]["name"]}</p>
-												</button>
-											</>
-										)}
-
-										{data["media"] && (
-											<>
-												<button
-													onClick={() => {
-														window.open(
-															process.env.NODE_ENV === "production"
-																? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
-																: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
-															"_blank"
-														);
-													}}
-													className={
-														`flex items-center gap-2 px-1 text-[15px]` +
-														" " +
-														`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
-													}
-												>
-													<i className="fa-regular fa-image text-[30px]"></i>
-													<p>{data["media"]["name"]}</p>
-												</button>
-											</>
-										)}
-
-										{data["contact"] && (
-											<>
-												<Popover className="relative">
-													{({ open }) => (
-														<>
-															<Popover.Button
-																className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
-															>
-																<div className="flex items-center gap-2 px-1">
-																	<Image
-																		src={
-																			process.env.NODE_ENV === "production"
-																				? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
-																				: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+													Re-edit &rarr;
+												</span>
+											)}
+										</article>
+									) : (
+										<article className="text-lg text-darkGray dark:text-lightBlue ">
+											{replyMSG && replyMSG.length > 0 && (
+												<>
+													{replyMSG.map((data2, i) => (
+														<div
+															className="mb-2 rounded-xl border-2 border-sky-600/25 bg-sky-300/25 px-3 py-2 text-darkGray/75 dark:text-lightBlue/75 "
+															key={i}
+														>
+															{data2["file"] && (
+																<>
+																	<button
+																		onClick={() => {
+																			window.open(
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
+																				"_blank"
+																			);
+																		}}
+																		className={
+																			`flex items-center gap-2 px-1 text-[15px]` +
+																			" " +
+																			`${
+																				(data2["media"] || data2["contact"] || data2["text"]) && "mb-1 pb-2 shadow-md"
+																			}`
 																		}
-																		alt={"ABC"}
-																		width={100}
-																		height={100}
-																		className="h-[40px] w-[40px] rounded-full object-cover"
-																	/>
-																	<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
-																</div>
-																<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																<p className="ml-3 text-sm">Contact Card</p>
-															</Popover.Button>
-															<Transition
-																as={Fragment}
-																enter="transition ease-out duration-200"
-																enterFrom="opacity-0 translate-y-1"
-																enterTo="opacity-100 translate-y-0"
-																leave="transition ease-in duration-150"
-																leaveFrom="opacity-100 translate-y-0"
-																leaveTo="opacity-0 translate-y-1"
-															>
-																<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
-																	<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
-																		<div
-																			className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
-																			// style={{ background: generateRandomGradient() }}
-																		>
-																			<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
-																				<Image
-																					src={
-																						process.env.NODE_ENV === "production"
-																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
-																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																	>
+																		<i className="fa-regular fa-file text-[30px]"></i>
+																		<p>{data2["file"]["name"]}</p>
+																	</button>
+																</>
+															)}
+
+															{data2["media"] && (
+																<>
+																	<button
+																		onClick={() => {
+																			window.open(
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
+																				"_blank"
+																			);
+																		}}
+																		className={
+																			`flex items-center gap-2 px-1 text-[15px]` +
+																			" " +
+																			`${(data2["text"] || data2["contact"]) && "mb-1 pb-2 shadow-md"}`
+																		}
+																	>
+																		<i className="fa-regular fa-image text-[30px]"></i>
+																		<p>{data2["media"]["name"]}</p>
+																	</button>
+																</>
+															)}
+
+															{data2["contact"] && (
+																<>
+																	<Popover className="relative">
+																		{({ open }) => (
+																			<>
+																				<Popover.Button
+																					className={
+																						`flex flex-col gap-2 ` + " " + `${data2["text"] && "mb-1 pb-2 shadow-md"}`
 																					}
-																					alt={"ABC"}
-																					width={100}
-																					height={100}
-																					className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
-																				/>
-																			</div>
-																		</div>
-																		<div className="p-6">
-																			<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				{data["contact"]["name"]}
-																			</h5>
-																			<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																				{data["contact"]["title"]}
-																			</p>
-																			<hr className="dark:border-lightBlue/50" />
-																			<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
-																				<div className="flex flex-col gap-2">
-																					<div className="flex justify-between gap-2">
-																						<b>Email</b>
-																						<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
-																					</div>
-																					<div className="flex justify-between gap-2">
-																						<b>Deparment</b>
+																				>
+																					<div className="flex items-center gap-2 px-1">
+																						<Image
+																							src={
+																								process.env.NODE_ENV === "production"
+																									? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																									: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																							}
+																							alt={"ABC"}
+																							width={100}
+																							height={100}
+																							className="h-[40px] w-[40px] rounded-full object-cover"
+																						/>
 																						<p>
-																							{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																							{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
 																						</p>
 																					</div>
-																					<div className="flex justify-between gap-2">
-																						<b>Role</b>
-																						<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
-																					</div>
-																				</div>
-																			</p>
-																		</div>
-																	</div>
-																</Popover.Panel>
-															</Transition>
-														</>
-													)}
-												</Popover>
-											</>
-										)}
+																					<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																					<p className="ml-3 text-sm">Contact Card</p>
+																				</Popover.Button>
+																				<Transition
+																					as={Fragment}
+																					enter="transition ease-out duration-200"
+																					enterFrom="opacity-0 translate-y-1"
+																					enterTo="opacity-100 translate-y-0"
+																					leave="transition ease-in duration-150"
+																					leaveFrom="opacity-100 translate-y-0"
+																					leaveTo="opacity-0 translate-y-1"
+																				>
+																					<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																						<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																							<div
+																								className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																								// style={{ background: generateRandomGradient() }}
+																							>
+																								<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																									<Image
+																										src={
+																											process.env.NODE_ENV === "production"
+																												? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																												: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																										}
+																										alt={"ABC"}
+																										width={100}
+																										height={100}
+																										className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																									/>
+																								</div>
+																							</div>
+																							<div className="p-6">
+																								<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																									{data2["contact"]["name"]}
+																								</h5>
+																								<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																									{data2["contact"]["title"]}
+																								</p>
+																								<hr className="dark:border-lightBlue/50" />
+																								<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																									<div className="flex flex-col gap-2">
+																										<div className="flex justify-between gap-2">
+																											<b>Email</b>
+																											<p>
+																												{data2["contact"]["email"] ? data2["contact"]["email"] : "N/A"}
+																											</p>
+																										</div>
+																										<div className="flex justify-between gap-2">
+																											<b>Deparment</b>
+																											<p>
+																												{data2["contact"]["department"]
+																													? data2["contact"]["department"]
+																													: "N/A"}
+																											</p>
+																										</div>
+																										<div className="flex justify-between gap-2">
+																											<b>Role</b>
+																											<p>
+																												{data2["contact"]["role"] ? data2["contact"]["role"] : "N/A"}
+																											</p>
+																										</div>
+																									</div>
+																								</p>
+																							</div>
+																						</div>
+																					</Popover.Panel>
+																				</Transition>
+																			</>
+																		)}
+																	</Popover>
+																</>
+															)}
 
-										{data["text"] && data["text"].length > 0 && <p className="text-right">{data["text"]}</p>}
-									</article>
+															{data2["text"] && data2["text"].length > 0 && (
+																<p className="text-right">{data2["text"]}</p>
+															)}
+
+															<p className="text-right text-xs font-bold">~{data2["sender_username"]}</p>
+														</div>
+													))}
+												</>
+											)}
+
+											{data["file"] && (
+												<>
+													<button
+														onClick={() => {
+															window.open(
+																process.env.NODE_ENV === "production"
+																	? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["file"]["url"]}`
+																	: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["file"]["url"]}`,
+																"_blank"
+															);
+														}}
+														className={
+															`flex items-center gap-2 px-1 text-[15px]` +
+															" " +
+															`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
+														}
+													>
+														<i className="fa-regular fa-file text-[30px]"></i>
+														<p>{data["file"]["name"]}</p>
+													</button>
+												</>
+											)}
+
+											{data["media"] && (
+												<>
+													<button
+														onClick={() => {
+															window.open(
+																process.env.NODE_ENV === "production"
+																	? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data["media"]["url"]}`
+																	: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data["media"]["url"]}`,
+																"_blank"
+															);
+														}}
+														className={
+															`flex items-center gap-2 px-1 text-[15px]` +
+															" " +
+															`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
+														}
+													>
+														<i className="fa-regular fa-image text-[30px]"></i>
+														<p>{data["media"]["name"]}</p>
+													</button>
+												</>
+											)}
+
+											{data["contact"] && (
+												<>
+													<Popover className="relative">
+														{({ open }) => (
+															<>
+																<Popover.Button
+																	className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
+																>
+																	<div className="flex items-center gap-2 px-1">
+																		<Image
+																			src={
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																			}
+																			alt={"ABC"}
+																			width={100}
+																			height={100}
+																			className="h-[40px] w-[40px] rounded-full object-cover"
+																		/>
+																		<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																	</div>
+																	<hr className="w-full border-gray-700 dark:border-lightBlue" />
+																	<p className="ml-3 text-sm">Contact Card</p>
+																</Popover.Button>
+																<Transition
+																	as={Fragment}
+																	enter="transition ease-out duration-200"
+																	enterFrom="opacity-0 translate-y-1"
+																	enterTo="opacity-100 translate-y-0"
+																	leave="transition ease-in duration-150"
+																	leaveFrom="opacity-100 translate-y-0"
+																	leaveTo="opacity-0 translate-y-1"
+																>
+																	<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																		<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																			<div
+																				className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																				// style={{ background: generateRandomGradient() }}
+																			>
+																				<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																					<Image
+																						src={
+																							process.env.NODE_ENV === "production"
+																								? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["contact"]["profile"]}`
+																								: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["contact"]["profile"]}`
+																						}
+																						alt={"ABC"}
+																						width={100}
+																						height={100}
+																						className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																					/>
+																				</div>
+																			</div>
+																			<div className="p-6">
+																				<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																					{data["contact"]["name"]}
+																				</h5>
+																				<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																					{data["contact"]["title"]}
+																				</p>
+																				<hr className="dark:border-lightBlue/50" />
+																				<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																					<div className="flex flex-col gap-2">
+																						<div className="flex justify-between gap-2">
+																							<b>Email</b>
+																							<p>{data["contact"]["email"] ? data["contact"]["email"] : "N/A"}</p>
+																						</div>
+																						<div className="flex justify-between gap-2">
+																							<b>Deparment</b>
+																							<p>
+																								{data["contact"]["department"] ? data["contact"]["department"] : "N/A"}
+																							</p>
+																						</div>
+																						<div className="flex justify-between gap-2">
+																							<b>Role</b>
+																							<p>{data["contact"]["role"] ? data["contact"]["role"] : "N/A"}</p>
+																						</div>
+																					</div>
+																				</p>
+																			</div>
+																		</div>
+																	</Popover.Panel>
+																</Transition>
+															</>
+														)}
+													</Popover>
+												</>
+											)}
+
+											{data["text"] && data["text"].length > 0 && <p className="text-right">{data["text"]}</p>}
+										</article>
+									)}
 								</div>
 
-								<ControlledMenu
-									anchorPoint={anchorPoint}
-									state={isOpen ? "open" : "closed"}
-									direction="right"
-									onClose={() => setOpen(false)}
-									theming={theme === "dark" ? "dark" : undefined}
-								>
-									<MenuItem value="ReplyMe" onClick={(e) => handleContextClick(e)}>
-										<i className="fa-solid fa-reply"></i>&nbsp;&nbsp;Reply
-									</MenuItem>
-									<MenuItem value="RecallMe" onClick={(e) => handleContextClick(e)}>
-										<i className="fa-regular fa-message"></i>&nbsp;&nbsp;Recall
-									</MenuItem>
-									{data["text"] && data["text"].length > 0 && (
-										<MenuItem value="EditMe" onClick={(e) => handleContextClick(e)}>
-											<i className="fa-solid fa-pencil"></i>&nbsp;&nbsp;Edit
+								{!data["isRecall"] && (
+									<ControlledMenu
+										anchorPoint={anchorPoint}
+										state={isOpen ? "open" : "closed"}
+										direction="right"
+										onClose={() => setOpen(false)}
+										theming={theme === "dark" ? "dark" : undefined}
+									>
+										<MenuItem value="ReplyMe" onClick={(e) => handleContextClick(e)}>
+											<i className="fa-solid fa-reply"></i>&nbsp;&nbsp;Reply
 										</MenuItem>
-									)}
-									<MenuItem value="DeleteMe" onClick={(e) => handleContextClick(e)}>
-										<i className="fa-solid fa-trash"></i>&nbsp;&nbsp;Delete
-									</MenuItem>
-								</ControlledMenu>
+										<MenuItem value="RecallMe" onClick={(e) => handleContextClick(e)}>
+											<i className="fa-regular fa-message"></i>&nbsp;&nbsp;Recall
+										</MenuItem>
+										{data["text"] && data["text"].length > 0 && (
+											<MenuItem value="EditMe" onClick={(e) => handleContextClick(e)}>
+												<i className="fa-solid fa-pencil"></i>&nbsp;&nbsp;Edit
+											</MenuItem>
+										)}
+										<MenuItem value="DeleteMe" onClick={(e) => handleContextClick(e)}>
+											<i className="fa-solid fa-trash"></i>&nbsp;&nbsp;Delete
+										</MenuItem>
+									</ControlledMenu>
+								)}
 							</div>
 							{data["isEdit"] && <p className="pl-2 text-sm">edited</p>}
 							<h4 className="mb-2 hidden whitespace-nowrap text-[10px] font-bold text-darkGray group-hover:block dark:text-gray-400">
