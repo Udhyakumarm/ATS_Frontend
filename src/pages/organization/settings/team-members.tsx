@@ -452,7 +452,7 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																						"absolute  right-0 w-[250px] overflow-hidden rounded-normal bg-white shadow-normal dark:bg-gray-700" +
 																						" " +
 																						`${
-																							i + 1 === filterTeam.length
+																							i + 1 === filterTeam.length && filterTeam.length > 1
 																								? "bottom-[100%] mb-[50px]"
 																								: "top-[100%] mt-2"
 																						}`
