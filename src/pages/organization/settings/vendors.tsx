@@ -105,9 +105,9 @@ export default function Vendors() {
 				if (res.data && res.data.length > 0) {
 					if (res.data[0]["vrefid"]) {
 						if (process.env.NODE_ENV === "production") {
-							setnvlink(`${process.env.PUBLIC_PROD_FRONTEND_NEXT}vendor/${res.data[0]["vrefid"]}/signup`);
+							setnvlink(`${process.env.NEXT_PUBLIC_PROD_FRONTEND}/vendor/${res.data[0]["vrefid"]}/signup`);
 						} else {
-							setnvlink(`${process.env.NEXT_PUBLIC_DEV_FRONTEND}vendor/${res.data[0]["vrefid"]}/signup`);
+							setnvlink(`${process.env.NEXT_PUBLIC_DEV_FRONTEND}/vendor/${res.data[0]["vrefid"]}/signup`);
 						}
 					}
 				}

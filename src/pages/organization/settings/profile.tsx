@@ -1499,7 +1499,16 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 														<UpcomingComp />
 													) : (
 														<>
-															<h6 className="mb-2 font-bold">{t("Words.AddWidget")}</h6>
+															<div className="flex flex-wrap justify-between">
+																<h6 className="mb-2 whitespace-nowrap font-bold">{t("Words.AddWidget")}</h6>
+																<Link
+																	className="whitespace-nowrap text-primary underline"
+																	href={`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																	target="_blank"
+																>
+																	Visit Career Page
+																</Link>
+															</div>
 															<div className="flex rounded-normal border">
 																<div className="flex w-[80%] items-center p-4">
 																	<p>Link ATS Career Page with External Career Page</p>
@@ -1909,32 +1918,57 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 												Access the HTML on the webpage where you want the display search jobs button.
 											</li>
 											{oprofile && oprofile.length > 0 && oprofile[0]["user"] && (
-												<li className="mb-4">
-													Copy the below URL tag and paste it into your website.
-													<div className="mt-2 flex rounded border">
-														<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
-															<p className="text-[12px]">
-																{/* {`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`} */}
-																&#60;a href=&ldquo;
-																{`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
-																&rdquo; target=&ldquo;_blank&rdquo;&#62;Search Jobs&#60;/a&#62;
-															</p>
-														</div>
+												<>
+													<li className="mb-4">
+														Copy the below URL only and paste it into your website.
+														<div className="mt-2 flex rounded border">
+															<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
+																<p className="text-[12px]">
+																	{`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																</p>
+															</div>
 
-														<button
-															type="button"
-															className="w-[50px] p-3"
-															onClick={() => {
-																navigator.clipboard.writeText(
-																	`<a href=“https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}” target=“_blank”>Search Jobs</a>`
-																);
-																toastcomp("URL tag Copied to clipboard", "success");
-															}}
-														>
-															<i className="fa-solid fa-copy"></i>
-														</button>
-													</div>
-												</li>
+															<button
+																type="button"
+																className="w-[50px] p-3"
+																onClick={() => {
+																	navigator.clipboard.writeText(
+																		`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`
+																	);
+																	toastcomp("URL Copied to clipboard", "success");
+																}}
+															>
+																<i className="fa-solid fa-copy"></i>
+															</button>
+														</div>
+													</li>
+													<li className="mb-4">
+														Copy the below URL tag and paste it into your website.
+														<div className="mt-2 flex rounded border">
+															<div className="flex w-[calc(100%-50px)] items-center border-r p-2">
+																<p className="text-[12px]">
+																	{/* {`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`} */}
+																	&#60;a href=&ldquo;
+																	{`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																	&rdquo; target=&ldquo;_blank&rdquo;&#62;Search Jobs&#60;/a&#62;
+																</p>
+															</div>
+
+															<button
+																type="button"
+																className="w-[50px] p-3"
+																onClick={() => {
+																	navigator.clipboard.writeText(
+																		`<a href=“https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}” target=“_blank”>Search Jobs</a>`
+																	);
+																	toastcomp("URL tag Copied to clipboard", "success");
+																}}
+															>
+																<i className="fa-solid fa-copy"></i>
+															</button>
+														</div>
+													</li>
+												</>
 											)}
 											<li className="mb-4">Addtional Note : available to modify CSS of above URL tag.</li>
 											<li className="mb-4">

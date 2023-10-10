@@ -24,7 +24,7 @@ import Validator, { Rules } from "validatorjs";
 
 const signInInfoRules: Rules = {
 	email: "required|email",
-	password: ["required", "min:8", "regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"]
+	password: ["required", "min:8"]
 };
 
 const errorMessages = {
@@ -72,8 +72,8 @@ export default function AuthSignIn({ providers }: any) {
 			{ [key]: signInInfoRules[key] },
 			{
 				min: "The password must be at least 8 characters long",
-				required: "This field is required",
-				regex: "Your password must be alphanumeric with at least one upper case letter"
+				required: "This field is required"
+				// regex: "Your password must be alphanumeric with at least one upper case letter"
 			}
 		);
 
