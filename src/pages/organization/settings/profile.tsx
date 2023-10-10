@@ -1501,13 +1501,15 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 														<>
 															<div className="flex flex-wrap justify-between">
 																<h6 className="mb-2 whitespace-nowrap font-bold">{t("Words.AddWidget")}</h6>
-																<Link
-																	className="whitespace-nowrap text-primary underline"
-																	href={`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
-																	target="_blank"
-																>
-																	Visit Career Page
-																</Link>
+																{oprofile && oprofile.length > 0 && oprofile[0]["user"] && (
+																	<Link
+																		className="whitespace-nowrap text-primary underline"
+																		href={`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																		target="_blank"
+																	>
+																		Visit Career Page
+																	</Link>
+																)}
 															</div>
 															<div className="flex rounded-normal border">
 																<div className="flex w-[80%] items-center p-4">
