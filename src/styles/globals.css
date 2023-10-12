@@ -1047,3 +1047,61 @@ input[type="number"] {
 	color: var(--primary);
 	/* font-weight: 700; */
 }
+
+.menu__link {
+	color: #fff;
+	line-height: 2;
+	position: relative;
+	text-decoration: none;
+}
+
+.menu__link::before {
+	content: "";
+	width: 0;
+	height: 2px;
+	border-radius: 2px;
+	background-color: #fff;
+	position: absolute;
+	bottom: -0.25rem;
+	left: 50%;
+	transition: width 0.4s, left 0.4s;
+}
+
+.menu__link:hover::before {
+	width: 100%;
+	left: 0;
+}
+
+.menu__link2 {
+	color: #fff;
+	line-height: 2;
+	position: relative;
+	text-decoration: none;
+	transform: scale(1.1);
+}
+
+.menu__link2::before {
+	content: "";
+	width: 100%;
+	height: 2px;
+	border-radius: 2px;
+	background-color: #fff;
+	position: absolute;
+	bottom: -0.25rem;
+	left: 0;
+	transition: width 0.4s, left 0.4s;
+}
+
+.scroll-container {
+	scroll-snap-type: y proximity;
+	scroll-padding: 10px;
+	overflow-y: scroll;
+	height: 100vh;
+}
+
+.scroll-container-child {
+	scroll-snap-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

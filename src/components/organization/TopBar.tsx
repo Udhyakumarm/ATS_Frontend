@@ -472,9 +472,11 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				>
 					<i className="fa-solid fa-right-from-bracket"></i>
 				</button> */}
-				<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
-					<Image src={visible ? novusIcon12 : novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
-				</button>
+				{role != "Hiring Manager" && (
+					<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
+						<Image src={visible ? novusIcon12 : novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
+					</button>
+				)}
 			</div>
 			<Transition.Root show={isCalendarOpen} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setIsCalendarOpen}>

@@ -177,6 +177,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	const [hiringAnalytics, sethiringAnalytics] = useState([]);
+	const [interviewAnalytics, setinterviewAnalytics] = useState([]);
 	const [tapp, settapp] = useState(0);
 	const [analyticsSource, setanalyticsSource] = useState([]);
 	const [analyticsColumn, setanalyticsColumn] = useState([]);
@@ -201,6 +202,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 				// setrecentJob(res.data["recentJob"]);
 				// setupcomingInterview(res.data["Interview"]);
 				sethiringAnalytics(res.data["HiringAnalytics"]);
+				setinterviewAnalytics(res.data["InterviewAnalytics"]);
 				setanalyticsSource(res.data["AnalyticsSource"]);
 				setanalyticsColumn(res.data["AnalyticsColumn"]);
 				setanalyticsFunnel(res.data["AnalyticsFunnel"]);
@@ -334,7 +336,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 													hiringAnalytics.some((item) => item > 0) &&
 													atsVersion != "starter" ? (
 														// <HighchartsReact highcharts={Highcharts} options={options} />
-														<AnalyticsChart data={hiringAnalytics} />
+														<AnalyticsChart data={hiringAnalytics} text="Hiring Trends" />
 													) : (
 														// <AnalyticsChart />
 														<>
@@ -399,9 +401,15 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 													</div> */}
 												</div>
 												<div className="p-8">
-													{analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (
-														<ColumnChart data={analyticsColumn} />
+													{interviewAnalytics &&
+													interviewAnalytics.length > 0 &&
+													interviewAnalytics.some((item) => item > 0) ? (
+														// <HighchartsReact highcharts={Highcharts} options={options} />
+														<AnalyticsChart data={interviewAnalytics} text="Interview Trends" />
 													) : (
+														// {analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (
+														// 	<ColumnChart data={analyticsColumn} />
+														// )
 														<div className="py-8 text-center">
 															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
 																<Image

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-export default function AnalyticsChart({ data }: any) {
+export default function AnalyticsChart({ data, text }: any) {
 	const [chartOptions, setchartOptions] = useState({});
 	useEffect(() => {
 		// Generate random data for the chart
@@ -22,7 +22,7 @@ export default function AnalyticsChart({ data }: any) {
 			},
 			series: [
 				{
-					name: "Hiring Trends",
+					name: text,
 					data: arr
 				}
 			]

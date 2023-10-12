@@ -412,14 +412,50 @@ export default function TeamMembers({ upcomingSoon }: any) {
 													</thead>
 													<tbody>
 														{filterTeam.map((data, i) => (
-															<tr key={i}>
-																<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
-																<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
-																<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																<td className="border-b px-3 py-2 text-sm">
+															<tr key={i} className="">
+																<td
+																	className={
+																		`border-b px-3 py-2 text-sm` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
+																	{data["name"]}
+																</td>
+																<td
+																	className={
+																		`border-b px-3 py-2 text-sm` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
+																	{data["dept"]}
+																</td>
+																<td
+																	className={
+																		`border-b px-3 py-2 text-sm` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
+																	{data["email"]}
+																</td>
+																<td
+																	className={
+																		`border-b px-3 py-2 text-sm` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
 																	{data["verified"] == false ? <>On Pending</> : <>Verified</>}
 																</td>
-																<td className="w-[250px] border-b px-3 py-2">
+																<td
+																	className={
+																		`w-[250px] border-b px-3 py-2` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
 																	<div className="w-full">
 																		<Listbox
 																			value={{ name: data["role"] }}
@@ -499,7 +535,13 @@ export default function TeamMembers({ upcomingSoon }: any) {
 																{/* <td className="border-b px-3 py-2 text-right">
 																	<input type="checkbox" />
 																</td> */}
-																<td className="border-b px-3 py-2 text-right">
+																<td
+																	className={
+																		`border-b px-3 py-2 text-right` +
+																		" " +
+																		`${i + 1 === filterTeam.length && "pb-[100px]"}`
+																	}
+																>
 																	<button
 																		type="button"
 																		className="ml-2 text-red-500 hover:text-red-700"

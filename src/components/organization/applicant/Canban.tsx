@@ -15,13 +15,20 @@ function Canban(props: any) {
 	let _columnId = 0;
 	let _cardId = 0;
 	var initialColumns = [
-		srcLang === "ja" ? "応募前" : "Sourced",
-		srcLang === "ja" ? "レビュー" : "Review",
-		srcLang === "ja" ? "面接" : "Interview",
-		srcLang === "ja" ? "面接通過" : "Shortlisted",
-		srcLang === "ja" ? "オファー" : "Offer",
-		srcLang === "ja" ? "入社" : "Hired",
-		srcLang === "ja" ? "不合格" : "Rejected"
+		"Sourced",
+		"Review",
+		"Interview",
+		"Shortlisted",
+		"Offer",
+		"Hired",
+		"Rejected"
+		// srcLang === "ja" ? "応募前" : "Sourced",
+		// srcLang === "ja" ? "レビュー" : "Review",
+		// srcLang === "ja" ? "面接" : "Interview",
+		// srcLang === "ja" ? "面接通過" : "Shortlisted",
+		// srcLang === "ja" ? "オファー" : "Offer",
+		// srcLang === "ja" ? "入社" : "Hired",
+		// srcLang === "ja" ? "不合格" : "Rejected"
 	].map((title, i) => ({
 		id: _columnId++,
 		title,
