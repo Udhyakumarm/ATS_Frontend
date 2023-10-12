@@ -16,7 +16,7 @@ import moment from "moment";
 import AnalyticsComp from "./AnalyticsComp";
 import AnalyticsChart from "./AnalyticsChart";
 
-export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
+export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }: any) {
 	const router = useRouter();
 
 	// const [chat, setchat] = useState([]);
@@ -198,7 +198,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 					settext("");
 
 					if (res.data.response && res.data.response === "Success") {
-						loadChat();
+						loadChat().then(() => {
+							if (refresh) {
+								setrefresh(0);
+							}
+						});
 					}
 				})
 				.catch((err) => {
@@ -354,7 +358,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 					settext("");
 
 					if (res.data.response && res.data.response === "Success") {
-						loadChat();
+						loadChat().then(() => {
+							if (refresh) {
+								setrefresh(0);
+							}
+						});
 					}
 				})
 				.catch((err) => {
@@ -378,7 +386,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 					settext("");
 
 					if (res.data.response && res.data.response === "Success") {
-						loadChat();
+						loadChat().then(() => {
+							if (refresh) {
+								setrefresh(0);
+							}
+						});
 					}
 				})
 				.catch((err) => {
@@ -404,7 +416,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2 }: any) {
 					settext("");
 
 					if (res.data.response && res.data.response === "Success") {
-						loadChat();
+						loadChat().then(() => {
+							if (refresh) {
+								setrefresh(0);
+							}
+						});
 					}
 				})
 				.catch((err) => {

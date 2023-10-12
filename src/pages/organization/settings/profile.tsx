@@ -75,7 +75,13 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		// 		return name === "Groups/Division" || name === "Offer Letter Format" || name === "Organization Profile";
 		// 	}
 		// }
-		return name === "Groups/Division";
+		if (name === "Groups/Division") {
+			return true;
+		}
+		if (userRole != "Super Admin" && (name === "Organization Profile" || name === "Offer Letter Format")) {
+			return true;
+		}
+		return false;
 	}
 
 	const tabHeading_1 = [
@@ -1475,7 +1481,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 															</div>
 														</div>
 													</div>
-													{atsVersion === "enterprise" && (
+													{!upcomingSoon && (
 														<div className="-mx-3 flex flex-wrap">
 															<div className="mb-6 w-full px-3 lg:max-w-[50%]">
 																<h6 className="mb-3 font-bold">{t("Words.ChooseColorPalates")}</h6>

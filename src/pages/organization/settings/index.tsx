@@ -37,6 +37,15 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 		return false;
 		// }
 	}
+	function hideOrNot(name: any) {
+		if (name === "Integrations" || name === "Calendar" || name === "Notifications") {
+			return true;
+		}
+		if (userRole != "Super Admin" && (name === "Plans & Pricing" || name === "Team Members" || name === "Vendors")) {
+			return true;
+		}
+		return false;
+	}
 
 	useEffect(() => {
 		if (userRole === "Super Admin" && currentuser && currentuser.length > 0) {
@@ -69,7 +78,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/profile",
 			color: "#B2E3FF",
 			blur: blurOrNot("Profile"),
-			hide: false
+			hide: hideOrNot("Profile")
 		},
 		{
 			name: t("Words.Integrations"),
@@ -77,7 +86,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/integrations",
 			color: "#D7C9FF",
 			blur: blurOrNot("Integrations"),
-			hide: true
+			hide: hideOrNot("Integrations")
 		},
 		{
 			name: t("Words.Vendors"),
@@ -85,7 +94,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/vendors",
 			color: "#90DEFF",
 			blur: blurOrNot("Vendors"),
-			hide: false
+			hide: hideOrNot("Vendors")
 		},
 		{
 			name: t("Words.Calendar"),
@@ -93,7 +102,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/calendar",
 			color: "#FFC0D3",
 			blur: blurOrNot("Calendar"),
-			hide: true
+			hide: hideOrNot("Calendar")
 		},
 		{
 			name: t("Words.TeamMembers"),
@@ -101,7 +110,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/team-members",
 			color: "#C0D1FF",
 			blur: blurOrNot("Team Members"),
-			hide: false
+			hide: hideOrNot("Team Members")
 		},
 		{
 			name: t("Words.Notifications"),
@@ -109,7 +118,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/notifications",
 			color: "#FFC0C0",
 			blur: blurOrNot("Notifications"),
-			hide: true
+			hide: hideOrNot("Notifications")
 		},
 		{
 			name: t("Words.Plans_Pricing"),
@@ -117,7 +126,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/pricing",
 			color: "#FFC0E9",
 			blur: blurOrNot("Plans & Pricing"),
-			hide: false
+			hide: hideOrNot("Plans & Pricing")
 		}
 	];
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);

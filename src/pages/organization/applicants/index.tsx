@@ -59,6 +59,12 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
+	// useEffect(() => {
+	// 	if (refresh != 0) {
+	// 		setrefresh(0);
+	// 	}
+	// }, [srcLang]);
+
 	const cancelButtonRef = useRef(null);
 	const [createBoard, setCreateBoard] = useState(false);
 
@@ -318,11 +324,16 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<main>
 				<Orgsidebar />
 				<Orgtopbar />
-				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
+				{token && token.length > 0 && (
+					<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} setrefresh={setrefresh} refresh={refresh} />
+				)}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
+				{/* <button className={`layoutWrap p-4`} onClick={() => setrefresh(0)}>
+					Refresh
+				</button> */}
 
 				{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
 					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
