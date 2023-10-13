@@ -9,42 +9,20 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import novusIcon from "/public/images/novus1.png";
 import novusIcon12 from "/public/images/novus12.png";
+import Button from "../Button";
 
-export default function noAuthHeader() {
+export default function noAuthHeader({ scrollTop }: any) {
 	// const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
-
-	const [isVisible, setIsVisible] = useState(false);
-	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth"
-		});
-	};
-
-	useEffect(() => {
-		// Button is displayed after scrolling for 500 pixels
-		const toggleVisibility = () => {
-			if (window.pageYOffset > 20) {
-				setIsVisible(true);
-			} else {
-				setIsVisible(false);
-			}
-		};
-
-		window.addEventListener("scroll", toggleVisibility);
-
-		return () => window.removeEventListener("scroll", toggleVisibility);
-	}, []);
 
 	return (
 		<>
 			<div
 				id="topbar"
 				className={
-					`fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-between bg-transparent px-6 py-3 shadow` +
+					`fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-between bg-transparent px-6 py-3 delay-150` +
 					" " +
-					`${isVisible ? "backdrop-blur-md" : "bg-transparent"}`
+					`${scrollTop > 10 ? "bg-white/10 backdrop-blur-md" : "bg-transparent"}`
 				}
 			>
 				<div>
@@ -52,25 +30,47 @@ export default function noAuthHeader() {
 					{/* <Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" /> */}
 					<Image src={novusIcon} alt={"Novus1"} width={45} className="max-h-[45px]" />
 				</div>
-				<div className="flex gap-8 px-6 py-3">
-					<Link href="/lp" className={`${router.route.includes("/lp") ? "menu__link2" : "menu__link"}`}>
+				<div className="flex gap-10 px-6 py-3">
+					<Link
+						href="/lp"
+						className={"my-auto" + " " + `${router.route.includes("/lp") ? "menu__link2" : "menu__link"}`}
+					>
 						Home
 					</Link>
-					<Link href="#" className={`${router.route.includes("/about") ? "menu__link2" : "menu__link"}`}>
+					<Link
+						href="#"
+						className={"my-auto" + " " + `${router.route.includes("/about") ? "menu__link2" : "menu__link"}`}
+					>
 						About
 					</Link>
-					<Link href="#" className={`${router.route.includes("/features") ? "menu__link2" : "menu__link"}`}>
+					<Link
+						href="#"
+						className={"my-auto" + " " + `${router.route.includes("/features") ? "menu__link2" : "menu__link"}`}
+					>
 						Features
 					</Link>
-					<div>
+					<div className="my-auto">
 						<Link href="#" className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>
 							Novus
 						</Link>
 						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
 					</div>
-					<Link href="#" className={`${router.route.includes("/blogs") ? "menu__link2" : "menu__link"}`}>
+					<Link
+						href="#"
+						className={"my-auto" + " " + `${router.route.includes("/blogs") ? "menu__link2" : "menu__link"}`}
+					>
 						Blogs
 					</Link>
+					<div className="ml-8">
+						<button
+							className={`my-2 w-auto rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-sm font-semibold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200`}
+						>
+							Learn More
+							<span className="ml-2">
+								<i className="fa-regular fa-circle-check"></i>
+							</span>
+						</button>
+					</div>
 					{/* <ThemeChange />
 					<button
 						type="button"

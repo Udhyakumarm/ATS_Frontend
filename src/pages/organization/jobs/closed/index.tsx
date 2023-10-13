@@ -19,7 +19,7 @@ import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 
-export default function JobsDrafted() {
+export default function JobsDrafted({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -139,6 +139,7 @@ export default function JobsDrafted() {
 															// }}
 															axiosInstanceAuth2={axiosInstanceAuth2}
 															loadJob={getDraftedJobs}
+															userRole={userRole}
 														/>
 													</div>
 												)
