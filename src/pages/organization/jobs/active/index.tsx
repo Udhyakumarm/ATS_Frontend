@@ -19,7 +19,7 @@ import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 
-export default function JobsActive() {
+export default function JobsActive({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
@@ -138,6 +138,7 @@ export default function JobsActive() {
 														// }}
 														axiosInstanceAuth2={axiosInstanceAuth2}
 														loadJob={getActiveJobs}
+														userRole={userRole}
 													/>
 												</div>
 											)

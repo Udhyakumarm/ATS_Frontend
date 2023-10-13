@@ -32,7 +32,7 @@ import { Combobox, Dialog, Menu, Tab, Transition } from "@headlessui/react";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore } from "@/utils/code";
+import { useLangStore, useUserStore } from "@/utils/code";
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton } from "react-share";
 import TwitterShareButton from "react-share/lib/TwitterShareButton";
 import TelegramShareButton from "react-share/lib/TelegramShareButton";
@@ -42,6 +42,8 @@ import { useNewNovusStore } from "@/utils/novus";
 export default function RecPreivew(props) {
 	const { t } = useTranslation("common");
 	const cancelButtonRef = useRef(null);
+	const userRole = useUserStore((state: { role: any }) => state.role);
+	const userState = useUserStore((state: { user: any }) => state.user);
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
 	const { data: session } = useSession();
@@ -57,6 +59,10 @@ export default function RecPreivew(props) {
 	const [token, settoken] = useState("");
 	const [btndis, setbtndis] = useState(false);
 	const [mainShareJob, mainShareJobOpen] = useState(false);
+
+	function emailExists(jdata: any, email: any) {
+		return jdata.team.some((member) => member.email === email);
+	}
 
 	useEffect(() => {
 		if (session) {
@@ -76,6 +82,7 @@ export default function RecPreivew(props) {
 			.get(`/job/detail-job/${refid}/`)
 			.then((res) => {
 				toastcomp("job load", "success");
+				console.log("^^^", "JDetail", res.data[0]);
 				setjdata(res.data[0]);
 			})
 			.catch((err) => {
@@ -159,212 +166,134 @@ export default function RecPreivew(props) {
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
 									<div className="text-md flex gap-2">
-										<button
-											type="button"
-											onClick={() => mainShareJobOpen(true)}
-											className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-										>
-											<i className="fa-solid fa-share"></i>
-											<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を編集" : "Share Job"}</div>
-										</button>
 										{jdata.jobStatus === "Active" && (
-											<>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`/organization/jobs/edit/${jdata.refid}`);
-													}}
-												>
-													<i className="fa-solid fa-pen"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を編集" : "Edit Job"}</div>
-												</button>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`/organization/jobs/clone/${jdata.refid}`);
-													}}
-												>
-													<i className="fa-solid fa-clone"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を複製" : "Clone Job"}</div>
-												</button>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Archived", jdata.refid)}
-												>
-													<i className="fa-solid fa-box-archive"></i>
-													<div className="whitespace-nowrap">
-														{srcLang === "ja" ? "求人をアーカイブ" : "Archieve Job"}
-													</div>
-												</button>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Closed", jdata.refid)}
-												>
-													<i className="fa-solid fa-trash"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}</div>
-												</button>
-											</>
-										)}
-
-										{(jdata.jobStatus === "Draft" || jdata.jobStatus === "Archived") && (
-											<>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`/organization/jobs/edit/${jdata.refid}`);
-													}}
-												>
-													<i className="fa-solid fa-pen"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を編集" : "Edit Job"}</div>
-												</button>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`/organization/jobs/clone/${jdata.refid}`);
-													}}
-												>
-													<i className="fa-solid fa-clone"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を複製" : "Clone Job"}</div>
-												</button>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={() => statusUpdate("Closed", jdata.refid)}
-												>
-													<i className="fa-solid fa-trash"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}</div>
-												</button>
-											</>
-										)}
-
-										{jdata.jobStatus === "Closed" && (
-											<>
-												<button
-													type="button"
-													className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													onClick={(e) => {
-														router.push(`/organization/jobs/clone/${jdata.refid}`);
-													}}
-												>
-													<i className="fa-solid fa-clone"></i>
-													<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を複製" : "Clone Job"}</div>
-												</button>
-											</>
-										)}
-
-										{/*
-										<Menu as="div" className="text-md relative mr-6 inline-block">
-											<Menu.Button className={"p-2"}>
-												<i className="fa-solid fa-ellipsis-vertical"></i>
-											</Menu.Button>
-											<Transition
-												as={Fragment}
-												enter="transition ease-out duration-100"
-												enterFrom="transform opacity-0 scale-95"
-												enterTo="transform opacity-100 scale-100"
-												leave="transition ease-in duration-75"
-												leaveFrom="transform opacity-100 scale-100"
-												leaveTo="transform opacity-0 scale-95"
+											<button
+												type="button"
+												onClick={() => mainShareJobOpen(true)}
+												className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 											>
-												
-													
-
-													{jdata.jobStatus === "Draft" && (
-														<>
-															<Menu.Item>
+												<i className="fa-solid fa-share"></i>
+												<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を編集" : "Share Job"}</div>
+											</button>
+										)}
+										{userRole != "Hiring Manager" && (
+											<>
+												{(userRole === "Recruiter" &&
+													jdata.team &&
+													jdata.team.some((member) => member.email === userState[0]["email"])) ||
+												userRole === "Collaborator" ||
+												userRole === "Super Admin" ? (
+													<>
+														{jdata.jobStatus === "Active" && (
+															<>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={(e) => {
-																		router.push(`edit/${jdata.refid}`);
+																		router.push(`/organization/jobs/edit/${jdata.refid}`);
 																	}}
 																>
-																	{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																	<i className="fa-solid fa-pen"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-															<Menu.Item>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={(e) => {
-																		router.push(`clone/${jdata.refid}`);
+																		router.push(`/organization/jobs/clone/${jdata.refid}`);
 																	}}
 																>
-																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	<i className="fa-solid fa-clone"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-															<Menu.Item>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => statusUpdate("Archived", jdata.refid)}
+																>
+																	<i className="fa-solid fa-box-archive"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人をアーカイブ" : "Archieve Job"}
+																	</div>
+																</button>
+																<button
+																	type="button"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={() => statusUpdate("Closed", jdata.refid)}
 																>
-																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																	<i className="fa-solid fa-trash"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-														</>
-													)}
+															</>
+														)}
 
-													{jdata.jobStatus === "Archived" && (
-														<>
-															<Menu.Item>
+														{(jdata.jobStatus === "Draft" || jdata.jobStatus === "Archived") && (
+															<>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={(e) => {
-																		router.push(`edit/${jdata.refid}`);
+																		router.push(`/organization/jobs/edit/${jdata.refid}`);
 																	}}
 																>
-																	{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																	<i className="fa-solid fa-pen"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-															<Menu.Item>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={(e) => {
-																		router.push(`clone/${jdata.refid}`);
+																		router.push(`/organization/jobs/clone/${jdata.refid}`);
 																	}}
 																>
-																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	<i className="fa-solid fa-clone"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-															<Menu.Item>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={() => statusUpdate("Closed", jdata.refid)}
 																>
-																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																	<i className="fa-solid fa-trash"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-														</>
-													)}
+															</>
+														)}
 
-													{jdata.jobStatus === "Closed" && (
-														<>
-															<Menu.Item>
+														{jdata.jobStatus === "Closed" && (
+															<>
 																<button
 																	type="button"
-																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 																	onClick={(e) => {
-																		router.push(`clone/${jdata.refid}`);
+																		router.push(`/organization/jobs/clone/${jdata.refid}`);
 																	}}
 																>
-																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	<i className="fa-solid fa-clone"></i>
+																	<div className="whitespace-nowrap">
+																		{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																	</div>
 																</button>
-															</Menu.Item>
-														</>
-													)} 
-												</Menu.Items>
-											</Transition>
-										</Menu>*/}
+															</>
+														)}
+													</>
+												) : (
+													<></>
+												)}
+											</>
+										)}
 									</div>
 								</div>
 								<div className="px-8 py-4">

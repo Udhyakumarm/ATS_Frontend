@@ -19,7 +19,7 @@ import {
 	EmailShareButton
 } from "react-share";
 
-export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob }: any) {
+export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob, userRole }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [starred, setStarred] = useState(false);
 	const cancelButtonRef = useRef(null);
@@ -32,6 +32,15 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
+
+	useEffect(() => {
+		console.log("^^^", "JD", job);
+	}, [job]);
+
+	function emailExists(email: any) {
+		console.log("^^^", "emailExists", email);
+		return job.team.some((member) => member.email === email);
+	}
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 	const [comingSoon, setComingSoon] = useState(false);
@@ -205,68 +214,73 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									</button>
 								</>
 							)}
-							<Menu as="div" className="relative inline-block">
-								<Menu.Button className={"p-2"}>
-									<i className="fa-solid fa-ellipsis-vertical"></i>
-								</Menu.Button>
-								<Transition
-									as={Fragment}
-									enter="transition ease-out duration-100"
-									enterFrom="transform opacity-0 scale-95"
-									enterTo="transform opacity-100 scale-100"
-									leave="transition ease-in duration-75"
-									leaveFrom="transform opacity-100 scale-100"
-									leaveTo="transform opacity-0 scale-95"
-								>
-									<Menu.Items
-										className={
-											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
-										}
-									>
-										{job.jobStatus === "Active" && (
-											<>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`edit/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`clone/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => statusUpdate("Archived", job.refid)}
-													>
-														{srcLang === "ja" ? "求人をアーカイブ" : "Archieve Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => statusUpdate("Closed", job.refid)}
-													>
-														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
-													</button>
-												</Menu.Item>
-												{/* temp hide naman */}
-												{/* <Menu.Item>
+							{userRole != "Hiring Manager" && (
+								<>
+									{(userRole === "Recruiter" && emailExists(userState[0]["email"])) ||
+									userRole === "Collaborator" ||
+									userRole === "Super Admin" ? (
+										<Menu as="div" className="relative inline-block">
+											<Menu.Button className={"p-2"}>
+												<i className="fa-solid fa-ellipsis-vertical"></i>
+											</Menu.Button>
+											<Transition
+												as={Fragment}
+												enter="transition ease-out duration-100"
+												enterFrom="transform opacity-0 scale-95"
+												enterTo="transform opacity-100 scale-100"
+												leave="transition ease-in duration-75"
+												leaveFrom="transform opacity-100 scale-100"
+												leaveTo="transform opacity-0 scale-95"
+											>
+												<Menu.Items
+													className={
+														"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
+													}
+												>
+													{job.jobStatus === "Active" && (
+														<>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`edit/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`clone/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => statusUpdate("Archived", job.refid)}
+																>
+																	{srcLang === "ja" ? "求人をアーカイブ" : "Archieve Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => statusUpdate("Closed", job.refid)}
+																>
+																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																</button>
+															</Menu.Item>
+															{/* temp hide naman */}
+															{/* <Menu.Item>
 													<button
 														type="button"
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
@@ -276,99 +290,104 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 														{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
 													</button>
 												</Menu.Item> */}
-											</>
-										)}
+														</>
+													)}
 
-										{job.jobStatus === "Draft" && (
-											<>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`edit/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`clone/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => statusUpdate("Closed", job.refid)}
-													>
-														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
-													</button>
-												</Menu.Item>
-											</>
-										)}
+													{job.jobStatus === "Draft" && (
+														<>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`edit/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`clone/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => statusUpdate("Closed", job.refid)}
+																>
+																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																</button>
+															</Menu.Item>
+														</>
+													)}
 
-										{job.jobStatus === "Archived" && (
-											<>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`edit/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を編集" : "Edit Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`clone/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
-													</button>
-												</Menu.Item>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => statusUpdate("Closed", job.refid)}
-													>
-														{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
-													</button>
-												</Menu.Item>
-											</>
-										)}
+													{job.jobStatus === "Archived" && (
+														<>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`edit/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を編集" : "Edit Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`clone/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																</button>
+															</Menu.Item>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => statusUpdate("Closed", job.refid)}
+																>
+																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																</button>
+															</Menu.Item>
+														</>
+													)}
 
-										{job.jobStatus === "Closed" && (
-											<>
-												<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={(e) => {
-															router.push(`clone/${job.refid}`);
-														}}
-													>
-														{srcLang === "ja" ? "求人を複製" : "Clone Job"}
-													</button>
-												</Menu.Item>
-											</>
-										)}
-									</Menu.Items>
-								</Transition>
-							</Menu>
+													{job.jobStatus === "Closed" && (
+														<>
+															<Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={(e) => {
+																		router.push(`clone/${job.refid}`);
+																	}}
+																>
+																	{srcLang === "ja" ? "求人を複製" : "Clone Job"}
+																</button>
+															</Menu.Item>
+														</>
+													)}
+												</Menu.Items>
+											</Transition>
+										</Menu>
+									) : (
+										<></>
+									)}
+								</>
+							)}
 						</div>
 					)}
 				</div>
