@@ -190,17 +190,17 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 			});
 
 			// Add footer to every page
-			const pages = pdfDoc.getPages();
-			const font = await pdfDoc.embedFont("Helvetica"); // You can use a different font if desired
+			// const pages = pdfDoc.getPages();
+			// const font = await pdfDoc.embedFont("Helvetica"); // You can use a different font if desired
 
-			for (const page of pages) {
-				const text = "Powered By Somhako";
-				const width = font.widthOfTextAtSize(text, 12);
-				const textX = (page.getWidth() - width) / 2;
-				const textY = 40; // Adjust this value to set the distance from the bottom
+			// for (const page of pages) {
+			// 	const text = "Powered By Somhako";
+			// 	const width = font.widthOfTextAtSize(text, 12);
+			// 	const textX = (page.getWidth() - width) / 2;
+			// 	const textY = 40; // Adjust this value to set the distance from the bottom
 
-				page.drawText(text, { x: textX, y: textY, size: 12, font });
-			}
+			// 	page.drawText(text, { x: textX, y: textY, size: 12, font });
+			// }
 
 			// Serialize the modified PDF
 			const mergedPdfData = await pdfDoc.save();

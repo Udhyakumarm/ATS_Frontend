@@ -45,81 +45,43 @@ export default function LandingPage() {
 								className="h-[100vh] w-[100vw] object-cover"
 							/>
 						</div>
-						<div className="z-10 flex h-[80vh] w-full shrink items-center justify-between border-4 border-black">
-							<div className="w-[50%] border-4 border-red-500">LOREM1</div>
-							<div className="ml-auto w-[50%] border-4 border-red-500">
+						<div className="z-10 flex max-h-[80vh] w-full shrink items-center justify-between ">
+							<div className="w-[50%] ">LOREM1</div>
+							<div className="ml-auto w-[50%] ">
 								<Image src={bg1x} alt="bg1x" width={1000} height={1000} className="h-auto max-h-[70vh] w-auto" />
 							</div>
 						</div>
 						<div className="cards z-10 grid grid-cols-2 max-sm:cursor-none  max-sm:grid-cols-1 xl:grid-cols-4">
-							<Tilt
-								glareEnable={true}
-								perspective={500}
-								glareColor="#5500FF"
-								glareMaxOpacity={0.5}
-								glarePosition={"all"}
-								glareReverse={true}
-								glareBorderRadius={"10px"}
-								className="card group"
-							>
-								<p className="px-1 text-xl font-semibold tracking-widest group-hover:font-bold">
+							<div className="card group">
+								<p className="px-1 text-xl font-semibold tracking-wide group-hover:font-bold">
 									All New AI HR assistant
 								</p>
-								<p className="px-2.5 text-xs">
+								<p className="px-1.5 text-xs">
 									Experience seamless and efficient HR operations with our dedicated, all-new HR assistant powered by
 									GPT-4
 								</p>
-							</Tilt>
+							</div>
 
-							<Tilt
-								glareEnable={true}
-								perspective={500}
-								glareColor="#5500FF"
-								glareMaxOpacity={0.5}
-								glarePosition={"all"}
-								glareReverse={true}
-								glareBorderRadius={"10px"}
-								className="card group"
-							>
-								<p className="px-1 text-xl font-semibold tracking-widest group-hover:font-bold">Offer Management</p>
+							<div className="card group">
+								<p className="px-1 text-xl font-semibold tracking-wide group-hover:font-bold">Offer Management</p>
 								<p className="px-2.5 text-xs">
 									Effortlessly track and manage all your offers with our integrated Offer Management System
 								</p>
-							</Tilt>
-							<Tilt
-								glareEnable={true}
-								perspective={500}
-								glareColor="#5500FF"
-								glareMaxOpacity={0.5}
-								glarePosition={"all"}
-								glareReverse={true}
-								glareBorderRadius={"10px"}
-								className="card group"
-							>
+							</div>
+							<div className="card group">
 								<p className="px-1 text-xl font-semibold tracking-wider group-hover:font-bold">
 									AI generated Job description
 								</p>
 								<p className="px-5 text-xs">
 									Craft comprehensive job descriptions effortlessly and in no time with the help of AI
 								</p>
-							</Tilt>
-							<Tilt
-								glareEnable={true}
-								perspective={500}
-								glareColor="#5500FF"
-								glareMaxOpacity={0.5}
-								glarePosition={"all"}
-								glareReverse={true}
-								glareBorderRadius={"10px"}
-								className="card group"
-							>
-								<p className="px-1 text-xl font-semibold tracking-widest group-hover:font-bold">
-									Internal Collaboration
-								</p>
+							</div>
+							<div className="card group">
+								<p className="px-1 text-xl font-semibold tracking-wide group-hover:font-bold">Internal Collaboration</p>
 								<p className="px-5 text-xs">
 									Utilize our built-in chat feature for seamless and efficient communication
 								</p>
-							</Tilt>
+							</div>
 						</div>
 					</section>
 
