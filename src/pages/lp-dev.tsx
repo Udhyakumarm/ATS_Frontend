@@ -17,7 +17,7 @@ import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import { Disclosure } from "@headlessui/react";
 import Tabs from "@/components/noAuth/Tabs";
 
-export default function LandingPage() {
+export default function LandingPageDev() {
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const handleScroll = (event) => {
@@ -93,9 +93,17 @@ export default function LandingPage() {
 								width: "100vw",
 								background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 							}}
-						></div>
-						<div className="z-10 flex h-[80vh] w-full shrink items-center justify-between">
-							<div className="m-4 w-[60%] flex-row items-center justify-center p-8 text-center text-white">
+						>
+							{/* <Image
+								src={landingPageBackground}
+								alt="LP"
+								width={"1000"}
+								height={"1000"}
+								className="h-[100vh] w-[100vw] object-cover"
+							/> */}
+						</div>
+						<div className="z-10 flex h-[80vh] w-full shrink items-center justify-between border-2 border-red-500">
+							<div className="m-4 w-[60%] flex-row items-center justify-center border-4 border-green-500 p-8 text-center text-white">
 								<h1 className="text-left text-6xl font-bold uppercase" style={{ letterSpacing: "7px" }}>
 									(R)evolutionising the Future of
 									<br />
@@ -111,11 +119,17 @@ export default function LandingPage() {
 										style={{
 											background:
 												"radial-gradient(2531.44% 156.09% at 13.45% 124.32%, #36CEF5 0%, #8037DE 66.68%, #E58BD3 100%)",
+											// background: "rgba(255, 255, 255, 0.1)",
+											// boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.2)",
+											// borderTop: "3px solid rgba(255, 255, 255, 0.38)",
+											// borderLeft: "3px solid rgba(255, 255, 255, 0.38)",
+											// backdropFilter: "blur(50px)",
 											borderRadius: "10px"
 										}}
 									>
 										<span className="text-2xl font-medium tracking-wider">Get Started now</span>
 										<i className="fa-regular fa-circle-check text-3xl"></i>
+										{/* <i className="fa-solid fa-circle-check text-xl"></i> */}
 									</div>
 									<div className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2">
 										<span className="text-lg uppercase tracking-wide text-white">Request for materials</span>
@@ -128,8 +142,15 @@ export default function LandingPage() {
 									</div>
 								</div>
 							</div>
-							<div className=" flex w-[40%] items-center justify-end">
-								<Image src={bg1x} alt="bg1x" width={1000} height={1000} className="h-auto max-h-[70vh] w-auto" />
+							<div className=" flex w-[40%] items-center justify-end border-4 border-green-500">
+								<Image
+									src={bg1x}
+									alt="bg1x"
+									width={1000}
+									height={1000}
+									className="h-auto max-h-[70vh] w-auto"
+									// style={{ float: "right" }}
+								/>
 							</div>
 						</div>
 						<div className="cards z-10 grid grid-cols-2 max-sm:cursor-none  max-sm:grid-cols-1 xl:grid-cols-4">
@@ -168,22 +189,91 @@ export default function LandingPage() {
 
 					{/* benefit section */}
 					<section className="flex h-[100vh] items-center justify-center gap-2 bg-[#e5e5e5] p-4 pt-[65px]">
-						<div className="relative h-full w-full">
+						<div className="relative h-full w-full border-2 border-red-500">
 							<div className="absolute left-[-20vh] top-[40%] -rotate-90 select-none max-md:left-[-5vh]">
-								<span className="text-9xl font-extrabold tracking-wide text-black/[0.05] max-md:text-4xl">
+								<span className=" border-2 border-black text-9xl font-extrabold tracking-wide text-black/[0.05] max-md:text-4xl">
 									Benefits
 								</span>
 							</div>
-							<div className="ml-[30vh] flex h-full flex-col items-center justify-start gap-2 max-md:ml-0">
-								<div className="m-2 px-4 py-0 text-center text-4xl font-semibold uppercase leading-loose max-xl:leading-normal max-lg:text-2xl">
+							<div className="ml-[30vh] flex h-full flex-col items-center justify-start gap-2 border-4 border-cyan-700 max-md:ml-0">
+								<div className="m-2 border-2 border-red-500 px-2 py-0 text-center text-4xl font-semibold uppercase leading-loose max-xl:leading-normal max-lg:text-2xl">
 									Take Control of Your Time with Our Intelligent Talent Automation Program
 								</div>
-								<div className="m-2 px-[200px] py-2 text-center text-lg max-xl:px-2">
+								<div className="m-2 border-2 border-red-500 px-[200px] py-2 text-center text-lg max-xl:px-2">
 									Somhako is powered by an agile, AI-platform that enables recruiters to find top talents. Our
 									dashboards use a one-tool approach, empowering recruiters to hire more efficiently from anywhere in
 									the world.
 								</div>
-								<div className="m-2 mt-4 h-[45vh] w-full p-2">
+								<div className="m-2 mt-4 h-[45vh] w-full border-2 border-red-500 p-2">
+									{/* <Tab.Group>
+										<Tab.List className={"overflow-auto"}>
+											<div className="flex w-full justify-center">
+												{tabHeading_1.map((item, i) => (
+													<Tab key={i} as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-5 py-1 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary dark:border-white dark:text-white"
+																		: "border-transparent text-darkGray dark:text-gray-400") +
+																	" " +
+																	(!item.hide && "display-none")
+																}
+															>
+																{item.title}
+															</button>
+														)}
+													</Tab>
+												))}
+											</div>
+										</Tab.List>
+										<Tab.Panels>
+											<Tab.Panel>
+												<div className="m-2 flex items-center justify-center gap-4 p-2">
+													<Image
+														src={tab1}
+														alt="LP"
+														width={"1000"}
+														height={"1000"}
+														className="h-auto max-h-[40vh] w-auto"
+													/>
+													<div className="m-2 w-full max-w-[25vw] p-2">
+														<Tab1 />
+													</div>
+												</div>
+											</Tab.Panel>
+											<Tab.Panel>
+												<div className="m-2 flex items-center justify-center gap-4 p-2">
+													<Image
+														src={tab2}
+														alt="LP"
+														width={"1000"}
+														height={"1000"}
+														className="h-auto max-h-[40vh] w-auto"
+													/>
+													<div className="m-2 w-full max-w-[25vw] p-2">
+														<Tab1 />
+													</div>
+												</div>
+											</Tab.Panel>
+											<Tab.Panel>
+												<div className="m-2 flex items-center justify-center gap-4 p-2">
+													<Image
+														src={tab3}
+														alt="LP"
+														width={"1000"}
+														height={"1000"}
+														className="h-auto max-h-[40vh] w-auto"
+													/>
+													<div className="m-2 w-full max-w-[25vw] p-2">
+														<Tab1 />
+													</div>
+												</div>
+											</Tab.Panel>
+										</Tab.Panels>
+									</Tab.Group> */}
 									<Tabs />
 								</div>
 							</div>
@@ -192,7 +282,7 @@ export default function LandingPage() {
 
 					{/* novus section	 */}
 					<section
-						className="relative flex h-[100vh] snap-center flex-col items-center justify-center  pt-[65px]"
+						className="relative flex h-[100vh] snap-center flex-col items-center justify-center border-4 border-black pt-[65px]"
 						style={{
 							height: "100vh",
 							width: "100vw",
@@ -200,18 +290,24 @@ export default function LandingPage() {
 						}}
 					>
 						<div
-							className="absolute left-0 top-0 "
+							className="absolute left-0 top-0 border-2 border-green-500"
 							style={{
 								height: "100vh",
 								width: "100vw"
 							}}
 						>
-							<Image src={novusBg1} alt="LP" width={"1000"} height={"1000"} className="h-[100vh] w-auto" />
+							<Image
+								src={novusBg1}
+								alt="LP"
+								width={"1000"}
+								height={"1000"}
+								className="h-[100vh] w-auto border-2 border-red-500"
+							/>
 						</div>
-						<div className="z-10 h-[70vh] w-full ">
+						<div className="z-10 h-[70vh] w-full border-4 border-red-800">
 							<div className="mx-[10vw] flex flex-col gap-6 px-10">
-								<div className=" text-9xl font-black text-white/[0.05]">Novus</div>
-								<div className="">
+								<div className="border-2 border-black text-9xl font-black text-white/[0.05]">Novus</div>
+								<div className="border-2 border-black">
 									<div className="flex justify-end">
 										<div className="w-[40vw] text-lg font-light leading-10 text-white">
 											<span className="text-4xl font-semibold uppercase">Novus AI</span> significantly enhances
@@ -220,8 +316,8 @@ export default function LandingPage() {
 										</div>
 									</div>
 								</div>
-								<div className="">
-									<div className="ml-auto flex w-[40vw] ">
+								<div className="border-2 border-black">
+									<div className="ml-auto flex w-[40vw] border-2 border-red-500">
 										<div
 											className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2"
 											style={{
@@ -268,7 +364,7 @@ export default function LandingPage() {
 							</div>
 						</div>
 						<div
-							className="z-10 flex h-[30vh] w-full items-center justify-around gap-2 px-8"
+							className="z-10 flex h-[30vh] w-full items-center justify-around gap-4 border-4 border-red-800 px-6"
 							style={{
 								backgroundImage: "url('images/noAuth/tabBg1.jpg')",
 								backgroundRepeat: "no-repeat",
@@ -276,8 +372,8 @@ export default function LandingPage() {
 								backgroundPosition: "center"
 							}}
 						>
-							<div className="h-[25vh] w-auto">
-								<div className="flex h-full w-full flex-col justify-around">
+							<div className="h-[25vh] w-auto border-2 border-red-500">
+								<div className="flex h-full w-full flex-col">
 									<p className="text-2xl uppercase leading-10 tracking-widest text-white">
 										Somahako’s AI-driven dashboard creates an environment that fosters unrivalled efficiency, allowing
 										you to make strategic hiring choices.
@@ -325,12 +421,43 @@ export default function LandingPage() {
 									</div>
 								</div>
 							</div>
-							<div className="h-[25vh] w-[45vw] ">
-								<Image src={demoBg} alt="LP" width={"1000"} height={"1000"} className="ml-auto h-full  w-auto" />
+							<div className="h-[25vh] w-[45vw] border-2 border-red-500">
+								<Image
+									src={demoBg}
+									alt="LP"
+									width={"1000"}
+									height={"1000"}
+									className="h-full w-full border-2 border-red-500"
+								/>
 							</div>
 						</div>
 					</section>
+
+					<section className="flex h-[100vh] snap-center items-center justify-center gap-2 bg-[#444cf7] p-4 pt-[65px]">
+						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Qui obcaecati labore voluptates dolorum quidem aut
+						harum totam sequi magnam molestiae aliquam modi quasi eaque, asperiores libero eos repellat, ipsum pariatur!
+					</section>
+					<section className="flex h-[100vh] snap-center items-center justify-center gap-2 bg-[#905bd0] p-4 pt-[65px]">
+						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Qui obcaecati labore voluptates dolorum quidem aut
+						harum totam sequi magnam molestiae aliquam modi quasi eaque, asperiores libero eos repellat, ipsum pariatur!
+					</section>
+					<section className="flex h-[100vh] snap-center items-center justify-center gap-2 bg-[#3700b3] p-4 pt-[65px]">
+						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Qui obcaecati labore voluptates dolorum quidem aut
+						harum totam sequi magnam molestiae aliquam modi quasi eaque, asperiores libero eos repellat, ipsum pariatur!
+					</section>
+					<section className="flex h-[100vh] snap-center items-center justify-center gap-2 bg-[#444cf7] p-4 pt-[65px]">
+						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Qui obcaecati labore voluptates dolorum quidem aut
+						harum totam sequi magnam molestiae aliquam modi quasi eaque, asperiores libero eos repellat, ipsum pariatur!
+					</section>
 				</div>
+
+				{/* <section className="container123">
+					<h1 className="child123">Slide 1</h1>
+					<h1 className="child123">Slide 2</h1>
+					<h1 className="child123">Slide 3</h1>
+					<h1 className="child123">Slide 4</h1>
+					<h1 className="child123">Slide 5</h1>
+				</section> */}
 			</main>
 		</>
 	);
@@ -345,4 +472,4 @@ export async function getStaticProps({ context, locale }: any) {
 	};
 }
 
-LandingPage.noAuth = true;
+LandingPageDev.noAuth = true;

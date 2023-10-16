@@ -1,0 +1,60 @@
+import React, { useState } from "react";
+
+export default function Tab3() {
+	const [disclosures, setDisclosures] = useState([
+		{
+			id: "disclosure-panel-1",
+			isOpen: false,
+			buttonText: "One-click sifting",
+			panelText: "Novus implements a fast-paced approach to enable quick talent organisation and management."
+		},
+		{
+			id: "disclosure-panel-2",
+			isOpen: false,
+			buttonText: "Embrace the speed",
+			panelText:
+				"Somhako uses a one-tool approach to create a dynamic environment that seamlessly adapts to your rhythm, enabling you to recruit the finest talents with great proficiency."
+		},
+		{
+			id: "disclosure-panel-3",
+			isOpen: false,
+			buttonText: "Experience convenience",
+			panelText:
+				"Novus takes over all the never-ending tasks and simplifies all tiresome operations to unlock a convenient and hassle-free hiring experience."
+		}
+	]);
+
+	const handleClick = (id) => {
+		setDisclosures(disclosures.map((d) => (d.id === id ? { ...d, isOpen: !d.isOpen } : { ...d, isOpen: false })));
+	};
+
+	return (
+		<div className="mx-auto w-full max-w-md space-y-2 rounded-2xl ">
+			{disclosures.map(({ id, isOpen, buttonText, panelText }) => (
+				<React.Fragment key={id}>
+					<div
+						className="rounded-lg text-white"
+						style={{
+							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundRepeat: "no-repeat",
+							backgroundSize: "cover",
+							backgroundPosition: "center"
+						}}
+					>
+						<button
+							// className="flex w-full justify-between rounded-lg bg-gray-300 px-4 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+							className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium text-white"
+							onClick={() => handleClick(id)}
+							aria-expanded={isOpen}
+							{...(isOpen && { "aria-controls": id })}
+						>
+							{buttonText}
+							<i className={`fa-solid text-lg ${isOpen ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
+						</button>
+						{isOpen && <div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-sm">{panelText}</div>}
+					</div>
+				</React.Fragment>
+			))}
+		</div>
+	);
+}
