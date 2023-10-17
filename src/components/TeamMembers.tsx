@@ -49,27 +49,30 @@ export default function TeamMembers({ selectedData, axiosInstanceAuth2 }: any) {
 					<Menu as="div" className="relative flex">
 						<Menu.Button className={"relative"}>
 							<div className="flex flex-row-reverse">
-								{tm.map((data, i) =>
-									data["profile"] && data["profile"].length > 0 ? (
-										<Image
-											key={i}
-											src={data["profile"]}
-											alt="User"
-											width={35}
-											height={35}
-											className={`h-[35px] rounded-full object-cover`}
-										/>
-									) : (
-										<Image
-											key={i}
-											src={userImg1}
-											alt="User"
-											width={35}
-											height={35}
-											className={`h-[35px] rounded-full object-cover`}
-										/>
-									)
-								)}
+								{tm
+									.slice(0, 3)
+									.map((data, i) =>
+										data["profile"] && data["profile"].length > 0 ? (
+											<Image
+												key={i}
+												src={data["profile"]}
+												alt="User"
+												width={35}
+												height={35}
+												className={`h-[35px] rounded-full object-cover`}
+											/>
+										) : (
+											<Image
+												key={i}
+												src={userImg1}
+												alt="User"
+												width={35}
+												height={35}
+												className={`h-[35px] rounded-full object-cover`}
+											/>
+										)
+									)}
+								{count > 3 && <div className="mt-auto">...</div>}
 							</div>
 							<span className="absolute right-0 top-0 block flex h-full w-[35px] items-center justify-center rounded-full bg-[rgba(0,0,0,0.3)] text-sm text-white">
 								+{count}

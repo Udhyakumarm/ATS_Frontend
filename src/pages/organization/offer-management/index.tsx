@@ -123,6 +123,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 	const [value, setvalue] = useState("");
 	const [bvalue, setbvalue] = useState("");
 	const htmlRef = useRef<HTMLDivElement>(null);
+	const [cvisible, setcvisible] = useState(false);
 
 	const offerArefid = useNewNovusStore((state: { offerArefid: any }) => state.offerArefid);
 	const setofferArefid = useNewNovusStore((state: { setofferArefid: any }) => state.setofferArefid);
@@ -481,6 +482,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 				if (data["candidate_status"] && data["candidate_status"].length > 0) {
 					setocstatus(data["candidate_status"]);
 				}
+				setcvisible(data["candidate_visibility"]);
 
 				if (data["approval_authorities"] && data["approval_authorities"].length > 0) {
 					let fstring = [];
@@ -536,6 +538,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 				} else {
 					setrelocation("");
 				}
+				setcvisible(false);
 				setsection("");
 				setgrade("");
 				setlocation("");
@@ -846,6 +849,37 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 
 			offerDetail(arefid, currentApplicant);
 		});
+	}
+
+	async function sendOLDL(arefid: string) {
+		await axiosInstanceAuth2
+			.post(`/job/offer-letter/${arefid}/`)
+			.then(async (res) => {
+				toastcomp("offer letter link send", "success");
+			})
+			.catch((err) => {
+				toastcomp("offer letter link not send", "error");
+			});
+	}
+	async function updateOfferVisble(arefid: string) {
+		const fd = new FormData();
+		fd.append("candidate_visibility", "true");
+		fd.append("step", 4);
+		await axiosInstanceAuth2
+			.put(`/job/update-offer/${omrefid}/`, fd)
+			.then(async (res) => {
+				toastcomp("offer visiblity Updated", "success");
+				sendOLDL(arefid);
+				offerDetail(arefid, currentApplicant);
+				console.log("@", "Offer Updated", res.data);
+				// setom(res.data);
+			})
+			.catch((err) => {
+				toastcomp("offer visiblity Not Updated", "error");
+				offerDetail(arefid, currentApplicant);
+				// setom([]);
+				console.log("@", "Offer Not Updated", err);
+			});
 	}
 
 	const handleDownload = () => {
@@ -1161,7 +1195,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 														{userRole != "Hiring Manager" && (
 															<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
 																<div
-																	className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
 																	// onClick={() => setstep(1)}
 																>
 																	{(offer.length > 0 && offer[0]["step"] === 1) || (offer.length <= 0 && step === 1) ? (
@@ -1186,7 +1220,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																	)}
 																</div>
 																<div
-																	className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
 																	// onClick={() => setstep(2)}
 																>
 																	{(offer.length > 0 && offer[0]["step"] === 2) || (offer.length <= 0 && step === 2) ? (
@@ -1223,7 +1257,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																	)}
 																</div>
 																<div
-																	className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
 																	// onClick={() => setstep(3)}
 																>
 																	{(offer.length > 0 && offer[0]["step"] === 3) || (offer.length <= 0 && step === 3) ? (
@@ -1260,7 +1294,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																	)}
 																</div>
 																<div
-																	className="after:content[''] relative w-[150px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
 																	// onClick={() => setstep(4)}
 																>
 																	{(offer.length > 0 && offer[0]["step"] === 4) || (offer.length <= 0 && step === 4) ? (
@@ -2083,12 +2117,19 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																						dangerouslySetInnerHTML={{ __html: value }}
 																					></article>
 																				</div>
-																				<div className="px-8 pt-4 text-center">
+																				<div className="flex flex-wrap justify-center gap-2 px-8 pt-4 text-center">
 																					<Button
 																						label={"Schedule Offer Call"}
 																						btnType="button"
 																						handleClick={() => checkGCAL()}
 																					/>
+																					{!cvisible && (
+																						<Button
+																							label={"Send Offer"}
+																							btnType="button"
+																							handleClick={() => updateOfferVisble(currentApplicant["arefid"])}
+																						/>
+																					)}
 																				</div>
 																			</>
 																		)}
@@ -2131,6 +2172,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 																) : (
 																	<></>
 																)}
+
 																{(offer.length > 0 && offer[0]["step"] === 5) || (offer.length <= 0 && step === 5) ? (
 																	<section className="px-10 py-6">
 																		{ocstatus === "Pending" && (

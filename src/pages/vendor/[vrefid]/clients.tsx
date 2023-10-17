@@ -42,10 +42,27 @@ export default function VendorClients() {
 	const [vdata, setvdata] = useState({});
 
 	const [vjdata, setvjdata] = useState([]);
+	const [showOffer, setshowOffer] = useState(false);
+	const [offerDetails, setofferDetails] = useState([]);
 	const [addSocial, setAddSocial] = useState(false);
 	const [sadApply, setsadApply] = useState(false);
 	const [vjobclick, setvjobclick] = useState(-1);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+
+	async function offerVisible(arefid: any) {
+		await axiosInstanceAuth2
+			.get(`/job/list-offer/${arefid}/`)
+			.then(async (res) => {
+				console.log("!", "Offer Detail", res.data);
+				setofferDetails(res.data);
+				setshowOffer(true);
+				// setvjdata(res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setofferDetails([]);
+			});
+	}
 
 	useEffect(() => {
 		if (session) {
@@ -1161,18 +1178,26 @@ export default function VendorClients() {
 															<tbody className="text-sm font-semibold">
 																{venapp &&
 																	venapp.map((data, i) => (
-																		<tr
-																			className="cursor-pointer odd:bg-gray-100 dark:odd:bg-gray-600"
-																			key={i}
-																			onClick={() => {
-																				setpopupvcrefid(data["applicant"]["vcrefid"]);
-																				setViewApplicant(true);
-																			}}
-																		>
+																		<tr className=" odd:bg-gray-100 dark:odd:bg-gray-600" key={i}>
 																			<td className="px-3 py-2 text-left">
 																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
 																			</td>
-																			<td className="px-3 py-2 text-left">{data["status"]}</td>
+																			{data["status"] === "Offer" || data["status"] === "Hired" ? (
+																				<>
+																					<td
+																						className={`cursor-pointer px-3 py-2 text-left hover:underline`}
+																						onClick={() => offerVisible(data["arefid"])}
+																					>
+																						{data["status"]}
+																						<i className="fa-solid fa-eye ml-2"></i>
+																					</td>
+																				</>
+																			) : (
+																				<>
+																					<td className="px-3 py-2 text-left">{data["status"]}</td>
+																				</>
+																			)}
+
 																			<td className="px-3 py-2 text-left">{moment(data["timestamp"]).fromNow()}</td>
 																			<td className="px-3 py-2 text-left">
 																				<button type="button" className="text-primary hover:underline dark:text-white">
@@ -1194,6 +1219,152 @@ export default function VendorClients() {
 					</div>
 				</div>
 			</main>
+			<Transition.Root show={showOffer} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setshowOffer}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className=" w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="font-semibold leading-none">Offer Details</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setshowOffer(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{offerDetails && offerDetails.length > 0 ? (
+											<>
+												{offerDetails.map((data, i) => (
+													<>
+														{data["step"] >= 2 ? (
+															<>
+																<div key={i}>
+																	{!data["candidate_visibility"] || data["step"] === 2 || data["step"] === 3 ? (
+																		<>
+																			<section className="">
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																					{data["step"] === 3 && (
+																						<p className="text-lg">Offer In A Disscussion Stage </p>
+																					)}
+																					{data["step"] === 2 && (
+																						<p className="text-lg">Offer In A Finalization Stage </p>
+																					)}
+																					{data["step"] === 3 && (
+																						<small className="font-semibold">
+																							You can view the offer letter once the recruiter makes it visible to you.
+																						</small>
+																					)}
+																				</div>
+																			</section>
+																		</>
+																	) : (
+																		<>
+																			<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																				<p className="my-2 font-bold">Offer Letter</p>
+																				<button
+																					className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																					onClick={() => {
+																						if (data["finalofferLetter"] && data["finalofferLetter"].length > 0) {
+																							window.open(data["finalofferLetter"], "_blank");
+																						} else if (data["offerLetter"] && data["offerLetter"].length > 0) {
+																							window.open(data["offerLetter"], "_blank");
+																						}
+																					}}
+																				>
+																					<i className="fa-solid fa-download mr-2"></i>
+																					Download
+																				</button>
+																			</div>
+
+																			{data["step"] >= 4 && (
+																				<>
+																					<div className="mx-auto w-full max-w-[700px] py-4">
+																						<p className="text-center">
+																							{data["finalofferLetter"] && data["finalofferLetter"].length > 0 ? (
+																								<iframe
+																									src={`${data["finalofferLetter"]}`}
+																									className="h-[50vh] w-[100%]"
+																								></iframe>
+																							) : (
+																								<iframe
+																									src={`${data["offerLetter"]}`}
+																									className="h-[50vh] w-[100%]"
+																								></iframe>
+																							)}
+																						</p>
+																					</div>
+																					{data["candidate_status"] === "Pending" ? (
+																						<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																							<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																							<p className="text-lg">Candidate Offer Status Pending </p>
+																						</div>
+																					) : (
+																						<div className="my-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																							<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																							<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
+																						</div>
+																					)}
+																				</>
+																			)}
+																		</>
+																	)}
+																</div>
+															</>
+														) : (
+															<section>
+																<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																	<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																	<p className="text-lg">Offer In A Prepration Stage </p>
+																</div>
+															</section>
+														)}
+													</>
+												))}
+											</>
+										) : (
+											<>
+												<section className="">
+													<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+														<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+														<p className="text-lg">No Offer</p>
+														<small className="font-semibold">Right Now There Are No Offers For This Candidate.</small>
+													</div>
+												</section>
+											</>
+										)}
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
 			<Transition.Root show={addCand} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddCand}>
 					<Transition.Child
