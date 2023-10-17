@@ -131,6 +131,8 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 		const fd = new FormData();
 		fd.append("step", "2");
 		fd.append("novus", "reject");
+		fd.append("candidate_status", "Pending");
+		fd.append("candidate_visibility", "false");
 		updateOffer(omrefid, fd, "Reject");
 	}
 
@@ -213,6 +215,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 			fd.append("step", 5);
 			fd.append("finalofferLetter", pdfFile, "merged.pdf");
 			fd.append("candidate_status", "Accepted");
+			fd.append("candidate_visibility", "true");
 			fd.append("novus", "accept");
 			updateOffer(omrefid, fd, "Approve");
 		} catch (error) {
@@ -382,141 +385,64 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 											<>
 												{offers.map((data, i) => (
 													<>
-														{data["step"] >= 3 && (
+														{data["step"] >= 2 ? (
 															<div key={i}>
-																<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																	<p className="my-2 font-bold">Offer Letter</p>
-																	<button
-																		className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																		onClick={() => {
-																			if (
-																				data["step"] >= 4 &&
-																				data["finalofferLetter"] &&
-																				data["finalofferLetter"].length > 0
-																			) {
-																				window.open(data["finalofferLetter"], "_blank");
-																			} else if (
-																				data["step"] === 3 &&
-																				data["offerLetter"] &&
-																				data["offerLetter"].length > 0
-																			) {
-																				window.open(data["offerLetter"], "_blank");
-																			}
-																		}}
-																	>
-																		<i className="fa-solid fa-download mr-2"></i>
-																		Download
-																	</button>
-																</div>
-
-																{data["step"] > 4 && (
-																	<div className="mx-auto w-full max-w-[700px] py-4">
-																		<p className="text-center">
-																			{data["finalofferLetter"] && data["finalofferLetter"].length > 0 && (
-																				<iframe
-																					src={`${data["finalofferLetter"]}`}
-																					className="h-[50vh] w-[100%]"
-																				></iframe>
-																			)}
-																		</p>
-																	</div>
-																)}
-
-																{data["step"] === 3 && (
-																	<div className="mx-auto w-full max-w-[700px] py-4">
-																		<p className="text-center">
-																			{data["offerLetter"] && data["offerLetter"].length > 0 && (
-																				<iframe src={`${data["offerLetter"]}`} className="h-[50vh] w-[100%]"></iframe>
-																			)}
-																		</p>
-																		<p className="pt-2 text-center text-sm">
-																			Right Now Offer Is Disscussion Stage <br />
-																			After Select Slot Offer Approve/Reject Option Available.
-																		</p>
-																	</div>
-																)}
-
-																{data["step"] === 4 && (
+																{!data["candidate_visibility"] || data["step"] === 2 || data["step"] === 3 ? (
 																	<>
-																		<div className="mx-auto w-full max-w-[700px] py-4">
-																			<p className="text-center">
-																				{data["offerLetter"] && data["offerLetter"].length > 0 && (
-																					<iframe src={`${data["offerLetter"]}`} className="h-[50vh] w-[100%]"></iframe>
+																		<section>
+																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																				{data["step"] === 3 && <p className="text-lg">Offer In A Disscussion Stage </p>}
+																				{data["step"] === 2 && (
+																					<p className="text-lg">Offer In A Finalization Stage </p>
 																				)}
-																			</p>
-																			<div className="pt-8">
-																				<h5 className="mb-2 font-bold">Add Signature</h5>
-																				<label
-																					htmlFor="uploadBanner"
-																					className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed py-4 hover:bg-lightBlue dark:hover:bg-gray-700"
-																				>
-																					{!file ? (
-																						<>
-																							<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-																							<p className="text-sm text-darkGray dark:text-gray-400">
-																								Upload Signature or Photo
-																								<br />
-																								<small>(File type should be .png format)</small>
-																							</p>
-																						</>
-																					) : (
-																						<>
-																							<Image
-																								src={URL.createObjectURL(sign)}
-																								alt="User"
-																								width={1200}
-																								height={800}
-																								className="mx-auto h-auto max-h-[200px] w-auto object-contain"
-																							/>
-																						</>
-																					)}
-
-																					<input
-																						type="file"
-																						hidden
-																						id="uploadBanner"
-																						accept=".png"
-																						onChange={handleFileInputChange}
-																					/>
-																				</label>
+																				{data["step"] === 3 && (
+																					<small className="font-semibold">
+																						You can view the offer letter once the recruiter makes it visible to you.
+																					</small>
+																				)}
 																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center justify-center border-t pt-4 dark:border-t-gray-600">
-																			<div className="mx-2">
-																				<Button
-																					btnStyle="success"
-																					label="Accept"
-																					btnType="button"
-																					disabled={!file}
-																					handleClick={() => acceptOffer(data["omrefid"], data["offerLetter"])}
-																				/>
-																			</div>
-																			<div className="mx-2">
-																				<Button
-																					btnStyle="danger"
-																					label="Reject"
-																					btnType="button"
-																					handleClick={() => rejectOffer(data["omrefid"])}
-																				/>
-																			</div>
-																		</div>
+																		</section>
 																	</>
-																)}
-
-																{/* {data["step"] >= 4 ? (
-																	<div className="mx-auto w-full max-w-[700px] py-4">
-																		<p className="text-center">
-																			{data["finalofferLetter"] && data["finalofferLetter"].length > 0 && (
-																				<iframe
-																					src={`${data["finalofferLetter"]}`}
-																					className="h-[50vh] w-[100%]"
-																				></iframe>
-																			)}
-																		</p>
-																	</div>
 																) : (
 																	<>
-																		{data["step"] == 4 && (
+																		<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																			<p className="my-2 font-bold">Offer Letter</p>
+																			<button
+																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																				onClick={() => {
+																					if (data["finalofferLetter"] && data["finalofferLetter"].length > 0) {
+																						window.open(data["finalofferLetter"], "_blank");
+																					} else if (data["offerLetter"] && data["offerLetter"].length > 0) {
+																						window.open(data["offerLetter"], "_blank");
+																					}
+																				}}
+																			>
+																				<i className="fa-solid fa-download mr-2"></i>
+																				Download
+																			</button>
+																		</div>
+
+																		{data["step"] > 4 && (
+																			<>
+																				<div className="mx-auto w-full max-w-[700px] py-4">
+																					<p className="text-center">
+																						{data["finalofferLetter"] && data["finalofferLetter"].length > 0 && (
+																							<iframe
+																								src={`${data["finalofferLetter"]}`}
+																								className="h-[50vh] w-[100%]"
+																							></iframe>
+																						)}
+																					</p>
+																				</div>
+																				<div className="my-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																					<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
+																				</div>
+																			</>
+																		)}
+
+																		{data["step"] === 4 && (
 																			<>
 																				<div className="mx-auto w-full max-w-[700px] py-4">
 																					<p className="text-center">
@@ -533,36 +459,68 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																							htmlFor="uploadBanner"
 																							className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed py-4 hover:bg-lightBlue dark:hover:bg-gray-700"
 																						>
-																							<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-																							<p className="text-sm text-darkGray dark:text-gray-400">
-																								Upload Signature or Photo
-																								<br />
-																								<small>(File type should be .png format)</small>
-																							</p>
-																							<Image
-																								src={signature}
-																								alt="Sign"
-																								width={1200}
-																								height={800}
-																								className="mx-auto h-auto max-h-[200px] w-auto object-contain"
+																							{!file ? (
+																								<>
+																									<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
+																									<p className="text-sm text-darkGray dark:text-gray-400">
+																										Upload Signature or Photo
+																										<br />
+																										<small>(File type should be .png format)</small>
+																									</p>
+																								</>
+																							) : (
+																								<>
+																									<Image
+																										src={URL.createObjectURL(sign)}
+																										alt="User"
+																										width={1200}
+																										height={800}
+																										className="mx-auto h-auto max-h-[200px] w-auto object-contain"
+																									/>
+																								</>
+																							)}
+
+																							<input
+																								type="file"
+																								hidden
+																								id="uploadBanner"
+																								accept=".png"
+																								onChange={handleFileInputChange}
 																							/>
-																							<input type="file" hidden id="uploadBanner" accept="image/*" />
 																						</label>
 																					</div>
 																				</div>
 																				<div className="flex flex-wrap items-center justify-center border-t pt-4 dark:border-t-gray-600">
 																					<div className="mx-2">
-																						<Button btnStyle="success" label="Accept" />
+																						<Button
+																							btnStyle="success"
+																							label="Accept"
+																							btnType="button"
+																							disabled={!file}
+																							handleClick={() => acceptOffer(data["omrefid"], data["offerLetter"])}
+																						/>
 																					</div>
 																					<div className="mx-2">
-																						<Button btnStyle="danger" label="Reject" />
+																						<Button
+																							btnStyle="danger"
+																							label="Reject"
+																							btnType="button"
+																							handleClick={() => rejectOffer(data["omrefid"])}
+																						/>
 																					</div>
 																				</div>
 																			</>
 																		)}
 																	</>
-																)} */}
+																)}
 															</div>
+														) : (
+															<section>
+																<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																	<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																	<p className="text-lg">Offer In A Prepration Stage </p>
+																</div>
+															</section>
 														)}
 													</>
 												))}
