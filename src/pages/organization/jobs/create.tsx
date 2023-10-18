@@ -32,6 +32,8 @@ import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import UnsavedChangesPrompt from "@/components/UnsavedChangesPrompt";
+import { Switch } from "@headlessui/react";
+import genDesc from "/public/images/genDesc.png";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg, dis }: any) => {
 	return (
@@ -227,7 +229,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const [jrecruiter, setjrecruiter] = useState(false);
 	const [jcollaborator, setjcollaborator] = useState(false);
-	const [jtm, setjtm] = useState([]);
+	const [ujtm, setujtm] = useState([]);
 	const [jfv, setjfv] = useState([]);
 
 	function previewJobDis() {
@@ -395,8 +397,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			}
 
 			fd.append("jobStatus", "Active");
-			if (jtm.length > 0) {
-				fd.append("teamID", jtm.join("|"));
+			if (ujtm.length > 0) {
+				fd.append("teamID", ujtm.join("|"));
 			}
 			if (jfv.length > 0) {
 				fd.append("vendorID", jfv.join("|"));
@@ -516,8 +518,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			}
 
 			fd.append("jobStatus", "Draft");
-			if (jtm.length > 0) {
-				fd.append("teamID", jtm.join("|"));
+			if (ujtm.length > 0) {
+				fd.append("teamID", ujtm.join("|"));
 			}
 			if (jfv.length > 0) {
 				fd.append("vendorID", jfv.join("|"));
@@ -607,71 +609,6 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			.catch((err) => {
 				console.log(err);
 			});
-	}
-
-	function onChnageCheck(e) {
-		e.preventDefault();
-		let arr = jtm;
-		if (e.target.checked) {
-			if (e.target.dataset.id === "Collaborator") {
-				setjcollaborator(true);
-			}
-
-			if (e.target.dataset.id === "Recruiter") {
-				setjrecruiter(true);
-			}
-
-			// if (e.target.dataset.id === "Hiring Manager") {
-			// }
-
-			let value = e.target.value;
-			let value2 = e.target.dataset.pk;
-
-			arr.push(value2);
-		} else {
-			if (e.target.dataset.id === "Collaborator") {
-				setjcollaborator(false);
-			}
-
-			if (e.target.dataset.id === "Recruiter") {
-				setjrecruiter(false);
-			}
-
-			// if (e.target.dataset.id === "Hiring Manager") {
-			// }
-
-			let value = e.target.value;
-			let value2 = e.target.dataset.pk;
-
-			arr = arr.filter((item) => item !== value2);
-		}
-
-		console.log("!", arr);
-		// console.log("!", e.target.dataset.pk);
-		setjtm(arr);
-	}
-
-	function onChnageCheck2(e) {
-		e.preventDefault();
-		let arr = jfv;
-		if (e.target.checked) {
-			let value2 = e.target.dataset.pk2;
-
-			if (e.target.dataset.id === "Vendor") {
-			}
-
-			arr.push(value2);
-		} else {
-			let value2 = e.target.dataset.pk2;
-
-			if (e.target.dataset.id === "Vendor") {
-			}
-			arr = arr.filter((item) => item !== value2);
-		}
-
-		console.log("!", arr);
-		// console.log("!", e.target.dataset.pk);
-		setjfv(arr);
 	}
 
 	function checkHideOrNot(title: any) {
@@ -820,6 +757,60 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 		return () => window.removeEventListener("scroll", toggleVisibility);
 	}, []);
+
+	function changeSwith(value: Boolean, data: any) {
+		console.log("Switch", "^^^", value);
+
+		if (value) {
+			setujtm([...ujtm, data["id"]]);
+		} else {
+			let arr = ujtm;
+			let value2 = data["id"];
+
+			arr = arr.filter((item: any) => item !== value2);
+			setujtm(arr);
+			console.log("Switch", "^^^", value, arr);
+		}
+	}
+
+	function changeSwith1(value: Boolean, data: any) {
+		console.log("Switch Vendor", "^^^", value);
+
+		if (value) {
+			setjfv([...jfv, data["id"]]);
+		} else {
+			let arr = jfv;
+			let value2 = data["id"];
+
+			arr = arr.filter((item: any) => item !== value2);
+			setjfv(arr);
+			console.log("Switch Vendor", "^^^", value, arr);
+		}
+	}
+
+	useEffect(() => {
+		console.log("After Switch", "^^^^", ujtm);
+		console.log("After Switch", "^^^^", filterTeam);
+		setjcollaborator(false);
+		setjrecruiter(false);
+		if (tm.length > 0) {
+			for (let i = 0; i < tm.length; i++) {
+				if (ujtm.includes(tm[i]["id"])) {
+					if (tm[i]["role"] === "Collaborator") {
+						setjcollaborator(true);
+					}
+					if (tm[i]["role"] === "Recruiter") {
+						setjrecruiter(true);
+					}
+				}
+			}
+		}
+	}, [ujtm]);
+
+	useEffect(() => {
+		console.log("After Switch jrecruiter", "^^^^", jrecruiter);
+		console.log("After Switch jcollaborator", "^^^^", jcollaborator);
+	}, [jrecruiter, jcollaborator]);
 
 	return (
 		<>
@@ -1087,8 +1078,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 													{aiLoader ? (
 														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
 													) : (
-														<div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-[6px] shadow-normal">
-															<Image src={favIcon} alt="AI" width={100} height={100} className="" />
+														<div className="flex h-[30px] w-[30px] items-center justify-center ">
+															<Image src={genDesc} alt="AI" width={100} height={100} className="" />
 														</div>
 													)}
 												</button>
@@ -1278,6 +1269,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									</div>
 								</Tab.Panel>
+
 								<Tab.Panel>
 									{upcomingSoon ? (
 										<UpcomingComp />
@@ -1302,6 +1294,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									)}
 								</Tab.Panel>
+
 								<Tab.Panel>
 									{atsVersion === "starter" ? (
 										<PermiumComp userRole={userRole} />
@@ -1399,14 +1392,23 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																							<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
 																							<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
 																							<td className="border-b px-3 py-2 text-right">
-																								<input
-																									type="checkbox"
-																									value={data["email"]}
-																									data-id={data["role"]}
-																									data-pk={data["id"]}
-																									checked={jtm.includes(data["id"].toString())}
-																									onChange={(e) => onChnageCheck(e)}
-																								/>
+																								<Switch
+																									checked={ujtm.includes(data["id"])}
+																									onChange={(value: Boolean) => changeSwith(value, data)}
+																									className={`${
+																										ujtm.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"
+																									}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																								>
+																									<span className="sr-only">Use setting</span>
+																									<span
+																										aria-hidden="true"
+																										className={`${
+																											ujtm.includes(data["id"]) ? "translate-x-4" : "translate-x-0"
+																										}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																									/>
+																								</Switch>
 																							</td>
 																						</tr>
 																					)
@@ -1515,6 +1517,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									)}
 								</Tab.Panel>
+
 								<Tab.Panel>
 									{atsVersion != "enterprise" ? (
 										<PermiumComp userRole={userRole} />
@@ -1584,14 +1587,19 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																			<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
 																			<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
 																			<td className="border-b px-3 py-2 text-right">
-																				<input
-																					type="checkbox"
-																					value={data["email"]}
-																					data-id={"vendor"}
-																					data-pk2={data["id"]}
-																					checked={jfv.includes(data["id"].toString())}
-																					onChange={(e) => onChnageCheck2(e)}
-																				/>
+																				<Switch
+																					checked={jfv.includes(data["id"])}
+																					onChange={(value: Boolean) => changeSwith1(value, data)}
+																					className={`${jfv.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																				>
+																					<span className="sr-only">Use setting</span>
+																					<span
+																						aria-hidden="true"
+																						className={`${jfv.includes(data["id"]) ? "translate-x-4" : "translate-x-0"}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																					/>
+																				</Switch>
 																			</td>
 																		</tr>
 																	))}
@@ -1635,6 +1643,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										</div>
 									)}
 								</Tab.Panel>
+
 								<Tab.Panel>
 									{upcomingSoon ? (
 										<UpcomingComp />
