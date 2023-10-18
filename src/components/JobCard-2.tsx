@@ -49,7 +49,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		const formData = new FormData();
 		formData.append("jobStatus", status);
 		await axiosInstanceAuth2
-			.put(`/job/update-job/${refid}/`, formData)
+			.put(`/job/update-job-other/${refid}/`, formData)
 			.then((res) => {
 				toastcomp(`${status} Successfully`, "success");
 
@@ -180,7 +180,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		const fd = new FormData();
 		fd.append("star", star);
 		await axiosInstanceAuth2
-			.put(`/job/update-job/${refid}/`, fd)
+			.put(`/job/update-job-other/${refid}/`, fd)
 			.then(async (res) => {
 				toastcomp("Bookmarked Successfully", "success");
 				loadJob();

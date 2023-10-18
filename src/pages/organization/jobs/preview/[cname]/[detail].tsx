@@ -112,7 +112,7 @@ export default function RecPreivew(props) {
 		const formData = new FormData();
 		formData.append("jobStatus", status);
 		await axiosInstanceAuth2
-			.put(`/job/update-job/${refid}/`, formData)
+			.put(`/job/update-job-other/${refid}/`, formData)
 			.then((res) => {
 				toastcomp(`${status} Successfully`, "success");
 

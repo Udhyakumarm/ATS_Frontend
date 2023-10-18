@@ -118,7 +118,7 @@ export default function CanCareerJobDetail2(props) {
 	const cancelButtonRef = useRef(null);
 	const [addCand, setAddCand] = useState(false);
 	const [addSocial, setAddSocial] = useState(false);
-	const [sadApply, setsadApply] = useState(true);
+	const [sadApply, setsadApply] = useState(false);
 	const [resume, setresume] = useState<File | null>(null);
 	const [fname, setfname] = useState("");
 	const [lname, setlname] = useState("");
@@ -226,7 +226,7 @@ export default function CanCareerJobDetail2(props) {
 	async function addCandidateApplicant(refid: any, rating: any) {
 		const axiosInstanceAuth2 = axiosInstanceAuth(token);
 		const fd = new FormData();
-		fd.append("fit_data", rating);
+		fd.append("fit_data", rating.toString());
 		await axiosInstanceAuth2
 			.post(`/job/applicant/apply/${refid}/`, fd)
 			.then((res) => {
@@ -388,7 +388,7 @@ export default function CanCareerJobDetail2(props) {
 									addCandidateCert(refid, fd);
 								}
 
-								addCandidateApplicant(refid);
+								addCandidateApplicant(refid, rating);
 							}
 						})
 						.catch((err) => {
