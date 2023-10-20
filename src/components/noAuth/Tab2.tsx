@@ -30,11 +30,11 @@ export default function Tab2() {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-md space-y-2 rounded-2xl ">
+		<div className="mx-auto w-full space-y-6 rounded-2xl max-lg:space-y-3 ">
 			{disclosures.map(({ id, isOpen, buttonText, panelText }) => (
 				<React.Fragment key={id}>
 					<div
-						className="rounded-lg text-white"
+						className="rounded-[3vw] p-2 text-white max-md:rounded-[4vw] max-md:p-0"
 						style={{
 							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
@@ -44,7 +44,7 @@ export default function Tab2() {
 					>
 						<button
 							// className="flex w-full justify-between rounded-lg bg-gray-300 px-4 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
-							className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium text-white"
+							className="flex w-full items-center justify-between rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
 							onClick={() => handleClick(id)}
 							aria-expanded={isOpen}
 							{...(isOpen && { "aria-controls": id })}
@@ -52,7 +52,11 @@ export default function Tab2() {
 							{buttonText}
 							<i className={`fa-solid text-lg ${isOpen ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 						</button>
-						{isOpen && <div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-sm">{panelText}</div>}
+						{isOpen && (
+							<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
+								{panelText}
+							</div>
+						)}
 					</div>
 				</React.Fragment>
 			))}

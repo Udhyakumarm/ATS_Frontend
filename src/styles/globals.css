@@ -1120,12 +1120,12 @@ input[type="number"] {
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
-	height: 120px;
-	width: 320px;
+	max-height: 120px;
+	max-width: 320px;
 	color: white;
 	cursor: pointer;
 	transition: 400ms;
-	padding: 2rem 0rem;
+	padding: 3vw 0rem;
 	gap: 0.5rem;
 }
 

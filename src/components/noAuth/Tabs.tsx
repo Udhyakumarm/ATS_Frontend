@@ -30,13 +30,11 @@ export default function Tabs() {
 								{({ selected }) => (
 									<button
 										className={
-											"border-b-4 px-5 py-1 font-semibold focus:outline-none" +
+											"border-b-4 px-5 py-1 text-[1.2vw] font-semibold focus:outline-none max-md:text-[2.2vw]" +
 											" " +
 											(selected
-												? "scale-105 border-gray-900 text-gray-900 dark:border-white dark:text-white"
-												: "border-transparent text-darkGray dark:text-gray-400") +
-											" " +
-											(!item.hide && "display-none")
+												? "border-gray-900 text-gray-900 dark:border-white dark:text-white lg:scale-105"
+												: "border-transparent text-darkGray dark:text-gray-400")
 										}
 									>
 										<i className="fa-solid fa-circle-check"></i>&nbsp;
@@ -49,25 +47,25 @@ export default function Tabs() {
 				</Tab.List>
 				<Tab.Panels>
 					<Tab.Panel>
-						<div className="m-2 flex items-center justify-center gap-4 p-2">
-							<Image src={tab1} alt="LP" width={"1000"} height={"1000"} className="h-[35vh] w-auto " />
-							<div className="m-2 w-[25vw]  p-2">
+						<div className="flex flex-row items-stretch justify-center gap-4 p-8 max-lg:flex-col max-lg:items-center">
+							<Image src={tab1} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
+							<div className="w-[30vw]  py-2 max-lg:w-full max-md:py-0">
 								<Tab1 />
 							</div>
 						</div>
 					</Tab.Panel>
 					<Tab.Panel>
-						<div className="m-2 flex items-center justify-center gap-4 p-2">
-							<Image src={tab2} alt="LP" width={"1000"} height={"1000"} className="h-[35vh] w-auto " />
-							<div className="m-2 w-[25vw]  p-2">
+						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
+							<Image src={tab2} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
+							<div className="w-[30vw]   py-2 max-lg:w-full max-md:py-0">
 								<Tab2 />
 							</div>
 						</div>
 					</Tab.Panel>
 					<Tab.Panel>
-						<div className="m-2 flex items-center justify-center gap-4 p-2">
-							<Image src={tab3} alt="LP" width={"1000"} height={"1000"} className="h-[35vh] w-auto " />
-							<div className="m-2 w-[25vw]  p-2">
+						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
+							<Image src={tab3} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
+							<div className="w-[30vw]   py-2 max-lg:w-full max-md:py-0">
 								<Tab3 />
 							</div>
 						</div>
