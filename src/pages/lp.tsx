@@ -16,6 +16,9 @@ import benfitsImg1 from "public/images/noAuth/benfitsImg1.png";
 import novusSection from "public/images/noAuth/novusSection.png";
 import whySomhako from "public/images/noAuth/whySomhako.png";
 import whySomhako1 from "public/images/noAuth/whySomhako1.png";
+import whySomhako2 from "public/images/noAuth/whySomhako2.png";
+import whySomhako3 from "public/images/noAuth/whySomhako3.png";
+import whySomhako4 from "public/images/noAuth/whySomhako4.png";
 import dream1 from "public/images/noAuth/dream1.png";
 import faq from "public/images/noAuth/faq.png";
 import tab1 from "public/images/noAuth/tab1.png";
@@ -26,8 +29,25 @@ import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import { Disclosure } from "@headlessui/react";
 import Tabs from "@/components/noAuth/Tabs";
 import Faq from "@/components/noAuth/FaQ";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export default function LandingPage() {
+	const settings = {
+		dots: false,
+		arrows: false,
+		infinite: true,
+		speed: 1500,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		adaptiveHeight: false,
+		autoplay: true,
+		autoplaySpeed: 4000,
+		vertical: false,
+		emulateTouch: true
+	};
+
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const handleScroll = (event) => {
@@ -38,15 +58,26 @@ export default function LandingPage() {
 		console.log("scrollTop", scrollTop);
 	}, [scrollTop]);
 
-	const tabHeading_1 = [
+	const whyHeading_1 = [
 		{
-			title: "Talent Acquisition"
+			title: "Find the best talent with our cutting-edge intelligence technology",
+			sub: "Somhako’s AI meticulously curates candidate profiles to enhance your talent pool with our talent insights",
+			img: whySomhako1
 		},
 		{
-			title: "Talent Management"
+			title: "Streamline processes and unlock better strategies",
+			sub: "Our intuitively designed AI software encourages you to optimise your time by only spending it on things that matter",
+			img: whySomhako2
 		},
 		{
-			title: "Workflow Management"
+			title: "Explore the potential of our AI integrated platform",
+			sub: "Novus acts as your HR assistant to help you deliver the best results by providing a fast-paced environment designed for your ease",
+			img: whySomhako3
+		},
+		{
+			title: "Go global with a single click",
+			sub: "Somhako’s one-tool dashboard is integrated with multiple languages to ensure global accessibility and utility for all its users",
+			img: whySomhako4
 		}
 	];
 
@@ -368,8 +399,41 @@ export default function LandingPage() {
 									</div>
 								</div>
 							</div>
-							<div className="m-2 flex h-auto w-full items-center justify-center  p-8 max-lg:p-4 max-md:p-2">
-								<div className="min-h-auto flex w-[80vw] items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+							<div className="m-2 h-auto w-full p-8 max-lg:p-4 max-md:p-2">
+								<Slider {...settings}>
+									{whyHeading_1.map((data, i) => (
+										<div key={i}>
+											<div className="min-h-auto mx-auto my-auto flex w-[80vw] items-center justify-center gap-4   p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+												<div className="flex flex-grow flex-col gap-4 ">
+													<div className="w-full text-[2vw]  text-white max-lg:text-center max-lg:text-[3.3vw] max-md:text-center max-md:text-[4vw]">
+														{data.title}
+													</div>
+													<div className="w-[90%] text-[1vw] font-light tracking-wider text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
+														{data.sub}
+													</div>
+													<div className="z-10 flex justify-start  pt-8 text-white max-lg:justify-center">
+														<div
+															className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
+															style={{
+																background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
+																// borderRadius: "10px"
+															}}
+														>
+															<span className=" font-medium tracking-wider">Get Started now</span>
+															<i className="fa-regular fa-circle-check "></i>
+														</div>
+													</div>
+												</div>
+												<div className="w-auto lg:w-[70vw]">
+													<Image src={data.img} alt="why" width={1000} height={1000} className="h-auto w-auto" />
+												</div>
+											</div>
+										</div>
+									))}
+								</Slider>
+							</div>
+							{/* <div className="m-2 flex h-auto w-full items-center justify-center  border-2 border-white p-8 max-lg:p-4 max-md:p-2">
+								<div className="min-h-auto flex w-[80vw] items-center gap-4  border-2 border-white p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 									<div className="flex flex-grow flex-col gap-4 ">
 										<div className="w-full text-[2vw]  text-white max-lg:text-center max-lg:text-[3.3vw] max-md:text-center max-md:text-[4vw]">
 											Find the best talent with our cutting-edge intelligence technology
@@ -395,7 +459,7 @@ export default function LandingPage() {
 										<Image src={whySomhako1} alt="why" width={1000} height={1000} className="h-auto w-auto" />
 									</div>
 								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 

@@ -49,7 +49,7 @@ export default function Tabs() {
 					<Tab.Panel>
 						<div className="flex flex-row items-stretch justify-center gap-4 p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab1} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
-							<div className="w-[30vw]  py-2 max-lg:w-full max-md:py-0">
+							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
 								<Tab1 />
 							</div>
 						</div>
@@ -57,7 +57,7 @@ export default function Tabs() {
 					<Tab.Panel>
 						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab2} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
-							<div className="w-[30vw]   py-2 max-lg:w-full max-md:py-0">
+							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
 								<Tab2 />
 							</div>
 						</div>
@@ -65,7 +65,7 @@ export default function Tabs() {
 					<Tab.Panel>
 						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab3} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
-							<div className="w-[30vw]   py-2 max-lg:w-full max-md:py-0">
+							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
 								<Tab3 />
 							</div>
 						</div>
