@@ -51,7 +51,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 
 	return (
 		<>
-			{isMobileOnly || !Component.mobileEnabled ? (
+			{isMobileOnly && !Component.mobileEnabled  ? (
 				<>
 					<div className="flex h-[calc(100vh-80px)] items-center justify-center p-[40px]">
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
