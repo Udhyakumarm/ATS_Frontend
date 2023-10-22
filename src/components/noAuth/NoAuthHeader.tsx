@@ -52,7 +52,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 					}`}
 				>
 					<Link
-						href="/lp"
+						href="/home"
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +
@@ -62,7 +62,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 						Home
 					</Link>
 					<Link
-						href="#"
+						href="/about"
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +
@@ -72,7 +72,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 						About
 					</Link>
 					<Link
-						href="#"
+						href="/features"
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +
@@ -81,12 +81,10 @@ export default function noAuthHeader({ scrollTop }: any) {
 					>
 						Features
 					</Link>
-					<div className="my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0">
-						<Link href="#" className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>
-							Novus
-						</Link>
+					<Link href="/novus" className="my-auto mb-4 flex w-fit flex-nowrap max-lg:mx-auto lg:mb-0 lg:mt-0">
+						<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>Novus</div>
 						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
-					</div>
+					</Link>
 					<Link
 						href="#"
 						className={
