@@ -39,7 +39,7 @@ export default function noAuthFooter() {
 					}}
 				></div>
 			</div> */}
-			<footer className="relative w-[100vw] bg-white p-4">
+			<footer className="relative w-full bg-white p-4">
 				<div
 					className="mx-auto w-full rounded-md px-8 py-4"
 					style={{
