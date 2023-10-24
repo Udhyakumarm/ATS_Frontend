@@ -56,7 +56,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +
-							`${router.route.includes("/lp") ? "menu__link2" : "menu__link"}`
+							`${router.route.includes("/home") ? "menu__link2" : "menu__link"}`
 						}
 					>
 						Home
