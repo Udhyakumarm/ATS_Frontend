@@ -34,15 +34,63 @@ import { useLangStore } from "@/utils/code";
 import Button from "../Button";
 import { isMobile } from "react-device-detect";
 import { useNewNovusStore } from "@/utils/novus";
+import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 
 export default function OrgSideBar() {
 	const router = useRouter();
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			// Call the async function immediately when the component mounts
+
+			console.log("!!!", "timeout1");
+			fetchCount();
+
+			// Set up an interval to call the async function every 5 seconds
+			const intervalId = setInterval(() => {
+				console.log("!!!", "timeout2");
+				fetchCount();
+			}, 5000); // 5000 milliseconds = 5 seconds
+
+			// Clean up the interval when the component unmounts to avoid memory leaks
+			return () => {
+				clearInterval(intervalId);
+			};
+		}
+	}, [token]);
+
+	// useEffect(() => {
+	// 	if (token && token.length > 0) {
+	// 		fetchCount();
+	// 	}
+	// }, [token]);
+
+	// useEffect(() => {
+	// 	// Creating a timeout within the useEffect hook
+	// 	setTimeout(() => {
+	// 		console.log("!!!", "timeout");
+	// 		fetchCount();
+	// 	}, 5000);
+	// }, []);
 
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const currentUser = useUserStore((state: { user: any }) => state.user);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
@@ -170,6 +218,35 @@ export default function OrgSideBar() {
 			router.push(url);
 		}
 	}
+
+	const [count, setcount] = useState(0);
+
+	async function fetchCount() {
+		await axiosInstanceAuth2
+			.get(`/inbox/total-unread-count/`)
+			.then(async (res) => {
+				console.log("!!!", res.data);
+				setcount(res.data["total"]);
+			})
+			.catch((err) => {
+				setcount(0);
+				console.log("!", err);
+			});
+	}
+
+	async function removeLogin(email: any) {
+		var fd = new FormData();
+		fd.append("email", email);
+		await axiosInstance2
+			.post(`/organization/after-logout/`, fd)
+			.then((res) => {
+				console.log("$", "res", res.data);
+			})
+			.catch((err) => {
+				console.log("$", "err", err);
+			});
+	}
+
 	return (
 		<>
 			<div
@@ -240,6 +317,17 @@ export default function OrgSideBar() {
 										/>
 									</span>
 									{show ? "" : menuItem.title}
+									{show ? (
+										""
+									) : (
+										<>
+											{menuItem.url === "/organization/inbox" && (
+												<span className="ml-auto rounded-full bg-primary px-2 py-0.5 font-normal text-white">
+													{count}
+												</span>
+											)}
+										</>
+									)}
 								</div>
 							</li>
 						))}
@@ -247,6 +335,8 @@ export default function OrgSideBar() {
 						<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}>
 							<div
 								onClick={() => {
+									toastcomp(currentUser[0]["email"], "success");
+									removeLogin(currentUser[0]["email"]);
 									signOut();
 
 									settype("");

@@ -18,7 +18,7 @@ const nextConfig = {
 	},
 	reactStrictMode: true,
 	images: {
-		domains: ["localhost", "127.0.0.1", "atsapi.somhako.com"]
+		domains: ["localhost", "127.0.0.1", "atsapi.somhako.com", "images.pexels.com", "cdn-images-1.medium.com"]
 	}
 	// env: {
 	// 	OPENAI_API: process.env.OPENAI_API
