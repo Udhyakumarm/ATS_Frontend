@@ -6,7 +6,7 @@ import { useLangStore } from "@/utils/code";
 import Logo from "../Logo";
 import Link from "next/link";
 import Image from "next/image";
-import LogoWhite from "/public/images/beta-logo-white.png";
+import footerLogo from "/public/images/noAuth/footerLogo.png";
 import { useEffect, useState } from "react";
 import novusIcon from "/public/images/novus1.png";
 import novusIcon12 from "/public/images/novus12.png";
@@ -49,7 +49,7 @@ export default function noAuthFooter() {
 					<div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
 						{/* <h5 className="mb-6">Material Tailwind</h5> */}
 						<div className="w-fit max-md:mx-auto">
-							<Image src={LogoWhite} priority alt={"Somhako"} width={"188"} />
+							<Image src={footerLogo} priority alt={"Somhako"} width={200} />
 						</div>
 						<div className="grid grid-cols-3 items-start justify-between gap-4 max-sm:grid-cols-1">
 							{LINKS.map(({ title, items }) => (
@@ -89,7 +89,7 @@ export default function noAuthFooter() {
 								<i className="fa-brands fa-facebook"></i>
 							</Link>
 							<Link href="#" className="opacity-80 transition-opacity hover:opacity-100">
-								<i className="fa-brands fa-github"></i>
+								<i className="fa-brands fa-instagram"></i>
 							</Link>
 						</div>
 					</div>

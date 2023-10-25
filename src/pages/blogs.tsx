@@ -94,164 +94,32 @@ export default function BlogsPage() {
 							background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 						}}
 					>
-						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-start gap-2 p-8 max-lg:p-4 max-md:gap-10 max-md:p-2">
-							<div className="w-full border-2 border-red-500 text-center text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:text-[5vw]">
-								Blog
+						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-start gap-2 p-8 pb-[4rem] max-lg:p-4 max-md:gap-10 max-md:p-2">
+							<div className="w-full text-center text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:text-[5vw]">
+								Blogs
 							</div>
-							<div className="flex h-auto w-full flex-row flex-wrap items-center justify-center gap-8 border-2 border-red-500 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+							<div className="flex h-auto w-[80vw] flex-row flex-wrap items-center justify-center gap-8 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 								{state &&
 									state.length > 0 &&
 									state.map((data, i) => (
-										<div className="m-3 h-96 w-72 rounded bg-white shadow-md" key={i}>
+										<div className="m-3 h-96 w-72 rounded-xl bg-white shadow-md" key={i}>
 											<div className="h-4/5 w-full">
 												<Image
 													width={1000}
 													height={1000}
-													className="h-full w-full rounded-t object-cover"
+													className="h-full w-full rounded-t-xl object-cover"
 													src={data.thumbnail}
 													alt="piña"
 												/>
 											</div>
 											<div className="h-1/2 w-full p-3">
-												{/* <Link
-													href={data.link}
-													target="_blank"
-													className=" truncate text-lg font-semibold uppercase text-gray-700 hover:text-yellow-600"
-												>
-													{data.title}
-												</Link> */}
-												<p className="cursor-pointer truncate  text-black hover:text-yellow-600">{data.title}</p>
-												<Link
-													href={data.link}
-													target="_blank"
-													className=" hover:underline"
-													style={{
-														background:
-															"-webkit-linear-gradient(75deg, rgba(15, 101, 205, 0.90) -1.16%, rgba(67, 165, 229, 0.63) 108.83%)",
-														WebkitBackgroundClip: "text",
-														WebkitTextFillColor: "transparent"
-													}}
-												>
+												<p className="cursor-pointer truncate  text-black hover:text-[#2D129A]">{data.title}</p>
+												<Link href={data.link} target="_blank" className="text-[#2D129A] hover:underline">
 													read more
 												</Link>
 											</div>
 										</div>
 									))}
-
-								{/* <div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5966630/pexels-photo-5966630.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Banana</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div>
-								<div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5217960/pexels-photo-5217960.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Mango</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div>
-								<div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5966630/pexels-photo-5966630.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Banana</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div>
-								<div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5217960/pexels-photo-5217960.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Mango</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div>
-								<div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5966630/pexels-photo-5966630.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Banana</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div>
-								<div className="m-3 h-96 w-72 rounded bg-white shadow-md">
-									<div className="h-3/4 w-full">
-										<Image
-											width={1000}
-											height={1000}
-											className="h-full w-full rounded-t object-cover"
-											src="https://images.pexels.com/photos/5217960/pexels-photo-5217960.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-											alt="piña"
-										/>
-									</div>
-									<div className="h-1/4 w-full p-3">
-										<a href="#" className=" text-gray-700 hover:text-yellow-600">
-											<span className="text-lg font-semibold uppercase tracking-wide ">Mango</span>
-										</a>
-										<p className="mt-1 text-sm leading-5 text-gray-600">
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										</p>
-									</div>
-								</div> */}
 							</div>
 						</div>
 					</div>

@@ -45,6 +45,7 @@ import Faq from "@/components/noAuth/FaQ";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Link from "next/link";
 
 export default function About() {
 	const [scrollTop, setScrollTop] = useState(0);
@@ -80,23 +81,23 @@ export default function About() {
 					>
 						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-evenly gap-20 p-8 max-lg:p-4 max-md:gap-10 max-md:p-2">
 							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-8  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
-								<div className="h-auto  w-[50%] max-md:w-full">
+								<div className="h-auto w-[40%]  max-md:w-full">
 									<Image
 										src={about1}
 										alt="why"
 										width={500}
 										height={500}
-										className="max-md:min-h-auto ml-auto h-auto max-h-[50vh] w-auto"
+										className="max-md:min-h-auto ml-auto h-auto max-h-[60vh] w-auto  max-md:mx-auto"
 									/>
 								</div>
-								<div className="flex w-[50%] flex-col gap-4  max-md:w-full">
+								<div className="flex w-[60%] flex-col gap-4 max-md:w-full">
 									<div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
 										About
 									</div>
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Hire Simple, Hire Perfect
 									</div>
-									<div className="w-[90%] text-[1vw] font-light uppercase  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-[90%] text-[1vw] font-light tracking-wider  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										We believe in making everything about hiring super simple so that you can unlock a supercharged
 										recruitment experience!
 									</div>
@@ -181,10 +182,13 @@ export default function About() {
 								</div>
 							</div>
 							<div className="flex w-[80%] justify-end gap-4  max-lg:w-full max-lg:justify-center ">
-								<div className="w-auto text-center text-[1vw] font-light capitalize tracking-wider text-white max-lg:text-[2vw] max-md:w-full max-md:text-[3vw]">
+								<Link
+									href="/values"
+									className="w-auto text-center text-[1vw] font-light capitalize tracking-wider text-white hover:underline max-lg:text-[2vw] max-md:w-full max-md:text-[3vw]"
+								>
 									read about our values more
 									<i className="fa-solid fa-circle-chevron-right ml-2"></i>
-								</div>
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -192,7 +196,7 @@ export default function About() {
 					{/* promblem section */}
 					<div className="h-auto w-full  bg-[#F5F6F8]">
 						<div className="flex h-auto w-full flex-col items-center justify-start gap-5 p-8 max-lg:p-4 max-md:p-2">
-							<div className="w-auto  text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
+							<div className="w-full px-2 text-left text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
 								Problem
 							</div>
 							<div className="w-auto  text-[2vw] font-bold uppercase text-black max-lg:w-full max-lg:text-center max-lg:text-[3vw] max-md:text-[4vw]">
@@ -219,7 +223,7 @@ export default function About() {
 											"linear-gradient(262deg, rgba(190, 190, 190, 0.42) 1.43%, rgba(217, 217, 217, 0.00) 96.38%)"
 									}}
 								>
-									<div className="w-full p-2 text-right text-[1vw] font-light  uppercase text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-full p-2 py-8 text-right text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										Recruiters typically take about a couple of days to share the shortlisted profiles with the hiring
 										managers.
 									</div>
@@ -243,7 +247,7 @@ export default function About() {
 											"linear-gradient(80deg, rgba(190, 190, 190, 0.42) 1.16%, rgba(217, 217, 217, 0.00) 105.58%)"
 									}}
 								>
-									<div className="w-full p-2 text-[1vw] font-light  uppercase text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-full p-2 py-8 text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										Following up on hiring managers for feedbacks can add further delays. This process can usually span
 										over 2-3 days.
 									</div>
@@ -267,7 +271,7 @@ export default function About() {
 											"linear-gradient(262deg, rgba(190, 190, 190, 0.42) 1.43%, rgba(217, 217, 217, 0.00) 96.38%)"
 									}}
 								>
-									<div className="w-full p-2 text-right text-[1vw] font-light  uppercase text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-full p-2 py-8 text-right text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										Manual scheduling of multiple interview rounds per candidate usually takes about 2-3 days. However,
 										the entire interview process can last up to 10 days.
 									</div>
@@ -335,7 +339,7 @@ export default function About() {
 									// 		"linear-gradient(262deg, rgba(190, 190, 190, 0.42) 1.43%, rgba(217, 217, 217, 0.00) 96.38%)"
 									// }}
 								>
-									<div className="w-full p-2 text-right text-[1vw] font-light  uppercase text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-full p-2 text-right text-[1vw]  tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										&quot;Our mission is to rapidly connect candidates to ideal jobs, slashing weeks to days. Our
 										software tackles hiring challenges, prioritizing recruiter efficiency, so they focus on linking
 										talent to fulfilling work environments.&quot;
@@ -393,21 +397,21 @@ export default function About() {
 						}}
 					>
 						<div className=" flex h-auto w-full flex-col items-center justify-evenly gap-20 p-8 max-lg:p-4 max-md:gap-4 max-md:p-2">
-							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-8  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-lg:p-2 max-md:flex-col max-md:gap-2">
-								<div className="h-auto  w-[50%] max-md:w-full">
+							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-8   p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-lg:p-2 max-md:flex-col max-md:gap-2">
+								<div className="h-auto  w-[40%] max-md:w-full">
 									<Image
 										src={novusH1}
 										alt="why"
 										width={500}
 										height={500}
-										className="max-md:min-h-auto ml-auto h-auto max-h-[50vh] w-auto"
+										className="max-md:min-h-auto ml-auto h-auto max-h-[60vh] w-auto  max-md:mx-auto"
 									/>
 								</div>
-								<div className="flex w-[50%] flex-col gap-4  max-md:w-full">
+								<div className="flex w-[60%] flex-col gap-4  max-md:w-full">
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Novus: Your Dedicated HR Assistant for Smarter Hiring
 									</div>
-									<div className="w-[90%] text-[1vw] font-light uppercase  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
+									<div className="w-[90%] text-[1vw] font-light tracking-widest  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
 										&quot;Statistics show that recruiters typically dedicate 2-3 days to screening and scheduling
 										profiles. With Novus, streamline your hiring process through advanced AI technology. Identify top
 										talent, rank candidates, and gain actionable insights swiftly. Let Novus, your dedicated hiring

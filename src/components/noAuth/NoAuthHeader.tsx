@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import novusIcon from "/public/images/novus1.png";
+import headerLogo from "/public/images/noAuth/headerLogo.png";
 import novusIcon12 from "/public/images/novus12.png";
 import Button from "../Button";
 
@@ -20,12 +21,12 @@ export default function noAuthHeader({ scrollTop }: any) {
 		<>
 			<nav
 				id="topbar"
-				className={`fixed left-0 top-0 z-[100] flex w-full flex-wrap items-center justify-between  px-4 py-1 ${
+				className={`fixed left-0 top-0 z-[100] flex w-full flex-wrap items-center justify-between px-4 py-2 ${
 					scrollTop > 10 ? "bg-white/10 backdrop-blur-md" : "bg-transparent"
 				} ${isOpen && " bg-white/10 backdrop-blur-lg max-lg:h-full"} `}
 			>
 				<div className=" flex flex-shrink-0 items-center ">
-					<Image src={novusIcon} className="h-[45px] w-[45px]" alt="Logo" />
+					<Image src={headerLogo} className="h-[55px] w-[55px]" alt="Logo" />
 				</div>
 				<div className="block lg:hidden">
 					<button onClick={() => setIsOpen(!isOpen)} className="flex items-center rounded px-3 py-2">
@@ -72,21 +73,21 @@ export default function noAuthHeader({ scrollTop }: any) {
 						About
 					</Link>
 					<Link
-						href="/features"
+						href="/product"
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +
-							`${router.route.includes("/features") ? "menu__link2" : "menu__link"}`
+							`${router.route.includes("/product") ? "menu__link2" : "menu__link"}`
 						}
 					>
-						Features
+						Product
 					</Link>
 					<Link href="/novus" className="my-auto mb-4 flex w-fit flex-nowrap max-lg:mx-auto lg:mb-0 lg:mt-0">
 						<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>Novus</div>
 						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
 					</Link>
 					<Link
-						href="#"
+						href="/blogs"
 						className={
 							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
 							" " +

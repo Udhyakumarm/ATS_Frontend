@@ -135,18 +135,21 @@ export default function Novus() {
 							background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 						}}
 					>
-						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-1rem)] w-full flex-col items-center justify-center gap-20 p-8 max-lg:p-4 max-md:gap-10 max-md:p-2">
-							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-4 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
-								<div className="h-auto  w-[50%] max-md:w-full">
+						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-2rem)] w-full flex-col items-center justify-center gap-20 p-8 pb-[4rem] max-lg:p-4 max-lg:pb-[4rem] max-md:gap-10 max-md:p-2 max-md:pb-[4rem]">
+							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-10 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+								<div className="h-auto  w-[40%] max-md:w-full">
 									<Image
 										src={novusH1}
 										alt="why"
 										width={500}
 										height={500}
-										className="max-md:min-h-auto ml-auto h-auto max-h-[50vh] w-auto"
+										className="max-md:min-h-auto ml-auto h-auto max-h-[60vh] w-auto max-md:mx-auto"
 									/>
 								</div>
-								<div className="flex w-[50%] flex-col gap-4 max-md:w-full">
+								<div className="flex w-[60%] flex-col gap-4 max-md:w-full">
+									<div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
+										Novus
+									</div>
 									<div className="w-[70%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Your all new HR Assistant
 									</div>
@@ -155,8 +158,17 @@ export default function Novus() {
 									</div>
 								</div>
 							</div>
-							<div className="min-h-auto flex w-[80vw] items-center justify-center gap-4 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
-								<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
+							<div className="min-h-auto flex w-[80vw] flex-row-reverse items-center justify-center gap-4 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+								<div className="h-auto w-[40%] max-md:w-full">
+									<Image
+										src={novusH2}
+										alt="why"
+										width={1000}
+										height={1000}
+										className="max-md:min-h-auto mr-auto h-auto max-h-[60vh] w-auto max-md:mx-auto"
+									/>
+								</div>
+								<div className="flex w-[60%]  flex-col gap-4 max-md:w-full">
 									<div className="w-[80%]  text-left text-[2vw] uppercase text-white max-lg:w-full  max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Simplified Resume Screening with a Single-Text Approach
 									</div>
@@ -177,15 +189,6 @@ export default function Novus() {
 										</div>
 									</div>
 								</div>
-								<div className="h-auto w-[50%] max-md:w-full">
-									<Image
-										src={novusH2}
-										alt="why"
-										width={1000}
-										height={1000}
-										className="max-md:min-h-auto h-auto max-h-[35vh] w-auto"
-									/>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -193,7 +196,7 @@ export default function Novus() {
 					{/* flow section */}
 					<div className="flex h-auto w-full items-center justify-center  bg-[#F5F6F8] p-8 max-lg:p-4 max-md:p-2">
 						<div className="min-h-auto flex w-[80vw] items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
-							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
+							<div className="flex w-[60%]  flex-col gap-4 max-md:w-full">
 								<div
 									className="w-full text-[3vw] font-bold uppercase max-lg:text-[4.3vw] max-md:text-center max-md:text-[5vw]"
 									style={{
@@ -206,7 +209,7 @@ export default function Novus() {
 								>
 									Flow
 								</div>
-								<div className="w-[90%] text-[1.5vw] font-medium tracking-wider text-black max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
+								<div className="w-[90%] text-[1.5vw] font-medium uppercase tracking-wider text-black max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
 									Source Top Talent and Streamline the Next Steps with Automation
 								</div>
 								<div className="w-[90%] text-[1vw] font-light tracking-wider text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
@@ -227,13 +230,13 @@ export default function Novus() {
 									</div>
 								</div>
 							</div>
-							<div className="h-auto w-[50%] max-md:w-full">
+							<div className="h-auto w-[40%] max-md:w-full">
 								<Image
 									src={novusF1}
 									alt="why"
 									width={1000}
 									height={1000}
-									className="max-md:min-h-auto h-auto max-h-[50vh] w-auto"
+									className="max-md:min-h-auto h-auto max-h-[60vh] w-auto"
 								/>
 							</div>
 						</div>
@@ -246,17 +249,17 @@ export default function Novus() {
 							background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 						}}
 					>
-						<div className="min-h-auto flex w-[80vw] items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
-							<div className="h-auto w-[50%] max-md:w-full">
+						<div className="min-h-auto flex w-[80vw] items-center gap-10  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+							<div className="h-auto w-[40%] max-md:w-full">
 								<Image
 									src={novusA1}
 									alt="why"
 									width={1000}
 									height={1000}
-									className="max-md:min-h-auto ml-auto h-auto max-h-[70vh] w-auto"
+									className="max-md:min-h-auto ml-auto h-auto max-h-[60vh] w-auto max-md:mx-auto"
 								/>
 							</div>
-							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
+							<div className="flex w-[60%]  flex-col gap-4 max-md:w-full">
 								<div className="w-full text-[3vw] uppercase text-white max-lg:text-[4.3vw] max-md:text-center max-md:text-[5vw]">
 									Analytics
 								</div>
