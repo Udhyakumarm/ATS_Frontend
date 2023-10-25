@@ -43,12 +43,12 @@ export default function Tab3() {
 					>
 						<button
 							// className="flex w-full justify-between rounded-lg bg-gray-300 px-4 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
-							className="flex w-full items-center justify-between rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
+							className="flex w-full items-center gap-4 rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
 							onClick={() => handleClick(id)}
 							aria-expanded={isOpen}
 							{...(isOpen && { "aria-controls": id })}
 						>
-							{buttonText}
+							<span className="w-full text-center">{buttonText}</span>
 							<i className={`fa-solid text-lg ${isOpen ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 						</button>
 						{isOpen && (

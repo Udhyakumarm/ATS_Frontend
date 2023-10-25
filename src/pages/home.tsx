@@ -35,7 +35,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 export default function LandingPage() {
 	const settings = {
-		dots: false,
+		dots: true,
 		arrows: false,
 		infinite: true,
 		speed: 1500,
@@ -236,7 +236,7 @@ export default function LandingPage() {
 										</span>
 									</div>
 									<div className="h-auto w-[90vw] ">
-										<div className="flex h-full flex-col items-center justify-around gap-2 ">
+										<div className="flex h-full flex-col items-center justify-around gap-20 max-md:gap-10 ">
 											<div className="flex w-full flex-row items-center justify-center gap-2  p-4 max-lg:flex-col max-md:p-2">
 												<div className="w-full flex-grow ">
 													<div className="flex w-full flex-col gap-2 p-4 max-lg:items-center max-lg:justify-center max-md:p-0">
@@ -302,9 +302,9 @@ export default function LandingPage() {
 								className="z-10 flex items-center justify-center  p-8 max-md:items-start max-md:p-2"
 								style={{ minHeight: "100vh", height: "inherit" }}
 							>
-								<div className="z-10 ml-[20vw] flex w-[40vw] flex-col gap-4 rounded-3xl p-4 text-white shadow-lg max-lg:ml-0 max-lg:w-[60vw] max-lg:border-l-2 max-lg:border-t-2 max-lg:border-black/[0.78] max-lg:bg-white max-lg:backdrop-blur max-md:w-[80vw] max-md:border-white/[0.4] max-md:bg-black/[0.15] ">
-									<div className="z-10 text-[1.2vw] font-light leading-[3vw] tracking-wider text-white max-lg:text-[1.5vw] max-lg:leading-[4vw] max-lg:text-black max-md:text-[2.5vw] max-md:leading-[5vw] max-md:text-white">
-										<span className="z-10 text-[2.5vw] font-semibold uppercase max-lg:text-[3vw] max-md:text-[4vw]">
+								<div className="z-10 ml-[30vw] flex w-[50vw] flex-col gap-4 rounded-3xl p-4 text-white max-lg:ml-0 max-lg:w-[60vw] max-lg:border-l-2 max-lg:border-t-2 max-lg:border-black/[0.78] max-lg:bg-white max-lg:backdrop-blur max-md:w-[80vw] max-md:border-white/[0.4] max-md:bg-black/[0.15] ">
+									<div className="z-10 text-[1.5vw] font-light leading-[3vw]  text-white max-lg:text-[1.7vw] max-lg:leading-[4vw] max-lg:text-black max-md:text-[2.5vw] max-md:leading-[5vw] max-md:text-white">
+										<span className="z-10 text-[3.5vw] font-semibold uppercase tracking-wider max-lg:text-[4vw] max-md:text-[5vw]">
 											Novus AI
 										</span>{" "}
 										significantly enhances recruiter efficiency, drastically reducing workload, and revolutionizing your
@@ -385,8 +385,8 @@ export default function LandingPage() {
 										>
 											Why Somhako?
 										</div>
-										<div className="text-[1.5vw] font-semibold tracking-wider text-black max-lg:text-[2vw] max-md:text-center max-md:text-[2.5vw]">
-											We are dedicated to lead you into a world of HR excellence
+										<div className="text-[1.5vw] font-normal tracking-wider text-black max-lg:text-[2vw] max-md:text-center max-md:text-[2.5vw]">
+											We are dedicated to lead you into a world of <span className="font-bold">HR excellence</span>
 										</div>
 										<div className="w-[90%] text-[1vw] font-light text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
 											We aim to create trustworthy connections to elevate the standard of hiring practices throughout
@@ -399,19 +399,19 @@ export default function LandingPage() {
 									</div>
 								</div>
 							</div>
-							<div className="m-2 h-auto w-full p-8 max-lg:p-4 max-md:p-2">
+							<div className="m-2 h-auto w-full  p-8 max-lg:p-4 max-lg:pb-[4rem] max-md:p-2 max-md:pb-[4rem]">
 								<Slider {...settings}>
 									{whyHeading_1.map((data, i) => (
 										<div key={i}>
-											<div className="min-h-auto mx-auto my-auto flex w-[80vw] items-center justify-center gap-4   p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+											<div className="min-h-auto mx-auto my-auto flex w-[80vw] items-center justify-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 												<div className="flex flex-grow flex-col gap-4 ">
-													<div className="w-full text-[2vw]  text-white max-lg:text-center max-lg:text-[3.3vw] max-md:text-center max-md:text-[4vw]">
+													<div className="w-full text-[2vw]  text-white max-lg:text-[3.3vw] max-md:text-center max-md:text-[4vw]">
 														{data.title}
 													</div>
 													<div className="w-[90%] text-[1vw] font-light tracking-wider text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
 														{data.sub}
 													</div>
-													<div className="z-10 flex justify-start  pt-8 text-white max-lg:justify-center">
+													<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center">
 														<div
 															className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
 															style={{
@@ -424,13 +424,30 @@ export default function LandingPage() {
 														</div>
 													</div>
 												</div>
-												<div className="w-auto lg:w-[70vw]">
-													<Image src={data.img} alt="why" width={1000} height={1000} className="h-auto w-auto" />
+												<div className="h-full w-full  lg:h-[60vh]">
+													<Image
+														src={data.img}
+														alt="why"
+														width={1000}
+														height={1000}
+														className="mx-auto h-full w-auto "
+													/>
 												</div>
 											</div>
 										</div>
 									))}
 								</Slider>
+								<style>
+									{`
+          /* Change the color of slick dots to white */
+          .slick-dots li button:before {
+            color: white;
+          }
+          .slick-dots li.slick-active button:before {
+            color: white;
+          }
+        `}
+								</style>
 							</div>
 							{/* <div className="m-2 flex h-auto w-full items-center justify-center  border-2 border-white p-8 max-lg:p-4 max-md:p-2">
 								<div className="min-h-auto flex w-[80vw] items-center gap-4  border-2 border-white p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
@@ -512,7 +529,7 @@ export default function LandingPage() {
 					>
 						<div className="flex flex-col items-center justify-center gap-0 ">
 							<div className="m-2 h-auto   py-4 text-[2.5vw] font-bold tracking-[0.25vw] text-white max-lg:text-center max-md:w-full max-md:text-center max-md:text-[3.5vw]">
-								FaQ
+								FAQ
 							</div>
 							<div
 								className="m-2 flex h-auto w-full items-center justify-center  p-8"
@@ -523,7 +540,7 @@ export default function LandingPage() {
 										<Image src={faq} alt="why" width={1000} height={1000} className="h-auto w-auto" />
 									</div>
 									<div className="flex w-[70vw] flex-col gap-4 ">
-										<div className="px-2 text-[1.3vw] font-semibold tracking-wider text-black max-lg:text-center max-lg:text-[1.7vw] max-md:text-[2.3vw]">
+										<div className="px-2 text-center text-[1.3vw] font-semibold tracking-wider text-[#2D129A] max-lg:text-[1.7vw] max-md:text-[2.3vw]">
 											Feel free to ask any product-related questions you may have.
 										</div>
 										<Faq />

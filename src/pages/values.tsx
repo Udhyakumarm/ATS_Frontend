@@ -40,7 +40,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-export default function Features() {
+export default function Values() {
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const handleScroll = (event) => {
@@ -73,17 +73,20 @@ export default function Features() {
 						}}
 					>
 						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-20 p-8 max-lg:p-4 max-md:gap-10 max-md:p-2">
-							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-8 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
-								<div className="h-auto  w-[50%] max-md:w-full">
+							<div className="flex h-auto w-[80vw] flex-row items-center justify-center gap-8  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+								<div className="h-auto  w-[40%] max-md:w-full">
 									<Image
 										src={featureH1}
 										alt="why"
 										width={500}
 										height={500}
-										className="max-md:min-h-auto ml-auto h-auto max-h-[50vh] w-auto"
+										className="max-md:min-h-auto ml-auto h-auto max-h-[60vh] w-auto  max-md:mx-auto"
 									/>
 								</div>
-								<div className="flex w-[50%] flex-col gap-4 max-md:w-full">
+								<div className="flex w-[60%] flex-col gap-4  max-md:w-full">
+									<div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
+										Values
+									</div>
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Our values enlighten the way as we walk towards our mission of fostering rewarding work
 										environments!
@@ -277,5 +280,5 @@ export async function getStaticProps({ context, locale }: any) {
 	};
 }
 
-Features.noAuth = true;
-Features.mobileEnabled = true;
+Values.noAuth = true;
+Values.mobileEnabled = true;
