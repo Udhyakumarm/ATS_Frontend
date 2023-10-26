@@ -154,20 +154,30 @@ export default function LandingPage() {
 													(R)evolutionising
 													<br /> the Future of Talent Management!
 												</p>
-												<p className="z-10 mb-8 w-[35vw]  text-justify text-[1vw] font-light max-lg:w-full  max-lg:text-[2vw] max-sm:mb-3 max-sm:text-[2.5vw] ">
+												<p className="z-10 mb-8 w-[35vw] text-justify text-[1vw] font-light  max-lg:w-full max-lg:text-[2vw] max-sm:mb-3 max-sm:text-[2.5vw]">
 													Master the challenge of efficiently sourcing, tracking, and hiring top talent aligned with
 													your business needs, all on a single, centralized platform
 												</p>
-												<div className=" flex justify-start max-lg:justify-center">
-													<div
-														className="z-10 flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.5vw] max-lg:text-[2vw] max-sm:text-[2.5vw]"
-														style={{
-															background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-														}}
-													>
-														<span className=" font-medium tracking-wider">Get Started now</span>
-														<i className="fa-regular fa-circle-check "></i>
+												<div className=" flex flex-row items-center justify-start max-lg:justify-center max-md:justify-center max-md:gap-4 max-sm:flex-col">
+													<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+														Get started now
+													</button>
+													<div className="-translate-x-3 scale-75 max-sm:-translate-x-0">
+														<button className="learn-more1" style={{ width: "18rem" }}>
+															<span className="circle" aria-hidden="true">
+																<span className="icon arrow"></span>
+															</span>
+															<span className="button-text">Request for materials</span>
+														</button>
 													</div>
+													{/* <div className="border-2 border-red-500">
+														<button className="learn-more  w-[17rem] scale-75">
+															<span className="circle" aria-hidden="true">
+																<span className="icon arrow"></span>
+															</span>
+															<span className="button-text">Request for materials</span>
+														</button>
+													</div> */}
 												</div>
 											</div>
 											<div className="flex items-center justify-end py-3 max-lg:w-[50vw] max-sm:w-auto">
@@ -311,16 +321,159 @@ export default function LandingPage() {
 										hiring process from hours to mere seconds
 									</div>
 									<div className="z-10 flex justify-start  max-lg:justify-center">
-										<div
-											className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.5vw]"
-											style={{
-												background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-												// borderRadius: "10px"
-											}}
-										>
-											<span className=" font-medium tracking-wider">Get Started now</span>
-											<i className="fa-regular fa-circle-check "></i>
-										</div>
+										<button className="btn1 rounded-xl px-6 py-2 text-xl">
+											Get started now
+											<div className="star-1">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+											<div className="star-2">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+											<div className="star-3">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+											<div className="star-4">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+											<div className="star-5">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+											<div className="star-6">
+												<svg
+													xmlnsXlink="http://www.w3.org/1999/xlink"
+													viewBox="0 0 784.11 815.53"
+													style={{
+														shapeRendering: "geometricPrecision",
+														textRendering: "geometricPrecision",
+														imageRendering: "optimizeQuality",
+														fillRule: "evenodd",
+														clipRule: "evenodd"
+													}}
+													version="1.1"
+													xmlSpace="preserve"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<defs></defs>
+													<g id="Layer_x0020_1">
+														<metadata id="CorelCorpID_0Corel-Layer"></metadata>
+														<path
+															d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+															className="fil0"
+														></path>
+													</g>
+												</svg>
+											</div>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -337,20 +490,19 @@ export default function LandingPage() {
 							backgroundPosition: "center"
 						}}
 					>
-						<p className="flex flex-col gap-4 text-[1.5vw] leading-10 tracking-widest text-white max-lg:text-[1.7vw] max-md:text-center max-md:text-[2.2vw] max-md:leading-4">
-							<div>
+						<p className="flex flex-col gap-4   max-md:text-center ">
+							<div className="text-[1.5vw] leading-10 tracking-widest text-white max-lg:text-[1.7vw] max-md:text-[2.2vw] max-md:leading-4">
 								Somahako’s realtime insights creates an environment that fosters unrivalled efficiency, allowing you to
 								make strategic hiring choices.
 							</div>
-							<div className="flex w-full justify-start max-md:justify-center">
-								<div
-									className="flex w-fit cursor-pointer flex-nowrap items-center gap-2 px-3 py-2 text-[1.2vw] text-white max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-									style={{
-										background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-									}}
-								>
-									<span className="whitespace-nowrap font-medium tracking-wider ">Take a Product Tour</span>
-									<i className="fa-regular fa-circle-check "></i>
+							<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
+								<div className="-translate-x-3 scale-90 ">
+									<button className="learn-more1">
+										<span className="circle" aria-hidden="true">
+											<span className="icon arrow"></span>
+										</span>
+										<span className="button-text">Get started now</span>
+									</button>
 								</div>
 							</div>
 						</p>
@@ -412,16 +564,9 @@ export default function LandingPage() {
 														{data.sub}
 													</div>
 													<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center">
-														<div
-															className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-															style={{
-																background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-																// borderRadius: "10px"
-															}}
-														>
-															<span className=" font-medium tracking-wider">Get Started now</span>
-															<i className="fa-regular fa-circle-check "></i>
-														</div>
+														<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+															Get started now
+														</button>
 													</div>
 												</div>
 												<div className="h-full w-full  lg:h-[60vh]">
@@ -506,16 +651,9 @@ export default function LandingPage() {
 								Ready to make recruitment easy?
 							</div>
 							<div className="z-10 flex justify-start  text-white max-lg:justify-center">
-								<div
-									className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-									style={{
-										background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										// borderRadius: "10px"
-									}}
-								>
-									<span className=" font-medium tracking-wider">Get Started now</span>
-									<i className="fa-regular fa-circle-check "></i>
-								</div>
+								<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+									Get started now
+								</button>
 							</div>
 						</p>
 					</div>

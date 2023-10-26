@@ -178,15 +178,9 @@ export default function Novus() {
 										most relevant candidates ranked by their professional aptitude.
 									</div>
 									<div className="z-10 flex justify-start  pt-8  text-white max-md:justify-center max-md:pt-4">
-										<div
-											className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-											style={{
-												background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-											}}
-										>
-											<span className=" font-medium tracking-wider">Get Started now</span>
-											<i className="fa-regular fa-circle-check "></i>
-										</div>
+										<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+											Get started now
+										</button>
 									</div>
 								</div>
 							</div>
@@ -219,15 +213,9 @@ export default function Novus() {
 									communication
 								</div>
 								<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
-									</div>
+									<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+										Get started now
+									</button>
 								</div>
 							</div>
 							<div className="h-auto w-[40%] max-md:w-full">
@@ -272,15 +260,9 @@ export default function Novus() {
 									Ensuring Continuous Enhancement and Long-term Success in Your Recruitment Processes
 								</div>
 								<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
-									</div>
+									<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+										Get started now
+									</button>
 								</div>
 							</div>
 						</div>
@@ -302,14 +284,13 @@ export default function Novus() {
 									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
+									<div className="-translate-x-3 scale-90 ">
+										<button className="learn-more1">
+											<span className="circle" aria-hidden="true">
+												<span className="icon arrow"></span>
+											</span>
+											<span className="button-text">Get started now</span>
+										</button>
 									</div>
 								</div>
 							</div>

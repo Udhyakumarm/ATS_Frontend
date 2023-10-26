@@ -89,16 +89,16 @@ export default function BlogsPage() {
 				<div className="h-[100vh] w-[100vw] overflow-y-scroll" onScroll={handleScroll}>
 					{/* hero section */}
 					<div
-						className="h-auto min-h-[100vh] w-full border-t-2 border-transparent"
+						className="h-auto min-h-[60vh] w-full border-t-2 border-transparent max-md:min-h-[40vh]"
 						style={{
 							background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 						}}
 					>
-						<div className="mt-[4rem] flex h-auto min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-start gap-2 p-8 pb-[4rem] max-lg:p-4 max-md:gap-10 max-md:p-2">
-							<div className="w-full text-center text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:text-[5vw]">
-								Blogs
+						<div className="mt-[4rem] flex h-auto min-h-[calc(60vh-4rem)] w-full flex-col items-center justify-start gap-2 p-8 pb-[4rem] max-lg:p-4 max-md:min-h-[calc(40vh-4rem)] max-md:gap-10 max-md:p-2">
+							<div className="w-full text-center text-[6vw] font-bold text-black/[0.05] max-lg:text-[7vw] max-md:text-[10vw]">
+								Editorial
 							</div>
-							<div className="flex h-auto w-[80vw] flex-row flex-wrap items-center justify-center gap-8 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
+							{/* <div className="flex h-auto w-[80vw] flex-row flex-wrap items-center justify-center gap-8 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 								{state &&
 									state.length > 0 &&
 									state.map((data, i) => (
@@ -120,6 +120,153 @@ export default function BlogsPage() {
 											</div>
 										</div>
 									))}
+							</div> */}
+						</div>
+					</div>
+					<div className="h-auto w-full bg-[#F5F6F8]">
+						<div className="flex h-auto w-full flex-col items-center justify-start gap-2 p-8  max-lg:p-4 max-md:gap-10 max-md:p-2">
+							<div className="mt-[-16rem] flex h-auto w-[60vw] flex-row flex-wrap items-center justify-center gap-8 rounded bg-white p-4 px-12 shadow-lg  max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:mt-[-8rem] max-md:flex-col max-md:p-2">
+								{state &&
+									state.length > 0 &&
+									state.map((data, i) => (
+										<div
+											className="mx-auto flex w-full cursor-pointer flex-col items-center space-y-3 rounded-xl border border-white bg-white p-3 shadow-lg hover:shadow-xl md:max-w-3xl md:space-x-5 md:space-y-0 md:odd:flex-row md:even:flex-row-reverse"
+											key={i}
+											onClick={() => {
+												window.open(data.link, "_blank");
+											}}
+										>
+											<div className="h-auto w-[40%] max-md:w-full">
+												<Image
+													src={data.thumbnail}
+													alt="why"
+													width={500}
+													height={500}
+													className="ml-auto h-[30vh] w-full object-cover max-md:mx-auto max-md:h-full"
+												/>
+											</div>
+
+											<div className="flex h-full w-[60%] flex-col space-y-2 bg-white p-3 max-md:w-full">
+												{/* <div className="item-center flex justify-between">
+													<p className="hidden font-medium text-gray-500 md:block">Vacations</p>
+													<div className="flex items-center">
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															className="h-5 w-5 text-yellow-500"
+															viewBox="0 0 20 20"
+															fill="currentColor"
+														>
+															<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+														</svg>
+														<p className="ml-1 text-sm font-bold text-gray-600">
+															4.96
+															<span className="font-normal text-gray-500">(76 reviews)</span>
+														</p>
+													</div>
+													<div className="">
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															className="h-5 w-5 text-pink-500"
+															viewBox="0 0 20 20"
+															fill="currentColor"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+																clip-rule="evenodd"
+															/>
+														</svg>
+													</div>
+													<div className="hidden rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-gray-800 md:block">
+														Superhost
+													</div>
+												</div> */}
+												<h3 className="w-[100%] truncate text-xl font-semibold text-gray-800 md:text-2xl">
+													{data.title}
+												</h3>
+												<Link href={data.link} target="_blank" className="text-[#2D129A] hover:underline">
+													read more
+												</Link>
+											</div>
+										</div>
+									))}
+
+								{/* <div className="relative mx-auto flex max-w-xs flex-col space-y-3 rounded-xl border border-white bg-white p-3 shadow-lg md:max-w-3xl md:flex-row-reverse md:space-x-5 md:space-y-0">
+									<div className="grid w-full place-items-center bg-white md:w-1/3">
+										<img
+											src="https://images.pexels.com/photos/4381392/pexels-photo-4381392.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+											alt="tailwind logo"
+											className="rounded-xl"
+										/>
+									</div>
+									<div className="flex w-full flex-col space-y-2 bg-white p-3 md:w-2/3">
+										<div className="item-center flex justify-between">
+											<p className="hidden font-medium text-gray-500 md:block">Vacations</p>
+											<div className="flex items-center">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													className="h-5 w-5 text-yellow-500"
+													viewBox="0 0 20 20"
+													fill="currentColor"
+												>
+													<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+												</svg>
+												<p className="ml-1 text-sm font-bold text-gray-600">
+													4.96
+													<span className="font-normal text-gray-500">(76 reviews)</span>
+												</p>
+											</div>
+											<div className="">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													className="h-5 w-5 text-pink-500"
+													viewBox="0 0 20 20"
+													fill="currentColor"
+												>
+													<path
+														fill-rule="evenodd"
+														d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+														clip-rule="evenodd"
+													/>
+												</svg>
+											</div>
+											<div className="hidden rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-gray-800 md:block">
+												Superhost
+											</div>
+										</div>
+										<h3 className="text-xl font-black text-gray-800 md:text-3xl">The Majestic and Wonderful Bahamas</h3>
+										<p className="text-base text-gray-500 md:text-lg">
+											The best kept secret of The Bahamas is the country’s sheer size and diversity. With 16 major
+											islands, The Bahamas is an unmatched destination
+										</p>
+										<p className="text-xl font-black text-gray-800">
+											$110
+											<span className="text-base font-normal text-gray-600">/night</span>
+										</p>
+									</div>
+								</div> */}
+
+								{/* {state &&
+									state.length > 0 &&
+									state.map((data, i) => (
+										<div className="m-3 h-96 w-72 rounded-xl bg-white shadow-md" key={i}>
+											<div className="h-4/5 w-full">
+												<Image
+													width={1000}
+													height={1000}
+													className="h-full w-full rounded-t-xl object-cover"
+													src={data.thumbnail}
+													alt="piña"
+												/>
+											</div>
+											<div className="h-1/2 w-full p-3">
+												<p className="cursor-pointer truncate  text-black hover:text-[#2D129A]">{data.title}</p>
+												<Link href={data.link} target="_blank" className="text-[#2D129A] hover:underline">
+													read more
+												</Link>
+											</div>
+										</div>
+									))} */}
 							</div>
 						</div>
 					</div>

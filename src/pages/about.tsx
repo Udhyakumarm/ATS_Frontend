@@ -49,6 +49,7 @@ import Link from "next/link";
 
 export default function About() {
 	const [scrollTop, setScrollTop] = useState(0);
+	const router = useRouter();
 
 	const handleScroll = (event) => {
 		setScrollTop(event.currentTarget.scrollTop);
@@ -366,14 +367,13 @@ export default function About() {
 									with pride and form meaningful connections.
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
+									<div className="-translate-x-3 scale-90 ">
+										<button className="learn-more1">
+											<span className="circle" aria-hidden="true">
+												<span className="icon arrow"></span>
+											</span>
+											<span className="button-text">Get started now</span>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -439,14 +439,13 @@ export default function About() {
 									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
+									<div className="-translate-x-3 scale-90 ">
+										<button className="learn-more1">
+											<span className="circle" aria-hidden="true">
+												<span className="icon arrow"></span>
+											</span>
+											<span className="button-text">Get started now</span>
+										</button>
 									</div>
 								</div>
 							</div>
