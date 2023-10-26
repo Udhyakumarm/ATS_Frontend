@@ -193,7 +193,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 
 		await axiosInstanceAuth21
-			.get(`/chatbot/interview-question-generator/${canid}/${jobid}/`)
+			.get(`/chatbot/interview-question-generator/${canid}/${jobid}/${srcLang}/`)
 			.then(async (res) => {
 				setaires(res.data["res"]);
 				setaiquestion(res.data["res"].split("\n"));
