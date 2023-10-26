@@ -21,9 +21,9 @@ export default function noAuthHeader({ scrollTop }: any) {
 		<>
 			<nav
 				id="topbar"
-				className={`fixed left-0 top-0 z-[100] flex w-full flex-wrap items-center justify-between px-4 py-2 ${
-					scrollTop > 10 ? "bg-white/10 backdrop-blur-md" : "bg-transparent"
-				} ${isOpen && " bg-white/10 backdrop-blur-lg max-lg:h-full"} `}
+				className={`fixed left-0 top-0 z-[100] flex w-full flex-wrap items-center justify-between px-4 py-0 max-lg:items-start max-lg:py-2 ${
+					scrollTop > 10 ? "bg-black/20 backdrop-blur-md" : "bg-transparent"
+				} ${isOpen && " max-lg:h-full max-lg:bg-black/20 max-lg:backdrop-blur-lg"} `}
 			>
 				<div className=" flex flex-shrink-0 items-center ">
 					<Image src={headerLogo} className="h-[55px] w-[55px]" alt="Logo" />
@@ -48,7 +48,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 				</div>
 
 				<div
-					className={`block w-full  p-4 text-sm lg:flex lg:w-auto lg:items-center lg:justify-center lg:gap-6 ${
+					className={`block w-full  p-3 text-sm lg:flex lg:w-auto lg:items-center lg:justify-center lg:gap-6 ${
 						isOpen ? " mt-4 block  lg:mt-0" : "hidden"
 					}`}
 				>
@@ -72,16 +72,6 @@ export default function noAuthHeader({ scrollTop }: any) {
 					>
 						About
 					</Link>
-					<Link
-						href="/product"
-						className={
-							"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
-							" " +
-							`${router.route.includes("/product") ? "menu__link2" : "menu__link"}`
-						}
-					>
-						Product
-					</Link>
 					<Link href="/novus" className="my-auto mb-4 flex w-fit flex-nowrap max-lg:mx-auto lg:mb-0 lg:mt-0">
 						<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>Novus</div>
 						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
@@ -96,9 +86,14 @@ export default function noAuthHeader({ scrollTop }: any) {
 					>
 						Blogs
 					</Link>
+					<div className="ml-[4rem]  max-lg:ml-0 max-lg:mt-[4rem] max-lg:flex max-lg:w-full max-lg:justify-center">
+						<button className=" transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce ">
+							Get started now
+						</button>
+					</div>
 				</div>
 
-				<div className={`block items-center max-lg:mx-auto  lg:inline-flex ${isOpen ? "block" : "hidden"}`}>
+				{/* <div className={`block items-center max-lg:mx-auto  lg:inline-flex ${isOpen ? "block" : "hidden"}`}>
 					<button
 						className={`my-2 w-auto rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-sm font-semibold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200`}
 					>
@@ -107,7 +102,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 							<i className="fa-regular fa-circle-check"></i>
 						</span>
 					</button>
-				</div>
+				</div> */}
 			</nav>
 
 			{/* <div

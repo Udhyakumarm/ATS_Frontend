@@ -84,9 +84,9 @@ export default function Values() {
 									/>
 								</div>
 								<div className="flex w-[60%] flex-col gap-4  max-md:w-full">
-									<div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
+									{/* <div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
 										Values
-									</div>
+									</div> */}
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
 										Our values enlighten the way as we walk towards our mission of fostering rewarding work
 										environments!
@@ -146,9 +146,9 @@ export default function Values() {
 												Simplicity
 											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												Our dedication to honesty, ethics, and transparency is unwavering. Integrity is the cornerstone
-												of our relationships with customers, partners, and employees. Your trust is priceless, and we
-												remain devoted to keeping our promises and upholding our moral principles
+												At <span className="font-bold">Somhako</span>, we believe in the beauty of simplicity. Our
+												mission is to streamline the hiring process and foster meaningful connections between our
+												clients and exceptional talent in a fast-paced world.
 											</div>
 										</div>
 									</div>
@@ -241,14 +241,13 @@ export default function Values() {
 									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
-									<div
-										className="flex w-fit cursor-pointer items-center gap-2 px-3 py-2 text-[1.2vw] max-lg:text-[1.5vw] max-md:text-[2.2vw]"
-										style={{
-											background: "linear-gradient(88deg, #197DF9 1.75%, #45BBED 103.51%)"
-										}}
-									>
-										<span className=" font-medium tracking-wider">Get Started now</span>
-										<i className="fa-regular fa-circle-check "></i>
+									<div className="-translate-x-3 scale-90 ">
+										<button className="learn-more1">
+											<span className="circle" aria-hidden="true">
+												<span className="icon arrow"></span>
+											</span>
+											<span className="button-text">Get started now</span>
+										</button>
 									</div>
 								</div>
 							</div>
