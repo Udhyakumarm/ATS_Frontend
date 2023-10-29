@@ -1,44 +1,13 @@
 import Head from "next/head";
 import React, { useRef, Fragment, useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NoAuthHeader from "@/components/noAuth/NoAuthHeader";
 import NoAuthFooter from "@/components/noAuth/NoAuthFooter";
-import landingPageBackground from "public/images/noAuth/landingPageBackground.jpg";
 import Image from "next/image";
-import Tilt from "react-parallax-tilt";
 import featureH1 from "public/images/noAuth/featureH1.png";
-import featureI1 from "public/images/noAuth/featureI1.png";
-import overlay1 from "public/images/noAuth/overlay1.png";
-import overlay2 from "public/images/noAuth/overlay2.png";
-import novusBg from "public/images/noAuth/novusBg.png";
-import novusBg1 from "public/images/noAuth/novusBg-full.png";
-import bgFinal from "public/images/noAuth/bgFinal.png";
-import benfitsImg1 from "public/images/noAuth/benfitsImg1.png";
-import novusSection from "public/images/noAuth/novusSection.png";
-import whySomhako from "public/images/noAuth/whySomhako.png";
 import novusS1 from "public/images/noAuth/novusS1.png";
-import novusA1 from "public/images/noAuth/novusA1.png";
-import novusF1 from "public/images/noAuth/novusF1.png";
-import novusH1 from "public/images/noAuth/novusH1.png";
-import novusH2 from "public/images/noAuth/novusH2.png";
-import whySomhako1 from "public/images/noAuth/whySomhako1.png";
-import whySomhako2 from "public/images/noAuth/whySomhako2.png";
-import whySomhako3 from "public/images/noAuth/whySomhako3.png";
-import whySomhako4 from "public/images/noAuth/whySomhako4.png";
-import dream1 from "public/images/noAuth/dream1.png";
-import faq from "public/images/noAuth/faq.png";
-import tab1 from "public/images/noAuth/tab1.png";
-import tab2 from "public/images/noAuth/tab2.png";
-import tab3 from "public/images/noAuth/tab3.png";
-import demoBg from "public/images/noAuth/demoBg.png";
-import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
-import { Disclosure } from "@headlessui/react";
-import Tabs from "@/components/noAuth/Tabs";
-import Faq from "@/components/noAuth/FaQ";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { useTranslation } from "react-i18next";
+import ToggleLang from "@/components/noAuth/ToggleLang";
 
 export default function Values() {
 	const [scrollTop, setScrollTop] = useState(0);
@@ -51,6 +20,8 @@ export default function Values() {
 		console.log("scrollTop", scrollTop);
 	}, [scrollTop]);
 
+	const { t } = useTranslation("common");
+
 	return (
 		<>
 			<Head>
@@ -59,6 +30,7 @@ export default function Values() {
 			</Head>
 			<main>
 				<NoAuthHeader scrollTop={scrollTop} />
+				<ToggleLang />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -84,12 +56,8 @@ export default function Values() {
 									/>
 								</div>
 								<div className="flex w-[60%] flex-col gap-4  max-md:w-full">
-									{/* <div className="w-full text-[6vw] font-bold text-black/[0.05] max-lg:text-[5vw] max-md:w-full max-md:text-center max-md:text-[5vw]">
-										Values
-									</div> */}
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-										Our values enlighten the way as we walk towards our mission of fostering rewarding work
-										environments!
+										{t("Noauth.values.text1")}
 									</div>
 								</div>
 							</div>
@@ -100,7 +68,7 @@ export default function Values() {
 					<div
 						className="flex h-auto w-full flex-col items-center justify-center gap-10 p-8 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/featureI1.png')",
+							backgroundImage: "url('/images/noAuth/featureI1.png')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -109,7 +77,7 @@ export default function Values() {
 						<div className="min-h-auto flex w-[80vw] flex-col items-center gap-4 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:p-2">
 							<div className="flex w-full justify-center gap-4">
 								<div className="w-full text-center text-[3vw] font-bold text-gray-400 max-lg:text-[4.3vw] max-md:text-[5vw]">
-									We are integrating
+									{t("Noauth.values.text2")}
 								</div>
 							</div>
 							<div className="flex h-auto w-full items-center justify-center gap-20 p-8 pr-[3.5rem] max-lg:flex-col">
@@ -123,12 +91,10 @@ export default function Values() {
 									<div className="absolute left-6 top-8 h-[calc(100%-2rem)] w-full rounded-2xl bg-white/[0.9] p-4">
 										<div className="flex h-full flex-col items-center justify-around gap-2">
 											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">
-												Sincerity
+												{t("Noauth.values.text3")}
 											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												Our dedication to honesty, ethics, and transparency is unwavering. Integrity is the cornerstone
-												of our relationships with customers, partners, and employees. Your trust is priceless, and we
-												remain devoted to keeping our promises and upholding our moral principles
+												{t("Noauth.values.text4")}
 											</div>
 										</div>
 									</div>
@@ -143,12 +109,10 @@ export default function Values() {
 									<div className="absolute left-6 top-8 h-[calc(100%-2rem)] w-full rounded-2xl bg-white/[0.9] p-4">
 										<div className="flex h-full flex-col items-center justify-around gap-2">
 											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">
-												Simplicity
+												{t("Noauth.values.text5")}
 											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												At <span className="font-bold">Somhako</span>, we believe in the beauty of simplicity. Our
-												mission is to streamline the hiring process and foster meaningful connections between our
-												clients and exceptional talent in a fast-paced world.
+												{t("Noauth.values.text6")}
 											</div>
 										</div>
 									</div>
@@ -162,11 +126,11 @@ export default function Values() {
 								>
 									<div className="absolute left-6 top-8 h-[calc(100%-2rem)] w-full rounded-2xl bg-white/[0.9] p-4">
 										<div className="flex h-full flex-col items-center justify-around gap-2">
-											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">Empathy</div>
+											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">
+												{t("Noauth.values.text7")}
+											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												We believe empathy and kindness bridge algorithms and people. Guided by ethics, we empower
-												individuals and global companies. Our aim is to unlock potential and revive ease and self-driven
-												productivity in work
+												{t("Noauth.values.text8")}
 											</div>
 										</div>
 									</div>
@@ -176,7 +140,7 @@ export default function Values() {
 						<div className="min-h-auto flex w-[80vw] flex-col items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:p-2">
 							<div className="flex w-full justify-center gap-4">
 								<div className="w-full text-center text-[3vw] font-bold text-gray-400 max-lg:text-[4.3vw] max-md:text-[5vw]">
-									To deliver
+									{t("Noauth.values.text9")}
 								</div>
 							</div>
 							<div className="flex h-auto w-full items-center justify-evenly gap-20 p-8 pl-[14rem] pr-[15.5rem] max-lg:flex-col">
@@ -190,12 +154,10 @@ export default function Values() {
 									<div className="absolute left-6 top-8 h-[calc(100%-2rem)] w-full rounded-2xl bg-white/[0.9] p-4">
 										<div className="flex h-full flex-col items-center justify-around gap-2">
 											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">
-												Efficency
+												{t("Noauth.values.text10")}
 											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												Somhako fosters a fast-paced work environment with a deep-learning HR assistant driving
-												proactive actions. Our one-tool approach ensures swift task resolution. We are dedicated to
-												maximizing time optimization and efficiency for our clients like never before.
+												{t("Noauth.values.text11")}
 											</div>
 										</div>
 									</div>
@@ -211,12 +173,10 @@ export default function Values() {
 									<div className="absolute left-6 top-8 h-[calc(100%-2rem)] w-full rounded-2xl bg-white/[0.9] p-4">
 										<div className="flex h-full flex-col items-center justify-around gap-2">
 											<div className="w-full text-[2vw] text-black max-lg:text-[3.3vw] max-md:text-[4vw]">
-												Excellence
+												{t("Noauth.values.text12")}
 											</div>
 											<div className="w-full text-[1vw] text-black max-lg:text-[1.5vw] max-md:text-[2vw]">
-												Recruiters often grapple with overwhelming tasks. Somhako strives to reclaim their time with
-												intelligent automation and an AI-powered HR assistant. Our goal is to lighten their load,
-												allowing them to focus on connecting ideal candidates with clients while we handle the rest
+												{t("Noauth.values.text13")}
 											</div>
 										</div>
 									</div>
@@ -229,7 +189,7 @@ export default function Values() {
 					<div
 						className="flex h-auto min-h-[35vh] w-full items-center justify-center  px-8 py-0 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -238,7 +198,7 @@ export default function Values() {
 						<div className="min-h-auto flex w-full items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
 							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
 								<div className="w-full text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
+									{t("Noauth.values.text14")}
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
 									<div className="-translate-x-3 scale-90 ">
@@ -246,7 +206,7 @@ export default function Values() {
 											<span className="circle" aria-hidden="true">
 												<span className="icon arrow"></span>
 											</span>
-											<span className="button-text">Get started now</span>
+											<span className="button-text">{t("Noauth.values.btn1")}</span>
 										</button>
 									</div>
 								</div>

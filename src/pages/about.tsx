@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NoAuthHeader from "@/components/noAuth/NoAuthHeader";
 import NoAuthFooter from "@/components/noAuth/NoAuthFooter";
-import landingPageBackground from "public/images/noAuth/landingPageBackground.jpg";
 import Image from "next/image";
-import Tilt from "react-parallax-tilt";
 import about1 from "public/images/noAuth/about1.png";
 import aboutP1 from "public/images/noAuth/aboutP1.png";
 import aboutP2 from "public/images/noAuth/aboutP2.png";
@@ -14,42 +12,17 @@ import aboutP3 from "public/images/noAuth/aboutP3.png";
 import aboutP4 from "public/images/noAuth/aboutP4.png";
 import aboutR3 from "public/images/noAuth/aboutR3.png";
 import aboutSP1 from "public/images/noAuth/aboutSP1.png";
-import featureI1 from "public/images/noAuth/featureI1.png";
-import overlay1 from "public/images/noAuth/overlay1.png";
-import overlay2 from "public/images/noAuth/overlay2.png";
-import novusBg from "public/images/noAuth/novusBg.png";
-import novusBg1 from "public/images/noAuth/novusBg-full.png";
-import bgFinal from "public/images/noAuth/bgFinal.png";
-import benfitsImg1 from "public/images/noAuth/benfitsImg1.png";
-import novusSection from "public/images/noAuth/novusSection.png";
-import whySomhako from "public/images/noAuth/whySomhako.png";
 import novusS1 from "public/images/noAuth/novusS1.png";
-import novusA1 from "public/images/noAuth/novusA1.png";
-import novusF1 from "public/images/noAuth/novusF1.png";
 import novusH1 from "public/images/noAuth/novusH1.png";
-import novusH2 from "public/images/noAuth/novusH2.png";
-import whySomhako1 from "public/images/noAuth/whySomhako1.png";
-import whySomhako2 from "public/images/noAuth/whySomhako2.png";
-import whySomhako3 from "public/images/noAuth/whySomhako3.png";
-import whySomhako4 from "public/images/noAuth/whySomhako4.png";
-import dream1 from "public/images/noAuth/dream1.png";
-import faq from "public/images/noAuth/faq.png";
-import tab1 from "public/images/noAuth/tab1.png";
-import tab2 from "public/images/noAuth/tab2.png";
-import tab3 from "public/images/noAuth/tab3.png";
-import demoBg from "public/images/noAuth/demoBg.png";
-import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
-import { Disclosure } from "@headlessui/react";
-import Tabs from "@/components/noAuth/Tabs";
-import Faq from "@/components/noAuth/FaQ";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import ToggleLang from "@/components/noAuth/ToggleLang";
 
 export default function About() {
 	const [scrollTop, setScrollTop] = useState(0);
 	const router = useRouter();
+
+	const { t } = useTranslation("common");
 
 	const handleScroll = (event) => {
 		setScrollTop(event.currentTarget.scrollTop);
@@ -67,6 +40,8 @@ export default function About() {
 			</Head>
 			<main>
 				<NoAuthHeader scrollTop={scrollTop} />
+
+				<ToggleLang />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -96,11 +71,10 @@ export default function About() {
 										About
 									</div>
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-										Hire Simple, Hire Perfect
+										{t("Noauth.about.text1")}
 									</div>
 									<div className="w-[90%] text-[1vw] font-light tracking-wider  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										We believe in making everything about hiring super simple so that you can unlock a supercharged
-										recruitment experience!
+										{t("Noauth.about.text2")}
 									</div>
 								</div>
 							</div>
@@ -111,7 +85,7 @@ export default function About() {
 					<div
 						className="flex h-auto min-h-[35vh] w-full items-center justify-center  px-8 py-0 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -120,7 +94,7 @@ export default function About() {
 						<div className="min-h-auto flex w-full flex-col items-center gap-4 p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 							<div className="flex w-full gap-4  ">
 								<div className="w-full text-center text-[1.5vw] font-bold uppercase tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-[3vw]">
-									We are integrating
+									{t("Noauth.about.text3")}
 								</div>
 							</div>
 							<div className="flex h-auto w-full items-center justify-evenly  text-white max-lg:flex-col max-lg:gap-5">
@@ -187,7 +161,7 @@ export default function About() {
 									href="/values"
 									className="w-auto text-center text-[1vw] font-light capitalize tracking-wider text-white hover:underline max-lg:text-[2vw] max-md:w-full max-md:text-[3vw]"
 								>
-									read about our values more
+									{t("Noauth.about.text4")}
 									<i className="fa-solid fa-circle-chevron-right ml-2"></i>
 								</Link>
 							</div>
@@ -201,10 +175,10 @@ export default function About() {
 								Problem
 							</div>
 							<div className="w-auto  text-[2vw] font-bold uppercase text-black max-lg:w-full max-lg:text-center max-lg:text-[3vw] max-md:text-[4vw]">
-								Somhako has studied the HR industry over the last two decades.
+								{t("Noauth.about.text5")}
 							</div>
 							<div className="w-auto  text-[2vw] font-bold uppercase text-black max-lg:w-full max-lg:text-center max-lg:text-[3vw] max-md:text-[4vw]">
-								Here’s what we have learned
+								{t("Noauth.about.text6")}
 							</div>
 							<div className="flex h-auto w-[60vw] flex-row-reverse items-center justify-center gap-8  px-12 py-0 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 								<div className="h-auto  w-[30%]  max-md:w-full">
@@ -225,8 +199,7 @@ export default function About() {
 									}}
 								>
 									<div className="w-full p-2 py-8 text-right text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										Recruiters typically take about a couple of days to share the shortlisted profiles with the hiring
-										managers.
+										{t("Noauth.about.text7")}
 									</div>
 								</div>
 							</div>
@@ -249,8 +222,7 @@ export default function About() {
 									}}
 								>
 									<div className="w-full p-2 py-8 text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										Following up on hiring managers for feedbacks can add further delays. This process can usually span
-										over 2-3 days.
+										{t("Noauth.about.text9")}
 									</div>
 								</div>
 							</div>
@@ -273,15 +245,14 @@ export default function About() {
 									}}
 								>
 									<div className="w-full p-2 py-8 text-right text-[1vw]  font-light tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										Manual scheduling of multiple interview rounds per candidate usually takes about 2-3 days. However,
-										the entire interview process can last up to 10 days.
+										{t("Noauth.about.text10")}
 									</div>
 								</div>
 							</div>
 							<div
 								className="flex h-auto min-h-[25vh] w-[70vw] items-center justify-center rounded-xl  px-8 py-0 max-lg:p-4 max-md:p-2"
 								style={{
-									backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+									backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 									backgroundRepeat: "no-repeat",
 									backgroundSize: "cover",
 									backgroundPosition: "center"
@@ -290,8 +261,7 @@ export default function About() {
 								<div className="min-h-auto flex w-full items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
 									<div className="flex w-[70%]  flex-col gap-4 max-md:w-full">
 										<div className="w-full text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-											To put it simply, completing the onboarding process for each profile typically takes around 20-30
-											days of meticulous screening and reviewing by the recruiter
+											{t("Noauth.about.text11")}
 										</div>
 									</div>
 									<div className="h-auto w-[30%] max-md:w-full">
@@ -312,7 +282,7 @@ export default function About() {
 					<div
 						className="h-auto w-full  "
 						style={{
-							backgroundImage: "url('images/noAuth/aboutR2.png')",
+							backgroundImage: "url('/images/noAuth/aboutR2.png')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -320,7 +290,7 @@ export default function About() {
 					>
 						<div className="flex h-auto w-full flex-col items-center justify-start gap-5 p-8 max-lg:p-4 max-md:p-2">
 							<div className="w-[60vw]  text-center text-[2vw] font-bold uppercase text-black max-lg:text-[3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-								Revolutionizing Recruitment: Connecting Candidates to Ideal Jobs in Days, Not Weeks
+								{t("Noauth.about.text12")}
 							</div>
 							<div className="flex h-auto w-[60vw] flex-row items-center justify-center gap-8  px-12 py-0 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col max-md:p-2">
 								<div className="h-auto  w-[30%]  max-md:w-full">
@@ -332,18 +302,9 @@ export default function About() {
 										className="max-md:min-h-auto mx-auto h-auto max-h-[50vh] w-auto drop-shadow-xl"
 									/>
 								</div>
-								<div
-									className="flex w-[70%] flex-col gap-4 rounded-lg  p-2 max-md:w-full"
-									// style={{
-									// 	opacity: "0.7",
-									// 	background:
-									// 		"linear-gradient(262deg, rgba(190, 190, 190, 0.42) 1.43%, rgba(217, 217, 217, 0.00) 96.38%)"
-									// }}
-								>
+								<div className="flex w-[70%] flex-col gap-4 rounded-lg  p-2 max-md:w-full">
 									<div className="w-full p-2 text-right text-[1vw]  tracking-widest text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										&quot;Our mission is to rapidly connect candidates to ideal jobs, slashing weeks to days. Our
-										software tackles hiring challenges, prioritizing recruiter efficiency, so they focus on linking
-										talent to fulfilling work environments.&quot;
+										&quot;{t("Noauth.about.text13")}&quot;
 									</div>
 								</div>
 							</div>
@@ -354,7 +315,7 @@ export default function About() {
 					<div
 						className="flex h-auto min-h-[35vh] w-full items-center justify-center  px-8 py-0 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -363,8 +324,7 @@ export default function About() {
 						<div className="min-h-auto flex w-full items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
 							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
 								<div className="w-full text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									At Somhako, we want to empower people to expand their horizons and unlock new potentials as they work
-									with pride and form meaningful connections.
+									{t("Noauth.about.text14")}
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
 									<div className="-translate-x-3 scale-90 ">
@@ -372,7 +332,7 @@ export default function About() {
 											<span className="circle" aria-hidden="true">
 												<span className="icon arrow"></span>
 											</span>
-											<span className="button-text">Get started now</span>
+											<span className="button-text">{t("Noauth.about.btn1")}</span>
 										</button>
 									</div>
 								</div>
@@ -409,14 +369,10 @@ export default function About() {
 								</div>
 								<div className="flex w-[60%] flex-col gap-4  max-md:w-full">
 									<div className="w-[90%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-										Novus: Your Dedicated HR Assistant for Smarter Hiring
+										{t("Noauth.about.text15")}
 									</div>
 									<div className="w-[90%] text-[1vw] font-light tracking-widest  text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[3.3vw]">
-										&quot;Statistics show that recruiters typically dedicate 2-3 days to screening and scheduling
-										profiles. With Novus, streamline your hiring process through advanced AI technology. Identify top
-										talent, rank candidates, and gain actionable insights swiftly. Let Novus, your dedicated hiring
-										assistant, handle the heavy lifting, allowing you to focus on your strengths and not daily
-										operations.&quot;
+										&quot;{t("Noauth.about.text16")}&quot;
 									</div>
 								</div>
 							</div>
@@ -427,7 +383,7 @@ export default function About() {
 					<div
 						className="flex h-auto min-h-[35vh] w-full items-center justify-center  px-8 py-0 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -436,7 +392,7 @@ export default function About() {
 						<div className="min-h-auto flex w-full items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
 							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
 								<div className="w-full text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
+									{t("Noauth.about.text17")}
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
 									<div className="-translate-x-3 scale-90 ">
@@ -444,7 +400,7 @@ export default function About() {
 											<span className="circle" aria-hidden="true">
 												<span className="icon arrow"></span>
 											</span>
-											<span className="button-text">Get started now</span>
+											<span className="button-text">{t("Noauth.about.btn2")}</span>
 										</button>
 									</div>
 								</div>
