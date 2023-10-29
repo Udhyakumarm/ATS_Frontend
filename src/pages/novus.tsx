@@ -1,58 +1,18 @@
 import Head from "next/head";
 import React, { useRef, Fragment, useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NoAuthHeader from "@/components/noAuth/NoAuthHeader";
 import NoAuthFooter from "@/components/noAuth/NoAuthFooter";
-import landingPageBackground from "public/images/noAuth/landingPageBackground.jpg";
 import Image from "next/image";
-import Tilt from "react-parallax-tilt";
-import overlay1 from "public/images/noAuth/overlay1.png";
-import overlay2 from "public/images/noAuth/overlay2.png";
-import novusBg from "public/images/noAuth/novusBg.png";
-import novusBg1 from "public/images/noAuth/novusBg-full.png";
-import bgFinal from "public/images/noAuth/bgFinal.png";
-import benfitsImg1 from "public/images/noAuth/benfitsImg1.png";
-import novusSection from "public/images/noAuth/novusSection.png";
-import whySomhako from "public/images/noAuth/whySomhako.png";
 import novusS1 from "public/images/noAuth/novusS1.png";
 import novusA1 from "public/images/noAuth/novusA1.png";
 import novusF1 from "public/images/noAuth/novusF1.png";
 import novusH1 from "public/images/noAuth/novusH1.png";
 import novusH2 from "public/images/noAuth/novusH2.png";
-import whySomhako1 from "public/images/noAuth/whySomhako1.png";
-import whySomhako2 from "public/images/noAuth/whySomhako2.png";
-import whySomhako3 from "public/images/noAuth/whySomhako3.png";
-import whySomhako4 from "public/images/noAuth/whySomhako4.png";
-import dream1 from "public/images/noAuth/dream1.png";
-import faq from "public/images/noAuth/faq.png";
-import tab1 from "public/images/noAuth/tab1.png";
-import tab2 from "public/images/noAuth/tab2.png";
-import tab3 from "public/images/noAuth/tab3.png";
-import demoBg from "public/images/noAuth/demoBg.png";
-import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
-import { Disclosure } from "@headlessui/react";
-import Tabs from "@/components/noAuth/Tabs";
-import Faq from "@/components/noAuth/FaQ";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { useTranslation } from "react-i18next";
+import ToggleLang from "@/components/noAuth/ToggleLang";
 
 export default function Novus() {
-	const settings = {
-		dots: false,
-		arrows: false,
-		infinite: true,
-		speed: 1500,
-		slidesToShow: 1,
-		slidesToScroll: 1,
-		adaptiveHeight: false,
-		autoplay: true,
-		autoplaySpeed: 4000,
-		vertical: false,
-		emulateTouch: true
-	};
-
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const handleScroll = (event) => {
@@ -63,56 +23,7 @@ export default function Novus() {
 		console.log("scrollTop", scrollTop);
 	}, [scrollTop]);
 
-	const whyHeading_1 = [
-		{
-			title: "Find the best talent with our cutting-edge intelligence technology",
-			sub: "Somhako’s AI meticulously curates candidate profiles to enhance your talent pool with our talent insights",
-			img: whySomhako1
-		},
-		{
-			title: "Streamline processes and unlock better strategies",
-			sub: "Our intuitively designed AI software encourages you to optimise your time by only spending it on things that matter",
-			img: whySomhako2
-		},
-		{
-			title: "Explore the potential of our AI integrated platform",
-			sub: "Novus acts as your HR assistant to help you deliver the best results by providing a fast-paced environment designed for your ease",
-			img: whySomhako3
-		},
-		{
-			title: "Go global with a single click",
-			sub: "Somhako’s one-tool dashboard is integrated with multiple languages to ensure global accessibility and utility for all its users",
-			img: whySomhako4
-		}
-	];
-
-	const [disclosures, setDisclosures] = useState([
-		{
-			id: "disclosure-panel-1",
-			isOpen: false,
-			buttonText: "Review only the most relevant results",
-			panelText:
-				"Novus carefully selects and evaluates candidate applications, providing you with ranked results to help you discover the top talents of your industry."
-		},
-		{
-			id: "disclosure-panel-2",
-			isOpen: false,
-			buttonText: "Experience an elite talent pool",
-			panelText:
-				"Somhako directs candidates towards the job openings that closely match their strengths so that you can access a strong talent pool that has been hand-picked for your job profile."
-		},
-		{
-			id: "disclosure-panel-3",
-			isOpen: false,
-			buttonText: "Broaden your network pool",
-			panelText:
-				"Somhako provides a seamless integration of third-party tools and platforms, thereby enabling collaborations and referral."
-		}
-	]);
-
-	const handleClick = (id: any) => {
-		setDisclosures(disclosures.map((d) => (d.id === id ? { ...d, isOpen: !d.isOpen } : { ...d, isOpen: false })));
-	};
+	const { t } = useTranslation("common");
 
 	return (
 		<>
@@ -122,6 +33,7 @@ export default function Novus() {
 			</Head>
 			<main>
 				<NoAuthHeader scrollTop={scrollTop} />
+				<ToggleLang />
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -151,10 +63,10 @@ export default function Novus() {
 										Novus
 									</div>
 									<div className="w-[70%] text-[2vw] uppercase  text-white max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-										Your all new HR Assistant
+										{t("Noauth.novus.text1")}
 									</div>
 									<div className="w-[60%] text-[1vw] font-light tracking-wider text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
-										A day’s work done in seconds
+										{t("Noauth.novus.text2")}
 									</div>
 								</div>
 							</div>
@@ -170,16 +82,14 @@ export default function Novus() {
 								</div>
 								<div className="flex w-[60%]  flex-col gap-4 max-md:w-full">
 									<div className="w-[80%]  text-left text-[2vw] uppercase text-white max-lg:w-full  max-lg:text-[3.3vw] max-md:w-full max-md:text-center max-md:text-[4vw]">
-										Simplified Resume Screening with a Single-Text Approach
+										{t("Noauth.novus.text3")}
 									</div>
 									<div className="w-[90%] text-[1vw] font-light tracking-wider text-white max-lg:w-full max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
-										Novus, driven by AI, provides quick and accurate responses with a single conversation prompt. It
-										utilizes an intuitive data-driven method to pre-screen resumes in the talent pool, presenting the
-										most relevant candidates ranked by their professional aptitude.
+										{t("Noauth.novus.text4")}
 									</div>
 									<div className="z-10 flex justify-start  pt-8  text-white max-md:justify-center max-md:pt-4">
-										<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
-											Get started now
+										<button className="transform rounded-full bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+											{t("Noauth.novus.btn1")}
 										</button>
 									</div>
 								</div>
@@ -204,17 +114,14 @@ export default function Novus() {
 									Flow
 								</div>
 								<div className="w-[90%] text-[1.5vw] font-medium uppercase tracking-wider text-black max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									Source Top Talent and Streamline the Next Steps with Automation
+									{t("Noauth.novus.text5")}
 								</div>
 								<div className="w-[90%] text-[1vw] font-light tracking-wider text-black max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
-									Unlock Premium Talent, Streamline Scheduling, and Secure Competitive Offers with Somhako-Novus.
-									Maximize Sourcing Excellence for Outstanding Results. Manage a Strong Candidate Pipeline and Drive
-									Business Success. Novus automates follow-up emails, reminders, and updates for stress-free
-									communication
+									{t("Noauth.novus.text6")}
 								</div>
 								<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center max-md:pt-4">
-									<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
-										Get started now
+									<button className="transform rounded-full bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+										{t("Noauth.novus.btn2")}
 									</button>
 								</div>
 							</div>
@@ -252,16 +159,14 @@ export default function Novus() {
 									Analytics
 								</div>
 								<div className="w-[90%] text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									Strategic Recruitment Insights: Monitor Conversions and Optimize Sourcing
+									{t("Noauth.novus.text7")}
 								</div>
 								<div className="w-[90%] text-[1vw] font-light tracking-wider text-white max-lg:text-[2vw] max-md:w-full max-md:text-center max-md:text-[2.5vw]">
-									Efficiently Monitor Source-Specific Candidate Conversions and Identify Trends to Optimize Your
-									Recruitment and Sourcing Strategies. Access Essential Data and Analytics for Informed Decision-Making,
-									Ensuring Continuous Enhancement and Long-term Success in Your Recruitment Processes
+									{t("Noauth.novus.text8")}
 								</div>
 								<div className="z-10 flex justify-start  pt-8 text-white max-md:justify-center max-md:pt-4">
-									<button className="transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
-										Get started now
+									<button className="transform rounded-full bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce">
+										{t("Noauth.novus.btn3")}
 									</button>
 								</div>
 							</div>
@@ -272,7 +177,7 @@ export default function Novus() {
 					<div
 						className="flex h-auto min-h-[35vh] w-full items-center justify-center  px-8 py-0 max-lg:p-4 max-md:p-2"
 						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
+							backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
 							backgroundRepeat: "no-repeat",
 							backgroundSize: "cover",
 							backgroundPosition: "center"
@@ -281,7 +186,7 @@ export default function Novus() {
 						<div className="min-h-auto flex w-full items-center gap-4  p-4 px-12 max-lg:h-auto max-lg:min-h-fit max-lg:w-[90vw] max-md:flex-col-reverse max-md:p-2">
 							<div className="flex w-[50%]  flex-col gap-4 max-md:w-full">
 								<div className="w-full text-[1.5vw] font-medium tracking-wider text-white max-lg:text-[2.3vw] max-md:w-full max-md:text-center max-md:text-[3vw]">
-									Rapid, Effective, and Improved Hiring with Somhako - Boost Your Recruitment Success!
+									{t("Noauth.novus.text9")}
 								</div>
 								<div className="z-10 flex justify-start  pt-4 text-white max-md:justify-center max-md:pt-4">
 									<div className="-translate-x-3 scale-90 ">
@@ -289,7 +194,7 @@ export default function Novus() {
 											<span className="circle" aria-hidden="true">
 												<span className="icon arrow"></span>
 											</span>
-											<span className="button-text">Get started now</span>
+											<span className="button-text"> {t("Noauth.novus.btn4")}</span>
 										</button>
 									</div>
 								</div>

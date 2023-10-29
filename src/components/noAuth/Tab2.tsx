@@ -1,65 +1,91 @@
 import React, { useState } from "react";
 
-export default function Tab2() {
-	const [disclosures, setDisclosures] = useState([
-		{
-			id: "disclosure-panel-1",
-			isOpen: false,
-			buttonText: "Optimise your time",
-			panelText:
-				"Streamline your daily operations and automate your tasks with Novus to create an efficient and meaningful talent management system."
-		},
-		{
-			id: "disclosure-panel-2",
-			isOpen: false,
-			buttonText: "Strategies better with comprehensive analytics",
-			panelText:
-				"Use our statistical observations and comprehensive analytics to develop talents that can promise a more fulfilling career trajectory."
-		},
-		{
-			id: "disclosure-panel-3",
-			isOpen: false,
-			buttonText: "Experience seamless integration",
-			panelText:
-				"Seamlessly integrate your calendar with our dashboard and leverage built-in chats for an uninterrupted and streamlined recruitment experience."
-		}
-	]);
+export default function Tab2({ t }: any) {
+	const [open1, setopen1] = useState(false);
+	const [open2, setopen2] = useState(false);
+	const [open3, setopen3] = useState(false);
 
-	const handleClick = (id) => {
-		setDisclosures(disclosures.map((d) => (d.id === id ? { ...d, isOpen: !d.isOpen } : { ...d, isOpen: false })));
+	const handleClick = (callback1: any, callback2: any) => {
+		setopen1(false);
+		setopen2(false);
+		setopen3(false);
+		callback1(callback2);
 	};
 
 	return (
-		<div className="mx-auto w-full space-y-6 rounded-2xl max-lg:space-y-3 ">
-			{disclosures.map(({ id, isOpen, buttonText, panelText }) => (
-				<React.Fragment key={id}>
-					<div
-						className="rounded-[3vw] p-2 text-white max-md:rounded-[4vw] max-md:p-0"
-						style={{
-							backgroundImage: "url('images/noAuth/tabBg1.jpg')",
-							backgroundRepeat: "no-repeat",
-							backgroundSize: "cover",
-							backgroundPosition: "center"
-						}}
-					>
-						<button
-							// className="flex w-full justify-between rounded-lg bg-gray-300 px-4 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-500 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
-							className="flex w-full items-center gap-4 rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
-							onClick={() => handleClick(id)}
-							aria-expanded={isOpen}
-							{...(isOpen && { "aria-controls": id })}
-						>
-							<span className="w-full text-center">{buttonText}</span>
-							<i className={`fa-solid text-lg ${isOpen ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
-						</button>
-						{isOpen && (
-							<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
-								{panelText}
-							</div>
-						)}
+		<div className="mx-auto w-full  space-y-6 rounded-2xl max-lg:space-y-3">
+			<div
+				className="rounded-[3vw] p-2 text-white max-md:rounded-[4vw] max-md:p-0"
+				style={{
+					backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundPosition: "center"
+				}}
+			>
+				<button
+					className="flex w-full items-center gap-4 rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
+					onClick={() => handleClick(setopen1, !open1)}
+					aria-expanded={open1}
+					{...(open1 && { "aria-controls": "disclosure-panel-1" })}
+				>
+					<span className="w-full text-center">{t("Noauth.home.benefitsTab2Text1")}</span>
+					<i className={`fa-solid text-lg ${open1 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
+				</button>
+				{open1 && (
+					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
+						{t("Noauth.home.benefitsTab2Sub1")}
 					</div>
-				</React.Fragment>
-			))}
+				)}
+			</div>
+			<div
+				className="rounded-[3vw] p-2 text-white max-md:rounded-[4vw] max-md:p-0"
+				style={{
+					backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundPosition: "center"
+				}}
+			>
+				<button
+					className="flex w-full items-center gap-4 rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
+					onClick={() => handleClick(setopen2, !open2)}
+					aria-expanded={open2}
+					{...(open2 && { "aria-controls": "disclosure-panel-2" })}
+				>
+					<span className="w-full text-center">{t("Noauth.home.benefitsTab2Text2")}</span>
+					<i className={`fa-solid text-lg ${open2 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
+				</button>
+				{open2 && (
+					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
+						{t("Noauth.home.benefitsTab2Sub2")}
+					</div>
+				)}
+			</div>
+			<div
+				className="rounded-[3vw] p-2 text-white max-md:rounded-[4vw] max-md:p-0"
+				style={{
+					backgroundImage: "url('/images/noAuth/tabBg1.jpg')",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundPosition: "center"
+				}}
+			>
+				<button
+					className="flex w-full items-center gap-4 rounded-lg p-4 text-left text-[1vw] font-medium text-white max-lg:text-[1.5vw] max-md:text-[2vw]"
+					onClick={() => handleClick(setopen3, !open3)}
+					aria-expanded={open3}
+					{...(open3 && { "aria-controls": "disclosure-panel-1" })}
+				>
+					<span className="w-full text-center">{t("Noauth.home.benefitsTab2Text3")}</span>
+					<i className={`fa-solid text-lg ${open3 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
+				</button>
+				{open3 && (
+					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
+						{t("Noauth.home.benefitsTab2Sub3")}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

@@ -1,6 +1,6 @@
 import ThemeChange from "../ThemeChange";
 import { useRouter } from "next/router";
-import ToggleLang from "../ToggleLang";
+import ToggleLang from "./ToggleLang";
 import toastcomp from "../toast";
 import { useLangStore } from "@/utils/code";
 import Logo from "../Logo";
@@ -13,7 +13,7 @@ import novusIcon12 from "/public/images/novus12.png";
 import Button from "../Button";
 
 export default function noAuthHeader({ scrollTop }: any) {
-	// const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -25,8 +25,15 @@ export default function noAuthHeader({ scrollTop }: any) {
 					scrollTop > 10 ? "bg-black/20 backdrop-blur-md" : "bg-transparent"
 				} ${isOpen && " max-lg:h-full max-lg:bg-black/20 max-lg:backdrop-blur-lg"} `}
 			>
-				<div className=" flex flex-shrink-0 items-center ">
-					<Image src={headerLogo} className="h-[55px] w-[55px]" alt="Logo" />
+				<div className=" flex flex-shrink-0 items-center">
+					<Image
+						src={headerLogo}
+						className="h-[55px] w-[55px] cursor-pointer"
+						alt="Logo"
+						onClick={() => {
+							router.push("/home");
+						}}
+					/>
 				</div>
 				<div className="block lg:hidden">
 					<button onClick={() => setIsOpen(!isOpen)} className="flex items-center rounded px-3 py-2">
@@ -60,7 +67,7 @@ export default function noAuthHeader({ scrollTop }: any) {
 							`${router.route.includes("/home") ? "menu__link2" : "menu__link"}`
 						}
 					>
-						Home
+						{srcLang === "ja" ? "ホーム" : "Home"}
 					</Link>
 					<Link
 						href="/about"
@@ -70,11 +77,15 @@ export default function noAuthHeader({ scrollTop }: any) {
 							`${router.route.includes("/about") ? "menu__link2" : "menu__link"}`
 						}
 					>
-						About
+						{srcLang === "ja" ? "について" : "About"}
 					</Link>
 					<Link href="/novus" className="my-auto mb-4 flex w-fit flex-nowrap max-lg:mx-auto lg:mb-0 lg:mt-0">
-						<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>Novus</div>
-						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
+						<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>
+							{srcLang === "ja" ? "ノーバス" : "Novus"}
+						</div>
+						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">
+							{srcLang === "ja" ? "ベータ" : "beta"}
+						</span>
 					</Link>
 					<Link
 						href="/blogs"
@@ -84,83 +95,15 @@ export default function noAuthHeader({ scrollTop }: any) {
 							`${router.route.includes("/blogs") ? "menu__link2" : "menu__link"}`
 						}
 					>
-						Blogs
+						{srcLang === "ja" ? "ブログ" : "Blogs"}
 					</Link>
 					<div className="ml-[4rem]  max-lg:ml-0 max-lg:mt-[4rem] max-lg:flex max-lg:w-full max-lg:justify-center">
-						<button className=" transform rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce ">
-							Get started now
+						<button className=" transform rounded-full bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce ">
+							{srcLang === "ja" ? "今すぐ始める" : "Get started now"}
 						</button>
 					</div>
 				</div>
-
-				{/* <div className={`block items-center max-lg:mx-auto  lg:inline-flex ${isOpen ? "block" : "hidden"}`}>
-					<button
-						className={`my-2 w-auto rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-sm font-semibold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200`}
-					>
-						Learn More
-						<span className="ml-2">
-							<i className="fa-regular fa-circle-check"></i>
-						</span>
-					</button>
-				</div> */}
 			</nav>
-
-			{/* <div
-				id="topbar"
-				className={
-					`fixed left-0 top-0 z-[12] mx-auto flex min-h-[65px] w-full flex-col flex-wrap items-center justify-center border-4 border-black bg-transparent px-6 py-3 delay-150 md:flex-row` +
-					" " +
-					`${scrollTop > 10 ? "bg-white/10 backdrop-blur-md" : "bg-transparent"}`
-				}
-			>
-				<div className="mb-4 flex items-center md:mb-0">
-					<Image src={novusIcon} alt={"Novus1"} width={55} className="max-h-[55px]" />
-				</div>
-				<div className="flex flex-wrap items-center justify-center gap-10 px-6 py-3 md:ml-auto md:mr-auto">
-					<Link
-						href="/lp"
-						className={"my-auto" + " " + `${router.route.includes("/lp") ? "menu__link2" : "menu__link"}`}
-					>
-						Home
-					</Link>
-					<Link
-						href="#"
-						className={"my-auto" + " " + `${router.route.includes("/about") ? "menu__link2" : "menu__link"}`}
-					>
-						About
-					</Link>
-					<Link
-						href="#"
-						className={"my-auto" + " " + `${router.route.includes("/features") ? "menu__link2" : "menu__link"}`}
-					>
-						Features
-					</Link>
-					<div className="my-auto">
-						<Link href="#" className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>
-							Novus
-						</Link>
-						<span className="mb-1 ml-1 mt-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">beta</span>
-					</div>
-					<Link
-						href="#"
-						className={"my-auto" + " " + `${router.route.includes("/blogs") ? "menu__link2" : "menu__link"}`}
-					>
-						Blogs
-					</Link>
-					
-				</div>
-
-				<div className="mt-4 inline-flex items-center md:mt-0">
-					<button
-						className={`my-2 w-auto rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-2 text-sm font-semibold text-white hover:from-gradDarkBlue hover:to-gradDarkBlue disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200`}
-					>
-						Learn More
-						<span className="ml-2">
-							<i className="fa-regular fa-circle-check"></i>
-						</span>
-					</button>
-				</div>
-			</div> */}
 		</>
 	);
 }

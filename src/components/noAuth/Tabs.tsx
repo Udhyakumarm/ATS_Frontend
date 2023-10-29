@@ -8,16 +8,16 @@ import Tab2 from "./Tab2";
 import Tab3 from "./Tab3";
 import Image from "next/image";
 
-export default function Tabs() {
+export default function Tabs({ t }: any) {
 	const tabHeading_1 = [
 		{
-			title: "Talent Acquisition"
+			title: t("Noauth.home.benefitsTab1")
 		},
 		{
-			title: "Talent Management"
+			title: t("Noauth.home.benefitsTab2")
 		},
 		{
-			title: "Workflow Management"
+			title: t("Noauth.home.benefitsTab3")
 		}
 	];
 	return (
@@ -32,9 +32,7 @@ export default function Tabs() {
 										className={
 											"border-b-4 px-5 py-1 text-[1.2vw] font-semibold focus:outline-none max-md:text-[2.2vw]" +
 											" " +
-											(selected
-												? "border-gray-900 text-gray-900 dark:border-white dark:text-white lg:scale-105"
-												: "border-transparent text-darkGray dark:text-gray-400")
+											(selected ? "border-gray-900 text-gray-900  lg:scale-105" : "border-transparent text-darkGray ")
 										}
 									>
 										<i className="fa-solid fa-circle-check"></i>&nbsp;
@@ -50,7 +48,7 @@ export default function Tabs() {
 						<div className="flex flex-row items-stretch justify-center gap-4 p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab1} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
 							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
-								<Tab1 />
+								<Tab1 t={t} />
 							</div>
 						</div>
 					</Tab.Panel>
@@ -58,7 +56,7 @@ export default function Tabs() {
 						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab2} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
 							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
-								<Tab2 />
+								<Tab2 t={t} />
 							</div>
 						</div>
 					</Tab.Panel>
@@ -66,7 +64,7 @@ export default function Tabs() {
 						<div className="flex flex-row items-start justify-center gap-4  p-8 max-lg:flex-col max-lg:items-center">
 							<Image src={tab3} alt="LP" width={"1000"} height={"1000"} className="h-auto w-[40vw]  max-md:w-full" />
 							<div className="mt-[5vw]  w-[30vw] py-2 max-lg:mt-0 max-lg:w-full max-lg:py-0">
-								<Tab3 />
+								<Tab3 t={t} />
 							</div>
 						</div>
 					</Tab.Panel>

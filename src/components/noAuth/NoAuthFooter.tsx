@@ -13,18 +13,27 @@ import novusIcon12 from "/public/images/novus12.png";
 import Button from "../Button";
 
 export default function noAuthFooter() {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const LINKS = [
 		{
-			title: "Product",
-			items: ["Applicant Tracking"]
+			title: srcLang === "ja" ? "製品" : "Product",
+			items: [srcLang === "ja" ? "応募者トラッキング" : "Applicant Tracking"]
 		},
 		{
-			title: "About",
-			items: ["Company", "Blog", "Book A Demo"]
+			title: srcLang === "ja" ? "について" : "About",
+			items: [
+				srcLang === "ja" ? "会社概要" : "Company",
+				srcLang === "ja" ? "ブログ" : "Blogs",
+				srcLang === "ja" ? "デモを予約する" : "Book A Demo"
+			]
 		},
 		{
-			title: "Policies",
-			items: ["Privacy Policy", "User Agreement", "Terms & Conditions"]
+			title: srcLang === "ja" ? "ポリシー" : "Policies",
+			items: [
+				srcLang === "ja" ? "プライバシーポリシー" : "Privacy Policy",
+				srcLang === "ja" ? "利用規約" : "User Agreement",
+				srcLang === "ja" ? "ご利用条件" : "Terms & Conditions"
+			]
 		}
 	];
 
@@ -71,7 +80,8 @@ export default function noAuthFooter() {
 					</div>
 					<div className="mt-8 flex w-full flex-col items-center justify-center border-t border-blue-50 py-4 md:flex-row md:justify-between">
 						<p className="mb-4 text-center font-normal text-white md:mb-0">
-							&copy; {currentYear} <a href="https://somhako.com/">Somhako</a>. All Rights Reserved.
+							&copy; {currentYear} <a href="https://somhako.com/">Somhako</a>.{" "}
+							{srcLang === "ja" ? "無断複写・転載を禁じます。" : "All Rights Reserved."}
 						</p>
 						<div className="flex gap-4 text-white sm:justify-center">
 							<Link href="#" className="opacity-80 transition-opacity hover:opacity-100">
