@@ -34,14 +34,12 @@ export default function ToggleLang() {
 	}
 
 	return (
-		<div className="fixed -right-5 top-24 z-[100] transition delay-500 duration-100 ease-in hover:right-0">
-			<div className="group relative inline-block">
+		<div className="fixed right-0 top-24 z-[100]">
+			<div className="relative inline-block">
 				<Listbox value={selectedLanguages} onChange={setLanguages}>
 					<div className="relative">
-						{/* <Listbox.Button className="flex w-full items-center justify-center gap-4  rounded-l-lg border-2 border-red-500 bg-white py-2 pl-3 pr-3 text-left text-sm text-black shadow-normal transition focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 group-hover:pr-6 sm:text-sm"> */}
-						<Listbox.Button className="flex w-full items-center justify-center  gap-2 rounded-l-lg border-l-2 border-t-2 border-black/50 bg-white px-1 py-2 pl-4 text-sm text-black shadow-normal transition">
+						<Listbox.Button className="flex w-full items-center justify-center  gap-2 rounded-l-lg border-l-2 border-t-2 border-black/50 bg-white px-3 py-2  text-sm text-black shadow-normal transition">
 							<span className="uppercase">{lang}</span>
-							<i className="fa-solid fa-globe text-base"></i>
 						</Listbox.Button>
 						<Transition
 							as={Fragment}
@@ -49,7 +47,7 @@ export default function ToggleLang() {
 							leaveFrom="opacity-100"
 							leaveTo="opacity-0"
 						>
-							<Listbox.Options className="absolute right-0 top-[100%] z-[20] mt-1 max-h-60 w-[150px] overflow-auto rounded-l-lg border-l-2 border-t-2 border-black/50 bg-white py-1 drop-shadow-xl">
+							<Listbox.Options className="absolute right-0 top-[100%] z-[20] mt-1 max-h-60 w-max overflow-auto rounded-l-lg border-l-2 border-t-2 border-black/50 bg-white py-1 drop-shadow-xl">
 								{languages.map((item, itemIdx) => (
 									<Listbox.Option
 										className={({ active }) =>

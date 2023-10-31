@@ -11,13 +11,13 @@ import Image from "next/image";
 export default function Tabs({ t }: any) {
 	const tabHeading_1 = [
 		{
-			title: t("Noauth.home.benefitsTab1")
+			title: t("Noauth.home.text14")
 		},
 		{
-			title: t("Noauth.home.benefitsTab2")
+			title: t("Noauth.home.text15")
 		},
 		{
-			title: t("Noauth.home.benefitsTab3")
+			title: t("Noauth.home.text16")
 		}
 	];
 	return (

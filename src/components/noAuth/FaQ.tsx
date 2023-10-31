@@ -29,12 +29,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open1}
 					{...(open1 && { "aria-controls": "disclosure-panel-1" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ1")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text55")}</span>
 					<i className={`fa-solid text-lg ${open1 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open1 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA1")}
+						{t("Noauth.home.text56")}
 					</div>
 				)}
 			</div>
@@ -46,12 +46,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open2}
 					{...(open2 && { "aria-controls": "disclosure-panel-2" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ2")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text57")}</span>
 					<i className={`fa-solid text-lg ${open2 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open2 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA2")}
+						{t("Noauth.home.text58")}
 					</div>
 				)}
 			</div>
@@ -63,12 +63,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open3}
 					{...(open3 && { "aria-controls": "disclosure-panel-3" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ3")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text59")}</span>
 					<i className={`fa-solid text-lg ${open3 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open3 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA3")}
+						{t("Noauth.home.text60")}
 					</div>
 				)}
 			</div>
@@ -80,12 +80,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open4}
 					{...(open4 && { "aria-controls": "disclosure-panel-4" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ4")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text61")}</span>
 					<i className={`fa-solid text-lg ${open4 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open4 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA4")}
+						{t("Noauth.home.text62")}
 					</div>
 				)}
 			</div>
@@ -97,12 +97,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open5}
 					{...(open5 && { "aria-controls": "disclosure-panel-5" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ5")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text63")}</span>
 					<i className={`fa-solid text-lg ${open5 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open5 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA5")}
+						{t("Noauth.home.text64")}
 					</div>
 				)}
 			</div>
@@ -114,12 +114,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open6}
 					{...(open6 && { "aria-controls": "disclosure-panel-6" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ6")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text65")}</span>
 					<i className={`fa-solid text-lg ${open6 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open6 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA6")}
+						{t("Noauth.home.text66")}
 					</div>
 				)}
 			</div>
@@ -131,12 +131,12 @@ export default function Faq({ t }: any) {
 					aria-expanded={open7}
 					{...(open7 && { "aria-controls": "disclosure-panel-7" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.faqQ7")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text67")}</span>
 					<i className={`fa-solid text-lg ${open7 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open7 && (
 					<div className="m-2 mt-0 border-t-2 border-blue-500 p-2 text-center text-[1vw] max-xl:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.faqA7")}
+						{t("Noauth.home.text68")}
 					</div>
 				)}
 			</div>
