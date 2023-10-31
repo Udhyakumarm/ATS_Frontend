@@ -29,12 +29,12 @@ export default function Tab1({ t }: any) {
 					aria-expanded={open1}
 					{...(open1 && { "aria-controls": "disclosure-panel-1" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.benefitsTab1Text1")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text17")}</span>
 					<i className={`fa-solid text-lg ${open1 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open1 && (
 					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.benefitsTab1Sub1")}
+						{t("Noauth.home.text18")}
 					</div>
 				)}
 			</div>
@@ -53,12 +53,12 @@ export default function Tab1({ t }: any) {
 					aria-expanded={open2}
 					{...(open2 && { "aria-controls": "disclosure-panel-2" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.benefitsTab1Text2")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text19")}</span>
 					<i className={`fa-solid text-lg ${open2 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open2 && (
 					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.benefitsTab1Sub2")}
+						{t("Noauth.home.text20")}
 					</div>
 				)}
 			</div>
@@ -77,12 +77,12 @@ export default function Tab1({ t }: any) {
 					aria-expanded={open3}
 					{...(open3 && { "aria-controls": "disclosure-panel-1" })}
 				>
-					<span className="w-full text-center">{t("Noauth.home.benefitsTab1Text3")}</span>
+					<span className="w-full text-center">{t("Noauth.home.text21")}</span>
 					<i className={`fa-solid text-lg ${open3 ? "fa-power-off -rotate-90" : "fa-circle-plus"} `}></i>
 				</button>
 				{open3 && (
 					<div className="m-2 mt-0 border-t-2 border-cyan-500 p-2 text-center text-[1vw] font-light  max-lg:text-[1.5vw] max-md:text-[2vw]">
-						{t("Noauth.home.benefitsTab1Sub3")}
+						{t("Noauth.home.text22")}
 					</div>
 				)}
 			</div>

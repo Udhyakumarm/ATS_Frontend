@@ -40,17 +40,9 @@ export default function noAuthFooter() {
 	const currentYear = new Date().getFullYear();
 	return (
 		<>
-			{/* <div className="h-[40vh] w-full bg-white">
+			<footer className="relative w-full bg-white py-4">
 				<div
-					className="m-2 h-full w-auto"
-					style={{
-						background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
-					}}
-				></div>
-			</div> */}
-			<footer className="relative w-full bg-white p-4">
-				<div
-					className="mx-auto w-full rounded-md px-8 py-4"
+					className="mx-auto  rounded-md  px-8 py-4 sm:max-w-[600px] md:max-w-[720px] lg:max-w-[991px] xl:max-w-[1216px] 2xl:max-w-[1448px]"
 					style={{
 						background: "linear-gradient(70deg, #2D129A -5.44%, #47BBFD 120.58%)"
 					}}
