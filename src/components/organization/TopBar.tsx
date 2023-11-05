@@ -21,6 +21,8 @@ import moment from "moment";
 import gcalIcon from "/public/images/social/google-cal-icon2.png";
 import novusIcon from "/public/images/novus1.png";
 import novusIcon12 from "/public/images/novus12.png";
+
+import LogoImg from "/public/images/noAuth/headerLogo.png";
 import { useNewNovusStore } from "@/utils/novus";
 
 const CalendarIntegrationOptions = [
@@ -474,7 +476,8 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				</button> */}
 				{role != "Hiring Manager" && (
 					<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
-						<Image src={visible ? novusIcon12 : novusIcon} alt={"Novus1"} width={30} className="max-h-[30px]" />
+						{/* <Image src={visible ? novusIcon12 : LogoImg} alt={"Novus1"} width={30} className="max-h-[30px]" /> */}
+						<Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" />
 					</button>
 				)}
 			</div>

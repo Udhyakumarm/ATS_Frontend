@@ -28,6 +28,7 @@ import TImeSlot from "@/components/TimeSlot";
 import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import FormField from "@/components/FormField";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -67,6 +68,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}, [session]);
 
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+	const [manualInterview, setmanualInterview] = useState(false);
 	const cancelButtonRef = useRef(null);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
@@ -468,6 +470,60 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
+	// manual interview
+	const [mtitle, setmtitle] = useState("");
+	const [mdesc, setmdesc] = useState("");
+	const [mlink, setmlink] = useState("");
+	const [msdate, setmsdate] = useState("");
+	const [medate, setmedate] = useState("");
+	const [mfsdate, setmfsdate] = useState("");
+	const [mfedate, setmfedate] = useState("");
+
+	function disBtn() {
+		return mtitle.length > 0 && mdesc.length > 0 && mlink.length > 0 && mfsdate.length > 0 && mfedate.length > 0;
+	}
+
+	useEffect(() => {
+		setmfsdate(moment(msdate).format().toString());
+	}, [msdate]);
+
+	useEffect(() => {
+		setmfedate(moment(medate).format().toString());
+	}, [medate]);
+
+	async function starterInterviewSchedule() {
+		const fd = new FormData();
+		fd.append("date_time_from", mfsdate);
+		fd.append("date_time_to", mfedate);
+		fd.append("interview_name", mtitle);
+		fd.append("description", mdesc);
+		fd.append("link", mlink);
+		await axiosInstanceAuth2
+			.post(`/job/create-interview/${appdata["arefid"]}/${appdata["job"]["refid"]}/`, fd)
+			.then(async (res) => {
+				toastcomp("Interview Scheduled", "success");
+				setmanualInterview(false);
+				setmtitle("");
+				setmdesc("");
+				setmlink("");
+				setmsdate("");
+				setmedate("");
+				setmfsdate("");
+				setmfedate("");
+			})
+			.catch((err) => {
+				toastcomp("Interview not Scheduled", "error");
+				setmanualInterview(false);
+				setmtitle("");
+				setmdesc("");
+				setmlink("");
+				setmsdate("");
+				setmedate("");
+				setmfsdate("");
+				setmfedate("");
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -678,6 +734,17 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											</h2>
 										</aside>
 										<aside className="flex items-center">
+											{atsVersion != "starter" && (
+												<div className="mr-4">
+													<Button
+														btnType="button"
+														btnStyle="iconLeftBtn"
+														label="Manual Interview"
+														iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
+														handleClick={() => setmanualInterview(true)}
+													/>
+												</div>
+											)}
 											<div className="mr-4">
 												<Button
 													btnType="button"
@@ -2066,6 +2133,112 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</div>
 									</Dialog.Panel>
 								)} */}
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={manualInterview} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setmanualInterview}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="font-semibold leading-none">Schedule Manual Interview</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setmanualInterview(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="w-full p-8">
+										<FormField
+											id={"summary"}
+											fieldType="input"
+											inputType="text"
+											label={"Interview Title"}
+											value={mtitle}
+											handleChange={(e) => setmtitle(e.target.value)}
+											required
+										/>
+										<FormField
+											id={"description"}
+											fieldType="textarea"
+											label={"Interview Description"}
+											value={mdesc}
+											handleChange={(e) => setmdesc(e.target.value)}
+											required
+										/>
+										<FormField
+											id={"link"}
+											fieldType="input"
+											label={"Interview Link"}
+											value={mlink}
+											handleChange={(e) => setmlink(e.target.value)}
+											required
+										/>
+										<div className="mx-[-10px] flex flex-wrap">
+											<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+												<FormField
+													id={"start"}
+													fieldType="date"
+													label={"Interview StartTime"}
+													singleSelect
+													value={msdate}
+													handleChange={(e) => setmsdate(e.target.value)}
+													showTimeSelect
+													showHours
+													required
+												/>
+											</div>
+											<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
+												<FormField
+													id={"end"}
+													fieldType="date"
+													label={"Interview EndTime"}
+													singleSelect
+													value={medate}
+													handleChange={(e) => setmedate(e.target.value)}
+													showTimeSelect
+													showHours
+													required
+												/>
+											</div>
+										</div>
+										<div>
+											<Button
+												label={t("Btn.SendInvite")}
+												btnType={"button"}
+												disabled={!disBtn()}
+												handleClick={starterInterviewSchedule}
+											/>
+										</div>
+									</div>
+								</Dialog.Panel>
 							</Transition.Child>
 						</div>
 					</div>

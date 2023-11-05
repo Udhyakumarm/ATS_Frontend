@@ -38,12 +38,12 @@ export default function ToggleLang() {
 						<i className="fa-solid fa-angle-down"></i>
 					</Listbox.Button>
 					<Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-						<Listbox.Options className="absolute right-0 top-[100%] z-[20] mt-1 max-h-60 w-[150px] overflow-auto rounded-md bg-primary py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+						<Listbox.Options className="absolute right-0 top-[100%] z-[20] mt-1 max-h-60 w-[150px] overflow-auto rounded-md bg-gradDarkBlue py-1 shadow-normal ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 							{languages.map((item, itemIdx) => (
 								<Listbox.Option
 									className={({ active }) =>
-										`relative block cursor-pointer select-none py-2 pl-10 pr-4 text-left hover:bg-indigo-500 hover:text-white ${
-											active ? "bg-indigo-500 text-white" : "text-white"
+										`relative block cursor-pointer select-none py-2 pl-10 pr-4 text-left hover:bg-secondary hover:text-white ${
+											active ? "bg-secondary text-white" : "text-white"
 										}`
 									}
 									value={item}

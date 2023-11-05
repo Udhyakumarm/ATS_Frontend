@@ -1200,7 +1200,14 @@ export default function VendorClients() {
 
 																			<td className="px-3 py-2 text-left">{moment(data["timestamp"]).fromNow()}</td>
 																			<td className="px-3 py-2 text-left">
-																				<button type="button" className="text-primary hover:underline dark:text-white">
+																				<button
+																					type="button"
+																					className="text-primary hover:underline dark:text-white"
+																					onClick={() => {
+																						setpopupvcrefid(data["applicant"]["vcrefid"]);
+																						setViewApplicant(true);
+																					}}
+																				>
 																					{t("Btn.View")}
 																				</button>
 																			</td>

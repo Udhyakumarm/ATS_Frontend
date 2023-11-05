@@ -12,7 +12,7 @@ import headerLogo from "/public/images/noAuth/headerLogo.png";
 import novusIcon12 from "/public/images/novus12.png";
 import Button from "../Button";
 
-export default function noAuthHeader({ scrollTop }: any) {
+export default function noAuthHeader({ scrollTop, setbookADemo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
@@ -93,6 +93,16 @@ export default function noAuthHeader({ scrollTop }: any) {
 							</span>
 						</Link>
 						<Link
+							href="/pricing"
+							className={
+								"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
+								" " +
+								`${router.route.includes("/pricing") ? "menu__link2" : "menu__link"}`
+							}
+						>
+							{srcLang === "ja" ? "価格" : "Pricing"}
+						</Link>
+						<Link
 							href="/blogs"
 							className={
 								"my-auto mb-4 block w-fit max-lg:mx-auto lg:mb-0 lg:mt-0" +
@@ -103,7 +113,10 @@ export default function noAuthHeader({ scrollTop }: any) {
 							{srcLang === "ja" ? "ブログ" : "Blogs"}
 						</Link>
 						<div className="ml-[4rem]  max-lg:ml-0 max-lg:mt-[4rem] max-lg:flex max-lg:w-full max-lg:justify-center">
-							<button className=" transform rounded-full bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce ">
+							<button
+								className=" transform rounded-full bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-3 tracking-wide text-white shadow-lg transition-all duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:from-blue-600 hover:to-blue-800 hover:brightness-110 active:animate-bounce "
+								onClick={() => setbookADemo(true)}
+							>
 								{srcLang === "ja" ? "デモを予約する" : "Book a demo"}
 							</button>
 						</div>
