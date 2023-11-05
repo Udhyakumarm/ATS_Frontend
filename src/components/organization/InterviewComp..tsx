@@ -148,7 +148,7 @@ export default function InterviewComp({ sklLoad, data, axiosInstanceAuth2, upcom
 					<div className="flex flex-wrap items-center px-4">
 						<div className="w-full px-2 py-3 lg:max-w-[20%]">
 							<h6 className="font-bold">{srcLang === "ja" ? "求人" : "Job"}</h6>
-							<p className="text-[12px] text-darkGray dark:text-gray-400">{data["job"]["job_title"]}</p>
+							<p className="text-[12px] text-darkGray dark:text-gray-400">{data["job"]["jobTitle"]}</p>
 						</div>
 						<div className="w-full px-2 py-3 lg:max-w-[25%]">
 							<h6 className="font-bold">{srcLang === "ja" ? "候補者" : "Candidate"}</h6>
@@ -284,26 +284,29 @@ export default function InterviewComp({ sklLoad, data, axiosInstanceAuth2, upcom
 													<p className="text-[12px] text-darkGray dark:text-gray-400">{data["interview_name"]}</p>
 												</div>
 											</div>
-											{upcome && user[0]["email"] === data["user"]["email"] && data["event_id"].length > 0 && (
-												<div className="flex flex-wrap">
-													<div className="my-1 mr-4 last:mr-0">
-														<Button
-															btnStyle="success"
-															label={srcLang === "ja" ? "再調整" : "Reschedule"}
-															btnType="button"
-															handleClick={() => rescheduleEvent(data["event_id"], data["applicant"]["arefid"])}
-														/>
+											{upcome &&
+												user[0]["email"] === data["user"]["email"] &&
+												data["event_id"] &&
+												data["event_id"].length > 0 && (
+													<div className="flex flex-wrap">
+														<div className="my-1 mr-4 last:mr-0">
+															<Button
+																btnStyle="success"
+																label={srcLang === "ja" ? "再調整" : "Reschedule"}
+																btnType="button"
+																handleClick={() => rescheduleEvent(data["event_id"], data["applicant"]["arefid"])}
+															/>
+														</div>
+														<div className="my-1 mr-4 last:mr-0">
+															<Button
+																btnStyle="danger"
+																label={srcLang === "ja" ? "キャンセル" : "Cancel"}
+																btnType="button"
+																handleClick={() => deleteEvent(data["event_id"])}
+															/>
+														</div>
 													</div>
-													<div className="my-1 mr-4 last:mr-0">
-														<Button
-															btnStyle="danger"
-															label={srcLang === "ja" ? "キャンセル" : "Cancel"}
-															btnType="button"
-															handleClick={() => deleteEvent(data["event_id"])}
-														/>
-													</div>
-												</div>
-											)}
+												)}
 										</div>
 									</div>
 									<div className="w-full md:max-w-[25%]">

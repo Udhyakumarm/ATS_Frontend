@@ -2,6 +2,7 @@ import { useState, Fragment, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "../Logo";
+import LogoImg from "/public/images/noAuth/headerLogo.png";
 import Favicon from "/public/favicon.ico";
 import FaviconWhite from "/public/favicon-white.ico";
 import { useRouter } from "next/router";
@@ -65,7 +66,7 @@ export default function OrgSideBar() {
 			const intervalId = setInterval(() => {
 				console.log("!!!", "timeout2");
 				fetchCount();
-			}, 5000); // 5000 milliseconds = 5 seconds
+			}, 10000); // 5000 milliseconds = 5 seconds
 
 			// Clean up the interval when the component unmounts to avoid memory leaks
 			return () => {
@@ -274,7 +275,8 @@ export default function OrgSideBar() {
 					)}
 					{show ? (
 						<>
-							<Image src={theme === "dark" ? FaviconWhite : Favicon} alt="Somhako" />
+							{/* <Image src={theme === "dark" ? FaviconWhite : Favicon} alt="Somhako" /> */}
+							<Image src={LogoImg} alt="Somhako" />
 						</>
 					) : (
 						<>
@@ -322,7 +324,7 @@ export default function OrgSideBar() {
 									) : (
 										<>
 											{menuItem.url === "/organization/inbox" && (
-												<span className="ml-auto rounded-full bg-primary px-2 py-0.5 font-normal text-white">
+												<span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-white">
 													{count}
 												</span>
 											)}

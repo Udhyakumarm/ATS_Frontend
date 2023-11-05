@@ -3,14 +3,23 @@
 @tailwind utilities;
 
 * {
+	/* background-color: #5500FF; primary
+	background-color: #6433c5; secondary
+	background-color: #F5F8FA; lightBlue
+	background-color: #BEBEBE,;
+	background-color: #727272,;
+	background-color: #9290FC,;
+	background-color: #6A67EA,;
+	background-color: #e5e7eb; */
+
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
 }
 
 :root {
-	--primary: #6d27f9;
-	--gradDarkBlue: #6a67ea;
+	--primary: #0066ff;
+	--gradDarkBlue: #4e76dc;
 }
 
 /* width */
@@ -1468,4 +1477,41 @@ button:hover .button-text {
 
 .learn-more1:hover .button-text {
 	color: #282936;
+}
+
+.customList {
+	counter-reset: foo;
+}
+
+.customList li {
+	list-style-type: none;
+}
+.customList1 li::before {
+	counter-increment: foo;
+	content: "1." counter(foo) " ";
+}
+
+.customList2 li::before {
+	counter-increment: foo;
+	content: "4." counter(foo) " ";
+}
+
+.customList3 li::before {
+	counter-increment: foo;
+	content: "5." counter(foo) " ";
+}
+
+.customList4 li::before {
+	counter-increment: foo;
+	content: "6." counter(foo) " ";
+}
+
+.customList5 li::before {
+	counter-increment: foo;
+	content: "7." counter(foo) " ";
+}
+
+.customList6 li::before {
+	counter-increment: foo;
+	content: "11." counter(foo) " ";
 }
