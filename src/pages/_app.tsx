@@ -51,7 +51,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 
 	return (
 		<>
-			{isMobileOnly && !Component.mobileEnabled  ? (
+			{isMobileOnly && !Component.mobileEnabled ? (
 				<>
 					<div className="flex h-[calc(100vh-80px)] items-center justify-center p-[40px]">
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
@@ -74,7 +74,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 							<Head>
 								<meta name="viewport" content="viewport-fit=cover" />
 								<meta name="viewport" content="width=device-width, initial-scale=1" />
-								<link rel="icon" href="/favicon.ico" />
+								{/* <link rel="icon" href="/favicon.ico" /> */}
+								<link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png" />
+								<link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png" />
+								<link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png" />
+								<link rel="manifest" href="/favicon_io/site.webmanifest" />
 							</Head>
 							<Header />
 							{Component.noAuth ? (

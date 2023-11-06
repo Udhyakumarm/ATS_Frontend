@@ -53,6 +53,7 @@ export default function AuthSignUp() {
 	const [success, setSuccess] = useState(false);
 	const [wrong, setWrong] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
+	const [check, setcheck] = useState(false);
 
 	const [formError, setFormError] = useState({
 		organizationName: null,
@@ -114,7 +115,8 @@ export default function AuthSignUp() {
 			formError.organizationName === null &&
 			formError.fullName === null &&
 			formError.companyType === null &&
-			formError.passwordConfirm === null
+			formError.passwordConfirm === null &&
+			check
 		);
 	}
 
@@ -320,6 +322,25 @@ export default function AuthSignUp() {
 									required
 								/>
 							</div>
+						</div>
+						<div className="flex flex-row items-center text-xs">
+							<label htmlFor="rememberMe" className="flex flex-wrap gap-1 text-darkGray">
+								<input
+									type="checkbox"
+									id="rememberMe"
+									className="mb-1 rounded border-lightGray"
+									checked={check}
+									onChange={(e) => setcheck(!check)}
+								/>
+								<span>I accept the</span>
+								<Link href="/t&c" className="text-primary hover:underline">
+									terms and conditions
+								</Link>
+								<span>as well as the</span>
+								<Link href="/privacy-policy" className="text-primary hover:underline">
+									privacy policy
+								</Link>
+							</label>
 						</div>
 						<div className="mb-4">
 							<Button

@@ -58,10 +58,10 @@ export default function TCPage() {
 								<h1 className="text-4xl font-extrabold max-md:text-2xl">Terms & Conditions</h1>
 								<div className="content mt-4 flex flex-col gap-4 text-base font-[300] max-md:mt-2 max-md:text-xs">
 									<p>
-										Thank you for using Somhako services (the “Services”) provided by AdvantF Group KK (
-										Somhako-Product) (“Somhako”, “us”, “our”, “we”) to your company (“Your Company”, “you”, “your”,
-										“yourself”), each individually referred to as a “Party” or together as “Parties” to these Terms &
-										Conditions (these “Terms”).
+										Thank you for using&nbsp;<span className="font-bold">Somhako</span> services (the “Services”)
+										provided by&nbsp;<span className="font-bold">AdvantF Group KK</span> ( Somhako-Product) (“Somhako”,
+										“us”, “our”, “we”) to your company (“Your Company”, “you”, “your”, “yourself”), each individually
+										referred to as a “Party” or together as “Parties” to these Terms & Conditions (these “Terms”).
 									</p>
 									<p>
 										These Terms constitute a binding agreement between the Parties and define the terms and conditions
@@ -99,13 +99,7 @@ export default function TCPage() {
 									<div className="text-base font-[300] max-md:text-xs">
 										The EU referred to here refers to “foreign countries that have systems for the protection of
 										personal information that are recognized to be at the same level as Japan in terms of protecting the
-										rights and interests of individuals&” (Personal Information Protection Act 2019). Refers to the
-										countries specified in Committee Notice No. 1) (however, does not include the United Kingdom).
-									</div>
-									<div className="text-base font-[300] max-md:text-xs">
-										(*2)REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL on the protection of natural persons
-										with regard to the processing of personal data and on the free movement of such data, and repealing
-										Directive 95/46/EC (General Data Protection Regulation )
+										rights and interests of individuals”
 									</div>
 									<div className="text-base font-[300] max-md:text-xs">
 										“Sensitive Data” means any (i) categories of data enumerated in European Union Regulation 2016/679,
@@ -126,24 +120,24 @@ export default function TCPage() {
 										your Order form or Statement of Work.
 									</div>
 									<div className="text-base font-[300] max-md:text-xs">
-										“Users” means Your Company&apos;s employees, contractors, consultants and representatives who are
+										“Users” means Your Company&apos;s employees, contractors, consultants, and representatives who are
 										authorized by Your Company to utilize the Services and who are provided with access to the Services
 										by virtue of login information. You understand that Users shall not be competitors of Somhako, or
-										provide services that compete with the Services, and that any such competing entity is not
-										authorized to access an Account or receive any User benefits under these Terms.
+										provide services that compete with the Services and that any such competing entity is not authorized
+										to access an Account or receive any User benefits under these Terms.
 									</div>
 									<div className="text-base font-[300] max-md:text-xs">
-										“Your Data” means any data, content, code, video, images or other materials of any type that you
+										“Your Data” means any data, content, code, video, images, or other materials of any type that you
 										(including any of your Users) submit to the Services. In this context, “submit” (and any similar
-										term) includes submitting, uploading, transmitting or otherwise making available Your Data to or
+										term) includes submitting, uploading, transmitting, or otherwise making available Your Data to or
 										through the Services.
 									</div>
 
 									<li>Effectiveness of these Terms</li>
 									<div className="text-base font-[300] max-md:text-xs">
-										The Terms shall be deemed established and take legal effect as between Your Company and Somhako when
-										you register an Account by entering your registration information and then log in for the first time
-										(the “Effective Date”).
+										The Terms shall be deemed established and take legal effect between Your Company and Somhako when
+										you register an Account by entering your registration information and then logging in for the first
+										time (the “Effective Date”).
 									</div>
 
 									<li>Use of the Services</li>
@@ -153,7 +147,7 @@ export default function TCPage() {
 										the jurisdictions in which the Services are used (including any laws regarding the export of data or
 										software to and from Japan or other relevant countries).
 									</div>
-									<div className="text-base font-[300] max-md:text-xs">
+									<div className="text-base font-bold max-md:text-xs">
 										By accessing or using the Services, you agree that you may not:
 									</div>
 									<div className="flex flex-col gap-1 text-base font-[300] max-md:text-xs">
@@ -242,7 +236,7 @@ export default function TCPage() {
 												Terms by all Users, including for any payment obligations. Please note that you are responsible
 												for the activities of all your Users, including Orders they may place and how Users use Your
 												Data, even if those Users are not from your organization or domain. We may display our user
-												notice to Users at sign up, first sign in, account creation, or in-product.
+												notice to Users at sign-up, first sign-in, account creation, or in-product.
 											</div>
 
 											<li>Feedback</li>
@@ -281,8 +275,9 @@ export default function TCPage() {
 											<div className="pl-6 text-base font-[300] max-md:text-xs">
 												We are always striving to improve the Services. In order to do so, we use analytics techniques
 												to better understand how our Services are being used. For more information on these techniques
-												and the type of data collected, please read our Privacy Policy. All right, title and interest in
-												the data we collect, and all intellectual property rights therein, belong solely to us.
+												and the type of data collected, please read our Privacy Policy. All rights, title,s and
+												interests in the data we collect, and all intellectual property rights therein, belong solely to
+												us.
 											</div>
 
 											<li>Subpoenas</li>
@@ -313,7 +308,7 @@ export default function TCPage() {
 												You represent and warrant that: (i) you have obtained all necessary rights, releases and
 												permissions to submit Your Data to the Services and to grant the rights granted to us in these
 												Terms and (ii) Your Data and its submission and use as you authorize in these Terms will not
-												violate any third-party intellectual property, privacy, publicity or other rights. Other than
+												violate any third party intellectual property, privacy, publicity or other rights. Other than
 												our express obligations under Section 5 of these Terms, “Security and data privacy”, we assume
 												no responsibility or liability for Your Data, and you are solely responsible for Your Data and
 												the consequences of submitting and using it with the Services.
@@ -374,11 +369,11 @@ export default function TCPage() {
 													telecommunications facilities of Somhako or is likely to do so, and as a result, interferes
 													with the performance of Somhako&apos;s business.
 												</div>
-												<div>
-													If Somhako suspends the Services, you shall be notified of such suspension, along with the
-													reason and duration thereof. This does not apply to periodic maintenance, temporary server
-													downtime, or other emergency situations.
-												</div>
+											</div>
+											<div className="pl-6 text-base font-[300] max-md:text-xs">
+												If Somhako suspends the Services, you shall be notified of such suspension, along with the
+												reason and duration thereof. This does not apply to periodic maintenance, temporary server
+												downtime, or other emergency situations.
 											</div>
 										</ol>
 									</div>
@@ -397,15 +392,15 @@ export default function TCPage() {
 									<li>Limitations of Liability</li>
 									<div className="text-base font-[300] max-md:text-xs">
 										To the maximum extent permitted by law, in no event shall Somhako be liable for any consequential,
-										incidental, indirect, special or punitive damages (including, without limitation, lost profits,
+										incidental, indirect, special, or punitive damages (including, without limitation, lost profits,
 										damages for loss of data or profit or due to business interruption) arising from or relating to
 										these Terms or your use of the Services.
 									</div>
 
 									<li>Intellectual Property Rights</li>
 									<div className="text-base font-[300] max-md:text-xs">
-										Somhako owns all right, title and interest, including all intellectual property rights, in and to
-										the Services and any and all intellectual property provided to you or any User in connection
+										Somhako owns all rights, titles, and interests, including all intellectual property rights, in and
+										to the Services and any and all intellectual property provided to you or any User in connection
 										therewith.
 									</div>
 
@@ -455,10 +450,10 @@ export default function TCPage() {
 									</div>
 									<div className="text-base font-[300] max-md:text-xs">
 										Upon expiration or termination of these Terms, your Account and right to access and use the Services
-										will terminate immediately. You understand that any termination of your Account may involve deletion
-										of Your Data from our live databases. Somhako will not have any liability whatsoever to you for any
-										termination of your rights under these Terms, including for termination of your Account or deletion
-										of Your Data. No expiration or termination will entitle you to any refund.
+										will terminate immediately. You understand that any termination of your Account may involve the
+										deletion of Your Data from our live databases. Somhako will not have any liability whatsoever to you
+										for any termination of your rights under these Terms, including for termination of your Account or
+										deletion of Your Data. No expiration or termination will entitle you to any refund.
 									</div>
 
 									<li>Terms Modification</li>
@@ -471,12 +466,12 @@ export default function TCPage() {
 									<div className="text-base font-[300] max-md:text-xs">
 										These Terms shall be governed by and construed in accordance with the laws of Japan and any dispute,
 										claim, or controversy relating to the Services or these Terms shall be subject to the exclusive
-										jurisdiction of the Tokyo District Court as the court of first instance.
+										jurisdiction of the Yokohama District Court as the court of first instance.
 									</div>
 
 									<li>Severability</li>
 									<div className="text-base font-[300] max-md:text-xs">
-										If any provision of these Terms is invalid, illegal or unenforceable in any jurisdiction, such
+										If any provision of these Terms is invalid, illegal, or unenforceable in any jurisdiction, such
 										invalidity, illegality or unenforceability will not affect any other term or provision hereof.
 									</div>
 
@@ -488,12 +483,15 @@ export default function TCPage() {
 
 									<li>Contact</li>
 									<div className="text-base font-[300] max-md:text-xs">
-										If you have questions or concerns regarding these Terms, please contact us at: support@Somhako.com.
+										If you have questions or concerns regarding these Terms, please contact us at:&nbsp;
+										<Link href={"mailto:tech@somhako.com"} className="text-primary hover:underline">
+											tech@somhako.com
+										</Link>
 									</div>
 								</ul>
 
 								<div className="content flex flex-col text-base font-[300] max-md:text-xs">
-									<div>Somhako, April 18, 2022</div>
+									<div>Somhako, November 06,2023</div>
 								</div>
 							</div>
 						</div>

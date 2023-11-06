@@ -110,11 +110,11 @@ export default function InboxChatMsg({
 							>
 								<div className="ml-2 mr-3 rounded-xl bg-stone-300/25 px-3 py-3">
 									{data["isRecall"] ? (
-										<article className="text-lg text-darkGray dark:text-lightBlue ">
+										<article className="text-sm text-darkGray dark:text-lightBlue ">
 											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
 										</article>
 									) : (
-										<article className="text-lg text-darkGray dark:text-lightBlue ">
+										<article className="text-sm font-bold text-darkGray dark:text-lightBlue ">
 											{replyMSG && replyMSG.length > 0 && (
 												<>
 													{replyMSG.map((data2, i) => (
@@ -468,7 +468,7 @@ export default function InboxChatMsg({
 							>
 								<div className="ml-2 mr-3 rounded-xl bg-sky-300/25 px-3 py-3">
 									{data["isRecall"] ? (
-										<article className="text-lg text-darkGray dark:text-lightBlue ">
+										<article className="text-sm text-darkGray dark:text-lightBlue ">
 											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
 											{data["text"] && data["text"].length > 0 && (
 												<span
@@ -480,7 +480,7 @@ export default function InboxChatMsg({
 											)}
 										</article>
 									) : (
-										<article className="text-lg text-darkGray dark:text-lightBlue ">
+										<article className="text-sm text-darkGray dark:text-lightBlue ">
 											{replyMSG && replyMSG.length > 0 && (
 												<>
 													{replyMSG.map((data2, i) => (
