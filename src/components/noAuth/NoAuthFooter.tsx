@@ -89,8 +89,8 @@ export default function noAuthFooter({ setbookADemo }: any) {
 							))}
 						</div>
 					</div>
-					<div className="mt-8 flex w-full flex-col items-center justify-center border-t border-blue-50 py-4 md:flex-row md:justify-between">
-						<p className="mb-4 text-center font-normal text-white md:mb-0">
+					<div className="mt-8 flex w-full flex-col items-center justify-center border-t border-blue-50 py-4 text-sm md:flex-row md:justify-between">
+						<p className="mb-4 text-center font-normal tracking-wider text-white md:mb-0">
 							&copy; {currentYear} <a href="https://somhako.com/">Somhako</a>.{" "}
 							{srcLang === "ja" ? "無断複写・転載を禁じます。" : "All Rights Reserved."}
 						</p>

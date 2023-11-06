@@ -171,7 +171,7 @@ any) {
 					</div>
 					<div className="flex w-[calc(100%-50px)] flex-col justify-center pl-3 pt-1">
 						<div className="mb-1 flex justify-between">
-							<h5 className="overflow-hidden truncate text-ellipsis text-sm font-semibold">{data["username"]}</h5>
+							<h5 className="overflow-hidden truncate text-ellipsis text-sm font-bold">{data["username"]}</h5>
 							<div className="flex flex-nowrap gap-2">
 								{data["is_pinned"] ? (
 									<span
@@ -208,7 +208,7 @@ any) {
 									</span>
 								)}
 								{data["last_message"] && (
-									<span className="block overflow-hidden truncate text-ellipsis rounded px-2 py-1 text-[10px] font-semibold dark:bg-gray-600">
+									<span className="block overflow-hidden truncate text-ellipsis rounded px-2 py-1 text-[10px] font-bold dark:bg-gray-600">
 										{/* {moment(data["modified"]).format("h:mm a")} */}
 										{moment(data["last_message"]["sent"]).fromNow()}
 									</span>

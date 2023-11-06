@@ -58,10 +58,18 @@ export default function PrivacyPolicyPage() {
 								<div className="content mt-4 flex flex-col gap-4 text-base font-[300] max-md:mt-2 max-md:text-xs">
 									<p>
 										This Privacy Policy applies to all data collections and other data processing of AdvantF Group KK
-										(Somhako) . (“our Company”, “us”, “our”, “we”), in particular through our Somhako services hosted at
-										AdvantF.com or Somhako.com and any of their sub-domains. Your privacy is important to us. Our goal
-										is to provide you with a personalized online experience that provides you with the information,
-										resources, and services that are most relevant and helpful to you.
+										(Somhako) . (“our Company”, “us”, “our”, “we”), in particular through our Somhako services hosted
+										at&nbsp;
+										<Link href={"https://advantf.com/"} target="_blank" className="text-primary hover:underline">
+											AdvantF.com
+										</Link>{" "}
+										or&nbsp;
+										<Link href={"https://somhako.com/"} target="_blank" className="text-primary hover:underline">
+											Somhako.com
+										</Link>{" "}
+										and any of their sub-domains. Your privacy is important to us. Our goal is to provide you with a
+										personalized online experience that provides you with the information, resources, and services that
+										are most relevant and helpful to you.
 									</p>
 									<p>
 										This Privacy Policy has been written to describe the conditions under which Somhako is being made
@@ -74,7 +82,7 @@ export default function PrivacyPolicyPage() {
 										using our services, you are accepting this Privacy Policy (on behalf of yourself or the entity that
 										you represent), meaning that you acknowledge that you have read this Privacy Policy, understand it
 										and agree to be bound by it. If you do not agree with our Privacy Policy, you may choose not to use
-										our website or services.{" "}
+										our website or services.
 									</p>
 								</div>
 
@@ -191,11 +199,11 @@ export default function PrivacyPolicyPage() {
 											To analyze trends, administer our websites, and track visitor navigations on our websites to
 											understand what visitors are looking for and to better help them;
 										</div>
-										<div>
-											To monitor and improve our marketing campaigns and make suggestions relevant to you as our user.
-										</div>
 									</div>
 
+									<div className="text-base font-[300] max-md:text-xs">
+										To monitor and improve our marketing campaigns and make suggestions relevant to you as our user.
+									</div>
 									<div className="text-base font-[300] max-md:text-xs">
 										We process your User Data only when you instruct us to do so, by using one of the modules or
 										functions of our services. We may also use your User Data in order to support you, but only upon
@@ -240,8 +248,8 @@ export default function PrivacyPolicyPage() {
 											body, regulatory, government agency, court or other third party where we believe disclosure is
 											necessary
 										</div>
-										<div>(i) as a matter of applicable law or regulation, </div>
-										<div>(ii) to exercise, establish or defend our legal rights, or </div>
+										<div>(i) as a matter of applicable law or regulation,</div>
+										<div>(ii) to exercise, establish or defend our legal rights, or</div>
 										<div>(iii) to protect your vital interests or those of any other person;</div>
 										<div>
 											to an acquirer, successor, or assignee as part of any merger, acquisition, debt financing, sale of
@@ -284,9 +292,16 @@ export default function PrivacyPolicyPage() {
 									<div className="text-base font-[300] max-md:text-xs">
 										We are committed to keeping the personal information of our users accurate. You can review, correct,
 										and request deletion of any of the personal information you have submitted to us at any time. In
-										order to do this, please email us a request at support@Somhako.com. Please also email us at
-										support@Somhako.com if you have submitted personal information on behalf of a candidate and that
-										candidate requests that you modify or correct their data.
+										order to do this, please email us a request at&nbsp;
+										<Link href={"mailto:tech@somhako.com"} className="text-primary hover:underline">
+											tech@somhako.com
+										</Link>
+										. Please also email us at&nbsp;
+										<Link href={"mailto:tech@somhako.com"} className="text-primary hover:underline">
+											tech@somhako.com
+										</Link>{" "}
+										if you have submitted personal information on behalf of a candidate and that candidate requests that
+										you modify or correct their data.
 									</div>
 									<div className="text-base font-[300] max-md:text-xs">
 										We may provide users with online access to your own personal profiles, enabling you to view, update
@@ -348,12 +363,11 @@ export default function PrivacyPolicyPage() {
 										<Link href={"mailto:tech@somhako.com"} className="text-primary hover:underline">
 											tech@somhako.com
 										</Link>
-										.
 									</div>
 								</ul>
 
 								<div className="content flex flex-col text-base font-[300] max-md:text-xs">
-									<div>Somhako, November 02,2023</div>
+									<div>Somhako, November 06,2023</div>
 								</div>
 							</div>
 						</div>

@@ -498,7 +498,7 @@ export default function InboxFrame({
 									className="mr-4 h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
 								/>
 								<aside>
-									<h4 className="jusitfy-between flex items-center text-lg font-bold">
+									<h4 className="jusitfy-between flex items-center text-sm font-bold">
 										<span className="grow">
 											{cardActiveData["username"]}
 											<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
