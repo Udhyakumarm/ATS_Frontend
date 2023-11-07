@@ -1,8 +1,11 @@
+import { useLangStore } from "@/utils/code";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+
 	return (
-		<Html lang="en">
+		<Html lang={srcLang}>
 			<Head>
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -26,7 +29,7 @@ export default function Document() {
 					crossOrigin="anonymous"
 					referrerPolicy="no-referrer"
 				/>
-				<title>Somhako</title>
+				{/* <title>Somhako</title> */}
 			</Head>
 			<body className="bg-lightBlue text-black dark:bg-gray-900 dark:text-white">
 				<Main />
