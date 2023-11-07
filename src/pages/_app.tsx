@@ -18,6 +18,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { isMobileOnly } from "react-device-detect";
 import Novus from "@/components/Novus";
+import { initializeGTM } from "@/components/noAuth/gtm";
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const { t } = useTranslation("common");
@@ -48,6 +49,8 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const [upgradePlan, setUpgradePlan] = useState(false);
 	const [comingSoon, setComingSoon] = useState(false);
 	const [title, settitle] = useState("");
+
+	initializeGTM();
 
 	return (
 		<>
