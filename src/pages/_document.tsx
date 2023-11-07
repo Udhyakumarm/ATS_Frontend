@@ -1,5 +1,6 @@
 import { useLangStore } from "@/utils/code";
 import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 export default function Document() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -30,6 +31,20 @@ export default function Document() {
 					referrerPolicy="no-referrer"
 				/>
 				{/* <title>Somhako</title> */}
+
+				{/* Google tag (gtag.js) */}
+				<Script src="https://www.googletagmanager.com/gtag/js?id=G-CLMDJ56THX" />
+				<Script id="google-analytics">
+					{`
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){
+					dataLayer.push(arguments)
+					}
+					gtag('js', new Date());
+
+					gtag('config', 'G-CLMDJ56THX');
+					`}
+				</Script>
 			</Head>
 			<body className="bg-lightBlue text-black dark:bg-gray-900 dark:text-white">
 				<Main />
