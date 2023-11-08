@@ -339,7 +339,7 @@ export default function VendorSignup() {
 													fieldType="input"
 													value={phone}
 													handleChange={(e) => setphone(e.target.value)}
-													inputType="number"
+													inputType="text"
 													readOnly
 													required
 												/>

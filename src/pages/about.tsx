@@ -113,8 +113,10 @@ export default function About() {
 											fill="white"
 										/>
 									</svg>
-									<div className="text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw]">
+									<div className="w-full text-center text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw] ">
 										{t("Noauth.about.text4")}
+										<br />
+										{t("Noauth.about.text4A")}
 									</div>
 								</div>
 								<div className="flex flex-col items-center justify-center gap-2 ">
@@ -127,8 +129,10 @@ export default function About() {
 											stroke-linejoin="round"
 										/>
 									</svg>
-									<div className="text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw]">
+									<div className="w-full text-center text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw] ">
 										{t("Noauth.about.text5")}
+										<br />
+										{t("Noauth.about.text5A")}
 									</div>
 								</div>
 								<div className="flex flex-col items-center justify-center gap-2 ">
@@ -140,11 +144,13 @@ export default function About() {
 											stroke-width="4"
 										/>
 									</svg>
-									<div className="text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw]">
+									<div className="w-full text-center text-[1vw] uppercase tracking-widest max-lg:text-[2vw] max-md:text-[3vw] ">
 										{t("Noauth.about.text6")}
+										<br />
+										{t("Noauth.about.text6A")}
 									</div>
 								</div>
-								<div className="flex flex-col items-center justify-center gap-2 ">
+								<div className="flex flex-col items-center justify-center gap-2">
 									<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 77 67" fill="none">
 										<path
 											fill-rule="evenodd"
@@ -159,8 +165,10 @@ export default function About() {
 											fill="white"
 										/>
 									</svg>
-									<div className="text-[1vw] uppercase max-lg:text-[2vw] max-md:text-[3vw]">
+									<div className="w-full text-center text-[1vw] uppercase max-lg:text-[2vw] max-md:text-[3vw]">
 										{t("Noauth.about.text7")}
+										<br />
+										{t("Noauth.about.text7A")}
 									</div>
 								</div>
 							</div>
