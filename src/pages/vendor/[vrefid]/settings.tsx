@@ -312,7 +312,7 @@ export default function VendorSettings() {
 												<FormField
 													label={t("Form.PhoneNumber")}
 													fieldType="input"
-													inputType="number"
+													inputType="text"
 													value={phone}
 													handleChange={(e) => setphone(e.target.value)}
 													handleOnBlur={(e) => setbphone(e.target.value)}
@@ -323,7 +323,7 @@ export default function VendorSettings() {
 												<FormField
 													label={t("Form.PhoneNumberOptional")}
 													fieldType="input"
-													inputType="number"
+													inputType="text"
 													value={ophone}
 													handleChange={(e) => setophone(e.target.value)}
 													handleOnBlur={(e) => setbophone(e.target.value)}

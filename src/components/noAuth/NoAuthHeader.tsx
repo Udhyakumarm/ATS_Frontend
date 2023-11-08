@@ -82,7 +82,7 @@ export default function noAuthHeader({ scrollTop, setbookADemo }: any) {
 								`${router.route.includes("/about") ? "menu__link2" : "menu__link"}`
 							}
 						>
-							{srcLang === "ja" ? "について" : "About"}
+							{srcLang === "ja" ? "Somhakoについて" : "About"}
 						</Link>
 						<Link href="/novus" className="my-auto mb-4 flex w-fit flex-nowrap max-lg:mx-auto lg:mb-0 lg:mt-0">
 							<div className={`${router.route.includes("/novus") ? "menu__link2" : "menu__link"}`}>

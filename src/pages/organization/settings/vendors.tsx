@@ -303,6 +303,27 @@ export default function Vendors() {
 			});
 	}
 
+	// const [accountDelete, setAccountDelete] = useState(false);
+	async function delAccount(vrefid: any) {
+		await axiosInstanceAuth2
+			.delete(`/vendors/delete/${vrefid}/`)
+			.then(async (res) => {
+				toastcomp("Vendor Account Deleted", "success");
+				// setAccountDelete(false);
+				loadVendors();
+				// signOut({ callbackUrl: `/organization/${cname}` });
+
+				// settype("");
+				// setrole("");
+				// setuser([]);
+			})
+			.catch((err) => {
+				console.log(err);
+				toastcomp("Vendor Account Not Deleted", "error");
+				// setAccountDelete(false);
+			});
+	}
+
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 
@@ -602,7 +623,7 @@ export default function Vendors() {
 															handleChange={(e) => setsearch(e.target.value)}
 														/>
 													</div>
-													<div className="flex grow items-center justify-end">
+													{/* <div className="flex grow items-center justify-end">
 														<div className="mr-3 w-[150px]">
 															<FormField
 																fieldType="select"
@@ -629,7 +650,7 @@ export default function Vendors() {
 																<input type="checkbox" id="teamSelectAll" />
 															</label>
 														</div>
-													</div>
+													</div> */}
 												</div>
 												<div className="mx-[-15px] flex flex-wrap">
 													{filterVendors.map((data, i) => (
@@ -638,6 +659,7 @@ export default function Vendors() {
 															onBoardVendor={onBoardVendor}
 															key={i}
 															fvendor={true}
+															delAccount={delAccount}
 															activateVendor={activateVendor}
 															axiosInstanceAuth2={axiosInstanceAuth2}
 														/>
