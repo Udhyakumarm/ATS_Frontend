@@ -7,77 +7,86 @@ import Button from "../Button";
 import FormField from "../FormField";
 import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import { axiosInstance2 } from "@/pages/api/axiosApi";
+import { PopupModal } from "react-calendly";
+import { InlineWidget } from "react-calendly";
 
 export default function bookADemo({ bookADemo, setbookADemo }: any) {
 	//book a demo
-	const cancelButtonRef = useRef(null);
+	// const cancelButtonRef = useRef(null);
 
-	const [selectedCheckbox, setSelectedCheckbox] = useState(null);
-	const [fname, setfname] = useState("");
-	const [lname, setlname] = useState("");
-	const [cname, setcname] = useState("");
-	const [email, setemail] = useState("");
-	const [contact, setcontact] = useState("");
-	const [address, setaddress] = useState("");
+	// const [selectedCheckbox, setSelectedCheckbox] = useState(null);
+	// const [fname, setfname] = useState("");
+	// const [lname, setlname] = useState("");
+	// const [cname, setcname] = useState("");
+	// const [email, setemail] = useState("");
+	// const [contact, setcontact] = useState("");
+	// const [address, setaddress] = useState("");
 
-	const handleCheckboxChange = (value) => {
-		setSelectedCheckbox((prevSelectedCheckbox) => (prevSelectedCheckbox === value ? null : value));
-	};
+	// const handleCheckboxChange = (value) => {
+	// 	setSelectedCheckbox((prevSelectedCheckbox) => (prevSelectedCheckbox === value ? null : value));
+	// };
 
-	function disBtn() {
-		return (
-			fname.length > 0 &&
-			lname.length > 0 &&
-			cname.length > 0 &&
-			email.length > 0 &&
-			contact.length > 0 &&
-			address.length > 0
-		);
-	}
+	// function disBtn() {
+	// 	return (
+	// 		fname.length > 0 &&
+	// 		lname.length > 0 &&
+	// 		cname.length > 0 &&
+	// 		email.length > 0 &&
+	// 		contact.length > 0 &&
+	// 		address.length > 0
+	// 	);
+	// }
 
-	async function submit() {
-		const fd = new FormData();
-		fd.append("firstName", fname);
-		fd.append("lastName", lname);
-		fd.append("companyName", cname);
-		fd.append("emailAddress", email);
-		fd.append("telephoneNumber", contact);
-		fd.append("address", address);
-		if (selectedCheckbox != null) {
-			fd.append("companyType", selectedCheckbox);
+	// async function submit() {
+	// 	const fd = new FormData();
+	// 	fd.append("firstName", fname);
+	// 	fd.append("lastName", lname);
+	// 	fd.append("companyName", cname);
+	// 	fd.append("emailAddress", email);
+	// 	fd.append("telephoneNumber", contact);
+	// 	fd.append("address", address);
+	// 	if (selectedCheckbox != null) {
+	// 		fd.append("companyType", selectedCheckbox);
+	// 	}
+	// 	await axiosInstance2
+	// 		.post(`/subscription/book-demo/`, fd)
+	// 		.then(async (res) => {
+	// 			toastcomp("book demo data successfully sent", "success");
+	// 			setbookADemo(false);
+	// 			setfname("");
+	// 			setlname("");
+	// 			setcname("");
+	// 			setemail("");
+	// 			setcontact("");
+	// 			setaddress("");
+	// 			setSelectedCheckbox(null);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("!!!", "err", err);
+	// 			toastcomp(err.response.data.errors, "error");
+	// 			setbookADemo(false);
+	// 			setfname("");
+	// 			setlname("");
+	// 			setcname("");
+	// 			setemail("");
+	// 			setcontact("");
+	// 			setaddress("");
+	// 			setSelectedCheckbox(null);
+	// 		});
+	// }
+
+	// const checkboxes = ["LLC", "Incorporation", "Agency", "Priopritery", "Start-up"];
+
+	useEffect(() => {
+		if (bookADemo) {
+			Calendly.showPopupWidget("https://calendly.com/somhako-demo/60min");
+			setbookADemo(false);
 		}
-		await axiosInstance2
-			.post(`/subscription/book-demo/`, fd)
-			.then(async (res) => {
-				toastcomp("book demo data successfully sent", "success");
-				setbookADemo(false);
-				setfname("");
-				setlname("");
-				setcname("");
-				setemail("");
-				setcontact("");
-				setaddress("");
-				setSelectedCheckbox(null);
-			})
-			.catch((err) => {
-				console.log("!!!", "err", err);
-				toastcomp(err.response.data.errors, "error");
-				setbookADemo(false);
-				setfname("");
-				setlname("");
-				setcname("");
-				setemail("");
-				setcontact("");
-				setaddress("");
-				setSelectedCheckbox(null);
-			});
-	}
-
-	const checkboxes = ["LLC", "Incorporation", "Agency", "Priopritery", "Start-up"];
+	}, [bookADemo]);
 
 	return (
 		<>
-			<Transition.Root show={bookADemo} as={Fragment}>
+			{/* <Transition.Root show={bookADemo} as={Fragment}>
 				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setbookADemo}>
 					<Transition.Child
 						as={Fragment}
@@ -267,7 +276,7 @@ export default function bookADemo({ bookADemo, setbookADemo }: any) {
 						</div>
 					</div>
 				</Dialog>
-			</Transition.Root>
+			</Transition.Root> */}
 		</>
 	);
 }
