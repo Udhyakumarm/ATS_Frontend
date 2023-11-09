@@ -45,7 +45,8 @@ export default function Document() {
 					gtag('config', 'G-CLMDJ56THX');
 					`}
 				</Script>
-				<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+				<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+				<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 			</Head>
 			<body className="bg-lightBlue text-black dark:bg-gray-900 dark:text-white">
 				<Main />
