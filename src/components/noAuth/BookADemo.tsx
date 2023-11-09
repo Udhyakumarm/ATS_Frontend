@@ -79,7 +79,7 @@ export default function bookADemo({ bookADemo, setbookADemo }: any) {
 
 	useEffect(() => {
 		if (bookADemo) {
-			Calendly.showPopupWidget("https://calendly.com/somhako-demo/60min");
+			Calendly.initPopupWidget({ url: "https://calendly.com/somhako/demo" });
 			setbookADemo(false);
 		}
 	}, [bookADemo]);
