@@ -333,11 +333,11 @@ export default function AuthSignUp() {
 									onChange={(e) => setcheck(!check)}
 								/>
 								<span>I accept the</span>
-								<Link href="/t&c" className="text-primary hover:underline">
+								<Link href="https://somhako.com/t&c" className="text-primary hover:underline">
 									terms and conditions
 								</Link>
 								<span>as well as the</span>
-								<Link href="/privacy-policy" className="text-primary hover:underline">
+								<Link href="https://somhako.com/privacy-policy" className="text-primary hover:underline">
 									privacy policy
 								</Link>
 							</label>

@@ -32,19 +32,6 @@ export default function Document() {
 				/>
 				{/* <title>Somhako</title> */}
 
-				{/* Google tag (gtag.js) */}
-				<Script src="https://www.googletagmanager.com/gtag/js?id=G-CLMDJ56THX" />
-				<Script id="google-analytics">
-					{`
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){
-					dataLayer.push(arguments)
-					}
-					gtag('js', new Date());
-
-					gtag('config', 'G-CLMDJ56THX');
-					`}
-				</Script>
 				<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
 				<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 			</Head>

@@ -18,7 +18,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { isMobileOnly } from "react-device-detect";
 import Novus from "@/components/Novus";
-import { initializeGTM } from "@/components/noAuth/gtm";
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const { t } = useTranslation("common");
@@ -50,11 +49,9 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const [comingSoon, setComingSoon] = useState(false);
 	const [title, settitle] = useState("");
 
-	initializeGTM();
-
 	return (
 		<>
-			{isMobileOnly && !Component.mobileEnabled ? (
+			{isMobileOnly ? (
 				<>
 					<div className="flex h-[calc(100vh-80px)] items-center justify-center p-[40px]">
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
@@ -138,9 +135,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 										? "AI型採用管理システム「Somhako(ソムハコ)」"
 										: 'AI-based Recruitment Management System "Somhako”'}
 								</title>
-
-								{/* google meta tag verification */}
-								<meta name="google-site-verification" content="DkhuL_1xRfBUg80an_H-asPR3-x_4tVuS6LZFIlLyns" />
 							</Head>
 							<Header />
 							{Component.noAuth ? (
