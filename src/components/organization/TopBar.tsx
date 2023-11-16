@@ -54,7 +54,16 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 	const [selectedPreVersion, setPreVersion] = useState({ name: version });
 
 	const [toDoPopup, setToDoPopup] = useState(false);
+	const [isExpired, setisExpired] = useState(false);
 	const [toDoAddTaskPopup, setToDoAddTaskPopup] = useState(false);
+
+	useEffect(() => {
+		if (user && user.length > 0) {
+			if (user[0]["is_expired"]) {
+				setisExpired(true);
+			}
+		}
+	}, [user]);
 
 	useEffect(() => {
 		if (!toDoPopup && todoLoadMore) {
@@ -438,8 +447,23 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				)} */}
 
 				<ThemeChange />
-				<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={() => setToDoPopup(true)}>
+				<button
+					type="button"
+					className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+					// disabled={isExpired}
+					onClick={() => {
+						if (isExpired) {
+							toastcomp("Plan Expired", "error");
+							router.push("/organization/settings/pricing");
+						} else {
+							setToDoPopup(true);
+						}
+					}}
+				>
 					<i className="fa-regular fa-clipboard text-[20px]"></i>
+					{isExpired && (
+						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+					)}
 				</button>
 				{/* {version != "starter" && (
 					<button type="button" className="mr-5 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
@@ -447,18 +471,43 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					</button>
 				)} */}
 				{version != "starter" && (
-					<button type="button" className="mr-6 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
+					<button
+						type="button"
+						className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+						onClick={() => {
+							if (isExpired) {
+								toastcomp("Plan Expired", "error");
+								router.push("/organization/settings/pricing");
+							} else {
+								checkGCAL();
+							}
+						}}
+						// onClick={checkGCAL}
+					>
 						<i className="fa-regular fa-calendar-days text-[20px]"></i>
+						{isExpired && (
+							<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+						)}
 					</button>
 				)}
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
-					onClick={() => notification()}
+					onClick={() => {
+						if (isExpired) {
+							toastcomp("Plan Expired", "error");
+							router.push("/organization/settings/pricing");
+						} else {
+							notification();
+						}
+					}}
 				>
 					<i className="fa-regular fa-bell text-[20px]"></i>
 					<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
 						{count}
 					</span>
+					{isExpired && (
+						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+					)}
 				</div>
 				<ToggleLang />
 				{/* <button
@@ -475,9 +524,23 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					<i className="fa-solid fa-right-from-bracket"></i>
 				</button> */}
 				{role != "Hiring Manager" && (
-					<button type="button" className="ml-4 text-darkGray dark:text-gray-400" onClick={() => tvisible()}>
+					<button
+						type="button"
+						className={`ml-4 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+						onClick={() => {
+							if (isExpired) {
+								toastcomp("Plan Expired", "error");
+								router.push("/organization/settings/pricing");
+							} else {
+								tvisible();
+							}
+						}}
+					>
 						{/* <Image src={visible ? novusIcon12 : LogoImg} alt={"Novus1"} width={30} className="max-h-[30px]" /> */}
 						<Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" />
+						{isExpired && (
+							<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+						)}
 					</button>
 				)}
 			</div>

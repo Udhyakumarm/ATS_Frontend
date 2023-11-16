@@ -41,6 +41,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const version = useVersionStore((state: { version: any }) => state.version);
 	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
 	const role = useUserStore((state: { role: any }) => state.role);
+	const user = useUserStore((state: { user: any }) => state.user);
 
 	const [soon, setSoon] = useState(true);
 
@@ -146,6 +147,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 											{...pageProps}
 											atsVersion={version}
 											userRole={role}
+											currentUser={user[0]}
 											upcomingSoon={soon}
 											setUpgradePlan={setUpgradePlan}
 											setComingSoon={setComingSoon}

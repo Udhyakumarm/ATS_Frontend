@@ -56,7 +56,12 @@ const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
 ];
 
-export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: any) {
+export default function OfferManagement({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
@@ -971,1392 +976,1411 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon }: 
 			<Head>
 				<title>{t("Words.OfferManagement")}</title>
 			</Head>
-			<main>
-				<Orgsidebar />
-				<Orgtopbar />
-				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
-				<div
-					id="overlay"
-					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
-				></div>
-				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					{applicantlist && applicantlist.length > 0 ? (
-						<>
-							<div className="relative z-[10] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-								<div className="mr-3 flex">
-									<Listbox value={selectedJob} onChange={setSelectedJob}>
-										<Listbox.Button className={"text-lg font-bold"}>
-											{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-										</Listbox.Button>
-										<Transition
-											enter="transition duration-100 ease-out"
-											enterFrom="transform scale-95 opacity-0"
-											enterTo="transform scale-100 opacity-100"
-											leave="transition duration-75 ease-out"
-											leaveFrom="transform scale-100 opacity-100"
-											leaveTo="transform scale-95 opacity-0"
-										>
-											<Listbox.Options
-												className={
-													"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-												}
+			{currentUser && !currentUser.is_expired && (
+				<main>
+					<Orgsidebar />
+					<Orgtopbar />
+					{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
+					<div
+						id="overlay"
+						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+					></div>
+					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+						{applicantlist && applicantlist.length > 0 ? (
+							<>
+								<div className="relative z-[10] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+									<div className="mr-3 flex">
+										<Listbox value={selectedJob} onChange={setSelectedJob}>
+											<Listbox.Button className={"text-lg font-bold"}>
+												{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+											</Listbox.Button>
+											<Transition
+												enter="transition duration-100 ease-out"
+												enterFrom="transform scale-95 opacity-0"
+												enterTo="transform scale-100 opacity-100"
+												leave="transition duration-75 ease-out"
+												leaveFrom="transform scale-100 opacity-100"
+												leaveTo="transform scale-95 opacity-0"
 											>
-												{jobd.map((item) => (
-													<Listbox.Option
-														key={item.id}
-														value={item}
-														disabled={item.unavailable}
-														className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-													>
-														{({ selected }) => (
-															<>
-																<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>{item.name}</span>
-																{selected ? (
-																	<span className="absolute left-3 top-[10px]">
-																		<i className="fa-solid fa-check"></i>
-																	</span>
-																) : null}
-															</>
-														)}
-													</Listbox.Option>
-												))}
-											</Listbox.Options>
-										</Transition>
-									</Listbox>
-									<div className="ml-3">
-										<FormField
-											fieldType="input"
-											inputType="search"
-											placeholder={t("Words.Search")}
-											icon={<i className="fa-solid fa-magnifying-glass"></i>}
-											value={search}
-											// handleChange={(e) => setsearch(e.target.value)}
-											handleChange={handleInputChange}
-										/>
-									</div>
-								</div>
-								<aside className="flex items-center">
-									<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
-								</aside>
-							</div>
-							<div className="relative z-[9] flex flex-wrap py-4 lg:py-8">
-								<div className="mb-4 w-full xl:max-w-[280px]">
-									<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
-										{filterApplicants ? (
-											filterApplicants.map((data, i) => (
-												<div
-													className=" mb-4  cursor-pointer rounded-normal bg-white px-4 py-2 shadow-normal dark:bg-gray-800 "
-													style={{
-														// boxShadow: `0px -1px 5px 0px  ${getColorCode(data.percentage_fit)}`, //shadow
-														borderColor: getColorCode(data.percentage_fit),
-														borderWidth: ".20rem 0 0 0"
-													}}
-													key={i}
-													onClick={() => {
-														offerDetail(data["arefid"], data);
-													}}
+												<Listbox.Options
+													className={
+														"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+													}
 												>
-													<div className="mb-2 flex items-center justify-between">
-														<aside className="flex items-center">
-															<Image
-																src={userImg1}
-																alt="User"
-																width={30}
-																className="h-[30px] rounded-full object-cover"
-															/>
-															<h5 className="pl-4 text-sm font-semibold">
-																{data["type"] === "career" && (
-																	<>
-																		{data["user"]["first_name"]} {data["user"]["last_name"]}
-																	</>
-																)}
-																{data["type"] === "vendor" && (
-																	<>
-																		{data["applicant"]["first_name"]} {data["applicant"]["last_name"]}
-																	</>
-																)}
-															</h5>
-														</aside>
-														<aside>
-															{/* <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" /> */}
-															{data["type"]}
-														</aside>
-													</div>
-													<div className="flex justify-between">
-														<p
-															className="mb-2 cursor-pointer text-[12px] text-darkGray dark:text-gray-400"
-															onClick={() => {
-																navigator.clipboard.writeText(data["arefid"]);
-																toastcomp("ID Copied to clipboard", "success");
-															}}
+													{jobd.map((item) => (
+														<Listbox.Option
+															key={item.id}
+															value={item}
+															disabled={item.unavailable}
+															className="clamp_1 relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
 														>
-															ID - {data["arefid"]}
-														</p>
-														<p className="text-[12px] ">{data["percentage_fit"]}%</p>
-													</div>
-													<div className="flex items-center justify-between">
-														<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
-															<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-															<p>{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
-														</aside>
-														<span className="text-[10px] text-darkGray dark:text-gray-400">
-															{moment(data["timestamp"]).format("h:mm a")}
-														</span>
-													</div>
-												</div>
-											))
-										) : (
-											<></>
-										)}
+															{({ selected }) => (
+																<>
+																	<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
+																		{item.name}
+																	</span>
+																	{selected ? (
+																		<span className="absolute left-3 top-[10px]">
+																			<i className="fa-solid fa-check"></i>
+																		</span>
+																	) : null}
+																</>
+															)}
+														</Listbox.Option>
+													))}
+												</Listbox.Options>
+											</Transition>
+										</Listbox>
+										<div className="ml-3">
+											<FormField
+												fieldType="input"
+												inputType="search"
+												placeholder={t("Words.Search")}
+												icon={<i className="fa-solid fa-magnifying-glass"></i>}
+												value={search}
+												// handleChange={(e) => setsearch(e.target.value)}
+												handleChange={handleInputChange}
+											/>
+										</div>
 									</div>
+									<aside className="flex items-center">
+										<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+									</aside>
 								</div>
-								{!stepform && filterApplicants.length <= 0 && (
-									<div className="w-full xl:max-w-[calc(100%)] xl:pl-6">
-										<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
-											<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
-												<div className="flex min-h-full items-center justify-center">
-													<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-														<div className="mb-6 p-2">
-															<Image
-																src={noInterviewdata}
-																alt="No Data"
-																width={300}
-																className="mx-auto max-h-[200px] w-auto max-w-[200px]"
-															/>
+								<div className="relative z-[9] flex flex-wrap py-4 lg:py-8">
+									<div className="mb-4 w-full xl:max-w-[280px]">
+										<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
+											{filterApplicants ? (
+												filterApplicants.map((data, i) => (
+													<div
+														className=" mb-4  cursor-pointer rounded-normal bg-white px-4 py-2 shadow-normal dark:bg-gray-800 "
+														style={{
+															// boxShadow: `0px -1px 5px 0px  ${getColorCode(data.percentage_fit)}`, //shadow
+															borderColor: getColorCode(data.percentage_fit),
+															borderWidth: ".20rem 0 0 0"
+														}}
+														key={i}
+														onClick={() => {
+															offerDetail(data["arefid"], data);
+														}}
+													>
+														<div className="mb-2 flex items-center justify-between">
+															<aside className="flex items-center">
+																<Image
+																	src={userImg1}
+																	alt="User"
+																	width={30}
+																	className="h-[30px] rounded-full object-cover"
+																/>
+																<h5 className="pl-4 text-sm font-semibold">
+																	{data["type"] === "career" && (
+																		<>
+																			{data["user"]["first_name"]} {data["user"]["last_name"]}
+																		</>
+																	)}
+																	{data["type"] === "vendor" && (
+																		<>
+																			{data["applicant"]["first_name"]} {data["applicant"]["last_name"]}
+																		</>
+																	)}
+																</h5>
+															</aside>
+															<aside>
+																{/* <Image src={socialIcon} alt="Social" className="h-[16px] w-auto" /> */}
+																{data["type"]}
+															</aside>
 														</div>
-														<h5 className="mb-4 text-lg font-semibold">No Applicants Found</h5>
-														<p className="mb-2 text-sm text-darkGray">There are no Applicants according filters</p>
+														<div className="flex justify-between">
+															<p
+																className="mb-2 cursor-pointer text-[12px] text-darkGray dark:text-gray-400"
+																onClick={() => {
+																	navigator.clipboard.writeText(data["arefid"]);
+																	toastcomp("ID Copied to clipboard", "success");
+																}}
+															>
+																ID - {data["arefid"]}
+															</p>
+															<p className="text-[12px] ">{data["percentage_fit"]}%</p>
+														</div>
+														<div className="flex items-center justify-between">
+															<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
+																<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
+																<p>{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
+															</aside>
+															<span className="text-[10px] text-darkGray dark:text-gray-400">
+																{moment(data["timestamp"]).format("h:mm a")}
+															</span>
+														</div>
+													</div>
+												))
+											) : (
+												<></>
+											)}
+										</div>
+									</div>
+									{!stepform && filterApplicants.length <= 0 && (
+										<div className="w-full xl:max-w-[calc(100%)] xl:pl-6">
+											<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
+												<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
+													<div className="flex min-h-full items-center justify-center">
+														<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+															<div className="mb-6 p-2">
+																<Image
+																	src={noInterviewdata}
+																	alt="No Data"
+																	width={300}
+																	className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																/>
+															</div>
+															<h5 className="mb-4 text-lg font-semibold">No Applicants Found</h5>
+															<p className="mb-2 text-sm text-darkGray">There are no Applicants according filters</p>
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								)}
-								{stepform && (
-									<div className="w-full xl:max-w-[calc(100%-280px)] xl:pl-6">
-										<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
-											<h2 className="flex justify-between px-10 py-4 text-lg font-bold">
-												<span>
-													{currentApplicant["user"] && (
-														<>
-															{currentApplicant["user"]["first_name"]}&nbsp;
-															{currentApplicant["user"]["last_name"]}
-														</>
-													)}
-													{currentApplicant["applicant"] && (
-														<>
-															{currentApplicant["applicant"]["first_name"]}&nbsp;
-															{currentApplicant["applicant"]["last_name"]}
-														</>
-													)}
-												</span>
-												{/* <button onClick={() => toastcomp(step, "success")}>STEP</button> */}
-												<span>Source : {currentApplicant["type"]}</span>
-											</h2>
-
-											<Tab.Group>
-												<Tab.List className={"border-b px-10 dark:border-b-gray-600"}>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
-																	" " +
-																	(selected
-																		? "border-primary text-primary dark:border-white dark:text-white"
-																		: "border-transparent text-darkGray dark:text-gray-400")
-																}
-															>
-																{t("Words.Offer")}
-															</button>
+									)}
+									{stepform && (
+										<div className="w-full xl:max-w-[calc(100%-280px)] xl:pl-6">
+											<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
+												<h2 className="flex justify-between px-10 py-4 text-lg font-bold">
+													<span>
+														{currentApplicant["user"] && (
+															<>
+																{currentApplicant["user"]["first_name"]}&nbsp;
+																{currentApplicant["user"]["last_name"]}
+															</>
 														)}
-													</Tab>
-													<Tab as={Fragment}>
-														{({ selected }) => (
-															<button
-																className={
-																	"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
-																	" " +
-																	(selected
-																		? "border-primary text-primary dark:border-white dark:text-white"
-																		: "border-transparent text-darkGray dark:text-gray-400") +
-																	" " +
-																	"display-none"
-																}
-															>
-																{t("Words.Timeline")}
-															</button>
+														{currentApplicant["applicant"] && (
+															<>
+																{currentApplicant["applicant"]["first_name"]}&nbsp;
+																{currentApplicant["applicant"]["last_name"]}
+															</>
 														)}
-													</Tab>
-												</Tab.List>
-												<Tab.Panels>
-													<Tab.Panel>
-														{userRole != "Hiring Manager" && (
-															<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
-																<div
-																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-																	// onClick={() => setstep(1)}
+													</span>
+													{/* <button onClick={() => toastcomp(step, "success")}>STEP</button> */}
+													<span>Source : {currentApplicant["type"]}</span>
+												</h2>
+
+												<Tab.Group>
+													<Tab.List className={"border-b px-10 dark:border-b-gray-600"}>
+														<Tab as={Fragment}>
+															{({ selected }) => (
+																<button
+																	className={
+																		"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary dark:border-white dark:text-white"
+																			: "border-transparent text-darkGray dark:text-gray-400")
+																	}
 																>
-																	{(offer.length > 0 && offer[0]["step"] === 1) || (offer.length <= 0 && step === 1) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				<span className="text-[32px] font-bold text-white"> 1 </span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferPrepration")}
-																			</p>
-																		</>
-																	) : (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				{/* <span className="text-[32px] font-bold text-white"> 1 </span> */}
-																				<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferPrepration")}
-																			</p>
-																		</>
-																	)}
-																</div>
-																<div
-																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-																	// onClick={() => setstep(2)}
+																	{t("Words.Offer")}
+																</button>
+															)}
+														</Tab>
+														<Tab as={Fragment}>
+															{({ selected }) => (
+																<button
+																	className={
+																		"mr-6 border-b-4 py-3 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary dark:border-white dark:text-white"
+																			: "border-transparent text-darkGray dark:text-gray-400") +
+																		" " +
+																		"display-none"
+																	}
 																>
-																	{(offer.length > 0 && offer[0]["step"] === 2) || (offer.length <= 0 && step === 2) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				<span className="text-[32px] font-bold text-white"> 2 </span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferFinalization")}
-																			</p>
-																		</>
-																	) : (offer.length > 0 && offer[0]["step"] > 2) || (offer.length <= 0 && step > 2) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				{/* <span className="text-[32px] font-bold text-white"> 2 </span> */}
-																				<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferFinalization")}
-																			</p>
-																		</>
-																	) : (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																				<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
-																					{" "}
-																					2{" "}
-																				</span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																				{t("Words.OfferFinalization")}
-																			</p>
-																		</>
-																	)}
-																</div>
-																<div
-																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-																	// onClick={() => setstep(3)}
-																>
-																	{(offer.length > 0 && offer[0]["step"] === 3) || (offer.length <= 0 && step === 3) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				<span className="text-[32px] font-bold text-white"> 3 </span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferDiscussion")}
-																			</p>
-																		</>
-																	) : (offer.length > 0 && offer[0]["step"] > 3) || (offer.length <= 0 && step > 3) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				{/* <span className="text-[32px] font-bold text-white"> 3 </span> */}
-																				<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferDiscussion")}
-																			</p>
-																		</>
-																	) : (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																				<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
-																					{" "}
-																					3{" "}
-																				</span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																				{t("Words.OfferDiscussion")}
-																			</p>
-																		</>
-																	)}
-																</div>
-																<div
-																	className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
-																	// onClick={() => setstep(4)}
-																>
-																	{(offer.length > 0 && offer[0]["step"] === 4) || (offer.length <= 0 && step === 4) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				<span className="text-[32px] font-bold text-white"> 4 </span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferStatus")}
-																			</p>
-																		</>
-																	) : (offer.length > 0 && offer[0]["step"] > 4) || (offer.length <= 0 && step > 4) ? (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
-																				{/* <span className="text-[32px] font-bold text-white"> 4 </span> */}
-																				<i className="fa-solid fa-check text-[32px] text-green-300"></i>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold">
-																				{t("Words.OfferStatus")}
-																			</p>
-																		</>
-																	) : (
-																		<>
-																			<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
-																				<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
-																					{" "}
-																					4{" "}
-																				</span>
-																			</div>
-																			<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
-																				{t("Words.OfferStatus")}
-																			</p>
-																		</>
-																	)}
-																</div>
-															</div>
-														)}
-
-														{userRole === "Hiring Manager" ? (
-															<section className="px-10 py-6">
-																{offer.length > 0 ? (
-																	<>
-																		<div className="-mx-3 flex flex-wrap">
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Form.Designation")}
-																					fieldType="input"
-																					inputType="text"
-																					value={designation}
-																					handleChange={(e) => setdesignation(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Words.Department")}
-																					fieldType="input"
-																					inputType="text"
-																					value={dept}
-																					handleChange={(e) => setdept(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Form.Section")}
-																					fieldType="input"
-																					inputType="text"
-																					value={section}
-																					handleChange={(e) => setsection(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Words.Division")}
-																					fieldType="input"
-																					inputType="text"
-																					value={div}
-																					handleChange={(e) => setdiv(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Form.Grade")}
-																					fieldType="input"
-																					inputType="text"
-																					value={grade}
-																					handleChange={(e) => setgrade(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																				<FormField
-																					label={t("Form.Location")}
-																					fieldType="input"
-																					inputType="text"
-																					value={location}
-																					handleChange={(e) => setlocation(e.target.value)}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																		</div>
-																		<div className="">
-																			<h4 className="mb-2 font-bold">
-																				{t("Form.SalaryRange")}
-																				<sup className="text-red-500">*</sup>
-																			</h4>
-																			<div className="flex flex-wrap">
-																				<div className="mb-4 w-[170px] pr-6 last:pr-0">
-																					<FormField
-																						placeholder={t("Words.Currency")}
-																						fieldType="select2"
-																						singleSelect
-																						value={curr}
-																						readOnly
-																						handleChange={setcurr}
-																						options={[
-																							"USD $",
-																							"CAD CA$",
-																							"EUR €",
-																							"AED AED",
-																							"AFN Af",
-																							"ALL ALL",
-																							"AMD AMD",
-																							"ARS AR$",
-																							"AUD AU$",
-																							"AZN man.",
-																							"BAM KM",
-																							"BDT Tk",
-																							"BGN BGN",
-																							"BHD BD",
-																							"BIF FBu",
-																							"BND BN$",
-																							"BOB Bs",
-																							"BRL R$",
-																							"BWP BWP",
-																							"BYN Br",
-																							"BZD BZ$",
-																							"CDF CDF",
-																							"CHF CHF",
-																							"CLP CL$",
-																							"CNY CN¥",
-																							"COP CO$",
-																							"CRC ₡",
-																							"CVE CV$",
-																							"CZK Kč",
-																							"DJF Fdj",
-																							"DKK Dkr",
-																							"DOP RD$",
-																							"DZD DA",
-																							"EEK Ekr",
-																							"EGP EGP",
-																							"ERN Nfk",
-																							"ETB Br",
-																							"GBP £",
-																							"GEL GEL",
-																							"GHS GH₵",
-																							"GNF FG",
-																							"GTQ GTQ",
-																							"HKD HK$",
-																							"HNL HNL",
-																							"HRK kn",
-																							"HUF Ft",
-																							"IDR Rp",
-																							"ILS ₪",
-																							"INR ₹",
-																							"IQD IQD",
-																							"IRR IRR",
-																							"ISK Ikr",
-																							"JMD J$",
-																							"JOD JD",
-																							"JPY ¥",
-																							"KES Ksh",
-																							"KHR KHR",
-																							"KMF CF",
-																							"KRW ₩",
-																							"KWD KD",
-																							"KZT KZT",
-																							"LBP L.L.",
-																							"LKR SLRs",
-																							"LTL Lt",
-																							"LVL Ls",
-																							"LYD LD",
-																							"MAD MAD",
-																							"MDL MDL",
-																							"MGA MGA",
-																							"MKD MKD",
-																							"MMK MMK",
-																							"MOP MOP$",
-																							"MUR MURs",
-																							"MXN MX$",
-																							"MYR RM",
-																							"MZN MTn",
-																							"NAD N$",
-																							"NGN ₦",
-																							"NIO C$",
-																							"NOK Nkr",
-																							"NPR NPRs",
-																							"NZD NZ$",
-																							"OMR OMR",
-																							"PAB B/.",
-																							"PEN S/.",
-																							"PHP ₱",
-																							"PKR PKRs",
-																							"PLN zł",
-																							"PYG ₲",
-																							"QAR QR",
-																							"RON RON",
-																							"RSD din.",
-																							"RUB RUB",
-																							"RWF RWF",
-																							"SAR SR",
-																							"SDG SDG",
-																							"SEK Skr",
-																							"SGD S$",
-																							"SOS Ssh",
-																							"SYP SY£",
-																							"THB ฿",
-																							"TND DT",
-																							"TOP T$",
-																							"TRY TL",
-																							"TTD TT$",
-																							"TWD NT$",
-																							"TZS TSh",
-																							"UAH ₴",
-																							"UGX USh",
-																							"UYU $U",
-																							"UZS UZS",
-																							"VEF Bs.F.",
-																							"VND ₫",
-																							"XAF FCFA",
-																							"XOF CFA",
-																							"YER YR",
-																							"ZAR R",
-																							"ZMK ZK",
-																							"ZWL ZWL$"
-																						]}
-																					/>
+																	{t("Words.Timeline")}
+																</button>
+															)}
+														</Tab>
+													</Tab.List>
+													<Tab.Panels>
+														<Tab.Panel>
+															{userRole != "Hiring Manager" && (
+																<div className="mb-4 flex flex-wrap items-center justify-center border-b py-4 dark:border-b-gray-600">
+																	<div
+																		className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																		// onClick={() => setstep(1)}
+																	>
+																		{(offer.length > 0 && offer[0]["step"] === 1) ||
+																		(offer.length <= 0 && step === 1) ? (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					<span className="text-[32px] font-bold text-white"> 1 </span>
 																				</div>
-																				<div className="mb-4 w-[170px] pr-6 last:pr-0">
-																					<FormField
-																						placeholder={t("Words.Type")}
-																						singleSelect
-																						fieldType="select2"
-																						options={[t("Form.Monthly"), t("Form.Yearly")]}
-																						value={type}
-																						handleChange={settype}
-																						readOnly
-																					/>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferPrepration")}
+																				</p>
+																			</>
+																		) : (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					{/* <span className="text-[32px] font-bold text-white"> 1 </span> */}
+																					<i className="fa-solid fa-check text-[32px] text-green-300"></i>
 																				</div>
-																				<div className="mb-4 grow pr-6 last:pr-0">
-																					<FormField
-																						placeholder={t("Words.From")}
-																						fieldType="input"
-																						inputType="number"
-																						value={from}
-																						handleChange={(e) => setfrom(e.target.value)}
-																						readOnly
-																					/>
-																				</div>
-																				<div className="mb-4 grow pr-6 last:pr-0">
-																					<FormField
-																						placeholder={t("Words.To")}
-																						fieldType="input"
-																						inputType="number"
-																						value={to}
-																						handleChange={(e) => setto(e.target.value)}
-																						readOnly
-																					/>
-																				</div>
-																			</div>
-																		</div>
-																		<FormField
-																			label={t("Form.CandidateType")}
-																			singleSelect
-																			fieldType="select2"
-																			options={[t("Select.FullTime"), t("Select.PartTime"), t("Select.Internship")]}
-																			value={ctype}
-																			handleChange={setctype}
-																			required
-																			readOnly
-																		/>
-																		<div className="flex flex-wrap">
-																			<div className="grow pr-6 last:pr-0">
-																				<FormField
-																					label={t("Words.VisaSponsorship")}
-																					singleSelect
-																					fieldType="select2"
-																					options={[t("Select.Yes"), t("Select.No"), "N/A"]}
-																					value={visa}
-																					handleChange={setvisa}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																			<div className="grow pr-6 last:pr-0">
-																				<FormField
-																					label={t("Words.PaidRelocation")}
-																					singleSelect
-																					fieldType="select2"
-																					options={[t("Select.Yes"), t("Select.No"), "N/A"]}
-																					value={relocation}
-																					handleChange={setrelocation}
-																					required
-																					readOnly
-																				/>
-																			</div>
-																		</div>
-																		<FormField
-																			label={t("Form.ApprovalAuthorities")}
-																			fieldType="select2"
-																			options={hmanage}
-																			value={approval}
-																			handleChange={setapproval}
-																			required
-																			readOnly
-																		/>
-
-																		<hr />
-
-																		<h4 className="mb-2 mt-6 font-bold">{t("Form.Feedback")}</h4>
-																		<FormField
-																			placeholder={t("Form.WriteFeedback")}
-																			fieldType="textarea"
-																			value={feedback}
-																			handleChange={(e) => setfeedback(e.target.value)}
-																		/>
-
-																		<div className="flex flex-wrap gap-2">
-																			<Button
-																				label={t("Btn.Approve")}
-																				btnStyle="success"
-																				btnType={"button"}
-																				handleClick={() => newOfferFeedback("Approve")}
-																			/>
-
-																			<Button
-																				label={t("Btn.Reject")}
-																				btnType={"button"}
-																				btnStyle="danger"
-																				disabled={!rejectVerify()}
-																				handleClick={() => newOfferFeedback("Reject")}
-																			/>
-																		</div>
-																	</>
-																) : (
-																	<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																		<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-																		<p className="text-lg text-yellow-700">{t("Words.OfferNotYetCreated")}</p>
-																		<p className="text-sm">{t("Words.UnderDevelopment")}</p>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferPrepration")}
+																				</p>
+																			</>
+																		)}
 																	</div>
-																)}
-															</section>
-														) : (
-															<>
-																{(offer.length > 0 && offer[0]["step"] === 1) || (offer.length <= 0 && step === 1) ? (
-																	<section className="px-10 py-6">
-																		{offer.length <= 0 || feedreject ? (
+																	<div
+																		className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																		// onClick={() => setstep(2)}
+																	>
+																		{(offer.length > 0 && offer[0]["step"] === 2) ||
+																		(offer.length <= 0 && step === 2) ? (
 																			<>
-																				{omf &&
-																					omf.length > 0 &&
-																					omf.map((data, i) =>
-																						data["status"] === "Reject" ? (
-																							<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
-																								<div className="flex flex-wrap items-center justify-between font-bold">
-																									<p className="mb-1 text-red-700">
-																										<i className="fa-regular fa-face-frown"></i> {t("Form.Rejected")} (
-																										{data["organization"]["email"]})
-																									</p>
-																									<p className="text-[12px] text-darkGray">
-																										{moment(data["timestamp"]).fromNow()}
-																									</p>
-																								</div>
-																								<h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>
-																								<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
-																							</div>
-																						) : (
-																							<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
-																								<div className="flex flex-wrap items-center justify-between font-bold">
-																									<p className="mb-1 text-green-700">
-																										<i className="fa-regular fa-face-smile"></i> {t("Form.Approved")} (
-																										{data["organization"]["email"]})
-																									</p>
-																									<p className="text-[12px] text-darkGray">
-																										{moment(data["timestamp"]).fromNow()}
-																									</p>
-																								</div>
-																								<h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>
-																								<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
-																							</div>
-																						)
-																					)}
-
-																				<div className="-mx-3 flex flex-wrap">
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Form.Designation")}
-																							fieldType="input"
-																							inputType="text"
-																							value={designation}
-																							handleChange={(e) => setdesignation(e.target.value)}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Words.Department")}
-																							fieldType="input"
-																							inputType="text"
-																							value={dept}
-																							handleChange={(e) => setdept(e.target.value)}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Form.Section")}
-																							fieldType="input"
-																							inputType="text"
-																							value={section}
-																							handleChange={(e) => setsection(e.target.value)}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Words.Division")}
-																							fieldType="input"
-																							inputType="text"
-																							value={div}
-																							handleChange={(e) => setdiv(e.target.value)}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Form.Grade")}
-																							fieldType="input"
-																							inputType="text"
-																							value={grade}
-																							handleChange={(e) => setgrade(e.target.value)}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 w-full px-3 md:max-w-[50%]">
-																						<FormField
-																							label={t("Form.Location")}
-																							fieldType="input"
-																							inputType="text"
-																							value={location}
-																							handleChange={(e) => setlocation(e.target.value)}
-																							required
-																						/>
-																					</div>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					<span className="text-[32px] font-bold text-white"> 2 </span>
 																				</div>
-																				<div className="">
-																					<h4 className="mb-2 font-bold">
-																						{t("Form.SalaryRange")}
-																						<sup className="text-red-500">*</sup>
-																					</h4>
-																					<div className="-mx-3 flex flex-wrap">
-																						<div className="mb-4 w-[50%] px-3 xl:max-w-[20%]">
-																							<FormField
-																								placeholder={t("Words.Currency")}
-																								fieldType="select2"
-																								singleSelect
-																								value={curr}
-																								handleChange={setcurr}
-																								options={[
-																									"USD $",
-																									"CAD CA$",
-																									"EUR €",
-																									"AED AED",
-																									"AFN Af",
-																									"ALL ALL",
-																									"AMD AMD",
-																									"ARS AR$",
-																									"AUD AU$",
-																									"AZN man.",
-																									"BAM KM",
-																									"BDT Tk",
-																									"BGN BGN",
-																									"BHD BD",
-																									"BIF FBu",
-																									"BND BN$",
-																									"BOB Bs",
-																									"BRL R$",
-																									"BWP BWP",
-																									"BYN Br",
-																									"BZD BZ$",
-																									"CDF CDF",
-																									"CHF CHF",
-																									"CLP CL$",
-																									"CNY CN¥",
-																									"COP CO$",
-																									"CRC ₡",
-																									"CVE CV$",
-																									"CZK Kč",
-																									"DJF Fdj",
-																									"DKK Dkr",
-																									"DOP RD$",
-																									"DZD DA",
-																									"EEK Ekr",
-																									"EGP EGP",
-																									"ERN Nfk",
-																									"ETB Br",
-																									"GBP £",
-																									"GEL GEL",
-																									"GHS GH₵",
-																									"GNF FG",
-																									"GTQ GTQ",
-																									"HKD HK$",
-																									"HNL HNL",
-																									"HRK kn",
-																									"HUF Ft",
-																									"IDR Rp",
-																									"ILS ₪",
-																									"INR ₹",
-																									"IQD IQD",
-																									"IRR IRR",
-																									"ISK Ikr",
-																									"JMD J$",
-																									"JOD JD",
-																									"JPY ¥",
-																									"KES Ksh",
-																									"KHR KHR",
-																									"KMF CF",
-																									"KRW ₩",
-																									"KWD KD",
-																									"KZT KZT",
-																									"LBP L.L.",
-																									"LKR SLRs",
-																									"LTL Lt",
-																									"LVL Ls",
-																									"LYD LD",
-																									"MAD MAD",
-																									"MDL MDL",
-																									"MGA MGA",
-																									"MKD MKD",
-																									"MMK MMK",
-																									"MOP MOP$",
-																									"MUR MURs",
-																									"MXN MX$",
-																									"MYR RM",
-																									"MZN MTn",
-																									"NAD N$",
-																									"NGN ₦",
-																									"NIO C$",
-																									"NOK Nkr",
-																									"NPR NPRs",
-																									"NZD NZ$",
-																									"OMR OMR",
-																									"PAB B/.",
-																									"PEN S/.",
-																									"PHP ₱",
-																									"PKR PKRs",
-																									"PLN zł",
-																									"PYG ₲",
-																									"QAR QR",
-																									"RON RON",
-																									"RSD din.",
-																									"RUB RUB",
-																									"RWF RWF",
-																									"SAR SR",
-																									"SDG SDG",
-																									"SEK Skr",
-																									"SGD S$",
-																									"SOS Ssh",
-																									"SYP SY£",
-																									"THB ฿",
-																									"TND DT",
-																									"TOP T$",
-																									"TRY TL",
-																									"TTD TT$",
-																									"TWD NT$",
-																									"TZS TSh",
-																									"UAH ₴",
-																									"UGX USh",
-																									"UYU $U",
-																									"UZS UZS",
-																									"VEF Bs.F.",
-																									"VND ₫",
-																									"XAF FCFA",
-																									"XOF CFA",
-																									"YER YR",
-																									"ZAR R",
-																									"ZMK ZK",
-																									"ZWL ZWL$"
-																								]}
-																							/>
-																						</div>
-																						<div className="mb-4 w-[50%] px-3 xl:max-w-[20%]">
-																							<FormField
-																								placeholder={t("Words.Type")}
-																								singleSelect
-																								fieldType="select2"
-																								options={["Monthly", "Yearly"]}
-																								value={type}
-																								handleChange={settype}
-																							/>
-																						</div>
-																						<div className="mb-4 w-[50%] px-3 xl:max-w-[30%]">
-																							<FormField
-																								placeholder={t("Words.From")}
-																								fieldType="input"
-																								inputType="number"
-																								value={from}
-																								handleChange={(e) => setfrom(e.target.value)}
-																							/>
-																						</div>
-																						<div className="mb-4 w-[50%] px-3 xl:max-w-[30%]">
-																							<FormField
-																								placeholder={t("Words.To")}
-																								fieldType="input"
-																								inputType="number"
-																								value={to}
-																								handleChange={(e) => setto(e.target.value)}
-																							/>
-																						</div>
-																					</div>
-																				</div>
-																				<FormField
-																					label={t("Form.CandidateType")}
-																					singleSelect
-																					fieldType="select2"
-																					options={[t("Select.FullTime"), t("Select.PartTime"), t("Select.Internship")]}
-																					value={ctype}
-																					handleChange={setctype}
-																					required
-																				/>
-																				<div className="flex flex-wrap">
-																					<div className="mb-4 grow pr-6 last:pr-0">
-																						<FormField
-																							label={t("Words.VisaSponsorship")}
-																							singleSelect
-																							fieldType="select2"
-																							options={[t("Select.Yes"), t("Select.No"), "N/A"]}
-																							value={visa}
-																							handleChange={setvisa}
-																							required
-																						/>
-																					</div>
-																					<div className="mb-4 grow pr-6 last:pr-0">
-																						<FormField
-																							label={t("Words.PaidRelocation")}
-																							singleSelect
-																							fieldType="select2"
-																							options={[t("Select.Yes"), t("Select.No"), "N/A"]}
-																							value={relocation}
-																							handleChange={setrelocation}
-																							required
-																						/>
-																					</div>
-																				</div>
-																				<FormField
-																					label={t("Form.ApprovalAuthorities")}
-																					fieldType="select2"
-																					options={hmanage}
-																					value={approval}
-																					handleChange={setapproval}
-																					required
-																				/>
-
-																				<Button
-																					label={
-																						offer.length <= 0 ? t("Btn.SendForApproval") : t("Btn.ReSendForApproval")
-																					}
-																					btnType={"button"}
-																					disabled={!checkBtnOffer()}
-																					handleClick={() => handleOfferManagement(currentApplicant["arefid"])}
-																				/>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferFinalization")}
+																				</p>
 																			</>
-																		) : omf && omf.length > 0 ? (
+																		) : (offer.length > 0 && offer[0]["step"] > 2) ||
+																		  (offer.length <= 0 && step > 2) ? (
 																			<>
-																				{omf.map((data, i) => (
-																					<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
-																						<div className="flex flex-wrap items-center justify-between font-bold">
-																							<p className="mb-1 text-green-700">
-																								<i className="fa-regular fa-face-smile"></i> {t("Form.Approved")} (
-																								{data["organization"]["email"]})
-																							</p>
-																							<p className="text-[12px] text-darkGray">
-																								{moment(data["timestamp"]).fromNow()}
-																							</p>
-																						</div>
-																						<h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>
-																						<p className="mb-2 text-sm text-darkGray">
-																							{data["feedback"].length > 0 ? data["feedback"] : <>N/A</>}
-																						</p>
-																					</div>
-																				))}
-																				{approval
-																					.split(",")
-																					.filter(
-																						(email) => !omf.some((item) => item["organization"]["email"] === email)
-																					).length > 0 ? (
-																					<>
-																						<p className="">Remaining Approval Authroties Who Not GIve Feedback :</p>
-																						{approval
-																							.split(",")
-																							.filter(
-																								(email) => !omf.some((item) => item["organization"]["email"] === email)
-																							)
-																							.map((data, i) => (
-																								<p key={i} className="text-sm">
-																									{i + 1}) {data}
-																								</p>
-																							))}
-																					</>
-																				) : (
-																					<p className="text-center text-sm">
-																						All Approval Authroties Give There Feedback Positive
-																					</p>
-																				)}{" "}
-																				<Button
-																					label={t("Btn.Next")}
-																					btnType={"button"}
-																					disabled={!nextstep1Verify()}
-																					handleClick={() => updateStep(2)}
-																					// handleClick={() => {
-																					// loadOrganizationProfile();
-																					// setstep(2);
-																					// }}
-																				/>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					{/* <span className="text-[32px] font-bold text-white"> 2 </span> */}
+																					<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferFinalization")}
+																				</p>
 																			</>
 																		) : (
-																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
-																				<p className="text-lg text-yellow-700">{t("Words.OfferSentSuccessfully")}</p>
-																				<p className="text-sm">{t("Words.UnderReview")}</p>
-																			</div>
-																		)}
-																	</section>
-																) : (
-																	<></>
-																)}
-
-																{(offer.length > 0 && offer[0]["step"] === 2) || (offer.length <= 0 && step === 2) ? (
-																	<section className="px-10 py-6">
-																		{wordpath === "" && (
-																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																				<p className="text-lg">{t("Words.OfferLetterFomratPending")}</p>
-																				<small className="font-semibold">
-																					{t("Words.KindlyContactYourOrgSuperAdminATS")}
-																				</small>
-																			</div>
-																		)}
-																		{value && value.length > 0 && word != null ? (
 																			<>
-																				<div className="border py-2">
-																					<article
-																						className="m-6"
-																						ref={htmlRef}
-																						id="contentABC"
-																						dangerouslySetInnerHTML={{ __html: value }}
-																					></article>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																					<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
+																						{" "}
+																						2{" "}
+																					</span>
 																				</div>
-																				<div className="flex flex-wrap items-center justify-between px-8 pt-4">
-																					<div className="my-1 mr-4 last:mr-0">
-																						<Button
-																							label={t("Btn.Confirm")}
-																							btnType="button"
-																							handleClick={() => updateOfferStep2(currentApplicant["arefid"])}
-																						/>
-																					</div>
-																					<div className="my-1 mr-4 last:mr-0">
-																						<Button
-																							btnStyle="gray"
-																							label={t("Btn.Edit")}
-																							btnType="button"
-																							handleClick={() => seteditDetails(true)}
-																						/>
-																					</div>
+																				<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																					{t("Words.OfferFinalization")}
+																				</p>
+																			</>
+																		)}
+																	</div>
+																	<div
+																		className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																		// onClick={() => setstep(3)}
+																	>
+																		{(offer.length > 0 && offer[0]["step"] === 3) ||
+																		(offer.length <= 0 && step === 3) ? (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					<span className="text-[32px] font-bold text-white"> 3 </span>
 																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferDiscussion")}
+																				</p>
+																			</>
+																		) : (offer.length > 0 && offer[0]["step"] > 3) ||
+																		  (offer.length <= 0 && step > 3) ? (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					{/* <span className="text-[32px] font-bold text-white"> 3 </span> */}
+																					<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferDiscussion")}
+																				</p>
 																			</>
 																		) : (
-																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																				<p className="text-lg">Server Error</p>
-																				<small className="font-semibold">
-																					Try Again Or Change Offer Letter Format For That Contact Super Admin
-																				</small>
-																			</div>
-																		)}
-																	</section>
-																) : (
-																	<></>
-																)}
-
-																{(offer.length > 0 && offer[0]["step"] === 3) || (offer.length <= 0 && step === 3) ? (
-																	<section className="px-10 py-6">
-																		{word != null && (
-																			<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																				<p className="my-2">{t("Words.OfferLetter")}</p>
-																				<button
-																					className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
-																					onClick={handleDownload}
-																				>
-																					<i className="fa-solid fa-download mr-2"></i>
-																					{t("Btn.Download")}
-																				</button>
-																			</div>
-																		)}
-																		{value && value.length > 0 && word != null && (
 																			<>
-																				<div className="border py-2">
-																					<article
-																						className="m-6"
-																						ref={htmlRef}
-																						id="contentABCD"
-																						dangerouslySetInnerHTML={{ __html: value }}
-																					></article>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																					<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
+																						{" "}
+																						3{" "}
+																					</span>
 																				</div>
-																				<div className="flex flex-wrap justify-center gap-2 px-8 pt-4 text-center">
-																					<Button
-																						label={"Schedule Offer Call"}
-																						btnType="button"
-																						handleClick={() => checkGCAL()}
+																				<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																					{t("Words.OfferDiscussion")}
+																				</p>
+																			</>
+																		)}
+																	</div>
+																	<div
+																		className="after:content[''] relative w-[170px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[150px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600"
+																		// onClick={() => setstep(4)}
+																	>
+																		{(offer.length > 0 && offer[0]["step"] === 4) ||
+																		(offer.length <= 0 && step === 4) ? (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					<span className="text-[32px] font-bold text-white"> 4 </span>
+																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferStatus")}
+																				</p>
+																			</>
+																		) : (offer.length > 0 && offer[0]["step"] > 4) ||
+																		  (offer.length <= 0 && step > 4) ? (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight">
+																					{/* <span className="text-[32px] font-bold text-white"> 4 </span> */}
+																					<i className="fa-solid fa-check text-[32px] text-green-300"></i>
+																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold">
+																					{t("Words.OfferStatus")}
+																				</p>
+																			</>
+																		) : (
+																			<>
+																				<div className="relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600">
+																					<span className="text-[32px] font-bold text-darkGray dark:text-gray-400">
+																						{" "}
+																						4{" "}
+																					</span>
+																				</div>
+																				<p className="relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400">
+																					{t("Words.OfferStatus")}
+																				</p>
+																			</>
+																		)}
+																	</div>
+																</div>
+															)}
+
+															{userRole === "Hiring Manager" ? (
+																<section className="px-10 py-6">
+																	{offer.length > 0 ? (
+																		<>
+																			<div className="-mx-3 flex flex-wrap">
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Form.Designation")}
+																						fieldType="input"
+																						inputType="text"
+																						value={designation}
+																						handleChange={(e) => setdesignation(e.target.value)}
+																						required
+																						readOnly
 																					/>
-																					{!cvisible && (
-																						<Button
-																							label={"Send Offer"}
-																							btnType="button"
-																							handleClick={() => updateOfferVisble(currentApplicant["arefid"])}
-																						/>
-																					)}
 																				</div>
-																			</>
-																		)}
-																	</section>
-																) : (
-																	<></>
-																)}
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Words.Department")}
+																						fieldType="input"
+																						inputType="text"
+																						value={dept}
+																						handleChange={(e) => setdept(e.target.value)}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Form.Section")}
+																						fieldType="input"
+																						inputType="text"
+																						value={section}
+																						handleChange={(e) => setsection(e.target.value)}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Words.Division")}
+																						fieldType="input"
+																						inputType="text"
+																						value={div}
+																						handleChange={(e) => setdiv(e.target.value)}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Form.Grade")}
+																						fieldType="input"
+																						inputType="text"
+																						value={grade}
+																						handleChange={(e) => setgrade(e.target.value)}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																				<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																					<FormField
+																						label={t("Form.Location")}
+																						fieldType="input"
+																						inputType="text"
+																						value={location}
+																						handleChange={(e) => setlocation(e.target.value)}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																			</div>
+																			<div className="">
+																				<h4 className="mb-2 font-bold">
+																					{t("Form.SalaryRange")}
+																					<sup className="text-red-500">*</sup>
+																				</h4>
+																				<div className="flex flex-wrap">
+																					<div className="mb-4 w-[170px] pr-6 last:pr-0">
+																						<FormField
+																							placeholder={t("Words.Currency")}
+																							fieldType="select2"
+																							singleSelect
+																							value={curr}
+																							readOnly
+																							handleChange={setcurr}
+																							options={[
+																								"USD $",
+																								"CAD CA$",
+																								"EUR €",
+																								"AED AED",
+																								"AFN Af",
+																								"ALL ALL",
+																								"AMD AMD",
+																								"ARS AR$",
+																								"AUD AU$",
+																								"AZN man.",
+																								"BAM KM",
+																								"BDT Tk",
+																								"BGN BGN",
+																								"BHD BD",
+																								"BIF FBu",
+																								"BND BN$",
+																								"BOB Bs",
+																								"BRL R$",
+																								"BWP BWP",
+																								"BYN Br",
+																								"BZD BZ$",
+																								"CDF CDF",
+																								"CHF CHF",
+																								"CLP CL$",
+																								"CNY CN¥",
+																								"COP CO$",
+																								"CRC ₡",
+																								"CVE CV$",
+																								"CZK Kč",
+																								"DJF Fdj",
+																								"DKK Dkr",
+																								"DOP RD$",
+																								"DZD DA",
+																								"EEK Ekr",
+																								"EGP EGP",
+																								"ERN Nfk",
+																								"ETB Br",
+																								"GBP £",
+																								"GEL GEL",
+																								"GHS GH₵",
+																								"GNF FG",
+																								"GTQ GTQ",
+																								"HKD HK$",
+																								"HNL HNL",
+																								"HRK kn",
+																								"HUF Ft",
+																								"IDR Rp",
+																								"ILS ₪",
+																								"INR ₹",
+																								"IQD IQD",
+																								"IRR IRR",
+																								"ISK Ikr",
+																								"JMD J$",
+																								"JOD JD",
+																								"JPY ¥",
+																								"KES Ksh",
+																								"KHR KHR",
+																								"KMF CF",
+																								"KRW ₩",
+																								"KWD KD",
+																								"KZT KZT",
+																								"LBP L.L.",
+																								"LKR SLRs",
+																								"LTL Lt",
+																								"LVL Ls",
+																								"LYD LD",
+																								"MAD MAD",
+																								"MDL MDL",
+																								"MGA MGA",
+																								"MKD MKD",
+																								"MMK MMK",
+																								"MOP MOP$",
+																								"MUR MURs",
+																								"MXN MX$",
+																								"MYR RM",
+																								"MZN MTn",
+																								"NAD N$",
+																								"NGN ₦",
+																								"NIO C$",
+																								"NOK Nkr",
+																								"NPR NPRs",
+																								"NZD NZ$",
+																								"OMR OMR",
+																								"PAB B/.",
+																								"PEN S/.",
+																								"PHP ₱",
+																								"PKR PKRs",
+																								"PLN zł",
+																								"PYG ₲",
+																								"QAR QR",
+																								"RON RON",
+																								"RSD din.",
+																								"RUB RUB",
+																								"RWF RWF",
+																								"SAR SR",
+																								"SDG SDG",
+																								"SEK Skr",
+																								"SGD S$",
+																								"SOS Ssh",
+																								"SYP SY£",
+																								"THB ฿",
+																								"TND DT",
+																								"TOP T$",
+																								"TRY TL",
+																								"TTD TT$",
+																								"TWD NT$",
+																								"TZS TSh",
+																								"UAH ₴",
+																								"UGX USh",
+																								"UYU $U",
+																								"UZS UZS",
+																								"VEF Bs.F.",
+																								"VND ₫",
+																								"XAF FCFA",
+																								"XOF CFA",
+																								"YER YR",
+																								"ZAR R",
+																								"ZMK ZK",
+																								"ZWL ZWL$"
+																							]}
+																						/>
+																					</div>
+																					<div className="mb-4 w-[170px] pr-6 last:pr-0">
+																						<FormField
+																							placeholder={t("Words.Type")}
+																							singleSelect
+																							fieldType="select2"
+																							options={[t("Form.Monthly"), t("Form.Yearly")]}
+																							value={type}
+																							handleChange={settype}
+																							readOnly
+																						/>
+																					</div>
+																					<div className="mb-4 grow pr-6 last:pr-0">
+																						<FormField
+																							placeholder={t("Words.From")}
+																							fieldType="input"
+																							inputType="number"
+																							value={from}
+																							handleChange={(e) => setfrom(e.target.value)}
+																							readOnly
+																						/>
+																					</div>
+																					<div className="mb-4 grow pr-6 last:pr-0">
+																						<FormField
+																							placeholder={t("Words.To")}
+																							fieldType="input"
+																							inputType="number"
+																							value={to}
+																							handleChange={(e) => setto(e.target.value)}
+																							readOnly
+																						/>
+																					</div>
+																				</div>
+																			</div>
+																			<FormField
+																				label={t("Form.CandidateType")}
+																				singleSelect
+																				fieldType="select2"
+																				options={[t("Select.FullTime"), t("Select.PartTime"), t("Select.Internship")]}
+																				value={ctype}
+																				handleChange={setctype}
+																				required
+																				readOnly
+																			/>
+																			<div className="flex flex-wrap">
+																				<div className="grow pr-6 last:pr-0">
+																					<FormField
+																						label={t("Words.VisaSponsorship")}
+																						singleSelect
+																						fieldType="select2"
+																						options={[t("Select.Yes"), t("Select.No"), "N/A"]}
+																						value={visa}
+																						handleChange={setvisa}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																				<div className="grow pr-6 last:pr-0">
+																					<FormField
+																						label={t("Words.PaidRelocation")}
+																						singleSelect
+																						fieldType="select2"
+																						options={[t("Select.Yes"), t("Select.No"), "N/A"]}
+																						value={relocation}
+																						handleChange={setrelocation}
+																						required
+																						readOnly
+																					/>
+																				</div>
+																			</div>
+																			<FormField
+																				label={t("Form.ApprovalAuthorities")}
+																				fieldType="select2"
+																				options={hmanage}
+																				value={approval}
+																				handleChange={setapproval}
+																				required
+																				readOnly
+																			/>
 
-																{(offer.length > 0 && offer[0]["step"] === 4) || (offer.length <= 0 && step === 4) ? (
-																	<section className="px-10 py-6">
-																		{ocstatus === "Pending" && (
-																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																				<p className="text-lg">{t("Words.OfferPending")}</p>
-																				<small className="font-semibold">{t("Words.OfferStatusApplicant")}</small>
-																			</div>
-																		)}
-																		{ocstatus === "Accepted" && (
-																			<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
-																				<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
-																				<button
-																					onClick={() => {
-																						if (
-																							offer[0]["finalofferLetter"] &&
-																							offer[0]["finalofferLetter"].length > 0
-																						) {
-																							window.open(offer[0]["finalofferLetter"], "_blank");
-																						} else {
-																							toastcomp("Under proccessing", "error");
-																						}
-																					}}
-																					className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-																				>
-																					{t("Btn.Download")} {t("Words.OfferLetter")}
-																				</button>
-																			</div>
-																		)}
-																	</section>
-																) : (
-																	<></>
-																)}
+																			<hr />
 
-																{(offer.length > 0 && offer[0]["step"] === 5) || (offer.length <= 0 && step === 5) ? (
-																	<section className="px-10 py-6">
-																		{ocstatus === "Pending" && (
-																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																				<p className="text-lg">{t("Words.OfferPending")}</p>
-																				<small className="font-semibold">{t("Words.OfferStatusApplicant")}</small>
+																			<h4 className="mb-2 mt-6 font-bold">{t("Form.Feedback")}</h4>
+																			<FormField
+																				placeholder={t("Form.WriteFeedback")}
+																				fieldType="textarea"
+																				value={feedback}
+																				handleChange={(e) => setfeedback(e.target.value)}
+																			/>
+
+																			<div className="flex flex-wrap gap-2">
+																				<Button
+																					label={t("Btn.Approve")}
+																					btnStyle="success"
+																					btnType={"button"}
+																					handleClick={() => newOfferFeedback("Approve")}
+																				/>
+
+																				<Button
+																					label={t("Btn.Reject")}
+																					btnType={"button"}
+																					btnStyle="danger"
+																					disabled={!rejectVerify()}
+																					handleClick={() => newOfferFeedback("Reject")}
+																				/>
 																			</div>
-																		)}
-																		{ocstatus === "Accepted" && (
-																			<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
-																				<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
-																				<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
-																				<button
-																					onClick={() => {
-																						if (
-																							offer[0]["finalofferLetter"] &&
-																							offer[0]["finalofferLetter"].length > 0
-																						) {
-																							window.open(offer[0]["finalofferLetter"], "_blank");
-																						} else {
-																							toastcomp("Under proccessing", "error");
+																		</>
+																	) : (
+																		<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																			<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+																			<p className="text-lg text-yellow-700">{t("Words.OfferNotYetCreated")}</p>
+																			<p className="text-sm">{t("Words.UnderDevelopment")}</p>
+																		</div>
+																	)}
+																</section>
+															) : (
+																<>
+																	{(offer.length > 0 && offer[0]["step"] === 1) || (offer.length <= 0 && step === 1) ? (
+																		<section className="px-10 py-6">
+																			{offer.length <= 0 || feedreject ? (
+																				<>
+																					{omf &&
+																						omf.length > 0 &&
+																						omf.map((data, i) =>
+																							data["status"] === "Reject" ? (
+																								<div className="mb-6 rounded-normal bg-red-100 px-6 py-4" key={i}>
+																									<div className="flex flex-wrap items-center justify-between font-bold">
+																										<p className="mb-1 text-red-700">
+																											<i className="fa-regular fa-face-frown"></i> {t("Form.Rejected")}{" "}
+																											({data["organization"]["email"]})
+																										</p>
+																										<p className="text-[12px] text-darkGray">
+																											{moment(data["timestamp"]).fromNow()}
+																										</p>
+																									</div>
+																									<h5 className="mt-2 font-semibold text-black">
+																										{t("Form.Feedback")}:
+																									</h5>
+																									<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																								</div>
+																							) : (
+																								<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																									<div className="flex flex-wrap items-center justify-between font-bold">
+																										<p className="mb-1 text-green-700">
+																											<i className="fa-regular fa-face-smile"></i> {t("Form.Approved")}{" "}
+																											({data["organization"]["email"]})
+																										</p>
+																										<p className="text-[12px] text-darkGray">
+																											{moment(data["timestamp"]).fromNow()}
+																										</p>
+																									</div>
+																									<h5 className="mt-2 font-semibold text-black">
+																										{t("Form.Feedback")}:
+																									</h5>
+																									<p className="mb-2 text-sm text-darkGray">{data["feedback"]}</p>
+																								</div>
+																							)
+																						)}
+
+																					<div className="-mx-3 flex flex-wrap">
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Form.Designation")}
+																								fieldType="input"
+																								inputType="text"
+																								value={designation}
+																								handleChange={(e) => setdesignation(e.target.value)}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Words.Department")}
+																								fieldType="input"
+																								inputType="text"
+																								value={dept}
+																								handleChange={(e) => setdept(e.target.value)}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Form.Section")}
+																								fieldType="input"
+																								inputType="text"
+																								value={section}
+																								handleChange={(e) => setsection(e.target.value)}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Words.Division")}
+																								fieldType="input"
+																								inputType="text"
+																								value={div}
+																								handleChange={(e) => setdiv(e.target.value)}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Form.Grade")}
+																								fieldType="input"
+																								inputType="text"
+																								value={grade}
+																								handleChange={(e) => setgrade(e.target.value)}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 w-full px-3 md:max-w-[50%]">
+																							<FormField
+																								label={t("Form.Location")}
+																								fieldType="input"
+																								inputType="text"
+																								value={location}
+																								handleChange={(e) => setlocation(e.target.value)}
+																								required
+																							/>
+																						</div>
+																					</div>
+																					<div className="">
+																						<h4 className="mb-2 font-bold">
+																							{t("Form.SalaryRange")}
+																							<sup className="text-red-500">*</sup>
+																						</h4>
+																						<div className="-mx-3 flex flex-wrap">
+																							<div className="mb-4 w-[50%] px-3 xl:max-w-[20%]">
+																								<FormField
+																									placeholder={t("Words.Currency")}
+																									fieldType="select2"
+																									singleSelect
+																									value={curr}
+																									handleChange={setcurr}
+																									options={[
+																										"USD $",
+																										"CAD CA$",
+																										"EUR €",
+																										"AED AED",
+																										"AFN Af",
+																										"ALL ALL",
+																										"AMD AMD",
+																										"ARS AR$",
+																										"AUD AU$",
+																										"AZN man.",
+																										"BAM KM",
+																										"BDT Tk",
+																										"BGN BGN",
+																										"BHD BD",
+																										"BIF FBu",
+																										"BND BN$",
+																										"BOB Bs",
+																										"BRL R$",
+																										"BWP BWP",
+																										"BYN Br",
+																										"BZD BZ$",
+																										"CDF CDF",
+																										"CHF CHF",
+																										"CLP CL$",
+																										"CNY CN¥",
+																										"COP CO$",
+																										"CRC ₡",
+																										"CVE CV$",
+																										"CZK Kč",
+																										"DJF Fdj",
+																										"DKK Dkr",
+																										"DOP RD$",
+																										"DZD DA",
+																										"EEK Ekr",
+																										"EGP EGP",
+																										"ERN Nfk",
+																										"ETB Br",
+																										"GBP £",
+																										"GEL GEL",
+																										"GHS GH₵",
+																										"GNF FG",
+																										"GTQ GTQ",
+																										"HKD HK$",
+																										"HNL HNL",
+																										"HRK kn",
+																										"HUF Ft",
+																										"IDR Rp",
+																										"ILS ₪",
+																										"INR ₹",
+																										"IQD IQD",
+																										"IRR IRR",
+																										"ISK Ikr",
+																										"JMD J$",
+																										"JOD JD",
+																										"JPY ¥",
+																										"KES Ksh",
+																										"KHR KHR",
+																										"KMF CF",
+																										"KRW ₩",
+																										"KWD KD",
+																										"KZT KZT",
+																										"LBP L.L.",
+																										"LKR SLRs",
+																										"LTL Lt",
+																										"LVL Ls",
+																										"LYD LD",
+																										"MAD MAD",
+																										"MDL MDL",
+																										"MGA MGA",
+																										"MKD MKD",
+																										"MMK MMK",
+																										"MOP MOP$",
+																										"MUR MURs",
+																										"MXN MX$",
+																										"MYR RM",
+																										"MZN MTn",
+																										"NAD N$",
+																										"NGN ₦",
+																										"NIO C$",
+																										"NOK Nkr",
+																										"NPR NPRs",
+																										"NZD NZ$",
+																										"OMR OMR",
+																										"PAB B/.",
+																										"PEN S/.",
+																										"PHP ₱",
+																										"PKR PKRs",
+																										"PLN zł",
+																										"PYG ₲",
+																										"QAR QR",
+																										"RON RON",
+																										"RSD din.",
+																										"RUB RUB",
+																										"RWF RWF",
+																										"SAR SR",
+																										"SDG SDG",
+																										"SEK Skr",
+																										"SGD S$",
+																										"SOS Ssh",
+																										"SYP SY£",
+																										"THB ฿",
+																										"TND DT",
+																										"TOP T$",
+																										"TRY TL",
+																										"TTD TT$",
+																										"TWD NT$",
+																										"TZS TSh",
+																										"UAH ₴",
+																										"UGX USh",
+																										"UYU $U",
+																										"UZS UZS",
+																										"VEF Bs.F.",
+																										"VND ₫",
+																										"XAF FCFA",
+																										"XOF CFA",
+																										"YER YR",
+																										"ZAR R",
+																										"ZMK ZK",
+																										"ZWL ZWL$"
+																									]}
+																								/>
+																							</div>
+																							<div className="mb-4 w-[50%] px-3 xl:max-w-[20%]">
+																								<FormField
+																									placeholder={t("Words.Type")}
+																									singleSelect
+																									fieldType="select2"
+																									options={["Monthly", "Yearly"]}
+																									value={type}
+																									handleChange={settype}
+																								/>
+																							</div>
+																							<div className="mb-4 w-[50%] px-3 xl:max-w-[30%]">
+																								<FormField
+																									placeholder={t("Words.From")}
+																									fieldType="input"
+																									inputType="number"
+																									value={from}
+																									handleChange={(e) => setfrom(e.target.value)}
+																								/>
+																							</div>
+																							<div className="mb-4 w-[50%] px-3 xl:max-w-[30%]">
+																								<FormField
+																									placeholder={t("Words.To")}
+																									fieldType="input"
+																									inputType="number"
+																									value={to}
+																									handleChange={(e) => setto(e.target.value)}
+																								/>
+																							</div>
+																						</div>
+																					</div>
+																					<FormField
+																						label={t("Form.CandidateType")}
+																						singleSelect
+																						fieldType="select2"
+																						options={[
+																							t("Select.FullTime"),
+																							t("Select.PartTime"),
+																							t("Select.Internship")
+																						]}
+																						value={ctype}
+																						handleChange={setctype}
+																						required
+																					/>
+																					<div className="flex flex-wrap">
+																						<div className="mb-4 grow pr-6 last:pr-0">
+																							<FormField
+																								label={t("Words.VisaSponsorship")}
+																								singleSelect
+																								fieldType="select2"
+																								options={[t("Select.Yes"), t("Select.No"), "N/A"]}
+																								value={visa}
+																								handleChange={setvisa}
+																								required
+																							/>
+																						</div>
+																						<div className="mb-4 grow pr-6 last:pr-0">
+																							<FormField
+																								label={t("Words.PaidRelocation")}
+																								singleSelect
+																								fieldType="select2"
+																								options={[t("Select.Yes"), t("Select.No"), "N/A"]}
+																								value={relocation}
+																								handleChange={setrelocation}
+																								required
+																							/>
+																						</div>
+																					</div>
+																					<FormField
+																						label={t("Form.ApprovalAuthorities")}
+																						fieldType="select2"
+																						options={hmanage}
+																						value={approval}
+																						handleChange={setapproval}
+																						required
+																					/>
+
+																					<Button
+																						label={
+																							offer.length <= 0 ? t("Btn.SendForApproval") : t("Btn.ReSendForApproval")
 																						}
-																					}}
-																					className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-																				>
-																					{t("Btn.Download")} {t("Words.OfferLetter")}
-																				</button>
+																						btnType={"button"}
+																						disabled={!checkBtnOffer()}
+																						handleClick={() => handleOfferManagement(currentApplicant["arefid"])}
+																					/>
+																				</>
+																			) : omf && omf.length > 0 ? (
+																				<>
+																					{omf.map((data, i) => (
+																						<div className="mb-6 rounded-normal bg-green-100 px-6 py-4" key={i}>
+																							<div className="flex flex-wrap items-center justify-between font-bold">
+																								<p className="mb-1 text-green-700">
+																									<i className="fa-regular fa-face-smile"></i> {t("Form.Approved")} (
+																									{data["organization"]["email"]})
+																								</p>
+																								<p className="text-[12px] text-darkGray">
+																									{moment(data["timestamp"]).fromNow()}
+																								</p>
+																							</div>
+																							<h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>
+																							<p className="mb-2 text-sm text-darkGray">
+																								{data["feedback"].length > 0 ? data["feedback"] : <>N/A</>}
+																							</p>
+																						</div>
+																					))}
+																					{approval
+																						.split(",")
+																						.filter(
+																							(email) => !omf.some((item) => item["organization"]["email"] === email)
+																						).length > 0 ? (
+																						<>
+																							<p className="">Remaining Approval Authroties Who Not GIve Feedback :</p>
+																							{approval
+																								.split(",")
+																								.filter(
+																									(email) =>
+																										!omf.some((item) => item["organization"]["email"] === email)
+																								)
+																								.map((data, i) => (
+																									<p key={i} className="text-sm">
+																										{i + 1}) {data}
+																									</p>
+																								))}
+																						</>
+																					) : (
+																						<p className="text-center text-sm">
+																							All Approval Authroties Give There Feedback Positive
+																						</p>
+																					)}{" "}
+																					<Button
+																						label={t("Btn.Next")}
+																						btnType={"button"}
+																						disabled={!nextstep1Verify()}
+																						handleClick={() => updateStep(2)}
+																						// handleClick={() => {
+																						// loadOrganizationProfile();
+																						// setstep(2);
+																						// }}
+																					/>
+																				</>
+																			) : (
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-solid fa-magnifying-glass mb-2 text-[40px]"></i>
+																					<p className="text-lg text-yellow-700">{t("Words.OfferSentSuccessfully")}</p>
+																					<p className="text-sm">{t("Words.UnderReview")}</p>
+																				</div>
+																			)}
+																		</section>
+																	) : (
+																		<></>
+																	)}
+
+																	{(offer.length > 0 && offer[0]["step"] === 2) || (offer.length <= 0 && step === 2) ? (
+																		<section className="px-10 py-6">
+																			{wordpath === "" && (
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																					<p className="text-lg">{t("Words.OfferLetterFomratPending")}</p>
+																					<small className="font-semibold">
+																						{t("Words.KindlyContactYourOrgSuperAdminATS")}
+																					</small>
+																				</div>
+																			)}
+																			{value && value.length > 0 && word != null ? (
+																				<>
+																					<div className="border py-2">
+																						<article
+																							className="m-6"
+																							ref={htmlRef}
+																							id="contentABC"
+																							dangerouslySetInnerHTML={{ __html: value }}
+																						></article>
+																					</div>
+																					<div className="flex flex-wrap items-center justify-between px-8 pt-4">
+																						<div className="my-1 mr-4 last:mr-0">
+																							<Button
+																								label={t("Btn.Confirm")}
+																								btnType="button"
+																								handleClick={() => updateOfferStep2(currentApplicant["arefid"])}
+																							/>
+																						</div>
+																						<div className="my-1 mr-4 last:mr-0">
+																							<Button
+																								btnStyle="gray"
+																								label={t("Btn.Edit")}
+																								btnType="button"
+																								handleClick={() => seteditDetails(true)}
+																							/>
+																						</div>
+																					</div>
+																				</>
+																			) : (
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																					<p className="text-lg">Server Error</p>
+																					<small className="font-semibold">
+																						Try Again Or Change Offer Letter Format For That Contact Super Admin
+																					</small>
+																				</div>
+																			)}
+																		</section>
+																	) : (
+																		<></>
+																	)}
+
+																	{(offer.length > 0 && offer[0]["step"] === 3) || (offer.length <= 0 && step === 3) ? (
+																		<section className="px-10 py-6">
+																			{word != null && (
+																				<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
+																					<p className="my-2">{t("Words.OfferLetter")}</p>
+																					<button
+																						className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
+																						onClick={handleDownload}
+																					>
+																						<i className="fa-solid fa-download mr-2"></i>
+																						{t("Btn.Download")}
+																					</button>
+																				</div>
+																			)}
+																			{value && value.length > 0 && word != null && (
+																				<>
+																					<div className="border py-2">
+																						<article
+																							className="m-6"
+																							ref={htmlRef}
+																							id="contentABCD"
+																							dangerouslySetInnerHTML={{ __html: value }}
+																						></article>
+																					</div>
+																					<div className="flex flex-wrap justify-center gap-2 px-8 pt-4 text-center">
+																						<Button
+																							label={"Schedule Offer Call"}
+																							btnType="button"
+																							handleClick={() => checkGCAL()}
+																						/>
+																						{!cvisible && (
+																							<Button
+																								label={"Send Offer"}
+																								btnType="button"
+																								handleClick={() => updateOfferVisble(currentApplicant["arefid"])}
+																							/>
+																						)}
+																					</div>
+																				</>
+																			)}
+																		</section>
+																	) : (
+																		<></>
+																	)}
+
+																	{(offer.length > 0 && offer[0]["step"] === 4) || (offer.length <= 0 && step === 4) ? (
+																		<section className="px-10 py-6">
+																			{ocstatus === "Pending" && (
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																					<p className="text-lg">{t("Words.OfferPending")}</p>
+																					<small className="font-semibold">{t("Words.OfferStatusApplicant")}</small>
+																				</div>
+																			)}
+																			{ocstatus === "Accepted" && (
+																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																					<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
+																					<button
+																						onClick={() => {
+																							if (
+																								offer[0]["finalofferLetter"] &&
+																								offer[0]["finalofferLetter"].length > 0
+																							) {
+																								window.open(offer[0]["finalofferLetter"], "_blank");
+																							} else {
+																								toastcomp("Under proccessing", "error");
+																							}
+																						}}
+																						className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																					>
+																						{t("Btn.Download")} {t("Words.OfferLetter")}
+																					</button>
+																				</div>
+																			)}
+																		</section>
+																	) : (
+																		<></>
+																	)}
+
+																	{(offer.length > 0 && offer[0]["step"] === 5) || (offer.length <= 0 && step === 5) ? (
+																		<section className="px-10 py-6">
+																			{ocstatus === "Pending" && (
+																				<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
+																					<p className="text-lg">{t("Words.OfferPending")}</p>
+																					<small className="font-semibold">{t("Words.OfferStatusApplicant")}</small>
+																				</div>
+																			)}
+																			{ocstatus === "Accepted" && (
+																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
+																					<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
+																					<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
+																					<button
+																						onClick={() => {
+																							if (
+																								offer[0]["finalofferLetter"] &&
+																								offer[0]["finalofferLetter"].length > 0
+																							) {
+																								window.open(offer[0]["finalofferLetter"], "_blank");
+																							} else {
+																								toastcomp("Under proccessing", "error");
+																							}
+																						}}
+																						className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																					>
+																						{t("Btn.Download")} {t("Words.OfferLetter")}
+																					</button>
+																				</div>
+																			)}
+																		</section>
+																	) : (
+																		<></>
+																	)}
+																</>
+															)}
+														</Tab.Panel>
+														<Tab.Panel>
+															{upcomingSoon ? (
+																<>
+																	<UpcomingComp />
+																</>
+															) : (
+																<div className="px-10">
+																	<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
+																		{Array(2).fill(
+																			<div className="flex items-start">
+																				<div className="w-[80px] px-2 py-4">
+																					<p className="text-sm text-darkGray dark:text-gray-400">
+																						<Skeleton width={30} />
+																						<Skeleton width={55} />
+																					</p>
+																				</div>
+																				<div className="w-[calc(100%-80px)] pl-6">
+																					<div className="border-b dark:border-b-gray-600">
+																						<article className="py-4">
+																							<h6 className="text-sm font-bold">
+																								<Skeleton width={70 + "%"} />
+																							</h6>
+																							<p className="text-[12px] text-darkGray dark:text-gray-400">
+																								<Skeleton width={20 + "%"} />
+																							</p>
+																						</article>
+																					</div>
+																				</div>
 																			</div>
 																		)}
-																	</section>
-																) : (
-																	<></>
-																)}
-															</>
-														)}
-													</Tab.Panel>
-													<Tab.Panel>
-														{upcomingSoon ? (
-															<>
-																<UpcomingComp />
-															</>
-														) : (
-															<div className="px-10">
-																<div className="relative max-h-[455px] overflow-y-auto before:absolute before:left-[80px] before:top-0 before:h-[100%] before:w-[1px] before:bg-gray-600 before:bg-slate-200 before:content-['']">
-																	{Array(2).fill(
 																		<div className="flex items-start">
 																			<div className="w-[80px] px-2 py-4">
 																				<p className="text-sm text-darkGray dark:text-gray-400">
-																					<Skeleton width={30} />
-																					<Skeleton width={55} />
+																					8 Feb
+																					<br />
+																					<small>2:30 PM</small>
 																				</p>
 																			</div>
 																			<div className="w-[calc(100%-80px)] pl-6">
 																				<div className="border-b dark:border-b-gray-600">
 																					<article className="py-4">
-																						<h6 className="text-sm font-bold">
-																							<Skeleton width={70 + "%"} />
+																						<h6 className="mb-2 text-sm font-bold">
+																							Applicant has been shifted to new Job -Software Engineer
 																						</h6>
 																						<p className="text-[12px] text-darkGray dark:text-gray-400">
-																							<Skeleton width={20 + "%"} />
+																							By - Steve Paul : Collaborator
 																						</p>
 																					</article>
 																				</div>
 																			</div>
 																		</div>
-																	)}
-																	<div className="flex items-start">
-																		<div className="w-[80px] px-2 py-4">
-																			<p className="text-sm text-darkGray dark:text-gray-400">
-																				8 Feb
-																				<br />
-																				<small>2:30 PM</small>
-																			</p>
-																		</div>
-																		<div className="w-[calc(100%-80px)] pl-6">
-																			<div className="border-b dark:border-b-gray-600">
-																				<article className="py-4">
-																					<h6 className="mb-2 text-sm font-bold">
-																						Applicant has been shifted to new Job -Software Engineer
-																					</h6>
-																					<p className="text-[12px] text-darkGray dark:text-gray-400">
-																						By - Steve Paul : Collaborator
-																					</p>
-																				</article>
+																		<div className="flex items-start">
+																			<div className="w-[80px] px-2 py-4">
+																				<p className="text-sm text-darkGray dark:text-gray-400">
+																					8 Feb
+																					<br />
+																					<small>2:30 PM</small>
+																				</p>
+																			</div>
+																			<div className="w-[calc(100%-80px)] pl-6">
+																				<div className="border-b dark:border-b-gray-600">
+																					<article className="py-4">
+																						<h6 className="mb-2 text-sm font-bold">
+																							Applicant has been shifted to new Job -Software Engineer
+																						</h6>
+																						<p className="text-[12px] text-darkGray dark:text-gray-400">
+																							By - Steve Paul : Collaborator
+																						</p>
+																					</article>
+																					<article className="py-4">
+																						<h6 className="mb-2 text-sm font-bold">
+																							Applicant has been shifted to new Job -Software Engineer
+																						</h6>
+																						<p className="text-[12px] text-darkGray dark:text-gray-400">
+																							By - Steve Paul : Collaborator
+																						</p>
+																					</article>
+																				</div>
 																			</div>
 																		</div>
-																	</div>
-																	<div className="flex items-start">
-																		<div className="w-[80px] px-2 py-4">
-																			<p className="text-sm text-darkGray dark:text-gray-400">
-																				8 Feb
-																				<br />
-																				<small>2:30 PM</small>
-																			</p>
-																		</div>
-																		<div className="w-[calc(100%-80px)] pl-6">
-																			<div className="border-b dark:border-b-gray-600">
-																				<article className="py-4">
-																					<h6 className="mb-2 text-sm font-bold">
-																						Applicant has been shifted to new Job -Software Engineer
-																					</h6>
-																					<p className="text-[12px] text-darkGray dark:text-gray-400">
-																						By - Steve Paul : Collaborator
-																					</p>
-																				</article>
-																				<article className="py-4">
-																					<h6 className="mb-2 text-sm font-bold">
-																						Applicant has been shifted to new Job -Software Engineer
-																					</h6>
-																					<p className="text-[12px] text-darkGray dark:text-gray-400">
-																						By - Steve Paul : Collaborator
-																					</p>
-																				</article>
+																		<div className="flex items-start">
+																			<div className="w-[80px] px-2 py-4">
+																				<p className="text-sm text-darkGray dark:text-gray-400">
+																					8 Feb
+																					<br />
+																					<small>2:30 PM</small>
+																				</p>
 																			</div>
-																		</div>
-																	</div>
-																	<div className="flex items-start">
-																		<div className="w-[80px] px-2 py-4">
-																			<p className="text-sm text-darkGray dark:text-gray-400">
-																				8 Feb
-																				<br />
-																				<small>2:30 PM</small>
-																			</p>
-																		</div>
-																		<div className="w-[calc(100%-80px)] pl-6">
-																			<div className="border-b dark:border-b-gray-600">
-																				<article className="py-4">
-																					<h6 className="mb-2 text-sm font-bold">
-																						Applicant has been shifted to new Job -Software Engineer
-																					</h6>
-																					<p className="text-[12px] text-darkGray dark:text-gray-400">
-																						By - Steve Paul : Collaborator
-																					</p>
-																				</article>
+																			<div className="w-[calc(100%-80px)] pl-6">
+																				<div className="border-b dark:border-b-gray-600">
+																					<article className="py-4">
+																						<h6 className="mb-2 text-sm font-bold">
+																							Applicant has been shifted to new Job -Software Engineer
+																						</h6>
+																						<p className="text-[12px] text-darkGray dark:text-gray-400">
+																							By - Steve Paul : Collaborator
+																						</p>
+																					</article>
+																				</div>
 																			</div>
 																		</div>
 																	</div>
 																</div>
-															</div>
-														)}
-													</Tab.Panel>
-												</Tab.Panels>
-											</Tab.Group>
+															)}
+														</Tab.Panel>
+													</Tab.Panels>
+												</Tab.Group>
+											</div>
+										</div>
+									)}
+								</div>
+							</>
+						) : (
+							<>
+								<div className="w-full rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800 xl:max-w-[calc(100%)] xl:pl-8 2xl:max-w-[calc(100%)]">
+									<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
+										<div className="flex min-h-full items-center justify-center">
+											{loader ? (
+												<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+													<i className="fa-solid fa-spinner fa-spin"></i>
+													<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
+												</div>
+											) : (
+												<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+													<div className="mb-6 p-2">
+														<Image
+															src={noInterviewdata}
+															alt="No Data"
+															width={300}
+															className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+														/>
+													</div>
+													<h5 className="mb-4 text-lg font-semibold">No Offer Stage Applicants</h5>
+													<p className="mb-2 text-sm text-darkGray">
+														There are no Applicants are in Offer Stage
+														<br />
+														that moment can not able to create Offer
+													</p>
+												</div>
+											)}
 										</div>
 									</div>
-								)}
-							</div>
-						</>
-					) : (
-						<>
-							<div className="w-full rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800 xl:max-w-[calc(100%)] xl:pl-8 2xl:max-w-[calc(100%)]">
-								<div className="h-[calc(100vh-185px)] overflow-y-auto px-8">
-									<div className="flex min-h-full items-center justify-center">
-										{loader ? (
-											<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-												<i className="fa-solid fa-spinner fa-spin"></i>
-												<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
-											</div>
-										) : (
-											<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-												<div className="mb-6 p-2">
-													<Image
-														src={noInterviewdata}
-														alt="No Data"
-														width={300}
-														className="mx-auto max-h-[200px] w-auto max-w-[200px]"
-													/>
-												</div>
-												<h5 className="mb-4 text-lg font-semibold">No Offer Stage Applicants</h5>
-												<p className="mb-2 text-sm text-darkGray">
-													There are no Applicants are in Offer Stage
-													<br />
-													that moment can not able to create Offer
-												</p>
-											</div>
-										)}
-									</div>
 								</div>
-							</div>
-						</>
-					)}
-				</div>
-			</main>
-
+							</>
+						)}
+					</div>
+				</main>
+			)}
 			<Transition.Root show={editDetails} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seteditDetails}>
 					<Transition.Child

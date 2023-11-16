@@ -21,7 +21,12 @@ import { useNewNovusStore } from "@/utils/novus";
 import { useEffect, useState } from "react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
-export default function JobsDashboard({ atsVersion, userRole, comingSoon }: any) {
+export default function JobsDashboard({ atsVersion, userRole, comingSoon, currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
@@ -92,44 +97,46 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon }: any)
 			<Head>
 				<title>{t("Words.Jobs")}</title>
 			</Head>
-			<main>
-				<Orgsidebar />
-				<Orgtopbar />
-				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
-				<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
-				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
-						<h1 className="mb-6 text-xl font-bold">{t("Words.Jobs")}</h1>
-						<div className="-mx-4 flex flex-wrap items-center">
-							{quicklinks.map((links, i) => (
-								<>
-									{!links.hide && (
-										<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
-											<Link
-												href={links.link}
-												className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
-											>
-												<div className="mb-10 flex w-full items-center">
-													<div
-														className={`mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3`}
-														style={{ backgroundColor: links.color }}
-													>
-														<Image src={links.icon} alt={links.name} height={20} />
+			{currentUser && !currentUser.is_expired && (
+				<main>
+					<Orgsidebar />
+					<Orgtopbar />
+					{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
+					<div id="overlay" className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)]"></div>
+					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+						<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
+							<h1 className="mb-6 text-xl font-bold">{t("Words.Jobs")}</h1>
+							<div className="-mx-4 flex flex-wrap items-center">
+								{quicklinks.map((links, i) => (
+									<>
+										{!links.hide && (
+											<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
+												<Link
+													href={links.link}
+													className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
+												>
+													<div className="mb-10 flex w-full items-center">
+														<div
+															className={`mr-4 flex h-[45px] w-[45px] items-center justify-center rounded p-3`}
+															style={{ backgroundColor: links.color }}
+														>
+															<Image src={links.icon} alt={links.name} height={20} />
+														</div>
+														<span className="text-lg font-bold">{links.name}</span>
 													</div>
-													<span className="text-lg font-bold">{links.name}</span>
-												</div>
-												<span className="flex items-center text-sm text-primary dark:text-gray-300">
-													{t("Words.GoTo")} <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
-												</span>
-											</Link>
-										</div>
-									)}
-								</>
-							))}
+													<span className="flex items-center text-sm text-primary dark:text-gray-300">
+														{t("Words.GoTo")} <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
+													</span>
+												</Link>
+											</div>
+										)}
+									</>
+								))}
+							</div>
 						</div>
 					</div>
-				</div>
-			</main>
+				</main>
+			)}
 		</>
 	);
 }

@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { Menu, Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import toastcomp from "@/components/toast";
+import moment from "moment";
+import { PopupModal } from "react-calendly";
+import { InlineWidget } from "react-calendly";
 
 export default function Pricing() {
 	const { t } = useTranslation("common");
@@ -26,6 +29,8 @@ export default function Pricing() {
 	const [tab, settab] = useState(0);
 	const [activePlan, setactivePlan] = useState(1);
 	const [planInfo, setplanInfo] = useState("");
+	const [price, setprice] = useState(false);
+	const [changePlan, setchangePlan] = useState(false);
 	const tabHeading_1 = [
 		{
 			title: "Plan & billing Information"
@@ -47,149 +52,66 @@ export default function Pricing() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
-
+	const [cplan, setcplan] = useState({});
+	const [aplan, setaplan] = useState([]);
 	const cancelButtonRef = useRef(null);
-	const [price, setprice] = useState(false);
-	const [path, setpath] = useState("");
-	const [step, setstep] = useState(1);
-	const [sign, setsign] = useState<File | null>(null);
-	const [check1, setcheck1] = useState(false);
-	const [file, setfile] = useState(false);
 
-	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
-		if (event.target.files && event.target.files[0]) {
-			const file = event.target.files && event.target.files[0];
-			setsign(file);
-			setfile(true);
-		} else {
-			if (file == null) {
-				setsign(null);
-				setfile(false);
-			}
-		}
-	}
-
-	function checkForm() {
-		return check1 && sign != null;
-	}
-
-	useEffect(() => {
-		if (price) {
-			setstep(1);
-			setcheck1(false);
-			setsign(null);
-			setfile(false);
-			setpath("");
-			// if(bilingData.length > 0){
-			console.log("!!!", "planInfo", planInfo);
-			getInvoice(planInfo);
-			// }
-		}
-	}, [price]);
-
-	async function regVendor() {
-		const fd = new FormData();
-		fd.append("plan_info", "ENTERPRISE_MONTHLY");
-		fd.append("payment_proof", sign);
+	async function getCurrentPlanInfo() {
 		await axiosInstanceAuth2
-			.post(`/subscription/direct-pay/`, fd)
+			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				toastcomp("reg success", "success");
-				setstep(3);
-				setcheck1(false);
-				setsign(null);
-				setfile(false);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("reg error", "error");
-			});
-	}
-
-	const [bilingData, setbilingData] = useState([]);
-	const [ainame, setainame] = useState("");
-	const [aiaddress, setaiaddress] = useState("");
-	const [aicon, setaicon] = useState("");
-	const [biname, setbiname] = useState("");
-	const [biaddress, setbiaddress] = useState("");
-	const [bicon, setbicon] = useState("");
-	const [acheck, setacheck] = useState(false);
-
-	function checkForm1() {
-		return (
-			acheck &&
-			ainame.length > 0 &&
-			aiaddress.length > 0 &&
-			aicon.length > 0 &&
-			biname.length > 0 &&
-			biaddress.length > 0 &&
-			bicon.length > 0
-		);
-	}
-
-	async function getBillingInfo() {
-		await axiosInstanceAuth2
-			.get(`/organization/billinginfo/`)
-			.then(async (res) => {
-				console.log("!!!", "setbilingData", res.data);
-				setbilingData(res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("setbilingData error", "error");
-			});
-	}
-
-	async function getInvoice(planInfo: any) {
-		const fd = new FormData();
-		fd.append("plan_type", planInfo);
-		await axiosInstanceAuth2
-			.post(`/subscription/pay-invoice/`, fd)
-			.then(async (res) => {
-				console.log("!!!", "getInvoice", res.data);
+				console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
-				const path =
-					process.env.NODE_ENV === "production"
-						? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/${data.Path}`
-						: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/${data.Path}`;
-
-				console.log("!!!", "path", path);
-				setpath(path);
-
-				// setbilingData(res.data);
+				if (data.length > 0) {
+					setcplan(data[0]);
+				} else {
+					setcplan({});
+				}
 			})
 			.catch((err) => {
 				console.log("!", err);
-				toastcomp("getInvoice error", "error");
+				toastcomp("get-active-plan error", "error");
+				setcplan({});
 			});
 	}
 
-	async function regBillingInfo() {
-		const fd = new FormData();
-		fd.append("ai_representative", ainame);
-		fd.append("ai_address", aiaddress);
-		fd.append("ai_phone", aicon);
-		fd.append("bi_representative", biname);
-		fd.append("bi_address", biaddress);
-		fd.append("bi_phone", bicon);
+	async function getALLPlanInfo() {
 		await axiosInstanceAuth2
-			.post(`/organization/billinginfo/add/`, fd)
+			.get(`/subscription/get-all-plan/`)
 			.then(async (res) => {
-				toastcomp("regBillingInfo success", "success");
-				getBillingInfo();
+				console.log("!!!", "get-all-plan", res.data);
+				setaplan(res.data);
 			})
 			.catch((err) => {
 				console.log("!", err);
-				toastcomp("regBillingInfo error", "error");
-				getBillingInfo();
+				toastcomp("get-all-plan error", "error");
+				setaplan([]);
 			});
 	}
 
 	useEffect(() => {
 		if (token && token.length > 0) {
-			getBillingInfo();
+			getCurrentPlanInfo();
+			getALLPlanInfo();
 		}
-	}, [token]);
+	}, [token, tab]);
+
+	function initatePopup() {
+		setchangePlan(false);
+		Calendly.initPopupWidget({ url: "https://calendly.com/somhako/somhako-plan" });
+	}
+
+	useEffect(() => {
+		if (price) {
+			if (cplan && cplan.active) {
+				setchangePlan(true);
+				setprice(false);
+			} else {
+				initatePopup();
+				setprice(false);
+			}
+		}
+	}, [price]);
 
 	return (
 		<>
@@ -282,7 +204,9 @@ export default function Pricing() {
 									</button>
 								</div>
 								<div className="mx-auto flex w-[80%] flex-wrap justify-center gap-4 p-2">
-									{activePlan === 0 ? (
+									{/* duration true for monthly */}
+									{/* free plan */}
+									{cplan.plan_info && cplan.plan_info === "FREE" ? (
 										<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 											<div className="flex flex-col gap-1">
 												<div className="text-xs font-bold">FREE Trial</div>
@@ -323,160 +247,203 @@ export default function Pricing() {
 											</div>
 										</div>
 									)}
+									{duration ? (
+										<>
+											{/* standard m plan */}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black">30,000￥/monthly</div>
 
-									{activePlan === 1 ? (
-										<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
-											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">{duration ? "Monthly Fixed" : "Annual Fixed"}</div>
-												<div className="text-lg font-black">{duration ? "30,000￥/monthly" : "360,000￥/yearly"}</div>
-
-												<div className="text-[10px] font-bold">Active/Paid</div>
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-												<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
-											</div>
-											<div
-												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
-												style={{
-													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
-												}}
-											>
-												Standard
-											</div>
-										</div>
-									) : (
-										<div
-											className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
-											onClick={() => {
-												setplanInfo(duration ? "STANDARD_MONTHLY" : "STANDARD_YEARLY");
-												setprice(true);
-											}}
-										>
-											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">{duration ? "Monthly Fixed" : "Annual Fixed"}</div>
-												<div className="text-lg font-black text-primary ">
-													{duration ? "30,000￥/monthly" : "360,000￥/yearly"}
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Standard
+													</div>
 												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("STANDARD_MONTHLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black text-primary ">30,000￥/monthly</div>
 
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-												<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
-											</div>
-											<div
-												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
-												style={{
-													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
-												}}
-											>
-												Standard
-											</div>
-										</div>
-									)}
-
-									{activePlan === 2 ? (
-										<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
-											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">{duration ? "Monthly Fixed" : "Annual Fixed"}</div>
-												<div className="text-lg font-black">{duration ? "45,000￥/monthly" : "480,000￥/yearly"}</div>
-
-												<div className="text-[10px] font-bold">Active/Paid</div>
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-												<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
-											</div>
-											<div
-												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
-												style={{
-													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
-												}}
-											>
-												Enterprise
-											</div>
-										</div>
-									) : (
-										<div
-											className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
-											onClick={() => {
-												setplanInfo(duration ? "ENTERPRISE_MONTHLY" : "ENTERPRISE_YEARLY");
-												setprice(true);
-											}}
-										>
-											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">{duration ? "Monthly Fixed" : "Annual Fixed"}</div>
-												<div className="text-lg font-black text-primary">
-													{duration ? "45,000￥/monthly" : "480,000￥/yearly"}
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Standard
+													</div>
 												</div>
+											)}
 
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-												<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
-											</div>
-											<div
-												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
-												style={{
-													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
-												}}
-											>
-												Enterprise
-											</div>
-										</div>
+											{/* Enterprise m plan */}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black">45,000￥/monthly</div>
+
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Enterprise
+													</div>
+												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("ENTERPRISE_MONTHLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black text-primary">45,000￥/monthly</div>
+
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Enterprise
+													</div>
+												</div>
+											)}
+										</>
+									) : (
+										<>
+											{/* standard y plan */}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black">360,000￥/yearly</div>
+
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Standard
+													</div>
+												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("STANDARD_YEARLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black text-primary ">360,000￥/yearly</div>
+
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Standard
+													</div>
+												</div>
+											)}
+
+											{/* Enterprise y plan */}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_YEARLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black">480,000￥/yearly</div>
+
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Enterprise
+													</div>
+												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("ENTERPRISE_YEARLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black text-primary">480,000￥/yearly</div>
+
+														<div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Enterprise
+													</div>
+												</div>
+											)}
+										</>
 									)}
-								</div>
-								<br />
-								<hr />
-								<br />
-								<div className="my-2 flex w-full flex-col items-center justify-center gap-10">
-									<h1 className="text-base font-bold">Billing Information </h1>
-									<div className="flex justify-center gap-20 text-sm">
-										<div className="flex  flex-col gap-1">
-											<p className="pb-4">
-												Account Information&nbsp;<i className="fa-solid fa-pen-to-square"></i>
-											</p>
-											{bilingData && bilingData.length > 0 ? (
-												<>
-													{bilingData.map((data, i) => (
-														<>
-															<span className="text-xs">{data.ai_representative}</span>
-															<span className="text-xs">{data.ai_address}</span>
-															<span className="text-xs">{data.ai_phone}</span>
-														</>
-													))}
-												</>
-											) : (
-												<>
-													<span className="text-xs">No Data</span>
-												</>
-											)}
-											{/* <span className="text-xs">Taro Suzuki (Representative)</span>
-											<span className="text-xs">
-												Somhako Inc,. 223-0061, Yokohoma shi , kohoku, Hiyoshi 506 0709999999, 045,000000
-											</span> */}
-										</div>
-										<div className="flex  flex-col gap-1">
-											<p className="pb-4">
-												Billing address&nbsp;<i className="fa-solid fa-pen-to-square"></i>
-											</p>
-											{bilingData && bilingData.length > 0 ? (
-												<>
-													{bilingData.map((data, i) => (
-														<>
-															<span className="text-xs">{data.bi_representative}</span>
-															<span className="text-xs">{data.bi_address}</span>
-															<span className="text-xs">{data.bi_phone}</span>
-														</>
-													))}
-												</>
-											) : (
-												<>
-													<span className="text-xs">No Data</span>
-												</>
-											)}
-											{/* <span className="text-xs">Taro Suzuki (Representative)</span>
-											<span className="text-xs">
-												Somhako Inc,. 223-0061, Yokohoma shi , kohoku, Hiyoshi 506 0709999999, 045,000000
-											</span> */}
-										</div>
-									</div>
 								</div>
 							</div>
 						)}
@@ -516,33 +483,75 @@ export default function Pricing() {
 										</svg>
 										<span>Plan subscribtion</span>
 									</button>
-									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-										<thead>
-											<tr>
-												<th className="border-b px-4 py-2 text-left">Plan Name</th>
-												<th className="border-b px-4 py-2 text-left">Status</th>
-												<th className="border-b px-4 py-2 text-left">Users</th>
-												<th className="border-b px-4 py-2 text-left">Payment</th>
-												<th className="border-b px-4 py-2 text-left">Paid</th>
-											</tr>
-										</thead>
-										<tbody>
-											{Array(5).fill(
-												<tr>
-													<td className="border-b px-4 py-2 text-sm">Somhako Enterprise </td>
-													<td className="border-b px-4 py-2 text-sm">Active</td>
-													<td className="border-b px-4 py-2 text-sm">15 Users</td>
-													<td className="border-b px-4 py-2 text-sm">Flexible plan </td>
-													<td className="border-b px-4 py-2 text-sm text-primary hover:underline">Invoice </td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-									<div className="my-2 text-center">
+									{aplan && aplan.length > 0 ? (
+										<>
+											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+												<thead>
+													<tr>
+														<th className="border-b px-4 py-2 text-left">Plan Name</th>
+														<th className="border-b px-4 py-2 text-left">Plan Duration</th>
+														<th className="border-b px-4 py-2 text-left">Status</th>
+														<th className="border-b px-4 py-2 text-left">Paid</th>
+													</tr>
+												</thead>
+												<tbody>
+													{aplan.map((data, i) => (
+														<tr key={i}>
+															{data.plan_info && data.plan_info === "FREE" && (
+																<td className="border-b px-4 py-2 text-sm">Free Version</td>
+															)}
+															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
+															)}
+															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Enterprise Version</td>
+															)}
+															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
+															)}
+															{data.plan_info && data.plan_info === "ENTERPRISE_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Enterprise Version</td>
+															)}
+
+															{data.plan_info && data.plan_info === "FREE" && (
+																<td className="border-b px-4 py-2 text-sm">Just For Month</td>
+															)}
+															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+															)}
+															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+															)}
+															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
+															)}
+															{data.plan_info && data.plan_info === "ENTERPRISE_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
+															)}
+															<td className="border-b px-4 py-2 text-sm">{data.active_plan ? "Active" : "Inactive"}</td>
+															<td className="border-b px-4 py-2 text-sm">
+																{data.active ? (
+																	<i className="fa-solid fa-circle-check text-green-500"></i>
+																) : (
+																	<i className="fa-solid fa-circle-xmark text-red-500"></i>
+																)}
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+											{/* <div className="my-2 text-center">
 										<Button label="Download CSV" btnStyle="sm" />
-									</div>
+									</div> */}
+										</>
+									) : (
+										<>
+											<p>No Data</p>
+										</>
+									)}
 								</div>
-								<br />
+								{/* vpayout */}
+								{/* <br />
 								<hr />
 								<br />
 								<div>
@@ -598,14 +607,15 @@ export default function Pricing() {
 									<div className="my-2 text-center">
 										<Button label="Download CSV" btnStyle="sm" />
 									</div>
-								</div>
+								</div> */}
 							</div>
 						)}
 					</div>
 				</div>
 			</main>
-			<Transition.Root show={price} as={Fragment}>
-				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setprice}>
+
+			<Transition.Root show={changePlan} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setchangePlan}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -629,240 +639,68 @@ export default function Pricing() {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{bilingData && bilingData.length <= 0 ? (
-									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all sm:my-8 sm:max-w-lg">
-										<div className="flex items-center justify-between px-8 py-6">
-											<h4 className="text-lg font-semibold leading-none">Billing Information</h4>
-											<button
-												type="button"
-												className="leading-none hover:text-gray-700"
-												onClick={() => setprice(false)}
-											>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Change Plan</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setchangePlan(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{/* <h3 className="mb-4 text-center text-lg font-bold">
+											{srcLang === "ja"
+												? "アカウントを削除してもよろしいですか?"
+												: "Are you sure want to change/upgrade your account plan?"}
+										</h3> */}
+										<h1 className="mb-4 text-center text-lg font-semibold">Active Plan Info</h1>
+										<div className="flex items-center justify-center gap-2">
+											<p>Plan Info : </p>
+											{cplan.plan_info && cplan.plan_info === "FREE" && <p>Free Version</p>}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" && <p>Standard Version</p>}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" && <p>Enterprise Version</p>}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" && <p>Standard Version</p>}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_YEARLY" && <p>Enterprise Version</p>}
 										</div>
-										<div className="w-full p-8 pt-4 font-normal">
-											<>
-												<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-													Before Purchace Plan Fill up Biling Information
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Account Information Represtative&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<input
-															type="text"
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={ainame}
-															onChange={(e) => setainame(e.target.value)}
-														/>
-													</div>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Account Information Address&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<textArea
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={aiaddress}
-															onChange={(e) => setaiaddress(e.target.value)}
-														></textArea>
-													</div>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Account Information Contact&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<input
-															type="text"
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={aicon}
-															onChange={(e) => setaicon(e.target.value)}
-														/>
-													</div>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Billing Information Represtative&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<input
-															type="text"
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={biname}
-															onChange={(e) => setbiname(e.target.value)}
-														/>
-													</div>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Billing Information Address&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<textArea
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={biaddress}
-															onChange={(e) => setbiaddress(e.target.value)}
-														></textArea>
-													</div>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<div>
-														<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-															Billing Information Contact&nbsp;
-															<sup className="text-red-500">*</sup>
-														</label>
-														<input
-															type="text"
-															id="cname"
-															className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-															value={bicon}
-															onChange={(e) => setbicon(e.target.value)}
-														/>
-													</div>
-												</div>
+										<div className="flex items-center justify-center gap-2">
+											<p>Plan Duration : </p>
+											{cplan.plan_info && cplan.plan_info === "FREE" && <p>Just For Month</p>}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" && <p>Monthly Basis</p>}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" && <p>Monthly Basis</p>}
+											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" && <p>Yearly Basis</p>}
+											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_YEARLY" && <p>Yearly Basis</p>}
+										</div>
+										<div className="flex items-center justify-center gap-2">
+											<p>Plan Expiry : </p>
+											{cplan.expire && (
+												<p>
+													{moment(cplan.expire).format("D-MM-YYYY")}&nbsp;(
+													{moment(cplan.expire).diff(moment(), "days") <= 0
+														? "0"
+														: moment(cplan.expire).diff(moment(), "days")}
+													&nbsp;days left)
+												</p>
+											)}
+										</div>
 
-												<div className="mb-4 last:mb-0">
-													<label htmlFor="agreeWithAgreement" className="flex cursor-pointer text-xs font-light">
-														<input
-															type="checkbox"
-															id="agreeWithAgreement"
-															className="mr-4 mt-1"
-															checked={acheck}
-															onChange={(e) => setacheck(e.target.checked)}
-														/>
-														Account Info Cant Chnage
-													</label>
-												</div>
-												<div className="mb-4 last:mb-0">
-													<Button
-														label={"Submit"}
-														btnType={"button"}
-														handleClick={regBillingInfo}
-														disabled={!checkForm1()}
-													/>
-												</div>
-											</>
-										</div>
-									</Dialog.Panel>
-								) : (
-									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all sm:my-8 sm:max-w-lg">
-										<div className="flex items-center justify-between px-8 py-6">
-											<h4 className="text-lg font-semibold leading-none">Direct Payment</h4>
-											<button
-												type="button"
-												className="leading-none hover:text-gray-700"
-												onClick={() => setprice(false)}
-											>
-												<i className="fa-solid fa-xmark"></i>
-											</button>
-										</div>
-										<div className="w-full p-8 pt-4 font-normal">
-											{/* {step === 0 && (
-											<div className="mx-[-10px] flex flex-wrap">
-												<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
-													<Button label={"Direct Pay"} btnType="button" full handleClick={() => setstep(1)} />
-												</div>
-												<div className="mb-4 w-full px-[10px] md:max-w-[50%]">
-													<Button label={"Online Pay"} btnType="button" full handleClick={() => setstep(2)} />
-												</div>
+										<div className="flex flex-wrap justify-center">
+											<div className="my-1 mr-4 last:mr-0">
+												<Button
+													btnStyle="gray"
+													label={"Close"}
+													btnType="button"
+													handleClick={() => setchangePlan(false)}
+												/>
 											</div>
-										)} */}
-											{step === 1 && (
-												<>
-													{path && path.length > 0 && (
-														<div
-															className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0"
-															onClick={() => {
-																window.open(path, "_blank");
-															}}
-														>
-															Invoice Download Here
-														</div>
-													)}
-													<div className="mb-4 last:mb-0">
-														<h5 className="text-md mb-2 w-full font-semibold">Upload Payment Proof</h5>
-														<label
-															htmlFor="uploadBanner"
-															className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed hover:bg-lightBlue dark:hover:bg-gray-700"
-														>
-															{!file ? (
-																<>
-																	<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-																	<p className="text-sm text-darkGray dark:text-gray-400">
-																		Upload Payment Proof
-																		<br />
-																		<small>(File type should be .png format)</small>
-																	</p>
-																</>
-															) : (
-																<>
-																	<Image
-																		src={URL.createObjectURL(sign)}
-																		alt="User"
-																		width={1200}
-																		height={800}
-																		className="mx-auto h-auto max-h-[200px] w-auto object-contain"
-																	/>
-																</>
-															)}
-															<input
-																type="file"
-																hidden
-																id="uploadBanner"
-																accept="image/*"
-																onChange={handleFileInputChange}
-															/>
-														</label>
-													</div>
-													<div className="mb-4 last:mb-0">
-														<label htmlFor="agreeWithAgreement" className="flex cursor-pointer text-xs font-light">
-															<input
-																type="checkbox"
-																id="agreeWithAgreement"
-																className="mr-4 mt-1"
-																checked={check1}
-																onChange={(e) => setcheck1(e.target.checked)}
-															/>
-															Click here if you read the agreement terms and submit your filled details for the Somhako.
-														</label>
-													</div>
-													<div className="mb-4 last:mb-0">
-														<Button
-															label={"Submit"}
-															btnType={"button"}
-															handleClick={regVendor}
-															disabled={!checkForm()}
-														/>
-													</div>
-												</>
-											)}
-											{step === 3 && (
-												<>
-													<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-														We taking 2 or 3 Working Days For Activate Your Account
-													</div>
-													<div className="mb-4 last:mb-0">
-														<Button label={"Close"} btnType={"button"} handleClick={() => setprice(false)} />
-													</div>
-												</>
-											)}
+											<div className="my-1 mr-4 last:mr-0">
+												<Button label={"Change Plan"} btnType="button" handleClick={initatePopup} />
+											</div>
 										</div>
-									</Dialog.Panel>
-								)}
+									</div>
+								</Dialog.Panel>
 							</Transition.Child>
 						</div>
 					</div>
