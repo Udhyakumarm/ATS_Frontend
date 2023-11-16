@@ -53,7 +53,12 @@ const useDebounce = (value, delay) => {
 	return debouncedValue;
 };
 
-export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) {
+export default function Applicants({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const router = useRouter();
 
 	const { t } = useTranslation("common");
@@ -147,7 +152,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			setfapplicantList(arr);
 			setrefresh(2);
 		} catch (error) {
-			toastcomp("2", "error");
+			// toastcomp("2", "error");
 			console.log("Error fetching data:", error);
 			setapplicantlist([]);
 			setfapplicantList([]);
@@ -320,253 +325,255 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon }: any) 
 			<Head>
 				<title>{t("Words.Applicants")}</title>
 			</Head>
-			<main>
-				<Orgsidebar />
-				<Orgtopbar />
-				{token && token.length > 0 && (
-					<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} setrefresh={setrefresh} refresh={refresh} />
-				)}
-				<div
-					id="overlay"
-					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
-				></div>
-				{/* <button className={`layoutWrap p-4`} onClick={() => setrefresh(0)}>
+			{currentUser && !currentUser.is_expired && (
+				<main>
+					<Orgsidebar />
+					<Orgtopbar />
+					{token && token.length > 0 && (
+						<OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} setrefresh={setrefresh} refresh={refresh} />
+					)}
+					<div
+						id="overlay"
+						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+					></div>
+					{/* <button className={`layoutWrap p-4`} onClick={() => setrefresh(0)}>
 					Refresh
 				</button> */}
 
-				{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
-					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-						<div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
-							<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-								<div className="mb-6 p-2">
-									<Image
-										src={noApplicantdata}
-										alt="No Data"
-										width={300}
-										className="mx-auto max-h-[200px] w-auto max-w-[200px]"
-									/>
+					{refresh === 2 && applicantlist && applicantlist.length < 0 ? (
+						<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+							<div className="flex min-h-[calc(100vh-130px)] items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+								<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+									<div className="mb-6 p-2">
+										<Image
+											src={noApplicantdata}
+											alt="No Data"
+											width={300}
+											className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+										/>
+									</div>
+									<h5 className="mb-4 text-lg font-semibold">
+										{t("Select.No")} {t("Words.Applicants")}
+									</h5>
+									<p className="mb-2 text-sm text-darkGray">
+										{srcLang === "ja" ? (
+											<>現在応募者はいません。新しい求人を投稿して応募者を獲得してください</>
+										) : (
+											<>There are no Applicants as of now , Post a New Job to have Applicants</>
+										)}
+									</p>
+									{/* <Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">{t('Words.PostNewJob')}</Link> */}
 								</div>
-								<h5 className="mb-4 text-lg font-semibold">
-									{t("Select.No")} {t("Words.Applicants")}
-								</h5>
-								<p className="mb-2 text-sm text-darkGray">
-									{srcLang === "ja" ? (
-										<>現在応募者はいません。新しい求人を投稿して応募者を獲得してください</>
-									) : (
-										<>There are no Applicants as of now , Post a New Job to have Applicants</>
-									)}
-								</p>
-								{/* <Link href={'/organization/jobs/create'} className="my-2 min-w-[60px] inline-block rounded py-2 px-3 text-white text-[14px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue hover:from-gradDarkBlue hover:to-gradDarkBlue">{t('Words.PostNewJob')}</Link> */}
 							</div>
 						</div>
-					</div>
-				) : (
-					<>
-						{atsVersion === "starter" && refresh === 2 ? (
-							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-								<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
-									<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
-									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-										<thead>
-											<tr>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Form.FullName")}</th>
-												<th className="border-b px-3 py-2 text-center text-sm">ID</th>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Source")}</th>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Form.Email")}</th>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Form.NoticePeriod")}</th>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Status")}</th>
-												<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Profile")}</th>
-											</tr>
-										</thead>
-										<tbody>
-											{applicantlist &&
-												applicantlist.length > 0 &&
-												applicantlist.map((data, i) => (
-													<tr className="odd:bg-gray-100 dark:odd:bg-gray-600" key={i}>
-														<td className="px-3 py-2 text-center text-[12px]">
-															<button
-																type="button"
-																className="rounded px-3 py-2 hover:bg-gradDarkBlue hover:text-white"
-															>
-																{data["type"] === "career" && (
-																	<>
-																		{data["user"]["first_name"]} {data["user"]["last_name"]}
-																	</>
-																)}
-																{data["type"] === "vendor" && (
-																	<>
-																		{data["applicant"]["first_name"]} {data["applicant"]["last_name"]}
-																	</>
-																)}
-															</button>
-														</td>
-														<td className="px-3 py-2 text-center text-[12px]">
-															<button
-																type="button"
-																className="rounded px-3 py-2 hover:bg-gradDarkBlue hover:text-white"
-															>
-																{data["arefid"]}
-															</button>
-														</td>
-														<td className="px-3 py-2 text-center text-[12px]">{data["type"]}</td>
-														<td className="px-3 py-2 text-center text-[12px]">
-															<span className="break-all">
-																{data["type"] === "career" && data["user"]["email"]}
-																{data["type"] === "vendor" && data["applicant"]["email"]}
-															</span>
-														</td>
-														<td className="px-3 py-2 text-center text-[12px]">
-															{data["type"] === "career" && data["user"]["notice_period"]}
-															{data["type"] === "vendor" && data["applicant"]["notice_period"]}
-														</td>
-														<td className="px-3 py-2 text-center text-[12px]">
-															{data["status"] === "Shortlisted" ? (
-																<span
-																	className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
-																	style={{
-																		["border-color" as any]: `#4ea818`,
-																		["color" as any]: `#4ea818`
-																	}}
+					) : (
+						<>
+							{atsVersion === "starter" && refresh === 2 ? (
+								<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+									<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
+										<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
+										<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+											<thead>
+												<tr>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Form.FullName")}</th>
+													<th className="border-b px-3 py-2 text-center text-sm">ID</th>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Source")}</th>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Form.Email")}</th>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Form.NoticePeriod")}</th>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Status")}</th>
+													<th className="border-b px-3 py-2 text-center text-sm">{t("Words.Profile")}</th>
+												</tr>
+											</thead>
+											<tbody>
+												{applicantlist &&
+													applicantlist.length > 0 &&
+													applicantlist.map((data, i) => (
+														<tr className="odd:bg-gray-100 dark:odd:bg-gray-600" key={i}>
+															<td className="px-3 py-2 text-center text-[12px]">
+																<button
+																	type="button"
+																	className="rounded px-3 py-2 hover:bg-gradDarkBlue hover:text-white"
 																>
-																	{data["status"]}
-																</span>
-															) : (
-																<>
-																	{data["status"] === "Rejected" ? (
-																		<span
-																			className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
-																			style={{
-																				["border-color" as any]: `#FE8F66`,
-																				["color" as any]: `#FE8F66`
-																			}}
-																		>
-																			{data["status"]}
-																		</span>
-																	) : (
-																		<span
-																			className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
-																			style={{
-																				["border-color" as any]: `#a9a30d`,
-																				["color" as any]: `#a9a30d`
-																			}}
-																		>
-																			{data["status"]}
-																		</span>
+																	{data["type"] === "career" && (
+																		<>
+																			{data["user"]["first_name"]} {data["user"]["last_name"]}
+																		</>
 																	)}
-																</>
-															)}
-														</td>
-														<td className="px-3 py-2 text-center text-[12px]">
-															<Button
-																btnStyle="sm"
-																label={srcLang === "ja" ? "閲覧する" : "View"}
-																btnType="button"
-																handleClick={() => {
-																	setjobid(data["job"]["refid"]);
-																	// setcanid(data["user"]["erefid"]);
-																	setappid(data["arefid"]);
-																	settype(data["type"]);
-																	setappdata(data);
-																	router.push("applicants/detail");
-																}}
-															/>
-														</td>
-													</tr>
-												))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						) : (
-							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-								{refresh === 2 && (
-									<>
-										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-											<div className="mr-3 flex">
-												<Listbox value={selectedJob} onChange={setSelectedJob}>
-													<Listbox.Button className={"text-lg font-bold"}>
-														{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-													</Listbox.Button>
-													<Transition
-														enter="transition duration-100 ease-out"
-														enterFrom="transform scale-95 opacity-0"
-														enterTo="transform scale-100 opacity-100"
-														leave="transition duration-75 ease-out"
-														leaveFrom="transform scale-100 opacity-100"
-														leaveTo="transform scale-95 opacity-0"
-													>
-														<Listbox.Options
-															className={
-																"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-															}
-														>
-															{jobd.length > 0 &&
-																jobd.map((item) => (
-																	<Listbox.Option
-																		key={item.id}
-																		value={item}
-																		disabled={item.unavailable}
-																		className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	{data["type"] === "vendor" && (
+																		<>
+																			{data["applicant"]["first_name"]} {data["applicant"]["last_name"]}
+																		</>
+																	)}
+																</button>
+															</td>
+															<td className="px-3 py-2 text-center text-[12px]">
+																<button
+																	type="button"
+																	className="rounded px-3 py-2 hover:bg-gradDarkBlue hover:text-white"
+																>
+																	{data["arefid"]}
+																</button>
+															</td>
+															<td className="px-3 py-2 text-center text-[12px]">{data["type"]}</td>
+															<td className="px-3 py-2 text-center text-[12px]">
+																<span className="break-all">
+																	{data["type"] === "career" && data["user"]["email"]}
+																	{data["type"] === "vendor" && data["applicant"]["email"]}
+																</span>
+															</td>
+															<td className="px-3 py-2 text-center text-[12px]">
+																{data["type"] === "career" && data["user"]["notice_period"]}
+																{data["type"] === "vendor" && data["applicant"]["notice_period"]}
+															</td>
+															<td className="px-3 py-2 text-center text-[12px]">
+																{data["status"] === "Shortlisted" ? (
+																	<span
+																		className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
+																		style={{
+																			["border-color" as any]: `#4ea818`,
+																			["color" as any]: `#4ea818`
+																		}}
 																	>
-																		{({ selected }) => (
-																			<>
-																				<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
-																					{item.name}
-																				</span>
-																				{selected ? (
-																					<span className="absolute left-3 top-[10px]">
-																						<i className="fa-solid fa-check"></i>
-																					</span>
-																				) : null}
-																			</>
+																		{data["status"]}
+																	</span>
+																) : (
+																	<>
+																		{data["status"] === "Rejected" ? (
+																			<span
+																				className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
+																				style={{
+																					["border-color" as any]: `#FE8F66`,
+																					["color" as any]: `#FE8F66`
+																				}}
+																			>
+																				{data["status"]}
+																			</span>
+																		) : (
+																			<span
+																				className="inline-block min-w-[110px] rounded-lg border px-4 py-1 text-center text-[12px]"
+																				style={{
+																					["border-color" as any]: `#a9a30d`,
+																					["color" as any]: `#a9a30d`
+																				}}
+																			>
+																				{data["status"]}
+																			</span>
 																		)}
-																	</Listbox.Option>
-																))}
-														</Listbox.Options>
-													</Transition>
-												</Listbox>
-												<div className="ml-3">
-													<FormField
-														fieldType="input"
-														inputType="search"
-														placeholder={t("Words.Search")}
-														icon={<i className="fa-solid fa-magnifying-glass"></i>}
-														value={search}
-														// handleChange={(e) => setsearch(e.target.value)}
-														handleChange={handleInputChange}
-													/>
-												</div>
-											</div>
-											<aside className="flex items-center">
-												{!upcomingSoon && (
-													<div className="mr-4 flex items-center">
-														<p className="mr-3 font-semibold">Add Board</p>
-														<button
-															type="button"
-															className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
-															onClick={() => setCreateBoard(true)}
+																	</>
+																)}
+															</td>
+															<td className="px-3 py-2 text-center text-[12px]">
+																<Button
+																	btnStyle="sm"
+																	label={srcLang === "ja" ? "閲覧する" : "View"}
+																	btnType="button"
+																	handleClick={() => {
+																		setjobid(data["job"]["refid"]);
+																		// setcanid(data["user"]["erefid"]);
+																		setappid(data["arefid"]);
+																		settype(data["type"]);
+																		setappdata(data);
+																		router.push("applicants/detail");
+																	}}
+																/>
+															</td>
+														</tr>
+													))}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							) : (
+								<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+									{refresh === 2 && (
+										<>
+											<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+												<div className="mr-3 flex">
+													<Listbox value={selectedJob} onChange={setSelectedJob}>
+														<Listbox.Button className={"text-lg font-bold"}>
+															{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+														</Listbox.Button>
+														<Transition
+															enter="transition duration-100 ease-out"
+															enterFrom="transform scale-95 opacity-0"
+															enterTo="transform scale-100 opacity-100"
+															leave="transition duration-75 ease-out"
+															leaveFrom="transform scale-100 opacity-100"
+															leaveTo="transform scale-95 opacity-0"
 														>
-															<i className="fa-solid fa-plus"></i>
-														</button>
+															<Listbox.Options
+																className={
+																	"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+																}
+															>
+																{jobd.length > 0 &&
+																	jobd.map((item) => (
+																		<Listbox.Option
+																			key={item.id}
+																			value={item}
+																			disabled={item.unavailable}
+																			className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																		>
+																			{({ selected }) => (
+																				<>
+																					<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
+																						{item.name}
+																					</span>
+																					{selected ? (
+																						<span className="absolute left-3 top-[10px]">
+																							<i className="fa-solid fa-check"></i>
+																						</span>
+																					) : null}
+																				</>
+																			)}
+																		</Listbox.Option>
+																	))}
+															</Listbox.Options>
+														</Transition>
+													</Listbox>
+													<div className="ml-3">
+														<FormField
+															fieldType="input"
+															inputType="search"
+															placeholder={t("Words.Search")}
+															icon={<i className="fa-solid fa-magnifying-glass"></i>}
+															value={search}
+															// handleChange={(e) => setsearch(e.target.value)}
+															handleChange={handleInputChange}
+														/>
 													</div>
-												)}
-												<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
-											</aside>
-										</div>
+												</div>
+												<aside className="flex items-center">
+													{!upcomingSoon && (
+														<div className="mr-4 flex items-center">
+															<p className="mr-3 font-semibold">Add Board</p>
+															<button
+																type="button"
+																className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
+																onClick={() => setCreateBoard(true)}
+															>
+																<i className="fa-solid fa-plus"></i>
+															</button>
+														</div>
+													)}
+													<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+												</aside>
+											</div>
 
-										<Canban
-											applicantlist={applicantlist}
-											token={token}
-											setcardarefid={setcardarefid}
-											setcardstatus={setcardstatus}
-										/>
-									</>
-								)}
-							</div>
-						)}
-					</>
-				)}
-			</main>
+											<Canban
+												applicantlist={applicantlist}
+												token={token}
+												setcardarefid={setcardarefid}
+												setcardstatus={setcardstatus}
+											/>
+										</>
+									)}
+								</div>
+							)}
+						</>
+					)}
+				</main>
+			)}
 			<Transition.Root show={createBoard} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setCreateBoard}>
 					<Transition.Child

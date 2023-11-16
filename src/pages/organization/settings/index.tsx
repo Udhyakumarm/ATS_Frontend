@@ -20,9 +20,9 @@ import OrgRSideBar from "@/components/organization/RSideBar";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 
-export default function Settings({ atsVersion, userRole, comingSoon }: any) {
+export default function Settings({ atsVersion, userRole, comingSoon, currentUser }: any) {
 	const { t } = useTranslation("common");
-	const currentuser = useUserStore((state: { user: any }) => state.user);
+	// const currentuser = useUserStore((state: { user: any }) => state.user);
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [hover, setHover] = useState(0);
 	const [rdate, setrdate] = useState("");
@@ -48,16 +48,17 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 	}
 
 	useEffect(() => {
-		if (userRole === "Super Admin" && currentuser && currentuser.length > 0) {
-			if (currentuser[0]["register_date"]) {
-				setrdate(currentuser[0]["register_date"]);
-			} else {
-				setrdate("");
-			}
-		} else {
-			setrdate("");
-		}
-	}, [currentuser, userRole]);
+		console.log("!!!", "currentuser", currentUser);
+		// if (userRole === "Super Admin" && currentuser && currentuser.length > 0) {
+		// 	if (currentuser[0]["register_date"]) {
+		// 		setrdate(currentuser[0]["register_date"]);
+		// 	} else {
+		// 		setrdate("");
+		// 	}
+		// } else {
+		// 	setrdate("");
+		// }
+	}, [currentUser]);
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
@@ -70,6 +71,9 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 	}, [session]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	function isExpired(name: any) {
+		return name != "Plans & Pricing" && currentUser.is_expired;
+	}
 
 	const quicklinks = [
 		{
@@ -78,7 +82,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/profile",
 			color: "#B2E3FF",
 			blur: blurOrNot("Profile"),
-			hide: hideOrNot("Profile")
+			hide: hideOrNot("Profile"),
+			expired: isExpired("Profile")
 		},
 		{
 			name: t("Words.Integrations"),
@@ -86,7 +91,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/integrations",
 			color: "#D7C9FF",
 			blur: blurOrNot("Integrations"),
-			hide: hideOrNot("Integrations")
+			hide: hideOrNot("Integrations"),
+			expired: isExpired("Integrations")
 		},
 		{
 			name: t("Words.Vendors"),
@@ -94,7 +100,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/vendors",
 			color: "#90DEFF",
 			blur: blurOrNot("Vendors"),
-			hide: hideOrNot("Vendors")
+			hide: hideOrNot("Vendors"),
+			expired: isExpired("Vendors")
 		},
 		{
 			name: t("Words.Calendar"),
@@ -102,7 +109,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/calendar",
 			color: "#FFC0D3",
 			blur: blurOrNot("Calendar"),
-			hide: hideOrNot("Calendar")
+			hide: hideOrNot("Calendar"),
+			expired: isExpired("Calendar")
 		},
 		{
 			name: t("Words.TeamMembers"),
@@ -110,7 +118,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/team-members",
 			color: "#C0D1FF",
 			blur: blurOrNot("Team Members"),
-			hide: hideOrNot("Team Members")
+			hide: hideOrNot("Team Members"),
+			expired: isExpired("Team Members")
 		},
 		{
 			name: t("Words.Notifications"),
@@ -118,7 +127,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/notifications",
 			color: "#FFC0C0",
 			blur: blurOrNot("Notifications"),
-			hide: hideOrNot("Notifications")
+			hide: hideOrNot("Notifications"),
+			expired: isExpired("Notifications")
 		},
 		{
 			name: t("Words.Plans_Pricing"),
@@ -126,7 +136,8 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 			link: "/organization/settings/pricing",
 			color: "#FFC0E9",
 			blur: blurOrNot("Plans & Pricing"),
-			hide: hideOrNot("Plans & Pricing")
+			hide: hideOrNot("Plans & Pricing"),
+			expired: isExpired("Plans & Pricing")
 		}
 	];
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
@@ -156,7 +167,7 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 										{!links.hide && (
 											<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
 												<Link
-													href={links.blur ? "javascript:void(0)" : links.link}
+													href={links.blur || links.expired ? "/organization/settings/pricing" : links.link}
 													className={`relative block overflow-hidden rounded-normal p-6 shadow-normal dark:bg-gray-700 dark:hover:bg-gray-600`}
 												>
 													<div className="mb-10 flex w-full items-center">
@@ -172,26 +183,42 @@ export default function Settings({ atsVersion, userRole, comingSoon }: any) {
 														<div>
 															{t("Words.GoTo")} <i className="fa-solid fa-arrow-right ml-2 text-[12px]"></i>
 														</div>
-														{/* {links.link === "/organization/settings/pricing" && (
-													<p className="rounded-lg bg-blue-500 p-1 text-center font-bold text-white">
-														{moment(rdate).add(60, "days").diff(moment(), "days")} Days Left
-													</p>
-												)} */}
+														{links.link === "/organization/settings/pricing" && currentUser.expire_date && (
+															<p className="rounded-lg bg-primary/75 px-2 py-1 text-center font-bold text-white">
+																{currentUser.is_expired ? (
+																	<>0 days left</>
+																) : (
+																	<>
+																		{moment(currentUser.expire_date).diff(moment(), "days") <= 0
+																			? "0"
+																			: moment(currentUser.expire_date).diff(moment(), "days")}
+																		&nbsp;days left
+																	</>
+																)}
+															</p>
+														)}
 													</span>
-													{links.blur && (
+													{links.expired && (
 														<>
-															<div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-[rgba(0,0,0,0.3)] backdrop-blur-sm">
-																<div className="mx-auto w-max max-w-[400px] rounded-normal px-6 py-2 text-center text-white transition hover:scale-[1.05]">
-																	<h3 className="mb-1 text-lg font-extrabold text-white">
-																		{srcLang === "ja" ? "プランをアップグレード" : "Go Premium"}
-																	</h3>
-																	<Link
-																		href={"/organization/settings/pricing"}
-																		className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-1 text-[10px] text-white hover:from-gradDarkBlue hover:to-gradDarkBlue"
-																	>
-																		{srcLang === "ja" ? "アップグレード" : "Upgrade"}
-																	</Link>
-																</div>
+															<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.1] backdrop-blur-[0.8px] transition hover:bg-red-300/[0.2] hover:backdrop-blur-[2px]">
+																<span className="hidden cursor-pointer items-center gap-2 rounded-md bg-red-200 p-2 duration-100 group-hover:flex">
+																	<i className="fa-solid fa-business-time text-red-900"></i>
+																	<span className="pr-1 text-sm font-bold text-red-900">
+																		{srcLang === "ja" ? "プランを購入する" : "Buy Plan"}
+																	</span>
+																</span>
+															</div>
+														</>
+													)}
+													{links.blur && !links.expired && (
+														<>
+															<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-blue-200/[0.3] backdrop-blur-[0.8px] transition hover:bg-blue-300/[0.2] hover:backdrop-blur-[2px]">
+																<span className="hidden cursor-pointer items-center gap-2 rounded-md bg-gradLightBlue p-2 duration-100 group-hover:flex">
+																	<i className="fa-solid fa-business-time text-blue-900"></i>
+																	<span className="pr-1 text-sm font-bold text-blue-900">
+																		{srcLang === "ja" ? "プランを購入する" : "Upgrade Plan"}
+																	</span>
+																</span>
 															</div>
 														</>
 													)}

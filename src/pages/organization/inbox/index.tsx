@@ -112,7 +112,12 @@ const isStopTyping = (socket: any, user_pk: any) => {
 	console.log("Message Stopped Typing Process DOne");
 };
 
-export default function Inbox() {
+export default function Inbox({ currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const markASRead = (socket: any, user_pk: any, mid: any) => {
 		socket.send(JSON.stringify({ msg_type: 6, user_pk: user_pk, message_id: mid }));
 		loadSidebar();
@@ -167,7 +172,7 @@ export default function Inbox() {
 	const [click, setclick] = useState(false);
 	const [cardActive, setcardActive] = useState(false);
 	const [cardActiveData, setcardActiveData] = useState({});
-	const currentUser = useUserStore((state: { user: any }) => state.user);
+	const currentUser2 = useUserStore((state: { user: any }) => state.user);
 
 	useEffect(() => {
 		if (session) {
@@ -180,7 +185,7 @@ export default function Inbox() {
 
 	const [socket, setSocket] = useState(null);
 	useEffect(() => {
-		if (token && token.length > 0) {
+		if (token && token.length > 0 && !currentUser.is_expired) {
 			console.log("&&&", "token", token);
 			const rws = new ReconnectingWebSocket(
 				process.env.NODE_ENV === "production"
@@ -303,38 +308,18 @@ export default function Inbox() {
 					<Head>
 						<title>{srcLang === "ja" ? "受信トレイ" : "Inbox"}</title>
 					</Head>
-					<main>
-						<OrgSideBar />
-						<OrgTopBar />
-						<div
-							id="overlay"
-							className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
-						></div>
-						<div className="layoutWrap p-4">
-							<div className="flex flex-wrap">
-								<div className="mb-4 w-full xl:mb-0 xl:max-w-[27%]">
-									<InboxSideBar
-										togglePages={togglePages}
-										setTogglePages={setTogglePages}
-										axiosInstanceAuth2={axiosInstanceAuth2}
-										cardActive={cardActive}
-										cardActiveData={cardActiveData}
-										setcardActive={setcardActive}
-										setcardActiveData={setcardActiveData}
-										socket={socket}
-										callbackOnline={callbackOnline}
-										//sidebar
-										sidebarData={sidebarData}
-										setsidebarData={setsidebarData}
-										pinnedClick={pinnedClick}
-										typingPK={typingPK}
-										settypingPK={settypingPK}
-										loadSidebar={loadSidebar}
-									/>
-								</div>
-								{cardActive && (
-									<div className="w-full xl:max-w-[73%] xl:pl-4">
-										<InboxFrame
+					{currentUser && !currentUser.is_expired && (
+						<main>
+							<OrgSideBar />
+							<OrgTopBar />
+							<div
+								id="overlay"
+								className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+							></div>
+							<div className="layoutWrap p-4">
+								<div className="flex flex-wrap">
+									<div className="mb-4 w-full xl:mb-0 xl:max-w-[27%]">
+										<InboxSideBar
 											togglePages={togglePages}
 											setTogglePages={setTogglePages}
 											axiosInstanceAuth2={axiosInstanceAuth2}
@@ -342,27 +327,49 @@ export default function Inbox() {
 											cardActiveData={cardActiveData}
 											setcardActive={setcardActive}
 											setcardActiveData={setcardActiveData}
-											text={text}
-											settext={settext}
-											setclick={setclick}
-											isTypingFun={isTyping}
-											isStopTypingFun={isStopTyping}
 											socket={socket}
-											sendOutgoingTextMessage={sendOutgoingTextMessage}
-											sendOutgoingFileMessage={sendOutgoingFileMessage}
-											sendOutgoingMediaMessage={sendOutgoingMediaMessage}
-											markASRead={markASRead}
-											sendOutgoingContactMessage={sendOutgoingContactMessage}
-											msgRead={msgRead}
-											loadS={loadS}
-											setloadS={setloadS}
+											callbackOnline={callbackOnline}
+											//sidebar
+											sidebarData={sidebarData}
+											setsidebarData={setsidebarData}
+											pinnedClick={pinnedClick}
+											typingPK={typingPK}
+											settypingPK={settypingPK}
 											loadSidebar={loadSidebar}
 										/>
 									</div>
-								)}
+									{cardActive && (
+										<div className="w-full xl:max-w-[73%] xl:pl-4">
+											<InboxFrame
+												togglePages={togglePages}
+												setTogglePages={setTogglePages}
+												axiosInstanceAuth2={axiosInstanceAuth2}
+												cardActive={cardActive}
+												cardActiveData={cardActiveData}
+												setcardActive={setcardActive}
+												setcardActiveData={setcardActiveData}
+												text={text}
+												settext={settext}
+												setclick={setclick}
+												isTypingFun={isTyping}
+												isStopTypingFun={isStopTyping}
+												socket={socket}
+												sendOutgoingTextMessage={sendOutgoingTextMessage}
+												sendOutgoingFileMessage={sendOutgoingFileMessage}
+												sendOutgoingMediaMessage={sendOutgoingMediaMessage}
+												markASRead={markASRead}
+												sendOutgoingContactMessage={sendOutgoingContactMessage}
+												msgRead={msgRead}
+												loadS={loadS}
+												setloadS={setloadS}
+												loadSidebar={loadSidebar}
+											/>
+										</div>
+									)}
+								</div>
 							</div>
-						</div>
-					</main>
+						</main>
+					)}
 					<Transition.Root show={addMembers} as={Fragment}>
 						<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddMembers}>
 							<Transition.Child

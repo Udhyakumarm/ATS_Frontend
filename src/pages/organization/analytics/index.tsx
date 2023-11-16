@@ -32,7 +32,12 @@ import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 
-export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
+export default function Analytics({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
@@ -236,334 +241,338 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon }: any) {
 			<Head>
 				<title>{t("Words.Analytics")}</title>
 			</Head>
-			<main>
-				<OrgSideBar />
-				<OrgTopBar />
-				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
-				<div
-					id="overlay"
-					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
-				></div>
-				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
-						<Tab.Group>
-							<div className={"border-b px-4 pt-3"}>
-								<Tab.List className={"mx-auto w-full max-w-[1100px]"}>
-									{tabHeading_1.map((item, i) => (
-										<Tab key={i} as={Fragment}>
-											{({ selected }) => (
-												<button
-													className={
-														"mr-16 border-b-4 py-3 font-semibold focus:outline-none" +
-														" " +
-														(selected
-															? "border-primary text-primary dark:border-white dark:text-white"
-															: "border-transparent text-darkGray dark:text-gray-400") +
-														" " +
-														(item.hide && "display-none")
-													}
-												>
-													{item.title}
-												</button>
-											)}
-										</Tab>
-									))}
-								</Tab.List>
-							</div>
-							<Tab.Panels className={"mx-auto w-full max-w-[1100px] px-4 py-8"}>
-								<Tab.Panel>
-									<div className="mb-6 rounded-normal border p-10 pb-4 dark:border-gray-400">
-										<div className="-mx-3 flex flex-wrap">
-											{quicklinks.map((item, i) => (
-												<div className="mb-6 w-full px-3 md:max-w-[33.3333%] 2xl:max-w-[25%]" key={i}>
-													<div className="flex h-full items-start rounded-normal border p-6 shadow-normal dark:border-gray-400">
-														<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
-															<Image src={item.icon} alt={"Icon"} width={30} height={30} />
-														</div>
-														<aside>
-															<span className="mb-4 block font-semibold text-darkGray dark:text-gray-400">
-																{item.name}
-															</span>
-															<h4 className="text-3xl font-bold">{quickLinkData[i]}</h4>
-														</aside>
-													</div>
-												</div>
-											))}
-										</div>
-									</div>
-									<div className="-mx-3 flex flex-wrap">
-										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
-											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.ApplicantPipeline")}</h2>
-													{/* <div className="w-[180px]">
-														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
-													</div> */}
-												</div>
-												<div className="p-8">
-													{analyticsFunnel && analyticsFunnel.length > 0 && tapp > 0 ? (
-														<FunnelChart data={analyticsFunnel} />
-													) : (
-														<div className="py-8 text-center">
-															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																<Image
-																	src={nodata_2}
-																	alt="No Data"
-																	width={300}
-																	className="max-h-[60px] w-auto max-w-[60px]"
-																/>
+			{currentUser && !currentUser.is_expired && (
+				<main>
+					<OrgSideBar />
+					<OrgTopBar />
+					{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
+					<div
+						id="overlay"
+						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+					></div>
+					<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+						<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
+							<Tab.Group>
+								<div className={"border-b px-4 pt-3"}>
+									<Tab.List className={"mx-auto w-full max-w-[1100px]"}>
+										{tabHeading_1.map((item, i) => (
+											<Tab key={i} as={Fragment}>
+												{({ selected }) => (
+													<button
+														className={
+															"mr-16 border-b-4 py-3 font-semibold focus:outline-none" +
+															" " +
+															(selected
+																? "border-primary text-primary dark:border-white dark:text-white"
+																: "border-transparent text-darkGray dark:text-gray-400") +
+															" " +
+															(item.hide && "display-none")
+														}
+													>
+														{item.title}
+													</button>
+												)}
+											</Tab>
+										))}
+									</Tab.List>
+								</div>
+								<Tab.Panels className={"mx-auto w-full max-w-[1100px] px-4 py-8"}>
+									<Tab.Panel>
+										<div className="mb-6 rounded-normal border p-10 pb-4 dark:border-gray-400">
+											<div className="-mx-3 flex flex-wrap">
+												{quicklinks.map((item, i) => (
+													<div className="mb-6 w-full px-3 md:max-w-[33.3333%] 2xl:max-w-[25%]" key={i}>
+														<div className="flex h-full items-start rounded-normal border p-6 shadow-normal dark:border-gray-400">
+															<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
+																<Image src={item.icon} alt={"Icon"} width={30} height={30} />
 															</div>
-															<p className="text-sm text-darkGray">
-																{srcLang === "ja" ? "応募者のパイプラインがありません" : "No Applicant Pipeline"}
-															</p>
+															<aside>
+																<span className="mb-4 block font-semibold text-darkGray dark:text-gray-400">
+																	{item.name}
+																</span>
+																<h4 className="text-3xl font-bold">{quickLinkData[i]}</h4>
+															</aside>
 														</div>
-													)}
-												</div>
+													</div>
+												))}
 											</div>
 										</div>
-										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
-											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.HiringAnalytics")}</h2>
-													{/* <div className="w-[180px]">
+										<div className="-mx-3 flex flex-wrap">
+											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.ApplicantPipeline")}</h2>
+														{/* <div className="w-[180px]">
+														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
+													</div> */}
+													</div>
+													<div className="p-8">
+														{analyticsFunnel && analyticsFunnel.length > 0 && tapp > 0 ? (
+															<FunnelChart data={analyticsFunnel} />
+														) : (
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "応募者のパイプラインがありません" : "No Applicant Pipeline"}
+																</p>
+															</div>
+														)}
+													</div>
+												</div>
+											</div>
+											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.HiringAnalytics")}</h2>
+														{/* <div className="w-[180px]">
 														<FormField fieldType="select" placeholder="All Time" />
 													</div> */}
-												</div>
-												<div className="p-8">
-													{hiringAnalytics &&
-													hiringAnalytics.length > 0 &&
-													hiringAnalytics.some((item) => item > 0) &&
-													atsVersion != "starter" ? (
-														// <HighchartsReact highcharts={Highcharts} options={options} />
-														<AnalyticsChart data={hiringAnalytics} text="Hiring Trends" />
-													) : (
-														// <AnalyticsChart />
-														<>
-															{atsVersion === "starter" ? (
-																<PermiumComp userRole={userRole} />
-															) : (
-																<div className="py-8 text-center">
-																	<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																		<Image
-																			src={nodata_2}
-																			alt="No Data"
-																			width={300}
-																			className="max-h-[60px] w-auto max-w-[60px]"
-																		/>
+													</div>
+													<div className="p-8">
+														{hiringAnalytics &&
+														hiringAnalytics.length > 0 &&
+														hiringAnalytics.some((item) => item > 0) &&
+														atsVersion != "starter" ? (
+															// <HighchartsReact highcharts={Highcharts} options={options} />
+															<AnalyticsChart data={hiringAnalytics} text="Hiring Trends" />
+														) : (
+															// <AnalyticsChart />
+															<>
+																{atsVersion === "starter" ? (
+																	<PermiumComp userRole={userRole} />
+																) : (
+																	<div className="py-8 text-center">
+																		<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																			<Image
+																				src={nodata_2}
+																				alt="No Data"
+																				width={300}
+																				className="max-h-[60px] w-auto max-w-[60px]"
+																			/>
+																		</div>
+																		<p className="text-sm text-darkGray">
+																			{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
+																		</p>
 																	</div>
-																	<p className="text-sm text-darkGray">
-																		{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
-																	</p>
+																)}
+															</>
+														)}
+													</div>
+												</div>
+											</div>
+											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">
+															{srcLang === "ja" ? "応募経路" : "Average Source of Candidate"}
+														</h2>
+													</div>
+													<div className="p-8">
+														{analyticsSource && analyticsSource.length > 0 && tapp > 0 ? (
+															<SourceChart data={analyticsSource} />
+														) : (
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
 																</div>
-															)}
-														</>
-													)}
-												</div>
-											</div>
-										</div>
-										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
-											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">
-														{srcLang === "ja" ? "応募経路" : "Average Source of Candidate"}
-													</h2>
-												</div>
-												<div className="p-8">
-													{analyticsSource && analyticsSource.length > 0 && tapp > 0 ? (
-														<SourceChart data={analyticsSource} />
-													) : (
-														<div className="py-8 text-center">
-															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																<Image
-																	src={nodata_2}
-																	alt="No Data"
-																	width={300}
-																	className="max-h-[60px] w-auto max-w-[60px]"
-																/>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "候補者の情報源なし" : "No Source of Candidate"}
+																</p>
 															</div>
-															<p className="text-sm text-darkGray">
-																{srcLang === "ja" ? "候補者の情報源なし" : "No Source of Candidate"}
-															</p>
-														</div>
-													)}
+														)}
+													</div>
 												</div>
 											</div>
-										</div>
-										<div className="mb-6 w-full px-3 xl:max-w-[50%]">
-											<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-												<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">
-														{srcLang === "ja" ? "面接実施推移" : "Average Interviews Schedule"}
-													</h2>
-													{/* <div className="w-[180px]">
+											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">
+															{srcLang === "ja" ? "面接実施推移" : "Average Interviews Schedule"}
+														</h2>
+														{/* <div className="w-[180px]">
 														<FormField fieldType="select" placeholder={srcLang === "ja" ? "全期間" : "All Time"} />
 													</div> */}
-												</div>
-												<div className="p-8">
-													{interviewAnalytics &&
-													interviewAnalytics.length > 0 &&
-													interviewAnalytics.some((item) => item > 0) ? (
-														// <HighchartsReact highcharts={Highcharts} options={options} />
-														<AnalyticsChart data={interviewAnalytics} text="Interview Trends" />
-													) : (
-														// {analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (
-														// 	<ColumnChart data={analyticsColumn} />
-														// )
-														<div className="py-8 text-center">
-															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																<Image
-																	src={nodata_2}
-																	alt="No Data"
-																	width={300}
-																	className="max-h-[60px] w-auto max-w-[60px]"
-																/>
+													</div>
+													<div className="p-8">
+														{interviewAnalytics &&
+														interviewAnalytics.length > 0 &&
+														interviewAnalytics.some((item) => item > 0) ? (
+															// <HighchartsReact highcharts={Highcharts} options={options} />
+															<AnalyticsChart data={interviewAnalytics} text="Interview Trends" />
+														) : (
+															// {analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (
+															// 	<ColumnChart data={analyticsColumn} />
+															// )
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "面接なし" : "No Interview"}
+																</p>
 															</div>
-															<p className="text-sm text-darkGray">{srcLang === "ja" ? "面接なし" : "No Interview"}</p>
-														</div>
-													)}
+														)}
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								</Tab.Panel>
-								<Tab.Panel>
-									{upcomingSoon ? (
-										<UpcomingComp />
-									) : (
-										<>
-											<div className="mb-6 rounded-normal border dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.VendorsPerformance")}</h2>
-												</div>
-												<div className="p-8">
-													<div className="max-h-[405px] overflow-auto">
-														<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-															<thead>
-																<tr>
-																	<th className="border-b px-3 py-2 text-left">{t("Form.FullName")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.TotalSubmissions")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.Conversions")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.Hiring")} (%)</th>
-																</tr>
-															</thead>
-															<tbody className="text-sm font-semibold">
-																{sklLoad
-																	? Array(10).fill(
-																			<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-																				<td className="px-3 py-2 text-left">
-																					<Image
-																						src={bambooHrIcon}
-																						alt="BambooHR"
-																						width={150}
-																						className="max-h-[25px] w-auto"
-																					/>
-																				</td>
-																				<td className="px-3 py-2 text-left">100</td>
-																				<td className="px-3 py-2 text-left">40</td>
-																				<td className="px-3 py-2 text-left">61.4%</td>
-																			</tr>
-																	  )
-																	: Array(6).fill(
-																			<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																			</tr>
-																	  )}
-															</tbody>
-														</table>
+									</Tab.Panel>
+									<Tab.Panel>
+										{upcomingSoon ? (
+											<UpcomingComp />
+										) : (
+											<>
+												<div className="mb-6 rounded-normal border dark:border-gray-400">
+													<div className="flex items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.VendorsPerformance")}</h2>
+													</div>
+													<div className="p-8">
+														<div className="max-h-[405px] overflow-auto">
+															<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																<thead>
+																	<tr>
+																		<th className="border-b px-3 py-2 text-left">{t("Form.FullName")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.TotalSubmissions")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.Conversions")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.Hiring")} (%)</th>
+																	</tr>
+																</thead>
+																<tbody className="text-sm font-semibold">
+																	{sklLoad
+																		? Array(10).fill(
+																				<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+																					<td className="px-3 py-2 text-left">
+																						<Image
+																							src={bambooHrIcon}
+																							alt="BambooHR"
+																							width={150}
+																							className="max-h-[25px] w-auto"
+																						/>
+																					</td>
+																					<td className="px-3 py-2 text-left">100</td>
+																					<td className="px-3 py-2 text-left">40</td>
+																					<td className="px-3 py-2 text-left">61.4%</td>
+																				</tr>
+																		  )
+																		: Array(6).fill(
+																				<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																				</tr>
+																		  )}
+																</tbody>
+															</table>
+														</div>
 													</div>
 												</div>
-											</div>
-											<div className="mb-6 rounded-normal border dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.ApplicantSourced")}</h2>
-													<div className="w-[180px]">
-														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
+												<div className="mb-6 rounded-normal border dark:border-gray-400">
+													<div className="flex items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.ApplicantSourced")}</h2>
+														<div className="w-[180px]">
+															<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
+														</div>
+													</div>
+													<div className="p-8">Body Graph Here</div>
+												</div>
+												<hr className="mb-6" />
+												<div className="mb-6 rounded-normal border dark:border-gray-400">
+													<div className="flex items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.JobBoards")}</h2>
+													</div>
+													<div className="p-8">
+														<div className="max-h-[405px] overflow-auto">
+															<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																<thead>
+																	<tr>
+																		<th className="border-b px-3 py-2 text-left">{t("Form.FullName")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.TotalSubmissions")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.Conversions")}</th>
+																		<th className="border-b px-3 py-2 text-left">{t("Words.Hiring")} (%)</th>
+																	</tr>
+																</thead>
+																<tbody className="text-sm font-semibold">
+																	{sklLoad
+																		? Array(10).fill(
+																				<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+																					<td className="px-3 py-2 text-left">
+																						<Image
+																							src={linkedInIcon}
+																							alt="LinkedIn"
+																							width={150}
+																							className="max-h-[25px] w-auto"
+																						/>
+																					</td>
+																					<td className="px-3 py-2 text-left">100</td>
+																					<td className="px-3 py-2 text-left">40</td>
+																					<td className="px-3 py-2 text-left">61.4%</td>
+																				</tr>
+																		  )
+																		: Array(6).fill(
+																				<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																					<td className="px-3 py-2 text-left">
+																						<Skeleton width={100} height={25} />
+																					</td>
+																				</tr>
+																		  )}
+																</tbody>
+															</table>
+														</div>
 													</div>
 												</div>
-												<div className="p-8">Body Graph Here</div>
-											</div>
-											<hr className="mb-6" />
-											<div className="mb-6 rounded-normal border dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.JobBoards")}</h2>
-												</div>
-												<div className="p-8">
-													<div className="max-h-[405px] overflow-auto">
-														<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-															<thead>
-																<tr>
-																	<th className="border-b px-3 py-2 text-left">{t("Form.FullName")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.TotalSubmissions")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.Conversions")}</th>
-																	<th className="border-b px-3 py-2 text-left">{t("Words.Hiring")} (%)</th>
-																</tr>
-															</thead>
-															<tbody className="text-sm font-semibold">
-																{sklLoad
-																	? Array(10).fill(
-																			<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-																				<td className="px-3 py-2 text-left">
-																					<Image
-																						src={linkedInIcon}
-																						alt="LinkedIn"
-																						width={150}
-																						className="max-h-[25px] w-auto"
-																					/>
-																				</td>
-																				<td className="px-3 py-2 text-left">100</td>
-																				<td className="px-3 py-2 text-left">40</td>
-																				<td className="px-3 py-2 text-left">61.4%</td>
-																			</tr>
-																	  )
-																	: Array(6).fill(
-																			<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																				<td className="px-3 py-2 text-left">
-																					<Skeleton width={100} height={25} />
-																				</td>
-																			</tr>
-																	  )}
-															</tbody>
-														</table>
+												<div className="mb-6 rounded-normal border dark:border-gray-400">
+													<div className="flex items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{t("Words.ApplicantSourced")}</h2>
+														<div className="w-[180px]">
+															<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
+														</div>
 													</div>
+													<div className="p-8">Body Graph Here</div>
 												</div>
-											</div>
-											<div className="mb-6 rounded-normal border dark:border-gray-400">
-												<div className="flex items-center border-b p-4 dark:border-gray-400">
-													<h2 className="grow font-bold">{t("Words.ApplicantSourced")}</h2>
-													<div className="w-[180px]">
-														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
-													</div>
-												</div>
-												<div className="p-8">Body Graph Here</div>
-											</div>
-										</>
-									)}
-								</Tab.Panel>
-							</Tab.Panels>
-						</Tab.Group>
+											</>
+										)}
+									</Tab.Panel>
+								</Tab.Panels>
+							</Tab.Group>
+						</div>
 					</div>
-				</div>
-			</main>
+				</main>
+			)}
 		</>
 	);
 }

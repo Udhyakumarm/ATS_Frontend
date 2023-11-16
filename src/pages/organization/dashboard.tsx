@@ -50,7 +50,12 @@ import Novus from "@/components/Novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
 
-export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon }: any) {
+export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
+	useEffect(() => {
+		if (currentUser.is_expired) {
+			router.push("/organization/settings/pricing");
+		}
+	}, [currentUser]);
 	const [sklLoad] = useState(true);
 
 	const { t } = useTranslation("common");
@@ -268,145 +273,146 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			<Head>
 				<title>{t("Words.Dashboard")}</title>
 			</Head>
-			<main>
-				{/* <Novus /> */}
-				{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
-				<Orgsidebar />
-				<Orgtopbar todoLoadMore={todoLoadMore} settodoLoadMore={settodoLoadMore} loadTodo={loadTodo} />
-				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
-				<div
-					id="overlay"
-					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
-				></div>
-				<div className={`layoutWrap p-4 xl:pl-4 xl:pr-0 xl:pt-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
-						<div className="flex flex-wrap gap-4">
-							{check1 ? (
-								<div className=" w-full xl:max-w-[calc(50%-1rem)] ">
-									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.ApplicantDetails")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside className="flex items-center justify-end">
-													{/* <div className="mr-4 w-[140px]">
+			{currentUser && !currentUser.is_expired && (
+				<main>
+					{/* <Novus /> */}
+					{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
+					<Orgsidebar />
+					<Orgtopbar todoLoadMore={todoLoadMore} settodoLoadMore={settodoLoadMore} loadTodo={loadTodo} />
+					{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
+					<div
+						id="overlay"
+						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
+					></div>
+					<div className={`layoutWrap p-4 xl:pl-4 xl:pr-0 xl:pt-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+						<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
+							<div className="flex flex-wrap gap-4">
+								{check1 ? (
+									<div className=" w-full xl:max-w-[calc(50%-1rem)] ">
+										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.ApplicantDetails")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside className="flex items-center justify-end">
+														{/* <div className="mr-4 w-[140px]">
 													<FormField fieldType="select" />
 												</div> */}
-													{/* <button
+														{/* <button
 														type="button"
 														className="relative z-[1] h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
 													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="dashboardSlider p-6 pt-0">
-											{applicantDetail && applicantDetail["totalApplicants"] > 0 ? (
-												<Slider {...settings}>
-													{aplc_status.map((item, i) => (
-														<div key={i}>
-															<div className="px-2 py-3">
-																<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
-																	<div className="mb-2 flex items-center justify-between">
-																		<h4 className="grow pr-4 text-xl font-extrabold">
-																			{/* {item.number || <Skeleton width={40} />} */}
-																			{item.number}
-																		</h4>
-																		<div className="rounded bg-lightGray px-2 py-1 text-[12px] text-white">
-																			{item.icon}
+													</aside>
+												)}
+											</div>
+											<div className="dashboardSlider p-6 pt-0">
+												{applicantDetail && applicantDetail["totalApplicants"] > 0 ? (
+													<Slider {...settings}>
+														{aplc_status.map((item, i) => (
+															<div key={i}>
+																<div className="px-2 py-3">
+																	<div className="relative rounded-normal border-b-[4px] border-lightGray bg-white p-3 pr-5 shadow-highlight dark:bg-gray-700">
+																		<div className="mb-2 flex items-center justify-between">
+																			<h4 className="grow pr-4 text-xl font-extrabold">
+																				{/* {item.number || <Skeleton width={40} />} */}
+																				{item.number}
+																			</h4>
+																			<div className="rounded bg-lightGray px-2 py-1 text-[12px] text-white">
+																				{item.icon}
+																			</div>
 																		</div>
+																		<p className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+																			{item.title}
+																		</p>
+																		<div style={{ width: 40, height: 40 }}>
+																			<CircularProgressbar
+																				value={getAverage(item.number)}
+																				text={`${getAverage(item.number)}`}
+																				styles={buildStyles({
+																					pathColor: getColor(item.number),
+																					textSize: "26px",
+																					textColor: "#727272"
+																				})}
+																			/>
+																		</div>
+																		<div
+																			className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
+																			style={{ borderRightColor: getColor(item.number) }}
+																		></div>
 																	</div>
-																	<p className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-																		{item.title}
-																	</p>
-																	<div style={{ width: 40, height: 40 }}>
-																		<CircularProgressbar
-																			value={getAverage(item.number)}
-																			text={`${getAverage(item.number)}`}
-																			styles={buildStyles({
-																				pathColor: getColor(item.number),
-																				textSize: "26px",
-																				textColor: "#727272"
-																			})}
-																		/>
-																	</div>
-																	<div
-																		className={`absolute right-0 top-[50%] block h-[74px] w-[15px] translate-y-[-50%] border-[14px] border-transparent`}
-																		style={{ borderRightColor: getColor(item.number) }}
-																	></div>
 																</div>
 															</div>
+														))}
+													</Slider>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_1}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
+															/>
 														</div>
-													))}
-												</Slider>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_1}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "有効なデータはありません" : "No Applicants"}
+														</p>
 													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "有効なデータはありません" : "No Applicants"}
-													</p>
-												</div>
-											)}
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							) : (
-								<></>
-							)}
-							{check2 ? (
-								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
-									{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
-									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.HiringAnalytics")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside>
-													{/* <button
+								) : (
+									<></>
+								)}
+								{check2 ? (
+									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+										{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
+										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.HiringAnalytics")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside>
+														{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
 													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="p-6 pt-0">
-											{hiringAnalytics &&
-											hiringAnalytics.length > 0 &&
-											hiringAnalytics.some((item) => item > 0) &&
-											atsVersion != "starter" ? (
-												<AnalyticsChart data={hiringAnalytics} />
-											) : (
-												// <AnalyticsChart />
-												<>
-													{atsVersion === "starter" ? (
-														<PermiumComp userRole={userRole} />
-													) : (
-														<div className="py-8 text-center">
-															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																<Image
-																	src={nodata_2}
-																	alt="No Data"
-																	width={300}
-																	className="max-h-[60px] w-auto max-w-[60px]"
-																/>
+													</aside>
+												)}
+											</div>
+											<div className="p-6 pt-0">
+												{hiringAnalytics &&
+												hiringAnalytics.length > 0 &&
+												hiringAnalytics.some((item) => item > 0) &&
+												atsVersion != "starter" ? (
+													<AnalyticsChart data={hiringAnalytics} />
+												) : (
+													// <AnalyticsChart />
+													<>
+														{atsVersion === "starter" ? (
+															<PermiumComp userRole={userRole} />
+														) : (
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "有効なデータはありません" : "No Hiring Analytics"}
+																</p>
 															</div>
-															<p className="text-sm text-darkGray">
-																{srcLang === "ja" ? "有効なデータはありません" : "No Hiring Analytics"}
-															</p>
-														</div>
-													)}
-												</>
-											)}
-										</div>
-										{/* {atsVersion === "starter" && (
+														)}
+													</>
+												)}
+											</div>
+											{/* {atsVersion === "starter" && (
 											<div
 												className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 backdrop-blur-md"
 												onClick={() => {
@@ -423,179 +429,179 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												</div>
 											</div>
 										)} */}
+										</div>
 									</div>
-								</div>
-							) : (
-								<></>
-							)}
-							{check3 ? (
-								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
-									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside>
-													{/* <button
+								) : (
+									<></>
+								)}
+								{check3 ? (
+									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside>
+														{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
 													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="p-6 pt-0">
-											{upcomingInterview && upcomingInterview.length > 0 ? (
-												<div className="max-h-[330px] overflow-y-auto">
-													{upcomingInterview.slice(0, 5).map((data, i) => (
-														<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2" key={i}>
-															<div className="flex w-[250px] items-center py-1 pr-2">
-																<Image
-																	src={userImg1}
-																	alt="User"
-																	className="rounded-full object-cover"
-																	width={30}
-																	height={30}
-																/>
-																<div className="grow pl-2">
-																	<h5 className="text-sm font-bold">
-																		{data["applicant"] != null ? (
-																			<>
-																				{data["applicant"]["user"]["first_name"]}&nbsp;
-																				{data["applicant"]["user"]["last_name"]}
-																				&nbsp;(Career)
-																			</>
-																		) : (
-																			<>
-																				{data["vapplicant"]["applicant"]["first_name"]}&nbsp;
-																				{data["vapplicant"]["applicant"]["last_name"]}
-																				&nbsp;(Vendor)
-																			</>
-																		)}
-																	</h5>
-																	<p className="text-[12px] text-darkGray">{data["job"]["job_title"]}</p>
-																</div>
-															</div>
-															<div className="flex grow">
-																<div className="grow py-1 pr-2">
-																	<h5 className="text-sm font-bold">
-																		{moment(data["date_time_from"]).format("DD MMM YYYY")}
-																	</h5>
-																	<p className="text-[12px] text-darkGray">
-																		{moment(data["date_time_from"]).format(" h:mm a")}
-																	</p>
-																</div>
-																<div className="grow py-1 pr-2">
-																	<h5 className="text-sm font-bold">
-																		{moment(data["date_time_to"]).format("DD MMM YYYY")}
-																	</h5>
-																	<p className="text-[12px] text-darkGray">
-																		{moment(data["date_time_to"]).format(" h:mm a")}
-																	</p>
-																</div>
-															</div>
-															<div className="grow py-1 text-right">
-																<Button
-																	btnStyle="outlined"
-																	label={t("Btn.View")}
-																	loader={false}
-																	btnType="button"
-																	handleClick={() => {
-																		if (data["applicant"] != null) {
-																			settype("career");
-																			setappdata(data["applicant"]);
-																			setappid(data["applicant"]["arefid"]);
-																			setjobid(data["applicant"]["job"]["refid"]);
-																		} else {
-																			settype("vendor");
-																			setappdata(data["vapplicant"]);
-																			setappid(data["vapplicant"]["arefid"]);
-																			setjobid(data["vapplicant"]["job"]["refid"]);
-																		}
-																		router.push("applicants/detail");
-																	}}
-																/>
-															</div>
-														</div>
-													))}
-												</div>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_3}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
-													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "予定している面接・面談はありません" : "No Upcoming Interviews"}
-													</p>
-												</div>
-											)}
-										</div>
-									</div>
-								</div>
-							) : (
-								<></>
-							)}
-							{check4 ? (
-								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
-									<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside>
-													{/* <button
-														type="button"
-														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
-													>
-														<i className="fa-regular fa-hand"></i>
-													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="p-6 pt-0">
-											{nctodos && nctodos.length > 0 ? (
-												<>
+													</aside>
+												)}
+											</div>
+											<div className="p-6 pt-0">
+												{upcomingInterview && upcomingInterview.length > 0 ? (
 													<div className="max-h-[330px] overflow-y-auto">
-														{nctodos.slice(0, 5).map((data, i) => (
-															<div className="mb-3 flex flex-wrap rounded-[10px] border" key={i}>
-																{/* <div className="flex w-[65%] items-center px-3 py-2"> */}
-																<div className="w-[65%] px-8 py-4">
-																	<h5 className="mb-2 font-bold">{data["title"]}</h5>
-																	<p
-																		className="text-sm text-darkGray dark:text-gray-400"
-																		dangerouslySetInnerHTML={{ __html: data["desc"] }}
-																	></p>
-																</div>
-																<div className="relative flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
-																	<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
-																		<i className="fa-regular fa-square-check"></i>
-																	</span>
-																	<h5 className="font-bold">{moment(data["deadline"]).format("DD MMM YYYY")}</h5>
-																	<div className="absolute right-1 top-1">
-																		{data["priority"] === "High" && (
-																			<p className="rounded-full bg-red-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
-																				High
-																			</p>
-																		)}
-																		{data["priority"] === "Medium" && (
-																			<p className="rounded-full bg-yellow-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
-																				Medium
-																			</p>
-																		)}
-																		{data["priority"] === "Low" && (
-																			<p className="rounded-full bg-gray-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
-																				Low
-																			</p>
-																		)}
+														{upcomingInterview.slice(0, 5).map((data, i) => (
+															<div className="mb-3 flex flex-wrap items-center rounded-[10px] border px-3 py-2" key={i}>
+																<div className="flex w-[250px] items-center py-1 pr-2">
+																	<Image
+																		src={userImg1}
+																		alt="User"
+																		className="rounded-full object-cover"
+																		width={30}
+																		height={30}
+																	/>
+																	<div className="grow pl-2">
+																		<h5 className="text-sm font-bold">
+																			{data["applicant"] != null ? (
+																				<>
+																					{data["applicant"]["user"]["first_name"]}&nbsp;
+																					{data["applicant"]["user"]["last_name"]}
+																					&nbsp;(Career)
+																				</>
+																			) : (
+																				<>
+																					{data["vapplicant"]["applicant"]["first_name"]}&nbsp;
+																					{data["vapplicant"]["applicant"]["last_name"]}
+																					&nbsp;(Vendor)
+																				</>
+																			)}
+																		</h5>
+																		<p className="text-[12px] text-darkGray">{data["job"]["job_title"]}</p>
 																	</div>
+																</div>
+																<div className="flex grow">
+																	<div className="grow py-1 pr-2">
+																		<h5 className="text-sm font-bold">
+																			{moment(data["date_time_from"]).format("DD MMM YYYY")}
+																		</h5>
+																		<p className="text-[12px] text-darkGray">
+																			{moment(data["date_time_from"]).format(" h:mm a")}
+																		</p>
+																	</div>
+																	<div className="grow py-1 pr-2">
+																		<h5 className="text-sm font-bold">
+																			{moment(data["date_time_to"]).format("DD MMM YYYY")}
+																		</h5>
+																		<p className="text-[12px] text-darkGray">
+																			{moment(data["date_time_to"]).format(" h:mm a")}
+																		</p>
+																	</div>
+																</div>
+																<div className="grow py-1 text-right">
+																	<Button
+																		btnStyle="outlined"
+																		label={t("Btn.View")}
+																		loader={false}
+																		btnType="button"
+																		handleClick={() => {
+																			if (data["applicant"] != null) {
+																				settype("career");
+																				setappdata(data["applicant"]);
+																				setappid(data["applicant"]["arefid"]);
+																				setjobid(data["applicant"]["job"]["refid"]);
+																			} else {
+																				settype("vendor");
+																				setappdata(data["vapplicant"]);
+																				setappid(data["vapplicant"]["arefid"]);
+																				setjobid(data["vapplicant"]["job"]["refid"]);
+																			}
+																			router.push("applicants/detail");
+																		}}
+																	/>
 																</div>
 															</div>
 														))}
-														{/* {sklLoad
+													</div>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_3}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
+															/>
+														</div>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "予定している面接・面談はありません" : "No Upcoming Interviews"}
+														</p>
+													</div>
+												)}
+											</div>
+										</div>
+									</div>
+								) : (
+									<></>
+								)}
+								{check4 ? (
+									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside>
+														{/* <button
+														type="button"
+														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
+													>
+														<i className="fa-regular fa-hand"></i>
+													</button> */}
+													</aside>
+												)}
+											</div>
+											<div className="p-6 pt-0">
+												{nctodos && nctodos.length > 0 ? (
+													<>
+														<div className="max-h-[330px] overflow-y-auto">
+															{nctodos.slice(0, 5).map((data, i) => (
+																<div className="mb-3 flex flex-wrap rounded-[10px] border" key={i}>
+																	{/* <div className="flex w-[65%] items-center px-3 py-2"> */}
+																	<div className="w-[65%] px-8 py-4">
+																		<h5 className="mb-2 font-bold">{data["title"]}</h5>
+																		<p
+																			className="text-sm text-darkGray dark:text-gray-400"
+																			dangerouslySetInnerHTML={{ __html: data["desc"] }}
+																		></p>
+																	</div>
+																	<div className="relative flex w-[35%] items-center justify-center bg-lightBlue px-3 py-6 dark:bg-gray-700">
+																		<span className="mr-2 flex items-center justify-center rounded bg-[#000] p-2 text-lg leading-normal text-white dark:bg-gray-800">
+																			<i className="fa-regular fa-square-check"></i>
+																		</span>
+																		<h5 className="font-bold">{moment(data["deadline"]).format("DD MMM YYYY")}</h5>
+																		<div className="absolute right-1 top-1">
+																			{data["priority"] === "High" && (
+																				<p className="rounded-full bg-red-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					High
+																				</p>
+																			)}
+																			{data["priority"] === "Medium" && (
+																				<p className="rounded-full bg-yellow-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					Medium
+																				</p>
+																			)}
+																			{data["priority"] === "Low" && (
+																				<p className="rounded-full bg-gray-500 px-2 py-1 text-[10px] leading-[1.2] text-white">
+																					Low
+																				</p>
+																			)}
+																		</div>
+																	</div>
+																</div>
+															))}
+															{/* {sklLoad
 															? Array(6).fill(
 																	<div className="mb-3 flex flex-wrap rounded-[10px] border">
 																		<div className="flex w-[65%] items-center px-3 py-2">
@@ -639,57 +645,57 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		</div>
 																	</div>
 															  )} */}
+														</div>
+														<div className="pt-4">
+															<Button
+																btnStyle="outlined"
+																label={t("Btn.LoadMore")}
+																btnType="button"
+																handleClick={() => settodoLoadMore(true)}
+															/>
+														</div>
+													</>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_4}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
+															/>
+														</div>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
+														</p>
 													</div>
-													<div className="pt-4">
-														<Button
-															btnStyle="outlined"
-															label={t("Btn.LoadMore")}
-															btnType="button"
-															handleClick={() => settodoLoadMore(true)}
-														/>
-													</div>
-												</>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_4}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
-													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "未完了のタスクはありません" : "Nothing In To Do List"}
-													</p>
-												</div>
-											)}
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							) : (
-								<></>
-							)}
-							{check5 ? (
-								<div className="w-full xl:max-w-[calc(50%-1rem)] ">
-									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside>
-													{/* <button
+								) : (
+									<></>
+								)}
+								{check5 ? (
+									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside>
+														{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
 													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="p-6 pt-0">
-											{recentJob && recentJob.length > 0 ? (
-												<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
-													{/* {sklLoad
+													</aside>
+												)}
+											</div>
+											<div className="p-6 pt-0">
+												{recentJob && recentJob.length > 0 ? (
+													<div className="mx-[-7px] flex max-h-[330px] flex-wrap overflow-y-auto">
+														{/* {sklLoad
 														? Array(5).fill(
 																<div className="mb-[15px] w-full px-[7px] md:max-w-[50%]">
 																	<JobCard_1 />
@@ -701,314 +707,317 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																</div>
 														  )} */}
 
-													{/* {recentJob.slice(0, 5).map((data, i) => (
+														{/* {recentJob.slice(0, 5).map((data, i) => (
 														<div className="mb-[15px] w-full px-[7px] md:max-w-[100%]" key={i}>
 															<JobCard_1 data={data} handleClick={() => router.push("jobs/active")} />
 														</div>
 													))} */}
-													{recentJob.slice(0, 5).map((data, i) => (
-														<div className="mb-[15px] w-full px-[7px] py-1 xl:max-w-[100%]" key={i}>
-															<JobCard_2
-																job={data}
-																dashbaord={true}
-																axiosInstanceAuth2={axiosInstanceAuth2}
-																loadJob={loadAnalytics}
+														{recentJob.slice(0, 5).map((data, i) => (
+															<div className="mb-[15px] w-full px-[7px] py-1 xl:max-w-[100%]" key={i}>
+																<JobCard_2
+																	job={data}
+																	dashbaord={true}
+																	axiosInstanceAuth2={axiosInstanceAuth2}
+																	loadJob={loadAnalytics}
+																/>
+															</div>
+														))}
+													</div>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_5}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
 															/>
 														</div>
-													))}
-												</div>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_5}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "掲載されている求人はありません" : "No Job has been posted yet"}
+														</p>
 													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "掲載されている求人はありません" : "No Job has been posted yet"}
-													</p>
-												</div>
-											)}
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							) : (
-								<></>
-							)}
-							{atsVersion && atsVersion != "enterprise" && (
-								<div className="w-full xl:max-w-[calc(50%-1rem)]">
-									<div className="flex h-full items-center justify-center rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
-										<div className="mx-auto w-full max-w-[400px]">
-											<div className="mb-2 flex items-center">
-												<h6 className="my-2 mr-3 text-4xl font-bold">
-													{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Premium"}
+								) : (
+									<></>
+								)}
+								{atsVersion && atsVersion != "enterprise" && (
+									<div className="w-full xl:max-w-[calc(50%-1rem)]">
+										<div className="flex h-full items-center justify-center rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
+											<div className="mx-auto w-full max-w-[400px]">
+												<div className="mb-2 flex items-center">
+													<h6 className="my-2 mr-3 text-4xl font-bold">
+														{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Premium"}
+													</h6>
+													<Image
+														src={"/images/upgrade_launch.png"}
+														alt="Upgrade"
+														width={200}
+														height={200}
+														className="ml-auto w-auto max-w-[150px]"
+													/>
+												</div>
+												<p className="mb-4 text-lg">
+													{srcLang === "ja"
+														? "プレミアムプランの詳細はこちら"
+														: "Check out the Power of Premium Account"}
+												</p>
+												<h6 className="my-2 text-xl font-bold">
+													{srcLang === "ja" ? "20%オフキャンペーン実施中" : "20% Off"}
 												</h6>
-												<Image
-													src={"/images/upgrade_launch.png"}
-													alt="Upgrade"
-													width={200}
-													height={200}
-													className="ml-auto w-auto max-w-[150px]"
+												<Button
+													btnStyle="white"
+													btnType="button"
+													label={srcLang === "ja" ? "アップグレード" : "Upgrade"}
+													handleClick={() => {
+														if (userRole === "Super Admin") {
+															router.push("/organization/settings/pricing");
+														} else {
+															toastcomp("Kindly Contact Your Super Admin", "warning");
+														}
+													}}
 												/>
 											</div>
-											<p className="mb-4 text-lg">
-												{srcLang === "ja" ? "プレミアムプランの詳細はこちら" : "Check out the Power of Premium Account"}
-											</p>
-											<h6 className="my-2 text-xl font-bold">
-												{srcLang === "ja" ? "20%オフキャンペーン実施中" : "20% Off"}
-											</h6>
-											<Button
-												btnStyle="white"
-												btnType="button"
-												label={srcLang === "ja" ? "アップグレード" : "Upgrade"}
-												handleClick={() => {
-													if (userRole === "Super Admin") {
-														router.push("/organization/settings/pricing");
-													} else {
-														toastcomp("Kindly Contact Your Super Admin", "warning");
-													}
-												}}
-											/>
 										</div>
 									</div>
-								</div>
-							)}
-							{check6 ? (
-								<div className="w-full xl:max-w-[calc(50%-1rem)]">
-									<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
-										<div className="flex items-center justify-between p-6">
-											<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>
-											{atsVersion && atsVersion === "enterprise" && (
-												<aside>
-													{/* <button
+								)}
+								{check6 ? (
+									<div className="w-full xl:max-w-[calc(50%-1rem)]">
+										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+											<div className="flex items-center justify-between p-6">
+												<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>
+												{atsVersion && atsVersion === "enterprise" && (
+													<aside>
+														{/* <button
 														type="button"
 														className="h-[30px] w-[30px] cursor-grab rounded-full bg-darkGray text-gray-300"
 													>
 														<i className="fa-regular fa-hand"></i>
 													</button> */}
-												</aside>
-											)}
-										</div>
-										<div className="p-6 pt-0">
-											{activityLog && activityLog.length > 0 ? (
-												<>
-													<div className="max-h-[330px] overflow-y-auto">
-														{activityLog.slice(0, 5).map((data, i) =>
-															i % 2 == 0 ? (
-																<div
-																	className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
-																	key={i}
-																>
-																	<div className="flex items-center justify-center p-3">
-																		<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
-																			<i className="fa-solid fa-briefcase"></i>
-																		</span>
-																		<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
-																	</div>
-																</div>
-															) : (
-																<div
-																	className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
-																	key={i}
-																>
-																	<div className="flex items-center justify-center p-3">
-																		<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
-																			<i className="fa-solid fa-star"></i>
+													</aside>
+												)}
+											</div>
+											<div className="p-6 pt-0">
+												{activityLog && activityLog.length > 0 ? (
+													<>
+														<div className="max-h-[330px] overflow-y-auto">
+															{activityLog.slice(0, 5).map((data, i) =>
+																i % 2 == 0 ? (
+																	<div
+																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																		key={i}
+																	>
+																		<div className="flex items-center justify-center p-3">
+																			<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
+																				<i className="fa-solid fa-briefcase"></i>
+																			</span>
+																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
 																		</div>
-																		<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
 																	</div>
-																</div>
-															)
-														)}
+																) : (
+																	<div
+																		className="mb-3 flex flex-wrap items-center rounded-[10px] border px-2 py-1"
+																		key={i}
+																	>
+																		<div className="flex items-center justify-center p-3">
+																			<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
+																				<i className="fa-solid fa-star"></i>
+																			</div>
+																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																		</div>
+																	</div>
+																)
+															)}
+														</div>
+														<div className="pt-4">
+															<Button
+																btnStyle="outlined"
+																label={t("Btn.LoadMore")}
+																btnType="button"
+																handleClick={() => setActivityLogPopup(true)}
+															/>
+														</div>
+													</>
+												) : (
+													<div className="py-8 text-center">
+														<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+															<Image
+																src={nodata_6}
+																alt="No Data"
+																width={300}
+																className="max-h-[60px] w-auto max-w-[60px]"
+															/>
+														</div>
+														<p className="text-sm text-darkGray">
+															{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
+														</p>
 													</div>
-													<div className="pt-4">
-														<Button
-															btnStyle="outlined"
-															label={t("Btn.LoadMore")}
-															btnType="button"
-															handleClick={() => setActivityLogPopup(true)}
-														/>
-													</div>
-												</>
-											) : (
-												<div className="py-8 text-center">
-													<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-														<Image
-															src={nodata_6}
-															alt="No Data"
-															width={300}
-															className="max-h-[60px] w-auto max-w-[60px]"
-														/>
-													</div>
-													<p className="text-sm text-darkGray">
-														{srcLang === "ja" ? "有効なデータはありません" : "Nothing in the Activity Log"}
-													</p>
-												</div>
-											)}
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							) : (
-								<></>
+								) : (
+									<></>
+								)}
+							</div>
+							{atsVersion && atsVersion === "enterprise" && (
+								<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
+									<Popover className="relative">
+										<Popover.Button
+											className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
+										>
+											<i className="fa-solid fa-gauge"></i>
+										</Popover.Button>
+										<Popover.Overlay className="fixed inset-0 left-0 top-0 z-30 h-full w-full bg-black opacity-30 dark:bg-white dark:opacity-50" />
+										<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal shadow-normal">
+											<div className="flex flex-wrap">
+												<label
+													htmlFor="cust_applicants"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_applicants"
+														className="hidden"
+														onClick={() => setcheck1(!check1)}
+													/>
+													{/* <Image src={customizeApplicants} alt="Applicants" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-users-viewfinder mb-3 text-[18px] leading-[1px]"></i>
+													<p className="text-[12px] font-bold">{t("Words.ApplicantDetails")}</p>
+													<i
+														className={`fa-solid ${
+															check1 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<label
+													htmlFor="cust_hiring"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_hiring"
+														className="hidden"
+														onChange={() => setcheck2(!check2)}
+													/>
+													{/* <Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-chart-line mb-3 text-[18px] leading-[1px]"></i>
+													<p className="text-[12px] font-bold">{t("Words.HiringAnalytics")}</p>
+													<i
+														className={`fa-solid ${
+															check2 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<label
+													htmlFor="cust_upcoming"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-700 dark:to-gray-500"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_upcoming"
+														className="hidden"
+														onChange={() => setcheck3(!check3)}
+													/>
+													{/* <Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-calendar-days mb-3 text-[18px] leading-[1px]"></i>
+													<p className="text-[12px] font-bold">{t("Words.UpcomingInterviews")}</p>
+													<i
+														className={`fa-solid ${
+															check3 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<label
+													htmlFor="cust_todo"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-500 dark:to-gray-700"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_todo"
+														className="hidden"
+														onChange={() => setcheck4(!check4)}
+													/>
+													{/* <Image src={customizeTodo} alt="To Do List" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-list mb-3 text-[18px] leading-[1px]"></i>
+													<p className="max-w-[55px] text-[12px] font-bold">{t("Words.ToDoList")}</p>
+													<i
+														className={`fa-solid ${
+															check4 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center dark:bg-gray-900">
+													<p className="text-[12px] font-bold">
+														{srcLang === "ja" ? (
+															<>
+																カスタマイズ <br /> ダッシュボード
+															</>
+														) : (
+															<>
+																Customize <br /> Your <br /> Dashboard
+															</>
+														)}
+													</p>
+												</div>
+												<label
+													htmlFor="cust_recent"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-500 dark:to-gray-700"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_recent"
+														className="hidden"
+														onChange={() => setcheck5(!check5)}
+													/>
+													{/* <Image src={customizeRecent} alt="Recent Jobs" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-briefcase mb-3 text-[18px] leading-[1px]"></i>
+													<p className="max-w-[60px] text-[12px] font-bold">{t("Words.RecentJobs")}</p>
+													<i
+														className={`fa-solid ${
+															check5 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<label
+													htmlFor="cust_activity"
+													className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
+												>
+													<input
+														type="checkbox"
+														name="cust_dashboard"
+														id="cust_activity"
+														className="hidden"
+														onChange={() => setcheck6(!check6)}
+													/>
+													{/* <Image src={customizeActivity} alt="Activity Log" className="mb-2 w-auto h-[18px]" /> */}
+													<i className="fa-solid fa-clock mb-3 text-[18px] leading-[1px]"></i>
+													<p className="max-w-[60px] text-[12px] font-bold">{t("Words.ActivityLog")}</p>
+													<i
+														className={`fa-solid ${
+															check6 ? "fa-eye" : "fa-eye-slash"
+														} absolute right-2 top-4 text-[12px] leading-[1px]`}
+													></i>
+												</label>
+												<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
+												<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
+											</div>
+										</Popover.Panel>
+									</Popover>
+								</aside>
 							)}
 						</div>
-						{atsVersion && atsVersion === "enterprise" && (
-							<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
-								<Popover className="relative">
-									<Popover.Button
-										className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}
-									>
-										<i className="fa-solid fa-gauge"></i>
-									</Popover.Button>
-									<Popover.Overlay className="fixed inset-0 left-0 top-0 z-30 h-full w-full bg-black opacity-30 dark:bg-white dark:opacity-50" />
-									<Popover.Panel className="absolute z-40 w-[300px] overflow-hidden rounded-normal shadow-normal">
-										<div className="flex flex-wrap">
-											<label
-												htmlFor="cust_applicants"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_applicants"
-													className="hidden"
-													onClick={() => setcheck1(!check1)}
-												/>
-												{/* <Image src={customizeApplicants} alt="Applicants" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-users-viewfinder mb-3 text-[18px] leading-[1px]"></i>
-												<p className="text-[12px] font-bold">{t("Words.ApplicantDetails")}</p>
-												<i
-													className={`fa-solid ${
-														check1 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<label
-												htmlFor="cust_hiring"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_hiring"
-													className="hidden"
-													onChange={() => setcheck2(!check2)}
-												/>
-												{/* <Image src={customizeAnalytics} alt="Hiring Analytics" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-chart-line mb-3 text-[18px] leading-[1px]"></i>
-												<p className="text-[12px] font-bold">{t("Words.HiringAnalytics")}</p>
-												<i
-													className={`fa-solid ${
-														check2 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<label
-												htmlFor="cust_upcoming"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-700 dark:to-gray-500"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_upcoming"
-													className="hidden"
-													onChange={() => setcheck3(!check3)}
-												/>
-												{/* <Image src={customizeUpcoming} alt="Upcoming Interviews" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-calendar-days mb-3 text-[18px] leading-[1px]"></i>
-												<p className="text-[12px] font-bold">{t("Words.UpcomingInterviews")}</p>
-												<i
-													className={`fa-solid ${
-														check3 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<label
-												htmlFor="cust_todo"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-500 dark:to-gray-700"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_todo"
-													className="hidden"
-													onChange={() => setcheck4(!check4)}
-												/>
-												{/* <Image src={customizeTodo} alt="To Do List" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-list mb-3 text-[18px] leading-[1px]"></i>
-												<p className="max-w-[55px] text-[12px] font-bold">{t("Words.ToDoList")}</p>
-												<i
-													className={`fa-solid ${
-														check4 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-white p-2 text-center dark:bg-gray-900">
-												<p className="text-[12px] font-bold">
-													{srcLang === "ja" ? (
-														<>
-															カスタマイズ <br /> ダッシュボード
-														</>
-													) : (
-														<>
-															Customize <br /> Your <br /> Dashboard
-														</>
-													)}
-												</p>
-											</div>
-											<label
-												htmlFor="cust_recent"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#A3CEFF] to-[#DCFFFB] p-3 dark:from-gray-500 dark:to-gray-700"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_recent"
-													className="hidden"
-													onChange={() => setcheck5(!check5)}
-												/>
-												{/* <Image src={customizeRecent} alt="Recent Jobs" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-briefcase mb-3 text-[18px] leading-[1px]"></i>
-												<p className="max-w-[60px] text-[12px] font-bold">{t("Words.RecentJobs")}</p>
-												<i
-													className={`fa-solid ${
-														check5 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<label
-												htmlFor="cust_activity"
-												className="relative h-[100px] w-[100px] cursor-pointer overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-3 dark:from-gray-700 dark:to-gray-500"
-											>
-												<input
-													type="checkbox"
-													name="cust_dashboard"
-													id="cust_activity"
-													className="hidden"
-													onChange={() => setcheck6(!check6)}
-												/>
-												{/* <Image src={customizeActivity} alt="Activity Log" className="mb-2 w-auto h-[18px]" /> */}
-												<i className="fa-solid fa-clock mb-3 text-[18px] leading-[1px]"></i>
-												<p className="max-w-[60px] text-[12px] font-bold">{t("Words.ActivityLog")}</p>
-												<i
-													className={`fa-solid ${
-														check6 ? "fa-eye" : "fa-eye-slash"
-													} absolute right-2 top-4 text-[12px] leading-[1px]`}
-												></i>
-											</label>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
-											<div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-[#DCFFFB] to-[#A3CEFF] p-2 text-center dark:from-gray-700 dark:to-gray-500"></div>
-										</div>
-									</Popover.Panel>
-								</Popover>
-							</aside>
-						)}
 					</div>
-				</div>
-			</main>
+				</main>
+			)}
 			<Transition.Root show={activityLogPopup} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setActivityLogPopup}>
 					<Transition.Child

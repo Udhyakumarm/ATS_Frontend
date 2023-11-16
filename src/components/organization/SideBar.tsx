@@ -56,7 +56,7 @@ export default function OrgSideBar() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	useEffect(() => {
-		if (token && token.length > 0) {
+		if (token && token.length > 0 && !isExpired) {
 			// Call the async function immediately when the component mounts
 
 			console.log("!!!", "timeout1");
@@ -93,6 +93,15 @@ export default function OrgSideBar() {
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const currentUser = useUserStore((state: { user: any }) => state.user);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
+	const user = useUserStore((state: { user: any }) => state.user);
+	const [isExpired, setisExpired] = useState(false);
+	useEffect(() => {
+		if (user && user.length > 0) {
+			if (user[0]["is_expired"]) {
+				setisExpired(true);
+			}
+		}
+	}, [user]);
 
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
@@ -149,7 +158,8 @@ export default function OrgSideBar() {
 			img: dashboardIcon,
 			imgWhite: dashboardIconWhite,
 			pre: preOrNot("Dashboard"),
-			com: comOrNot("Dashboard")
+			com: comOrNot("Dashboard"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "求人" : "Jobs",
@@ -157,7 +167,8 @@ export default function OrgSideBar() {
 			img: jobsIcon,
 			imgWhite: jobsIconWhite,
 			pre: preOrNot("Jobs"),
-			com: comOrNot("Jobs")
+			com: comOrNot("Jobs"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "候補者" : "Applicants",
@@ -165,7 +176,8 @@ export default function OrgSideBar() {
 			img: applicantsIcon,
 			imgWhite: applicantsIconWhite,
 			pre: preOrNot("Applicants"),
-			com: comOrNot("Applicants")
+			com: comOrNot("Applicants"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "オファー管理" : "Offer Management",
@@ -173,7 +185,8 @@ export default function OrgSideBar() {
 			img: offerManageIcon,
 			imgWhite: offerManageIconWhite,
 			pre: preOrNot("Offer Management"),
-			com: comOrNot("Offer Management")
+			com: comOrNot("Offer Management"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "面接" : "Interviews",
@@ -181,7 +194,8 @@ export default function OrgSideBar() {
 			img: interviewsIcon,
 			imgWhite: interviewsIconWhite,
 			pre: preOrNot("Interviews"),
-			com: comOrNot("Interviews")
+			com: comOrNot("Interviews"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "アナリティクス" : "Analytics",
@@ -189,7 +203,8 @@ export default function OrgSideBar() {
 			img: analyticsIcon,
 			imgWhite: analyticsIconWhite,
 			pre: preOrNot("Analytics"),
-			com: comOrNot("Analytics")
+			com: comOrNot("Analytics"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "インボックス" : "Inboxes",
@@ -197,7 +212,8 @@ export default function OrgSideBar() {
 			img: inboxesIcon,
 			imgWhite: inboxesIconWhite,
 			pre: preOrNot("Inboxes"),
-			com: comOrNot("Inboxes")
+			com: comOrNot("Inboxes"),
+			expired: isExpired
 		},
 		{
 			title: srcLang === "ja" ? "設定" : "Settings",
@@ -205,7 +221,8 @@ export default function OrgSideBar() {
 			img: settingsIcon,
 			imgWhite: settingsIconWhite,
 			pre: preOrNot("Settings"),
-			com: comOrNot("Settings")
+			com: comOrNot("Settings"),
+			expired: false
 		}
 	];
 
@@ -288,7 +305,7 @@ export default function OrgSideBar() {
 					<ul className={"sideMenu" + " " + show ? "" : "border-b pb-4"}>
 						{menu.map((menuItem, i) => (
 							<li
-								className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}
+								className={`relative my-[12px]` + " " + (show ? "my-[24px]" : "")}
 								key={i}
 								data-te-toggle="tooltip"
 								data-te-placement="right"
@@ -297,7 +314,14 @@ export default function OrgSideBar() {
 								title={show ? menuItem.title : ""}
 							>
 								<div
-									onClick={() => handleClickLink(menuItem.url, menuItem.com, menuItem.pre, menuItem.title)}
+									onClick={() => {
+										if (!menuItem.expired) {
+											handleClickLink(menuItem.url, menuItem.com, menuItem.pre, menuItem.title);
+										} else {
+											toastcomp("Plan Expired", "error");
+											router.push("/organization/settings/pricing");
+										}
+									}}
 									className={
 										`flex cursor-pointer items-center rounded-[8px] font-semibold hover:bg-lightBlue dark:hover:bg-gray-900` +
 										" " +
@@ -328,6 +352,11 @@ export default function OrgSideBar() {
 													{count}
 												</span>
 											)}
+										</>
+									)}
+									{menuItem.expired && (
+										<>
+											<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[1px]"></div>
 										</>
 									)}
 								</div>
