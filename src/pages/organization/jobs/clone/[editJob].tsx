@@ -14,7 +14,7 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
-import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyJobLog, axiosInstanceAuth, axiosInstance2 } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
@@ -360,6 +360,9 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	const userState = useUserStore((state: { user: any }) => state.user);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
+	const [err, seterr] = useState(false);
+	const [errMsg, seterrMsg] = useState("");
+
 	async function addJob(formData: any, type: any) {
 		await axiosInstanceAuth2
 			.post(`/job/create-job/`, formData)
@@ -395,7 +398,14 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				}
 			})
 			.catch((err) => {
-				toastcomp("Job Not Clone", "error");
+				if (err.response.data.err) {
+					seterrMsg(err.response.data.err);
+					seterr(true);
+					toastcomp(err.response.data.err, "error");
+				} else {
+					toastcomp("Job Not Clone", "error");
+				}
+				console.log("!!!", "JobErr", err);
 			});
 	}
 
@@ -407,8 +417,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			jdept.length <= 0 ||
 			jlang.length <= 0 ||
 			jloc.length <= 0 ||
-			(!jcollaborator && atsVersion === "enterprise") ||
-			(!jrecruiter && atsVersion === "enterprise")
+			(!jcollaborator && atsVersion != "standard") ||
+			(!jrecruiter && atsVersion != "standard")
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
@@ -428,10 +438,10 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator && atsVersion === "enterprise") {
+			if (!jcollaborator && atsVersion != "standard") {
 				toastcomp("One Collaborator Required", "error");
 			}
-			if (!jrecruiter && atsVersion === "enterprise") {
+			if (!jrecruiter && atsVersion != "standard") {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -670,7 +680,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 
 	async function searchLoc(value) {
 		if (value === "") value = "a";
-		await axiosInstance.marketplace_api
+		await axiosInstance2
 			.get(`/job/load/location/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
@@ -688,7 +698,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	}
 
 	async function searchSkill(value) {
-		await axiosInstance.marketplace_api
+		await axiosInstance2
 			.get(`/job/load/skills/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
@@ -1369,7 +1379,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 								</Tab.Panel>
 
 								<Tab.Panel>
-									{atsVersion === "starter" ? (
+									{atsVersion === "standard" ? (
 										<PermiumComp userRole={userRole} />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
@@ -1570,93 +1580,90 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									)}
 								</Tab.Panel>
 								<Tab.Panel>
-									{atsVersion != "enterprise" ? (
-										<PermiumComp userRole={userRole} />
-									) : (
-										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t("Words.Vendors")} />
-											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-												<div className="mb-6 flex flex-wrap items-center justify-between">
-													<div className="w-[350px] pr-2">
-														<FormField
-															fieldType="input"
-															inputType="search"
-															placeholder={t("Words.Search")}
-															icon={<i className="fa-solid fa-magnifying-glass"></i>}
-															value={search2}
-															handleChange={(e) => setsearch2(e.target.value)}
-														/>
-													</div>
-													{!upcomingSoon && (
-														<div className="flex grow items-center justify-end">
-															<div className="mr-3 w-[150px]">
-																<FormField
-																	fieldType="select"
-																	placeholder={t("Words.Sort")}
-																	singleSelect={true}
-																	options={[
-																		{
-																			id: "A-to-Z",
-																			name: "A to Z"
-																		},
-																		{
-																			id: "Z-to-A",
-																			name: "Z to A"
-																		}
-																	]}
-																/>
-															</div>
-															<div className="w-[150px]">
-																<label
-																	htmlFor="teamSelectAll"
-																	className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																>
-																	<span>{t("Words.SelectAll")}</span>
-																	<input type="checkbox" id="teamSelectAll" />
-																</label>
-															</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.Vendors")} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="mb-6 flex flex-wrap items-center justify-between">
+												<div className="w-[350px] pr-2">
+													<FormField
+														fieldType="input"
+														inputType="search"
+														placeholder={t("Words.Search")}
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														value={search2}
+														handleChange={(e) => setsearch2(e.target.value)}
+													/>
+												</div>
+												{!upcomingSoon && (
+													<div className="flex grow items-center justify-end">
+														<div className="mr-3 w-[150px]">
+															<FormField
+																fieldType="select"
+																placeholder={t("Words.Sort")}
+																singleSelect={true}
+																options={[
+																	{
+																		id: "A-to-Z",
+																		name: "A to Z"
+																	},
+																	{
+																		id: "Z-to-A",
+																		name: "Z to A"
+																	}
+																]}
+															/>
 														</div>
-													)}
-												</div>
-												<div className="overflow-x-auto">
-													<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
-														<thead>
-															<tr>
-																{VendorTableHead.map((item, i) => (
-																	<th className="border-b px-3 py-2 text-left" key={i}>
-																		{item.title}
-																	</th>
-																))}
-															</tr>
-														</thead>
-														<tbody>
-															{filterVendors &&
-																filterVendors.map((data, i) => (
-																	<tr key={i}>
-																		<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
-																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																		<td className="border-b px-3 py-2 text-right">
-																			<Switch
-																				checked={jfv.includes(data["id"])}
-																				onChange={(value: Boolean) => changeSwith1(value, data)}
-																				className={`${jfv.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"}
+														<div className="w-[150px]">
+															<label
+																htmlFor="teamSelectAll"
+																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+															>
+																<span>{t("Words.SelectAll")}</span>
+																<input type="checkbox" id="teamSelectAll" />
+															</label>
+														</div>
+													</div>
+												)}
+											</div>
+											<div className="overflow-x-auto">
+												<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
+													<thead>
+														<tr>
+															{VendorTableHead.map((item, i) => (
+																<th className="border-b px-3 py-2 text-left" key={i}>
+																	{item.title}
+																</th>
+															))}
+														</tr>
+													</thead>
+													<tbody>
+														{filterVendors &&
+															filterVendors.map((data, i) => (
+																<tr key={i}>
+																	<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
+																	<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
+																	<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																	<td className="border-b px-3 py-2 text-right">
+																		<Switch
+																			checked={jfv.includes(data["id"])}
+																			onChange={(value: Boolean) => changeSwith1(value, data)}
+																			className={`${jfv.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"}
           relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-																			>
-																				<span className="sr-only">Use setting</span>
-																				<span
-																					aria-hidden="true"
-																					className={`${jfv.includes(data["id"]) ? "translate-x-4" : "translate-x-0"}
+																		>
+																			<span className="sr-only">Use setting</span>
+																			<span
+																				aria-hidden="true"
+																				className={`${jfv.includes(data["id"]) ? "translate-x-4" : "translate-x-0"}
             pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-																				/>
-																			</Switch>
-																		</td>
-																	</tr>
-																))}
-														</tbody>
-													</table>
-												</div>
-												{/* <div className="mx-[-15px] flex flex-wrap">
+																			/>
+																		</Switch>
+																	</td>
+																</tr>
+															))}
+													</tbody>
+												</table>
+											</div>
+											{/* <div className="mx-[-15px] flex flex-wrap">
 													{sklLoad
 														? fvendors &&
 														  fvendors.map((data, i) => (
@@ -1670,9 +1677,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 																</div>
 														  )}
 												</div> */}
-											</div>
 										</div>
-									)}
+									</div>
 								</Tab.Panel>
 								<Tab.Panel>
 									{upcomingSoon ? (
@@ -1963,6 +1969,51 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 												</>
 											)}
 										</p>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={err} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seterr}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => seterr(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{err && errMsg.length > 0 && (
+											<PermiumComp userRole={userRole} title={errMsg} setUpgradePlan={seterr} />
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -733,32 +733,32 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											</h2>
 										</aside>
 										<aside className="flex items-center">
-											{atsVersion != "starter" && (
-												<div className="mr-4">
-													<Button
-														btnType="button"
-														btnStyle="iconLeftBtn"
-														label="Manual Interview"
-														iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
-														handleClick={() => setmanualInterview(true)}
-													/>
-												</div>
-											)}
 											<div className="mr-4">
 												<Button
 													btnType="button"
 													btnStyle="iconLeftBtn"
-													label={t("Words.ScheduleInterview")}
+													label="Manual Interview"
 													iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
-													handleClick={() => {
-														if (atsVersion === "starter") {
-															router.push("/organization/applicants/schedule-interview");
-														} else {
-															checkGCAL();
-														}
-													}}
+													handleClick={() => setmanualInterview(true)}
 												/>
 											</div>
+											{atsVersion != "standard" && (
+												<div className="mr-4">
+													<Button
+														btnType="button"
+														btnStyle="iconLeftBtn"
+														label={t("Words.ScheduleInterview")}
+														iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
+														handleClick={() => {
+															if (atsVersion === "standard") {
+																router.push("/organization/applicants/schedule-interview");
+															} else {
+																checkGCAL();
+															}
+														}}
+													/>
+												</div>
+											)}
 											<div className="">
 												<Listbox value={selectedPerson} onChange={(v) => moveApplicant(v)}>
 													<Listbox.Button className={"rounded border border-slate-300 text-sm font-bold"}>
@@ -936,8 +936,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													{!currentUserFeedback &&
 														selectedPerson["name"] === "Review" &&
-														((atsVersion === "enterprise" && userRole === "Hiring Manager") ||
-															atsVersion != "enterprise") && (
+														((atsVersion != "standard" && userRole === "Hiring Manager") ||
+															atsVersion === "standard") && (
 															<div className="relative mt-6 border-t pb-8 pt-6 first:mt-0 first:border-t-0 first:pt-0">
 																<h3 className="mb-5">GIVE FEEDBACK FIRST</h3>
 																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">

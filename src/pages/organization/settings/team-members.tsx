@@ -20,10 +20,11 @@ import UpcomingComp from "@/components/organization/upcomingComp";
 import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import PermiumComp from "@/components/organization/premiumComp";
 
 const people = [{ name: "Recruiter" }, { name: "Collaborator" }, { name: "Hiring Manager" }];
 
-export default function TeamMembers({ upcomingSoon }: any) {
+export default function TeamMembers({ upcomingSoon, userRole }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -95,6 +96,9 @@ export default function TeamMembers({ upcomingSoon }: any) {
 		}
 	}, [search]);
 
+	const [err, seterr] = useState(false);
+	const [errMsg, seterrMsg] = useState("");
+
 	async function addTeamMember() {
 		const fd = new FormData();
 		fd.append("name", name);
@@ -126,8 +130,14 @@ export default function TeamMembers({ upcomingSoon }: any) {
 				loadTeamMember();
 			})
 			.catch((err) => {
+				if (err.response.data.err) {
+					seterrMsg(err.response.data.err);
+					seterr(true);
+					toastcomp(err.response.data.err, "error");
+				} else {
+					toastcomp("New User Not Add", "error");
+				}
 				console.log("@", "iprofile", err);
-				toastcomp("New User Not Add", "error");
 				setAddTeam(false);
 				setname("");
 				setoemail("");
@@ -806,6 +816,51 @@ export default function TeamMembers({ upcomingSoon }: any) {
 										<div className="text-center">
 											<Button label={t("Btn.Add")} />
 										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={err} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seterr}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => seterr(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{err && errMsg.length > 0 && (
+											<PermiumComp userRole={userRole} title={errMsg} setUpgradePlan={seterr} />
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

@@ -285,14 +285,14 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 					></div>
 					<div className={`layoutWrap p-4 xl:pl-4 xl:pr-0 xl:pt-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-						<div id={atsVersion === "enterprise" && "dashboard"} className="relative">
+						<div id={atsVersion != "standard" && "dashboard"} className="relative">
 							<div className="flex flex-wrap gap-4">
 								{check1 ? (
 									<div className=" w-full xl:max-w-[calc(50%-1rem)] ">
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.ApplicantDetails")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside className="flex items-center justify-end">
 														{/* <div className="mr-4 w-[140px]">
 													<FormField fieldType="select" />
@@ -372,7 +372,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.HiringAnalytics")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside>
 														{/* <button
 														type="button"
@@ -384,31 +384,24 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												)}
 											</div>
 											<div className="p-6 pt-0">
-												{hiringAnalytics &&
-												hiringAnalytics.length > 0 &&
-												hiringAnalytics.some((item) => item > 0) &&
-												atsVersion != "starter" ? (
+												{hiringAnalytics && hiringAnalytics.length > 0 && hiringAnalytics.some((item) => item > 0) ? (
 													<AnalyticsChart data={hiringAnalytics} />
 												) : (
 													// <AnalyticsChart />
 													<>
-														{atsVersion === "starter" ? (
-															<PermiumComp userRole={userRole} />
-														) : (
-															<div className="py-8 text-center">
-																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																	<Image
-																		src={nodata_2}
-																		alt="No Data"
-																		width={300}
-																		className="max-h-[60px] w-auto max-w-[60px]"
-																	/>
-																</div>
-																<p className="text-sm text-darkGray">
-																	{srcLang === "ja" ? "有効なデータはありません" : "No Hiring Analytics"}
-																</p>
+														<div className="py-8 text-center">
+															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																<Image
+																	src={nodata_2}
+																	alt="No Data"
+																	width={300}
+																	className="max-h-[60px] w-auto max-w-[60px]"
+																/>
 															</div>
-														)}
+															<p className="text-sm text-darkGray">
+																{srcLang === "ja" ? "有効なデータはありません" : "No Hiring Analytics"}
+															</p>
+														</div>
 													</>
 												)}
 											</div>
@@ -439,7 +432,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside>
 														{/* <button
 														type="button"
@@ -551,7 +544,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside>
 														{/* <button
 														type="button"
@@ -681,7 +674,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside>
 														{/* <button
 														type="button"
@@ -744,13 +737,13 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								) : (
 									<></>
 								)}
-								{atsVersion && atsVersion != "enterprise" && (
+								{atsVersion && atsVersion === "standard" && (
 									<div className="w-full xl:max-w-[calc(50%-1rem)]">
 										<div className="flex h-full items-center justify-center rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
 											<div className="mx-auto w-full max-w-[400px]">
 												<div className="mb-2 flex items-center">
 													<h6 className="my-2 mr-3 text-4xl font-bold">
-														{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Premium"}
+														{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Enterprise"}
 													</h6>
 													<Image
 														src={"/images/upgrade_launch.png"}
@@ -763,10 +756,10 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												<p className="mb-4 text-lg">
 													{srcLang === "ja"
 														? "プレミアムプランの詳細はこちら"
-														: "Check out the Power of Premium Account"}
+														: "Check out the Power of Enterprise Account"}
 												</p>
 												<h6 className="my-2 text-xl font-bold">
-													{srcLang === "ja" ? "20%オフキャンペーン実施中" : "20% Off"}
+													{srcLang === "ja" ? "20%オフキャンペーン実施中" : "22% Off"}
 												</h6>
 												<Button
 													btnStyle="white"
@@ -789,7 +782,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>
-												{atsVersion && atsVersion === "enterprise" && (
+												{atsVersion && atsVersion != "standard" && (
 													<aside>
 														{/* <button
 														type="button"
@@ -863,7 +856,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									<></>
 								)}
 							</div>
-							{atsVersion && atsVersion === "enterprise" && (
+							{atsVersion && atsVersion != "standard" && (
 								<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
 									<Popover className="relative">
 										<Popover.Button

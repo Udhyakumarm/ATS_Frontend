@@ -54,6 +54,8 @@ export default function Pricing() {
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 	const [cplan, setcplan] = useState({});
 	const [aplan, setaplan] = useState([]);
+	const [vplan, setvplan] = useState([]);
+	const [vcplan, setvcplan] = useState([]);
 	const cancelButtonRef = useRef(null);
 
 	async function getCurrentPlanInfo() {
@@ -89,10 +91,40 @@ export default function Pricing() {
 			});
 	}
 
+	async function getALLVPlanInfo() {
+		await axiosInstanceAuth2
+			.get(`/subscription/get-all-csh/`)
+			.then(async (res) => {
+				console.log("!!!", "get-all-csh", res.data);
+				setvplan(res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("get-all-csh error", "error");
+				setvplan([]);
+			});
+	}
+
+	async function getALLVCPlanInfo() {
+		await axiosInstanceAuth2
+			.get(`/subscription/get-all-csh1/`)
+			.then(async (res) => {
+				console.log("!!!", "get-all-csh", res.data);
+				setvcplan(res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("get-all-csh error", "error");
+				setvcplan([]);
+			});
+	}
+
 	useEffect(() => {
 		if (token && token.length > 0) {
 			getCurrentPlanInfo();
 			getALLPlanInfo();
+			getALLVPlanInfo();
+			getALLVCPlanInfo();
 		}
 	}, [token, tab]);
 
@@ -445,6 +477,384 @@ export default function Pricing() {
 										</>
 									)}
 								</div>
+								<br />
+								<div>
+									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+										<thead>
+											<tr>
+												<th className="w-[300px] border-b px-3 py-2"></th>
+												<th className="border-b px-3 py-2">Free</th>
+												<th className="border-b px-3 py-2">Standard</th>
+												<th className="border-b px-3 py-2">{t("Plans.Enterprise")}</th>
+											</tr>
+										</thead>
+										<tbody className="text-sm font-semibold">
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Duration
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Only 30 Days</td>
+												<td className="px-3 py-2 text-center">Monthly / Yearly</td>
+												<td className="px-3 py-2 text-center">Monthly / Yearly</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Team Members
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+												<td className="px-3 py-2 text-center">Up to 5</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Vendors/Agency Members
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Up to 2</td>
+												<td className="px-3 py-2 text-center">Up to 5</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Job Publish
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Up to 2</td>
+												<td className="px-3 py-2 text-center">Up to 5</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Application
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Up to 100</td>
+												<td className="px-3 py-2 text-center">Flexible</td>
+												<td className="px-3 py-2 text-center">Flexible</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Calendar
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">Automate/Manual</td>
+												<td className="px-3 py-2 text-center">Manual</td>
+												<td className="px-3 py-2 text-center">Automate/Manual</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Custimize Dashboard
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Offer Management
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Internal Communication
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Analytics
+													<Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						)}
 						{tab === 1 && (
@@ -551,7 +961,7 @@ export default function Pricing() {
 									)}
 								</div>
 								{/* vpayout */}
-								{/* <br />
+								<br />
 								<hr />
 								<br />
 								<div>
@@ -576,7 +986,58 @@ export default function Pricing() {
 										</svg>
 										<span>Variable subscribtion</span>
 									</button>
-									<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+
+									<>
+										<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+											<thead>
+												<tr>
+													<th className="border-b px-4 py-2 text-left">Total Applicants</th>
+													<th className="border-b px-4 py-2 text-left">Amount</th>
+													<th className="border-b px-4 py-2 text-left">Date of Payment</th>
+													<th className="border-b px-4 py-2 text-left">Paid</th>
+												</tr>
+											</thead>
+											<tbody>
+												{vcplan &&
+													vcplan.map((data, i) => (
+														<tr key={i}>
+															<td className="border-b px-4 py-2 text-sm">{data.total_count}</td>
+
+															<td className="border-b px-4 py-2 text-sm">
+																¥ {data.total_count >= 1000 ? data.total_count * 100 : data.total_count * 200}
+															</td>
+															<td className="border-b px-4 py-2 text-sm">Active</td>
+															<td className="border-b px-4 py-2 text-sm">
+																<i className="fa-solid fa-circle-xmark text-red-500"></i>
+															</td>
+														</tr>
+													))}
+												{vplan &&
+													vplan.map((data, i) => (
+														<tr key={i}>
+															<td className="border-b px-4 py-2 text-sm">{data.total_count}</td>
+
+															<td className="border-b px-4 py-2 text-sm">¥ {data.amount}</td>
+															<td className="border-b px-4 py-2 text-sm">
+																{moment(data.date_of_payment).format("D-MM-YYYY")}
+															</td>
+															<td className="border-b px-4 py-2 text-sm">
+																{data.is_paid ? (
+																	<i className="fa-solid fa-circle-check text-green-500"></i>
+																) : (
+																	<i className="fa-solid fa-circle-xmark text-red-500"></i>
+																)}
+															</td>
+														</tr>
+													))}
+											</tbody>
+										</table>
+										{/* <div className="my-2 text-center">
+										<Button label="Download CSV" btnStyle="sm" />
+									</div> */}
+									</>
+
+									{/* <table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 										<thead>
 											<tr>
 												<th className="border-b px-4 py-2 text-left">Total Applications</th>
@@ -603,11 +1064,8 @@ export default function Pricing() {
 												</tr>
 											)}
 										</tbody>
-									</table>
-									<div className="my-2 text-center">
-										<Button label="Download CSV" btnStyle="sm" />
-									</div>
-								</div> */}
+									</table> */}
+								</div>
 							</div>
 						)}
 					</div>

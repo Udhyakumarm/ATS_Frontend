@@ -1,3 +1,4 @@
+//@collapse
 import ThemeChange from "../ThemeChange";
 import { signOut, useSession } from "next-auth/react";
 import { useState, Fragment, useRef, useEffect } from "react";
@@ -24,12 +25,13 @@ import novusIcon12 from "/public/images/novus12.png";
 
 import LogoImg from "/public/images/noAuth/headerLogo.png";
 import { useNewNovusStore } from "@/utils/novus";
+import PermiumComp from "./premiumComp";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
 ];
 
-const preVersions = [{ name: "starter" }, { name: "premium" }, { name: "enterprise" }];
+const preVersions = [{ name: "free" }, { name: "standard" }, { name: "enterprise" }];
 
 export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -163,7 +165,9 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 	}, [token, role, load]);
 
 	useEffect(() => {
-		setversion(selectedPreVersion.name);
+		if (selectedPreVersion && selectedPreVersion.name) {
+			setversion(selectedPreVersion.name);
+		}
 	}, [selectedPreVersion]);
 
 	const tabHeading = [
@@ -393,6 +397,9 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 		}
 	}, [gcal, res]);
 
+	const [err, seterr] = useState(false);
+	const [errMsg, seterrMsg] = useState("");
+
 	return (
 		<>
 			<div
@@ -400,7 +407,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
 				{/* {role === "Super Admin" && (
-					<div className="ms-3">
+					<div className="mr-6 ms-3">
 						<Listbox value={selectedPreVersion} onChange={setPreVersion}>
 							<div className="relative">
 								<Listbox.Button className="flex items-center justify-center rounded-l bg-secondary px-2 py-2 text-white">
@@ -446,6 +453,13 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					</div>
 				)} */}
 
+				<p className="mr-6 rounded-lg bg-primary/75 px-2 py-1 text-center text-xs font-bold uppercase text-white">
+					{version}
+				</p>
+
+				<p className="mr-6 rounded-lg bg-primary/75 px-2 py-1 text-center text-xs font-bold uppercase text-white">
+					{role}
+				</p>
 				<ThemeChange />
 				<button
 					type="button"
@@ -465,31 +479,26 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
 					)}
 				</button>
-				{/* {version != "starter" && (
-					<button type="button" className="mr-5 text-darkGray dark:text-gray-400" onClick={checkGCAL}>
-						<Image src={gcalIcon} alt={"gcal"} width={30} className="max-h-[30px]" />
-					</button>
-				)} */}
-				{version != "starter" && (
-					<button
-						type="button"
-						className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
-						onClick={() => {
-							if (isExpired) {
-								toastcomp("Plan Expired", "error");
-								router.push("/organization/settings/pricing");
-							} else {
-								checkGCAL();
-							}
-						}}
-						// onClick={checkGCAL}
-					>
-						<i className="fa-regular fa-calendar-days text-[20px]"></i>
-						{isExpired && (
-							<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
-						)}
-					</button>
-				)}
+				<button
+					type="button"
+					className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+					onClick={() => {
+						if (isExpired) {
+							toastcomp("Plan Expired", "error");
+							router.push("/organization/settings/pricing");
+						} else if (version === "standard") {
+							seterr(true);
+							seterrMsg("Calendar Automation");
+						} else {
+							checkGCAL();
+						}
+					}}
+				>
+					<i className="fa-regular fa-calendar-days text-[20px]"></i>
+					{isExpired && (
+						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+					)}
+				</button>
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
 					onClick={() => {
@@ -510,19 +519,6 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					)}
 				</div>
 				<ToggleLang />
-				{/* <button
-					type="button"
-					className=" rounded text-xl text-red-500 hover:text-red-600"
-					onClick={() => {
-						signOut();
-
-						settype("");
-						setrole("");
-						setuser([]);
-					}}
-				>
-					<i className="fa-solid fa-right-from-bracket"></i>
-				</button> */}
 				{role != "Hiring Manager" && (
 					<button
 						type="button"
@@ -531,12 +527,14 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 							if (isExpired) {
 								toastcomp("Plan Expired", "error");
 								router.push("/organization/settings/pricing");
+							} else if (version === "standard") {
+								seterr(true);
+								seterrMsg("Novus AI");
 							} else {
 								tvisible();
 							}
 						}}
 					>
-						{/* <Image src={visible ? novusIcon12 : LogoImg} alt={"Novus1"} width={30} className="max-h-[30px]" /> */}
 						<Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" />
 						{isExpired && (
 							<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
@@ -1028,6 +1026,49 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 												editTodo ? updateFunDone() : addTodo();
 											}}
 										/>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={err} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seterr}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => seterr(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{err && errMsg.length > 0 && <PermiumComp userRole={role} title={errMsg} setUpgradePlan={seterr} />}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
