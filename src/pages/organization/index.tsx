@@ -19,13 +19,9 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	function blurOrNot(name: any) {
-		if (atsVersion === "starter") {
-			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
-		}
-		if (atsVersion === "premium") {
-			return name === "Offer Management" || name === "Vendors";
-		}
-		if (atsVersion === "enterprise") {
+		if (atsVersion === "standard") {
+			return name === "Offer Management";
+		} else {
 			return false;
 		}
 	}

@@ -135,13 +135,9 @@ export default function OrgSideBar() {
 	const version = useVersionStore((state: { version: any }) => state.version);
 
 	function preOrNot(name: any) {
-		if (version === "starter") {
-			return name === "Offer Management" || name === "Analytics" || name === "Vendors";
-		}
-		if (version === "premium") {
-			return name === "Offer Management" || name === "Vendors";
-		}
-		if (version === "enterprise") {
+		if (version === "standard") {
+			return name === "Offer Management";
+		} else {
 			return false;
 		}
 	}
@@ -389,12 +385,12 @@ export default function OrgSideBar() {
 							</div>
 						</li>
 					</ul>
-					{version != "enterprise" && !show && (
-						<div className="py-4">
+					{version === "standard" && !show && (
+						<div className="py-0">
 							<div className="rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
 								<div className="mb-2 flex items-center">
 									<h6 className="my-2 text-lg font-bold">
-										{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Premium"}
+										{srcLang === "ja" ? "プランをアップグレード" : "Upgrade to Enterprise"}
 									</h6>
 									<Image
 										src={"/images/upgrade_launch.png"}
@@ -405,9 +401,8 @@ export default function OrgSideBar() {
 									/>
 								</div>
 								<p className="mb-2">
-									{srcLang === "ja" ? "プレミアムプランの詳細はこちら" : "Check out the Power of Premium Account"}
+									{srcLang === "ja" ? "プレミアムプランの詳細はこちら" : "Check out the Power of Enterprise Account"}
 								</p>
-								<h6 className="my-2 text-lg font-bold">{srcLang === "ja" ? "20%オフキャンペーン実施中" : "20% Off"}</h6>
 								<Button
 									btnStyle="white"
 									btnType="button"

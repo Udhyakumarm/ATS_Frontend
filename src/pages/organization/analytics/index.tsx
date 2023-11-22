@@ -338,30 +338,25 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 													<div className="p-8">
 														{hiringAnalytics &&
 														hiringAnalytics.length > 0 &&
-														hiringAnalytics.some((item) => item > 0) &&
-														atsVersion != "starter" ? (
+														hiringAnalytics.some((item) => item > 0) ? (
 															// <HighchartsReact highcharts={Highcharts} options={options} />
 															<AnalyticsChart data={hiringAnalytics} text="Hiring Trends" />
 														) : (
 															// <AnalyticsChart />
 															<>
-																{atsVersion === "starter" ? (
-																	<PermiumComp userRole={userRole} />
-																) : (
-																	<div className="py-8 text-center">
-																		<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																			<Image
-																				src={nodata_2}
-																				alt="No Data"
-																				width={300}
-																				className="max-h-[60px] w-auto max-w-[60px]"
-																			/>
-																		</div>
-																		<p className="text-sm text-darkGray">
-																			{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
-																		</p>
+																<div className="py-8 text-center">
+																	<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																		<Image
+																			src={nodata_2}
+																			alt="No Data"
+																			width={300}
+																			className="max-h-[60px] w-auto max-w-[60px]"
+																		/>
 																	</div>
-																)}
+																	<p className="text-sm text-darkGray">
+																		{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
+																	</p>
+																</div>
 															</>
 														)}
 													</div>

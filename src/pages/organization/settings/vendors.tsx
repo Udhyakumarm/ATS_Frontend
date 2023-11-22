@@ -19,8 +19,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import PermiumComp from "@/components/organization/premiumComp";
 
-export default function Vendors() {
+export default function Vendors({ atsVersion, userRole }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -73,6 +74,8 @@ export default function Vendors() {
 	const [aedate, setaedate] = useState("");
 
 	const [nvlink, setnvlink] = useState("");
+	const [err, seterr] = useState(false);
+	const [errMsg, seterrMsg] = useState("");
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
@@ -158,7 +161,13 @@ export default function Vendors() {
 				loadVendors();
 			})
 			.catch((err) => {
-				toastcomp("New Agreement Not Send", "error");
+				if (err.response.data.err) {
+					seterrMsg(err.response.data.err);
+					seterr(true);
+					toastcomp(err.response.data.err, "error");
+				} else {
+					toastcomp("New Agreement Not Send", "error");
+				}
 				console.log(err);
 				setagreement(null);
 				setcname("");
@@ -739,6 +748,52 @@ export default function Vendors() {
 											</button>
 										</div>
 										<Button label={t("Btn.Close")} btnType="button" handleClick={() => setSentAgreement(false)} />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={err} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seterr}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => seterr(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{err && errMsg.length > 0 && (
+											<PermiumComp userRole={userRole} title={errMsg} setUpgradePlan={seterr} />
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

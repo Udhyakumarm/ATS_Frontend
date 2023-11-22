@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import toastcomp from "@/components/toast";
 import { axiosInstance2 } from "../api/axiosApi";
-import { useLangStore, useUserStore, useNotificationStore } from "@/utils/code";
+import { useLangStore, useUserStore, useNotificationStore, useVersionStore } from "@/utils/code";
 import moment from "moment";
 const Toaster = dynamic(() => import("../../components/Toaster"), {
 	ssr: false
@@ -97,6 +97,7 @@ export default function AuthSignIn({ providers }: any) {
 	const user = useUserStore((state: { user: any }) => state.user);
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
+	const setversion = useVersionStore((state: { setversion: any }) => state.setversion);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
 	const reminder = useNotificationStore((state: { reminder: any }) => state.reminder);
 	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
@@ -165,6 +166,9 @@ export default function AuthSignIn({ providers }: any) {
 						// console.log("@", response.data);
 						if (response.data.role) {
 							setrole(response.data.role);
+						}
+						if (response.data.version) {
+							setversion(response.data.version);
 						}
 						if (response.data.type) {
 							settype(response.data.type);

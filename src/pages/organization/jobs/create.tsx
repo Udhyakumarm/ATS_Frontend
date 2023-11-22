@@ -14,7 +14,7 @@ import Orgtopbar from "@/components/organization/TopBar";
 import CardLayout_1 from "@/components/CardLayout-1";
 import { Tab, Dialog, Listbox, Transition } from "@headlessui/react";
 import CardLayout_2 from "@/components/CardLayout-2";
-import { addActivityLog, addNotifyJobLog, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyJobLog, axiosInstanceAuth, axiosInstance2 } from "@/pages/api/axiosApi";
 import Button from "@/components/Button";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
@@ -259,6 +259,9 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
+	const [err, seterr] = useState(false);
+	const [errMsg, seterrMsg] = useState("");
+
 	async function addJob(formData: any, type: any) {
 		await axiosInstanceAuth2
 			.post(`/job/create-job/`, formData)
@@ -294,7 +297,15 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				}
 			})
 			.catch((err) => {
-				toastcomp("Job Not Created", "error");
+				if (err.response.data.err) {
+					seterrMsg(err.response.data.err);
+					seterr(true);
+					toastcomp(err.response.data.err, "error");
+				} else {
+					toastcomp("Job Not Created", "error");
+				}
+				console.log("!!!", "JobErr", err);
+				// toastcomp("Job Not Created", "error");
 			});
 	}
 
@@ -306,8 +317,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			jdept.length <= 0 ||
 			jlang.length <= 0 ||
 			jloc.length <= 0 ||
-			(!jcollaborator && atsVersion === "enterprise") ||
-			(!jrecruiter && atsVersion === "enterprise")
+			(!jcollaborator && atsVersion != "standard") ||
+			(!jrecruiter && atsVersion != "standard")
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
@@ -327,10 +338,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator && atsVersion === "enterprise") {
+			if (!jcollaborator && atsVersion != "standard") {
 				toastcomp("One Collaborator Required", "error");
 			}
-			if (!jrecruiter && atsVersion === "enterprise") {
+			if (!jrecruiter && atsVersion != "standard") {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -574,7 +585,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 
 	async function searchLoc(value) {
 		if (value === "") value = "a";
-		await axiosInstance.marketplace_api
+		await axiosInstance2
 			.get(`/job/load/location/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
@@ -592,7 +603,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 	}
 
 	async function searchSkill(value) {
-		await axiosInstance.marketplace_api
+		await axiosInstance2
 			.get(`/job/load/skills/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
@@ -1295,230 +1306,226 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 								</Tab.Panel>
 
 								<Tab.Panel>
-									{atsVersion === "starter" ? (
-										<PermiumComp userRole={userRole} />
-									) : (
-										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t("Words.TeamMembers")} />
-											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-												<Tab.Group>
-													<Tab.List className={"mb-6 flex border-b"}>
-														{tabHeading_2.map((item, i) => (
-															<Tab key={i} as={Fragment}>
-																{({ selected }) => (
-																	<button
-																		type="button"
-																		className={
-																			"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
-																			" " +
-																			(selected
-																				? "border-primary text-primary dark:border-white dark:text-white"
-																				: "border-transparent text-darkGray dark:text-gray-400") +
-																			" " +
-																			(!item.hide && "display-none")
-																		}
-																	>
-																		<div className="mr-2">{item.icon}</div>
-																		{item.title}
-																	</button>
-																)}
-															</Tab>
-														))}
-													</Tab.List>
-													<Tab.Panels>
-														<Tab.Panel>
-															<div className="mb-6 flex flex-wrap items-center justify-between">
-																<div className="w-[350px] pr-2">
-																	<FormField
-																		fieldType="input"
-																		inputType="search"
-																		placeholder={t("Words.Search")}
-																		icon={<i className="fa-solid fa-magnifying-glass"></i>}
-																		value={search}
-																		handleChange={(e) => setsearch(e.target.value)}
-																	/>
-																</div>
-																{!upcomingSoon && (
-																	<div className="flex grow items-center justify-end">
-																		<div className="mr-3 w-[150px]">
-																			<FormField
-																				fieldType="select"
-																				placeholder={t("Words.Sort")}
-																				singleSelect={true}
-																				options={[
-																					{
-																						id: "A-to-Z",
-																						name: "A to Z"
-																					},
-																					{
-																						id: "Z-to-A",
-																						name: "Z to A"
-																					}
-																				]}
-																			/>
-																		</div>
-																		<div className="w-[150px]">
-																			<label
-																				htmlFor="teamSelectAll"
-																				className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																			>
-																				<span>{t("Words.SelectAll")}</span>
-																				<input type="checkbox" id="teamSelectAll" />
-																			</label>
-																		</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.TeamMembers")} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<Tab.Group>
+												<Tab.List className={"mb-6 flex border-b"}>
+													{tabHeading_2.map((item, i) => (
+														<Tab key={i} as={Fragment}>
+															{({ selected }) => (
+																<button
+																	type="button"
+																	className={
+																		"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary dark:border-white dark:text-white"
+																			: "border-transparent text-darkGray dark:text-gray-400") +
+																		" " +
+																		(!item.hide && "display-none")
+																	}
+																>
+																	<div className="mr-2">{item.icon}</div>
+																	{item.title}
+																</button>
+															)}
+														</Tab>
+													))}
+												</Tab.List>
+												<Tab.Panels>
+													<Tab.Panel>
+														<div className="mb-6 flex flex-wrap items-center justify-between">
+															<div className="w-[350px] pr-2">
+																<FormField
+																	fieldType="input"
+																	inputType="search"
+																	placeholder={t("Words.Search")}
+																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
+																	value={search}
+																	handleChange={(e) => setsearch(e.target.value)}
+																/>
+															</div>
+															{!upcomingSoon && (
+																<div className="flex grow items-center justify-end">
+																	<div className="mr-3 w-[150px]">
+																		<FormField
+																			fieldType="select"
+																			placeholder={t("Words.Sort")}
+																			singleSelect={true}
+																			options={[
+																				{
+																					id: "A-to-Z",
+																					name: "A to Z"
+																				},
+																				{
+																					id: "Z-to-A",
+																					name: "Z to A"
+																				}
+																			]}
+																		/>
 																	</div>
-																)}
-															</div>
-															<div className="overflow-x-auto">
-																{filterTeam && filterTeam.length > 0 ? (
-																	<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableTM">
-																		<thead>
-																			<tr>
-																				{TeamTableHead.map((item, i) => (
-																					<th className="border-b px-3 py-2 text-left" key={i}>
-																						{item.title}
-																					</th>
-																				))}
-																			</tr>
-																		</thead>
-																		<tbody>
-																			{filterTeam.map(
-																				(data, i) =>
-																					data["verified"] !== false && (
-																						<tr key={i}>
-																							<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
-																							<td className="border-b px-3 py-2 text-right">
-																								<Switch
-																									checked={ujtm.includes(data["id"])}
-																									onChange={(value: Boolean) => changeSwith(value, data)}
-																									className={`${
-																										ujtm.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"
-																									}
-          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-																								>
-																									<span className="sr-only">Use setting</span>
-																									<span
-																										aria-hidden="true"
-																										className={`${
-																											ujtm.includes(data["id"]) ? "translate-x-4" : "translate-x-0"
-																										}
-            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-																									/>
-																								</Switch>
-																							</td>
-																						</tr>
-																					)
-																			)}
-																		</tbody>
-																	</table>
-																) : (
-																	<>
-																		<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
-																			<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-																				<div className="mb-6 p-2">
-																					<Image
-																						src={noApplicantdata}
-																						alt="No Data"
-																						width={300}
-																						className="mx-auto max-h-[200px] w-auto max-w-[200px]"
-																					/>
-																				</div>
-																				<h5 className="mb-4 text-lg font-semibold">No Team Memeber</h5>
-																				<p className="mb-2 text-sm text-darkGray">
-																					There are no Team Memebers as of now ...
-																				</p>
-																			</div>
-																		</div>
-																	</>
-																)}
-															</div>
-														</Tab.Panel>
-														<Tab.Panel>
-															{upcomingSoon ? (
-																<UpcomingComp />
-															) : (
-																<div>
-																	{Array(4).fill(
+																	<div className="w-[150px]">
 																		<label
-																			htmlFor="checkDivison"
-																			className={
-																				"mb-3 block rounded border text-sm" +
-																				" " +
-																				(accordionOpen ? "border-slate-300" : "")
-																			}
+																			htmlFor="teamSelectAll"
+																			className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 																		>
-																			<div className="flex flex-wrap items-center px-4">
-																				<h6 className="grow py-3 font-bold">Software Developer</h6>
-																				<div className="py-3 text-right">
-																					<input type="checkbox" id="checkDivison" />
-																					<button
-																						type="button"
-																						className="ml-4 text-darkGray dark:text-gray-400"
-																						onClick={() => setAccordionOpen(!accordionOpen)}
-																					>
-																						<i
-																							className={
-																								"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
-																							}
-																						></i>
-																					</button>
-																				</div>
-																			</div>
-																			<Transition.Root show={accordionOpen} as={Fragment}>
-																				<Transition.Child
-																					as={Fragment}
-																					enter="ease-out duration-300"
-																					enterFrom="opacity-0"
-																					enterTo="opacity-100"
-																					leave="ease-in duration-200"
-																					leaveFrom="opacity-100"
-																					leaveTo="opacity-0"
-																				>
-																					<div className="border-t">
-																						<div className="overflow-x-auto">
-																							<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																								<thead>
-																									<tr>
-																										{TeamTableHead.map((item, i) => (
-																											<th className="border-b px-4 py-2 text-left" key={i}>
-																												{item.title}
-																											</th>
-																										))}
-																									</tr>
-																								</thead>
-																								<tbody>
-																									{Array(6).fill(
-																										<tr>
-																											<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
-																											<td className="border-b px-4 py-2 text-sm">Recruiter</td>
-																											<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
-																											<td className="border-b px-4 py-2 text-sm">On Pending</td>
-																											<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
-																										</tr>
-																									)}
-																								</tbody>
-																							</table>
-																						</div>
-																					</div>
-																				</Transition.Child>
-																			</Transition.Root>
+																			<span>{t("Words.SelectAll")}</span>
+																			<input type="checkbox" id="teamSelectAll" />
 																		</label>
-																	)}
+																	</div>
 																</div>
 															)}
-														</Tab.Panel>
-													</Tab.Panels>
-												</Tab.Group>
-											</div>
+														</div>
+														<div className="overflow-x-auto">
+															{filterTeam && filterTeam.length > 0 ? (
+																<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableTM">
+																	<thead>
+																		<tr>
+																			{TeamTableHead.map((item, i) => (
+																				<th className="border-b px-3 py-2 text-left" key={i}>
+																					{item.title}
+																				</th>
+																			))}
+																		</tr>
+																	</thead>
+																	<tbody>
+																		{filterTeam.map(
+																			(data, i) =>
+																				data["verified"] !== false && (
+																					<tr key={i}>
+																						<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																						<td className="border-b px-3 py-2 text-right">
+																							<Switch
+																								checked={ujtm.includes(data["id"])}
+																								onChange={(value: Boolean) => changeSwith(value, data)}
+																								className={`${
+																									ujtm.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"
+																								}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																							>
+																								<span className="sr-only">Use setting</span>
+																								<span
+																									aria-hidden="true"
+																									className={`${
+																										ujtm.includes(data["id"]) ? "translate-x-4" : "translate-x-0"
+																									}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																								/>
+																							</Switch>
+																						</td>
+																					</tr>
+																				)
+																		)}
+																	</tbody>
+																</table>
+															) : (
+																<>
+																	<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+																		<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+																			<div className="mb-6 p-2">
+																				<Image
+																					src={noApplicantdata}
+																					alt="No Data"
+																					width={300}
+																					className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																				/>
+																			</div>
+																			<h5 className="mb-4 text-lg font-semibold">No Team Memeber</h5>
+																			<p className="mb-2 text-sm text-darkGray">
+																				There are no Team Memebers as of now ...
+																			</p>
+																		</div>
+																	</div>
+																</>
+															)}
+														</div>
+													</Tab.Panel>
+													<Tab.Panel>
+														{upcomingSoon ? (
+															<UpcomingComp />
+														) : (
+															<div>
+																{Array(4).fill(
+																	<label
+																		htmlFor="checkDivison"
+																		className={
+																			"mb-3 block rounded border text-sm" +
+																			" " +
+																			(accordionOpen ? "border-slate-300" : "")
+																		}
+																	>
+																		<div className="flex flex-wrap items-center px-4">
+																			<h6 className="grow py-3 font-bold">Software Developer</h6>
+																			<div className="py-3 text-right">
+																				<input type="checkbox" id="checkDivison" />
+																				<button
+																					type="button"
+																					className="ml-4 text-darkGray dark:text-gray-400"
+																					onClick={() => setAccordionOpen(!accordionOpen)}
+																				>
+																					<i
+																						className={
+																							"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
+																						}
+																					></i>
+																				</button>
+																			</div>
+																		</div>
+																		<Transition.Root show={accordionOpen} as={Fragment}>
+																			<Transition.Child
+																				as={Fragment}
+																				enter="ease-out duration-300"
+																				enterFrom="opacity-0"
+																				enterTo="opacity-100"
+																				leave="ease-in duration-200"
+																				leaveFrom="opacity-100"
+																				leaveTo="opacity-0"
+																			>
+																				<div className="border-t">
+																					<div className="overflow-x-auto">
+																						<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																							<thead>
+																								<tr>
+																									{TeamTableHead.map((item, i) => (
+																										<th className="border-b px-4 py-2 text-left" key={i}>
+																											{item.title}
+																										</th>
+																									))}
+																								</tr>
+																							</thead>
+																							<tbody>
+																								{Array(6).fill(
+																									<tr>
+																										<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																										<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																										<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																										<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																										<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
+																									</tr>
+																								)}
+																							</tbody>
+																						</table>
+																					</div>
+																				</div>
+																			</Transition.Child>
+																		</Transition.Root>
+																	</label>
+																)}
+															</div>
+														)}
+													</Tab.Panel>
+												</Tab.Panels>
+											</Tab.Group>
 										</div>
-									)}
+									</div>
 								</Tab.Panel>
 
 								<Tab.Panel>
-									{atsVersion != "enterprise" ? (
+									{atsVersion === "standard" ? (
 										<PermiumComp userRole={userRole} />
 									) : (
 										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
@@ -1931,6 +1938,51 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</>
 											)}
 										</p>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={err} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={seterr}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "プランをアップグレードする" : "Upgrade Your Plan"}
+										</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => seterr(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{err && errMsg.length > 0 && (
+											<PermiumComp userRole={userRole} title={errMsg} setUpgradePlan={seterr} />
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

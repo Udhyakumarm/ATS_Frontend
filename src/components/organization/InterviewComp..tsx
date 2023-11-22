@@ -197,7 +197,7 @@ export default function InterviewComp({ sklLoad, data, axiosInstanceAuth2, upcom
 								}}
 							/>
 						</div>
-						{version != "starter" && (
+						{version === "standard" && (
 							<div className="w-full py-3 text-right lg:max-w-[100px]">
 								<button
 									type="button"

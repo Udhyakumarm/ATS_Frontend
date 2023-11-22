@@ -77,12 +77,16 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 	const [jobd, setjobd] = useState([{ id: 1, name: "All", refid: "ALL", unavailable: false }]);
 
 	useEffect(() => {
-		if (session) {
-			settoken(session.accessToken as string);
-		} else if (!session) {
-			settoken("");
+		if (atsVersion === "standard") {
+			router.push("/organizaton");
+		} else {
+			if (session) {
+				settoken(session.accessToken as string);
+			} else if (!session) {
+				settoken("");
+			}
 		}
-	}, [session]);
+	}, [session, atsVersion]);
 	const [selectedJob, setSelectedJob] = useState(jobd[0]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);

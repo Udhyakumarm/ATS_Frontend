@@ -34,6 +34,10 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		// 	return name === "Integrations" || name === "Vendors" || name === "Calendar";
 		// }
 		// if (atsVersion === "enterprise") {
+		// }
+		// if (atsVersion === "standard") {
+		// 	return name === "Vendors";
+		// } else {
 		return false;
 		// }
 	}

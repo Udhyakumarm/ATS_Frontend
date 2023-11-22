@@ -368,7 +368,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 						</div>
 					) : (
 						<>
-							{atsVersion === "starter" && refresh === 2 ? (
+							{/* {atsVersion === "starter" && refresh === 2 ? (
 								<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
 									<div className="rounded-normal bg-white p-6 shadow-normal dark:bg-gray-800">
 										<h2 className="mb-6 text-lg font-bold">{srcLang === "ja" ? "すべての応募" : "All Applicants"}</h2>
@@ -483,93 +483,93 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 										</table>
 									</div>
 								</div>
-							) : (
-								<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-									{refresh === 2 && (
-										<>
-											<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
-												<div className="mr-3 flex">
-													<Listbox value={selectedJob} onChange={setSelectedJob}>
-														<Listbox.Button className={"text-lg font-bold"}>
-															{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
-														</Listbox.Button>
-														<Transition
-															enter="transition duration-100 ease-out"
-															enterFrom="transform scale-95 opacity-0"
-															enterTo="transform scale-100 opacity-100"
-															leave="transition duration-75 ease-out"
-															leaveFrom="transform scale-100 opacity-100"
-															leaveTo="transform scale-95 opacity-0"
+							) : ( */}
+							<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+								{refresh === 2 && (
+									<>
+										<div className="relative z-[2] flex flex-wrap items-center justify-between bg-white px-4 py-4 shadow-normal dark:bg-gray-800 lg:px-8">
+											<div className="mr-3 flex">
+												<Listbox value={selectedJob} onChange={setSelectedJob}>
+													<Listbox.Button className={"text-lg font-bold"}>
+														{selectedJob["name"]} <i className="fa-solid fa-chevron-down ml-2 text-sm"></i>
+													</Listbox.Button>
+													<Transition
+														enter="transition duration-100 ease-out"
+														enterFrom="transform scale-95 opacity-0"
+														enterTo="transform scale-100 opacity-100"
+														leave="transition duration-75 ease-out"
+														leaveFrom="transform scale-100 opacity-100"
+														leaveTo="transform scale-95 opacity-0"
+													>
+														<Listbox.Options
+															className={
+																"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
+															}
 														>
-															<Listbox.Options
-																className={
-																	"absolute left-0 top-[100%] mt-2 w-[250px] rounded-normal bg-white py-2 shadow-normal dark:bg-gray-700"
-																}
-															>
-																{jobd.length > 0 &&
-																	jobd.map((item) => (
-																		<Listbox.Option
-																			key={item.id}
-																			value={item}
-																			disabled={item.unavailable}
-																			className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-																		>
-																			{({ selected }) => (
-																				<>
-																					<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
-																						{item.name}
+															{jobd.length > 0 &&
+																jobd.map((item) => (
+																	<Listbox.Option
+																		key={item.id}
+																		value={item}
+																		disabled={item.unavailable}
+																		className="relative cursor-pointer px-6 py-2 pl-8 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	>
+																		{({ selected }) => (
+																			<>
+																				<span className={`clamp_1 ${selected ? "font-bold" : "font-normal"}`}>
+																					{item.name}
+																				</span>
+																				{selected ? (
+																					<span className="absolute left-3 top-[10px]">
+																						<i className="fa-solid fa-check"></i>
 																					</span>
-																					{selected ? (
-																						<span className="absolute left-3 top-[10px]">
-																							<i className="fa-solid fa-check"></i>
-																						</span>
-																					) : null}
-																				</>
-																			)}
-																		</Listbox.Option>
-																	))}
-															</Listbox.Options>
-														</Transition>
-													</Listbox>
-													<div className="ml-3">
-														<FormField
-															fieldType="input"
-															inputType="search"
-															placeholder={t("Words.Search")}
-															icon={<i className="fa-solid fa-magnifying-glass"></i>}
-															value={search}
-															// handleChange={(e) => setsearch(e.target.value)}
-															handleChange={handleInputChange}
-														/>
-													</div>
+																				) : null}
+																			</>
+																		)}
+																	</Listbox.Option>
+																))}
+														</Listbox.Options>
+													</Transition>
+												</Listbox>
+												<div className="ml-3">
+													<FormField
+														fieldType="input"
+														inputType="search"
+														placeholder={t("Words.Search")}
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														value={search}
+														// handleChange={(e) => setsearch(e.target.value)}
+														handleChange={handleInputChange}
+													/>
 												</div>
-												<aside className="flex items-center">
-													{!upcomingSoon && (
-														<div className="mr-4 flex items-center">
-															<p className="mr-3 font-semibold">Add Board</p>
-															<button
-																type="button"
-																className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
-																onClick={() => setCreateBoard(true)}
-															>
-																<i className="fa-solid fa-plus"></i>
-															</button>
-														</div>
-													)}
-													<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
-												</aside>
 											</div>
+											<aside className="flex items-center">
+												{!upcomingSoon && (
+													<div className="mr-4 flex items-center">
+														<p className="mr-3 font-semibold">Add Board</p>
+														<button
+															type="button"
+															className="h-7 w-7 rounded bg-gray-400 text-sm text-white hover:bg-gray-700"
+															onClick={() => setCreateBoard(true)}
+														>
+															<i className="fa-solid fa-plus"></i>
+														</button>
+													</div>
+												)}
+												<TeamMembers selectedData={selectedJob} axiosInstanceAuth2={axiosInstanceAuth2} />
+											</aside>
+										</div>
 
-											<Canban
-												applicantlist={applicantlist}
-												token={token}
-												setcardarefid={setcardarefid}
-												setcardstatus={setcardstatus}
-											/>
-										</>
-									)}
-								</div>
-							)}
+										<Canban
+											applicantlist={applicantlist}
+											token={token}
+											setcardarefid={setcardarefid}
+											setcardstatus={setcardstatus}
+										/>
+									</>
+								)}
+							</div>
+							{/* )} */}
 						</>
 					)}
 				</main>
