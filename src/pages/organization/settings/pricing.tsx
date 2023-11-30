@@ -123,8 +123,8 @@ export default function Pricing() {
 		if (token && token.length > 0) {
 			getCurrentPlanInfo();
 			getALLPlanInfo();
-			getALLVPlanInfo();
-			getALLVCPlanInfo();
+			// getALLVPlanInfo();
+			// getALLVCPlanInfo();
 		}
 	}, [token, tab]);
 
@@ -961,10 +961,10 @@ export default function Pricing() {
 									)}
 								</div>
 								{/* vpayout */}
-								<br />
+								{/* <br />
 								<hr />
-								<br />
-								<div>
+								<br /> */}
+								{/* <div>
 									<button
 										className={
 											"my-2 mr-4 flex gap-2 border-b-4 border-primary py-1 text-base font-semibold text-primary focus:outline-none dark:border-white dark:text-white"
@@ -1032,40 +1032,8 @@ export default function Pricing() {
 													))}
 											</tbody>
 										</table>
-										{/* <div className="my-2 text-center">
-										<Button label="Download CSV" btnStyle="sm" />
-									</div> */}
 									</>
-
-									{/* <table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-										<thead>
-											<tr>
-												<th className="border-b px-4 py-2 text-left">Total Applications</th>
-												<th className="border-b px-4 py-2 text-left">Amount</th>
-												<th className="border-b px-4 py-2 text-left">Billing cycle </th>
-												<th className="border-b px-4 py-2 text-left">Paid on date </th>
-												<th className="border-b px-4 py-2 text-left">Due</th>
-												<th className="border-b px-4 py-2 text-left">Paid</th>
-											</tr>
-										</thead>
-										<tbody>
-											{Array(5).fill(
-												<tr>
-													<td className="border-b px-4 py-2 text-sm">200</td>
-													<td className="border-b px-4 py-2 text-sm">￥２0000/-</td>
-													<td className="border-b px-4 py-2 text-sm">Oct 15- Nov 12 2023</td>
-													<td className="border-b px-4 py-2 text-sm">Nov 14,2023</td>
-													<td className="border-b px-4 py-2 text-sm text-primary hover:underline">
-														Invoice&nbsp;<i className="fa-solid fa-circle-check text-green-500"></i>
-													</td>
-													<td className="border-b px-4 py-2 text-sm text-primary hover:underline">
-														<span className="text-red-500">due</span>Invoice{" "}
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table> */}
-								</div>
+								</div> */}
 							</div>
 						)}
 					</div>

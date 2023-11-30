@@ -19,6 +19,7 @@ import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import toastcomp from "@/components/toast";
 
 export default function Settings({ atsVersion, userRole, comingSoon, currentUser }: any) {
 	const { t } = useTranslation("common");
@@ -50,6 +51,25 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		}
 		return false;
 	}
+	const [cplan, setcplan] = useState({});
+	async function getCurrentPlanInfo() {
+		await axiosInstanceAuth2
+			.get(`/subscription/get-active-plan/`)
+			.then(async (res) => {
+				console.log("!!!", "get-active-plan", res.data);
+				const data = res.data;
+				if (data.length > 0) {
+					setcplan(data[0]);
+				} else {
+					setcplan({});
+				}
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("get-active-plan error", "error");
+				setcplan({});
+			});
+	}
 
 	useEffect(() => {
 		console.log("!!!", "currentuser", currentUser);
@@ -73,6 +93,12 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 			settoken("");
 		}
 	}, [session]);
+
+	useEffect(() => {
+		if (token && token.length > 0) {
+			getCurrentPlanInfo();
+		}
+	}, [token]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	function isExpired(name: any) {
@@ -189,13 +215,11 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 														</div>
 														{links.link === "/organization/settings/pricing" && currentUser.expire_date && (
 															<p className="rounded-lg bg-primary/75 px-2 py-1 text-center font-bold text-white">
-																{currentUser.is_expired ? (
-																	<>0 days left</>
-																) : (
+																{cplan.expire && (
 																	<>
-																		{moment(currentUser.expire_date).diff(moment(), "days") <= 0
+																		{moment(cplan.expire).diff(moment(), "days") <= 0
 																			? "0"
-																			: moment(currentUser.expire_date).diff(moment(), "days")}
+																			: moment(cplan.expire).diff(moment(), "days")}
 																		&nbsp;days left
 																	</>
 																)}

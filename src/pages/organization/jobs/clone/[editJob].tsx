@@ -237,7 +237,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 						for (let j = 0; j < jobData["team"].length; j++) {
 							if (jobData["team"][j]["verified"] !== false) {
 								arr.push(jobData["team"][j]["id"]);
-								if (jobData["team"][j]["role"] === "Collaborator") {
+								if (jobData["team"][j]["role"] === "Hiring Manager") {
 									setjcollaborator(true);
 								}
 								if (jobData["team"][j]["role"] === "Recruiter") {
@@ -439,7 +439,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				toastcomp("Job Department Required", "error");
 			}
 			if (!jcollaborator && atsVersion != "standard") {
-				toastcomp("One Collaborator Required", "error");
+				toastcomp("One Hiring Manager Required", "error");
 			}
 			if (!jrecruiter && atsVersion != "standard") {
 				toastcomp("One Recruiter Required", "error");
@@ -887,7 +887,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		if (tm.length > 0) {
 			for (let i = 0; i < tm.length; i++) {
 				if (ujtm.includes(tm[i]["id"])) {
-					if (tm[i]["role"] === "Collaborator") {
+					if (tm[i]["role"] === "Hiring Manager") {
 						setjcollaborator(true);
 					}
 					if (tm[i]["role"] === "Recruiter") {
