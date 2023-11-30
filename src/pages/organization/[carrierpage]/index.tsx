@@ -89,8 +89,8 @@ export default function CanCareer() {
 									}
 									alt="Banner"
 									width={1200}
-									height={200}
-									className="mx-auto mb-6 max-h-[200px] rounded-large object-cover"
+									height={500}
+									className="mx-auto mb-6 max-h-[500px] rounded-large object-cover"
 								/>
 								<div className="mx-auto w-full max-w-[1100px] px-4">
 									<div className="mb-6 rounded-normal bg-white px-8 py-4 dark:bg-gray-800">

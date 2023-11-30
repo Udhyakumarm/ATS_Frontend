@@ -339,7 +339,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				toastcomp("Job Department Required", "error");
 			}
 			if (!jcollaborator && atsVersion != "standard") {
-				toastcomp("One Collaborator Required", "error");
+				toastcomp("One Hiring Manager Required", "error");
 			}
 			if (!jrecruiter && atsVersion != "standard") {
 				toastcomp("One Recruiter Required", "error");
@@ -807,7 +807,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		if (tm.length > 0) {
 			for (let i = 0; i < tm.length; i++) {
 				if (ujtm.includes(tm[i]["id"])) {
-					if (tm[i]["role"] === "Collaborator") {
+					if (tm[i]["role"] === "Hiring Manager") {
 						setjcollaborator(true);
 					}
 					if (tm[i]["role"] === "Recruiter") {
