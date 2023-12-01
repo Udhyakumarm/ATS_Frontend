@@ -283,65 +283,67 @@ export default function InboxFrame({
 	}
 
 	async function handleSendClick() {
-		isStopTypingFun(socket, cardActiveData["other_user_id"]);
-		if (file != null) {
-			const fd = new FormData();
-			fd.append("file", file);
-			await axiosInstanceAuth2.post(`/inbox/upload/`, fd).then(async (res) => {
-				var id = res.data["id"].toString();
-				console.log("id", id);
-				if (id != null && id.length > 0) {
-					let user_pk = cardActiveData["other_user_id"].toString();
-					if (reply) {
-						sendOutgoingFileMessage(socket, id, text, user_pk, replyC["id"]);
-					} else {
-						sendOutgoingFileMessage(socket, id, text, user_pk, "-1");
+		if (!composition) {
+			isStopTypingFun(socket, cardActiveData["other_user_id"]);
+			if (file != null) {
+				const fd = new FormData();
+				fd.append("file", file);
+				await axiosInstanceAuth2.post(`/inbox/upload/`, fd).then(async (res) => {
+					var id = res.data["id"].toString();
+					console.log("id", id);
+					if (id != null && id.length > 0) {
+						let user_pk = cardActiveData["other_user_id"].toString();
+						if (reply) {
+							sendOutgoingFileMessage(socket, id, text, user_pk, replyC["id"]);
+						} else {
+							sendOutgoingFileMessage(socket, id, text, user_pk, "-1");
+						}
+						setreply(false);
+						setreplyC({});
+						setfile(null);
+						setmedia(null);
+						settext("");
+						loadFrame(cardActiveData["other_user_id"]);
 					}
-					setreply(false);
-					setreplyC({});
-					setfile(null);
-					setmedia(null);
-					settext("");
-					loadFrame(cardActiveData["other_user_id"]);
-				}
-			});
-		} else if (media != null) {
-			const fd = new FormData();
-			fd.append("file", media);
-			await axiosInstanceAuth2.post(`/inbox/upload2/`, fd).then(async (res) => {
-				var id = res.data["id"].toString();
-				console.log("id", id);
-				if (id != null && id.length > 0) {
-					let user_pk = cardActiveData["other_user_id"].toString();
-					if (reply) {
-						sendOutgoingMediaMessage(socket, id, text, user_pk, replyC["id"]);
-					} else {
-						sendOutgoingMediaMessage(socket, id, text, user_pk, "-1");
+				});
+			} else if (media != null) {
+				const fd = new FormData();
+				fd.append("file", media);
+				await axiosInstanceAuth2.post(`/inbox/upload2/`, fd).then(async (res) => {
+					var id = res.data["id"].toString();
+					console.log("id", id);
+					if (id != null && id.length > 0) {
+						let user_pk = cardActiveData["other_user_id"].toString();
+						if (reply) {
+							sendOutgoingMediaMessage(socket, id, text, user_pk, replyC["id"]);
+						} else {
+							sendOutgoingMediaMessage(socket, id, text, user_pk, "-1");
+						}
+						setreply(false);
+						setreplyC({});
+						setfile(null);
+						setmedia(null);
+						settext("");
+						loadFrame(cardActiveData["other_user_id"]);
 					}
-					setreply(false);
-					setreplyC({});
-					setfile(null);
-					setmedia(null);
-					settext("");
-					loadFrame(cardActiveData["other_user_id"]);
-				}
-			});
-		} else {
-			if (editText.length > 0 && editId.length > 0) {
-				editMsg2();
+				});
 			} else {
-				let user_pk = cardActiveData["other_user_id"].toString();
-				if (reply) {
-					sendOutgoingTextMessage(socket, text, user_pk, replyC["id"]);
+				if (editText.length > 0 && editId.length > 0) {
+					editMsg2();
 				} else {
-					sendOutgoingTextMessage(socket, text, user_pk, "-1");
+					let user_pk = cardActiveData["other_user_id"].toString();
+					if (reply) {
+						sendOutgoingTextMessage(socket, text, user_pk, replyC["id"]);
+					} else {
+						sendOutgoingTextMessage(socket, text, user_pk, "-1");
+					}
+					setreply(false);
+					setreplyC({});
+					setfile(null);
+					setmedia(null);
+					settext("");
+					loadFrame(cardActiveData["other_user_id"]);
 				}
-				setreply(false);
-				setreplyC({});
-				setfile(null);
-				setmedia(null);
-				settext("");
-				loadFrame(cardActiveData["other_user_id"]);
 			}
 		}
 	}
@@ -377,6 +379,24 @@ export default function InboxFrame({
 			});
 		}
 	}, [msg]);
+
+	const [composition, setcomposition] = useState(false);
+	const handleCompositionStart = (e) => {
+		console.log("Composition Start:", e.data);
+		setcomposition(true);
+	};
+
+	const handleCompositionUpdate = (e) => {
+		console.log("Composition Update:", e.data);
+		// setCompositionText(e.data);
+	};
+
+	const handleCompositionEnd = (e) => {
+		console.log("Composition End:", e.data);
+		setcomposition(false);
+		// setCompositionText('');
+		// setInputText(e.target.value); // Save the final composed text
+	};
 
 	return (
 		<>
@@ -929,6 +949,9 @@ export default function InboxFrame({
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
 									placeholder="Type something..."
 									value={text}
+									onCompositionStart={handleCompositionStart}
+									onCompositionUpdate={handleCompositionUpdate}
+									onCompositionEnd={handleCompositionEnd}
 									onChange={(e) => {
 										settext(e.target.value);
 										setisTyping(true);
@@ -937,7 +960,7 @@ export default function InboxFrame({
 										setisTyping(false);
 									}}
 									onKeyDown={(e) => {
-										if (e.key === "Enter") {
+										if (e.key === "Enter" && !composition) {
 											e.preventDefault();
 											e.stopPropagation();
 											handleSendClick();
