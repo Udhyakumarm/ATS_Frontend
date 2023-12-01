@@ -117,18 +117,18 @@ any) {
 	return (
 		<>
 			<div
-				onContextMenu={(e) => {
-					if (
-						(typeof document.hasFocus === "function" && !document.hasFocus()) ||
-						!cardActive ||
-						cardActiveData["id"] != data["id"]
-					)
-						return;
+			// onContextMenu={(e) => {
+			// 	if (
+			// 		(typeof document.hasFocus === "function" && !document.hasFocus()) ||
+			// 		!cardActive ||
+			// 		cardActiveData["id"] != data["id"]
+			// 	)
+			// 		return;
 
-					e.preventDefault();
-					setAnchorPoint({ x: e.clientX, y: e.clientY });
-					setOpen(true);
-				}}
+			// 	e.preventDefault();
+			// 	setAnchorPoint({ x: e.clientX, y: e.clientY });
+			// 	setOpen(true);
+			// }}
 			>
 				<div
 					className={

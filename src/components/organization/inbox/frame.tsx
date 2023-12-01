@@ -982,9 +982,9 @@ export default function InboxFrame({
 										</div>
 									)}
 
-									<button type="button" className="block px-0.5 text-lg leading-normal">
+									{/* <button type="button" className="block px-0.5 text-lg leading-normal">
 										<i className="fa-solid fa-microphone"></i>
-									</button>
+									</button> */}
 									<input
 										type="file"
 										ref={fileInputRef}
@@ -1069,7 +1069,7 @@ export default function InboxFrame({
 														<span className="pl-2">Image and Video</span>
 													</button>
 												</Menu.Item>
-												<Menu.Item>
+												{/* <Menu.Item>
 													<button
 														type="button"
 														className="relative flex w-full cursor-pointer items-center px-4 py-2 text-left text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-900"
@@ -1094,7 +1094,7 @@ export default function InboxFrame({
 														</svg>
 														<span className="pl-2">Event</span>
 													</button>
-												</Menu.Item>
+												</Menu.Item> */}
 												<Menu.Item>
 													<button
 														type="button"
