@@ -417,8 +417,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			jdept.length <= 0 ||
 			jlang.length <= 0 ||
 			jloc.length <= 0 ||
-			(!jcollaborator && atsVersion != "standard") ||
-			(!jrecruiter && atsVersion != "standard")
+			(!jcollaborator && !["standard", "starter"].includes(atsVersion)) ||
+			(!jrecruiter && !["standard", "starter"].includes(atsVersion))
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
@@ -438,10 +438,10 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator && atsVersion != "standard") {
+			if (!jcollaborator && !["standard", "starter"].includes(atsVersion)) {
 				toastcomp("One Hiring Manager Required", "error");
 			}
-			if (!jrecruiter && atsVersion != "standard") {
+			if (!jrecruiter && !["standard", "starter"].includes(atsVersion)) {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -1157,22 +1157,24 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.JobDescription")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
-											<div className="mb-4 w-full text-right">
-												<button
-													type="button"
-													onClick={() => onAIGenerateHandler()}
-													className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
-												>
-													<span className="mr-3">{t("Words.GenerateDescription")}</span>
-													{aiLoader ? (
-														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
-													) : (
-														<div className="flex h-[30px] w-[30px] items-center justify-center ">
-															<Image src={genDesc} alt="AI" width={100} height={100} className="" />
-														</div>
-													)}
-												</button>
-											</div>
+											{atsVersion != "starter" && (
+												<div className="mb-4 w-full text-right">
+													<button
+														type="button"
+														onClick={() => onAIGenerateHandler()}
+														className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
+													>
+														<span className="mr-3">{t("Words.GenerateDescription")}</span>
+														{aiLoader ? (
+															<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
+														) : (
+															<div className="flex h-[30px] w-[30px] items-center justify-center ">
+																<Image src={genDesc} alt="AI" width={100} height={100} className="" />
+															</div>
+														)}
+													</button>
+												</div>
+											)}
 											<FormField
 												fieldType="reactquill"
 												id="description"
@@ -1379,205 +1381,201 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 								</Tab.Panel>
 
 								<Tab.Panel>
-									{atsVersion === "standard" ? (
-										<PermiumComp userRole={userRole} />
-									) : (
-										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t("Words.TeamMembers")} />
-											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-												<Tab.Group>
-													<Tab.List className={"mb-6 flex border-b"}>
-														{tabHeading_2.map((item, i) => (
-															<Tab key={i} as={Fragment}>
-																{({ selected }) => (
-																	<button
-																		type="button"
-																		className={
-																			"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
-																			" " +
-																			(selected
-																				? "border-primary text-primary"
-																				: "border-transparent text-darkGray dark:text-gray-400")
-																		}
-																	>
-																		<div className="mr-2">{item.icon}</div>
-																		{item.title}
-																	</button>
-																)}
-															</Tab>
-														))}
-													</Tab.List>
-													<Tab.Panels>
-														<Tab.Panel>
-															<div className="mb-6 flex flex-wrap items-center justify-between">
-																<div className="w-[350px] pr-2">
-																	<FormField
-																		fieldType="input"
-																		inputType="search"
-																		placeholder={t("Words.Search")}
-																		icon={<i className="fa-solid fa-magnifying-glass"></i>}
-																		value={search}
-																		handleChange={(e) => setsearch(e.target.value)}
-																	/>
-																</div>
-																{!upcomingSoon && (
-																	<div className="flex grow items-center justify-end">
-																		<div className="mr-3 w-[150px]">
-																			<FormField
-																				fieldType="select"
-																				placeholder={t("Words.Sort")}
-																				singleSelect={true}
-																				options={[
-																					{
-																						id: "A-to-Z",
-																						name: "A to Z"
-																					},
-																					{
-																						id: "Z-to-A",
-																						name: "Z to A"
-																					}
-																				]}
-																			/>
-																		</div>
-																		<div className="w-[150px]">
-																			<label
-																				htmlFor="teamSelectAll"
-																				className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																			>
-																				<span>{t("Words.SelectAll")}</span>
-																				<input type="checkbox" id="teamSelectAll" />
-																			</label>
-																		</div>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.TeamMembers")} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<Tab.Group>
+												<Tab.List className={"mb-6 flex border-b"}>
+													{tabHeading_2.map((item, i) => (
+														<Tab key={i} as={Fragment}>
+															{({ selected }) => (
+																<button
+																	type="button"
+																	className={
+																		"mr-6 inline-flex items-center border-b-4 px-4 py-2 font-semibold focus:outline-none" +
+																		" " +
+																		(selected
+																			? "border-primary text-primary"
+																			: "border-transparent text-darkGray dark:text-gray-400")
+																	}
+																>
+																	<div className="mr-2">{item.icon}</div>
+																	{item.title}
+																</button>
+															)}
+														</Tab>
+													))}
+												</Tab.List>
+												<Tab.Panels>
+													<Tab.Panel>
+														<div className="mb-6 flex flex-wrap items-center justify-between">
+															<div className="w-[350px] pr-2">
+																<FormField
+																	fieldType="input"
+																	inputType="search"
+																	placeholder={t("Words.Search")}
+																	icon={<i className="fa-solid fa-magnifying-glass"></i>}
+																	value={search}
+																	handleChange={(e) => setsearch(e.target.value)}
+																/>
+															</div>
+															{!upcomingSoon && (
+																<div className="flex grow items-center justify-end">
+																	<div className="mr-3 w-[150px]">
+																		<FormField
+																			fieldType="select"
+																			placeholder={t("Words.Sort")}
+																			singleSelect={true}
+																			options={[
+																				{
+																					id: "A-to-Z",
+																					name: "A to Z"
+																				},
+																				{
+																					id: "Z-to-A",
+																					name: "Z to A"
+																				}
+																			]}
+																		/>
 																	</div>
-																)}
-															</div>
-															<div className="overflow-x-auto">
-																<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																	<thead>
-																		<tr>
-																			{TeamTableHead.map((item, i) => (
-																				<th className="border-b px-3 py-2 text-left" key={i}>
-																					{item.title}
-																				</th>
-																			))}
-																		</tr>
-																	</thead>
-																	<tbody>
-																		{filterTeam &&
-																			ujtm &&
-																			filterTeam.map(
-																				(data, i) =>
-																					data["verified"] !== false && (
-																						<tr key={i}>
-																							<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																							<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
-																							<td className="border-b px-3 py-2 text-right">
-																								<Switch
-																									checked={ujtm.includes(data["id"])}
-																									onChange={(value: Boolean) => changeSwith(value, data)}
-																									className={`${
-																										ujtm.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"
-																									}
-          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-																								>
-																									<span className="sr-only">Use setting</span>
-																									<span
-																										aria-hidden="true"
-																										className={`${
-																											ujtm.includes(data["id"]) ? "translate-x-4" : "translate-x-0"
-																										}
-            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-																									/>
-																								</Switch>
-																							</td>
-																						</tr>
-																					)
-																			)}
-																	</tbody>
-																</table>
-															</div>
-														</Tab.Panel>
-														<Tab.Panel>
-															{upcomingSoon ? (
-																<UpcomingComp />
-															) : (
-																<div>
-																	{Array(4).fill(
+																	<div className="w-[150px]">
 																		<label
-																			htmlFor="checkDivison"
-																			className={
-																				"mb-3 block rounded border text-sm" +
-																				" " +
-																				(accordionOpen ? "border-slate-300" : "")
-																			}
+																			htmlFor="teamSelectAll"
+																			className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
 																		>
-																			<div className="flex flex-wrap items-center px-4">
-																				<h6 className="grow py-3 font-bold">Software Developer</h6>
-																				<div className="py-3 text-right">
-																					<input type="checkbox" id="checkDivison" />
-																					<button
-																						type="button"
-																						className="ml-4 text-darkGray dark:text-gray-400"
-																						onClick={() => setAccordionOpen(!accordionOpen)}
-																					>
-																						<i
-																							className={
-																								"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
-																							}
-																						></i>
-																					</button>
-																				</div>
-																			</div>
-																			<Transition.Root show={accordionOpen} as={Fragment}>
-																				<Transition.Child
-																					as={Fragment}
-																					enter="ease-out duration-300"
-																					enterFrom="opacity-0"
-																					enterTo="opacity-100"
-																					leave="ease-in duration-200"
-																					leaveFrom="opacity-100"
-																					leaveTo="opacity-0"
-																				>
-																					<div className="border-t">
-																						<div className="overflow-x-auto">
-																							<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
-																								<thead>
-																									<tr>
-																										{TeamTableHead.map((item, i) => (
-																											<th className="border-b px-4 py-2 text-left" key={i}>
-																												{item.title}
-																											</th>
-																										))}
-																									</tr>
-																								</thead>
-																								<tbody>
-																									{Array(6).fill(
-																										<tr>
-																											<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
-																											<td className="border-b px-4 py-2 text-sm">Recruiter</td>
-																											<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
-																											<td className="border-b px-4 py-2 text-sm">On Pending</td>
-																											<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
-																										</tr>
-																									)}
-																								</tbody>
-																							</table>
-																						</div>
-																					</div>
-																				</Transition.Child>
-																			</Transition.Root>
+																			<span>{t("Words.SelectAll")}</span>
+																			<input type="checkbox" id="teamSelectAll" />
 																		</label>
-																	)}
+																	</div>
 																</div>
 															)}
-														</Tab.Panel>
-													</Tab.Panels>
-												</Tab.Group>
-											</div>
+														</div>
+														<div className="overflow-x-auto">
+															<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																<thead>
+																	<tr>
+																		{TeamTableHead.map((item, i) => (
+																			<th className="border-b px-3 py-2 text-left" key={i}>
+																				{item.title}
+																			</th>
+																		))}
+																	</tr>
+																</thead>
+																<tbody>
+																	{filterTeam &&
+																		ujtm &&
+																		filterTeam.map(
+																			(data, i) =>
+																				data["verified"] !== false && (
+																					<tr key={i}>
+																						<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																						<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																						<td className="border-b px-3 py-2 text-right">
+																							<Switch
+																								checked={ujtm.includes(data["id"])}
+																								onChange={(value: Boolean) => changeSwith(value, data)}
+																								className={`${
+																									ujtm.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"
+																								}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																							>
+																								<span className="sr-only">Use setting</span>
+																								<span
+																									aria-hidden="true"
+																									className={`${
+																										ujtm.includes(data["id"]) ? "translate-x-4" : "translate-x-0"
+																									}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																								/>
+																							</Switch>
+																						</td>
+																					</tr>
+																				)
+																		)}
+																</tbody>
+															</table>
+														</div>
+													</Tab.Panel>
+													<Tab.Panel>
+														{upcomingSoon ? (
+															<UpcomingComp />
+														) : (
+															<div>
+																{Array(4).fill(
+																	<label
+																		htmlFor="checkDivison"
+																		className={
+																			"mb-3 block rounded border text-sm" +
+																			" " +
+																			(accordionOpen ? "border-slate-300" : "")
+																		}
+																	>
+																		<div className="flex flex-wrap items-center px-4">
+																			<h6 className="grow py-3 font-bold">Software Developer</h6>
+																			<div className="py-3 text-right">
+																				<input type="checkbox" id="checkDivison" />
+																				<button
+																					type="button"
+																					className="ml-4 text-darkGray dark:text-gray-400"
+																					onClick={() => setAccordionOpen(!accordionOpen)}
+																				>
+																					<i
+																						className={
+																							"fa-solid" + " " + (accordionOpen ? "fa-chevron-up" : "fa-chevron-down")
+																						}
+																					></i>
+																				</button>
+																			</div>
+																		</div>
+																		<Transition.Root show={accordionOpen} as={Fragment}>
+																			<Transition.Child
+																				as={Fragment}
+																				enter="ease-out duration-300"
+																				enterFrom="opacity-0"
+																				enterTo="opacity-100"
+																				leave="ease-in duration-200"
+																				leaveFrom="opacity-100"
+																				leaveTo="opacity-0"
+																			>
+																				<div className="border-t">
+																					<div className="overflow-x-auto">
+																						<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+																							<thead>
+																								<tr>
+																									{TeamTableHead.map((item, i) => (
+																										<th className="border-b px-4 py-2 text-left" key={i}>
+																											{item.title}
+																										</th>
+																									))}
+																								</tr>
+																							</thead>
+																							<tbody>
+																								{Array(6).fill(
+																									<tr>
+																										<td className="border-b px-4 py-2 text-sm">Jane Cooper</td>
+																										<td className="border-b px-4 py-2 text-sm">Recruiter</td>
+																										<td className="border-b px-4 py-2 text-sm">jane@microsoft.com</td>
+																										<td className="border-b px-4 py-2 text-sm">On Pending</td>
+																										<td className="border-b px-4 py-2 text-sm">Hiring Manager</td>
+																									</tr>
+																								)}
+																							</tbody>
+																						</table>
+																					</div>
+																				</div>
+																			</Transition.Child>
+																		</Transition.Root>
+																	</label>
+																)}
+															</div>
+														)}
+													</Tab.Panel>
+												</Tab.Panels>
+											</Tab.Group>
 										</div>
-									)}
+									</div>
 								</Tab.Panel>
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">

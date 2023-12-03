@@ -19,7 +19,7 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	function blurOrNot(name: any) {
-		if (atsVersion === "standard") {
+		if (atsVersion === "standard" || atsVersion === "starter") {
 			return name === "Offer Management";
 		} else {
 			return false;

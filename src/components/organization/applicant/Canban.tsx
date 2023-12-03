@@ -157,7 +157,19 @@ function Canban(props: any) {
 		}
 	};
 
-	return <>{r > 0 && <Board columns={columns} cards={cards} applicantlist={applicantlist} moveCard={moveCard} />}</>;
+	return (
+		<>
+			{r > 0 && (
+				<Board
+					columns={columns}
+					cards={cards}
+					applicantlist={applicantlist}
+					moveCard={moveCard}
+					atsVersion={props.atsVersion}
+				/>
+			)}
+		</>
+	);
 }
 
 export default DragDropContext(HTML5Backend)(Canban);

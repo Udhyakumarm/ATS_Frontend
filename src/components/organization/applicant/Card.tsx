@@ -43,7 +43,11 @@ export default function Card(props: any) {
 
 		// Convert the RGB array to a hex color code
 		const hexColor = rgbToHex(colorVariant);
-		return hexColor;
+		if (props.atsVersion === "starter") {
+			return "transpert";
+		} else {
+			return hexColor;
+		}
 	};
 
 	return _.flowRight(
@@ -114,7 +118,7 @@ export default function Card(props: any) {
 						>
 							{props["data"]["arefid"]}
 						</p>
-						<p className="text-[12px] ">{props["data"]["percentage_fit"]}%</p>
+						{props.atsVersion != "starter" && <p className="text-[12px] ">{props["data"]["percentage_fit"]}%</p>}
 					</div>
 					<div className="flex items-center justify-between">
 						<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">

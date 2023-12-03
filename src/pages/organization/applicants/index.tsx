@@ -145,7 +145,9 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 				.map((data: any) => ({ ...data, type: "career" }))
 				.concat(res2.data.map((data: any) => ({ ...data, type: "vendor" })));
 
-			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+			if (atsVersion != "starter") {
+				arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+			}
 
 			console.log("data", "applicant list", arr);
 			setapplicantlist(arr);
@@ -161,11 +163,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	}
 
 	useEffect(() => {
-		if (token && token.length > 0 && refresh === 0) {
+		if (token && token.length > 0 && refresh === 0 && atsVersion && atsVersion.length > 0) {
 			loadApplicant();
 			loadJobFiter();
 		}
-	}, [token, refresh]);
+	}, [token, refresh, atsVersion]);
 
 	useEffect(() => {
 		if (selectedJob && fapplicantList.length > 0) {
@@ -562,6 +564,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 										<Canban
 											applicantlist={applicantlist}
+											atsVersion={atsVersion}
 											token={token}
 											setcardarefid={setcardarefid}
 											setcardstatus={setcardstatus}

@@ -1596,7 +1596,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 										)}
 									</Tab.Panel>
 									<Tab.Panel>
-										{atsVersion === "standard" ? (
+										{["standard", "starter"].includes(atsVersion) ? (
 											<PermiumComp userRole={userRole} />
 										) : (
 											<>

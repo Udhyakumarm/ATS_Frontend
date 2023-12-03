@@ -1,3 +1,4 @@
+//@collapse
 import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
@@ -204,7 +205,7 @@ export default function CanCareerJobDetail2(props) {
 	}
 
 	async function searchSkill(value) {
-		await axis.marketplace_api
+		await axiosInstance2
 			.get(`/job/load/skills/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
@@ -327,7 +328,8 @@ export default function CanCareerJobDetail2(props) {
 				console.log("^^^", "vendor rating", res.data);
 				// toastcomp("VendorCandidate Rating Fetch", "success");
 				let rating = res.data.fit_data;
-				if (rating > 40) {
+
+				if (rating > 40 || rating === -1) {
 					const fd = new FormData();
 					fd.append("first_name", fname);
 					fd.append("last_name", lname);
@@ -505,153 +507,158 @@ export default function CanCareerJobDetail2(props) {
 			.then(async (res) => {
 				var data = res.data;
 				console.log("$", "OCR Result", data);
-				// if (data["firstName"] && data["firstName"].length > 0) setfname(data["firstName"]);
-				// if (data["lastName"] && data["lastName"].length > 0) setlname(data["lastName"]);
-				// if (data["email"] && data["email"].length > 0) setemail(data["email"]);
-				if (data["phone"] && data["phone"].length > 0) setphone(data["phone"]);
-				if (data["summary"] && data["summary"].length > 0) setsummary(data["summary"]);
+				if (data["NOOCR"]) {
+				} else {
+					// if (data["firstName"] && data["firstName"].length > 0) setfname(data["firstName"]);
+					// if (data["lastName"] && data["lastName"].length > 0) setlname(data["lastName"]);
+					// if (data["email"] && data["email"].length > 0) setemail(data["email"]);
+					if (data["phone"] && data["phone"].length > 0) setphone(data["phone"]);
+					if (data["summary"] && data["summary"].length > 0) setsummary(data["summary"]);
 
-				try {
-					if (data["links"] && data["links"].length > 0) {
-						setlinks(data["links"]);
+					try {
+						if (data["links"] && data["links"].length > 0) {
+							setlinks(data["links"]);
+						}
+					} catch {
+						setlinks([]);
 					}
-				} catch {
-					setlinks([]);
-				}
-				try {
-					if (data["skills"] && data["skills"].length > 0) {
-						setskill(data["skills"].join().toLowerCase());
+					try {
+						if (data["skills"] && data["skills"].length > 0) {
+							setskill(data["skills"].join().toLowerCase());
+						}
+					} catch {
+						setskill("");
 					}
-				} catch {
-					setskill("");
-				}
 
-				try {
-					if (data["experience"] && data["experience"].length > 0) {
-						setnewgre(false);
-						let arr = [];
-						data["experience"].map((data, i) => {
-							arr.push(`expBlock${i + 1}`);
-						});
-						setexpid(arr);
-						setexpcount(data["experience"].length + 1);
-
-						setTimeout(() => {
-							data["experience"].map((data2, i) => {
-								if (data2["title"]) document.getElementById(`titleexpBlock${i + 1}`).value = data2["title"];
-								if (data2["company"]) document.getElementById(`cnameexpBlock${i + 1}`).value = data2["company"];
-								if (data2["description"]) document.getElementById(`descexpBlock${i + 1}`).value = data2["description"];
-
-								if (data2["start_date"]) {
-									try {
-										document.getElementById(`sdateexpBlock${i + 1}`).value = moment(data2["start_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Exp SDATE Catch", err);
-									}
-								}
-								if (data2["end_date"]) {
-									try {
-										document.getElementById(`edateexpBlock${i + 1}`).value = moment(data2["end_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Exp EDATE Catch", err);
-									}
-								}
+					try {
+						if (data["experience"] && data["experience"].length > 0) {
+							setnewgre(false);
+							let arr = [];
+							data["experience"].map((data, i) => {
+								arr.push(`expBlock${i + 1}`);
 							});
-						}, 1000);
-					} else {
-						setnewgre(true);
+							setexpid(arr);
+							setexpcount(data["experience"].length + 1);
+
+							setTimeout(() => {
+								data["experience"].map((data2, i) => {
+									if (data2["title"]) document.getElementById(`titleexpBlock${i + 1}`).value = data2["title"];
+									if (data2["company"]) document.getElementById(`cnameexpBlock${i + 1}`).value = data2["company"];
+									if (data2["description"])
+										document.getElementById(`descexpBlock${i + 1}`).value = data2["description"];
+
+									if (data2["start_date"]) {
+										try {
+											document.getElementById(`sdateexpBlock${i + 1}`).value = moment(data2["start_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Exp SDATE Catch", err);
+										}
+									}
+									if (data2["end_date"]) {
+										try {
+											document.getElementById(`edateexpBlock${i + 1}`).value = moment(data2["end_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Exp EDATE Catch", err);
+										}
+									}
+								});
+							}, 1000);
+						} else {
+							setnewgre(true);
+						}
+					} catch (err) {
+						console.log("$", "Exp Catch", err);
+						// setnewgre(false);
+						// setexpid(["expBlock1"]);
+						// setexpcount(1);
 					}
-				} catch (err) {
-					console.log("$", "Exp Catch", err);
-					// setnewgre(false);
-					// setexpid(["expBlock1"]);
-					// setexpcount(1);
-				}
 
-				try {
-					if (data["education"] && data["education"].length > 0) {
-						let arr = [];
-						data["education"].map((data, i) => {
-							arr.push(`eduBlock${i + 1}`);
-						});
-						seteduid(arr);
-						seteducount(data["education"].length + 1);
-
-						setTimeout(() => {
-							data["education"].map((data2, i) => {
-								if (data2["title"]) document.getElementById(`titleeduBlock${i + 1}`).value = data2["title"];
-								if (data2["college"]) document.getElementById(`cnameeduBlock${i + 1}`).value = data2["college"];
-								if (data2["description"]) document.getElementById(`desceduBlock${i + 1}`).value = data2["description"];
-								if (data2["start_date"]) {
-									try {
-										document.getElementById(`sdateeduBlock${i + 1}`).value = moment(data2["start_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Edu SDATE Catch", err);
-									}
-								}
-								if (data2["end_date"]) {
-									try {
-										document.getElementById(`edateeduBlock${i + 1}`).value = moment(data2["end_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Edu EDATE Catch", err);
-									}
-								}
+					try {
+						if (data["education"] && data["education"].length > 0) {
+							let arr = [];
+							data["education"].map((data, i) => {
+								arr.push(`eduBlock${i + 1}`);
 							});
-						}, 1000);
+							seteduid(arr);
+							seteducount(data["education"].length + 1);
+
+							setTimeout(() => {
+								data["education"].map((data2, i) => {
+									if (data2["title"]) document.getElementById(`titleeduBlock${i + 1}`).value = data2["title"];
+									if (data2["college"]) document.getElementById(`cnameeduBlock${i + 1}`).value = data2["college"];
+									if (data2["description"])
+										document.getElementById(`desceduBlock${i + 1}`).value = data2["description"];
+									if (data2["start_date"]) {
+										try {
+											document.getElementById(`sdateeduBlock${i + 1}`).value = moment(data2["start_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Edu SDATE Catch", err);
+										}
+									}
+									if (data2["end_date"]) {
+										try {
+											document.getElementById(`edateeduBlock${i + 1}`).value = moment(data2["end_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Edu EDATE Catch", err);
+										}
+									}
+								});
+							}, 1000);
+						}
+					} catch (err) {
+						console.log("$", "Edu Catch", err);
+						// seteduid([]);
+						// seteducount(0);
 					}
-				} catch (err) {
-					console.log("$", "Edu Catch", err);
-					// seteduid([]);
-					// seteducount(0);
-				}
 
-				try {
-					if (data["certificates"] && data["certificates"].length > 0) {
-						let arr = [];
-						data["certificates"].map((data, i) => {
-							arr.push(`certBlock${i + 1}`);
-						});
-						setcertid(arr);
-						setcertcount(data["certificates"].length + 1);
-
-						setTimeout(() => {
-							data["certificates"].map((data2, i) => {
-								if (data2["title"]) document.getElementById(`titlecertBlock${i + 1}`).value = data2["title"];
-								if (data2["issuedCompany"])
-									document.getElementById(`cnamecertBlock${i + 1}`).value = data2["issuedCompany"];
-								if (data2["start_date"]) {
-									try {
-										document.getElementById(`sdatecertBlock${i + 1}`).value = moment(data2["start_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Cert SDATE Catch", err);
-									}
-								}
-								if (data2["end_date"]) {
-									try {
-										document.getElementById(`edatecertBlock${i + 1}`).value = moment(data2["end_date"]).format(
-											"YYYY-MM-DD"
-										);
-									} catch (err) {
-										console.log("$", "Cert EDATE Catch", err);
-									}
-								}
+					try {
+						if (data["certificates"] && data["certificates"].length > 0) {
+							let arr = [];
+							data["certificates"].map((data, i) => {
+								arr.push(`certBlock${i + 1}`);
 							});
-						}, 1000);
+							setcertid(arr);
+							setcertcount(data["certificates"].length + 1);
+
+							setTimeout(() => {
+								data["certificates"].map((data2, i) => {
+									if (data2["title"]) document.getElementById(`titlecertBlock${i + 1}`).value = data2["title"];
+									if (data2["issuedCompany"])
+										document.getElementById(`cnamecertBlock${i + 1}`).value = data2["issuedCompany"];
+									if (data2["start_date"]) {
+										try {
+											document.getElementById(`sdatecertBlock${i + 1}`).value = moment(data2["start_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Cert SDATE Catch", err);
+										}
+									}
+									if (data2["end_date"]) {
+										try {
+											document.getElementById(`edatecertBlock${i + 1}`).value = moment(data2["end_date"]).format(
+												"YYYY-MM-DD"
+											);
+										} catch (err) {
+											console.log("$", "Cert EDATE Catch", err);
+										}
+									}
+								});
+							}, 1000);
+						}
+					} catch (err) {
+						console.log("$", "Cert Catch", err);
+						// setcertid([]);
+						// setcertcount(0);
 					}
-				} catch (err) {
-					console.log("$", "Cert Catch", err);
-					// setcertid([]);
-					// setcertcount(0);
 				}
 
 				setocrLoader(false);
@@ -664,10 +671,11 @@ export default function CanCareerJobDetail2(props) {
 	}
 
 	useEffect(() => {
-		if (resume != null) {
+		if (resume != null && jdata["refid"].length > 0) {
 			console.log("$", "OCR", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
+			fd.append("refid", jdata["refid"]);
 			oceFun1(fd);
 		}
 	}, [resume]);

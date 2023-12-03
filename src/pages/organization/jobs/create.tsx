@@ -317,8 +317,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			jdept.length <= 0 ||
 			jlang.length <= 0 ||
 			jloc.length <= 0 ||
-			(!jcollaborator && atsVersion != "standard") ||
-			(!jrecruiter && atsVersion != "standard")
+			(!jcollaborator && !["standard", "starter"].includes(atsVersion)) ||
+			(!jrecruiter && !["standard", "starter"].includes(atsVersion))
 		) {
 			if (jtitle.length <= 0) {
 				toastcomp("Job Title Required", "error");
@@ -338,10 +338,10 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			if (jdept.length <= 0) {
 				toastcomp("Job Department Required", "error");
 			}
-			if (!jcollaborator && atsVersion != "standard") {
+			if (!jcollaborator && !["standard", "starter"].includes(atsVersion)) {
 				toastcomp("One Hiring Manager Required", "error");
 			}
-			if (!jrecruiter && atsVersion != "standard") {
+			if (!jrecruiter && !["standard", "starter"].includes(atsVersion)) {
 				toastcomp("One Recruiter Required", "error");
 			}
 		} else {
@@ -1078,22 +1078,24 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.JobDescription")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
-											<div className="mb-4 w-full text-right">
-												<button
-													type="button"
-													onClick={() => onAIGenerateHandler()}
-													className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
-												>
-													<span className="mr-3">{t("Words.GenerateDescription")}</span>
-													{aiLoader ? (
-														<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
-													) : (
-														<div className="flex h-[30px] w-[30px] items-center justify-center ">
-															<Image src={genDesc} alt="AI" width={100} height={100} className="" />
-														</div>
-													)}
-												</button>
-											</div>
+											{atsVersion != "starter" && (
+												<div className="mb-4 w-full text-right">
+													<button
+														type="button"
+														onClick={() => onAIGenerateHandler()}
+														className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
+													>
+														<span className="mr-3">{t("Words.GenerateDescription")}</span>
+														{aiLoader ? (
+															<i className="fa-solid fa-spinner fa-spin-pulse mx-2"></i>
+														) : (
+															<div className="flex h-[30px] w-[30px] items-center justify-center ">
+																<Image src={genDesc} alt="AI" width={100} height={100} className="" />
+															</div>
+														)}
+													</button>
+												</div>
+											)}
 											<FormField
 												fieldType="reactquill"
 												id="description"
@@ -1525,113 +1527,110 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 								</Tab.Panel>
 
 								<Tab.Panel>
-									{atsVersion === "standard" ? (
-										<PermiumComp userRole={userRole} />
-									) : (
-										<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
-											<StickyLabel label={t("Words.Vendors")} />
-											<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
-												<div className="mb-6 flex flex-wrap items-center justify-between">
-													<div className="w-[350px] pr-2">
-														<FormField
-															fieldType="input"
-															inputType="search"
-															placeholder={t("Words.Search")}
-															icon={<i className="fa-solid fa-magnifying-glass"></i>}
-															value={search2}
-															handleChange={(e) => setsearch2(e.target.value)}
-														/>
+									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
+										<StickyLabel label={t("Words.Vendors")} />
+										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+											<div className="mb-6 flex flex-wrap items-center justify-between">
+												<div className="w-[350px] pr-2">
+													<FormField
+														fieldType="input"
+														inputType="search"
+														placeholder={t("Words.Search")}
+														icon={<i className="fa-solid fa-magnifying-glass"></i>}
+														value={search2}
+														handleChange={(e) => setsearch2(e.target.value)}
+													/>
+												</div>
+												{!upcomingSoon && (
+													<div className="flex grow items-center justify-end">
+														<div className="mr-3 w-[150px]">
+															<FormField
+																fieldType="select"
+																placeholder={t("Words.Sort")}
+																singleSelect={true}
+																options={[
+																	{
+																		id: "A-to-Z",
+																		name: "A to Z"
+																	},
+																	{
+																		id: "Z-to-A",
+																		name: "Z to A"
+																	}
+																]}
+															/>
+														</div>
+														<div className="w-[150px]">
+															<label
+																htmlFor="teamSelectAll"
+																className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
+															>
+																<span>{t("Words.SelectAll")}</span>
+																<input type="checkbox" id="teamSelectAll" />
+															</label>
+														</div>
 													</div>
-													{!upcomingSoon && (
-														<div className="flex grow items-center justify-end">
-															<div className="mr-3 w-[150px]">
-																<FormField
-																	fieldType="select"
-																	placeholder={t("Words.Sort")}
-																	singleSelect={true}
-																	options={[
-																		{
-																			id: "A-to-Z",
-																			name: "A to Z"
-																		},
-																		{
-																			id: "Z-to-A",
-																			name: "Z to A"
-																		}
-																	]}
-																/>
-															</div>
-															<div className="w-[150px]">
-																<label
-																	htmlFor="teamSelectAll"
-																	className="flex min-h-[45px] w-full cursor-pointer items-center justify-between rounded-normal border border-borderColor p-3 text-sm text-darkGray dark:border-gray-600 dark:bg-gray-700"
-																>
-																	<span>{t("Words.SelectAll")}</span>
-																	<input type="checkbox" id="teamSelectAll" />
-																</label>
+												)}
+											</div>
+											<div className="overflow-x-auto">
+												{filterVendors && filterVendors.length > 0 ? (
+													<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
+														<thead>
+															<tr>
+																{VendorTableHead.map((item, i) => (
+																	<th className="border-b px-3 py-2 text-left" key={i}>
+																		{item.title}
+																	</th>
+																))}
+															</tr>
+														</thead>
+														<tbody>
+															{filterVendors &&
+																filterVendors.map((data, i) => (
+																	<tr key={i}>
+																		<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
+																		<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
+																		<td className="border-b px-3 py-2 text-right">
+																			<Switch
+																				checked={jfv.includes(data["id"])}
+																				onChange={(value: Boolean) => changeSwith1(value, data)}
+																				className={`${jfv.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																			>
+																				<span className="sr-only">Use setting</span>
+																				<span
+																					aria-hidden="true"
+																					className={`${jfv.includes(data["id"]) ? "translate-x-4" : "translate-x-0"}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																				/>
+																			</Switch>
+																		</td>
+																	</tr>
+																))}
+														</tbody>
+													</table>
+												) : (
+													<>
+														<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
+															<div className="mx-auto w-full max-w-[300px] py-8 text-center">
+																<div className="mb-6 p-2">
+																	<Image
+																		src={noApplicantdata}
+																		alt="No Data"
+																		width={300}
+																		className="mx-auto max-h-[200px] w-auto max-w-[200px]"
+																	/>
+																</div>
+																<h5 className="mb-4 text-lg font-semibold">No Vendor</h5>
+																<p className="mb-2 text-sm text-darkGray">There are no Vendors as of now ...</p>
 															</div>
 														</div>
-													)}
-												</div>
-												<div className="overflow-x-auto">
-													{filterVendors && filterVendors.length > 0 ? (
-														<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
-															<thead>
-																<tr>
-																	{VendorTableHead.map((item, i) => (
-																		<th className="border-b px-3 py-2 text-left" key={i}>
-																			{item.title}
-																		</th>
-																	))}
-																</tr>
-															</thead>
-															<tbody>
-																{filterVendors &&
-																	filterVendors.map((data, i) => (
-																		<tr key={i}>
-																			<td className="border-b px-3 py-2 text-sm">{data["agent_name"]}</td>
-																			<td className="border-b px-3 py-2 text-sm">{data["company_name"]}</td>
-																			<td className="border-b px-3 py-2 text-sm">{data["email"]}</td>
-																			<td className="border-b px-3 py-2 text-right">
-																				<Switch
-																					checked={jfv.includes(data["id"])}
-																					onChange={(value: Boolean) => changeSwith1(value, data)}
-																					className={`${jfv.includes(data["id"]) ? "bg-[#50F357]" : "bg-gray-400"}
-          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-																				>
-																					<span className="sr-only">Use setting</span>
-																					<span
-																						aria-hidden="true"
-																						className={`${jfv.includes(data["id"]) ? "translate-x-4" : "translate-x-0"}
-            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-																					/>
-																				</Switch>
-																			</td>
-																		</tr>
-																	))}
-															</tbody>
-														</table>
-													) : (
-														<>
-															<div className="flex items-center justify-center rounded-normal bg-white shadow-normal dark:bg-gray-800">
-																<div className="mx-auto w-full max-w-[300px] py-8 text-center">
-																	<div className="mb-6 p-2">
-																		<Image
-																			src={noApplicantdata}
-																			alt="No Data"
-																			width={300}
-																			className="mx-auto max-h-[200px] w-auto max-w-[200px]"
-																		/>
-																	</div>
-																	<h5 className="mb-4 text-lg font-semibold">No Vendor</h5>
-																	<p className="mb-2 text-sm text-darkGray">There are no Vendors as of now ...</p>
-																</div>
-															</div>
-														</>
-													)}
-												</div>
+													</>
+												)}
+											</div>
 
-												{/* <div className="mx-[-15px] flex flex-wrap">
+											{/* <div className="mx-[-15px] flex flex-wrap">
 													{sklLoad
 														? fvendors &&
 														  fvendors.map((data, i) => (
@@ -1645,9 +1644,8 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 																</div>
 														  )}
 												</div> */}
-											</div>
 										</div>
-									)}
+									</div>
 								</Tab.Panel>
 
 								<Tab.Panel>

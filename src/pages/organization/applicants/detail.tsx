@@ -29,6 +29,7 @@ import { Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import FormField from "@/components/FormField";
+import PermiumComp from "@/components/organization/premiumComp";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -185,26 +186,28 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}
 
 	async function loadAIInterviewQuestion() {
-		setailoader(true);
-		let canid = "";
-		if (type === "career") {
-			canid = appdata["user"]["erefid"];
-		}
-		if (type === "vendor") {
-			canid = appdata["applicant"]["vcrefid"];
-		}
+		if (atsVersion != "starter") {
+			setailoader(true);
+			let canid = "";
+			if (type === "career") {
+				canid = appdata["user"]["erefid"];
+			}
+			if (type === "vendor") {
+				canid = appdata["applicant"]["vcrefid"];
+			}
 
-		await axiosInstanceAuth21
-			.get(`/chatbot/interview-question-generator/${canid}/${jobid}/${srcLang}/`)
-			.then(async (res) => {
-				setaires(res.data["res"]);
-				setaiquestion(res.data["res"].split("\n"));
-				setailoader(false);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				setailoader(false);
-			});
+			await axiosInstanceAuth21
+				.get(`/chatbot/interview-question-generator/${canid}/${jobid}/${srcLang}/`)
+				.then(async (res) => {
+					setaires(res.data["res"]);
+					setaiquestion(res.data["res"].split("\n"));
+					setailoader(false);
+				})
+				.catch((err) => {
+					console.log("!", err);
+					setailoader(false);
+				});
+		}
 	}
 
 	async function loadApplicantDetail() {
@@ -276,13 +279,15 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}
 
 	useEffect(() => {
-		if (token && token.length > 0 && aiquestion.length <= 0) {
+		if (token && token.length > 0 && aiquestion.length <= 0 && atsVersion && atsVersion.length > 0) {
 			loadApplicantDetail();
 			loadFeedback();
 			loadTimeLine();
-			loadAIInterviewQuestion();
+			if (atsVersion != "starter") {
+				loadAIInterviewQuestion();
+			}
 		}
-	}, [token]);
+	}, [token, atsVersion]);
 
 	function checkDis() {
 		return feedbackStatus.length > 0 && feedbackTA.length > 0;
@@ -742,7 +747,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													handleClick={() => setmanualInterview(true)}
 												/>
 											</div>
-											{atsVersion != "standard" && (
+											{!["standard", "starter"].includes(atsVersion) && (
 												<div className="mr-4">
 													<Button
 														btnType="button"
@@ -750,7 +755,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 														label={t("Words.ScheduleInterview")}
 														iconLeft={<i className="fa-solid fa-calendar-plus"></i>}
 														handleClick={() => {
-															if (atsVersion === "standard") {
+															if (["standard", "starter"].includes(atsVersion)) {
 																router.push("/organization/applicants/schedule-interview");
 															} else {
 																checkGCAL();
@@ -935,9 +940,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													{!currentUserFeedback &&
-														selectedPerson["name"] === "Review" &&
-														((atsVersion != "standard" && userRole === "Hiring Manager") ||
-															atsVersion === "standard") && (
+														(selectedPerson["name"] === "Review" || selectedPerson["name"] === "Interview") &&
+														((!["standard", "starter"].includes(atsVersion) && userRole === "Hiring Manager") ||
+															["standard", "starter"].includes(atsVersion)) && (
 															<div className="relative mt-6 border-t pb-8 pt-6 first:mt-0 first:border-t-0 first:pt-0">
 																<h3 className="mb-5">GIVE FEEDBACK FIRST</h3>
 																<div className="mb-8 flex w-[210px] items-center rounded-br-[30px] rounded-tr-[30px] bg-lightBlue shadow-normal dark:bg-gray-700">
@@ -1865,48 +1870,52 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													)}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													<div>
-														<div className="mx-auto mb-4 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
-															<Image src={favIcon} alt="Somhako" width={30} />
-														</div>
-														<p className="mb-4 text-center text-darkGray dark:text-gray-400">
-															{t("Words.AskQuestionsRelatedCandidate")}
-														</p>
-														<div className="mx-auto w-full max-w-[650px]">
-															<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
-																<div className="px-10 py-4">
-																	{aiquestion &&
-																		aiquestion.map((data, i) => (
-																			<div
-																				className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800"
-																				key={i}
-																			>
-																				<h5 className="text-sm text-darkGray dark:text-gray-100">{data}</h5>
-																			</div>
-																		))}
-																</div>
-																<div className="border-t px-10 py-4 dark:border-t-gray-600">
-																	<button
-																		type="button"
-																		className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
-																		disabled={ailoader}
-																		onClick={() => {
-																			setaiquestion([]);
-																			setaires("");
-																			loadAIInterviewQuestion();
-																		}}
-																	>
-																		{ailoader && (
-																			<span className="mr-2 block">
-																				<i className={"fa-solid fa-rotate fa-spin"}></i>
-																			</span>
-																		)}
-																		{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
-																	</button>
+													{atsVersion === "starter" ? (
+														<PermiumComp userRole={userRole} />
+													) : (
+														<div>
+															<div className="mx-auto mb-4 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
+																<Image src={favIcon} alt="Somhako" width={30} />
+															</div>
+															<p className="mb-4 text-center text-darkGray dark:text-gray-400">
+																{t("Words.AskQuestionsRelatedCandidate")}
+															</p>
+															<div className="mx-auto w-full max-w-[650px]">
+																<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
+																	<div className="px-10 py-4">
+																		{aiquestion &&
+																			aiquestion.map((data, i) => (
+																				<div
+																					className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800"
+																					key={i}
+																				>
+																					<h5 className="text-sm text-darkGray dark:text-gray-100">{data}</h5>
+																				</div>
+																			))}
+																	</div>
+																	<div className="border-t px-10 py-4 dark:border-t-gray-600">
+																		<button
+																			type="button"
+																			className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
+																			disabled={ailoader}
+																			onClick={() => {
+																				setaiquestion([]);
+																				setaires("");
+																				loadAIInterviewQuestion();
+																			}}
+																		>
+																			{ailoader && (
+																				<span className="mr-2 block">
+																					<i className={"fa-solid fa-rotate fa-spin"}></i>
+																				</span>
+																			)}
+																			{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
+																		</button>
+																	</div>
 																</div>
 															</div>
 														</div>
-													</div>
+													)}
 												</Tab.Panel>
 											</Tab.Panels>
 										</Tab.Group>
