@@ -77,8 +77,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 	const [jobd, setjobd] = useState([{ id: 1, name: "All", refid: "ALL", unavailable: false }]);
 
 	useEffect(() => {
-		if (atsVersion === "standard") {
-			router.push("/organizaton");
+		if (["standard", "starter"].includes(atsVersion)) {
+			router.push("/organization/settings/pricing");
 		} else {
 			if (session) {
 				settoken(session.accessToken as string);
@@ -171,7 +171,9 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 					res2.data.filter((data: any) => data.status === "Offer").map((data: any) => ({ ...data, type: "vendor" }))
 				);
 
-			arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+			if (atsVersion != "starter") {
+				arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
+			}
 
 			console.info("data", "offer applicant", arr);
 			setapplicantlist(arr);
@@ -398,7 +400,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 	}
 
 	useEffect(() => {
-		if (token && token.length > 0) {
+		if (token && token.length > 0 && atsVersion && atsVersion.length > 0) {
 			loadJobFiter();
 			loadApplicant().then(() => {
 				if (offerArefid && offerArefid.length > 0) {
@@ -408,7 +410,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			loadTeamMember();
 			loadOrganizationProfile();
 		}
-	}, [token]);
+	}, [token, atsVersion]);
 
 	async function offerDetail(arefid: string, current_data: any) {
 		try {
@@ -933,7 +935,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 		// Convert the RGB array to a hex color code
 		const hexColor = rgbToHex(colorVariant);
-		return hexColor;
+		if (atsVersion === "starter") {
+			return "transpert";
+		} else {
+			return hexColor;
+		}
 	};
 
 	const [gcall, setgcall] = useState(false);
@@ -1104,7 +1110,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 															>
 																ID - {data["arefid"]}
 															</p>
-															<p className="text-[12px] ">{data["percentage_fit"]}%</p>
+															{atsVersion != "starter" && <p className="text-[12px] ">{data["percentage_fit"]}%</p>}
 														</div>
 														<div className="flex items-center justify-between">
 															<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">

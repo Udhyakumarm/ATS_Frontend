@@ -31,7 +31,7 @@ const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
 ];
 
-const preVersions = [{ name: "free" }, { name: "standard" }, { name: "enterprise" }];
+const preVersions = [{ name: "free" }, { name: "starter" }, { name: "standard" }, { name: "enterprise" }];
 
 export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -486,7 +486,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 						if (isExpired) {
 							toastcomp("Plan Expired", "error");
 							router.push("/organization/settings/pricing");
-						} else if (version === "standard") {
+						} else if (version === "standard" || version === "starter") {
 							seterr(true);
 							seterrMsg("Calendar Automation");
 						} else {
@@ -527,7 +527,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 							if (isExpired) {
 								toastcomp("Plan Expired", "error");
 								router.push("/organization/settings/pricing");
-							} else if (version === "standard") {
+							} else if (version === "standard" || version === "starter") {
 								seterr(true);
 								seterrMsg("Novus AI");
 							} else {

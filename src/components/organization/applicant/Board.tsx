@@ -5,7 +5,7 @@ import { Column } from "./Column";
 import { DraggableCard } from "./Card";
 import { useLangStore } from "@/utils/code";
 
-export function Board({ cards, columns, moveCard, applicantlist }: any) {
+export function Board({ cards, columns, moveCard, applicantlist, atsVersion }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	return (
 		//100vh - 132px
@@ -25,6 +25,7 @@ export function Board({ cards, columns, moveCard, applicantlist }: any) {
 										data["arefid"] == card.arefid && (
 											<DraggableCard
 												applicantlist={applicantlist}
+												atsVersion={atsVersion}
 												data={data}
 												key={card.id}
 												id={card.id}

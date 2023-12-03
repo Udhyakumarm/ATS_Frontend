@@ -1,3 +1,4 @@
+//@collapse
 import OrgSideBar from "@/components/organization/SideBar";
 import OrgTopBar from "@/components/organization/TopBar";
 import Head from "next/head";
@@ -246,8 +247,8 @@ export default function Pricing() {
 													<div className="font-black">0 ￥</div>
 													<div>30 days</div>
 												</div>
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">100 Application free</div>
+												{/* <div className="text-xs font-bold">Flexible</div>
+												<div className="text-xs font-[300]">100 Application free</div> */}
 											</div>
 											<div
 												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
@@ -266,8 +267,8 @@ export default function Pricing() {
 													<div className="font-black text-primary">0 ￥</div>
 													<div>30 days</div>
 												</div>
-												<div className="text-xs font-bold">Flexible</div>
-												<div className="text-xs font-[300]">100 Application free</div>
+												{/* <div className="text-xs font-bold">Flexible</div>
+												<div className="text-xs font-[300]">100 Application free</div> */}
 											</div>
 											<div
 												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
@@ -281,6 +282,54 @@ export default function Pricing() {
 									)}
 									{duration ? (
 										<>
+											{/* starter m plan */}
+											{cplan.plan_info && cplan.plan_info === "STARTER_MONTHLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black">5,000￥/monthly</div>
+
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Starter
+													</div>
+												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("STARTER_MONTHLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-lg font-black text-primary ">5,000￥/monthly</div>
+
+														{/* <div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Starter
+													</div>
+												</div>
+											)}
+
 											{/* standard m plan */}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
@@ -289,9 +338,9 @@ export default function Pricing() {
 														<div className="text-lg font-black">30,000￥/monthly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
@@ -314,9 +363,9 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Monthly Fixed</div>
 														<div className="text-lg font-black text-primary ">30,000￥/monthly</div>
 
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
@@ -337,9 +386,9 @@ export default function Pricing() {
 														<div className="text-lg font-black">45,000￥/monthly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
@@ -362,9 +411,9 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Monthly Fixed</div>
 														<div className="text-lg font-black text-primary">45,000￥/monthly</div>
 
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
@@ -379,6 +428,54 @@ export default function Pricing() {
 										</>
 									) : (
 										<>
+											{/* starter m plan */}
+											{cplan.plan_info && cplan.plan_info === "STARTER_YEARLY" ? (
+												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black">60,000￥/yearly</div>
+
+														<div className="text-[10px] font-bold">Active/Paid</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold text-[#3358C5]"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Starter
+													</div>
+												</div>
+											) : (
+												<div
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													onClick={() => {
+														setplanInfo("STARTER_YEARLY");
+														setprice(true);
+													}}
+												>
+													<div className="flex flex-col gap-1">
+														<div className="text-xs font-bold">Annual Fixed</div>
+														<div className="text-lg font-black text-primary ">5,000￥/yearly</div>
+
+														{/* <div className="text-xs font-bold">Flexible</div>
+														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
+													</div>
+													<div
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold"
+														style={{
+															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
+														}}
+													>
+														Starter
+													</div>
+												</div>
+											)}
+
 											{/* standard y plan */}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
@@ -387,9 +484,9 @@ export default function Pricing() {
 														<div className="text-lg font-black">360,000￥/yearly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
@@ -412,9 +509,9 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Annual Fixed</div>
 														<div className="text-lg font-black text-primary ">360,000￥/yearly</div>
 
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
@@ -435,9 +532,9 @@ export default function Pricing() {
 														<div className="text-lg font-black">480,000￥/yearly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold text-[#3358C5]"
@@ -460,9 +557,9 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Annual Fixed</div>
 														<div className="text-lg font-black text-primary">480,000￥/yearly</div>
 
-														<div className="text-xs font-bold">Flexible</div>
+														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
-														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div>
+														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
 														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
@@ -483,16 +580,17 @@ export default function Pricing() {
 										<thead>
 											<tr>
 												<th className="w-[300px] border-b px-3 py-2"></th>
-												<th className="border-b px-3 py-2">Free</th>
+												<th className="border-b px-3 py-2">Free Trial</th>
+												<th className="border-b px-3 py-2">Starter</th>
 												<th className="border-b px-3 py-2">Standard</th>
-												<th className="border-b px-3 py-2">{t("Plans.Enterprise")}</th>
+												<th className="border-b px-3 py-2">Enterprise</th>
 											</tr>
 										</thead>
 										<tbody className="text-sm font-semibold">
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
-													Duration
-													<Menu as="div" className="relative inline-block">
+													Novus AI HR Assistant
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -516,9 +614,53 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Plan Duration
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">Only 30 Days</td>
+												<td className="px-3 py-2 text-center">Monthly / Yearly</td>
 												<td className="px-3 py-2 text-center">Monthly / Yearly</td>
 												<td className="px-3 py-2 text-center">Monthly / Yearly</td>
 											</tr>
@@ -526,7 +668,7 @@ export default function Pricing() {
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Team Members
-													<Menu as="div" className="relative inline-block">
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -550,17 +692,53 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">Unlimited</td>
+												<td className="px-3 py-2 text-center">Up to 7</td>
+												<td className="px-3 py-2 text-center">Up to 10</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Vendors/Agency Contracts
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">Up to 2</td>
+												<td className="px-3 py-2 text-center">Up to 3</td>
 												<td className="px-3 py-2 text-center">Up to 5</td>
 												<td className="px-3 py-2 text-center">Unlimited</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
-													Vendors/Agency Members
-													<Menu as="div" className="relative inline-block">
+													Publish/Active Jobs
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -584,51 +762,18 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">Up to 2</td>
 												<td className="px-3 py-2 text-center">Up to 5</td>
-												<td className="px-3 py-2 text-center">Unlimited</td>
-											</tr>
-
-											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-												<td className="w-[300px] px-3 py-2">
-													Job Publish
-													<Menu as="div" className="relative inline-block">
-														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-															<i className="fa-solid fa-circle-question"></i>
-														</Menu.Button>
-														<Transition
-															as={Fragment}
-															enter="transition ease-out duration-100"
-															enterFrom="transform opacity-0 scale-95"
-															enterTo="transform opacity-100 scale-100"
-															leave="transition ease-in duration-75"
-															leaveFrom="transform opacity-100 scale-100"
-															leaveTo="transform opacity-0 scale-95"
-														>
-															<Menu.Items
-																className={
-																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
-																}
-															>
-																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
-																<Menu.Item>
-																	<p>Lorem impsum is a dummy text provide here.</p>
-																</Menu.Item>
-															</Menu.Items>
-														</Transition>
-													</Menu>
-												</td>
-												<td className="px-3 py-2 text-center">Up to 2</td>
-												<td className="px-3 py-2 text-center">Up to 5</td>
+												<td className="px-3 py-2 text-center">Up to 10</td>
 												<td className="px-3 py-2 text-center">Unlimited</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Application
-													<Menu as="div" className="relative inline-block">
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -652,17 +797,18 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">Up to 100</td>
-												<td className="px-3 py-2 text-center">Flexible</td>
+												<td className="px-3 py-2 text-center">80 / 1000</td>
+												<td className="px-3 py-2 text-center">240 / 3000</td>
 												<td className="px-3 py-2 text-center">Flexible</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
-													Calendar
-													<Menu as="div" className="relative inline-block">
+													Calendar & Interview
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -686,17 +832,18 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
-												<td className="px-3 py-2 text-center">Automate/Manual</td>
+												<td className="px-3 py-2 text-center">Automate & Manual</td>
 												<td className="px-3 py-2 text-center">Manual</td>
-												<td className="px-3 py-2 text-center">Automate/Manual</td>
+												<td className="px-3 py-2 text-center">Manual</td>
+												<td className="px-3 py-2 text-center">Automate & Manual</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Custimize Dashboard
-													<Menu as="div" className="relative inline-block">
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -720,10 +867,13 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-xmark"></i>
@@ -736,7 +886,7 @@ export default function Pricing() {
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Offer Management
-													<Menu as="div" className="relative inline-block">
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -760,10 +910,13 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-xmark"></i>
@@ -775,8 +928,8 @@ export default function Pricing() {
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
-													Internal Communication
-													<Menu as="div" className="relative inline-block">
+													AI Generated Job Description
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -800,10 +953,142 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													AI Generated Application Rating
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													AI Generated Interview Questions
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Internal Communication
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-xmark"></i>
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-check"></i>
@@ -816,7 +1101,7 @@ export default function Pricing() {
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Analytics
-													<Menu as="div" className="relative inline-block">
+													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
 														</Menu.Button>
@@ -840,7 +1125,96 @@ export default function Pricing() {
 																</Menu.Item>
 															</Menu.Items>
 														</Transition>
-													</Menu>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Career & Widget
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
+												</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													Application Kanban Board
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">
+													<i className="fa-solid fa-check"></i>
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-check"></i>
@@ -910,11 +1284,17 @@ export default function Pricing() {
 															{data.plan_info && data.plan_info === "FREE" && (
 																<td className="border-b px-4 py-2 text-sm">Free Version</td>
 															)}
+															{data.plan_info && data.plan_info === "STARTER_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Starter Version</td>
+															)}
 															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
 																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
 																<td className="border-b px-4 py-2 text-sm">Enterprise Version</td>
+															)}
+															{data.plan_info && data.plan_info === "STARTER_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Starter Version</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
 																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
@@ -926,11 +1306,17 @@ export default function Pricing() {
 															{data.plan_info && data.plan_info === "FREE" && (
 																<td className="border-b px-4 py-2 text-sm">Just For Month</td>
 															)}
+															{data.plan_info && data.plan_info === "STARTER_MONTHLY" && (
+																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+															)}
 															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
 																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
 																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+															)}
+															{data.plan_info && data.plan_info === "STARTER_YEARLY" && (
+																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
 																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
@@ -1086,16 +1472,20 @@ export default function Pricing() {
 										<div className="flex items-center justify-center gap-2">
 											<p>Plan Info : </p>
 											{cplan.plan_info && cplan.plan_info === "FREE" && <p>Free Version</p>}
+											{cplan.plan_info && cplan.plan_info === "STARTER_MONTHLY" && <p>Starter Version</p>}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" && <p>Standard Version</p>}
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" && <p>Enterprise Version</p>}
+											{cplan.plan_info && cplan.plan_info === "STARTER_YEARLY" && <p>Starter Version</p>}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" && <p>Standard Version</p>}
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_YEARLY" && <p>Enterprise Version</p>}
 										</div>
 										<div className="flex items-center justify-center gap-2">
 											<p>Plan Duration : </p>
 											{cplan.plan_info && cplan.plan_info === "FREE" && <p>Just For Month</p>}
+											{cplan.plan_info && cplan.plan_info === "STARTER_MONTHLY" && <p>Monthly Basis</p>}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" && <p>Monthly Basis</p>}
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" && <p>Monthly Basis</p>}
+											{cplan.plan_info && cplan.plan_info === "STARTER_YEARLY" && <p>Yearly Basis</p>}
 											{cplan.plan_info && cplan.plan_info === "STANDARD_YEARLY" && <p>Yearly Basis</p>}
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_YEARLY" && <p>Yearly Basis</p>}
 										</div>

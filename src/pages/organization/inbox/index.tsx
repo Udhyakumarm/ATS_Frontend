@@ -112,7 +112,7 @@ const isStopTyping = (socket: any, user_pk: any) => {
 	console.log("Message Stopped Typing Process DOne");
 };
 
-export default function Inbox({ currentUser }: any) {
+export default function Inbox({ currentUser, atsVersion }: any) {
 	useEffect(() => {
 		if (currentUser.is_expired) {
 			router.push("/organization/settings/pricing");
@@ -175,12 +175,16 @@ export default function Inbox({ currentUser }: any) {
 	const currentUser2 = useUserStore((state: { user: any }) => state.user);
 
 	useEffect(() => {
-		if (session) {
-			settoken(session.accessToken as string);
-		} else if (!session) {
-			settoken("");
+		if (["standard", "starter"].includes(atsVersion)) {
+			router.push("/organization/settings/pricing");
+		} else {
+			if (session) {
+				settoken(session.accessToken as string);
+			} else if (!session) {
+				settoken("");
+			}
 		}
-	}, [session]);
+	}, [session, atsVersion]);
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	const [socket, setSocket] = useState(null);

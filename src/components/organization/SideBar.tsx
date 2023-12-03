@@ -135,7 +135,9 @@ export default function OrgSideBar() {
 	const version = useVersionStore((state: { version: any }) => state.version);
 
 	function preOrNot(name: any) {
-		if (version === "standard") {
+		if (version === "starter") {
+			return name === "Offer Management" || name === "Inboxes";
+		} else if (version === "standard") {
 			return name === "Offer Management";
 		} else {
 			return false;
@@ -343,7 +345,7 @@ export default function OrgSideBar() {
 										""
 									) : (
 										<>
-											{menuItem.url === "/organization/inbox" && (
+											{version != "starter" && menuItem.url === "/organization/inbox" && (
 												<span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-white">
 													{count}
 												</span>
@@ -385,7 +387,7 @@ export default function OrgSideBar() {
 							</div>
 						</li>
 					</ul>
-					{version === "standard" && !show && (
+					{["standard", "starter"].includes(version) && !show && (
 						<div className="py-0">
 							<div className="rounded-large bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-6 text-white">
 								<div className="mb-2 flex items-center">
