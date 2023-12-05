@@ -26,7 +26,7 @@ export default function Pricing() {
 
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
-	const [duration, setduration] = useState(false);
+	const [duration, setduration] = useState(true);
 	const [tab, settab] = useState(0);
 	const [activePlan, setactivePlan] = useState(1);
 	const [planInfo, setplanInfo] = useState("");
@@ -375,21 +375,21 @@ export default function Pricing() {
 										className={
 											"rounded-full px-4 py-2 text-[12px] font-bold uppercase" +
 											" " +
-											(!duration ? "bg-primary text-white" : "text-darkGray dark:text-gray-400")
-										}
-										onClick={() => setduration(false)}
-									>
-										{t("Form.Yearly")}
-									</button>
-									<button
-										className={
-											"rounded-full px-4 py-2 text-[12px] font-bold uppercase" +
-											" " +
 											(duration ? "bg-primary text-white" : "text-darkGray dark:text-gray-400")
 										}
 										onClick={() => setduration(true)}
 									>
 										{t("Form.Monthly")}
+									</button>
+									<button
+										className={
+											"rounded-full px-4 py-2 text-[12px] font-bold uppercase" +
+											" " +
+											(!duration ? "bg-primary text-white" : "text-darkGray dark:text-gray-400")
+										}
+										onClick={() => setduration(false)}
+									>
+										{t("Form.Yearly")}
 									</button>
 								</div>
 								<div className="mx-auto flex w-[80%] flex-wrap justify-center gap-4 p-2">
@@ -491,7 +491,8 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black">30,000￥/monthly</div>
+														<div className="text-base font-black line-through decoration-red-500">30,000￥</div>
+														<div className="text-lg font-black ">17,500￥/monthly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -517,7 +518,10 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black text-primary ">30,000￥/monthly</div>
+														<div className="text-base font-black text-primary line-through decoration-red-500">
+															30,000￥
+														</div>
+														<div className="text-lg font-black text-primary ">17,500￥/monthly</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -539,6 +543,7 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-base font-black line-through decoration-red-500">60,000￥</div>
 														<div className="text-lg font-black">45,000￥/monthly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
@@ -565,7 +570,10 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black text-primary">45,000￥/monthly</div>
+														<div className="text-base font-black text-primary line-through decoration-red-500">
+															60,000￥
+														</div>
+														<div className="text-lg font-black text-primary ">45,000￥/monthly</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -637,7 +645,8 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
-														<div className="text-lg font-black">360,000￥/yearly</div>
+														<div className="text-base font-black  line-through decoration-red-500">360,000￥</div>
+														<div className="text-lg font-black  ">210,000￥/yearly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -663,7 +672,10 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
-														<div className="text-lg font-black text-primary ">360,000￥/yearly</div>
+														<div className="text-base font-black text-primary line-through decoration-red-500">
+															360,000￥
+														</div>
+														<div className="text-lg font-black text-primary ">210,000￥/yearly</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -685,7 +697,8 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
-														<div className="text-lg font-black">480,000￥/yearly</div>
+														<div className="text-base font-black  line-through decoration-red-500">720,000￥</div>
+														<div className="text-lg font-black  ">480,000￥/yearly</div>
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -711,7 +724,10 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
-														<div className="text-lg font-black text-primary">480,000￥/yearly</div>
+														<div className="text-base font-black text-primary line-through decoration-red-500">
+															720,000￥
+														</div>
+														<div className="text-lg font-black text-primary ">480,000￥/yearly</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
