@@ -1,3 +1,4 @@
+//@collapse
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import Image from "next/image";
 import FormField from "@/components/FormField";
@@ -87,8 +88,8 @@ export default function InboxChatMsg({
 			{type === "user" && (
 				<>
 					<div className="group flex w-full cursor-default items-end py-1">
-						<div className="flex max-w-[80%] cursor-default flex-row flex-nowrap items-end">
-							<Image
+						<div className="flex max-w-[70%] cursor-default flex-row flex-nowrap items-end">
+							{/* <Image
 								src={
 									process.env.NODE_ENV === "production"
 										? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
@@ -98,7 +99,11 @@ export default function InboxChatMsg({
 								width={150}
 								height={150}
 								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
-							/>
+							/> */}
+							<h4 className="mb-2 mr-2 flex flex-col items-center whitespace-nowrap text-[8px] font-bold text-darkGray dark:text-gray-400">
+								<div>{moment(data["sent"]).format("Do MMM YY")}</div>
+								<div>{moment(data["sent"]).format("hh:mm a")}</div>
+							</h4>
 							<div
 								onContextMenu={(e) => {
 									if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
@@ -108,173 +113,197 @@ export default function InboxChatMsg({
 									setOpen(true);
 								}}
 							>
-								<div className="ml-2 mr-3 rounded-xl bg-stone-300/25 px-3 py-3">
+								<div
+									className="rounded-xl px-4 py-2.5 leading-5"
+									style={{
+										outline: "transparent solid 1px",
+										boxShadow: "0px 0.3px 0.9px rgba(0, 0, 0, 0.12), 0px 1.6px 3.6px rgba(0, 0, 0, 0.16)",
+										background: "rgba(255,255,255,0.7)"
+									}}
+								>
 									{data["isRecall"] ? (
-										<article className="text-sm text-darkGray dark:text-lightBlue ">
+										<article className="text-sm text-[#111]/75 dark:text-lightBlue ">
 											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
 										</article>
 									) : (
-										<article className="text-sm font-bold text-darkGray dark:text-lightBlue ">
+										<article className="text-sm font-bold text-[#111] dark:text-lightBlue ">
 											{replyMSG && replyMSG.length > 0 && (
 												<>
 													{replyMSG.map((data2, i) => (
-														<div
-															className="mb-2 rounded-xl border-2 border-stone-600/25 bg-stone-300/25 px-3 py-2 text-darkGray/75 dark:text-lightBlue/75 "
-															key={i}
-														>
-															{data2["file"] && (
-																<>
-																	<button
-																		onClick={() => {
-																			window.open(
-																				process.env.NODE_ENV === "production"
-																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
-																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
-																				"_blank"
-																			);
-																		}}
-																		className={
-																			`flex items-center gap-2 px-1 text-[15px]` +
-																			" " +
-																			`${
-																				(data2["media"] || data2["contact"] || data2["text"]) && "mb-1 pb-2 shadow-md"
-																			}`
-																		}
-																	>
-																		<i className="fa-regular fa-file text-[30px]"></i>
-																		<p>{data2["file"]["name"]}</p>
-																	</button>
-																</>
-															)}
-															{data2["media"] && (
-																<>
-																	<button
-																		onClick={() => {
-																			window.open(
-																				process.env.NODE_ENV === "production"
-																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
-																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
-																				"_blank"
-																			);
-																		}}
-																		className={
-																			`flex items-center gap-2 px-1 text-[15px]` +
-																			" " +
-																			`${(data2["text"] || data2["contact"]) && "mb-1 pb-2 shadow-md"}`
-																		}
-																	>
-																		<i className="fa-regular fa-image text-[30px]"></i>
-																		<p>{data2["media"]["name"]}</p>
-																	</button>
-																</>
-															)}
+														<>
+															{!data2["isRecall"] && (
+																<div
+																	className="mb-1 rounded-lg bg-[#e1ffe140]/[0.25] px-2 py-1 text-[10px] font-[300] shadow-md dark:text-lightBlue/75 "
+																	key={i}
+																>
+																	{data2["file"] && (
+																		<>
+																			<button
+																				onClick={() => {
+																					window.open(
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
+																						"_blank"
+																					);
+																				}}
+																				className={
+																					`flex items-center gap-2` +
+																					" " +
+																					`${
+																						(data2["media"] || data2["contact"] || data2["text"]) &&
+																						"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 shadow-md"
+																					}`
+																				}
+																			>
+																				<i className="fa-regular fa-file"></i>
+																				<p>{data2["file"]["name"]}</p>
+																			</button>
+																		</>
+																	)}
+																	{data2["media"] && (
+																		<>
+																			<button
+																				onClick={() => {
+																					window.open(
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
+																						"_blank"
+																					);
+																				}}
+																				className={
+																					`flex items-center gap-2` +
+																					" " +
+																					`${
+																						(data2["text"] || data2["contact"]) &&
+																						"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 shadow-md"
+																					}`
+																				}
+																			>
+																				<i className="fa-regular fa-image"></i>
+																				<p>{data2["media"]["name"]}</p>
+																			</button>
+																		</>
+																	)}
 
-															{data2["contact"] && (
-																<>
-																	<Popover className="relative">
-																		{({ open }) => (
-																			<>
-																				<Popover.Button
-																					className={
-																						`flex flex-col gap-2 ` + " " + `${data2["text"] && "mb-1 pb-2 shadow-md"}`
-																					}
-																				>
-																					<div className="flex items-center gap-2 px-1">
-																						<Image
-																							src={
-																								process.env.NODE_ENV === "production"
-																									? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
-																									: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																	{data2["contact"] && (
+																		<>
+																			<Popover className="relative">
+																				{({ open }) => (
+																					<>
+																						<Popover.Button
+																							className={
+																								`flex flex-col gap-2 ` +
+																								" " +
+																								`${
+																									data2["text"] &&
+																									"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 shadow-md"
+																								}`
 																							}
-																							alt={"ABC"}
-																							width={100}
-																							height={100}
-																							className="h-[40px] w-[40px] rounded-full object-cover"
-																						/>
-																						<p>
-																							{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
-																						</p>
-																					</div>
-																					<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																					<p className="ml-3 text-sm">Contact Card</p>
-																				</Popover.Button>
-
-																				<Transition
-																					as={Fragment}
-																					enter="transition ease-out duration-200"
-																					enterFrom="opacity-0 translate-y-1"
-																					enterTo="opacity-100 translate-y-0"
-																					leave="transition ease-in duration-150"
-																					leaveFrom="opacity-100 translate-y-0"
-																					leaveTo="opacity-0 translate-y-1"
-																				>
-																					<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
-																						<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
-																							<div
-																								className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
-																								// style={{ background: generateRandomGradient() }}
-																							>
-																								<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
-																									<Image
-																										src={
-																											process.env.NODE_ENV === "production"
-																												? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
-																												: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
-																										}
-																										alt={"ABC"}
-																										width={100}
-																										height={100}
-																										className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
-																									/>
-																								</div>
-																							</div>
-																							<div className="p-6">
-																								<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																									{data2["contact"]["name"]}
-																								</h5>
-																								<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																									{data2["contact"]["title"]}
+																						>
+																							<div className="flex items-center gap-2">
+																								<Image
+																									src={
+																										process.env.NODE_ENV === "production"
+																											? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																											: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																									}
+																									alt={"ABC"}
+																									width={100}
+																									height={100}
+																									className="h-[20px] w-[20px] rounded-full object-cover"
+																								/>
+																								<p>
+																									{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
 																								</p>
-																								<hr className="dark:border-lightBlue/50" />
-																								<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
-																									<div className="flex flex-col gap-2">
-																										<div className="flex justify-between gap-2">
-																											<b>Email</b>
-																											<p>
-																												{data2["contact"]["email"] ? data2["contact"]["email"] : "N/A"}
-																											</p>
-																										</div>
-																										<div className="flex justify-between gap-2">
-																											<b>Deparment</b>
-																											<p>
-																												{data2["contact"]["department"]
-																													? data2["contact"]["department"]
-																													: "N/A"}
-																											</p>
-																										</div>
-																										<div className="flex justify-between gap-2">
-																											<b>Role</b>
-																											<p>
-																												{data2["contact"]["role"] ? data2["contact"]["role"] : "N/A"}
-																											</p>
+																							</div>
+																							{/* <hr className="w-full border-gray-700 dark:border-lightBlue" />
+																							<p className="ml-3 text-sm">Contact Card</p> */}
+																						</Popover.Button>
+
+																						<Transition
+																							as={Fragment}
+																							enter="transition ease-out duration-200"
+																							enterFrom="opacity-0 translate-y-1"
+																							enterTo="opacity-100 translate-y-0"
+																							leave="transition ease-in duration-150"
+																							leaveFrom="opacity-100 translate-y-0"
+																							leaveTo="opacity-0 translate-y-1"
+																						>
+																							<Popover.Panel className="absolute bottom-0 left-[20vw] z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																								<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																									<div
+																										className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																										// style={{ background: generateRandomGradient() }}
+																									>
+																										<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																											<Image
+																												src={
+																													process.env.NODE_ENV === "production"
+																														? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																														: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																												}
+																												alt={"ABC"}
+																												width={100}
+																												height={100}
+																												className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																											/>
 																										</div>
 																									</div>
-																								</p>
-																							</div>
-																						</div>
-																					</Popover.Panel>
-																				</Transition>
-																			</>
-																		)}
-																	</Popover>
-																</>
-															)}
+																									<div className="p-6">
+																										<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																											{data2["contact"]["name"]}
+																										</h5>
+																										<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																											{data2["contact"]["title"]}
+																										</p>
+																										<hr className="dark:border-lightBlue/50" />
+																										<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																											<div className="flex flex-col gap-2">
+																												<div className="flex justify-between gap-2">
+																													<b>Email</b>
+																													<p>
+																														{data2["contact"]["email"]
+																															? data2["contact"]["email"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																												<div className="flex justify-between gap-2">
+																													<b>Deparment</b>
+																													<p>
+																														{data2["contact"]["department"]
+																															? data2["contact"]["department"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																												<div className="flex justify-between gap-2">
+																													<b>Role</b>
+																													<p>
+																														{data2["contact"]["role"]
+																															? data2["contact"]["role"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																											</div>
+																										</p>
+																									</div>
+																								</div>
+																							</Popover.Panel>
+																						</Transition>
+																					</>
+																				)}
+																			</Popover>
+																		</>
+																	)}
 
-															{data2["text"] && data2["text"].length > 0 && (
-																<p className="text-left">{data2["text"]}</p>
+																	{data2["text"] && data2["text"].length > 0 && (
+																		<p className="text-left">{data2["text"]}</p>
+																	)}
+																	{/* <p className="text-left text-xs font-bold">{data2["sender_username"]}~</p> */}
+																</div>
 															)}
-															<p className="text-left text-xs font-bold">{data2["sender_username"]}~</p>
-														</div>
+														</>
 													))}
 												</>
 											)}
@@ -290,12 +319,15 @@ export default function InboxChatMsg({
 															);
 														}}
 														className={
-															`flex items-center gap-2 px-1 text-[15px]` +
+															`flex items-center gap-2` +
 															" " +
-															`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
+															`${
+																(data["media"] || data["contact"] || data["text"]) &&
+																"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 text-[11px] shadow-md"
+															}`
 														}
 													>
-														<i className="fa-regular fa-file text-[30px]"></i>
+														<i className="fa-regular fa-file"></i>
 														<p>{data["file"]["name"]}</p>
 													</button>
 												</>
@@ -312,12 +344,15 @@ export default function InboxChatMsg({
 															);
 														}}
 														className={
-															`flex items-center gap-2 px-1 text-[15px]` +
+															`flex items-center gap-2` +
 															" " +
-															`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
+															`${
+																(data["text"] || data["contact"]) &&
+																"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 text-[11px] shadow-md"
+															}`
 														}
 													>
-														<i className="fa-regular fa-image text-[30px]"></i>
+														<i className="fa-regular fa-image"></i>
 														<p>{data["media"]["name"]}</p>
 													</button>
 												</>
@@ -329,9 +364,16 @@ export default function InboxChatMsg({
 														{({ open }) => (
 															<>
 																<Popover.Button
-																	className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
+																	className={
+																		`flex flex-col gap-2 ` +
+																		" " +
+																		`${
+																			data["text"] &&
+																			"mb-1 rounded-lg bg-[#e1ffe140]/[0.1] px-2 py-1 text-[11px] shadow-md"
+																		}`
+																	}
 																>
-																	<div className="flex items-center gap-2 px-1">
+																	<div className="flex items-center gap-2">
 																		<Image
 																			src={
 																				process.env.NODE_ENV === "production"
@@ -341,12 +383,14 @@ export default function InboxChatMsg({
 																			alt={"ABC"}
 																			width={100}
 																			height={100}
-																			className="h-[40px] w-[40px] rounded-full object-cover"
+																			className="h-[20px] w-[20px] rounded-full object-cover"
 																		/>
-																		<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																		<p className="text-[11px] font-[400]">
+																			{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}
+																		</p>
 																	</div>
-																	<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																	<p className="ml-3 text-sm">Contact Card</p>
+																	{/* <hr className="w-full border-gray-700 dark:border-lightBlue" />
+																	<p className="ml-3 text-sm">Contact Card</p> */}
 																</Popover.Button>
 
 																<Transition
@@ -433,10 +477,33 @@ export default function InboxChatMsg({
 								)}
 							</div>
 
-							{data["isEdit"] && <p className="pr-2 text-sm">edited</p>}
-							<h4 className="mb-2 hidden whitespace-nowrap text-[10px] font-bold text-darkGray group-hover:block dark:text-gray-400">
-								{moment(data["sent"]).format("h:mm a")}
-							</h4>
+							{!data["isRecall"] && replyMSG && replyMSG.length > 0 && (
+								<>
+									{replyMSG.map((data2, ii) => (
+										<>
+											{!data2["isRecall"] && (
+												<h4
+													className="mb-2 ml-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400"
+													key={ii}
+												>
+													to: {data2["sender_username"]}
+												</h4>
+											)}
+										</>
+									))}
+								</>
+							)}
+
+							{data["contact"] && (
+								<h4 className="mb-2 ml-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400">
+									card
+								</h4>
+							)}
+							{data["isEdit"] && (
+								<h4 className="mb-2 ml-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400">
+									edited
+								</h4>
+							)}
 						</div>
 					</div>
 				</>
@@ -445,8 +512,8 @@ export default function InboxChatMsg({
 			{type === "me" && (
 				<>
 					<div className="group flex w-full cursor-default flex-row-reverse items-end py-1">
-						<div className="flex max-w-[80%] cursor-default flex-row-reverse flex-nowrap items-end">
-							<Image
+						<div className="flex max-w-[70%] cursor-default flex-row-reverse flex-nowrap items-end">
+							{/* <Image
 								src={
 									process.env.NODE_ENV === "production"
 										? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["sender_profile"]}`
@@ -456,7 +523,11 @@ export default function InboxChatMsg({
 								width={150}
 								height={150}
 								className="h-[35px] w-[35px] rounded-full object-cover shadow-highlight"
-							/>
+							/> */}
+							<h4 className="mb-2 ml-2 flex flex-col items-center whitespace-nowrap text-[8px] font-bold text-darkGray dark:text-gray-400">
+								<div>{moment(data["sent"]).format("Do MMM YY")}</div>
+								<div>{moment(data["sent"]).format("hh:mm a")}</div>
+							</h4>
 							<div
 								onContextMenu={(e) => {
 									if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
@@ -466,13 +537,16 @@ export default function InboxChatMsg({
 									setOpen(true);
 								}}
 							>
-								<div className="ml-2 mr-3 rounded-xl bg-sky-300/25 px-3 py-3">
+								<div
+									className="rounded-xl px-4 py-2.5 leading-5"
+									style={{ background: "linear-gradient(130deg, #2870EA 20%, #1B4AEF 77.5%)" }}
+								>
 									{data["isRecall"] ? (
-										<article className="text-sm text-darkGray dark:text-lightBlue ">
+										<article className="text-sm text-white/75 dark:text-lightBlue ">
 											{srcLang === "ja" ? "このメッセージは取り消されました。" : "This message was recalled."}
 											{data["text"] && data["text"].length > 0 && (
 												<span
-													className="ml-1 cursor-pointer text-primary/75 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:text-xl hover:text-primary"
+													className="ml-1 cursor-pointer text-white/[0.85] transition delay-150 duration-300 ease-in-out hover:text-red-200"
 													onClick={() => settext(data["text"])}
 												>
 													Re-edit &rarr;
@@ -480,168 +554,184 @@ export default function InboxChatMsg({
 											)}
 										</article>
 									) : (
-										<article className="text-sm text-darkGray dark:text-lightBlue ">
+										<article className="text-sm font-[400] text-white">
 											{replyMSG && replyMSG.length > 0 && (
 												<>
 													{replyMSG.map((data2, i) => (
-														<div
-															className="mb-2 rounded-xl border-2 border-sky-600/25 bg-sky-300/25 px-3 py-2 text-darkGray/75 dark:text-lightBlue/75 "
-															key={i}
-														>
-															{data2["file"] && (
-																<>
-																	<button
-																		onClick={() => {
-																			window.open(
-																				process.env.NODE_ENV === "production"
-																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
-																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
-																				"_blank"
-																			);
-																		}}
-																		className={
-																			`flex items-center gap-2 px-1 text-[15px]` +
-																			" " +
-																			`${
-																				(data2["media"] || data2["contact"] || data2["text"]) && "mb-1 pb-2 shadow-md"
-																			}`
-																		}
-																	>
-																		<i className="fa-regular fa-file text-[30px]"></i>
-																		<p>{data2["file"]["name"]}</p>
-																	</button>
-																</>
-															)}
+														<>
+															{!data2["isRecall"] && (
+																<div
+																	className="mb-1 rounded-lg bg-white/[0.25] px-2 py-1 text-[10px] font-[300] shadow-md dark:text-lightBlue/75 "
+																	key={i}
+																>
+																	{data2["file"] && (
+																		<>
+																			<button
+																				onClick={() => {
+																					window.open(
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["file"]["url"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["file"]["url"]}`,
+																						"_blank"
+																					);
+																				}}
+																				className={
+																					`flex items-center gap-2` +
+																					" " +
+																					`${
+																						(data2["media"] || data2["contact"] || data2["text"]) &&
+																						"mb-1 rounded-lg bg-white/[0.1] px-2 py-1 shadow-md"
+																					}`
+																				}
+																			>
+																				<i className="fa-regular fa-file"></i>
+																				<p>{data2["file"]["name"]}</p>
+																			</button>
+																		</>
+																	)}
 
-															{data2["media"] && (
-																<>
-																	<button
-																		onClick={() => {
-																			window.open(
-																				process.env.NODE_ENV === "production"
-																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
-																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
-																				"_blank"
-																			);
-																		}}
-																		className={
-																			`flex items-center gap-2 px-1 text-[15px]` +
-																			" " +
-																			`${(data2["text"] || data2["contact"]) && "mb-1 pb-2 shadow-md"}`
-																		}
-																	>
-																		<i className="fa-regular fa-image text-[30px]"></i>
-																		<p>{data2["media"]["name"]}</p>
-																	</button>
-																</>
-															)}
+																	{data2["media"] && (
+																		<>
+																			<button
+																				onClick={() => {
+																					window.open(
+																						process.env.NODE_ENV === "production"
+																							? `${process.env.NEXT_PUBLIC_PROD_BACKEND}${data2["media"]["url"]}`
+																							: `${process.env.NEXT_PUBLIC_DEV_BACKEND}${data2["media"]["url"]}`,
+																						"_blank"
+																					);
+																				}}
+																				className={
+																					`flex items-center gap-2` +
+																					" " +
+																					`${
+																						(data2["text"] || data2["contact"]) &&
+																						"mb-1 rounded-lg bg-white/[0.1] px-2 py-1 shadow-md"
+																					}`
+																				}
+																			>
+																				<i className="fa-regular fa-image text-[30px]"></i>
+																				<p>{data2["media"]["name"]}</p>
+																			</button>
+																		</>
+																	)}
 
-															{data2["contact"] && (
-																<>
-																	<Popover className="relative">
-																		{({ open }) => (
-																			<>
-																				<Popover.Button
-																					className={
-																						`flex flex-col gap-2 ` + " " + `${data2["text"] && "mb-1 pb-2 shadow-md"}`
-																					}
-																				>
-																					<div className="flex items-center gap-2 px-1">
-																						<Image
-																							src={
-																								process.env.NODE_ENV === "production"
-																									? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
-																									: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																	{data2["contact"] && (
+																		<>
+																			<Popover className="relative">
+																				{({ open }) => (
+																					<>
+																						<Popover.Button
+																							className={
+																								`flex flex-col gap-2 ` +
+																								" " +
+																								`${
+																									data2["text"] && "mb-1 rounded-lg bg-white/[0.1] px-2 py-1 shadow-md"
+																								}`
 																							}
-																							alt={"ABC"}
-																							width={100}
-																							height={100}
-																							className="h-[40px] w-[40px] rounded-full object-cover"
-																						/>
-																						<p>
-																							{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
-																						</p>
-																					</div>
-																					<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																					<p className="ml-3 text-sm">Contact Card</p>
-																				</Popover.Button>
-																				<Transition
-																					as={Fragment}
-																					enter="transition ease-out duration-200"
-																					enterFrom="opacity-0 translate-y-1"
-																					enterTo="opacity-100 translate-y-0"
-																					leave="transition ease-in duration-150"
-																					leaveFrom="opacity-100 translate-y-0"
-																					leaveTo="opacity-0 translate-y-1"
-																				>
-																					<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
-																						<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
-																							<div
-																								className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
-																								// style={{ background: generateRandomGradient() }}
-																							>
-																								<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
-																									<Image
-																										src={
-																											process.env.NODE_ENV === "production"
-																												? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
-																												: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
-																										}
-																										alt={"ABC"}
-																										width={100}
-																										height={100}
-																										className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
-																									/>
-																								</div>
-																							</div>
-																							<div className="p-6">
-																								<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																									{data2["contact"]["name"]}
-																								</h5>
-																								<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
-																									{data2["contact"]["title"]}
+																						>
+																							<div className="flex items-center gap-2">
+																								<Image
+																									src={
+																										process.env.NODE_ENV === "production"
+																											? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																											: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																									}
+																									alt={"ABC"}
+																									width={100}
+																									height={100}
+																									className="h-[20px] w-[20px] rounded-full object-cover"
+																								/>
+																								<p>
+																									{data2["contact"]["name"] ? data2["contact"]["name"] : "Contact Card"}
 																								</p>
-																								<hr className="dark:border-lightBlue/50" />
-																								<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
-																									<div className="flex flex-col gap-2">
-																										<div className="flex justify-between gap-2">
-																											<b>Email</b>
-																											<p>
-																												{data2["contact"]["email"] ? data2["contact"]["email"] : "N/A"}
-																											</p>
-																										</div>
-																										<div className="flex justify-between gap-2">
-																											<b>Deparment</b>
-																											<p>
-																												{data2["contact"]["department"]
-																													? data2["contact"]["department"]
-																													: "N/A"}
-																											</p>
-																										</div>
-																										<div className="flex justify-between gap-2">
-																											<b>Role</b>
-																											<p>
-																												{data2["contact"]["role"] ? data2["contact"]["role"] : "N/A"}
-																											</p>
+																							</div>
+																							{/* <hr className="w-full border-gray-700 dark:border-lightBlue" />
+																					<p className="ml-3 text-sm">Contact Card</p> */}
+																						</Popover.Button>
+																						<Transition
+																							as={Fragment}
+																							enter="transition ease-out duration-200"
+																							enterFrom="opacity-0 translate-y-1"
+																							enterTo="opacity-100 translate-y-0"
+																							leave="transition ease-in duration-150"
+																							leaveFrom="opacity-100 translate-y-0"
+																							leaveTo="opacity-0 translate-y-1"
+																						>
+																							<Popover.Panel className="absolute bottom-0 right-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0">
+																								<div className="relative flex w-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 drop-shadow-lg dark:bg-gray-900">
+																									<div
+																										className="bg-blue-gray-500 relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-border text-white shadow-lg shadow-blue-500/50"
+																										// style={{ background: generateRandomGradient() }}
+																									>
+																										<div className="absolute right-[calc(50%-50px)] top-[calc(50%-50px)]">
+																											<Image
+																												src={
+																													process.env.NODE_ENV === "production"
+																														? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data2["contact"]["profile"]}`
+																														: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data2["contact"]["profile"]}`
+																												}
+																												alt={"ABC"}
+																												width={100}
+																												height={100}
+																												className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+																											/>
 																										</div>
 																									</div>
-																								</p>
-																							</div>
-																						</div>
-																					</Popover.Panel>
-																				</Transition>
-																			</>
-																		)}
-																	</Popover>
-																</>
-															)}
+																									<div className="p-6">
+																										<h5 className="text-blue-gray-900 mb-2 block font-sans text-xl font-semibold capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																											{data2["contact"]["name"]}
+																										</h5>
+																										<p className="text-blue-gray-900 mb-2 block font-sans text-sm capitalize leading-snug tracking-normal antialiased dark:text-lightBlue">
+																											{data2["contact"]["title"]}
+																										</p>
+																										<hr className="dark:border-lightBlue/50" />
+																										<p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased dark:text-lightBlue">
+																											<div className="flex flex-col gap-2">
+																												<div className="flex justify-between gap-2">
+																													<b>Email</b>
+																													<p>
+																														{data2["contact"]["email"]
+																															? data2["contact"]["email"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																												<div className="flex justify-between gap-2">
+																													<b>Deparment</b>
+																													<p>
+																														{data2["contact"]["department"]
+																															? data2["contact"]["department"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																												<div className="flex justify-between gap-2">
+																													<b>Role</b>
+																													<p>
+																														{data2["contact"]["role"]
+																															? data2["contact"]["role"]
+																															: "N/A"}
+																													</p>
+																												</div>
+																											</div>
+																										</p>
+																									</div>
+																								</div>
+																							</Popover.Panel>
+																						</Transition>
+																					</>
+																				)}
+																			</Popover>
+																		</>
+																	)}
 
-															{data2["text"] && data2["text"].length > 0 && (
-																<p className="text-right">{data2["text"]}</p>
-															)}
+																	{data2["text"] && data2["text"].length > 0 && (
+																		<p className="text-right">{data2["text"]}</p>
+																	)}
 
-															<p className="text-right text-xs font-bold">~{data2["sender_username"]}</p>
-														</div>
+																	{/* <p className="text-right text-xs font-bold"></p> */}
+																</div>
+															)}
+														</>
 													))}
 												</>
 											)}
@@ -658,12 +748,15 @@ export default function InboxChatMsg({
 															);
 														}}
 														className={
-															`flex items-center gap-2 px-1 text-[15px]` +
+															`flex items-center gap-2` +
 															" " +
-															`${(data["media"] || data["contact"] || data["text"]) && "mb-1 pb-2 shadow-md"}`
+															`${
+																(data["media"] || data["contact"] || data["text"]) &&
+																"mb-1 rounded-lg bg-white/[0.1] px-2 py-1 text-[11px] shadow-md"
+															}`
 														}
 													>
-														<i className="fa-regular fa-file text-[30px]"></i>
+														<i className="fa-regular fa-file"></i>
 														<p>{data["file"]["name"]}</p>
 													</button>
 												</>
@@ -681,12 +774,15 @@ export default function InboxChatMsg({
 															);
 														}}
 														className={
-															`flex items-center gap-2 px-1 text-[15px]` +
+															`flex items-center gap-2` +
 															" " +
-															`${(data["text"] || data["contact"]) && "mb-1 pb-2 shadow-md"}`
+															`${
+																(data["text"] || data["contact"]) &&
+																"mb-1 rounded-lg bg-white/[0.1] px-2 py-1 text-[11px] shadow-md"
+															}`
 														}
 													>
-														<i className="fa-regular fa-image text-[30px]"></i>
+														<i className="fa-regular fa-image"></i>
 														<p>{data["media"]["name"]}</p>
 													</button>
 												</>
@@ -698,9 +794,15 @@ export default function InboxChatMsg({
 														{({ open }) => (
 															<>
 																<Popover.Button
-																	className={`flex flex-col gap-2 ` + " " + `${data["text"] && "mb-1 pb-2 shadow-md"}`}
+																	className={
+																		`flex flex-col gap-2 text-sm` +
+																		" " +
+																		`${
+																			data["text"] && "mb-1 rounded-lg bg-white/[0.1] px-2 py-1 text-[11px] shadow-md"
+																		}`
+																	}
 																>
-																	<div className="flex items-center gap-2 px-1">
+																	<div className="flex items-center gap-1">
 																		<Image
 																			src={
 																				process.env.NODE_ENV === "production"
@@ -710,12 +812,14 @@ export default function InboxChatMsg({
 																			alt={"ABC"}
 																			width={100}
 																			height={100}
-																			className="h-[40px] w-[40px] rounded-full object-cover"
+																			className="h-[20px] w-[20px] rounded-full object-cover"
 																		/>
-																		<p>{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}</p>
+																		<p className="text-[11px] font-[400]">
+																			{data["contact"]["name"] ? data["contact"]["name"] : "Contact Card"}
+																		</p>
 																	</div>
-																	<hr className="w-full border-gray-700 dark:border-lightBlue" />
-																	<p className="ml-3 text-sm">Contact Card</p>
+																	{/* <hr className="w-full border-gray-700 dark:border-lightBlue" />
+																	<p className="ml-3 text-sm">Contact Card</p> */}
 																</Popover.Button>
 																<Transition
 																	as={Fragment}
@@ -812,10 +916,34 @@ export default function InboxChatMsg({
 									</ControlledMenu>
 								)}
 							</div>
-							{data["isEdit"] && <p className="pl-2 text-sm">edited</p>}
-							<h4 className="mb-2 hidden whitespace-nowrap text-[10px] font-bold text-darkGray group-hover:block dark:text-gray-400">
-								{moment(data["sent"]).format("h:mm a")}
-							</h4>
+
+							{!data["isRecall"] && replyMSG && replyMSG.length > 0 && (
+								<>
+									{replyMSG.map((data2, ii) => (
+										<>
+											{!data2["isRecall"] && (
+												<h4
+													className="mb-2 mr-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400"
+													key={ii}
+												>
+													to: {data2["sender_username"]}
+												</h4>
+											)}
+										</>
+									))}
+								</>
+							)}
+
+							{data["contact"] && (
+								<h4 className="mb-2 mr-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400">
+									card
+								</h4>
+							)}
+							{data["isEdit"] && (
+								<h4 className="mb-2 mr-2 whitespace-nowrap text-[10px] font-bold text-black dark:text-gray-400">
+									edited
+								</h4>
+							)}
 						</div>
 					</div>
 				</>
