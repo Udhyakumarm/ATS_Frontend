@@ -692,10 +692,7 @@ export default function InboxFrame({
 							</div>
 						</div>
 						{toggle ? (
-							<div
-								className="h-[calc(100vh-280px-8px)] overflow-y-auto py-2"
-								// ref={msgContainerRef}
-							>
+							<div className="h-[calc(100vh-280px-8px)] overflow-y-auto py-2" ref={msgContainerRef}>
 								<div className="mx-auto w-full max-w-[100%] px-4">
 									{msg.length <= 0 ? (
 										<div className="flex h-[calc(100vh-305px)] items-center justify-center">
