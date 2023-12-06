@@ -1,3 +1,4 @@
+//@collapse
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { Dialog, Menu, Tab, Transition } from "@headlessui/react";
 import Image from "next/image";
@@ -12,6 +13,8 @@ import Picker from "@emoji-mart/react";
 import toastcomp from "@/components/toast";
 import moment from "moment";
 import Link from "next/link";
+import EmojiPicker from "emoji-picker-react";
+import { useTheme } from "next-themes";
 
 export default function InboxFrame({
 	togglePages,
@@ -37,6 +40,7 @@ export default function InboxFrame({
 	setloadS,
 	loadSidebar
 }: any) {
+	const { ctheme, setTheme } = useTheme();
 	const cancelButtonRef = useRef(null);
 	const [showContact, setShowContact] = useState(false);
 	const [showContactData, setShowContactData] = useState([]);
@@ -44,7 +48,9 @@ export default function InboxFrame({
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
 
 	const handleEmojiClick = (emoji) => {
-		settext(text + emoji.native);
+		console.log("emoji", emoji);
+		// settext(text + emoji.native);
+		settext(text + emoji.emoji);
 		setIsPickerOpen(false);
 	};
 
@@ -398,9 +404,36 @@ export default function InboxFrame({
 		// setInputText(e.target.value); // Save the final composed text
 	};
 
+	function disSend() {
+		return text.length > 0 || file || media;
+	}
+
+	const getFileIcon = (fileName: any) => {
+		var fileExtension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2);
+		switch (fileExtension.toLowerCase()) {
+			case "pdf":
+				return "fa-regular fa-file-pdf";
+			case "doc":
+			case "docx":
+				return "fa-regular fa-file-word";
+			case "png":
+			case "jpg":
+			case "jpeg":
+				return "fa-regular fa-file-image";
+			default:
+				return "fa-regular fa-file";
+		}
+	};
+
 	return (
 		<>
-			<div className="relative h-full overflow-hidden rounded-normal border bg-white pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800">
+			<div
+				className="relative h-full overflow-hidden rounded-normal border pb-[80px] shadow-normal dark:border-gray-600 dark:bg-gray-800"
+				style={{
+					background:
+						"linear-gradient(90deg, rgb(239, 242, 247) 0%, 7.60286%, rgb(237, 240, 249) 15.2057%, 20.7513%, rgb(235, 239, 248) 26.297%, 27.6386%, rgb(235, 239, 248) 28.9803%, 38.2826%, rgb(231, 237, 249) 47.585%, 48.1216%, rgb(230, 236, 250) 48.6583%, 53.1306%, rgb(228, 236, 249) 57.6029%, 61.5385%, rgb(227, 234, 250) 65.4741%, 68.7835%, rgb(222, 234, 250) 72.093%, 75.7603%, rgb(219, 230, 248) 79.4275%, 82.8265%, rgb(216, 229, 248) 86.2254%, 87.8354%, rgb(213, 228, 249) 89.4454%, 91.8605%, rgb(210, 226, 249) 94.2755%, 95.4383%, rgb(209, 225, 248) 96.6011%, 98.3005%, rgb(208, 224, 247) 100%)"
+				}}
+			>
 				{togglePages ? (
 					<>
 						{/* <div className="h-[calc(100vh-212px)] overflow-y-auto">
@@ -504,7 +537,7 @@ export default function InboxFrame({
 					</>
 				) : (
 					<>
-						<div className="border-b dark:border-b-gray-600">
+						<div className="border-b border-[#174ae4]/25 dark:border-b-gray-600">
 							<div className="mx-auto flex w-full max-w-[90%] items-center px-4 py-2">
 								<Image
 									src={
@@ -513,20 +546,24 @@ export default function InboxFrame({
 											: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${cardActiveData["profile"]}`
 									}
 									alt="User"
-									width={1500}
-									height={1500}
-									className="mr-4 h-[50px] w-[50px] rounded-full object-cover shadow-highlight"
+									width={1000}
+									height={1000}
+									className="mr-4 h-[40px] w-[40px] rounded-full object-cover shadow-highlight"
 								/>
-								<aside>
-									<h4 className="jusitfy-between flex items-center text-sm font-bold">
+								<aside className="w-full">
+									<h4 className="jusitfy-between flex w-[100%] items-center text-sm font-bold">
 										<span className="grow">
-											{cardActiveData["username"]}
-											<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
-												{cardActiveData["title"]}
-											</span>
-											<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
-												{cardActiveData["dept"]}
-											</span>
+											<div className="flex flex-col gap-2">
+												<div>{cardActiveData["username"]}</div>
+												<div className="flex">
+													<span className="pl-0 text-xs text-gray-700/75 dark:text-lightBlue/75">
+														{cardActiveData["title"]}
+													</span>
+													<span className="pl-4 text-xs text-gray-700/75 dark:text-lightBlue/75">
+														{cardActiveData["dept"]}
+													</span>
+												</div>
+											</div>
 										</span>
 										{/* <Menu as="div" className="relative">
 										<Menu.Button className="ml-2 w-6 text-darkGray dark:text-gray-400">
@@ -579,85 +616,89 @@ export default function InboxFrame({
 											</Menu.Items>
 										</Transition>
 									</Menu> */}
+										<div className="flex items-center gap-4 py-1">
+											<div
+												className={
+													"flex h-fit w-fit cursor-pointer items-center gap-1 py-0 " +
+													`${
+														toggle
+															? " border-b-2 border-[#174ae4] text-base font-semibold text-[#174ae4] dark:border-white dark:text-white"
+															: "text-[15px] font-bold text-gray-700/75 dark:text-lightBlue/75"
+													}`
+												}
+												onClick={() => setoggle(true)}
+											>
+												{/* <svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="13"
+													height="16"
+													viewBox="0 0 13 16"
+													fill="none"
+													className={`${
+														toggle ? "fill-[#174ae4] dark:fill-white" : "fill-gray-700/75 dark:fill-lightBlue/75"
+													}`}
+												>
+													<path
+														d="M9.74935 0.535156H3.24935C2.89369 0.535156 2.5415 0.604132 2.21291 0.738144C1.88432 0.872157 1.58576 1.06858 1.33427 1.3162C0.826357 1.8163 0.541016 2.49458 0.541016 3.20182V7.46849C0.540888 8.08324 0.756482 8.67915 1.15131 9.15537C1.54613 9.63159 2.09594 9.95887 2.70768 10.0818V11.2018C2.70724 11.4127 2.77029 11.619 2.88888 11.7946C3.00746 11.9702 3.17626 12.1073 3.37393 12.1885C3.50651 12.2411 3.64808 12.2682 3.79102 12.2685C4.07787 12.2673 4.35253 12.1541 4.55477 11.9538L6.40727 10.1352H9.74935C10.105 10.1352 10.4572 10.0662 10.7858 9.93217C11.1144 9.79816 11.4129 9.60173 11.6644 9.35411C11.9159 9.10649 12.1154 8.81251 12.2515 8.48898C12.3876 8.16544 12.4577 7.81868 12.4577 7.46849V3.20182C12.4577 2.85163 12.3876 2.50487 12.2515 2.18133C12.1154 1.8578 11.9159 1.56383 11.6644 1.3162C11.4129 1.06858 11.1144 0.872157 10.7858 0.738144C10.4572 0.604132 10.105 0.535156 9.74935 0.535156ZM11.3743 7.46849C11.3743 7.89284 11.2031 8.2998 10.8984 8.59986C10.5936 8.89992 10.1803 9.06849 9.74935 9.06849H6.17977C6.03766 9.06908 5.90149 9.12463 5.8006 9.22316L3.79102 11.2018V9.60182C3.79102 9.46037 3.73395 9.32472 3.63236 9.2247C3.53078 9.12468 3.39301 9.06849 3.24935 9.06849C2.81837 9.06849 2.40505 8.89992 2.1003 8.59986C1.79555 8.2998 1.62435 7.89284 1.62435 7.46849V3.20182C1.62435 2.77748 1.79555 2.37051 2.1003 2.07045C2.40505 1.77039 2.81837 1.60182 3.24935 1.60182H9.74935C10.1803 1.60182 10.5936 1.77039 10.8984 2.07045C11.2031 2.37051 11.3743 2.77748 11.3743 3.20182V7.46849Z"
+														// fill="#5500FF"
+													/>
+													<path
+														d="M4.0625 6.13516C4.51123 6.13516 4.875 5.77698 4.875 5.33516C4.875 4.89333 4.51123 4.53516 4.0625 4.53516C3.61377 4.53516 3.25 4.89333 3.25 5.33516C3.25 5.77698 3.61377 6.13516 4.0625 6.13516Z"
+														// fill="#5500FF"
+													/>
+													<path
+														d="M6.5 6.13516C6.94873 6.13516 7.3125 5.77698 7.3125 5.33516C7.3125 4.89333 6.94873 4.53516 6.5 4.53516C6.05127 4.53516 5.6875 4.89333 5.6875 5.33516C5.6875 5.77698 6.05127 6.13516 6.5 6.13516Z"
+														// fill="#5500FF"
+													/>
+													<path
+														d="M8.9375 6.13516C9.38623 6.13516 9.75 5.77698 9.75 5.33516C9.75 4.89333 9.38623 4.53516 8.9375 4.53516C8.48877 4.53516 8.125 4.89333 8.125 5.33516C8.125 5.77698 8.48877 6.13516 8.9375 6.13516Z"
+														// fill="#5500FF"
+													/>
+												</svg> */}
+												<span>Chats</span>
+											</div>
+											<div>|</div>
+											<div
+												className={
+													"flex h-fit w-fit cursor-pointer items-center gap-1 py-0 " +
+													`${
+														!toggle
+															? " border-b-2 border-[#174ae4] text-base font-semibold text-[#174ae4] dark:border-white dark:text-white"
+															: "text-[15px] font-bold text-gray-700/75 dark:text-lightBlue/75"
+													}`
+												}
+												onClick={() => setoggle(false)}
+											>
+												{/* <svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="14"
+													height="11"
+													viewBox="0 0 14 11"
+													fill="none"
+													className={`${
+														!toggle ? "fill-primary dark:fill-white" : "fill-gray-700/75 dark:fill-lightBlue/75"
+													}`}
+												>
+													<path
+														d="M12.495 0H1.505C0.6825 0 0 0.707921 0 1.56106V9.43894C0 10.2921 0.6825 11 1.505 11H12.495C13.3175 11 14 10.2921 14 9.43894V1.5429C14 0.689769 13.3175 0 12.495 0ZM1.225 1.56106L2.835 3.10396H1.225V1.56106ZM4.6025 3.10396C4.5675 3.06766 4.55 3.0132 4.515 2.9769L2.7125 1.27063H3.7975L5.7225 3.10396H4.6025ZM7.49 3.10396C7.455 3.06766 7.4375 3.0132 7.4025 2.9769L5.6 1.27063H6.685L8.61 3.10396H7.49ZM10.395 3.10396C10.36 3.06766 10.3425 3.0132 10.3075 2.9769L8.505 1.27063H9.59L11.515 3.10396H10.395ZM12.775 1.5429V2.57756L11.3925 1.27063H12.495C12.6525 1.27063 12.775 1.39769 12.775 1.5429ZM12.495 9.72937H1.505C1.3475 9.72937 1.225 9.60231 1.225 9.43894V4.37459H12.775V9.43894C12.775 9.58416 12.6525 9.72937 12.495 9.72937Z"
+														// fill="#727272"
+													/>
+												</svg> */}
+												<span>Files</span>
+											</div>
+										</div>
 									</h4>
-									<div className="flex items-center gap-4">
-										<div
-											className={
-												"flex w-fit cursor-pointer gap-1 py-2 text-xs " +
-												`${
-													toggle
-														? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
-														: "text-gray-700/75 dark:text-lightBlue/75"
-												}`
-											}
-											onClick={() => setoggle(true)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="13"
-												height="16"
-												viewBox="0 0 13 16"
-												fill="none"
-												className={`${
-													toggle ? "fill-primary dark:fill-white" : "fill-gray-700/75 dark:fill-lightBlue/75"
-												}`}
-											>
-												<path
-													d="M9.74935 0.535156H3.24935C2.89369 0.535156 2.5415 0.604132 2.21291 0.738144C1.88432 0.872157 1.58576 1.06858 1.33427 1.3162C0.826357 1.8163 0.541016 2.49458 0.541016 3.20182V7.46849C0.540888 8.08324 0.756482 8.67915 1.15131 9.15537C1.54613 9.63159 2.09594 9.95887 2.70768 10.0818V11.2018C2.70724 11.4127 2.77029 11.619 2.88888 11.7946C3.00746 11.9702 3.17626 12.1073 3.37393 12.1885C3.50651 12.2411 3.64808 12.2682 3.79102 12.2685C4.07787 12.2673 4.35253 12.1541 4.55477 11.9538L6.40727 10.1352H9.74935C10.105 10.1352 10.4572 10.0662 10.7858 9.93217C11.1144 9.79816 11.4129 9.60173 11.6644 9.35411C11.9159 9.10649 12.1154 8.81251 12.2515 8.48898C12.3876 8.16544 12.4577 7.81868 12.4577 7.46849V3.20182C12.4577 2.85163 12.3876 2.50487 12.2515 2.18133C12.1154 1.8578 11.9159 1.56383 11.6644 1.3162C11.4129 1.06858 11.1144 0.872157 10.7858 0.738144C10.4572 0.604132 10.105 0.535156 9.74935 0.535156ZM11.3743 7.46849C11.3743 7.89284 11.2031 8.2998 10.8984 8.59986C10.5936 8.89992 10.1803 9.06849 9.74935 9.06849H6.17977C6.03766 9.06908 5.90149 9.12463 5.8006 9.22316L3.79102 11.2018V9.60182C3.79102 9.46037 3.73395 9.32472 3.63236 9.2247C3.53078 9.12468 3.39301 9.06849 3.24935 9.06849C2.81837 9.06849 2.40505 8.89992 2.1003 8.59986C1.79555 8.2998 1.62435 7.89284 1.62435 7.46849V3.20182C1.62435 2.77748 1.79555 2.37051 2.1003 2.07045C2.40505 1.77039 2.81837 1.60182 3.24935 1.60182H9.74935C10.1803 1.60182 10.5936 1.77039 10.8984 2.07045C11.2031 2.37051 11.3743 2.77748 11.3743 3.20182V7.46849Z"
-													// fill="#5500FF"
-												/>
-												<path
-													d="M4.0625 6.13516C4.51123 6.13516 4.875 5.77698 4.875 5.33516C4.875 4.89333 4.51123 4.53516 4.0625 4.53516C3.61377 4.53516 3.25 4.89333 3.25 5.33516C3.25 5.77698 3.61377 6.13516 4.0625 6.13516Z"
-													// fill="#5500FF"
-												/>
-												<path
-													d="M6.5 6.13516C6.94873 6.13516 7.3125 5.77698 7.3125 5.33516C7.3125 4.89333 6.94873 4.53516 6.5 4.53516C6.05127 4.53516 5.6875 4.89333 5.6875 5.33516C5.6875 5.77698 6.05127 6.13516 6.5 6.13516Z"
-													// fill="#5500FF"
-												/>
-												<path
-													d="M8.9375 6.13516C9.38623 6.13516 9.75 5.77698 9.75 5.33516C9.75 4.89333 9.38623 4.53516 8.9375 4.53516C8.48877 4.53516 8.125 4.89333 8.125 5.33516C8.125 5.77698 8.48877 6.13516 8.9375 6.13516Z"
-													// fill="#5500FF"
-												/>
-											</svg>
-											<span>Chats</span>
-										</div>
-										<div
-											className={
-												"flex w-fit cursor-pointer items-center gap-1 py-2 text-xs " +
-												`${
-													!toggle
-														? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
-														: "text-gray-700/75 dark:text-lightBlue/75"
-												}`
-											}
-											onClick={() => setoggle(false)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="14"
-												height="11"
-												viewBox="0 0 14 11"
-												fill="none"
-												className={`${
-													!toggle ? "fill-primary dark:fill-white" : "fill-gray-700/75 dark:fill-lightBlue/75"
-												}`}
-											>
-												<path
-													d="M12.495 0H1.505C0.6825 0 0 0.707921 0 1.56106V9.43894C0 10.2921 0.6825 11 1.505 11H12.495C13.3175 11 14 10.2921 14 9.43894V1.5429C14 0.689769 13.3175 0 12.495 0ZM1.225 1.56106L2.835 3.10396H1.225V1.56106ZM4.6025 3.10396C4.5675 3.06766 4.55 3.0132 4.515 2.9769L2.7125 1.27063H3.7975L5.7225 3.10396H4.6025ZM7.49 3.10396C7.455 3.06766 7.4375 3.0132 7.4025 2.9769L5.6 1.27063H6.685L8.61 3.10396H7.49ZM10.395 3.10396C10.36 3.06766 10.3425 3.0132 10.3075 2.9769L8.505 1.27063H9.59L11.515 3.10396H10.395ZM12.775 1.5429V2.57756L11.3925 1.27063H12.495C12.6525 1.27063 12.775 1.39769 12.775 1.5429ZM12.495 9.72937H1.505C1.3475 9.72937 1.225 9.60231 1.225 9.43894V4.37459H12.775V9.43894C12.775 9.58416 12.6525 9.72937 12.495 9.72937Z"
-													// fill="#727272"
-												/>
-											</svg>
-											<span>Files</span>
-										</div>
-									</div>
 								</aside>
 							</div>
 						</div>
 						{toggle ? (
-							<div className="h-[calc(100vh-280px)] overflow-y-auto" ref={msgContainerRef}>
-								<div className="mx-auto w-full max-w-[90%] px-4">
+							<div
+								className="h-[calc(100vh-280px-8px)] overflow-y-auto py-2"
+								// ref={msgContainerRef}
+							>
+								<div className="mx-auto w-full max-w-[100%] px-4">
 									{msg.length <= 0 ? (
-										<div className="flex min-h-[400px] items-center justify-center">
+										<div className="flex h-[calc(100vh-305px)] items-center justify-center">
 											<div className="mx-auto w-full max-w-[300px] py-8 text-center">
 												<div className="mb-6 p-2">
 													<Image
@@ -710,28 +751,29 @@ export default function InboxFrame({
 								</div>
 							</div>
 						) : (
-							<div className="mx-2 h-full p-2">
-								<div className="flex items-center gap-4">
+							<div className="mx-auto h-full max-w-[90%] px-2 py-2">
+								<div className="flex items-center justify-end gap-4 py-1">
 									<div
 										className={
-											"flex w-fit cursor-pointer gap-1 py-2 text-xs " +
+											"flex h-fit w-fit cursor-pointer items-center gap-1 py-0 " +
 											`${
 												toggle2
-													? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
-													: "text-gray-700/75 dark:text-lightBlue/75"
+													? " border-b-2 border-[#174ae4] text-base font-semibold text-[#174ae4] dark:border-white dark:text-white"
+													: "text-[15px] font-bold text-gray-700/75 dark:text-lightBlue/75"
 											}`
 										}
 										onClick={() => setoggle2(true)}
 									>
 										<span>Document</span>
 									</div>
+									<div>|</div>
 									<div
 										className={
-											"flex w-fit cursor-pointer items-center gap-1 py-2 text-xs " +
+											"flex h-fit w-fit cursor-pointer items-center gap-1 py-0 " +
 											`${
 												!toggle2
-													? "border-b-2 border-primary text-primary dark:border-white dark:text-white"
-													: "text-gray-700/75 dark:text-lightBlue/75"
+													? " border-b-2 border-[#174ae4] text-base font-semibold text-[#174ae4] dark:border-white dark:text-white"
+													: "text-[15px] font-bold text-gray-700/75 dark:text-lightBlue/75"
 											}`
 										}
 										onClick={() => setoggle2(false)}
@@ -740,7 +782,7 @@ export default function InboxFrame({
 									</div>
 								</div>
 								{toggle2 ? (
-									<div className="p-4">
+									<div className="mx-2 p-4">
 										{dataFile && dataFile.length > 0 ? (
 											<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
 												<table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -761,12 +803,23 @@ export default function InboxFrame({
 														{dataFile.map((data, i) => (
 															<tr
 																key={i}
-																className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+																className="cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+																onClick={() => {
+																	window.open(
+																		process.env.NODE_ENV === "production"
+																			? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["file"]}`
+																			: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["file"]}`,
+																		"_blank"
+																	);
+																}}
 															>
 																<th
 																	scope="row"
-																	className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+																	className="flex items-center gap-2 whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
 																>
+																	<i
+																		className={`fa-regular text-xl ${getFileIcon(data["file"].replace("file/", ""))}`}
+																	></i>
 																	{data["file"].replace("file/", "")}
 																</th>
 																<td className="px-6 py-4">{moment(data["upload_date"]).format("DD/MM/YYYY")}</td>
@@ -793,7 +846,7 @@ export default function InboxFrame({
 										)}
 									</div>
 								) : (
-									<div className="p-4">
+									<div className="mx-2 p-4">
 										{dataMwdia && dataMwdia.length > 0 ? (
 											<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
 												<table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -814,14 +867,31 @@ export default function InboxFrame({
 														{dataMwdia.map((data, i) => (
 															<tr
 																key={i}
-																className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+																className="cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+																onClick={() => {
+																	window.open(
+																		process.env.NODE_ENV === "production"
+																			? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["media"]}`
+																			: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["media"]}`,
+																		"_blank"
+																	);
+																}}
 															>
 																<th
+																	scope="row"
+																	className="flex items-center gap-2 whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+																>
+																	<i
+																		className={`fa-regular text-xl ${getFileIcon(data["media"].replace("media/", ""))}`}
+																	></i>
+																	{data["media"].replace("media/", "")}
+																</th>
+																{/* <th
 																	scope="row"
 																	className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
 																>
 																	{data["media"].replace("media/", "")}
-																</th>
+																</th> */}
 																<td className="px-6 py-4">{moment(data["upload_date"]).format("DD/MM/YYYY")}</td>
 																<td className="px-6 py-4 text-right">
 																	<Link
@@ -852,7 +922,11 @@ export default function InboxFrame({
 				)}
 				{toggle && (
 					<>
-						<div className="absolute bottom-0 left-0 w-full border-t bg-lightBlue p-3 dark:border-t-gray-600 dark:bg-gray-900">
+						<div
+							className={`${
+								reply || file || media ? "bg-white" : "bg-transpert"
+							} absolute bottom-0 left-0 w-full border-t p-3 dark:border-t-gray-600 dark:bg-gray-900`}
+						>
 							{reply && (
 								<div className="flex w-full items-center gap-2">
 									<i
@@ -947,7 +1021,7 @@ export default function InboxFrame({
 									name=""
 									id=""
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
-									placeholder="Type something..."
+									placeholder="Message"
 									value={text}
 									onCompositionStart={handleCompositionStart}
 									onCompositionUpdate={handleCompositionUpdate}
@@ -978,7 +1052,24 @@ export default function InboxFrame({
 
 									{isPickerOpen && (
 										<div style={{ position: "absolute", bottom: "50px", right: "10px" }}>
-											<Picker data={data} onEmojiSelect={handleEmojiClick} />
+											<EmojiPicker
+												onEmojiClick={handleEmojiClick}
+												emojiStyle={"google"}
+												theme={ctheme === "dark" ? "dark" : "light"}
+											/>
+											{/* <Picker
+												data={data}
+												onEmojiSelect={handleEmojiClick}
+												emojiButtonRadius="6px"
+												emojiButtonColors={[
+													"rgba(155,223,88,.7)",
+													"rgba(149,211,254,.7)",
+													"rgba(247,233,34,.7)",
+													"rgba(238,166,252,.7)",
+													"rgba(255,213,143,.7)",
+													"rgba(211,209,255,.7)"
+												]}
+											/> */}
 										</div>
 									)}
 
@@ -1146,9 +1237,13 @@ export default function InboxFrame({
 										type="button"
 										className={`block border-l-2 border-gray-400 px-4 text-lg leading-normal`}
 										onClick={() => handleSendClick()}
-										disabled={text === ""}
+										disabled={!disSend()}
 									>
-										<i className={`fa-solid fa-paper-plane` + " " + `${text.length > 0 ? "text-primary" : ""}`}></i>
+										<i
+											className={
+												`fa-solid fa-paper-plane` + " " + `${text.length > 0 || file || media ? "text-primary" : ""}`
+											}
+										></i>
 									</button>
 								</div>
 							</div>
