@@ -15,6 +15,8 @@ import toastcomp from "../toast";
 import moment from "moment";
 import AnalyticsComp from "./AnalyticsComp";
 import AnalyticsChart from "./AnalyticsChart";
+import Button from "../Button";
+import { Dialog, Switch, Transition } from "@headlessui/react";
 
 export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }: any) {
 	const router = useRouter();
@@ -465,6 +467,83 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		setofferArefid(data2["arefid"]);
 		setofferData(data2);
 		router.push("/organization/offer-management");
+	}
+
+	const [step, setstep] = useState(0);
+	const [genReport, setgenReport] = useState(false);
+	const [path, setpath] = useState("");
+	const [tm, settm] = useState([]);
+	const [sp, setsp] = useState([]);
+
+	function changeSwith1(value: any, email: any) {
+		if (value && !sp.includes(email)) {
+			setsp([...sp, email]);
+		} else if (!value && sp.includes(email)) {
+			const newArray = sp.filter((item) => item !== email);
+			setsp(newArray);
+		}
+	}
+
+	async function loadTeamMember() {
+		await axiosInstanceAuth2
+			.get(`/organization/listorguser/`)
+			.then(async (res) => {
+				console.log("!!!!", "share report team", res.data);
+				settm(res.data);
+				setstep(3);
+			})
+			.catch((err) => {
+				console.log("!!!!", "share report team err", err);
+				setstep(1);
+			});
+	}
+
+	useEffect(() => {
+		if (genReport) {
+			setstep(0);
+			setpath("");
+			settm([]);
+			setsp([]);
+		}
+	}, [genReport]);
+
+	async function downloadReport() {
+		setstep(1);
+		const fd = new FormData();
+		fd.append("text", "Download");
+		await axiosInstanceAuth2
+			.post(`/job/analytics-report/`, fd)
+			.then((res) => {
+				console.log("!!!!", "download report", res.data);
+				const data = res.data;
+				if (data.url && data.url.length > 0) {
+					setpath(data.url);
+					setstep(2);
+				} else {
+					setstep(0);
+				}
+			})
+			.catch((err) => {
+				setstep(0);
+				console.log("!!!!", "download report err", err);
+			});
+	}
+
+	async function shareReport() {
+		console.log("!!!!", "share report sp", sp);
+		setstep(4);
+		const fd = new FormData();
+		fd.append("text", "Mail");
+		fd.append("emails", sp.join(","));
+		await axiosInstanceAuth2
+			.post(`/job/analytics-report/`, fd)
+			.then((res) => {
+				setstep(5);
+			})
+			.catch((err) => {
+				setstep(0);
+				console.log("!!!!", "download report err", err);
+			});
 	}
 
 	return (
@@ -1699,6 +1778,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 												</div>
 											</div> */}
 										</div>
+										<div className="mx-auto w-fit">
+											<Button
+												label="Generate report"
+												btnStyle="outlined"
+												btnType="label"
+												handleClick={() => setgenReport(true)}
+											/>
+										</div>
 									</div>
 								)}
 
@@ -1751,6 +1838,176 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					<></>
 				)}
 			</div>
+
+			<Transition.Root show={genReport} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setgenReport}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Overall Report</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setgenReport(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									{step === 0 && (
+										<>
+											<div className="flex w-full gap-1 p-8 pt-4 font-normal">
+												<div
+													className="flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0"
+													onClick={downloadReport}
+												>
+													<i className="fa-solid fa-download"></i>
+													<span>Download report</span>
+												</div>
+												<div
+													className="flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0"
+													onClick={loadTeamMember}
+												>
+													<i className="fa-solid fa-share-nodes"></i>
+													<span>Share report</span>
+												</div>
+											</div>
+											<div className="mb-4 flex flex-col items-center justify-center gap-1">
+												<small>Report download in xlsx format</small>
+												<small>Report can be share accross with team members via mail</small>
+											</div>
+										</>
+									)}
+
+									{step === 1 && (
+										<>
+											<div className="flex w-full gap-1 p-8 pt-4 font-normal">
+												<div className="flex h-full w-full cursor-no-drop items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0">
+													<div
+														className="loader flex aspect-square w-4 animate-spin
+items-center justify-center rounded-full border-t-2 border-gray-500"
+													></div>
+													<span>Report generating</span>
+												</div>
+											</div>
+										</>
+									)}
+
+									{step === 2 && (
+										<>
+											<div className="flex w-full gap-1 p-8 pt-4 font-normal">
+												{path && path.length > 0 && (
+													<div
+														className="flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0"
+														onClick={() => {
+															window.open(path, "_blank");
+															setgenReport(false);
+														}}
+													>
+														<i className="fa-solid fa-download"></i>
+														<span>Click to Download report</span>
+													</div>
+												)}
+											</div>
+										</>
+									)}
+
+									{step === 3 && (
+										<>
+											<div className="p-8 pt-4">
+												<table cellPadding={"0"} cellSpacing={"0"} className="w-full" id="tableV">
+													<thead>
+														<th className="border-b px-3 py-2 text-left">Name</th>
+														<th className="border-b px-3 py-2 text-left">Role</th>
+														<th className="border-b px-3 py-2 text-left">Department</th>
+														{/* <th className="border-b px-3 py-2 text-left">Email</th> */}
+														<th className="border-b px-3 py-2 text-left">Select</th>
+													</thead>
+													<tbody>
+														{tm &&
+															tm.map((data, i) => (
+																<tr key={i}>
+																	<td className="border-b px-3 py-2 text-sm">{data["name"]}</td>
+																	<td className="border-b px-3 py-2 text-sm">{data["role"]}</td>
+																	<td className="border-b px-3 py-2 text-sm">{data["dept"]}</td>
+																	{/* <td className="border-b px-3 py-2 text-sm">{data["email"]}</td> */}
+																	<td className="border-b px-3 py-2 text-sm">
+																		<Switch
+																			checked={sp.includes(data["email"])}
+																			onChange={(value: Boolean) => changeSwith1(value, data["email"])}
+																			className={`${sp.includes(data["email"]) ? "bg-[#50F357]" : "bg-gray-400"}
+          relative inline-flex h-[18px] w-[34px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+																		>
+																			<span className="sr-only">Use setting</span>
+																			<span
+																				aria-hidden="true"
+																				className={`${sp.includes(data["email"]) ? "translate-x-4" : "translate-x-0"}
+            pointer-events-none inline-block h-[14px] w-[14px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+																			/>
+																		</Switch>
+																	</td>
+																</tr>
+															))}
+													</tbody>
+												</table>
+												<div className="flex justify-center gap-2 pt-4">
+													<Button btnStyle="sm" label="Go back" btnType="button" handleClick={() => setstep(0)} />
+													<Button btnStyle="sm" label="Share report" btnType="button" handleClick={shareReport} />
+												</div>
+											</div>
+										</>
+									)}
+
+									{step === 4 && (
+										<>
+											<div className="flex w-full gap-1 p-8 pt-4 font-normal">
+												<div className="flex h-full w-full cursor-no-drop items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0">
+													<div
+														className="loader flex aspect-square w-4 animate-spin
+items-center justify-center rounded-full border-t-2 border-gray-500"
+													></div>
+													<span>Report sharing</span>
+												</div>
+											</div>
+										</>
+									)}
+
+									{step === 5 && (
+										<>
+											<div className="flex w-full gap-1 p-8 pt-4 font-normal">
+												<div className="flex h-full w-full cursor-no-drop items-center justify-center gap-2 rounded-normal border-2 border-dashed py-2 last:mb-0">
+													<span>Report successfully shared within selected members via mail</span>
+												</div>
+											</div>
+										</>
+									)}
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 		</>
 	);
 }
