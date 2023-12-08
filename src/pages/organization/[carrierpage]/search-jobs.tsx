@@ -12,6 +12,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import Head from "next/head";
 import CandFooter from "@/components/candidate/footer";
+import { axiosInstance } from "@/pages/api/axiosApi";
 
 export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -20,6 +21,7 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 	const router = useRouter();
 
 	const cname = useCarrierStore((state: { cname: any }) => state.cname);
+	const setcname = useCarrierStore((state: { setcname: any }) => state.setcname);
 	const cid = useCarrierStore((state: { cid: any }) => state.cid);
 	const setcid = useCarrierStore((state: { setcid: any }) => state.setcid);
 	const orgdetail = useCarrierStore((state: { orgdetail: any }) => state.orgdetail);
@@ -29,12 +31,47 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 	const jdata = useCarrierStore((state: { jdata: any }) => state.jdata);
 	const setjdata = useCarrierStore((state: { setjdata: any }) => state.setjdata);
 
+	const { carrierpage } = router.query;
+	const [load, setload] = useState(false);
+
+	async function loadOrgDetail(carrierID: any) {
+		await axiosInstance
+			.get(`/organization/get/organizationprofile/carrier/${carrierID}/`)
+			.then((res) => {
+				setorgdetail(res.data);
+				console.log("@", res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+				setorgdetail({});
+			});
+	}
+
+	async function getcid(cname: any) {
+		await axiosInstance.get(`/organization/get/organizationprofilecid/carrier/${cname}/`).then((res) => {
+			console.log(res.data);
+			console.log(res.data["OrgProfile"]);
+			console.log(res.data["OrgProfile"][0]["unique_id"]);
+			setcid(res.data["OrgProfile"][0]["unique_id"]);
+			loadOrgDetail(res.data["OrgProfile"][0]["unique_id"]);
+			setload(true);
+		});
+	}
+
 	useEffect(() => {
-		if (orgdetail && Object.keys(orgdetail).length === 0) {
-			if (cid == "" || cname == "") router.replace(`/organization/${cname}`);
-			else router.back();
+		if (carrierpage && carrierpage.length > 0 && !load) {
+			setcname(carrierpage);
+			setcid("");
+			getcid(carrierpage);
 		}
-	}, [cid, orgdetail, cname]);
+	}, [cname, carrierpage, load]);
+
+	// useEffect(() => {
+	// 	if (orgdetail && Object.keys(orgdetail).length === 0) {
+	// 		if (cid == "" || cname == "") router.replace(`/organization/${cname}`);
+	// 		else router.back();
+	// 	}
+	// }, [cid, orgdetail, cname]);
 
 	return (
 		<>
