@@ -26,6 +26,7 @@ import novusIcon12 from "/public/images/novus12.png";
 import LogoImg from "/public/images/noAuth/headerLogo.png";
 import { useNewNovusStore } from "@/utils/novus";
 import PermiumComp from "./premiumComp";
+import toastcomp2 from "../toast2";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
@@ -399,6 +400,47 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	const [err, seterr] = useState(false);
 	const [errMsg, seterrMsg] = useState("");
+
+	//realtime notification
+	const [realNotification, setrealNotification] = useState([]);
+
+	async function fetchCount() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/real-notification/`)
+			.then(async (res) => {
+				console.log("!!!", "Real Notification", res.data);
+				const data = res.data.slice(0, 5);
+				for (let i = 0; i < data.length; i++) {
+					toastcomp2(data[i]["title"], "success");
+				}
+
+				setrealNotification(res.data);
+			})
+			.catch((err) => {
+				setrealNotification([]);
+				console.log("!!!", "Real Notification", err);
+			});
+	}
+
+	// useEffect(() => {
+	// 	if (token && token.length > 0 && !isExpired) {
+	// 		// Call the async function immediately when the component mounts
+
+	// 		console.log("!!!", "timeout1");
+	// 		fetchCount();
+
+	// 		// Set up an interval to call the async function every 5 seconds
+	// 		const intervalId = setInterval(() => {
+	// 			console.log("!!!", "timeout2");
+	// 			fetchCount();
+	// 		}, 10000); // 5000 milliseconds = 5 seconds
+
+	// 		// Clean up the interval when the component unmounts to avoid memory leaks
+	// 		return () => {
+	// 			clearInterval(intervalId);
+	// 		};
+	// 	}
+	// }, [token]);
 
 	return (
 		<>

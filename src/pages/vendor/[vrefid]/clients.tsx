@@ -733,6 +733,40 @@ export default function VendorClients() {
 		}
 	}, [resume]);
 
+	
+	useEffect(() => {
+		if (addCand) {
+			//add
+			setresume(null);
+			setfname("");
+			setlname("");
+			setemail("");
+			setphone("");
+
+			//link
+			setlinks([]);
+			setlink("");
+
+			setsummary("");
+			setcsalary("");
+			setesalary("");
+			setnotice("");
+			setmsg("");
+			setskill("");
+			//exp
+			setnewgre(false);
+			setexpcount(1);
+			setexpid(["expBlock1"]);
+
+			seteducount(0);
+			seteduid([]);
+
+			setcertcount(0);
+			setcertid([]);
+			setocrLoader(false);
+		}
+	}, [addCand]);
+
 	return (
 		<>
 			<Head>
@@ -1383,7 +1417,9 @@ export default function VendorClients() {
 			</Transition.Root>
 
 			<Transition.Root show={addCand} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddCand}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={() => {}}
+					static
+					open={false}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
