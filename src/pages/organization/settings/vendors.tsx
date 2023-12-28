@@ -144,7 +144,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 
 				let title = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${userState[0]["email"]}) `;
 
-				addNotifyLog(axiosInstanceAuth2, title, "");
+				addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
 				toggleLoadMode(true);
 
 				setagreement(null);
@@ -254,7 +254,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 
 					let title = `Vendor ${vid} Onboard by ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-					addNotifyLog(axiosInstanceAuth2, title, "");
+					addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
 					toggleLoadMode(true);
 				}
 
@@ -285,7 +285,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 
 					let title = `Vendor ${vid} Activate by ${userState[0]["name"]} (${userState[0]["email"]}) `;
 
-					addNotifyLog(axiosInstanceAuth2, title, "");
+					addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
 					toggleLoadMode(true);
 				}
 
@@ -298,7 +298,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 
 					let title = `Vendor ${vid} Deactivate by ${userState[0]["name"]} (${userState[0]["email"]}) `;
 
-					addNotifyLog(axiosInstanceAuth2, title, "");
+					addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
 					toggleLoadMode(true);
 				}
 

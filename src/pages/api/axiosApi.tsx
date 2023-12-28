@@ -72,40 +72,44 @@ export async function addActivityLog(axiosInstanceAuth2: any, aname: any) {
 	});
 }
 
-export async function addNotifyLog(axiosInstanceAuth2: any, title: any, type: any) {
+export async function addNotifyLog(axiosInstanceAuth2: any, title: any, type: any, link: any) {
 	const fd = new FormData();
 	fd.append("title", title);
 	fd.append("notification_type", type);
+	fd.append("link", link);
 	await axiosInstanceAuth2.post(`/chatbot/notification/`, fd).catch((err: any) => {
 		toastcomp("Notify Not Add", "error");
 	});
 }
 
-export async function addNotifyJobLog(axiosInstanceAuth2: any, title: any, type: any, refid: any) {
+export async function addNotifyJobLog(axiosInstanceAuth2: any, title: any, type: any, refid: any, link: any) {
 	const fd = new FormData();
 	fd.append("title", title);
 	fd.append("notification_type", type);
 	fd.append("refid", refid);
+	fd.append("link", link);
 	await axiosInstanceAuth2.post(`/chatbot/notification/`, fd).catch((err: any) => {
 		toastcomp("Notify Not Add", "error");
 	});
 }
 
-export async function addNotifyApplicantLog(axiosInstanceAuth2: any, title: any, type: any, arefid: any) {
+export async function addNotifyApplicantLog(axiosInstanceAuth2: any, title: any, type: any, arefid: any, link: any) {
 	const fd = new FormData();
 	fd.append("title", title);
 	fd.append("notification_type", type);
 	fd.append("arefid", arefid);
+	fd.append("link", link);
 	await axiosInstanceAuth2.post(`/chatbot/notification/`, fd).catch((err: any) => {
 		toastcomp("Notify Not Add", "error");
 	});
 }
 
-export async function addNotifyInterviewLog(axiosInstanceAuth2: any, title: any, type: any, irefid: any) {
+export async function addNotifyInterviewLog(axiosInstanceAuth2: any, title: any, type: any, irefid: any, link: any) {
 	const fd = new FormData();
 	fd.append("title", title);
 	fd.append("notification_type", type);
 	fd.append("irefid", irefid);
+	fd.append("link", link);
 	await axiosInstanceAuth2.post(`/chatbot/notification/`, fd).catch((err: any) => {
 		toastcomp("Notify Not Add", "error");
 	});

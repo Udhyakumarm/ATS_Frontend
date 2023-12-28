@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { axiosInstanceAuth } from "../api/axiosApi";
 import moment from "moment";
-import { useLangStore, useNotificationStore, useUserStore } from "@/utils/code";
+import { useApplicantStore, useLangStore, useNotificationStore, useUserStore } from "@/utils/code";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -20,10 +20,6 @@ export default function OrgNotifications() {
 	const [loader, setloader] = useState(true);
 	const [token, settoken] = useState("");
 	const [notification, setnotification] = useState([]);
-
-	const load = useNotificationStore((state: { load: any }) => state.load);
-	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
-	const role = useUserStore((state: { role: any }) => state.role);
 
 	useEffect(() => {
 		if (session) {
@@ -36,39 +32,54 @@ export default function OrgNotifications() {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
 	async function loadNotification() {
-		if (role === "Super Admin") {
-			await axiosInstanceAuth2
-				.get(`/chatbot/list-notification-admin/`)
-				.then(async (res) => {
-					console.log("!", res.data);
-					setnotification(res.data);
-					setloader(false);
-				})
-				.catch((err) => {
-					console.log("!", err);
-					setloader(false);
-				});
-		} else {
-			await axiosInstanceAuth2
-				.get(`/chatbot/list-notification/`)
-				.then(async (res) => {
-					console.log("!", res.data);
-					setnotification(res.data);
-					setloader(false);
-				})
-				.catch((err) => {
-					console.log("!", err);
-					setloader(false);
-				});
-		}
+		await axiosInstanceAuth2
+			.get(`/chatbot/get-all-real-notification/`)
+			.then(async (res) => {
+				console.log("!!!!!", "all notifications", res.data);
+				setnotification(res.data);
+				setloader(false);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setloader(false);
+			});
 	}
 
 	useEffect(() => {
-		if ((token && token.length > 0 && role && role.length > 0) || load) {
+		if (token && token.length > 0) {
 			loadNotification();
-			if (load) toggleLoadMode();
 		}
-	}, [token, role, load]);
+	}, [token]);
+
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+
+	async function handleClick(data: any) {
+		console.log("!!!!!", "notification clicked");
+		//first action unread
+
+		if (data["notification_type"] === "Applicant") {
+			var data2 = data["applicant"];
+			data2["type"] = "career";
+			setjobid(data["applicant"]["job"]["refid"]);
+			setappid(data["applicant"]["arefid"]);
+			settype("career");
+			setappdata(data2);
+			router.push(data["link"]);
+		} else if (data["notification_type"] === "Vendor Applicant") {
+			var data2 = data["vapplicant"];
+			data2["type"] = "vendor";
+			setjobid(data["vapplicant"]["job"]["refid"]);
+			setappid(data["vapplicant"]["arefid"]);
+			settype("vendor");
+			setappdata(data2);
+			router.push(data["link"]);
+		} else if (data["link"] && data["link"].length > 0) {
+			router.push(data["link"]);
+		}
+	}
 
 	return (
 		<>
@@ -105,12 +116,15 @@ export default function OrgNotifications() {
 										notification.map((data, i) =>
 											data["notification_type"] === null || data["notification_type"] === "" ? (
 												<div
-													className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600"
+													className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
+														data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+													}`}
 													key={i}
+													onClick={(e) => handleClick(data)}
 												>
-													<div className="px-8 py-4">
-														<h3 className="mb-1 font-bold">{data["title"]}</h3>
-														<p className="text-sm text-darkGray dark:text-gray-400">
+													<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+														<h3 className="mb-1 text-sm font-bold">{data["title"]}</h3>
+														<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
 															{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
 															{moment(data["timestamp"]).format("h:mm a")}
 														</p>
@@ -120,17 +134,22 @@ export default function OrgNotifications() {
 												<>
 													{data["notification_type"] === "Job" && (
 														<div
-															className="mb-4 overflow-hidden rounded-normal bg-lightBlue last:mb-0 dark:bg-gray-600"
+															className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
+																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+															}`}
 															key={i}
+															onClick={(e) => handleClick(data)}
 														>
-															<div className="border-b px-8 py-4 dark:border-gray-500">
-																<h3 className="mb-1 font-bold">{data["title"]}</h3>
-																<p className="text-sm text-darkGray dark:text-gray-400">
+															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																<h3 className="mb-1  text-sm  font-bold">
+																	{data["title"]}&nbsp;({data["job"]["refid"]}&nbsp;:&nbsp;{data["job"]["jobTitle"]})
+																</h3>
+																<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
 																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at
 																	{moment(data["timestamp"]).format("h:mm a")}
 																</p>
 															</div>
-															<div className="px-8 py-4">
+															{/* <div className="px-8 py-4">
 																<div className="mb-4 flex flex-wrap">
 																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
 																		<h6 className="text-sm font-bold">Scheduled by</h6>
@@ -145,20 +164,28 @@ export default function OrgNotifications() {
 																		</p>
 																	</div>
 																</div>
-															</div>
+															</div> */}
 														</div>
 													)}
 
 													{data["notification_type"] === "Applicant" && (
-														<div className="mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0" key={i}>
-															<div className="border-b border-green-200 px-8 py-4">
-																<h3 className="mb-1 font-bold dark:text-black">{data["title"]}</h3>
-																<p className="text-sm text-darkGray">
+														<div
+															className={`mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0 ${
+																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+															}`}
+															key={i}
+															onClick={(e) => handleClick(data)}
+														>
+															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																<h3 className="mb-1 text-sm  font-bold dark:text-black">
+																	{data["title"]}&nbsp;(Applicant ID&nbsp;:&nbsp;{data["applicant"]["arefid"]})
+																</h3>
+																<p className="whitespace-nowrap text-xs text-darkGray">
 																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
 																	{moment(data["timestamp"]).format("h:mm a")}
 																</p>
 															</div>
-															<div className="px-8 py-4">
+															{/* <div className="px-8 py-4">
 																<div className="mb-4 flex flex-wrap">
 																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
 																		<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
@@ -173,7 +200,44 @@ export default function OrgNotifications() {
 																		<p className="text-[12px] text-darkGray">{data["applicant"]["arefid"]}</p>
 																	</div>
 																</div>
+															</div> */}
+														</div>
+													)}
+
+													{data["notification_type"] === "Vendor Applicant" && (
+														<div
+															className={`mb-4 overflow-hidden rounded-normal bg-lime-100 last:mb-0 ${
+																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+															}`}
+															key={i}
+															onClick={(e) => handleClick(data)}
+														>
+															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																<h3 className="mb-1 text-sm  font-bold dark:text-black">
+																	{data["title"]}&nbsp;
+																	{data["vapplicant"] && <>(Applicant ID&nbsp;:&nbsp;{data["vapplicant"]["arefid"]})</>}
+																</h3>
+																<p className="whitespace-nowrap text-xs text-darkGray">
+																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
+																	{moment(data["timestamp"]).format("h:mm a")}
+																</p>
 															</div>
+															{/* <div className="px-8 py-4">
+																<div className="mb-4 flex flex-wrap">
+																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
+																		<p className="text-[12px] text-darkGray">{data["to_user"]["email"]}</p>
+																	</div>
+																	<div className="mr-4 w-full pl-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Job ID</h6>
+																		<p className="text-[12px] text-darkGray">{data["applicant"]["job"]["refid"]}</p>
+																	</div>
+																	<div className="w-full pl-4 lg:max-w-[20%]">
+																		<h6 className="text-sm font-bold dark:text-black">Applicant ID</h6>
+																		<p className="text-[12px] text-darkGray">{data["applicant"]["arefid"]}</p>
+																	</div>
+																</div>
+															</div> */}
 														</div>
 													)}
 												</>

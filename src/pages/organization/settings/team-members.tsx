@@ -119,7 +119,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 
 				let title = `New User ${name} (${oemail}) as ${role["name"]} joined in our Organization by ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-				addNotifyLog(axiosInstanceAuth2, title, "");
+				addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/team-members");
 				toggleLoadMode(true);
 
 				setAddTeam(false);
@@ -164,7 +164,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 
 				let title = `Organization User role Updated to ${res.data["role"]} by ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-				addNotifyLog(axiosInstanceAuth2, title, "");
+				addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/team-members");
 				toggleLoadMode(true);
 
 				loadTeamMember();
@@ -191,7 +191,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 
 				let title = `Organization User (${email}) Removed by ${userState[0]["name"]} (${userState[0]["email"]})`;
 
-				addNotifyLog(axiosInstanceAuth2, title, "");
+				addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/team-members");
 				toggleLoadMode(true);
 
 				loadTeamMember();

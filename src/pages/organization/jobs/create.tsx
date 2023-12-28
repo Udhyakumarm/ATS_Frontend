@@ -284,7 +284,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				}
 
 				addActivityLog(axiosInstanceAuth2, aname);
-				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"]);
+				addNotifyJobLog(axiosInstanceAuth2, title, "Job", res.data["refid"], `/organization/jobs/${type}/`);
 				toggleLoadMode(true);
 				if (type === "active") {
 					setPublishThanks(true);
