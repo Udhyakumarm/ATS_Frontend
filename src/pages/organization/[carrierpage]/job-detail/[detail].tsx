@@ -402,7 +402,7 @@ export default function CanCareerJobDetail2(props) {
 				// toastcomp("VendorCandidate Rating Fetch", "success");
 				let rating = res.data.fit_data;
 
-				if (rating > 40 || rating === -1) {
+				if (rating > 0 || rating === -1 || rating === null) {
 					const fd = new FormData();
 					fd.append("first_name", fname);
 					fd.append("last_name", lname);

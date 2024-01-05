@@ -394,7 +394,7 @@ export default function VendorClients() {
 				console.log("^^^", "vendor rating", res.data);
 				// toastcomp("VendorCandidate Rating Fetch", "success");
 				let rating = res.data.fit_data;
-				if (rating > 40 || rating === -1) {
+				if (rating > 0 || rating === -1 || rating === null) {
 					// toastcomp("Condition Pass", "success");
 
 					const fd = new FormData();

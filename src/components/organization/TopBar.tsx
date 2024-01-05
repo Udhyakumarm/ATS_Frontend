@@ -27,6 +27,7 @@ import LogoImg from "/public/images/noAuth/headerLogo.png";
 import { useNewNovusStore } from "@/utils/novus";
 import PermiumComp from "./premiumComp";
 import toastcomp2 from "../toast2";
+import ToastComp22 from "../toast3";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
@@ -403,47 +404,105 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	//realtime notification
 	const [realNotification, setrealNotification] = useState([]);
+	const [realNotificationCount, setrealNotificationCount] = useState(0);
 
-	async function fetchCount() {
+	async function fetchRealNotificationCount() {
 		await axiosInstanceAuth2
-			.get(`/chatbot/real-notification/`)
+			.get(`/chatbot/get-real-notification-count/`)
 			.then(async (res) => {
-				console.log("!!!", "Real Notification", res.data);
-				const data = res.data.slice(0, 5);
-				for (let i = 0; i < data.length; i++) {
-					toastcomp2(data[i]["title"], "success");
-				}
-
-				setrealNotification(res.data);
+				console.log("!!!!", "Real Notification Count", res.data.length);
+				setrealNotificationCount(res.data.length);
 			})
 			.catch((err) => {
-				setrealNotification([]);
-				console.log("!!!", "Real Notification", err);
+				setrealNotificationCount(0);
+				console.log("!!!!", "Real Notification Count", err);
 			});
 	}
 
-	// useEffect(() => {
-	// 	if (token && token.length > 0 && !isExpired) {
-	// 		// Call the async function immediately when the component mounts
+	async function fetchRealNotification() {
+		await axiosInstanceAuth2
+			.get(`/chatbot/real-notification/`)
+			.then(async (res) => {
+				console.log("!!!!", "Real Notification", res.data);
+				const data = res.data.slice(0, 4);
+				// for (let i = 0; i < data.length; i++) {
+				// 	toastcomp2(data[i]["title"], data[i]["jtitle"], data[i]["created"], data[i], router.locale);
+				// }
+				// if (res.data.length > 4) {
+				// 	toastcomp2(
+				// 		`${res.data.length - 4} more notifications ...`,
+				// 		`さらに${res.data.length - 4}件の通知 ...`,
+				// 		"",
+				// 		{},
+				// 		router.locale
+				// 	);
+				// }
+				setrealNotification(res.data);
+				afterRealNotification();
+			})
+			.catch((err) => {
+				setrealNotification([]);
+				afterRealNotification();
+				console.log("!!!!", "Real Notification", err);
+			});
+	}
 
-	// 		console.log("!!!", "timeout1");
-	// 		fetchCount();
+	async function afterRealNotification() {
+		await axiosInstanceAuth2
+			.post(`/chatbot/real-notification-after/`)
+			.then(async (res) => {
+				// setrealNotification([]);
+				console.log("!!!", "After Real Notification", res.data);
+			})
+			.catch((err) => {
+				// setrealNotification([]);
+				console.log("!!!", "After Real Notification", err);
+			});
+	}
 
-	// 		// Set up an interval to call the async function every 5 seconds
-	// 		const intervalId = setInterval(() => {
-	// 			console.log("!!!", "timeout2");
-	// 			fetchCount();
-	// 		}, 10000); // 5000 milliseconds = 5 seconds
+	async function afterclickRealNotification() {
+		await axiosInstanceAuth2
+			.post(`/chatbot/read-real-notification/`)
+			.then(async (res) => {
+				fetchRealNotificationCount();
+				router.push("/organization/notifications");
+			})
+			.catch((err) => {
+				fetchRealNotificationCount();
+				router.push("/organization/notifications");
+			});
+	}
 
-	// 		// Clean up the interval when the component unmounts to avoid memory leaks
-	// 		return () => {
-	// 			clearInterval(intervalId);
-	// 		};
-	// 	}
-	// }, [token]);
+	useEffect(() => {
+		if (token && token.length > 0 && !isExpired) {
+			// Call the async function immediately when the component mounts
+
+			console.log("!!!", "timeout1");
+			fetchRealNotificationCount();
+			fetchRealNotification();
+
+			// Set up an interval to call the async function every 5 seconds
+			const intervalId = setInterval(() => {
+				console.log("!!!", "timeout2");
+				fetchRealNotificationCount();
+				fetchRealNotification();
+			}, 12000); //12000 5000 milliseconds = 5 seconds
+
+			// Clean up the interval when the component unmounts to avoid memory leaks
+			return () => {
+				clearInterval(intervalId);
+			};
+		}
+	}, [token]);
 
 	return (
 		<>
+			<ToastComp22
+				data={realNotification}
+				axiosInstanceAuth2={axiosInstanceAuth2}
+				fetchRealNotificationCount={fetchRealNotificationCount}
+				afterclickRealNotification={afterclickRealNotification}
+			/>
 			<div
 				id="topbar"
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
@@ -548,13 +607,13 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 							toastcomp("Plan Expired", "error");
 							router.push("/organization/settings/pricing");
 						} else {
-							notification();
+							afterclickRealNotification();
 						}
 					}}
 				>
 					<i className="fa-regular fa-bell text-[20px]"></i>
 					<span className="absolute right-[-10px] top-[-7px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
-						{count}
+						{realNotificationCount}
 					</span>
 					{isExpired && (
 						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>

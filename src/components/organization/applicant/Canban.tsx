@@ -101,10 +101,17 @@ function Canban(props: any) {
 				let title = `Applicant has been shifted to ${status} By ${userState[0]["name"]} (${userState[0]["email"]})`;
 
 				if (type === "career") {
-					addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid);
+					addNotifyApplicantLog(axiosInstanceAuth2, title, "Applicant", arefid, "/organization/applicants/detail");
 				}
 				if (type === "vendor") {
-					addNotifyLog(axiosInstanceAuth2, title, "Vendor Applicant");
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Vendor Applicant",
+						arefid,
+						"/organization/applicants/detail"
+					);
+					// addNotifyLog(axiosInstanceAuth2, title, "Vendor Applicant");
 				}
 
 				toggleLoadMode(true);

@@ -122,7 +122,7 @@ export default function RecPreivew(props) {
 				let title = `${userState[0]["name"]} (${userState[0]["email"]}) has ${status} a Job`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
-				addNotifyJobLog(axiosInstanceAuth2, title, "Job", refid);
+				addNotifyJobLog(axiosInstanceAuth2, title, "Job", refid, `/organization/jobs/${status.toLowerCase()}/`);
 				toggleLoadMode(true);
 
 				router.push(`/organization/jobs/${status.toLowerCase()}/`);

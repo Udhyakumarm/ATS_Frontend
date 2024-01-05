@@ -6,7 +6,13 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
-import { addNotifyLog, axiosInstance2, axiosInstanceAuth, axiosInstanceAuth22 } from "@/pages/api/axiosApi";
+import {
+	addNotifyApplicantLog,
+	addNotifyLog,
+	axiosInstance2,
+	axiosInstanceAuth,
+	axiosInstanceAuth22
+} from "@/pages/api/axiosApi";
 import { useEffect, useState, useRef, Fragment } from "react";
 import { useApplicantStore, useCalStore, useNotificationStore, useUserStore } from "@/utils/code";
 import Button from "@/components/Button";
@@ -310,8 +316,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			.then((res) => {
 				toastcomp("Feedback Created", "success");
 				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-
-				addNotifyLog(axiosInstanceAuth2, title, "");
+				addNotifyApplicantLog(
+					axiosInstanceAuth2,
+					title,
+					`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+					appdata["arefid"],
+					"/organization/applicants/detail"
+				);
+				// addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
 				loadTimeLine();
@@ -365,8 +377,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Updated", "success");
 					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-
-					addNotifyLog(axiosInstanceAuth2, title, "");
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+					// addNotifyLog(axiosInstanceAuth2, title, "");
 					toggleLoadMode(true);
 					loadFeedback();
 				})
@@ -396,8 +414,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Status Updated", "success");
 					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-
-					addNotifyLog(axiosInstanceAuth2, title, "");
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+					// addNotifyLog(axiosInstanceAuth2, title, "");
 					toggleLoadMode(true);
 					loadFeedback();
 					if (status === "Reject") {

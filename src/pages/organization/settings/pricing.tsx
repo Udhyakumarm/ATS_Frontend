@@ -385,9 +385,9 @@ export default function Pricing() {
 											{/* Enterprise m plan */}
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
-													<div className="flex flex-col gap-1">
+													<div className="flex flex-col justify-center gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-base font-black line-through decoration-red-500">60,000￥</div>
+														{/* <div className="text-base font-black line-through decoration-red-500">60,000￥</div> */}
 														<div className="text-lg font-black">45,000￥/monthly</div>
 														{/* <div className="text-lg font-black">45,000￥/monthly</div> */}
 
@@ -413,11 +413,11 @@ export default function Pricing() {
 														setprice(true);
 													}}
 												>
-													<div className="flex flex-col gap-1">
+													<div className="flex flex-col justify-center gap-1">
 														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-base font-black text-primary line-through decoration-red-500">
+														{/* <div className="text-base font-black text-primary line-through decoration-red-500">
 															60,000￥
-														</div>
+														</div> */}
 														<div className="text-lg font-black text-primary ">45,000￥/monthly</div>
 														{/* <div className="text-lg font-black text-primary">45,000￥/monthly</div> */}
 
@@ -549,7 +549,7 @@ export default function Pricing() {
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
 
-														<div className="text-base font-black  line-through decoration-red-500">720,000￥</div>
+														<div className="text-base font-black  line-through decoration-red-500">540,000￥</div>
 														<div className="text-lg font-black  ">480,000￥/yearly</div>
 														{/* <div className="text-lg font-black">480,000￥/yearly</div> */}
 
@@ -579,7 +579,7 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Annual Fixed</div>
 
 														<div className="text-base font-black text-primary line-through decoration-red-500">
-															720,000￥
+															540,000￥
 														</div>
 														<div className="text-lg font-black text-primary ">480,000￥/yearly</div>
 														{/* <div className="text-lg font-black text-primary">480,000￥/yearly</div> */}
