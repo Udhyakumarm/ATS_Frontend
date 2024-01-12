@@ -42,6 +42,7 @@ import { EmailShareButton, FacebookShareButton, LinkedinShareButton } from "reac
 import TwitterShareButton from "react-share/lib/TwitterShareButton";
 import TelegramShareButton from "react-share/lib/TelegramShareButton";
 import CandFooter from "@/components/candidate/footer";
+import toastcomp2 from "@/components/toast2";
 
 export default function CanCareerJobDetail2(props) {
 	const { t } = useTranslation("common");
@@ -135,8 +136,19 @@ export default function CanCareerJobDetail2(props) {
 				console.log("!", res.data);
 				if (res.data["Message"] == 1) {
 					setbtndis(true);
+					if (noAuth) {
+						toastcomp("Already Applied", "error");
+						setAddCand(false);
+						setnoAuth(false);
+					}
 				} else {
 					setbtndis(false);
+					if (noAuth) {
+						setnoAuth(false);
+						toastcomp("Not Applied", "success");
+						addCandidateProfile(detail);
+						// addApp({ preventDefault: () => {} });
+					}
 				}
 			})
 			.catch((err) => {
@@ -316,7 +328,11 @@ export default function CanCareerJobDetail2(props) {
 
 		setAddCand(false);
 		// checkApplicant()
-		router.push(`/organization/${cname}/dashboard`);
+		if (noAuthCount === 2) {
+			toastcomp("Done", "success");
+		} else {
+			router.push(`/organization/${cname}/dashboard`);
+		}
 		// loadVendorAppDetail(vjdata[vjobclick]["refid"], vrefid);
 	}
 
@@ -376,111 +392,137 @@ export default function CanCareerJobDetail2(props) {
 	}
 
 	async function addCandidateProfile(refid: any) {
-		const axiosInstanceAuth2 = axiosInstanceAuth(token);
+		if (noAuth && noAuthCount === 1) {
+			console.log("noAuth", "Applied Procees not start");
+			const oid = orgdetail.OrgProfile[0].unique_id;
+			const fd2 = new FormData();
+			fd2.append("email", email);
+			fd2.append("first_name", fname);
+			fd2.append("last_name", lname);
+			await axiosInstance2
+				.post(`/candidate/candidate-noauth-email-registration/${oid}/`, fd2)
+				.then((res) => {
+					console.log("noAuth", res.data);
+					const newtoken = res.data.tokens.access;
+					console.log("noAuth token", newtoken);
+					settoken(newtoken);
+					setnoAuthCount(2);
+					// checkApplicant();
 
-		var exp = 0;
-		var month = 0;
-		if (!newgre) {
-			for (let i = 0; i < expid.length; i++) {
-				let startdate = moment(document.getElementById(`sdate${expid[i]}`).value);
-				let enddate = moment(document.getElementById(`edate${expid[i]}`).value);
-				month = month + Math.floor(enddate.diff(startdate, "months"));
-			}
-			exp = month / 12;
-			exp = (Math.round(exp * 100) / 100).toFixed(1);
-		}
-		var text = `Applicant Data: Applicant Name ${fname} ${lname}, they have experience of ${exp} years with skills set of ${skill} with Current Salary is ${
-			!newgre ? csalary : "0"
-		} and Expected salary is ${esalary}.`;
-
-		const fd = new FormData();
-		fd.append("text", text);
-		await axiosInstanceAuth2
-			.post(`/vendors/job-fit/${refid}/`, fd)
-			.then(async (res) => {
-				console.log("^^^", "vendor rating", res.data);
-				// toastcomp("VendorCandidate Rating Fetch", "success");
-				let rating = res.data.fit_data;
-
-				if (rating > 0 || rating === -1 || rating === null) {
-					const fd = new FormData();
-					fd.append("first_name", fname);
-					fd.append("last_name", lname);
-					// fd.append("email", email);
-					fd.append("resume", resume);
-					fd.append("skills", skill);
-					if (!newgre) fd.append("current_salary", csalary);
-					if (!newgre) fd.append("notice_period", notice);
-					if (phone && phone.length > 0) fd.append("mobile", phone);
-					if (summary && summary.length > 0) fd.append("summary", summary);
-					if (esalary && esalary.length > 0) fd.append("expected_salary", esalary);
-					if (msg && msg.length > 0) fd.append("recuriter_message", msg);
-
-					await axiosInstanceAuth2
-						.post(`/candidate/candidateprofile/${refid}/`, fd)
-						.then(async (res) => {
-							if (res.data["msg"] && res.data["msg"].length > 0) {
-								toastcomp(res.data["msg"], "error");
-							} else {
-								console.log("$", res.data);
-								// let vcrefid = res.data.data[0]["vcrefid"];
-								toastcomp("Candidate Profile Created", "success");
-								for (let i = 0; i < links.length; i++) {
-									addCandidateLink(refid, checkurl(links[i]));
-								}
-
-								if (!newgre) {
-									for (let i = 0; i < expid.length; i++) {
-										var fd = new FormData();
-										fd.append("title", document.getElementById(`title${expid[i]}`).value);
-										fd.append("company", document.getElementById(`cname${expid[i]}`).value);
-										fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
-										fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
-										fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
-										fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
-										addCandidateExp(refid, fd);
-									}
-								}
-
-								for (let i = 0; i < eduid.length; i++) {
-									var fd = new FormData();
-									fd.append("title", document.getElementById(`title${eduid[i]}`).value);
-									fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
-									fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
-									fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
-									fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
-									addCandidateEdu(refid, fd);
-								}
-
-								for (let i = 0; i < certid.length; i++) {
-									var fd = new FormData();
-									fd.append("title", document.getElementById(`title${certid[i]}`).value);
-									fd.append("company", document.getElementById(`cname${certid[i]}`).value);
-									fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
-									fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
-									fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
-									fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
-									addCandidateCert(refid, fd);
-								}
-
-								addCandidateApplicant(refid, rating);
-							}
-						})
-						.catch((err) => {
-							// toastcomp("Vendor Candidate Profile Not Created", "error");
-							toastcomp("Email ALreday Exist", "error");
-							console.log("error:", err);
-						});
-				} else {
-					setsadApply(true);
 					return false;
+				})
+				.catch((error) => {
+					console.log("noAuth Error", error);
+					return false;
+				});
+		} else {
+			console.log("noAuth", "Applied Procees start");
+			const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+			var exp = 0;
+			var month = 0;
+			if (!newgre) {
+				for (let i = 0; i < expid.length; i++) {
+					let startdate = moment(document.getElementById(`sdate${expid[i]}`).value);
+					let enddate = moment(document.getElementById(`edate${expid[i]}`).value);
+					month = month + Math.floor(enddate.diff(startdate, "months"));
 				}
-			})
-			.catch((err) => {
-				toastcomp("VendorCandidate Rating Fetch Error", "error");
-				console.log("@", err);
-				return false;
-			});
+				exp = month / 12;
+				exp = (Math.round(exp * 100) / 100).toFixed(1);
+			}
+			var text = `Applicant Data: Applicant Name ${fname} ${lname}, they have experience of ${exp} years with skills set of ${skill} with Current Salary is ${
+				!newgre ? csalary : "0"
+			} and Expected salary is ${esalary}.`;
+
+			const fd = new FormData();
+			fd.append("text", text);
+			await axiosInstanceAuth2
+				.post(`/vendors/job-fit/${refid}/`, fd)
+				.then(async (res) => {
+					console.log("^^^", "vendor rating", res.data);
+					// toastcomp("VendorCandidate Rating Fetch", "success");
+					let rating = res.data.fit_data;
+
+					if (rating > 0 || rating === -1 || rating === null) {
+						const fd = new FormData();
+						fd.append("first_name", fname);
+						fd.append("last_name", lname);
+						// fd.append("email", email);
+						fd.append("resume", resume);
+						fd.append("skills", skill);
+						if (!newgre) fd.append("current_salary", csalary);
+						if (!newgre) fd.append("notice_period", notice);
+						if (phone && phone.length > 0) fd.append("mobile", phone);
+						if (summary && summary.length > 0) fd.append("summary", summary);
+						if (esalary && esalary.length > 0) fd.append("expected_salary", esalary);
+						if (msg && msg.length > 0) fd.append("recuriter_message", msg);
+
+						await axiosInstanceAuth2
+							.post(`/candidate/candidateprofile/${refid}/`, fd)
+							.then(async (res) => {
+								if (res.data["msg"] && res.data["msg"].length > 0) {
+									toastcomp(res.data["msg"], "error");
+								} else {
+									console.log("$", res.data);
+									// let vcrefid = res.data.data[0]["vcrefid"];
+									toastcomp("Candidate Profile Created", "success");
+									for (let i = 0; i < links.length; i++) {
+										addCandidateLink(refid, checkurl(links[i]));
+									}
+
+									if (!newgre) {
+										for (let i = 0; i < expid.length; i++) {
+											var fd = new FormData();
+											fd.append("title", document.getElementById(`title${expid[i]}`).value);
+											fd.append("company", document.getElementById(`cname${expid[i]}`).value);
+											fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
+											fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
+											fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
+											fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
+											addCandidateExp(refid, fd);
+										}
+									}
+
+									for (let i = 0; i < eduid.length; i++) {
+										var fd = new FormData();
+										fd.append("title", document.getElementById(`title${eduid[i]}`).value);
+										fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
+										fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
+										fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
+										fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
+										addCandidateEdu(refid, fd);
+									}
+
+									for (let i = 0; i < certid.length; i++) {
+										var fd = new FormData();
+										fd.append("title", document.getElementById(`title${certid[i]}`).value);
+										fd.append("company", document.getElementById(`cname${certid[i]}`).value);
+										fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
+										fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
+										fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
+										fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
+										addCandidateCert(refid, fd);
+									}
+
+									addCandidateApplicant(refid, rating);
+								}
+							})
+							.catch((err) => {
+								// toastcomp("Vendor Candidate Profile Not Created", "error");
+								toastcomp("Email ALreday Exist", "error");
+								console.log("error:", err);
+							});
+					} else {
+						setsadApply(true);
+						return false;
+					}
+				})
+				.catch((err) => {
+					toastcomp("VendorCandidate Rating Fetch Error", "error");
+					console.log("@", err);
+					return false;
+				});
+		}
 	}
 
 	function addApp(event: FormEvent<HTMLFormElement>) {
@@ -488,7 +530,14 @@ export default function CanCareerJobDetail2(props) {
 
 		var check = 0;
 
-		if (fname.length <= 0 || lname.length <= 0 || skill.length <= 0 || resume === null) {
+		// if (fname.length <= 0 || lname.length <= 0) {
+		if (
+			fname.length <= 0 ||
+			lname.length <= 0 ||
+			skill.length <= 0 ||
+			resume === null ||
+			(noAuth && email.length <= 0)
+		) {
 			check = 4;
 		} else if (!newgre) {
 			for (let i = 0; i < expid.length; i++) {
@@ -785,6 +834,9 @@ export default function CanCareerJobDetail2(props) {
 		}
 	}
 
+	const [noAuth, setnoAuth] = useState(false);
+	const [noAuthCount, setnoAuthCount] = useState(0);
+
 	return (
 		<>
 			<Head>
@@ -896,11 +948,18 @@ export default function CanCareerJobDetail2(props) {
 												loader={false}
 												btnType="button"
 												handleClick={() => {
+													setnoAuth(false);
+													setnoAuthCount(0);
 													if (session) {
+														setnoAuth(false);
 														loadSettings();
 														setAddCand(true);
+														setnoAuthCount(0);
 													} else {
-														router.push(`/organization/${cname}/candidate/signin`);
+														setnoAuth(true);
+														setnoAuthCount(1);
+														setAddCand(true);
+														// router.push(`/organization/${cname}/candidate/signin`);
 													}
 												}}
 												disabled={btndis}
@@ -1190,6 +1249,22 @@ export default function CanCareerJobDetail2(props) {
 												</div>
 											)}
 
+											{noAuth && (
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[100%]">
+														<FormField
+															fieldType="input"
+															inputType="email"
+															label={"Email"}
+															value={email}
+															handleChange={(e) => setemail(e.target.value)}
+															placeholder={"Email"}
+															required
+														/>
+													</div>
+												</div>
+											)}
+
 											<div className="mx-[-10px] flex flex-wrap">
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
 													<FormField
@@ -1197,10 +1272,10 @@ export default function CanCareerJobDetail2(props) {
 														inputType="text"
 														label={t("Form.FirstName")}
 														value={fname}
-														// handleChange={(e) => setfname(e.target.value)}
+														handleChange={(e) => setfname(e.target.value)}
 														placeholder={t("Form.FirstName")}
 														required
-														readOnly
+														readOnly={!noAuth}
 													/>
 												</div>
 												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
@@ -1210,12 +1285,13 @@ export default function CanCareerJobDetail2(props) {
 														label={t("Form.LastName")}
 														placeholder={t("Form.LastName")}
 														value={lname}
-														// handleChange={(e) => setlname(e.target.value)}
+														handleChange={(e) => setlname(e.target.value)}
 														required
-														readOnly
+														readOnly={!noAuth}
 													/>
 												</div>
 											</div>
+
 											<div className="mb-4">
 												<div className="mb-2 flex flex-wrap items-center justify-between">
 													<label className="mb-1 inline-block font-bold">{t("Words.AddSocialLogins")}</label>
