@@ -1156,7 +1156,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.JobDescription")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
-											{atsVersion != "starter" && (
+											{!["standard", "starter"].includes(atsVersion) && (
 												<div className="mb-4 w-full text-right">
 													<button
 														type="button"

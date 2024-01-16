@@ -192,7 +192,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}
 
 	async function loadAIInterviewQuestion() {
-		if (atsVersion != "starter") {
+		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader(true);
 			let canid = "";
 			if (type === "career") {
@@ -289,7 +289,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			loadApplicantDetail();
 			loadFeedback();
 			loadTimeLine();
-			if (atsVersion != "starter") {
+			if (!["standard", "starter"].includes(atsVersion)) {
 				loadAIInterviewQuestion();
 			}
 		}
@@ -1894,7 +1894,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													)}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
-													{atsVersion === "starter" ? (
+													{["standard", "starter"].includes(atsVersion) ? (
 														<PermiumComp userRole={userRole} />
 													) : (
 														<div>

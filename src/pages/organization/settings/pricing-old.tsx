@@ -32,8 +32,6 @@ export default function Pricing() {
 	const [planInfo, setplanInfo] = useState("");
 	const [price, setprice] = useState(false);
 	const [changePlan, setchangePlan] = useState(false);
-	const [changePlan2, setchangePlan2] = useState(false);
-	const [billingInfo2, setbillingInfo2] = useState(false);
 	const tabHeading_1 = [
 		{
 			title: "Plan & billing Information"
@@ -60,109 +58,6 @@ export default function Pricing() {
 	const [vplan, setvplan] = useState([]);
 	const [vcplan, setvcplan] = useState([]);
 	const cancelButtonRef = useRef(null);
-
-	const [bilingData, setbilingData] = useState([]);
-	const [ainame, setainame] = useState("");
-	const [aiaddress, setaiaddress] = useState("");
-	const [aicon, setaicon] = useState("");
-	const [biname, setbiname] = useState("");
-	const [biaddress, setbiaddress] = useState("");
-	const [bicon, setbicon] = useState("");
-	const [acheck, setacheck] = useState(false);
-
-	function checkForm1() {
-		return (
-			acheck &&
-			ainame.length > 0 &&
-			aiaddress.length > 0 &&
-			aicon.length > 0 &&
-			biname.length > 0 &&
-			biaddress.length > 0 &&
-			bicon.length > 0
-		);
-	}
-
-	async function getBillingInfo() {
-		await axiosInstanceAuth2
-			.get(`/organization/billinginfo/`)
-			.then(async (res) => {
-				console.log("!!!", "setbilingData", res.data);
-				setbilingData(res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("setbilingData error", "error");
-			});
-	}
-
-	async function regBillingInfo() {
-		setbillingInfo2(false);
-		const fd = new FormData();
-		fd.append("ai_representative", ainame);
-		fd.append("ai_address", aiaddress);
-		fd.append("ai_phone", aicon);
-		fd.append("bi_representative", biname);
-		fd.append("bi_address", biaddress);
-		fd.append("bi_phone", bicon);
-		await axiosInstanceAuth2
-			.post(`/organization/billinginfo/add/`, fd)
-			.then(async (res) => {
-				toastcomp("regBillingInfo success", "success");
-				initatePopup();
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("regBillingInfo error", "error");
-				getBillingInfo();
-			});
-	}
-
-	const [path, setpath] = useState("");
-	const [step, setstep] = useState(1);
-	const [sign, setsign] = useState<File | null>(null);
-	const [check1, setcheck1] = useState(false);
-	const [file, setfile] = useState(false);
-
-	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
-		if (event.target.files && event.target.files[0]) {
-			const file = event.target.files && event.target.files[0];
-			setsign(file);
-			setfile(true);
-		} else {
-			if (file == null) {
-				setsign(null);
-				setfile(false);
-			}
-		}
-	}
-
-	function checkForm() {
-		return check1 && sign != null;
-	}
-
-	async function getInvoice(planInfo: any) {
-		const fd = new FormData();
-		fd.append("plan_type", planInfo);
-		await axiosInstanceAuth2
-			.post(`/subscription/invoice/`, fd)
-			.then(async (res) => {
-				console.log("!!!", "getInvoice", res.data);
-				const data = res.data;
-				const path =
-					process.env.NODE_ENV === "production"
-						? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/${data.Path}`
-						: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/${data.Path}`;
-
-				console.log("!!!", "path", path);
-				setpath(path);
-
-				// setbilingData(res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("getInvoice error", "error");
-			});
-	}
 
 	async function getCurrentPlanInfo() {
 		await axiosInstanceAuth2
@@ -231,44 +126,12 @@ export default function Pricing() {
 			getALLPlanInfo();
 			// getALLVPlanInfo();
 			// getALLVCPlanInfo();
-			getBillingInfo();
 		}
 	}, [token, tab]);
 
-	async function initatePopup() {
-		await axiosInstanceAuth2.get(`/subscription/get-all-pay-proof-plan/`).then(async (res) => {
-			console.log("!!!", "get-all-pay-proof-plan", res.data);
-			toastcomp("get-all-pay-proof-plan success", "success");
-			const data = res.data;
-			toastcomp("initatePopup", "success");
-			setchangePlan(false);
-			setbillingInfo2(false);
-			setchangePlan2(false);
-			if (data.length > 0) {
-				setstep(3);
-				setchangePlan2(true);
-			} else {
-				await axiosInstanceAuth2.get(`/organization/billinginfo/`).then(async (res) => {
-					console.log("!!!", "setbilingData", res.data);
-					setbilingData(res.data);
-					const data2 = res.data;
-					if (data2 && data2.length <= 0) {
-						setbillingInfo2(true);
-					} else {
-						setstep(1);
-						setcheck1(false);
-						setsign(null);
-						setfile(false);
-						setpath("");
-						console.log("!!!", "planInfo", planInfo);
-						getInvoice(planInfo);
-						setchangePlan2(true);
-					}
-				});
-			}
-		});
-
-		// Calendly.initPopupWidget({ url: "https://calendly.com/somhako/somhako-plan" });
+	function initatePopup() {
+		setchangePlan(false);
+		Calendly.initPopupWidget({ url: "https://calendly.com/somhako/somhako-plan" });
 	}
 
 	useEffect(() => {
@@ -282,25 +145,6 @@ export default function Pricing() {
 			}
 		}
 	}, [price]);
-
-	async function regVendor() {
-		const fd = new FormData();
-		fd.append("plan_info", planInfo);
-		fd.append("payment_proof", sign);
-		await axiosInstanceAuth2
-			.post(`/subscription/direct-pay/`, fd)
-			.then(async (res) => {
-				toastcomp("reg success", "success");
-				setstep(3);
-				setcheck1(false);
-				setsign(null);
-				setfile(false);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				toastcomp("reg error", "error");
-			});
-	}
 
 	return (
 		<>
@@ -545,6 +389,7 @@ export default function Pricing() {
 														<div className="text-xs font-bold">Monthly Fixed</div>
 														{/* <div className="text-base font-black line-through decoration-red-500">60,000￥</div> */}
 														<div className="text-lg font-black">45,000￥/monthly</div>
+														{/* <div className="text-lg font-black">45,000￥/monthly</div> */}
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -574,6 +419,7 @@ export default function Pricing() {
 															60,000￥
 														</div> */}
 														<div className="text-lg font-black text-primary ">45,000￥/monthly</div>
+														{/* <div className="text-lg font-black text-primary">45,000￥/monthly</div> */}
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -592,7 +438,7 @@ export default function Pricing() {
 										</>
 									) : (
 										<>
-											{/* starter y plan */}
+											{/* starter m plan */}
 											{cplan.plan_info && cplan.plan_info === "STARTER_YEARLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
@@ -645,8 +491,11 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
+
 														<div className="text-base font-black  line-through decoration-red-500">360,000￥</div>
 														<div className="text-lg font-black  ">210,000￥/yearly</div>
+
+														{/* <div className="text-lg font-black">360,000￥/yearly</div> */}
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -672,10 +521,12 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
+
 														<div className="text-base font-black text-primary line-through decoration-red-500">
 															360,000￥
 														</div>
 														<div className="text-lg font-black text-primary ">210,000￥/yearly</div>
+														{/* <div className="text-lg font-black text-primary ">360,000￥/yearly</div> */}
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -697,8 +548,10 @@ export default function Pricing() {
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
+
 														<div className="text-base font-black  line-through decoration-red-500">540,000￥</div>
 														<div className="text-lg font-black  ">480,000￥/yearly</div>
+														{/* <div className="text-lg font-black">480,000￥/yearly</div> */}
 
 														<div className="text-[10px] font-bold">Active/Paid</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
@@ -724,10 +577,12 @@ export default function Pricing() {
 												>
 													<div className="flex flex-col gap-1">
 														<div className="text-xs font-bold">Annual Fixed</div>
+
 														<div className="text-base font-black text-primary line-through decoration-red-500">
 															540,000￥
 														</div>
 														<div className="text-lg font-black text-primary ">480,000￥/yearly</div>
+														{/* <div className="text-lg font-black text-primary">480,000￥/yearly</div> */}
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -1521,8 +1376,8 @@ export default function Pricing() {
 								{/* vpayout */}
 								{/* <br />
 								<hr />
-								<br />
-								<div>
+								<br /> */}
+								{/* <div>
 									<button
 										className={
 											"my-2 mr-4 flex gap-2 border-b-4 border-primary py-1 text-base font-semibold text-primary focus:outline-none dark:border-white dark:text-white"
@@ -1687,300 +1542,6 @@ export default function Pricing() {
 												<Button label={"Change Plan"} btnType="button" handleClick={initatePopup} />
 											</div>
 										</div>
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
-						</div>
-					</div>
-				</Dialog>
-			</Transition.Root>
-
-			<Transition.Root show={billingInfo2} as={Fragment}>
-				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setbillingInfo2}>
-					<Transition.Child
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-					</Transition.Child>
-
-					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-								enterTo="opacity-100 translate-y-0 sm:scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							>
-								{/* {bilingData && bilingData.length <= 0 ? ( */}
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all sm:my-8 sm:max-w-lg">
-									<div className="flex items-center justify-between px-8 py-6">
-										<h4 className="text-lg font-semibold leading-none">Billing Information</h4>
-										<button
-											type="button"
-											className="leading-none hover:text-gray-700"
-											onClick={() => setbillingInfo2(false)}
-										>
-											<i className="fa-solid fa-xmark"></i>
-										</button>
-									</div>
-									<div className="w-full p-8 pt-4 font-normal">
-										<>
-											<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-												Before Purchace Plan Fill up Biling Information
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Account Information Represtative&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<input
-														type="text"
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={ainame}
-														onChange={(e) => setainame(e.target.value)}
-													/>
-												</div>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Account Information Address&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<textArea
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={aiaddress}
-														onChange={(e) => setaiaddress(e.target.value)}
-													></textArea>
-												</div>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Account Information Contact&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<input
-														type="text"
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={aicon}
-														onChange={(e) => setaicon(e.target.value)}
-													/>
-												</div>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Billing Information Represtative&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<input
-														type="text"
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={biname}
-														onChange={(e) => setbiname(e.target.value)}
-													/>
-												</div>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Billing Information Address&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<textArea
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={biaddress}
-														onChange={(e) => setbiaddress(e.target.value)}
-													></textArea>
-												</div>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<div>
-													<label htmlFor={`field_cname`} className="mb-1 inline-block text-sm font-light">
-														Billing Information Contact&nbsp;
-														<sup className="text-red-500">*</sup>
-													</label>
-													<input
-														type="text"
-														id="cname"
-														className={`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm`}
-														value={bicon}
-														onChange={(e) => setbicon(e.target.value)}
-													/>
-												</div>
-											</div>
-
-											<div className="mb-4 last:mb-0">
-												<label htmlFor="agreeWithAgreement" className="flex cursor-pointer text-xs font-light">
-													<input
-														type="checkbox"
-														id="agreeWithAgreement"
-														className="mr-4 mt-1"
-														checked={acheck}
-														onChange={(e) => setacheck(e.target.checked)}
-													/>
-													Account Info Cant Chnage
-												</label>
-											</div>
-											<div className="mb-4 last:mb-0">
-												<Button
-													label={"Submit"}
-													btnType={"button"}
-													handleClick={regBillingInfo}
-													disabled={!checkForm1()}
-												/>
-											</div>
-										</>
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
-						</div>
-					</div>
-				</Dialog>
-			</Transition.Root>
-
-			<Transition.Root show={changePlan2} as={Fragment}>
-				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setchangePlan2}>
-					<Transition.Child
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-					</Transition.Child>
-
-					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-								enterTo="opacity-100 translate-y-0 sm:scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all sm:my-8 sm:max-w-lg">
-									<div className="flex items-center justify-between px-8 py-6">
-										<h4 className="text-lg font-semibold leading-none">Direct Payment</h4>
-										<button
-											type="button"
-											className="leading-none hover:text-gray-700"
-											onClick={() => setchangePlan2(false)}
-										>
-											<i className="fa-solid fa-xmark"></i>
-										</button>
-									</div>
-									<div className="w-full p-8 pt-4 font-normal">
-										{step === 1 && (
-											<>
-												{path && path.length > 0 ? (
-													<>
-														<div
-															className="mb-4 flex w-full cursor-pointer items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0"
-															onClick={() => {
-																window.open(path, "_blank");
-															}}
-														>
-															Invoice Download Here
-														</div>
-														<div className="mb-4 last:mb-0">
-															<h5 className="text-md mb-2 w-full font-semibold">Upload Payment Proof</h5>
-															<label
-																htmlFor="uploadBanner"
-																className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed hover:bg-lightBlue dark:hover:bg-gray-700"
-															>
-																{!file ? (
-																	<>
-																		<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
-																		<p className="text-sm text-darkGray dark:text-gray-400">
-																			Upload Payment Proof
-																			<br />
-																			<small>(File type should be .png format)</small>
-																		</p>
-																	</>
-																) : (
-																	<>
-																		<Image
-																			src={URL.createObjectURL(sign)}
-																			alt="Payment Proof"
-																			width={1200}
-																			height={800}
-																			className="mx-auto h-auto max-h-[200px] w-auto object-contain"
-																		/>
-																	</>
-																)}
-																<input
-																	type="file"
-																	hidden
-																	id="uploadBanner"
-																	accept="image/*"
-																	onChange={handleFileInputChange}
-																/>
-															</label>
-														</div>
-														<div className="mb-4 last:mb-0">
-															<label htmlFor="agreeWithAgreement" className="flex cursor-pointer text-xs font-light">
-																<input
-																	type="checkbox"
-																	id="agreeWithAgreement"
-																	className="mr-4 mt-1"
-																	checked={check1}
-																	onChange={(e) => setcheck1(e.target.checked)}
-																/>
-																Click here if you read the agreement terms and submit your filled details for the
-																Somhako.
-															</label>
-														</div>
-														<div className="mb-4 last:mb-0">
-															<Button
-																label={"Submit"}
-																btnType={"button"}
-																handleClick={regVendor}
-																disabled={!checkForm()}
-															/>
-														</div>
-													</>
-												) : (
-													<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-														Invoice Generating...
-													</div>
-												)}
-											</>
-										)}
-										{step === 3 && (
-											<>
-												<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-													You already submit your payment proof
-												</div>
-												<div className="mb-4 flex w-full items-center justify-center rounded-normal border-2 border-dashed py-2 last:mb-0">
-													We taking 2 or 3 Working Days For Activate Your Plan
-												</div>
-												<div className="mb-4 last:mb-0">
-													<Button label={"Close"} btnType={"button"} handleClick={() => setchangePlan2(false)} />
-												</div>
-											</>
-										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
