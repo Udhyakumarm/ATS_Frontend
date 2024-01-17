@@ -345,3 +345,4 @@ export async function getServerSideProps({ context, locale }: any) {
 }
 
 CandSignIn.noAuth = true;
+CandSignIn.mobileEnabled = true;

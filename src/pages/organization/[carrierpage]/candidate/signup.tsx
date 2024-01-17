@@ -308,7 +308,10 @@ export default function CandSignUp() {
 						</div>
 						<p className="text-center text-darkGray">
 							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Already have an Account?"}{" "}
-							<Link href={`/organization/${cname}/candidate/signin`} className="font-bold text-primary hover:underline dark:text-white">
+							<Link
+								href={`/organization/${cname}/candidate/signin`}
+								className="font-bold text-primary hover:underline dark:text-white"
+							>
 								{srcLang === "ja" ? "こちら" : "Sign In"}
 							</Link>
 						</p>
@@ -332,5 +335,5 @@ export async function getServerSideProps({ context, locale }: any) {
 	};
 }
 
-
 CandSignUp.noAuth = true;
+CandSignUp.mobileEnabled = true;

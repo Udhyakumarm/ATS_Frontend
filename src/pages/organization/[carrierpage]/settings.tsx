@@ -376,3 +376,5 @@ export async function getServerSideProps({ context, locale }: any) {
 		}
 	};
 }
+
+CandSettings.mobileEnabled = true;

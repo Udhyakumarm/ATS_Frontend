@@ -18,6 +18,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { isMobileOnly } from "react-device-detect";
 import Novus from "@/components/Novus";
+import ToggleLang from "@/components/ToggleLang";
+import ToggleLang2 from "@/components/ToogleLang2";
 
 function App({ Component, pageProps: { session, ...pageProps } }: any) {
 	const { t } = useTranslation("common");
@@ -52,9 +54,10 @@ function App({ Component, pageProps: { session, ...pageProps } }: any) {
 
 	return (
 		<>
-			{isMobileOnly ? (
+			{isMobileOnly && !Component.mobileEnabled ? (
 				<>
-					<div className="flex h-[calc(100vh-80px)] items-center justify-center p-[40px]">
+					<div className="flex h-[100vh] w-[100vw] items-center justify-center p-[40px]">
+						<ToggleLang2 />
 						<div className="mx-auto w-full max-w-[450px] rounded-normal bg-[rgba(255,255,255,0)] p-6 text-center text-white transition hover:scale-[1.05]">
 							<h3 className="textGrad mb-4 text-3xl font-extrabold">
 								{srcLang === "ja" ? "準備中" : "Mobile View Coming Soon"}

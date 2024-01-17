@@ -544,3 +544,5 @@ export async function getServerSideProps({ context, locale }: any) {
 		}
 	};
 }
+
+CanCareerDashboard.mobileEnabled = true;

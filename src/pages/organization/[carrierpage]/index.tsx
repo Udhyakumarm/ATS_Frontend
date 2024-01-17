@@ -317,3 +317,4 @@ export async function getServerSideProps({ context, locale }: any) {
 	};
 }
 CanCareer.noAuth = true;
+CanCareer.mobileEnabled = true;
