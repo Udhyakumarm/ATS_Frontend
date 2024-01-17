@@ -896,7 +896,7 @@ export default function CanCareerJobDetail2(props) {
 					{jdata && (
 						// temp hide naman
 						// <div className="w-[calc(100%-300px)] pl-8">
-						<div className="w-[calc(100%)] pl-8">
+						<div className="w-[calc(100%)]">
 							<div className="mb-6 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
@@ -1677,13 +1677,13 @@ export default function CanCareerJobDetail2(props) {
 													/>
 												</div>
 											</div>
-											<FormField
+											{/* <FormField
 												fieldType="reactquill"
 												label={srcLang === "ja" ? "採用担当者へのメッセージ" : "Any Message to Recruiter"}
 												value={msg}
 												handleChange={setmsg}
 												handleOnBlur={setmsg}
-											/>
+											/> */}
 											<Button label={t("Btn.Add")} loader={false} btnType={"submit"} />
 										</div>
 									</form>
@@ -1981,3 +1981,4 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 };
 
 CanCareerJobDetail2.noAuth = true;
+CanCareerJobDetail2.mobileEnabled = true;

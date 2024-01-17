@@ -121,7 +121,7 @@ export default function CanCareerSearchJobs({ upcomingSoon }: any) {
 					{orgdetail["Job"] && (
 						// temp hide naman
 						// <div className="w-[calc(100%-300px)] pl-8">
-						<div className="w-[calc(100%)] pl-8">
+						<div className="w-[calc(100%)] ">
 							<h3 className="mb-6 text-lg font-bold">
 								{sklLoad ? (
 									<>
@@ -225,3 +225,4 @@ export async function getServerSideProps({ context, locale }: any) {
 	};
 }
 CanCareerSearchJobs.noAuth = true;
+CanCareerSearchJobs.mobileEnabled = true;
