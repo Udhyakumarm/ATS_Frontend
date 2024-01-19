@@ -130,6 +130,7 @@ export default function Header() {
 			router.asPath == "/organization/" + cname + "/dashboard" ||
 			router.asPath == "/organization/" + cname + "/job-detail" ||
 			router.asPath == "/organization/" + cname + "/job-detail/" + jid ||
+			router.asPath == "/organization/" + cname + "/job-detail2/" + jid ||
 			router.asPath == "/organization/" + cname + "/job-apply" ||
 			router.asPath == "/organization/" + cname + "/notifications" ||
 			router.asPath == "/organization/" + cname + "/settings")
@@ -287,7 +288,7 @@ export default function Header() {
 										alt={"Somhako"}
 										width={1000}
 										height={1000}
-										className="mr-8 max-h-[100px] w-auto"
+										className="mr-8 max-h-[80px] w-auto"
 										onClick={() => {
 											router.push("/organization/" + cname);
 										}}
