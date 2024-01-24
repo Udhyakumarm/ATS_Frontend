@@ -12,6 +12,7 @@ import moment from "moment";
 import { useApplicantStore, useLangStore, useNotificationStore, useUserStore } from "@/utils/code";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import Button from "@/components/Button";
 
 export default function OrgNotifications() {
 	const router = useRouter();
@@ -19,6 +20,7 @@ export default function OrgNotifications() {
 	const { data: session } = useSession();
 	const [loader, setloader] = useState(true);
 	const [token, settoken] = useState("");
+	const [notificationALLDATA, setnotificationALLDATA] = useState({});
 	const [notification, setnotification] = useState([]);
 
 	useEffect(() => {
@@ -36,11 +38,12 @@ export default function OrgNotifications() {
 			.get(`/chatbot/get-all-real-notification/`)
 			.then(async (res) => {
 				console.log("!!!!!", "all notifications", res.data);
-				setnotification(res.data);
+				setnotificationALLDATA(res.data);
 				setloader(false);
 			})
 			.catch((err) => {
 				console.log("!", err);
+				setnotificationALLDATA({});
 				setloader(false);
 			});
 	}
@@ -81,6 +84,21 @@ export default function OrgNotifications() {
 		}
 	}
 
+	async function loadNotification2(link: any) {
+		await axiosInstanceAuth2
+			.get(link)
+			.then(async (res) => {
+				console.log("!!!!!", "all notifications link", res.data);
+				setnotificationALLDATA(res.data);
+				setloader(false);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setnotificationALLDATA({});
+				setloader(false);
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -97,59 +115,84 @@ export default function OrgNotifications() {
 					<div className="rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
 						<div className="border-b dark:border-gray-600">
 							<div className="mx-auto w-full max-w-[1100px] px-4 py-4">
-								<h1 className="text-xl font-bold">Notifications</h1>
+								<h1 className="text-xl font-bold">{srcLang === "ja" ? "お知らせ" : "Notifications"}</h1>
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[1100px] px-4 py-4">
 							{loader ? (
-								Array(6).fill(
+								Array(10).fill(
 									<>
-										<div className="mb-4 overflow-hidden rounded-normal bg-lightBlue px-8 py-4 last:mb-0 dark:bg-gray-600">
-											<Skeleton width={600} style={{ maxWidth: "100%" }} />
-											<Skeleton width={170} style={{ maxWidth: "100%" }} />
+										<div className="mb-2 overflow-hidden rounded-normal bg-lightBlue px-4 py-2 last:mb-0 dark:bg-gray-600">
+											<div className="flex justify-between">
+												<Skeleton width={600} style={{ maxWidth: "50vw" }} />
+												<Skeleton width={170} style={{ maxWidth: "20vw" }} />
+											</div>
 										</div>
 									</>
 								)
 							) : (
 								<>
-									{notification && notification.length > 0 ? (
-										notification.map((data, i) =>
-											data["notification_type"] === null || data["notification_type"] === "" ? (
-												<div
-													className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
-														data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
-													}`}
-													key={i}
-													onClick={(e) => handleClick(data)}
-												>
-													<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
-														<h3 className="mb-1 text-sm font-bold">{data["title"]}</h3>
-														<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
-															{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
-															{moment(data["timestamp"]).format("h:mm a")}
-														</p>
+									{notificationALLDATA &&
+									notificationALLDATA["results"] &&
+									notificationALLDATA["results"].length > 0 ? (
+										<>
+											{notificationALLDATA["results"].map((data, i) =>
+												data["notification_type"] === null || data["notification_type"] === "" ? (
+													<div
+														className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
+															data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+														}`}
+														key={i}
+														onClick={(e) => handleClick(data)}
+													>
+														<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+															<h3 className="mb-1 text-sm font-bold">
+																{/* {data["title"]} */}
+																{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0
+																	? data["jtitle"]
+																	: data["title"]}
+															</h3>
+															<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
+																{srcLang === "ja" ? (
+																	moment(data["timestamp"]).locale("ja").format("YYYY年M月D日 HH:mm")
+																) : (
+																	<>
+																		{moment(data["timestamp"]).locale("ja").format("MMMM DD, YYYY")} at{" "}
+																		{moment(data["timestamp"]).locale("ja").format("h:mm a")}
+																	</>
+																)}
+															</p>
+														</div>
 													</div>
-												</div>
-											) : (
-												<>
-													{data["notification_type"] === "Job" && (
-														<div
-															className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
-																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
-															}`}
-															key={i}
-															onClick={(e) => handleClick(data)}
-														>
-															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
-																<h3 className="mb-1  text-sm  font-bold">
-																	{data["title"]}&nbsp;({data["job"]["refid"]}&nbsp;:&nbsp;{data["job"]["jobTitle"]})
-																</h3>
-																<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
-																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at
-																	{moment(data["timestamp"]).format("h:mm a")}
-																</p>
-															</div>
-															{/* <div className="px-8 py-4">
+												) : (
+													<>
+														{data["notification_type"] === "Job" && (
+															<div
+																className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
+																	data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+																}`}
+																key={i}
+																onClick={(e) => handleClick(data)}
+															>
+																<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																	<h3 className="mb-1  text-sm  font-bold">
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0
+																			? data["jtitle"]
+																			: data["title"]}
+																		&nbsp;({data["job"]["refid"]}&nbsp;:&nbsp;{data["job"]["jobTitle"]})
+																	</h3>
+																	<p className="whitespace-nowrap text-xs text-darkGray dark:text-gray-400">
+																		{srcLang === "ja" ? (
+																			moment(data["timestamp"]).locale("ja").format("YYYY年M月D日 HH:mm")
+																		) : (
+																			<>
+																				{moment(data["timestamp"]).locale("ja").format("MMMM DD, YYYY")} at{" "}
+																				{moment(data["timestamp"]).locale("ja").format("h:mm a")}
+																			</>
+																		)}
+																	</p>
+																</div>
+																{/* <div className="px-8 py-4">
 																<div className="mb-4 flex flex-wrap">
 																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
 																		<h6 className="text-sm font-bold">Scheduled by</h6>
@@ -165,27 +208,37 @@ export default function OrgNotifications() {
 																	</div>
 																</div>
 															</div> */}
-														</div>
-													)}
-
-													{data["notification_type"] === "Applicant" && (
-														<div
-															className={`mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0 ${
-																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
-															}`}
-															key={i}
-															onClick={(e) => handleClick(data)}
-														>
-															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
-																<h3 className="mb-1 text-sm  font-bold dark:text-black">
-																	{data["title"]}&nbsp;(Applicant ID&nbsp;:&nbsp;{data["applicant"]["arefid"]})
-																</h3>
-																<p className="whitespace-nowrap text-xs text-darkGray">
-																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
-																	{moment(data["timestamp"]).format("h:mm a")}
-																</p>
 															</div>
-															{/* <div className="px-8 py-4">
+														)}
+
+														{data["notification_type"] === "Applicant" && (
+															<div
+																className={`mb-4 overflow-hidden rounded-normal bg-green-100 last:mb-0 ${
+																	data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+																}`}
+																key={i}
+																onClick={(e) => handleClick(data)}
+															>
+																<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																	<h3 className="mb-1 text-sm  font-bold dark:text-black">
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0
+																			? data["jtitle"]
+																			: data["title"]}
+																		&nbsp;({srcLang === "ja" ? "申請者ID" : "Applicant ID"}&nbsp;:&nbsp;
+																		{data["applicant"]["arefid"]})
+																	</h3>
+																	<p className="whitespace-nowrap text-xs text-darkGray">
+																		{srcLang === "ja" ? (
+																			moment(data["timestamp"]).locale("ja").format("YYYY年M月D日 HH:mm")
+																		) : (
+																			<>
+																				{moment(data["timestamp"]).locale("ja").format("MMMM DD, YYYY")} at{" "}
+																				{moment(data["timestamp"]).locale("ja").format("h:mm a")}
+																			</>
+																		)}
+																	</p>
+																</div>
+																{/* <div className="px-8 py-4">
 																<div className="mb-4 flex flex-wrap">
 																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
 																		<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
@@ -201,28 +254,42 @@ export default function OrgNotifications() {
 																	</div>
 																</div>
 															</div> */}
-														</div>
-													)}
-
-													{data["notification_type"] === "Vendor Applicant" && (
-														<div
-															className={`mb-4 overflow-hidden rounded-normal bg-lime-100 last:mb-0 ${
-																data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
-															}`}
-															key={i}
-															onClick={(e) => handleClick(data)}
-														>
-															<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
-																<h3 className="mb-1 text-sm  font-bold dark:text-black">
-																	{data["title"]}&nbsp;
-																	{data["vapplicant"] && <>(Applicant ID&nbsp;:&nbsp;{data["vapplicant"]["arefid"]})</>}
-																</h3>
-																<p className="whitespace-nowrap text-xs text-darkGray">
-																	{moment(data["timestamp"]).format("MMMM DD, YYYY")} at{" "}
-																	{moment(data["timestamp"]).format("h:mm a")}
-																</p>
 															</div>
-															{/* <div className="px-8 py-4">
+														)}
+
+														{data["notification_type"] === "Vendor Applicant" && (
+															<div
+																className={`mb-4 overflow-hidden rounded-normal bg-lime-100 last:mb-0 ${
+																	data["link"] && data["link"].length > 0 ? "cursor-pointer" : "cursor-not-allowed"
+																}`}
+																key={i}
+																onClick={(e) => handleClick(data)}
+															>
+																<div className="flex w-full items-center justify-between gap-4 px-4 py-2">
+																	<h3 className="mb-1 text-sm  font-bold dark:text-black">
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0
+																			? data["jtitle"]
+																			: data["title"]}
+																		&nbsp;
+																		{data["vapplicant"] && (
+																			<>
+																				({srcLang === "ja" ? "申請者ID" : "Applicant ID"}&nbsp;:&nbsp;
+																				{data["vapplicant"]["arefid"]})
+																			</>
+																		)}
+																	</h3>
+																	<p className="whitespace-nowrap text-xs text-darkGray">
+																		{srcLang === "ja" ? (
+																			moment(data["timestamp"]).locale("ja").format("YYYY年M月D日 HH:mm")
+																		) : (
+																			<>
+																				{moment(data["timestamp"]).locale("ja").format("MMMM DD, YYYY")} at{" "}
+																				{moment(data["timestamp"]).locale("ja").format("h:mm a")}
+																			</>
+																		)}
+																	</p>
+																</div>
+																{/* <div className="px-8 py-4">
 																<div className="mb-4 flex flex-wrap">
 																	<div className="mr-4 w-full pr-4 lg:max-w-[20%]">
 																		<h6 className="text-sm font-bold dark:text-black">Scheduled by</h6>
@@ -238,11 +305,47 @@ export default function OrgNotifications() {
 																	</div>
 																</div>
 															</div> */}
-														</div>
-													)}
-												</>
-											)
-										)
+															</div>
+														)}
+													</>
+												)
+											)}
+											<div className="m-2 flex items-center justify-between border-t-2 border-borderColor">
+												{notificationALLDATA["count"] && (
+													<div className="text-sm">
+														{srcLang === "ja" ? "合計" : "total"} {notificationALLDATA["count"]}{" "}
+														{srcLang === "ja" ? "通" : "Notifications"},{" "}
+														{notificationALLDATA["next"] && notificationALLDATA["next"].length > 0 ? (
+															<>
+																{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
+																{parseInt(notificationALLDATA["next"].split("=").pop()) - 1}
+															</>
+														) : (
+															<>
+																{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
+																{parseInt(notificationALLDATA["previous"].split("=").pop()) + 1}
+															</>
+														)}
+													</div>
+												)}
+												<div className="flex justify-end gap-2">
+													<Button
+														btnType="button"
+														btnStyle="sm"
+														label={srcLang === "ja" ? "前へ" : "Previous"}
+														disabled={!(notificationALLDATA["previous"] && notificationALLDATA["previous"].length > 0)}
+														handleClick={() => loadNotification2(notificationALLDATA["previous"])}
+													/>
+													<Button
+														btnType="button"
+														btnStyle="sm"
+														label={srcLang === "ja" ? "次のページ" : "Next"}
+														disabled={!(notificationALLDATA["next"] && notificationALLDATA["next"].length > 0)}
+														handleClick={() => loadNotification2(notificationALLDATA["next"])}
+													/>
+												</div>
+											</div>
+										</>
 									) : (
 										<>
 											<div>No Notification</div>

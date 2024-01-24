@@ -24,3 +24,5 @@ export default function Home() {
 	}, [type, cname, vid]);
 	return <></>;
 }
+
+Home.mobileEnabled = true;
