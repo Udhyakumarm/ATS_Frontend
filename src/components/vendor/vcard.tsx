@@ -607,7 +607,7 @@ export default function VCard(props: any) {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 										<h4 className="flex items-center font-semibold leading-none">Jobs for Agent</h4>
 										<button
@@ -619,7 +619,47 @@ export default function VCard(props: any) {
 										</button>
 									</div>
 									<div className="p-8">
-										<div className="mb-4 flex flex-col ">
+										<div className="three overflow-x-auto">
+											{jobData && jobData.length > 0 ? (
+												<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+													<thead>
+														<tr>
+															<th className="border-b px-3 py-2 text-left">Job Title</th>
+															<th className="border-b px-3 py-2 text-left">Refid</th>
+															<th className="border-b px-3 py-2 text-left">Access</th>
+														</tr>
+													</thead>
+													<tbody>
+														{jobData.map((data, i) => (
+															<tr key={i} className="">
+																<td className={`border-b px-3 py-2 text-sm`}>{data["jobTitle"]}</td>
+																<td className={`border-b px-3 py-2 text-sm`}>{data["refid"]}</td>
+																<td className={`border-b px-3 py-2 text-sm`}>
+																	<Switch
+																		checked={checkedCheckboxes[data.refid] || false}
+																		onChange={() => handleCheckboxChange(data.refid)}
+																		className={`${
+																			checkedCheckboxes[data.refid] ? "bg-green-500" : "bg-gray-400"
+																		} relative inline-flex h-5 w-10 items-center rounded-full`}
+																	>
+																		<span className="sr-only"></span>
+																		<span
+																			className={`${
+																				checkedCheckboxes[data.refid] ? "translate-x-6" : "translate-x-1"
+																			} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+																		/>
+																	</Switch>
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+											) : (
+												<div>No Job Found</div>
+											)}
+										</div>
+
+										{/* <div className="mb-4 flex flex-col ">
 											{jobData && jobData.length > 0 ? (
 												<>
 													<div className="mb-2 flex justify-between gap-2 border-b-2 border-borderColor">
@@ -653,7 +693,7 @@ export default function VCard(props: any) {
 													<h3>No Jobs</h3>
 												</>
 											)}
-										</div>
+										</div> */}
 
 										<div className="flex flex-wrap justify-center">
 											<div className="my-1 mr-4 last:mr-0">
