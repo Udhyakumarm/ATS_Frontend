@@ -1,3 +1,4 @@
+//@collapse
 import { Dialog, Menu, Switch, Tab, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import FormField from "../FormField";
@@ -73,6 +74,7 @@ export default function VCard(props: any) {
 				setagreement("");
 				setasdate("");
 				setaedate("");
+				setcurrentvid();
 			});
 	}
 
@@ -84,6 +86,109 @@ export default function VCard(props: any) {
 	}, [companyDetails]);
 
 	const [accountDelete, setAccountDelete] = useState(false);
+	const [jobFunction1, setjobFunction1] = useState(false);
+	const [jobData, setjobData] = useState([]);
+	const [currentvid, setcurrentvid] = useState();
+
+	const [checkedCheckboxes, setCheckedCheckboxes] = useState({});
+	const [bchecked, setBChecked] = useState({});
+
+	const handleCheckboxChange = (checkboxId) => {
+		setCheckedCheckboxes((prevCheckedCheckboxes) => ({
+			...prevCheckedCheckboxes,
+			[checkboxId]: !prevCheckedCheckboxes[checkboxId]
+		}));
+		console.log("@!!", "check", checkedCheckboxes);
+	};
+
+	async function loadActiveJobs(vid: string) {
+		await axiosInstanceAuth2
+			.get(`/vendors/vendor_data2/${vid}/`)
+			.then(async (res: any) => {
+				if (res.data.length > 0) {
+					console.log("@@@", "loadActiveJobs step1 vendor ID", res.data[0]["vendor"]["id"]);
+					setcurrentvid(res.data[0]["vendor"]["id"]);
+					var vvid = res.data[0]["vendor"]["id"];
+					await axiosInstanceAuth2
+						.get(`/job/active-list-job/`)
+						.then(async (res: any) => {
+							console.log("@@@", "loadActiveJobs step2 jobs", res.data);
+							setjobData(res.data);
+							const jobs = res.data;
+							var checkedState = {};
+							for (let i = 0; i < jobs.length; i++) {
+								if (jobs[i]["vendor"].includes(vvid)) {
+									checkedState[jobs[i]["refid"]] = true;
+								} else {
+									checkedState[jobs[i]["refid"]] = false;
+								}
+							}
+							console.log("@!!", "loadActiveJobs before check", checkedState);
+							setCheckedCheckboxes(checkedState);
+							setBChecked(checkedState);
+						})
+						.catch((err: any) => {
+							console.log("@@@", "loadActiveJobs step2 jobs", err);
+							setjobData([]);
+							setcurrentvid(null);
+						});
+				} else {
+					setcurrentvid(null);
+					setjobData([]);
+				}
+			})
+			.catch((err: any) => {
+				console.log("@@@", "loadActiveJobs step1 vendor", err);
+				setjobData([]);
+				setcurrentvid(null);
+			});
+	}
+
+	useEffect(() => {
+		setCheckedCheckboxes({});
+		setBChecked({});
+		if (jobFunction1 === true) {
+			loadActiveJobs(props.data["vrefid"]);
+		}
+	}, [jobFunction1]);
+
+	async function saveJobsVendor() {
+		console.log("@!!", "before", bchecked);
+		console.log("@!!", "new", checkedCheckboxes);
+
+		const differingPairs = Object.keys(bchecked)
+			.filter((key) => bchecked[key] !== checkedCheckboxes[key])
+			.map((key) => ({ key, value: checkedCheckboxes[key] }));
+
+		console.log("@!!", "new after", differingPairs);
+
+		const trueValuesKeys = differingPairs.filter((item) => item.value === true).map((item) => item.key);
+		const falseValuesKeys = differingPairs.filter((item) => item.value === false).map((item) => item.key);
+
+		console.log("@!!", "new after true", trueValuesKeys);
+		console.log("@!!", "new after false", falseValuesKeys);
+
+		if (trueValuesKeys.length > 0 || falseValuesKeys.length > 0) {
+			const fd = new FormData();
+			fd.append("trueValuesKeys", trueValuesKeys.join());
+			fd.append("falseValuesKeys", falseValuesKeys.join());
+			await axiosInstanceAuth2
+				.post(`/job/active-vendors-change/${currentvid}/`, fd)
+				.then(async (res: any) => {
+					console.log("@!!", "active-vendors-change", res.data);
+					setjobFunction1(false);
+					toastcomp("vendors job updated successfully", "success");
+				})
+				.catch((err: any) => {
+					console.log("@!!", "active-vendors-change", err);
+					setjobFunction1(false);
+					toastcomp("vendors job updated unsuccessfully", "error");
+				});
+		} else {
+			setjobFunction1(false);
+			toastcomp("vendors job can't found any change", "success");
+		}
+	}
 
 	return (
 		<>
@@ -94,8 +199,19 @@ export default function VCard(props: any) {
 						<div className="h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
 							<div className="mb-2 flex items-start justify-between">
 								<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["company_name"]}</h4>
-								<div className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => setAccountDelete(true)}>
-									<i className="fa-solid fa-trash"></i>
+								<div className="flex items-center gap-2">
+									<div
+										className="cursor-pointer text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-300"
+										onClick={() => setjobFunction1(true)}
+									>
+										<i className="fa-solid fa-square-plus"></i>
+									</div>
+									<div
+										className="cursor-pointer text-red-400 hover:text-red-500"
+										onClick={() => setAccountDelete(true)}
+									>
+										<i className="fa-solid fa-trash"></i>
+									</div>
 								</div>
 							</div>
 							<p className="font-semibold text-darkGray dark:text-gray-300">{props.data["agent_name"]}</p>
@@ -456,6 +572,147 @@ export default function VCard(props: any) {
 													handleClick={() => {
 														props.delAccount(props.data["vrefid"]).then(() => setAccountDelete(false));
 													}}
+												/>
+											</div>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			<Transition.Root show={jobFunction1} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setjobFunction1}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Jobs for Agent</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setjobFunction1(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="three overflow-x-auto">
+											{jobData && jobData.length > 0 ? (
+												<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
+													<thead>
+														<tr>
+															<th className="border-b px-3 py-2 text-left">Job Title</th>
+															<th className="border-b px-3 py-2 text-left">Refid</th>
+															<th className="border-b px-3 py-2 text-left">Access</th>
+														</tr>
+													</thead>
+													<tbody>
+														{jobData.map((data, i) => (
+															<tr key={i} className="">
+																<td className={`border-b px-3 py-2 text-sm`}>{data["jobTitle"]}</td>
+																<td className={`border-b px-3 py-2 text-sm`}>{data["refid"]}</td>
+																<td className={`border-b px-3 py-2 text-sm`}>
+																	<Switch
+																		checked={checkedCheckboxes[data.refid] || false}
+																		onChange={() => handleCheckboxChange(data.refid)}
+																		className={`${
+																			checkedCheckboxes[data.refid] ? "bg-green-500" : "bg-gray-400"
+																		} relative inline-flex h-5 w-10 items-center rounded-full`}
+																	>
+																		<span className="sr-only"></span>
+																		<span
+																			className={`${
+																				checkedCheckboxes[data.refid] ? "translate-x-6" : "translate-x-1"
+																			} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+																		/>
+																	</Switch>
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+											) : (
+												<div>No Job Found</div>
+											)}
+										</div>
+
+										{/* <div className="mb-4 flex flex-col ">
+											{jobData && jobData.length > 0 ? (
+												<>
+													<div className="mb-2 flex justify-between gap-2 border-b-2 border-borderColor">
+														<span>Job Title (refid)</span>
+														<span>Active</span>
+													</div>
+													{jobData.map((data, i) => (
+														<div className="mb-1 flex justify-between gap-2" key={i}>
+															<span>
+																{data["jobTitle"]} ({data["refid"]})
+															</span>
+															<Switch
+																checked={checkedCheckboxes[data.refid] || false}
+																onChange={() => handleCheckboxChange(data.refid)}
+																className={`${
+																	checkedCheckboxes[data.refid] ? "bg-green-500" : "bg-gray-400"
+																} relative inline-flex h-5 w-10 items-center rounded-full`}
+															>
+																<span className="sr-only">Enable notifications</span>
+																<span
+																	className={`${
+																		checkedCheckboxes[data.refid] ? "translate-x-6" : "translate-x-1"
+																	} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+																/>
+															</Switch>
+														</div>
+													))}
+												</>
+											) : (
+												<>
+													<h3>No Jobs</h3>
+												</>
+											)}
+										</div> */}
+
+										<div className="flex flex-wrap justify-center">
+											<div className="my-1 mr-4 last:mr-0">
+												<Button
+													btnStyle="gray"
+													label={"Close"}
+													btnType="button"
+													handleClick={() => setjobFunction1(false)}
+												/>
+											</div>
+											<div className="my-1 mr-4 last:mr-0">
+												<Button
+													btnStyle="success"
+													label={"Save"}
+													btnType="button"
+													// handleClick={() => {
+													// 	props.delAccount(props.data["vrefid"]).then(() => setjobFunction1(false));
+													// }}
+													handleClick={() => saveJobsVendor()}
 												/>
 											</div>
 										</div>
