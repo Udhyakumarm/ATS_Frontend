@@ -27,6 +27,7 @@ import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore, useNotificationStore } from "@/utils/code";
+import Confetti from "react-confetti";
 
 const people = [
 	{ id: 1, name: "Wade Cooper" },
@@ -38,6 +39,31 @@ const people = [
 ];
 
 export default function VendorClients() {
+	const [windowSize, setWindowSize] = useState({
+		width: typeof window !== "undefined" ? window.innerWidth : 0,
+		height: typeof window !== "undefined" ? window.innerHeight : 0
+	});
+
+	// useEffect to update window size when it changes
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight
+			});
+		};
+
+		// Add event listener for window resize
+		window.addEventListener("resize", handleResize);
+
+		// Initial cleanup function to remove the event listener
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
+	const [showConfetti, setShowConfetti] = useState(false);
+
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -194,37 +220,12 @@ export default function VendorClients() {
 	const [fname, setfname] = useState("");
 	const [lname, setlname] = useState("");
 	const [email, setemail] = useState("");
-	const [phone, setphone] = useState("");
-
-	//link
-	const [links, setlinks] = useState([]);
-	const [link, setlink] = useState("");
-
-	function deleteLink(id: any) {
-		var arr = links;
-		arr = arr.splice(1, parseInt(id));
-		setlinks(arr);
-		setlink("");
-	}
-
-	function verifylink() {
-		return link.length > 0;
-	}
-
-	function addlink() {
-		let arr = links;
-		arr.push(link);
-		setlinks(arr);
-		setAddSocial(false);
-		setlink("");
-	}
-
 	const [summary, setsummary] = useState("");
-	const [csalary, setcsalary] = useState("");
-	const [esalary, setesalary] = useState("");
-	const [notice, setnotice] = useState("");
 	const [msg, setmsg] = useState("");
-	const [skill, setskill] = useState("");
+	const [ocrLoader, setocrLoader] = useState(false);
+	const [step1Data, setstep1Data] = useState({});
+	const [version, setversion] = useState("");
+	const [step, setstep] = useState(0);
 
 	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
 		if (event.target.files && event.target.files[0]) {
@@ -233,507 +234,31 @@ export default function VendorClients() {
 		}
 	}
 
-	const [ski, setski] = useState([]);
-	// const [load, setload] = useState(false);
-
-	const debouncedSearchResults = useMemo(() => {
-		return debounce(searchSkill, 300);
-	}, []);
-
-	useEffect(() => {
-		return () => {
-			debouncedSearchResults.cancel();
-		};
-	}, [debouncedSearchResults]);
-
-	//exp
-	const [newgre, setnewgre] = useState(false);
-	const [expcount, setexpcount] = useState(1);
-	const [expid, setexpid] = useState(["expBlock1"]);
-
-	const [educount, seteducount] = useState(0);
-	const [eduid, seteduid] = useState([]);
-
-	const [certcount, setcertcount] = useState(0);
-	const [certid, setcertid] = useState([]);
-
-	async function searchSkill(value) {
-		await axiosInstance2
-			.get(`/job/load/skills/?search=${value}`)
-			.then(async (res) => {
-				let obj = res.data;
-				let arr = [];
-				for (const [key, value] of Object.entries(obj)) {
-					arr.push(value);
-				}
-				if (arr.length <= 0 && value.length > 0) {
-					arr.push(value.toLowerCase().replace(/\s/g, ""));
-				}
-				setski(arr);
-				setload(false);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+	function resetState() {
+		setresume(null);
+		setfname("");
+		setlname("");
+		setemail("");
+		setmsg("");
+		setstep(0);
+		setsummary("");
+		setstep1Data({});
+		setversion("");
 	}
 
-	async function addVendorCandidateApplicant(refid: any, vrefid: any, vcrefid: any, rating: any) {
-		const fd = new FormData();
-		fd.append("fit_data", rating);
-		await axiosInstanceAuth2
-			.post(`/vendors/vendor-applicant-apply/${refid}/${vrefid}/${vcrefid}/`, fd)
-			.then((res) => {
-				toastcomp(res.data.Message, "success");
-				let title = `${fname} ${lname} (${email}) Suceessfully Applied On ${vjdata[0]["jobTitle"]} (${vjdata[0]["refid"]})`;
-				addExternalNotifyLog(axiosInstanceAuth2, title);
-				toggleLoadMode(true);
-				setresume(null);
-				setfname("");
-				setlname("");
-				setemail("");
-				setphone("");
-				setlinks([]);
-				setlink("");
-				setsummary("");
-				setcsalary("");
-				setesalary("");
-				setnotice("");
-				setmsg("");
-				setskill("");
-				setski([]);
-				setnewgre(false);
-				setexpcount(1);
-				setexpid(["expBlock1"]);
-				seteducount(0);
-				seteduid([]);
-				setcertcount(0);
-				setcertid([]);
-			})
-			.catch((err) => {
-				toastcomp("Vendor Candidate Applicant Not Created", "error");
-				console.log("@", err);
-			});
-
-		setAddCand(false);
-
-		loadVendorAppDetail(vjdata[vjobclick]["refid"], vrefid);
+	function disBtnApply() {
+		return (
+			fname.length > 0 &&
+			lname.length > 0 &&
+			email.length > 0 &&
+			msg.length > 0 &&
+			summary.length > 0 &&
+			resume != null &&
+			step1Data["rtext"] &&
+			step1Data["rtext"].length > 0
+		);
 	}
 
-	async function addVendorCandidateCert(vrefid: any, refid: any, fd: any) {
-		await axiosInstanceAuth2
-			.post(`/vendors/vendor-candidate-cretificate/${refid}/${vrefid}/`, fd)
-			.then((res) => {
-				toastcomp("Vendor Candidate Cert Created", "success");
-			})
-			.catch((err) => {
-				toastcomp("Vendor Candidate Cert Not Created", "error");
-				console.log("@", err);
-			});
-	}
-
-	async function addVendorCandidateEdu(vrefid: any, refid: any, fd: any) {
-		await axiosInstanceAuth2
-			.post(`/vendors/vendor-candidate-education/${refid}/${vrefid}/`, fd)
-			.then((res) => {
-				toastcomp("Vendor Candidate Edu Created", "success");
-			})
-			.catch((err) => {
-				toastcomp("Vendor Candidate Edu Not Created", "error");
-				console.log("@", err);
-			});
-	}
-
-	async function addVendorCandidateExp(vrefid: any, refid: any, fd: any) {
-		await axiosInstanceAuth2
-			.post(`/vendors/vendor-candidate-experience/${refid}/${vrefid}/`, fd)
-			.then((res) => {
-				toastcomp("Vendor Candidate Exp Created", "success");
-			})
-			.catch((err) => {
-				toastcomp("Vendor Candidate Exp Not Created", "error");
-				console.log("@", err);
-			});
-	}
-
-	async function addVendorCandidateLink(vrefid: any, refid: any, title: any) {
-		const fd = new FormData();
-		fd.append("title", title);
-
-		await axiosInstanceAuth2
-			.post(`/vendors/vendor-candidate-social/${refid}/${vrefid}/`, fd)
-			.then((res) => {
-				toastcomp("Vendor Candidate Link Created", "success");
-			})
-			.catch((err) => {
-				toastcomp("Vendor Candidate Link Not Created", "error");
-				console.log("@", err);
-			});
-	}
-
-	async function addVendorCandidateProfile(vrefid: any, refid: any) {
-		var exp = 0;
-		var month = 0;
-		if (!newgre) {
-			for (let i = 0; i < expid.length; i++) {
-				let startdate = moment(document.getElementById(`sdate${expid[i]}`).value);
-				let enddate = moment(document.getElementById(`edate${expid[i]}`).value);
-				month = month + Math.floor(enddate.diff(startdate, "months"));
-			}
-			exp = month / 12;
-			exp = (Math.round(exp * 100) / 100).toFixed(1);
-		}
-		var text = `Applicant Data: Applicant Name ${fname} ${lname}, they have experience of ${exp} years with skills set of ${skill} with Current Salary is ${
-			!newgre ? csalary : "0"
-		} and Expected salary is ${esalary}.`;
-
-		const fd = new FormData();
-		fd.append("text", text);
-		await axiosInstanceAuth2
-			.post(`/vendors/job-fit/${refid}/`, fd)
-			.then(async (res) => {
-				console.log("^^^", "vendor rating", res.data);
-				// toastcomp("VendorCandidate Rating Fetch", "success");
-				let rating = res.data.fit_data;
-				if (rating > 0 || rating === -1 || rating === null) {
-					// toastcomp("Condition Pass", "success");
-
-					const fd = new FormData();
-					fd.append("first_name", fname);
-					fd.append("last_name", lname);
-					fd.append("email", email);
-					fd.append("resume", resume);
-					fd.append("skills", skill);
-					if (!newgre) fd.append("current_salary", csalary);
-					if (!newgre) fd.append("notice_period", notice);
-					if (phone && phone.length > 0) fd.append("mobile", phone);
-					if (summary && summary.length > 0) fd.append("summary", summary);
-					if (esalary && esalary.length > 0) fd.append("expected_salary", esalary);
-					if (msg && msg.length > 0) fd.append("recuriter_message", msg);
-
-					await axiosInstanceAuth2
-						.post(`/vendors/vendor-candidate/${refid}/${vrefid}/`, fd)
-						.then(async (res) => {
-							if (res.data["msg"] && res.data["msg"].length > 0) {
-								toastcomp(res.data["msg"], "error");
-							} else {
-								let vcrefid = res.data.data[0]["vcrefid"];
-								toastcomp("Vendor Candidate Profile Created", "success");
-								if (vcrefid && vcrefid.length > 0) {
-									for (let i = 0; i < links.length; i++) {
-										addVendorCandidateLink(vcrefid, refid, links[i]);
-									}
-
-									if (!newgre) {
-										for (let i = 0; i < expid.length; i++) {
-											var fd = new FormData();
-											fd.append("title", document.getElementById(`title${expid[i]}`).value);
-											fd.append("company", document.getElementById(`cname${expid[i]}`).value);
-											fd.append("year_of_join", document.getElementById(`sdate${expid[i]}`).value);
-											fd.append("year_of_end", document.getElementById(`edate${expid[i]}`).value);
-											fd.append("expbody", document.getElementById(`desc${expid[i]}`).value);
-											fd.append("type", document.getElementById(`jtype${expid[i]}`).value);
-											addVendorCandidateExp(vcrefid, refid, fd);
-										}
-									}
-
-									for (let i = 0; i < eduid.length; i++) {
-										var fd = new FormData();
-										fd.append("title", document.getElementById(`title${eduid[i]}`).value);
-										fd.append("college", document.getElementById(`cname${eduid[i]}`).value);
-										fd.append("yearofjoin", document.getElementById(`sdate${eduid[i]}`).value);
-										fd.append("yearofend", document.getElementById(`edate${eduid[i]}`).value);
-										fd.append("edubody", document.getElementById(`desc${eduid[i]}`).value);
-										addVendorCandidateEdu(vcrefid, refid, fd);
-									}
-
-									for (let i = 0; i < certid.length; i++) {
-										var fd = new FormData();
-										fd.append("title", document.getElementById(`title${certid[i]}`).value);
-										fd.append("company", document.getElementById(`cname${certid[i]}`).value);
-										fd.append("yearofissue", document.getElementById(`sdate${certid[i]}`).value);
-										fd.append("yearofexp", document.getElementById(`edate${certid[i]}`).value);
-										fd.append("creid", document.getElementById(`cid${certid[i]}`).value);
-										fd.append("creurl", document.getElementById(`curl${certid[i]}`).value);
-										addVendorCandidateCert(vcrefid, refid, fd);
-									}
-
-									addVendorCandidateApplicant(refid, vrefid, vcrefid, rating.toString());
-								}
-							}
-						})
-						.catch((err) => {
-							// toastcomp("Vendor Candidate Profile Not Created", "error");
-							toastcomp("Email ALreday Exist", "error");
-							console.log("error:", err);
-						});
-				} else {
-					setsadApply(true);
-					return false;
-				}
-			})
-			.catch((err) => {
-				toastcomp("VendorCandidate Rating Fetch Error", "error");
-				console.log("@", err);
-				return false;
-			});
-	}
-
-	function addApp(event: FormEvent<HTMLFormElement>, vrefid: any, refid: any) {
-		event.preventDefault();
-
-		var check = 0;
-
-		if (fname.length <= 0 || lname.length <= 0 || email.length <= 0 || skill.length <= 0 || resume === null) {
-			check = 4;
-		} else if (!newgre) {
-			for (let i = 0; i < expid.length; i++) {
-				if (
-					!document.getElementById(`title${expid[i]}`).value ||
-					!document.getElementById(`cname${expid[i]}`).value ||
-					!document.getElementById(`jtype${expid[i]}`).value ||
-					!document.getElementById(`sdate${expid[i]}`).value ||
-					!document.getElementById(`edate${expid[i]}`).value ||
-					!document.getElementById(`desc${expid[i]}`).value ||
-					document.getElementById(`title${expid[i]}`).value.length <= 0 ||
-					document.getElementById(`cname${expid[i]}`).value.length <= 0 ||
-					document.getElementById(`jtype${expid[i]}`).value.length <= 0 ||
-					document.getElementById(`sdate${expid[i]}`).value.length <= 0 ||
-					document.getElementById(`edate${expid[i]}`).value.length <= 0 ||
-					document.getElementById(`desc${expid[i]}`).value.length <= 0
-				) {
-					check = 1;
-				}
-			}
-		}
-
-		for (let i = 0; i < eduid.length; i++) {
-			if (
-				!document.getElementById(`title${eduid[i]}`).value ||
-				!document.getElementById(`cname${eduid[i]}`).value ||
-				!document.getElementById(`sdate${eduid[i]}`).value ||
-				!document.getElementById(`edate${eduid[i]}`).value ||
-				!document.getElementById(`desc${eduid[i]}`).value ||
-				document.getElementById(`title${eduid[i]}`).value.length <= 0 ||
-				document.getElementById(`cname${eduid[i]}`).value.length <= 0 ||
-				document.getElementById(`sdate${eduid[i]}`).value.length <= 0 ||
-				document.getElementById(`edate${eduid[i]}`).value.length <= 0 ||
-				document.getElementById(`desc${eduid[i]}`).value.length <= 0
-			) {
-				check = 2;
-			}
-		}
-
-		for (let i = 0; i < certid.length; i++) {
-			if (
-				!document.getElementById(`title${certid[i]}`).value ||
-				!document.getElementById(`cname${certid[i]}`).value ||
-				!document.getElementById(`sdate${certid[i]}`).value ||
-				!document.getElementById(`edate${certid[i]}`).value ||
-				!document.getElementById(`cid${certid[i]}`).value ||
-				!document.getElementById(`curl${certid[i]}`).value ||
-				document.getElementById(`title${certid[i]}`).value.length <= 0 ||
-				document.getElementById(`cname${certid[i]}`).value.length <= 0 ||
-				document.getElementById(`sdate${certid[i]}`).value.length <= 0 ||
-				document.getElementById(`edate${certid[i]}`).value.length <= 0 ||
-				document.getElementById(`cid${certid[i]}`).value.length <= 0 ||
-				document.getElementById(`curl${certid[i]}`).value.length <= 0
-			) {
-				check = 3;
-			}
-		}
-
-		console.log(check);
-		if (check === 0) addVendorCandidateProfile(vrefid, refid);
-		else if (check === 4) toastcomp("Fill Up Required Fields", "error");
-		else if (check === 1) toastcomp("Fill Up Exp", "error");
-		else if (check === 2) toastcomp("Fill Up Edu", "error");
-		else if (check === 3) toastcomp("Fill Up Cert", "error");
-	}
-
-	//ocr
-
-	const [ocrLoader, setocrLoader] = useState(false);
-	async function oceFun1(fd: any) {
-		setocrLoader(true);
-
-		console.log("$", "OCR", "In progress...");
-		await axiosInstanceOCR
-			.post(`/ocr/parse_resume/`, fd)
-			.then(async (res) => {
-				var data = res.data;
-				console.log("$", "OCR Result", data);
-				if (data["NOOCR"]) {
-				} else {
-					if (data["firstName"] && data["firstName"].length > 0) setfname(data["firstName"]);
-					if (data["lastName"] && data["lastName"].length > 0) setlname(data["lastName"]);
-					if (data["email"] && data["email"].length > 0) setemail(data["email"]);
-					if (data["phone"] && data["phone"].length > 0) setphone(data["phone"]);
-					if (data["summary"] && data["summary"].length > 0) setsummary(data["summary"]);
-
-					try {
-						if (data["links"] && data["links"].length > 0) {
-							setlinks(data["links"]);
-						}
-					} catch {
-						setlinks([]);
-					}
-					try {
-						if (data["skills"] && data["skills"].length > 0) {
-							setskill(data["skills"].join().toLowerCase());
-						}
-					} catch {
-						setskill("");
-					}
-
-					try {
-						if (data["experience"] && data["experience"].length > 0) {
-							setnewgre(false);
-							let arr = [];
-							data["experience"].map((data, i) => {
-								arr.push(`expBlock${i + 1}`);
-							});
-							setexpid(arr);
-							setexpcount(data["experience"].length + 1);
-
-							setTimeout(() => {
-								data["experience"].map((data2, i) => {
-									if (data2["title"]) document.getElementById(`titleexpBlock${i + 1}`).value = data2["title"];
-									if (data2["company"]) document.getElementById(`cnameexpBlock${i + 1}`).value = data2["company"];
-									if (data2["description"])
-										document.getElementById(`descexpBlock${i + 1}`).value = data2["description"];
-
-									if (data2["start_date"]) {
-										try {
-											document.getElementById(`sdateexpBlock${i + 1}`).value = moment(data2["start_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Exp SDATE Catch", err);
-										}
-									}
-									if (data2["end_date"]) {
-										try {
-											document.getElementById(`edateexpBlock${i + 1}`).value = moment(data2["end_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Exp EDATE Catch", err);
-										}
-									}
-								});
-							}, 1000);
-						} else {
-							setnewgre(true);
-						}
-					} catch (err) {
-						console.log("$", "Exp Catch", err);
-						// setnewgre(false);
-						// setexpid(["expBlock1"]);
-						// setexpcount(1);
-					}
-
-					try {
-						if (data["education"] && data["education"].length > 0) {
-							let arr = [];
-							data["education"].map((data, i) => {
-								arr.push(`eduBlock${i + 1}`);
-							});
-							seteduid(arr);
-							seteducount(data["education"].length + 1);
-
-							setTimeout(() => {
-								data["education"].map((data2, i) => {
-									if (data2["title"]) document.getElementById(`titleeduBlock${i + 1}`).value = data2["title"];
-									if (data2["college"]) document.getElementById(`cnameeduBlock${i + 1}`).value = data2["college"];
-									if (data2["description"])
-										document.getElementById(`desceduBlock${i + 1}`).value = data2["description"];
-									if (data2["start_date"]) {
-										try {
-											document.getElementById(`sdateeduBlock${i + 1}`).value = moment(data2["start_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Edu SDATE Catch", err);
-										}
-									}
-									if (data2["end_date"]) {
-										try {
-											document.getElementById(`edateeduBlock${i + 1}`).value = moment(data2["end_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Edu EDATE Catch", err);
-										}
-									}
-								});
-							}, 1000);
-						}
-					} catch (err) {
-						console.log("$", "Edu Catch", err);
-						// seteduid([]);
-						// seteducount(0);
-					}
-
-					try {
-						if (data["certificates"] && data["certificates"].length > 0) {
-							let arr = [];
-							data["certificates"].map((data, i) => {
-								arr.push(`certBlock${i + 1}`);
-							});
-							setcertid(arr);
-							setcertcount(data["certificates"].length + 1);
-
-							setTimeout(() => {
-								data["certificates"].map((data2, i) => {
-									if (data2["title"]) document.getElementById(`titlecertBlock${i + 1}`).value = data2["title"];
-									if (data2["issuedCompany"])
-										document.getElementById(`cnamecertBlock${i + 1}`).value = data2["issuedCompany"];
-									if (data2["start_date"]) {
-										try {
-											document.getElementById(`sdatecertBlock${i + 1}`).value = moment(data2["start_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Cert SDATE Catch", err);
-										}
-									}
-									if (data2["end_date"]) {
-										try {
-											document.getElementById(`edatecertBlock${i + 1}`).value = moment(data2["end_date"]).format(
-												"YYYY-MM-DD"
-											);
-										} catch (err) {
-											console.log("$", "Cert EDATE Catch", err);
-										}
-									}
-								});
-							}, 1000);
-						}
-					} catch (err) {
-						console.log("$", "Cert Catch", err);
-						// setcertid([]);
-						// setcertcount(0);
-					}
-				}
-				setocrLoader(false);
-			})
-			.catch((err) => {
-				console.log("$", "OCR Result", err);
-
-				setocrLoader(false);
-			});
-	}
-
-	useEffect(() => {
-		if (resume != null) {
-			console.log("$", "OCR", "Resume Changed Useeffect...");
-			const fd = new FormData();
-			fd.append("resume", resume);
-			oceFun1(fd);
-		}
-	}, [resume]);
-
-	
 	useEffect(() => {
 		if (addCand) {
 			//add
@@ -741,31 +266,107 @@ export default function VendorClients() {
 			setfname("");
 			setlname("");
 			setemail("");
-			setphone("");
-
-			//link
-			setlinks([]);
-			setlink("");
-
+			setstep(0);
 			setsummary("");
-			setcsalary("");
-			setesalary("");
-			setnotice("");
-			setmsg("");
-			setskill("");
-			//exp
-			setnewgre(false);
-			setexpcount(1);
-			setexpid(["expBlock1"]);
-
-			seteducount(0);
-			seteduid([]);
-
-			setcertcount(0);
-			setcertid([]);
+			setstep1Data({});
+			setversion("");
 			setocrLoader(false);
+			setmsg("");
 		}
 	}, [addCand]);
+
+	useEffect(() => {
+		if (resume != null && popuprefid.length > 0) {
+			console.log("$", "Step1", "Resume Changed Useeffect...");
+			const fd = new FormData();
+			fd.append("resume", resume);
+			step1(popuprefid, fd);
+		}
+	}, [resume]);
+
+	async function step1(refid: any, fd: any) {
+		setocrLoader(true);
+		await axiosInstanceOCR
+			.post(`/applicant/step-1/${refid}/`, fd)
+			.then(async (res) => {
+				toastcomp("step 1", "success");
+				const dataObj = res.data;
+				console.log("!!!", "step1", dataObj);
+				console.log("!!!", "step1", dataObj["Email"]);
+				const data = res.data;
+				toastcomp("step 2", "success");
+				if (data["Email"] && data["Email"].length > 0) {
+					setemail(data["Email"]);
+				}
+				if (data["First Name"] && data["First Name"].length > 0) {
+					setfname(data["First Name"]);
+				}
+				if (data["Last Name"] && data["Last Name"].length > 0) {
+					setlname(data["Last Name"]);
+				}
+				if (data["Summary"] && data["Summary"].length > 0) {
+					setsummary(data["Summary"]);
+				}
+				if (data["Candidate Summary"] && data["Candidate Summary"].length > 0) {
+					setsummary(data["Candidate Summary"]);
+				}
+				if (data["version"] && data["version"].length > 0) {
+					setversion(data["version"]);
+				}
+				setstep1Data(data);
+				setocrLoader(false);
+				setstep(2);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "step1 errr", err);
+				resetState();
+			});
+	}
+
+	async function applyVendorApplicant() {
+		toastcomp("step 3", "success");
+		setocrLoader(true);
+		const fd = new FormData();
+		fd.append("email", email);
+		fd.append("fname", fname);
+		fd.append("lname", lname);
+		fd.append("summary", summary);
+		fd.append("rmsg", msg);
+
+		if (step1Data["rtext"] && step1Data["rtext"].length > 0) {
+			fd.append("rtext", step1Data["rtext"]);
+		}
+
+		if (step1Data["Percentage"]) {
+			fd.append("percent", step1Data["Percentage"]);
+		}
+		fd.append("resume", resume);
+
+		await axiosInstanceAuth2
+			.post(`/applicant/vendor-apply/${popuprefid}/${vrefid}/`, fd)
+			.then((res) => {
+				console.log("!!!", "apply noauth md", res.data);
+				if (res.data.success === 1) {
+					toastcomp("Applied Successfully", "success");
+					setShowConfetti(true);
+				} else if (res.data.success === 2) {
+					toastcomp("Vendor ID Not found", "error");
+				} else {
+					toastcomp("This Resume Already Applied", "error");
+				}
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "apply noauth err", err);
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			});
+	}
 
 	return (
 		<>
@@ -782,6 +383,25 @@ export default function VendorClients() {
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className="layoutWrap">
+					<div className="text-center">
+						{process.env.NODE_ENV != "production" && (
+							<Button
+								btnStyle={"sm"}
+								btnType="button"
+								handleClick={() => setShowConfetti(true)}
+								disabled={showConfetti}
+								label={"Test Confetti"}
+							/>
+						)}
+						{showConfetti && (
+							<Confetti
+								recycle={false}
+								width={windowSize.width}
+								height={windowSize.height}
+								onConfettiComplete={(confetti: Confetti) => setShowConfetti(false)}
+							/>
+						)}
+					</div>
 					<div className="flex flex-wrap p-4 lg:p-8">
 						<div className="mb-4 w-full xl:mb-0 xl:max-w-[300px]">
 							<div className="rounded-normal border bg-white p-4 dark:border-gray-600 dark:bg-gray-800">
@@ -835,6 +455,7 @@ export default function VendorClients() {
 										</Transition>
 									</div>
 								</Combobox> */}
+
 								<h4 className="mb-2 text-lg font-bold">{t("Words.Jobs")}</h4>
 								<div className="max-h-[400px] overflow-auto xl:max-h-[inherit]">
 									{vjdata &&
@@ -1417,9 +1038,14 @@ export default function VendorClients() {
 			</Transition.Root>
 
 			<Transition.Root show={addCand} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={() => {}}
+				<Dialog
+					as="div"
+					className="relative z-40"
+					initialFocus={cancelButtonRef}
+					onClose={() => {}}
 					static
-					open={false}>
+					open={false}
+				>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -1443,19 +1069,18 @@ export default function VendorClients() {
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
 									{ocrLoader && (
-										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-20 backdrop-blur-md">
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-3 backdrop-blur-md">
 											<div className="text-center">
 												<i className="fa-solid fa-spinner fa-spin"></i>
 												<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
 											</div>
 										</div>
 									)}
+
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="font-semibold leading-none">
-											{t("Btn.Add")} {t("Words.Applicants")}
-										</h4>
+										<h4 className="font-semibold leading-none">{t("Words.ApplyJob")}</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -1464,35 +1089,30 @@ export default function VendorClients() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									<form
-										action=""
-										method="post"
-										onSubmit={(e) => {
-											addApp(e, vrefid, popuprefid);
-										}}
-									>
-										<div className="p-8">
-											{resume === null ? (
-												<label
-													htmlFor="uploadCV"
-													className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
-												>
-													<h5 className="mb-2 text-darkGray">{t("Words.DragDropResumeHere")}</h5>
-													<p className="mb-2 text-sm">
-														<span className="font-semibold text-primary dark:text-white">
-															{t("Words.ClickHereToUpload")}
-														</span>
-													</p>
-													<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-													<input
-														type="file"
-														accept=".doc, .docx,.pdf"
-														className="hidden"
-														id="uploadCV"
-														onChange={handleFileInputChange}
-													/>
-												</label>
-											) : (
+									<div className="p-8">
+										{resume === null || step === 0 ? (
+											<label
+												htmlFor="uploadCV"
+												className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+											>
+												<h5 className="mb-2 text-darkGray">{t("Words.DragDropResumeHere")}</h5>
+												<p className="mb-2 text-sm">
+													Or{" "}
+													<span className="font-semibold text-primary dark:text-white">
+														{t("Words.ClickHereToUpload")}
+													</span>
+												</p>
+												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+												<input
+													type="file"
+													accept=".doc, .docx,.pdf"
+													className="hidden"
+													id="uploadCV"
+													onChange={handleFileInputChange}
+												/>
+											</label>
+										) : (
+											<>
 												<div className="my-2 mb-5 flex pb-5">
 													<div className="">
 														{resume.type === "application/pdf" && (
@@ -1530,6 +1150,7 @@ export default function VendorClients() {
 																	title="Delete"
 																	onClick={() => {
 																		setresume(null);
+																		setstep(0);
 																	}}
 																>
 																	<i className="fa-solid fa-trash"></i>
@@ -1540,541 +1161,87 @@ export default function VendorClients() {
 															<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
 																<span
 																	className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
-																	style={{ width: "99%" }}
+																	style={{ width: "100%" }}
 																></span>
 															</div>
 														</div>
 													</div>
 												</div>
-											)}
 
-											<div className="mx-[-10px] flex flex-wrap">
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="text"
-														label={t("Form.FirstName")}
-														value={fname}
-														handleChange={(e) => setfname(e.target.value)}
-														placeholder={t("Form.FirstName")}
-														required
-													/>
-												</div>
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="text"
-														label={t("Form.LastName")}
-														placeholder={t("Form.LastName")}
-														value={lname}
-														handleChange={(e) => setlname(e.target.value)}
-														required
-													/>
-												</div>
-											</div>
-											<div className="mx-[-10px] flex flex-wrap">
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="email"
-														label={t("Form.Email")}
-														placeholder={t("Form.Email")}
-														value={email}
-														handleChange={(e) => setemail(e.target.value)}
-														required
-													/>
-												</div>
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="text"
-														label={t("Form.PhoneNumber")}
-														placeholder={t("Form.PhoneNumber")}
-														value={phone}
-														handleChange={(e) => setphone(e.target.value)}
-													/>
-												</div>
-											</div>
-											<div className="mb-4">
-												<div className="mb-2 flex flex-wrap items-center justify-between">
-													<label className="mb-1 inline-block font-bold">{t("Words.AddSocialLogins")}</label>
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														onClick={() => setAddSocial(true)}
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
-												</div>
-												<div className="flex flex-wrap">
-													{links &&
-														links.map((data, i) => (
-															<div className="relative mb-4 mr-6 p-1" key={i}>
-																<Link href={data} target="_blank" className="text-center">
-																	<span className="mx-auto mb-1 block h-8 w-8 rounded bg-white p-1 shadow-normal dark:bg-gray-500">
-																		<i className={`fa-solid fa-link`}></i>
-																	</span>
-																	{/* <p className="text-[12px] font-bold capitalize">Link {i}</p> */}
-																</Link>
-																<button
-																	type="button"
-																	className="absolute right-[0px] top-[-5px] rounded-full text-center text-[12px] font-bold text-red-500 dark:text-white"
-																	onClick={() => deleteLink(i)}
-																>
-																	<i className="fa-solid fa-circle-xmark"></i>
-																</button>
-															</div>
-														))}
-												</div>
-											</div>
-											<FormField
-												fieldType="textarea"
-												label={t("Words.Summary")}
-												placeholder={t("Words.Summary")}
-												value={summary}
-												handleChange={(e) => setsummary(e.target.value)}
-											/>
-											<FormField
-												options={ski}
-												onSearch={searchSkill}
-												fieldType="select2"
-												id="skills"
-												value={skill}
-												handleChange={setskill}
-												label={t("Words.Skills")}
-												required
-											/>
-
-											{/* exp */}
-											<hr className="mb-4 mt-8" />
-											<div className="relative mb-4">
-												<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
-													<input
-														type="checkbox"
-														id="newGraduate"
-														name="newGraduate"
-														className="mb-[3px] mr-2"
-														checked={newgre}
-														onChange={(e) => setnewgre(e.target.checked)}
-													/>
-													{t("Words.NewGraduate")}
-												</label>
-												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">
-														{t("Words.Experience")} <sup className="text-red-500">*</sup>
-													</label>
-													<div className="flex" style={{ display: newgre === true ? "none" : "flex" }}>
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-															{expid &&
-																expid.map((data, i) => (
-																	<article className="border-b last:border-b-0" key={i} id={data}>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[90%]">
-																				<input
-																					type="text"
-																					placeholder={t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`title${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[10%] pl-4 text-right">
-																				<button
-																					type="button"
-																					className="pr-4 text-red-500"
-																					disabled={expid.length === 1}
-																					onClick={() => {
-																						setexpcount(expcount - 1);
-																						const newExpid = expid.filter((id) => id !== data);
-																						setexpid(newExpid);
-																					}}
-																				>
-																					<i className="fa-solid fa-trash-can"></i>
-																				</button>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[50%]">
-																				<input
-																					type="text"
-																					placeholder={t("Form.CompanyName")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`cname${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[50%] pl-4">
-																				<input
-																					type="text"
-																					placeholder={t("Words.JobType")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`jtype${data}`}
-																				/>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[50%]">
-																				<input
-																					type="date"
-																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`sdate${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[50%] pl-4">
-																				<input
-																					type="date"
-																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`edate${data}`}
-																				/>
-																			</div>
-																		</div>
-																		<textarea
-																			placeholder={t("Form.Description")}
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																			id={`desc${data}`}
-																		></textarea>
-																	</article>
-																))}
-														</div>
-														<div className="w-[40px] text-right">
-															<button
-																type="button"
-																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-																onClick={() => {
-																	setexpid([...expid, `expBlock${expcount + 1}`]);
-																	setexpcount(expcount + 1);
-																}}
-																disabled={newgre}
-															>
-																<i className="fa-regular fa-plus"></i>
-															</button>
-														</div>
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[100%]">
+														<FormField
+															fieldType="input"
+															inputType="email"
+															label={"Email"}
+															value={email}
+															handleChange={(e) => setemail(e.target.value)}
+															placeholder={"Email"}
+															required
+														/>
 													</div>
 												</div>
-											</div>
 
-											{/* edu */}
-											<hr className="mb-4 mt-8" />
-											<div className="relative mb-4">
-												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">{t("Words.Education")}</label>
-													<div className="flex">
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-															{eduid &&
-																eduid.map((data, i) => (
-																	<article className="border-b last:border-b-0" key={i} id={data}>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[90%]">
-																				<input
-																					type="text"
-																					placeholder={t("Words.Education") + " " + t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`title${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[10%] pl-4 text-right">
-																				<button
-																					type="button"
-																					className="pr-4 text-red-500"
-																					// disabled={expid.length === 1}
-																					onClick={() => {
-																						seteducount(educount - 1);
-																						const neweduid = eduid.filter((id) => id !== data);
-																						seteduid(neweduid);
-																					}}
-																				>
-																					<i className="fa-solid fa-trash-can"></i>
-																				</button>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[33%]">
-																				<input
-																					type="text"
-																					placeholder={t("Words.Education") + " " + t("Form.FullName")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`cname${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[33%] pl-4">
-																				<input
-																					type="date"
-																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`sdate${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[33%] pl-4">
-																				<input
-																					type="date"
-																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`edate${data}`}
-																				/>
-																			</div>
-																		</div>
-																		<textarea
-																			placeholder={t("Form.Description")}
-																			className="h-[60px] w-full resize-none rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																			id={`desc${data}`}
-																		></textarea>
-																	</article>
-																))}
-														</div>
-														<div className="w-[40px] text-right">
-															<button
-																type="button"
-																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-																onClick={() => {
-																	seteduid([...eduid, `eduBlock${educount + 1}`]);
-																	seteducount(educount + 1);
-																}}
-															>
-																<i className="fa-regular fa-plus"></i>
-															</button>
-														</div>
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={t("Form.FirstName")}
+															value={fname}
+															handleChange={(e) => setfname(e.target.value)}
+															placeholder={t("Form.FirstName")}
+															required
+														/>
+													</div>
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={t("Form.LastName")}
+															placeholder={t("Form.LastName")}
+															value={lname}
+															handleChange={(e) => setlname(e.target.value)}
+															required
+														/>
 													</div>
 												</div>
-											</div>
 
-											{/* cer */}
-											<hr className="mb-4 mt-8" />
-											<div className="relative mb-4">
-												<div className="mb-0">
-													<label className="mb-1 inline-block font-bold">{t("Form.Certificate")}</label>
-													<div className="flex">
-														<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-															{certid &&
-																certid.map((data, i) => (
-																	<article className="border-b last:border-b-0" key={i} id={data}>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[90%]">
-																				<input
-																					type="text"
-																					placeholder={t("Words.Title")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`title${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[10%] pl-4 text-right">
-																				<button
-																					type="button"
-																					className="pr-4 text-red-500"
-																					// disabled={expid.length === 1}
-																					onClick={() => {
-																						setcertcount(certcount - 1);
-																						const newcertid = certid.filter((id) => id !== data);
-																						setcertid(newcertid);
-																					}}
-																				>
-																					<i className="fa-solid fa-trash-can"></i>
-																				</button>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[33%]">
-																				<input
-																					type="text"
-																					placeholder={t("Form.CompanyName")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`cname${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[33%] pl-4">
-																				<input
-																					type="date"
-																					placeholder={t("Form.StartDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`sdate${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[33%] pl-4">
-																				<input
-																					type="date"
-																					placeholder={t("Form.EndDate")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`edate${data}`}
-																				/>
-																			</div>
-																		</div>
-																		<div className="flex flex-wrap items-center text-sm">
-																			<div className="my-2 w-[50%]">
-																				<input
-																					type="text"
-																					placeholder={t("Form.CredentialsID")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`cid${data}`}
-																				/>
-																			</div>
-																			<div className="my-2 w-[50%] pl-4">
-																				<input
-																					type="text"
-																					placeholder={t("Form.CredentialURL")}
-																					className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																					id={`curl${data}`}
-																				/>
-																			</div>
-																		</div>
-																	</article>
-																))}
-														</div>
-														<div className="w-[40px] text-right">
-															<button
-																type="button"
-																className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-																onClick={() => {
-																	setcertid([...certid, `certBlock${certcount + 1}`]);
-																	setcertcount(certcount + 1);
-																}}
-															>
-																<i className="fa-regular fa-plus"></i>
-															</button>
-														</div>
-													</div>
-												</div>
-											</div>
+												<FormField
+													fieldType="textarea"
+													label={t("Words.Summary")}
+													placeholder={t("Words.Summary")}
+													value={summary}
+													handleChange={(e) => setsummary(e.target.value)}
+													required
+												/>
 
-											{/* edu */}
-											{/* <hr className="mt-8 mb-4" />
-											<div className="mb-4">
-												<label className="mb-1 inline-block font-bold">Education</label>
-												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)]">
-														{Array(2).fill(
-															<article className="mb-2 border-b pb-2 last:border-b-0">
-																<div className="flex flex-wrap items-center text-sm">
-																	<div className="my-2 w-[30%]">
-																		<input
-																			type="text"
-																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[60%] pl-4">
-																		<input
-																			type="text"
-																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[10%] pl-4 text-right">
-																		<button type="button" className="pr-4 text-red-500">
-																			<i className="fa-solid fa-trash-can"></i>
-																		</button>
-																	</div>
-																</div>
-																<textarea
-																	placeholder="Description"
-																	className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-																></textarea>
-															</article>
-														)}
-													</div>
-													<div className="w-[40px] text-right">
-														<button
-															type="button"
-															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														>
-															<i className="fa-regular fa-plus"></i>
-														</button>
-													</div>
-												</div>
-											</div>
+												<FormField
+													fieldType="textarea"
+													label={t("Form.AnyMessageRecruiter")}
+													placeholder={t("Form.AnyMessageRecruiter")}
+													value={msg}
+													handleChange={(e) => setmsg(e.target.value)}
+													required
+												/>
 
-											<div className="mb-4">
-												<label className="mb-1 inline-block font-bold">Certifications</label>
-												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor py-1 px-3">
-														{Array(2).fill(
-															<article className="border-b last:border-b-0">
-																<div className="flex flex-wrap items-center text-sm">
-																	<div className="my-2 w-[30%]">
-																		<input
-																			type="text"
-																			placeholder="Company Name"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[60%] pl-4">
-																		<input
-																			type="text"
-																			placeholder="2021 Sep - 2022 Nov"
-																			className="w-full rounded-normal border border-borderColor text-sm dark:border-gray-600 dark:bg-gray-700"
-																		/>
-																	</div>
-																	<div className="my-2 w-[10%] pl-4 text-right">
-																		<button type="button" className="pr-4 text-red-500">
-																			<i className="fa-solid fa-trash-can"></i>
-																		</button>
-																	</div>
-																</div>
-																<textarea
-																	placeholder="Description"
-																	className="h-[120px] w-full resize-none rounded-normal border border-borderColor text-sm"
-																></textarea>
-															</article>
-														)}
-													</div>
-													<div className="w-[40px] text-right">
-														<button
-															type="button"
-															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														>
-															<i className="fa-regular fa-plus"></i>
-														</button>
-													</div>
-												</div>
-											</div> */}
-
-											<div className="mx-[-10px] flex flex-wrap">
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="text"
-														label={"Current Salary Per Anum"}
-														placeholder={"150000 INR"}
-														value={csalary}
-														handleChange={(e) => setcsalary(e.target.value)}
-														disabled={newgre}
-													/>
-												</div>
-												<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-													<FormField
-														fieldType="input"
-														inputType="text"
-														label={"Expected Salary Per Anum"}
-														placeholder={"450000 INR"}
-														value={esalary}
-														handleChange={(e) => setesalary(e.target.value)}
-													/>
-												</div>
-											</div>
-											<FormField
-												fieldType="input"
-												inputType="text"
-												label={t("Form.NoticePeriod")}
-												placeholder={t("Form.NoticePeriod")}
-												value={notice}
-												handleChange={(e) => setnotice(e.target.value)}
-												readOnly={newgre}
-											/>
-											<FormField
-												fieldType="reactquill"
-												label={t("Form.AnyMessageRecruiter")}
-												placeholder={t("Form.AnyMessageRecruiter")}
-												value={msg}
-												handleChange={setmsg}
-												handleOnBlur={setmsg}
-											/>
-											<Button label={t("Btn.Add")} loader={false} btnType={"submit"} />
-										</div>
-									</form>
+												<Button
+													label={"Apply"}
+													loader={false}
+													btnType={"button"}
+													disabled={!disBtnApply()}
+													handleClick={applyVendorApplicant}
+												/>
+											</>
+										)}
+									</div>
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
 					</div>
 				</Dialog>
 			</Transition.Root>
+
 			<Transition.Root show={viewApplicant} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setViewApplicant}>
 					<Transition.Child
@@ -2272,60 +1439,7 @@ export default function VendorClients() {
 					</div>
 				</Dialog>
 			</Transition.Root>
-			<Transition.Root show={addSocial} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddSocial}>
-					<Transition.Child
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-					</Transition.Child>
 
-					<div className="fixed inset-0 z-10 overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-								enterTo="opacity-100 translate-y-0 sm:scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
-									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="flex items-center font-semibold leading-none">{t("Words.AddSocialLogins")}</h4>
-										<button
-											type="button"
-											className="leading-none hover:text-gray-700"
-											onClick={() => setAddSocial(false)}
-										>
-											<i className="fa-solid fa-xmark"></i>
-										</button>
-									</div>
-									<div className="p-8">
-										<FormField
-											fieldType="input"
-											inputType="text"
-											label="URL"
-											value={link}
-											handleChange={(e) => setlink(e.target.value)}
-										/>
-										<div className="text-center">
-											<Button label={t("Btn.Add")} btnType={"button"} disabled={!verifylink()} handleClick={addlink} />
-										</div>
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
-						</div>
-					</div>
-				</Dialog>
-			</Transition.Root>
 			<Transition.Root show={sadApply} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setsadApply}>
 					<Transition.Child
