@@ -1,4 +1,3 @@
-//@collapse
 import VendorSideBar from "@/components/vendor/Sidebar";
 import VendorTopBar from "@/components/vendor/TopBar";
 import Head from "next/head";
@@ -84,7 +83,7 @@ export default function VendorClients() {
 
 	async function offerVisible(arefid: any) {
 		await axiosInstanceAuth2
-			.get(`/job/list-offer/${arefid}/`)
+			.get(`/applicant/list-offer/${arefid}/`)
 			.then(async (res) => {
 				console.log("!", "Offer Detail", res.data);
 				setofferDetails(res.data);
@@ -171,7 +170,7 @@ export default function VendorClients() {
 
 	async function loadVendorAppDetail(refid: any, vrefid: any) {
 		await axiosInstance
-			.get(`/vendors/vendor-list/${refid}/${vrefid}/`)
+			.get(`/vendors/vendor-list2/${refid}/${vrefid}/`)
 			.then((res) => {
 				setvenapp(res.data);
 				console.log("&", res.data);
@@ -182,18 +181,18 @@ export default function VendorClients() {
 			});
 	}
 
-	async function loadVendorSingleAppDetail(refid: any, vcrefid: any) {
-		await axiosInstance
-			.get(`/vendors/vendoruser/${refid}/${vcrefid}/`)
-			.then((res) => {
-				setvenappdetail(res.data);
-				console.log("&", res.data);
-			})
-			.catch((err) => {
-				setvenappdetail({});
-				console.log("&", err);
-			});
-	}
+	// async function loadVendorSingleAppDetail(refid: any, vcrefid: any) {
+	// 	await axiosInstance
+	// 		.get(`/vendors/vendoruser/${refid}/${vcrefid}/`)
+	// 		.then((res) => {
+	// 			setvenappdetail(res.data);
+	// 			console.log("&", res.data);
+	// 		})
+	// 		.catch((err) => {
+	// 			setvenappdetail({});
+	// 			console.log("&", err);
+	// 		});
+	// }
 
 	useEffect(() => {
 		if (vjobclick != -1) {
@@ -208,12 +207,12 @@ export default function VendorClients() {
 		}
 	}, [addCand]);
 
-	useEffect(() => {
-		if (viewApplicant) {
-			console.log("NA");
-			loadVendorSingleAppDetail(vjdata[vjobclick]["refid"], popupvcrefid);
-		}
-	}, [viewApplicant]);
+	// useEffect(() => {
+	// 	if (viewApplicant) {
+	// 		console.log("NA");
+	// 		loadVendorSingleAppDetail(vjdata[vjobclick]["refid"], popupvcrefid);
+	// 	}
+	// }, [viewApplicant]);
 
 	//add applicant state
 	const [resume, setresume] = useState<File | null>(null);
@@ -845,7 +844,7 @@ export default function VendorClients() {
 																	venapp.map((data, i) => (
 																		<tr className=" odd:bg-gray-100 dark:odd:bg-gray-600" key={i}>
 																			<td className="px-3 py-2 text-left">
-																				{data["applicant"]["first_name"]}&nbsp;{data["applicant"]["last_name"]}
+																				{data["fname"]}&nbsp;{data["lname"]}
 																			</td>
 																			{data["status"] === "Offer" || data["status"] === "Hired" ? (
 																				<>
@@ -863,13 +862,14 @@ export default function VendorClients() {
 																				</>
 																			)}
 
-																			<td className="px-3 py-2 text-left">{moment(data["timestamp"]).fromNow()}</td>
+																			<td className="px-3 py-2 text-left">{moment(data["created_at"]).fromNow()}</td>
 																			<td className="px-3 py-2 text-left">
 																				<button
 																					type="button"
 																					className="text-primary hover:underline dark:text-white"
 																					onClick={() => {
-																						setpopupvcrefid(data["applicant"]["vcrefid"]);
+																						setvenappdetail(data);
+																						// setpopupvcrefid(data["applicant"]["vcrefid"]);
 																						setViewApplicant(true);
 																					}}
 																				>
@@ -1278,161 +1278,58 @@ export default function VendorClients() {
 											<i className="fa-solid fa-xmark"></i>
 										</button>
 									</div>
-									{venappdetail["VendorCandidateProfile"] &&
-										venappdetail["VendorCandidateProfile"].length > 0 &&
-										venappdetail["VendorCandidateProfile"].map((data, i) => (
-											<div className="p-8" key={i}>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<p className="mx-auto w-full max-w-[600px] text-center">
-														<iframe
-															src={
-																process.env.NODE_ENV === "production"
-																	? process.env.NEXT_PUBLIC_PROD_BACKEND + data["resume"]
-																	: process.env.NEXT_PUBLIC_DEV_BACKEND + data["resume"]
-															}
-															className="h-[50vh] w-[100%]"
-														></iframe>
-													</p>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<h2 className="mb-2 text-lg font-bold">
-														{data["first_name"]}&nbsp;{data["last_name"]}
-													</h2>
-													<ul className="mb-2 flex list-inside list-disc flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
-														<li className="mr-3 list-none">{data["email"]}</li>
-														{data["mobile"] && data["mobile"].length > 0 && <li className="mr-3">{data["mobile"]}</li>}
-														<li className="mr-3">
-															{t("Form.NoticePeriod")} -{" "}
-															{data["notice_period"] && data["notice_period"].length > 0 ? (
-																data["notice_period"]
-															) : (
-																<>N/A</>
-															)}
-														</li>
-														<li className="mr-3">
-															{t("Form.CurrentSalary")} -{" "}
-															{data["current_salary"] && data["current_salary"].length > 0 ? (
-																data["current_salary"]
-															) : (
-																<>N/A</>
-															)}
-														</li>
-														<li className="mr-3">
-															{t("Form.ExpectedSalary")} -{" "}
-															{data["expected_salary"] && data["expected_salary"].length > 0 ? (
-																data["expected_salary"]
-															) : (
-																<>N/A</>
-															)}
-														</li>
-													</ul>
-													<div className="flex flex-wrap items-center text-xl">
-														{venappdetail["Link"] &&
-															venappdetail["Link"].length > 0 &&
-															venappdetail["Link"].map((data, i) => (
-																<Link href={data["title"]} target="_blank" className="m-3 mb-0" key={i}>
-																	<i className="fa-solid fa-link"></i>
-																</Link>
-															))}
-													</div>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">{t("Words.Summary")}</label>
-													<article className="text-sm">
-														{data["summary"] && data["summary"].length > 0 ? data["summary"] : <>N/A</>}
-													</article>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">{t("Words.Skills")}</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
-														<div className="text-sm">
-															{data["skills"] &&
-																data["skills"].length > 0 &&
-																data["skills"].split(",").map((data, i) => (
-																	<p className="my-1" key={i}>
-																		{data}
-																	</p>
-																))}
-														</div>
-													</div>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">{t("Words.Experience")}</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
-														{venappdetail["Experience"] &&
-															venappdetail["Experience"].length > 0 &&
-															venappdetail["Experience"].map((data, i) => (
-																<article className="border-b last:border-b-0" key={i}>
-																	<div className="flex flex-wrap text-sm">
-																		<div className="my-2 w-[70%]">
-																			<h4 className="font-bold">
-																				{data["title"]}&nbsp;({data["company"]})&nbsp;({data["type"]})
-																			</h4>
-																		</div>
-																		<div className="my-2 w-[30%] pl-4 text-right">
-																			<p className="font-semibold">
-																				{data["year_of_join"]}&nbsp;-&nbsp;{data["year_of_end"]}
-																			</p>
-																		</div>
-																	</div>
-																	<p className="mb-2 text-sm">{data["expbody"]}</p>
-																</article>
-															))}
-													</div>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">{t("Words.Education")}</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
-														{venappdetail &&
-															venappdetail["Education"] &&
-															venappdetail["Education"].length > 0 &&
-															venappdetail["Education"].map((data, i) => (
-																<article className="border-b last:border-b-0" key={i}>
-																	<div className="flex flex-wrap text-sm">
-																		<div className="my-2 w-[70%]">
-																			<h4 className="font-bold">
-																				{data["title"]}&nbsp;({data["college"]})
-																			</h4>
-																		</div>
-																		<div className="my-2 w-[30%] pl-4 text-right">
-																			<p className="font-semibold">
-																				{data["yearofjoin"]}&nbsp;-&nbsp;{data["yearofend"]}{" "}
-																			</p>
-																		</div>
-																	</div>
-																	<p className="mb-2 text-sm">{data["edubody"]}</p>
-																</article>
-															))}
-													</div>
-												</div>
-												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">{t("Words.Certifications")}</label>
-													<div className="min-h-[45px] rounded-normal border border-borderColor px-3 py-1">
-														{venappdetail["Certification"] &&
-															venappdetail["Certification"].length > 0 &&
-															venappdetail["Certification"].map((data, i) => (
-																<article className="border-b last:border-b-0" key={i}>
-																	<div className="flex flex-wrap text-sm">
-																		<div className="my-2 w-[70%]">
-																			<h4 className="font-bold">
-																				{data["title"]}&nbsp;({data["company"]})
-																			</h4>
-																		</div>
-																		<div className="my-2 w-[30%] pl-4 text-right">
-																			<p className="font-semibold">
-																				{data["yearofissue"]}&nbsp;-&nbsp;{data["yearofexp"]}
-																			</p>
-																		</div>
-																	</div>
-																	<p className="mb-2 text-sm">
-																		{data["creid"]}&nbsp;{data["creurl"]}
-																	</p>
-																</article>
-															))}
-													</div>
-												</div>
+									{venappdetail && (
+										<div className="p-8">
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<p className="mx-auto w-full max-w-[600px] text-center">
+													<iframe src={venappdetail["resume"]} className="h-[100vh] w-[100%]"></iframe>
+												</p>
 											</div>
-										))}
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">Candidate Information</label>
+												<article className="text-sm">
+													Name :{" "}
+													{venappdetail["fname"] &&
+													venappdetail["fname"].length > 0 &&
+													venappdetail["lname"] &&
+													venappdetail["lname"].length > 0 ? (
+														<>
+															{venappdetail["fname"]}&nbsp;{venappdetail["lname"]}
+														</>
+													) : (
+														<>N/A</>
+													)}
+												</article>
+												<article className="text-sm">
+													Email :{" "}
+													{venappdetail["email"] && venappdetail["email"].length > 0 ? venappdetail["email"] : <>N/A</>}
+												</article>
+												<article className="text-sm">
+													Rating : {venappdetail["percentage_fit"] ? <>{venappdetail["percentage_fit"]}%</> : <>N/A</>}
+												</article>
+											</div>
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">{t("Words.Summary")}</label>
+												<article className="text-sm">
+													{venappdetail["summary"] && venappdetail["summary"].length > 0 ? (
+														venappdetail["summary"]
+													) : (
+														<>N/A</>
+													)}
+												</article>
+											</div>
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">{t("Words.MessageFromVendor")}</label>
+												<article className="text-sm">
+													{venappdetail["recuriter_message"] && venappdetail["recuriter_message"].length > 0 ? (
+														venappdetail["recuriter_message"]
+													) : (
+														<>N/A</>
+													)}
+												</article>
+											</div>
+										</div>
+									)}
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>

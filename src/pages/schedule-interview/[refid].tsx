@@ -43,6 +43,9 @@ export default function CandSchedule() {
 				if (res.data[0]["capplicant"]) {
 					setemail(res.data[0]["capplicant"]["user"]["email"]);
 				}
+				if (res.data[0]["applicant"]) {
+					setemail(res.data[0]["applicant"]["email"]);
+				}
 				if (res.data[0]["selectedSlot"]) {
 					if (res.data[0]["selectedSlot"] === res.data[0]["slot1"]) {
 						setSelected("slot1");
@@ -82,6 +85,16 @@ export default function CandSchedule() {
 		fd.append("start_time", moment(data[select]).format());
 		fd.append("end_time", moment(data[select]).add(parseInt(data["duration"]), "minutes").format());
 		fd.append("type", data["type"]);
+		if (data["applicant"]) {
+			fd.append("arefid", data["applicant"]["arefid"]);
+			fd.append("jobpk", parseInt(data["applicant"]["job"]["id"]));
+			fd.append(
+				"title",
+				`${data["type"][0].toUpperCase() + data["type"].slice(1)} with ${data["applicant"]["fname"]} ${
+					data["applicant"]["lname"]
+				} for ${data["applicant"]["job"]["jobTitle"]}`
+			);
+		}
 		if (data["capplicant"]) {
 			fd.append("arefid", data["capplicant"]["arefid"]);
 			fd.append("jobpk", parseInt(data["capplicant"]["job"]["id"]));
@@ -203,6 +216,11 @@ export default function CandSchedule() {
 										</div>
 										<div className="py-1 pl-6">
 											<h6 className="mb-2 text-lg text-darkGray dark:text-gray-400">{t("Words.JobTitle")}</h6>
+											{data["applicant"] && data["applicant"]["job"] && data["applicant"]["job"]["jobTitle"] && (
+												<>
+													<p>{data["applicant"]["job"]["jobTitle"]}</p>
+												</>
+											)}
 											{data["capplicant"] && data["capplicant"]["job"] && data["capplicant"]["job"]["jobTitle"] && (
 												<>
 													<p>{data["capplicant"]["job"]["jobTitle"]}</p>

@@ -136,14 +136,9 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	async function loadApplicant() {
 		try {
 			let arr = [];
-			var [res1, res2] = await Promise.all([
-				axiosInstanceAuth2.get(`/job/listapplicant/`),
-				axiosInstanceAuth2.get(`/job/listvendorapplicant/`)
-			]);
+			var [res1] = await Promise.all([axiosInstanceAuth2.get(`/applicant/list-applicant/`)]);
 
-			arr = res1.data
-				.map((data: any) => ({ ...data, type: "career" }))
-				.concat(res2.data.map((data: any) => ({ ...data, type: "vendor" })));
+			arr = res1.data;
 
 			if (atsVersion != "starter") {
 				arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
@@ -259,13 +254,10 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 			const fApplicants = applicantlist.filter((applicant) => {
 				const type = applicant.type;
-				const firstName = type === "career" ? applicant.user.first_name : applicant.applicant.first_name;
-				const lastName = type === "career" ? applicant.user.last_name : applicant.applicant.last_name;
+				const firstName = applicant.fname;
+				const lastName = applicant.lname;
 
-				return (
-					(type === "career" || type === "vendor") && // Optionally add more types if needed
-					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
-				);
+				return firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch);
 			});
 
 			setapplicantlist(fApplicants);
@@ -276,10 +268,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		} else {
 			if (selectedJob.name === "All") {
 				// setrefresh(1);
+				console.log("###", fapplicantList);
 				setapplicantlist(fapplicantList);
 				setTimeout(() => {
 					setrefresh(2);
-				}, 500);
+				}, 1000);
 			} else {
 				setSelectedJob(jobd[0]);
 			}

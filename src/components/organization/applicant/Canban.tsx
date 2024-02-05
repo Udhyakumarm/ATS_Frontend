@@ -46,23 +46,27 @@ function Canban(props: any) {
 
 	useEffect(() => {
 		let arr = cards;
+		console.log("####", "applicantlist", applicantlist);
+		let _cardId2 = 0;
 		for (let i = 0; i < applicantlist.length; i++) {
 			const abc = arr.some((item) => item.arefid === applicantlist[i]["arefid"]);
+			console.log("####", "abc", abc);
 			if (abc === false) {
 				let dic = {
-					id: ++_cardId,
-					title: `Card ${_cardId}`,
+					id: ++_cardId2,
+					title: `Card ${_cardId2}`,
 					arefid: `${applicantlist[i]["arefid"]}`,
 					type: `${applicantlist[i]["type"]}`
 				};
 				arr.push(dic);
 				for (let j = 0; j < initialColumns.length; j++) {
 					if (initialColumns[j]["title"] === applicantlist[i]["status"]) {
-						initialColumns[j]["cardIds"].push(_cardId);
+						initialColumns[j]["cardIds"].push(_cardId2);
 					}
 				}
 			}
 		}
+		console.log("####", "arr", arr);
 		setcards(arr);
 		setcolumns(initialColumns);
 		setr(1);
@@ -81,13 +85,13 @@ function Canban(props: any) {
 	async function chnageStatus(status: string | Blob, arefid: any, type: any) {
 		const fdata = new FormData();
 		fdata.append("status", status);
-		let url = "";
-		if (type === "career") {
-			url = `/job/applicant/${arefid}/update/`;
-		}
-		if (type === "vendor") {
-			url = `/job/vapplicant/${arefid}/update/`;
-		}
+		let url = `/applicant/applicant-status/${arefid}/update/`;
+		// if (type === "career") {
+		// 	url = `/job/applicant/${arefid}/update/`;
+		// }
+		// if (type === "vendor") {
+		// 	url = `/job/vapplicant/${arefid}/update/`;
+		// }
 		await axiosInstanceAuth2
 			.put(url, fdata)
 			.then((res) => {
