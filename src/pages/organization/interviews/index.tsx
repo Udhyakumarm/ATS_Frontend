@@ -60,7 +60,8 @@ export default function Interviews({ upcomingSoon, currentUser }: any) {
 
 	async function loadUpcomingInterview() {
 		await axiosInstanceAuth2
-			.get(`/job/upcoming-listing-interview/`)
+			// .get(`/job/upcoming-listing-interview/`)
+			.get(`/applicant/upcoming-listing-interview/`)
 			.then(async (res) => {
 				console.log("!", "upcome", res.data);
 				setinterviewUpcoming(res.data);
@@ -73,7 +74,8 @@ export default function Interviews({ upcomingSoon, currentUser }: any) {
 
 	async function loadPastInterview() {
 		await axiosInstanceAuth2
-			.get(`/job/past-listing-interview/`)
+			// .get(`/job/past-listing-interview/`)
+			.get(`/applicant/past-listing-interview/`)
 			.then(async (res) => {
 				console.log("!", "past", res.data);
 				setinterviewPast(res.data);

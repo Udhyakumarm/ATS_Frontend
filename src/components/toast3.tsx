@@ -17,7 +17,7 @@ const ToastComp22 = ({ data, axiosInstanceAuth2, fetchRealNotificationCount, aft
 
 	async function updateRealNotification(id: any) {
 		await axiosInstanceAuth2
-			.put(`/chatbot/read-real-notification/${id}/`)
+			.put(`/applicant/read-real-notification/${id}/`)
 			.then(async (res) => {
 				console.log("!!!!", "Real Notification Read success");
 				fetchRealNotificationCount();

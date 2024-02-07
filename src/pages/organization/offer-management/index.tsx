@@ -159,17 +159,13 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		try {
 			let arr = [];
 			setloader(true);
-			var [res1, res2] = await Promise.all([
-				axiosInstanceAuth2.get(`/job/listapplicant/`),
-				axiosInstanceAuth2.get(`/job/listvendorapplicant/`)
-			]);
+			var [res1] = await Promise.all([axiosInstanceAuth2.get(`/applicant/list-applicant/`)]);
 
-			arr = res1.data
-				.filter((data: any) => data.status === "Offer")
-				.map((data: any) => ({ ...data, type: "career" }))
-				.concat(
-					res2.data.filter((data: any) => data.status === "Offer").map((data: any) => ({ ...data, type: "vendor" }))
-				);
+			arr = res1.data.filter((data: any) => data.status === "Offer");
+			// .map((data: any) => ({ ...data, type: "career" }))
+			// .concat(
+			// 	res2.data.filter((data: any) => data.status === "Offer").map((data: any) => ({ ...data, type: "vendor" }))
+			// );
 
 			if (atsVersion != "starter") {
 				arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
@@ -281,31 +277,43 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 							html = html + "<br/><br/>";
 							setbvalue(html);
 
-							if (currentApplicant["type"] === "career") {
-								if (
-									currentApplicant["user"]["last_name"] &&
-									currentApplicant["user"]["last_name"].length > 0 &&
-									currentApplicant["user"]["first_name"] &&
-									currentApplicant["user"]["first_name"].length > 0
-								) {
-									html = html.replaceAll(
-										"[Candidate's Name]",
-										`${currentApplicant["user"]["first_name"]}&nbsp;${currentApplicant["user"]["last_name"]}`
-									);
-								}
-							} else if (currentApplicant["type"] === "vendor") {
-								if (
-									currentApplicant["applicant"]["last_name"] &&
-									currentApplicant["applicant"]["last_name"].length > 0 &&
-									currentApplicant["applicant"]["first_name"] &&
-									currentApplicant["applicant"]["first_name"].length > 0
-								) {
-									html = html.replaceAll(
-										"[Candidate's Name]",
-										`${currentApplicant["applicant"]["first_name"]}&nbsp;${currentApplicant["applicant"]["last_name"]}`
-									);
-								}
+							if (
+								currentApplicant["lname"] &&
+								currentApplicant["lname"].length > 0 &&
+								currentApplicant["fname"] &&
+								currentApplicant["fname"].length > 0
+							) {
+								html = html.replaceAll(
+									"[Candidate's Name]",
+									`${currentApplicant["fname"]}&nbsp;${currentApplicant["lname"]}`
+								);
 							}
+
+							// if (currentApplicant["type"] === "career") {
+							// 	if (
+							// 		currentApplicant["user"]["last_name"] &&
+							// 		currentApplicant["user"]["last_name"].length > 0 &&
+							// 		currentApplicant["user"]["first_name"] &&
+							// 		currentApplicant["user"]["first_name"].length > 0
+							// 	) {
+							// 		html = html.replaceAll(
+							// 			"[Candidate's Name]",
+							// 			`${currentApplicant["user"]["first_name"]}&nbsp;${currentApplicant["user"]["last_name"]}`
+							// 		);
+							// 	}
+							// } else if (currentApplicant["type"] === "vendor") {
+							// 	if (
+							// 		currentApplicant["applicant"]["last_name"] &&
+							// 		currentApplicant["applicant"]["last_name"].length > 0 &&
+							// 		currentApplicant["applicant"]["first_name"] &&
+							// 		currentApplicant["applicant"]["first_name"].length > 0
+							// 	) {
+							// 		html = html.replaceAll(
+							// 			"[Candidate's Name]",
+							// 			`${currentApplicant["applicant"]["first_name"]}&nbsp;${currentApplicant["applicant"]["last_name"]}`
+							// 		);
+							// 	}
+							// }
 							if (designation && designation.length > 0) {
 								html = html.replaceAll("[Designation]", designation);
 							}
@@ -383,8 +391,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 			const fApplicants = filterApplicants.filter((applicant) => {
 				const type = applicant.type;
-				const firstName = type === "career" ? applicant.user.first_name : applicant.applicant.first_name;
-				const lastName = type === "career" ? applicant.user.last_name : applicant.applicant.last_name;
+				const firstName = type === "career" ? applicant.fname : applicant.fname;
+				const lastName = type === "career" ? applicant.lname : applicant.lname;
 
 				return (
 					(type === "career" || type === "vendor") && // Optionally add more types if needed
@@ -414,7 +422,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 	async function offerDetail(arefid: string, current_data: any) {
 		try {
-			var [res] = await Promise.all([axiosInstanceAuth2.get(`/job/list-offer/${arefid}/`)]);
+			var [res] = await Promise.all([axiosInstanceAuth2.get(`/applicant/list-offer/${arefid}/`)]);
 
 			console.info("data", "offer detail", res.data);
 			console.info("data", "offer current applicant", current_data);
@@ -575,7 +583,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 	async function loadOfferFeedback(omrefid: string) {
 		await axiosInstanceAuth2
-			.get(`/job/list-offerfeedback/${omrefid}/`)
+			.get(`/applicant/list-offerfeedback/${omrefid}/`)
 			.then(async (res) => {
 				console.log("@", "list-offer-feedback", res.data);
 				setomf(res.data);
@@ -650,7 +658,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		fd.append("status", status);
 
 		await axiosInstanceAuth2
-			.post(`/job/create-offerfeedback/${omrefid}/`, fd)
+			.post(`/applicant/create-offerfeedback/${omrefid}/`, fd)
 			.then(async (res) => {
 				toastcomp("offer feedback created", "success");
 			})
@@ -663,7 +671,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		const fd = new FormData();
 		fd.append("step", count);
 		await axiosInstanceAuth2
-			.put(`/job/update-offer/${omrefid}/`, fd)
+			.put(`/applicant/update-offer/${omrefid}/`, fd)
 			.then(async (res) => {
 				toastcomp("offer stage Updated", "success");
 				offerDetail(currentApplicant["arefid"], currentApplicant);
@@ -714,7 +722,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		if (offer.length <= 0) {
 			fd.append("step", step);
 			await axiosInstanceAuth2
-				.post(`/job/create-offer/${arefid}/`, fd)
+				.post(`/applicant/create-offer/${arefid}/`, fd)
 				.then(async (res) => {
 					toastcomp("offer Sent", "success");
 					console.log("@", "Offer Sent", res.data);
@@ -729,7 +737,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				});
 		} else {
 			await axiosInstanceAuth2
-				.put(`/job/update-offer/${omrefid}/`, fd)
+				.put(`/applicant/update-offer/${omrefid}/`, fd)
 				.then(async (res) => {
 					toastcomp("offer Updated", "success");
 					offerDetail(arefid, currentApplicant);
@@ -747,31 +755,41 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 	function updateOffer() {
 		let html = bvalue;
-		if (currentApplicant["type"] === "career") {
-			if (
-				currentApplicant["user"]["last_name"] &&
-				currentApplicant["user"]["last_name"].length > 0 &&
-				currentApplicant["user"]["first_name"] &&
-				currentApplicant["user"]["first_name"].length > 0
-			) {
-				html = html.replaceAll(
-					"[Candidate's Name]",
-					`${currentApplicant["user"]["first_name"]}&nbsp;${currentApplicant["user"]["last_name"]}`
-				);
-			}
-		} else if (currentApplicant["type"] === "vendor") {
-			if (
-				currentApplicant["applicant"]["last_name"] &&
-				currentApplicant["applicant"]["last_name"].length > 0 &&
-				currentApplicant["applicant"]["first_name"] &&
-				currentApplicant["applicant"]["first_name"].length > 0
-			) {
-				html = html.replaceAll(
-					"[Candidate's Name]",
-					`${currentApplicant["applicant"]["first_name"]}&nbsp;${currentApplicant["applicant"]["last_name"]}`
-				);
-			}
+
+		if (
+			currentApplicant["lname"] &&
+			currentApplicant["lname"].length > 0 &&
+			currentApplicant["fname"] &&
+			currentApplicant["fname"].length > 0
+		) {
+			html = html.replaceAll("[Candidate's Name]", `${currentApplicant["fname"]}&nbsp;${currentApplicant["lname"]}`);
 		}
+
+		// if (currentApplicant["type"] === "career") {
+		// 	if (
+		// 		currentApplicant["user"]["last_name"] &&
+		// 		currentApplicant["user"]["last_name"].length > 0 &&
+		// 		currentApplicant["user"]["first_name"] &&
+		// 		currentApplicant["user"]["first_name"].length > 0
+		// 	) {
+		// 		html = html.replaceAll(
+		// 			"[Candidate's Name]",
+		// 			`${currentApplicant["user"]["first_name"]}&nbsp;${currentApplicant["user"]["last_name"]}`
+		// 		);
+		// 	}
+		// } else if (currentApplicant["type"] === "vendor") {
+		// 	if (
+		// 		currentApplicant["applicant"]["last_name"] &&
+		// 		currentApplicant["applicant"]["last_name"].length > 0 &&
+		// 		currentApplicant["applicant"]["first_name"] &&
+		// 		currentApplicant["applicant"]["first_name"].length > 0
+		// 	) {
+		// 		html = html.replaceAll(
+		// 			"[Candidate's Name]",
+		// 			`${currentApplicant["applicant"]["first_name"]}&nbsp;${currentApplicant["applicant"]["last_name"]}`
+		// 		);
+		// 	}
+		// }
 		if (designation && designation.length > 0) {
 			html = html.replaceAll("[Designation]", designation);
 		}
@@ -846,7 +864,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			fd.append("offerLetter", blob, "converted.pdf");
 
 			await axiosInstanceAuth2
-				.put(`/job/update-offer-step2/${omrefid}/`, fd)
+				.put(`/applicant/update-offer-step2/${omrefid}/`, fd)
 				.then(async (res) => {
 					toastcomp("offer Updated", "success");
 					console.log("@", "Offer Updated", res.data);
@@ -864,7 +882,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 
 	async function sendOLDL(arefid: string) {
 		await axiosInstanceAuth2
-			.post(`/job/offer-letter/${arefid}/`)
+			.post(`/applicant/offer-letter/${arefid}/`)
 			.then(async (res) => {
 				toastcomp("offer letter link send", "success");
 			})
@@ -877,7 +895,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		fd.append("candidate_visibility", "true");
 		fd.append("step", 4);
 		await axiosInstanceAuth2
-			.put(`/job/update-offer/${omrefid}/`, fd)
+			.put(`/applicant/update-offer/${omrefid}/`, fd)
 			.then(async (res) => {
 				toastcomp("offer visiblity Updated", "success");
 				sendOLDL(arefid);
@@ -904,13 +922,15 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			pdf.addImage(canvas.toDataURL("image/png"), "JPEG", 5, 5);
 
 			// Save the PDF document
-			if (currentApplicant["type"] === "career") {
-				pdf.save(`OfferLetter_${currentApplicant["user"]["first_name"]}_${currentApplicant["user"]["last_name"]}.pdf`);
-			} else if (currentApplicant["type"] === "vendor") {
-				pdf.save(
-					`OfferLetter_${currentApplicant["applicant"]["first_name"]}_${currentApplicant["applicant"]["last_name"]}.pdf`
-				);
-			}
+			pdf.save(`OfferLetter_${currentApplicant["fname"]}_${currentApplicant["lname"]}.pdf`);
+
+			// if (currentApplicant["type"] === "career") {
+			// 	pdf.save(`OfferLetter_${currentApplicant["user"]["first_name"]}_${currentApplicant["user"]["last_name"]}.pdf`);
+			// } else if (currentApplicant["type"] === "vendor") {
+			// 	pdf.save(
+			// 		`OfferLetter_${currentApplicant["applicant"]["first_name"]}_${currentApplicant["applicant"]["last_name"]}.pdf`
+			// 	);
+			// }
 		});
 	};
 
@@ -1083,7 +1103,10 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																	className="h-[30px] rounded-full object-cover"
 																/>
 																<h5 className="pl-4 text-sm font-semibold">
-																	{data["type"] === "career" && (
+																	<>
+																		{data["fname"]} {data["lname"]}
+																	</>
+																	{/* {data["type"] === "career" && (
 																		<>
 																			{data["user"]["first_name"]} {data["user"]["last_name"]}
 																		</>
@@ -1092,7 +1115,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																		<>
 																			{data["applicant"]["first_name"]} {data["applicant"]["last_name"]}
 																		</>
-																	)}
+																	)} */}
 																</h5>
 															</aside>
 															<aside>
@@ -1115,10 +1138,10 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 														<div className="flex items-center justify-between">
 															<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
 																<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-																<p>{moment(data["timestamp"]).format("Do MMM YYYY")}</p>
+																<p>{moment(data["created_at"]).format("Do MMM YYYY")}</p>
 															</aside>
 															<span className="text-[10px] text-darkGray dark:text-gray-400">
-																{moment(data["timestamp"]).format("h:mm a")}
+																{moment(data["created_at"]).format("h:mm a")}
 															</span>
 														</div>
 													</div>
@@ -1155,7 +1178,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 											<div className="rounded-normal border bg-white dark:border-gray-600 dark:bg-gray-800">
 												<h2 className="flex justify-between px-10 py-4 text-lg font-bold">
 													<span>
-														{currentApplicant["user"] && (
+														<>
+															{currentApplicant["fname"]}&nbsp;
+															{currentApplicant["lname"]}
+														</>
+														{/* {currentApplicant["user"] && (
 															<>
 																{currentApplicant["user"]["first_name"]}&nbsp;
 																{currentApplicant["user"]["last_name"]}
@@ -1166,7 +1193,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																{currentApplicant["applicant"]["first_name"]}&nbsp;
 																{currentApplicant["applicant"]["last_name"]}
 															</>
-														)}
+														)} */}
 													</span>
 													{/* <button onClick={() => toastcomp(step, "success")}>STEP</button> */}
 													<span>Source : {currentApplicant["type"]}</span>
@@ -1431,7 +1458,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																			</div>
 																			<div className="">
 																				<h4 className="mb-2 font-bold">
-																					{t("Form.SalaryRange")}
+																					{t("Form.SalaryRange")} per annum
 																					<sup className="text-red-500">*</sup>
 																				</h4>
 																				<div className="flex flex-wrap">
@@ -1788,7 +1815,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																					</div>
 																					<div className="">
 																						<h4 className="mb-2 font-bold">
-																							{t("Form.SalaryRange")}
+																							{t("Form.SalaryRange")} per annum
 																							<sup className="text-red-500">*</sup>
 																						</h4>
 																						<div className="-mx-3 flex flex-wrap">
@@ -2493,7 +2520,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 										</div>
 										<div className="">
 											<h4 className="mb-2 font-bold">
-												{t("Form.SalaryRange")}
+												{t("Form.SalaryRange")} per annum
 												<sup className="text-red-500">*</sup>
 											</h4>
 											<div className="flex flex-wrap">

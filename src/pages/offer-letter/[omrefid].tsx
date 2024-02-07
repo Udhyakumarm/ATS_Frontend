@@ -46,7 +46,7 @@ export default function OfferSchedule() {
 
 	async function loadOffer(omrefid: any) {
 		await axiosInstance
-			.get(`/job/list-offer-dl/${omrefid}/`)
+			.get(`/applicant/list-offer-dl/${omrefid}/`)
 			.then(async (res) => {
 				console.log("!", "Offer Detail", res.data);
 				setofferDetails(res.data);
@@ -61,7 +61,7 @@ export default function OfferSchedule() {
 
 	async function updateOffer(omrefid: any, fd: any, type: any) {
 		await axiosInstance2
-			.post(`/job/list-offer-dl-update/${omrefid}/`, fd)
+			.post(`/applicant/list-offer-dl-update/${omrefid}/`, fd)
 			.then(async (res) => {
 				console.log("!", "Offer Detail", res.data);
 				loadOffer(omrefid).then(() => {
@@ -175,7 +175,7 @@ export default function OfferSchedule() {
 	return (
 		<>
 			<Head>
-				<title>{t("Words.InterviewDetails")}</title>
+				<title>Offer Details</title>
 			</Head>
 			<main className="relative py-8">
 				<div className="absolute right-2 top-5">
@@ -256,7 +256,7 @@ export default function OfferSchedule() {
 																			{data["finalofferLetter"] && data["finalofferLetter"].length > 0 ? (
 																				<iframe
 																					src={`${data["finalofferLetter"]}`}
-																					className="h-[50vh] w-[100%]"
+																					className="h-[100vh] w-[100%]"
 																				></iframe>
 																			) : (
 																				<iframe src={`${data["offerLetter"]}`} className="h-[50vh] w-[100%]"></iframe>

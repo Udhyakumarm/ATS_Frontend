@@ -9,7 +9,7 @@ export default function AnalyticsComp({ data2, axiosInstanceAuth2 }: any) {
 
 	const [data, setdata] = useState({});
 	async function getAnalyticsData2(refid: any) {
-		await axiosInstanceAuth2.post(`/chatbot/only-analytics/${refid}/`).then((res) => {
+		await axiosInstanceAuth2.post(`/applicant/only-analytics/${refid}/`).then((res) => {
 			setdata(res.data);
 			console.log("&&", "AD!", res.data);
 		});
