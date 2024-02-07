@@ -139,7 +139,8 @@ export default function Card(props: any) {
 								settype(props["data"]["type"]);
 								setappdata(props["data"]);
 								console.log("&&&&", "click ", props["data"]);
-								router.push("applicants/detail");
+								// router.push("applicants/detail");
+								window.open("applicants/detail", '_blank');
 							}}
 						/>
 					</div>
