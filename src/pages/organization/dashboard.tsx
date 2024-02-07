@@ -222,7 +222,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 
 	async function loadAnalytics() {
 		await axiosInstanceAuth2
-			.get(`/organization/get_analytics/`)
+			.get(`/applicant/get_analytics/`)
 			.then(async (res) => {
 				console.log("!", res.data);
 				// setactivityLog(res.data);
@@ -458,17 +458,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	/>
 																	<div className="grow pl-2">
 																		<h5 className="text-sm font-bold">
-																			{data["applicant"] != null ? (
+																			{data["applicant"] != null && (
 																				<>
-																					{data["applicant"]["user"]["first_name"]}&nbsp;
-																					{data["applicant"]["user"]["last_name"]}
-																					&nbsp;(Career)
-																				</>
-																			) : (
-																				<>
-																					{data["vapplicant"]["applicant"]["first_name"]}&nbsp;
-																					{data["vapplicant"]["applicant"]["last_name"]}
-																					&nbsp;(Vendor)
+																					{data["applicant"]["fname"]}&nbsp;
+																					{data["applicant"]["lname"]}
+																					&nbsp;({data["applicant"]["type"]})
 																				</>
 																			)}
 																		</h5>

@@ -72,7 +72,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	async function loaddashboard() {
 		await axiosInstanceAuth2
-			.get(`/job/applicants/alls/${cid}/`)
+			.get(`/applicant/carrer-dashbaord/${cid}/`)
 			.then(async (res) => {
 				console.log("!", res.data);
 				setloadash(res.data);
@@ -95,7 +95,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 
 	async function loadOffer(id: any) {
 		await axiosInstanceAuth2
-			.get(`/job/can/offer/detail/${id}/`)
+			.get(`/applicant/can/offer/detail/${id}/`)
 			.then(async (res) => {
 				console.log("data", res.data);
 				setOffers(res.data);
@@ -108,7 +108,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 
 	async function updateOffer(omrefid: any, fd: any, type: any) {
 		await axiosInstanceAuth2
-			.post(`/job/can/offer/update/${omrefid}/`, fd)
+			.post(`/applicant/can/offer/update/${omrefid}/`, fd)
 			.then(async (res) => {
 				toastcomp("Offer " + type + " successfully", "success");
 				if (orgdetail["OrgProfile"].length > 0) {
@@ -285,7 +285,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																>
 																	{data["job"]["jobTitle"]}
 																</button>
-																<ul className="mb-3 flex flex-wrap items-center text-[12px] font-semibold text-darkGray dark:text-gray-400">
+																<ul className="mb-3 flex flex-wrap items-start text-[12px] font-semibold text-darkGray dark:text-gray-400">
 																	<li className="mr-8">
 																		<i className="fa-solid fa-location-dot mr-2 capitalize"></i>
 																		{data["job"]["jobWorktype"] ? data["job"]["jobWorktype"] : <>Not Disclosed</>}
@@ -313,7 +313,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																	</li>
 																</ul>
 																<p className="border-b pb-3 text-[12px] text-darkGray dark:text-gray-400">
-																	Applied On - {moment(data["timestamp"]).format("DD MMM YYYY")}
+																	Applied On - {moment(data["created_at"]).format("DD MMM YYYY, h:mm a")}
 																</p>
 																<ul className="pt-3 text-[12px] font-bold text-darkGray dark:text-gray-400">
 																	<li className="flex items-center">

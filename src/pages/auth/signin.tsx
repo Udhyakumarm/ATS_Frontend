@@ -153,7 +153,7 @@ export default function AuthSignIn({ providers }: any) {
 					password: loginInfo.password
 				})
 				.then(async (response) => {
-					setBtnLoader(false);
+					// setBtnLoader(false);
 					if (response.data.Message) {
 						// toastcomp(response.data.Message, "error");
 						setWrong(true);
@@ -205,7 +205,7 @@ export default function AuthSignIn({ providers }: any) {
 							// let notification_type = `${}`
 
 							await axiosInstance2
-								.post("/chatbot/notification/unauth/", {
+								.post("/applicant/notification/unauth/", {
 									email: loginInfo.email,
 									title: title
 									// notification_type: notification_type

@@ -35,7 +35,7 @@ export default function OrgNotifications() {
 
 	async function loadNotification() {
 		await axiosInstanceAuth2
-			.get(`/chatbot/get-all-real-notification/`)
+			.get(`/applicant/get-all-real-notification/`)
 			.then(async (res) => {
 				console.log("!!!!!", "all notifications", res.data);
 				setnotificationALLDATA(res.data);
@@ -72,10 +72,10 @@ export default function OrgNotifications() {
 			setappdata(data2);
 			router.push(data["link"]);
 		} else if (data["notification_type"] === "Vendor Applicant") {
-			var data2 = data["vapplicant"];
+			var data2 = data["applicant"];
 			data2["type"] = "vendor";
-			setjobid(data["vapplicant"]["job"]["refid"]);
-			setappid(data["vapplicant"]["arefid"]);
+			setjobid(data["applicant"]["job"]["refid"]);
+			setappid(data["applicant"]["arefid"]);
 			settype("vendor");
 			setappdata(data2);
 			router.push(data["link"]);
@@ -271,10 +271,10 @@ export default function OrgNotifications() {
 																			? data["jtitle"]
 																			: data["title"]}
 																		&nbsp;
-																		{data["vapplicant"] && (
+																		{data["applicant"] && (
 																			<>
 																				({srcLang === "ja" ? "申請者ID" : "Applicant ID"}&nbsp;:&nbsp;
-																				{data["vapplicant"]["arefid"]})
+																				{data["applicant"]["arefid"]})
 																			</>
 																		)}
 																	</h3>
@@ -322,8 +322,14 @@ export default function OrgNotifications() {
 															</>
 														) : (
 															<>
-																{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
-																{parseInt(notificationALLDATA["previous"].split("=").pop()) + 1}
+																{notificationALLDATA["previous"] && notificationALLDATA["previous"].length > 0 ? (
+																	<>
+																		{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
+																		{parseInt(notificationALLDATA["previous"].split("=").pop()) + 1}
+																	</>
+																) : (
+																	<>{srcLang === "ja" ? "現在のページ" : "Current Page"} : 1 </>
+																)}
 															</>
 														)}
 													</div>

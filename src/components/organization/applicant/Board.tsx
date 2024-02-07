@@ -21,8 +21,8 @@ export function Board({ cards, columns, moveCard, applicantlist, atsVersion }: a
 						.map(
 							(card, index) =>
 								applicantlist.map(
-									(data, i) =>
-										data["arefid"] == card.arefid && (
+									(data) =>
+										data["arefid"] === card.arefid && (
 											<DraggableCard
 												applicantlist={applicantlist}
 												atsVersion={atsVersion}

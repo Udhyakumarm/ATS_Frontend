@@ -91,7 +91,10 @@ export default function Card(props: any) {
 						<aside className="flex items-center">
 							<Image src={userImg1} alt="User" width={30} className="h-[30px] rounded-full object-cover" />
 							<h5 className="pl-4 text-sm font-semibold">
-								{props["data"]["type"] === "career" && (
+								<>
+									{props["data"]["fname"]} {props["data"]["lname"]}
+								</>
+								{/* {props["data"]["type"] === "career" && (
 									<>
 										{props["data"]["user"]["first_name"]} {props["data"]["user"]["last_name"]}
 									</>
@@ -100,7 +103,7 @@ export default function Card(props: any) {
 									<>
 										{props["data"]["applicant"]["first_name"]} {props["data"]["applicant"]["last_name"]}
 									</>
-								)}
+								)} */}
 							</h5>
 						</aside>
 						<aside>
@@ -123,7 +126,7 @@ export default function Card(props: any) {
 					<div className="flex items-center justify-between">
 						<aside className="flex items-center text-[12px] text-darkGray dark:text-gray-400">
 							<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
-							<p>{moment(props["data"]["timestamp"]).format("Do MMM YYYY")}</p>
+							<p>{moment(props["data"]["created_at"]).format("Do MMM YYYY")}</p>
 						</aside>
 						<Button
 							btnStyle="outlined"

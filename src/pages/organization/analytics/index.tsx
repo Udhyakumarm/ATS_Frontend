@@ -190,7 +190,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 
 	async function loadAnalytics() {
 		await axiosInstanceAuth2
-			.get(`/organization/get_analytics/`)
+			.get(`/applicant/get_analytics/`)
 			.then(async (res) => {
 				console.log("$", res.data);
 				// setactivityLog(res.data);

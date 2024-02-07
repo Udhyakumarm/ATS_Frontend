@@ -153,15 +153,10 @@ export default function InterviewComp({ sklLoad, data, axiosInstanceAuth2, upcom
 						<div className="w-full px-2 py-3 lg:max-w-[25%]">
 							<h6 className="font-bold">{srcLang === "ja" ? "候補者" : "Candidate"}</h6>
 							<p className="clamp_1 break-all text-[12px] text-darkGray dark:text-gray-400">
-								{data["applicant"] != null ? (
+								{data["applicant"] != null && (
 									<>
-										{data["applicant"]["user"]["first_name"]}&nbsp;{data["applicant"]["user"]["last_name"]}
-										&nbsp;(Career)
-									</>
-								) : (
-									<>
-										{data["vapplicant"]["applicant"]["first_name"]}&nbsp;{data["vapplicant"]["applicant"]["last_name"]}
-										&nbsp;(Vendor)
+										{data["applicant"]["fname"]}&nbsp;{data["applicant"]["lname"]}
+										&nbsp;({data["applicant"]["type"]})
 									</>
 								)}
 								{/* {data["applicant"]["user"]["first_name"] && data["applicant"]["user"]["first_name"]}&nbsp;

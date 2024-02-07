@@ -130,7 +130,6 @@ export default function Header() {
 			router.asPath == "/organization/" + cname + "/dashboard" ||
 			router.asPath == "/organization/" + cname + "/job-detail" ||
 			router.asPath == "/organization/" + cname + "/job-detail/" + jid ||
-			router.asPath == "/organization/" + cname + "/job-detail2/" + jid ||
 			router.asPath == "/organization/" + cname + "/job-apply" ||
 			router.asPath == "/organization/" + cname + "/notifications" ||
 			router.asPath == "/organization/" + cname + "/settings")
@@ -335,18 +334,55 @@ export default function Header() {
 										{srcLang === "ja" ? "求人検索" : "Search Jobs"}
 									</Link>
 									{auth && (
-										<Link
-											href={"/organization/" + cname + "/dashboard"}
-											className={
-												`w-full rounded-lg bg-gray-50 px-1 py-2 text-center hover:bg-gray-100 hover:text-primary dark:bg-gray-700 dark:hover:bg-gray-800 ` +
-												" " +
-												(router.pathname == "/organization/" + cname + "/dashboard"
-													? "border-2 border-b-primary text-primary"
-													: "border-b-transparent")
-											}
-										>
-											{srcLang === "ja" ? "ダッシュボード" : "Dashboard"}
-										</Link>
+										<>
+											<Link
+												href={"/organization/" + cname + "/dashboard"}
+												className={
+													`w-full rounded-lg bg-gray-50 px-1 py-2 text-center hover:bg-gray-100 hover:text-primary dark:bg-gray-700 dark:hover:bg-gray-800 ` +
+													" " +
+													(router.pathname == "/organization/" + cname + "/dashboard"
+														? "border-2 border-b-primary text-primary"
+														: "border-b-transparent")
+												}
+											>
+												{srcLang === "ja" ? "ダッシュボード" : "Dashboard"}
+											</Link>
+											<Link
+												href={`/organization/${cname}/settings`}
+												className={
+													`w-full rounded-lg bg-gray-50 px-1 py-2 text-center hover:bg-gray-100 hover:text-primary dark:bg-gray-700 dark:hover:bg-gray-800 ` +
+													" " +
+													(router.pathname == "/organization/" + cname + "/settings"
+														? "border-2 border-b-primary text-primary"
+														: "border-b-transparent")
+												}
+											>
+												{srcLang === "ja" ? "設定" : "Settings"}
+											</Link>
+											<div
+												className={`flex w-full cursor-pointer justify-center gap-1 rounded-lg border-b-transparent bg-gray-50 px-1 py-2 text-center hover:bg-gray-100 hover:text-primary dark:bg-gray-700 dark:hover:bg-gray-800`}
+												onClick={() => notification()}
+											>
+												{srcLang === "ja" ? "お知らせ" : "Notifications"}
+												<span className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-primary text-[8px] text-white">
+													{count}
+												</span>
+											</div>
+											<button
+												type="button"
+												className={`dark:hover:bg-gray-800border-b-transparent w-full rounded-lg bg-gray-50 px-1 py-2 text-center text-red-500 hover:bg-gray-100 hover:text-red-700 dark:bg-gray-700`}
+												onClick={() => {
+													signOut({ callbackUrl: `/organization/${cname}` });
+
+													settype("");
+													setrole("");
+													setuser([]);
+												}}
+											>
+												<i className="fa-solid fa-right-from-bracket mr-3"></i>{" "}
+												{srcLang === "ja" ? "ログアウト" : "Logout"}
+											</button>
+										</>
 									)}
 									{!auth && (
 										<Link

@@ -90,13 +90,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const [aires, setaires] = useState("");
 	const [aiquestion, setaiquestion] = useState([]);
 	const [ailoader, setailoader] = useState(false);
-
-	//applicant detail
-	const [profileData, setprofileData] = useState({});
-	const [linkData, setlinkData] = useState([]);
-	const [educationData, seteducationData] = useState([]);
-	const [experienceData, setexperienceData] = useState([]);
-	const [certificateData, setcertificateData] = useState([]);
+	//ai c a
+	const [ailoader2, setailoader2] = useState(false);
 
 	//feedback
 	const [feedbackList, setfeedbackList] = useState([]);
@@ -118,59 +113,31 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}, [appdata]);
 
 	async function loadNEWAPPDATA(arefid: any) {
-		if (type === "career") {
-			await axiosInstanceAuth2
-				.get(`/job/listsapplicant/${arefid}/`)
-				.then((res) => {
-					setappdata(res.data[0]);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-		if (type === "vendor") {
-			await axiosInstanceAuth2
-				.get(`/job/listsvapplicant/${arefid}/`)
-				.then((res) => {
-					setappdata(res.data[0]);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
+		await axiosInstanceAuth2
+			.get(`/applicant/applicant-detail/${arefid}/`)
+			.then((res) => {
+				console.log("@@@@@", "applicant-detail", res.data);
+				setappdata(res.data[0]);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 
 	async function chnageStatus(status: string, arefid: any) {
-		if (type === "career") {
-			const fdata = new FormData();
-			fdata.append("status", status);
-			await axiosInstanceAuth2
-				.put(`/job/applicant/${arefid}/update/`, fdata)
-				.then((res) => {
-					toastcomp("Status Changed", "success");
-					loadNEWAPPDATA(arefid);
-					loadTimeLine();
-				})
-				.catch((err) => {
-					console.log(err);
-					toastcomp("Status Not Change", "error");
-				});
-		}
-		if (type === "vendor") {
-			const fdata = new FormData();
-			fdata.append("status", status);
-			await axiosInstanceAuth2
-				.put(`/job/vapplicant/${arefid}/update/`, fdata)
-				.then((res) => {
-					toastcomp("Status Changed", "success");
-					loadNEWAPPDATA(arefid);
-					loadTimeLine();
-				})
-				.catch((err) => {
-					console.log(err);
-					toastcomp("Status Not Change", "error");
-				});
-		}
+		const fdata = new FormData();
+		fdata.append("status", status);
+		await axiosInstanceAuth2
+			.put(`/applicant/applicant-status/${arefid}/update/`, fdata)
+			.then((res) => {
+				toastcomp("Status Changed", "success");
+				loadNEWAPPDATA(arefid);
+				loadTimeLine();
+			})
+			.catch((err) => {
+				console.log(err);
+				toastcomp("Status Not Change", "error");
+			});
 	}
 
 	function moveApplicant(v) {
@@ -180,7 +147,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	async function loadTimeLine() {
 		await axiosInstanceAuth21
-			.get(`/job/list-candidate-timeline/${appdata["arefid"]}/`)
+			.get(`/applicant/list-applicant-timeline/${appdata["arefid"]}/`)
 			.then(async (res) => {
 				settimeline(res.data);
 				console.log("$", "timeline", res.data);
@@ -194,16 +161,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	async function loadAIInterviewQuestion() {
 		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader(true);
-			let canid = "";
-			if (type === "career") {
-				canid = appdata["user"]["erefid"];
-			}
-			if (type === "vendor") {
-				canid = appdata["applicant"]["vcrefid"];
-			}
 
 			await axiosInstanceAuth21
-				.get(`/chatbot/interview-question-generator/${canid}/${jobid}/${srcLang}/`)
+				.get(`/applicant/interview-question-generator/${appdata["arefid"]}/${srcLang}/`)
 				.then(async (res) => {
 					setaires(res.data["res"]);
 					setaiquestion(res.data["res"].split("\n"));
@@ -216,60 +176,28 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}
 
-	async function loadApplicantDetail() {
-		if (type === "career") {
-			let canid = appdata["user"]["erefid"];
+	async function genAIFeedback() {
+		if (!["standard", "starter"].includes(atsVersion)) {
+			setailoader2(true);
+
 			await axiosInstanceAuth21
-				.get(`/candidate/listuser/${canid}/${jobid}/`)
+				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`)
 				.then(async (res) => {
-					setprofileData(res.data["CandidateProfile"][0]);
-					setlinkData(res.data["Link"]);
-					setexperienceData(res.data["Experience"]);
-					seteducationData(res.data["Education"]);
-					setcertificateData(res.data["Certification"]);
-					console.log("$", res.data);
+					toastcomp("genAIFeedback ", "success");
+					loadNEWAPPDATA(appdata["arefid"]);
+					setailoader2(false);
 				})
 				.catch((err) => {
+					toastcomp("genAIFeedback ", "error");
 					console.log("!", err);
-					setprofileData({});
-					setlinkData([]);
-					setexperienceData([]);
-					seteducationData([]);
-					setcertificateData([]);
-				});
-		}
-		if (type === "vendor") {
-			let canid = appdata["applicant"]["vcrefid"];
-			await axiosInstanceAuth21
-				.get(`/vendors/vendoruser/${jobid}/${canid}/`)
-				.then(async (res) => {
-					setprofileData(res.data["VendorCandidateProfile"][0]);
-					setlinkData(res.data["Link"]);
-					setexperienceData(res.data["Experience"]);
-					seteducationData(res.data["Education"]);
-					setcertificateData(res.data["Certification"]);
-					console.log("$", res.data);
-				})
-				.catch((err) => {
-					console.log("!", err);
-					setprofileData({});
-					setlinkData([]);
-					setexperienceData([]);
-					seteducationData([]);
-					setcertificateData([]);
+					setailoader2(false);
 				});
 		}
 	}
 
 	async function loadFeedback() {
 		let canid = appdata["arefid"];
-		let url = "";
-		if (type === "career") {
-			url = `/job/listfeedback/${canid}/`;
-		}
-		if (type === "vendor") {
-			url = `/job/listvfeedback/${canid}/`;
-		}
+		let url = `/applicant/listfeedback/${canid}/`;
 
 		await axiosInstanceAuth21
 			.get(url)
@@ -286,12 +214,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	useEffect(() => {
 		if (token && token.length > 0 && aiquestion.length <= 0 && atsVersion && atsVersion.length > 0) {
-			loadApplicantDetail();
 			loadFeedback();
 			loadTimeLine();
-			if (!["standard", "starter"].includes(atsVersion)) {
-				loadAIInterviewQuestion();
-			}
+			// if (!["standard", "starter"].includes(atsVersion)) {
+			// 	loadAIInterviewQuestion();
+			// }
 		}
 	}, [token, atsVersion]);
 
@@ -300,13 +227,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}
 
 	async function createFeedback() {
-		let url = "";
-		if (type === "career") {
-			url = `/job/feedback/${appdata["arefid"]}/create/`;
-		}
-		if (type === "vendor") {
-			url = `/job/vfeedback/${appdata["arefid"]}/create/`;
-		}
+		let url = `/applicant/feedback/${appdata["arefid"]}/create/`;
 
 		const fdata = new FormData();
 		fdata.append("status", feedbackStatus);
@@ -362,13 +283,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			seteditfeedback(false);
 			loadFeedback();
 		} else {
-			let url = "";
-			if (type === "career") {
-				url = `/job/feedback/${pk}/update/`;
-			}
-			if (type === "vendor") {
-				url = `/job/vfeedback/${pk}/update/`;
-			}
+			let url = `/applicant/feedback/${pk}/update/`;
+			// if (type === "career") {
+			// 	url = `/job/feedback/${pk}/update/`;
+			// }
+			// if (type === "vendor") {
+			// 	url = `/job/vfeedback/${pk}/update/`;
+			// }
 
 			const fdata = new FormData();
 			fdata.append("feedback", editfeedbackTA);
@@ -400,13 +321,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			seteditfeedback(false);
 			loadFeedback();
 		} else {
-			let url = "";
-			if (type === "career") {
-				url = `/job/feedback/${pk}/update/`;
-			}
-			if (type === "vendor") {
-				url = `/job/vfeedback/${pk}/update/`;
-			}
+			let url = `/applicant/feedback/${pk}/update/`;
+			// if (type === "career") {
+			// 	url = `/job/feedback/${pk}/update/`;
+			// }
+			// if (type === "vendor") {
+			// 	url = `/job/vfeedback/${pk}/update/`;
+			// }
 			const fdata = new FormData();
 			fdata.append("status", status);
 			await axiosInstanceAuth2
@@ -528,9 +449,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		fd.append("description", mdesc);
 		fd.append("link", mlink);
 		await axiosInstanceAuth2
-			.post(`/job/create-interview/${appdata["arefid"]}/${appdata["job"]["refid"]}/`, fd)
+			// .post(`/job/create-interview/${appdata["arefid"]}/${appdata["job"]["refid"]}/`, fd)
+			.post(`/applicant/create-interview/${appdata["arefid"]}/${appdata["job"]["refid"]}/`, fd)
 			.then(async (res) => {
 				toastcomp("Interview Scheduled", "success");
+				loadTimeLine();
 				setmanualInterview(false);
 				setmtitle("");
 				setmdesc("");
@@ -542,6 +465,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			})
 			.catch((err) => {
 				toastcomp("Interview not Scheduled", "error");
+				loadTimeLine();
 				setmanualInterview(false);
 				setmtitle("");
 				setmdesc("");
@@ -594,12 +518,19 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												className="mx-auto mb-3 h-[90px] rounded-full object-cover shadow-normal"
 											/>
 											<h3 className="mb-2 font-bold">
-												{profileData["first_name"]} {profileData["last_name"]}
+												{appdata["fname"]} {appdata["lname"]}
 											</h3>
 											<p className="mb-2 text-sm text-darkGray">{appdata["arefid"]}</p>
 											<p className="mb-2 text-sm text-darkGray">
 												{t("Words.Source")} - &nbsp;
-												<span className="font-semibold uppercase text-primary dark:text-white">{type}</span>
+												<span className="font-semibold uppercase text-primary dark:text-white">
+													{type}{" "}
+													{appdata["vaccount"] && (
+														<span className="mb-2 text-sm normal-case text-darkGray ">
+															({appdata["vaccount"]["agent_name"]} from {appdata["vaccount"]["company_name"]})
+														</span>
+													)}
+												</span>
 											</p>
 										</div>
 										<div className="flex flex-wrap items-center justify-between">
@@ -607,19 +538,16 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-red-100 text-center leading-[23px] text-red-500 shadow-normal">
 													<i className="fa-regular fa-envelope"></i>
 												</div>
-												<p className="text-[11px] font-semibold text-darkGray">
-													{type === "career" && profileData["user"] && profileData["user"]["email"]}
-													{type === "vendor" && profileData["email"] && profileData["email"]}
-												</p>
+												<p className="text-[11px] font-semibold text-darkGray">{appdata["email"]}</p>
 											</div>
 											<div className="my-1 flex items-center">
 												<div className="mr-2 block h-[26px] w-[30px] rounded border border-white bg-teal-100 text-center leading-[23px] text-teal-500 shadow-normal">
-													<i className="fa-solid fa-phone text-[14px]"></i>
+													<i className="fa-solid fa-percent"></i>
 												</div>
-												<p className="text-[11px] font-semibold text-darkGray">{profileData["mobile"]}</p>
+												<p className="text-[11px] font-semibold text-darkGray">{appdata["percentage_fit"]}</p>
 											</div>
 										</div>
-										{linkData && linkData.length > 0 && (
+										{/* {linkData && linkData.length > 0 && (
 											<div className="flex flex-wrap items-center justify-center text-2xl">
 												{linkData.map((data: any, i: React.Key) => (
 													<Link href={`${data["title"]}`} target="_blank" className="m-3 mb-0" key={i}>
@@ -627,9 +555,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													</Link>
 												))}
 											</div>
-										)}
+										)} */}
 									</div>
-									<div className="mb-4 border-b pb-4">
+									{/* <div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Details")}</h3>
 										<ul className="flex flex-wrap text-[12px] text-darkGray">
 											<li className="mb-2 w-[50%] pr-2">
@@ -639,12 +567,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{t("Form.ExpectedSalary")} - {profileData["expected_salary"]}
 											</li>
 										</ul>
-									</div>
+									</div> */}
 									<div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Summary")}</h3>
-										<p className="text-[12px] text-darkGray">{`${profileData["summary"]}`}</p>
+										<p className="text-[12px] text-darkGray">{appdata["summary"]}</p>
 									</div>
-									<div className="mb-4 border-b pb-4">
+									{/* <div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Skills")}</h3>
 										{profileData["skills"] && profileData["skills"].length > 0 ? (
 											<ul className="flex flex-wrap rounded-normal border p-2 text-[12px] shadow">
@@ -662,8 +590,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{t("Select.No")} {t("Words.Skills")}
 											</p>
 										)}
-									</div>
-									<div className="mb-4 border-b pb-4">
+									</div> */}
+									{/* <div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Experience")}</h3>
 										{experienceData && experienceData.length > 0 ? (
 											experienceData.map((data: any, i: React.Key) => (
@@ -686,8 +614,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{t("Select.No")} {t("Words.Experience")}
 											</p>
 										)}
-									</div>
-									<div className="mb-4 border-b pb-4">
+									</div> */}
+									{/* <div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Education")}</h3>
 										{educationData && educationData.length > 0 ? (
 											educationData.map((data: any, i: React.Key) => (
@@ -709,8 +637,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{t("Select.No")} {t("Words.Education")}
 											</p>
 										)}
-									</div>
-									<div className="mb-4 border-b pb-4">
+									</div> */}
+									{/* <div className="mb-4 border-b pb-4">
 										<h3 className="mb-4 text-lg font-semibold">{t("Words.Certifications")}</h3>
 										{certificateData && certificateData.length > 0 ? (
 											certificateData.map((data: any, i: React.Key) => (
@@ -735,19 +663,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{t("Select.No")} {t("Words.Certifications")}
 											</p>
 										)}
-									</div>
+									</div> */}
 									{type === "vendor" && (
 										<div className="mb-4 border-b pb-4">
 											<h3 className="mb-4 text-lg font-semibold">{t("Words.MessageFromVendor")}</h3>
-											<div className="mb-2 rounded-normal border p-3 text-[12px] text-darkGray shadow last:mb-0">
-												{profileData["recuriter_message"] && profileData["recuriter_message"].length > 0 ? (
-													<p dangerouslySetInnerHTML={{ __html: profileData["recuriter_message"] }}></p>
-												) : (
-													<p>
-														{t("Select.No")} {t("Words.MessageFromVendor")}
-													</p>
-												)}
-											</div>
+											<p className="text-[12px] text-darkGray">{appdata["recuriter_message"]}</p>
 										</div>
 									)}
 								</div>
@@ -838,7 +758,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									<div className="">
 										<Tab.Group>
 											<Tab.List className={"overflow-auto border-b px-4"}>
-												<div className="flex w-[700px]">
+												<div className="flex w-fit">
 													<Tab as={Fragment}>
 														{({ selected }) => (
 															<button
@@ -916,33 +836,41 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															</button>
 														)}
 													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary dark:border-white dark:text-white"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																AI Comparative Analysis
+															</button>
+														)}
+													</Tab>
 												</div>
 											</Tab.List>
 											<Tab.Panels>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)]"}>
-													{profileData["resume"] && profileData["resume"].length > 0 && (
+													{appdata["resume"] && appdata["resume"].length > 0 && (
 														<>
 															<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-900">
-																<p className="my-2">{profileData["resume"].split("/").pop()}</p>
+																<p className="my-2">{appdata["resume"].split("/").pop()}</p>
 																<Link
-																	href={
-																		process.env.NODE_ENV === "production"
-																			? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
-																			: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
-																	}
+																	href={appdata["resume"]}
+																	target="_blank"
 																	className="my-2 inline-block font-bold text-primary hover:underline dark:text-white"
-																	download={profileData["resume"].split("/").pop()}
+																	download={appdata["resume"].split("/").pop()}
 																>
 																	<i className="fa-solid fa-download mr-2"></i>
 																	{t("Btn.Download")}
 																</Link>
 															</div>
 															<iframe
-																src={
-																	process.env.NODE_ENV === "production"
-																		? process.env.NEXT_PUBLIC_PROD_BACKEND + profileData["resume"]
-																		: process.env.NEXT_PUBLIC_DEV_BACKEND + profileData["resume"]
-																}
+																src={appdata["resume"]}
 																className="mx-auto h-[50vh] w-[100%] max-w-[800px]"
 															></iframe>
 														</>
@@ -1933,9 +1861,67 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					<i className={"fa-solid fa-rotate fa-spin"}></i>
 																				</span>
 																			)}
-																			{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
+																			{ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
 																		</button>
 																	</div>
+																</div>
+															</div>
+														</div>
+													)}
+												</Tab.Panel>
+												{/* #AISUMMARY */}
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													{["standard", "starter"].includes(atsVersion) ? (
+														<PermiumComp userRole={userRole} />
+													) : (
+														<div>
+															<div className="mx-auto mb-4 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
+																<Image src={favIcon} alt="Somhako" width={30} />
+															</div>
+															<p className="mb-4 text-center text-darkGray dark:text-gray-400">
+																AI Comparative Analysis
+															</p>
+															<div className="mx-auto w-full max-w-[800px]">
+																<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
+																	<div className="px-10 py-4">
+																		{appdata["ai_text"] && appdata["ai_text"].length > 0 && (
+																			<div className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800">
+																				<div
+																					className=" contentFORAIFeedback text-sm leading-relaxed text-darkGray dark:text-gray-100"
+																					dangerouslySetInnerHTML={{ __html: appdata["ai_text"] }}
+																				></div>
+																			</div>
+																		)}
+																	</div>
+																	{appdata["ai_text"] && appdata["ai_text"].length > 0 ? (
+																		<></>
+																	) : (
+																		<div className="border-t px-10 py-4 dark:border-t-gray-600">
+																			<button
+																				type="button"
+																				className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
+																				disabled={ailoader2}
+																				onClick={genAIFeedback}
+																			>
+																				{ailoader2 && (
+																					<span className="mr-2 block">
+																						<i className={"fa-solid fa-rotate fa-spin"}></i>
+																					</span>
+																				)}
+																				{ailoader2 ? (
+																					<>{t("Btn.InProgress")}</>
+																				) : (
+																					<>
+																						{appdata["ai_text"] && appdata["ai_text"].length > 0 ? (
+																							<>Re-generate</>
+																						) : (
+																							<>Generate</>
+																						)}
+																					</>
+																				)}
+																			</button>
+																		</div>
+																	)}
 																</div>
 															</div>
 														</div>

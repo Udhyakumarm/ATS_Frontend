@@ -1515,3 +1515,51 @@ button:hover .button-text {
 	counter-increment: foo;
 	content: "11." counter(foo) " ";
 }
+
+.contentFORAIFeedback * {
+	/* line-height: 1.5; */
+	padding-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback h1 {
+	font-size: 1.875rem; /* 30px */
+	line-height: 2.25rem;
+	font-weight: 800;
+	margin-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback h2 {
+	font-size: 1.5rem; /* 24px */
+	line-height: 2rem;
+	font-weight: 700;
+	margin-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback h3 {
+	font-size: 1.25rem; /* 20px */
+	line-height: 1.75rem;
+	font-weight: 700;
+	margin-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback h4 {
+	font-size: 1rem; /* 24px */
+	line-height: 1.5rem;
+	font-weight: 700;
+	margin-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback h5 {
+	font-size: 0.75rem; /* 20px */
+	line-height: 1.25rem;
+	font-weight: 700;
+	margin-bottom: 0.25rem;
+}
+
+.contentFORAIFeedback ul {
+	list-style-type: disc;
+}
+
+.contentFORAIFeedback ol {
+	list-style-type: decimal;
+}

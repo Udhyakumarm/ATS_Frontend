@@ -108,7 +108,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 	async function loadNotificationCount() {
 		if (role === "Super Admin") {
 			await axiosInstanceAuth2
-				.get(`/chatbot/get-notification-count-admin/`)
+				.get(`/applicant/get-notification-count-admin/`)
 				.then(async (res) => {
 					// console.log("!", res.data);
 					setcount(res.data.length);
@@ -118,7 +118,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				});
 		} else {
 			await axiosInstanceAuth2
-				.get(`/chatbot/get-notification-count/`)
+				.get(`/applicant/get-notification-count/`)
 				.then(async (res) => {
 					// console.log("!", res.data);
 					setcount(res.data.length);
@@ -129,31 +129,31 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 		}
 	}
 
-	async function notification() {
-		if (role === "Super Admin") {
-			await axiosInstanceAuth2
-				.get(`/chatbot/read-notification-count-admin/`)
-				.then(async (res) => {
-					// console.log("!", res.data);
-					setcount(res.data.length);
-					router.push("/organization/notifications");
-				})
-				.catch((err) => {
-					console.log("!", err);
-				});
-		} else {
-			await axiosInstanceAuth2
-				.get(`/chatbot/read-notification-count/`)
-				.then(async (res) => {
-					// console.log("!", res.data);
-					setcount(res.data.length);
-					router.push("/organization/notifications");
-				})
-				.catch((err) => {
-					console.log("!", err);
-				});
-		}
-	}
+	// async function notification() {
+	// 	if (role === "Super Admin") {
+	// 		await axiosInstanceAuth2
+	// 			.get(`/chatbot/read-notification-count-admin/`)
+	// 			.then(async (res) => {
+	// 				// console.log("!", res.data);
+	// 				setcount(res.data.length);
+	// 				router.push("/organization/notifications");
+	// 			})
+	// 			.catch((err) => {
+	// 				console.log("!", err);
+	// 			});
+	// 	} else {
+	// 		await axiosInstanceAuth2
+	// 			.get(`/chatbot/read-notification-count/`)
+	// 			.then(async (res) => {
+	// 				// console.log("!", res.data);
+	// 				setcount(res.data.length);
+	// 				router.push("/organization/notifications");
+	// 			})
+	// 			.catch((err) => {
+	// 				console.log("!", err);
+	// 			});
+	// 	}
+	// }
 
 	const load = useNotificationStore((state: { load: any }) => state.load);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
@@ -408,7 +408,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	async function fetchRealNotificationCount() {
 		await axiosInstanceAuth2
-			.get(`/chatbot/get-real-notification-count/`)
+			.get(`/applicant/get-real-notification-count/`)
 			.then(async (res) => {
 				console.log("!!!!", "Real Notification Count", res.data.length);
 				setrealNotificationCount(res.data.length);
@@ -421,7 +421,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	async function fetchRealNotification() {
 		await axiosInstanceAuth2
-			.get(`/chatbot/real-notification/`)
+			.get(`/applicant/real-notification/`)
 			.then(async (res) => {
 				console.log("!!!!", "Real Notification", res.data);
 				const data = res.data.slice(0, 4);
@@ -449,7 +449,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	async function afterRealNotification() {
 		await axiosInstanceAuth2
-			.post(`/chatbot/real-notification-after/`)
+			.post(`/applicant/real-notification-after/`)
 			.then(async (res) => {
 				// setrealNotification([]);
 				console.log("!!!", "After Real Notification", res.data);
@@ -462,7 +462,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	async function afterclickRealNotification() {
 		await axiosInstanceAuth2
-			.post(`/chatbot/read-real-notification/`)
+			.post(`/applicant/read-real-notification/`)
 			.then(async (res) => {
 				fetchRealNotificationCount();
 				router.push("/organization/notifications");
