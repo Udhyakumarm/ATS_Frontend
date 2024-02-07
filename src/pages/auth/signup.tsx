@@ -178,7 +178,7 @@ export default function AuthSignUp() {
 					// let notification_type = `${}`
 
 					await axiosInstance2
-						.post("/chatbot/notification/unauth/", {
+						.post("/applicant/notification/unauth/", {
 							email: signUpInfo.email,
 							title: title
 							// notification_type: notification_type

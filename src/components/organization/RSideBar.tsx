@@ -58,7 +58,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 	//load embding
 	async function orgEmbedding() {
 		await axiosInstanceAuth2
-			.post(`/chatbot/org-embedding/`)
+			.post(`/applicant/org-embedding/`)
 			.then(async (res) => {
 				toastcomp("success org---", "success");
 			})
@@ -89,7 +89,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 	//load chat
 	async function loadChat() {
 		await axiosInstanceAuth2
-			.get(`/chatbot/listchat/`)
+			.get(`/applicant/listchat/`)
 			.then(async (res) => {
 				console.log("&&", "chat", res.data);
 				setchat(res.data);
@@ -125,7 +125,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 	//load Analytics chat
 	async function loadAnalyticsNumber1() {
 		await axiosInstanceAuth2
-			.post(`/chatbot/all-analytics/`)
+			.post(`/applicant/all-analytics/`)
 			.then(async (res) => {
 				console.log("&&", "analytics", res.data);
 				setanalyticsdata(res.data);
@@ -161,15 +161,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		}
 	}, [tab]);
 
-	function filterBase1(param1: any, param2: any) {
+	function filterBase1(param1: any) {
 		// Combine the two arrays
-		param1 = param1.map((item) => {
-			return { ...item, type: "career" };
-		});
-		param2 = param2.map((item) => {
-			return { ...item, type: "vendor" };
-		});
-		const combinedArray = [...param1, ...param2];
+
+		const combinedArray = param1;
 
 		// Sort the combined array in descending order based on "percentage_fit"
 		combinedArray.sort((a, b) => b.percentage_fit - a.percentage_fit);
@@ -194,7 +189,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			const fd = new FormData();
 			fd.append("prompt", text);
 			await axiosInstanceAuth2
-				.post(`/chatbot/applicant-flow/`, fd)
+				.post(`/applicant/applicant-flow/`, fd)
 				.then(async (res) => {
 					settmpLoader(false);
 					settext("");
@@ -296,7 +291,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			const fd = new FormData();
 			fd.append("prompt", prompt);
 			await axiosInstanceAuth2
-				.post(`/chatbot/applicant-flow/`, fd)
+				.post(`/applicant/applicant-flow/`, fd)
 				.then(async (res) => {
 					settmpLoader(false);
 					settext("");
@@ -354,7 +349,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			const fd = new FormData();
 			fd.append("prompt", prompt);
 			await axiosInstanceAuth2
-				.post(`/chatbot/applicant-flow/`, fd)
+				.post(`/applicant/applicant-flow/`, fd)
 				.then(async (res) => {
 					settmpLoader(false);
 					settext("");
@@ -382,7 +377,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			const fd = new FormData();
 			fd.append("prompt", prompt);
 			await axiosInstanceAuth2
-				.post(`/chatbot/applicant-flow/`, fd)
+				.post(`/applicant/applicant-flow/`, fd)
 				.then(async (res) => {
 					settmpLoader(false);
 					settext("");
@@ -412,7 +407,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			const fd = new FormData();
 			fd.append("prompt", prompt);
 			await axiosInstanceAuth2
-				.post(`/chatbot/applicant-flow/`, fd)
+				.post(`/applicant/applicant-flow/`, fd)
 				.then(async (res) => {
 					settmpLoader(false);
 					settext("");
@@ -1009,10 +1004,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																		</div>
 																	</div>
 																	{/* applicant */}
-																	{data["capplicant"].length > 0 || data["vapplicant"].length > 0 ? (
+
+																	{data["applicant"].length > 0 ? (
 																		<div className="my-2 mb-3  max-w-[85%] rounded bg-white text-left shadow-lg dark:bg-gray-700">
 																			<div className="flex flex-wrap gap-4 border-b-2 border-borderColor px-5 py-3">
-																				{filterBase1(data["capplicant"], data["vapplicant"]).map((data2, j) => (
+																				{filterBase1(data["applicant"]).map((data2, j) => (
 																					<span className="rounded bg-lightBlue text-sm dark:bg-gray-900" key={j}>
 																						{i === chat.length - 1 && data["suggestion"] ? (
 																							<div className="flex items-center">
@@ -1038,7 +1034,10 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																									{/* <span className="z-3 absolute right-0 top-0 text-[10px]">
 																								{data["percentage_fit"]}
 																							</span> */}
-																									{data2["user"] ? (
+																									<>
+																										{data2["fname"]}&nbsp;{data2["lname"]}
+																									</>
+																									{/* {data2["user"] ? (
 																										<>
 																											{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
 																										</>
@@ -1047,7 +1046,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																											{data2["applicant"]["first_name"]}&nbsp;
 																											{data2["applicant"]["last_name"]}
 																										</>
-																									)}
+																									)} */}
 																									<span
 																										className=" 
 																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
@@ -1093,16 +1092,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																									{/* <span className="z-3 absolute right-0 top-0 text-[10px]">
 																								{data["percentage_fit"]}
 																							</span> */}
-																									{data2["user"] ? (
-																										<>
-																											{data2["user"]["first_name"]}&nbsp;{data2["user"]["last_name"]}
-																										</>
-																									) : (
-																										<>
-																											{data2["applicant"]["first_name"]}&nbsp;
-																											{data2["applicant"]["last_name"]}
-																										</>
-																									)}
+																									<>
+																										{data2["fname"]}&nbsp;{data2["lname"]}
+																									</>
 																									<span
 																										className=" 
 																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
@@ -1286,49 +1278,31 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																						<div
 																							className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
 																							onClick={() => {
-																								if (data["capplicant"].length > 0) {
-																									setjobid(data["capplicant"][0]["job"]["refid"]);
-																									setappid(data["capplicant"][0]["arefid"]);
-																									settype("career");
-																									setappdata(data["capplicant"][0]);
-																								} else {
-																									setjobid(data["vapplicant"][0]["job"]["refid"]);
-																									setappid(data["vapplicant"][0]["arefid"]);
-																									settype("vendor");
-																									setappdata(data["vapplicant"][0]);
-																								}
+																								setjobid(data["applicant"][0]["job"]["refid"]);
+																								setappid(data["applicant"][0]["arefid"]);
+																								settype(data["applicant"][0]["type"]);
+																								setappdata(data["applicant"][0]);
 
 																								router.push("/organization/applicants/detail");
 																							}}
 																						>
-																							{data["capplicant"].length > 0 && (
+																							{data["applicant"].length > 0 && (
 																								<>
-																									{data["capplicant"][0]["user"]["first_name"]}{" "}
-																									{data["capplicant"][0]["user"]["last_name"]}
+																									{data["applicant"][0]["fname"]} {data["applicant"][0]["lname"]}
 																								</>
 																							)}
-																							{data["vapplicant"].length > 0 && (
-																								<>
-																									{data["vapplicant"][0]["applicant"]["first_name"]}{" "}
-																									{data["vapplicant"][0]["applicant"]["last_name"]}
-																								</>
-																							)}
+
 																							<span
 																								className=" 
 																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
 																							>
 																								<span className="relative text-xs text-black">
-																									{data["capplicant"].length > 0
-																										? data["capplicant"][0]["percentage_fit"]
-																										: data["vapplicant"][0]["percentage_fit"]}
+																									{data["applicant"].length > 0 &&
+																										data["applicant"][0]["percentage_fit"]}
 																								</span>
 																							</span>
 																						</div>
-																						<div>
-																							{data["capplicant"].length > 0
-																								? data["capplicant"][0]["arefid"]
-																								: data["vapplicant"][0]["arefid"]}
-																						</div>
+																						<div>{data["applicant"].length > 0 && data["applicant"][0]["arefid"]}</div>
 																					</div>
 																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
 																						<i className="fa-solid fa-info rounded-full border border-black/75 px-1 py-0.5 text-[8px] dark:border-white/75"></i>
@@ -1340,7 +1314,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																									dataname
 																										.filter((obj) => obj.id === data["feedback"]["user"]["id"])
 																										.map((data, i) => (
-																											<p key={i}>Interview process will be handle by {data["name"]}</p>
+																											<p key={i}>Interview process will be handled by {data["name"]}</p>
 																										))}
 																							</>
 																						)}
@@ -1415,54 +1389,43 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																						<div
 																							className="cursor-pointer bg-lightBlue p-2 dark:bg-gray-800"
 																							onClick={() => {
-																								if (data["offerfeedback"]["offer"]["capplicant"]) {
-																									sendTOOfferPage(
-																										data["offerfeedback"]["offer"]["capplicant"],
-																										"career"
-																									);
-																								} else {
-																									sendTOOfferPage(
-																										data["offerfeedback"]["offer"]["vapplicant"],
-																										"vendor"
-																									);
-																								}
+																								sendTOOfferPage(
+																									data["offerfeedback"]["offer"]["applicant"],
+																									data["offerfeedback"]["offer"]["applicant"]["type"]
+																								);
+																								// if (data["offerfeedback"]["offer"]["capplicant"]) {
+																								// 	sendTOOfferPage(
+																								// 		data["offerfeedback"]["offer"]["capplicant"],
+																								// 		"career"
+																								// 	);
+																								// } else {
+																								// 	sendTOOfferPage(
+																								// 		data["offerfeedback"]["offer"]["vapplicant"],
+																								// 		"vendor"
+																								// 	);
+																								// }
 																							}}
 																						>
-																							{data["offerfeedback"]["offer"]["capplicant"] && (
+																							{data["offerfeedback"]["offer"]["applicant"] && (
 																								<>
-																									{data["offerfeedback"]["offer"]["capplicant"]["user"]["first_name"]}{" "}
-																									{data["offerfeedback"]["offer"]["capplicant"]["user"]["last_name"]}
+																									{data["offerfeedback"]["offer"]["applicant"]["fname"]}{" "}
+																									{data["offerfeedback"]["offer"]["applicant"]["lname"]}
 																								</>
 																							)}
-																							{data["offerfeedback"]["offer"]["vapplicant"] && (
-																								<>
-																									{
-																										data["offerfeedback"]["offer"]["vapplicant"]["applicant"][
-																											"first_name"
-																										]
-																									}{" "}
-																									{
-																										data["offerfeedback"]["offer"]["vapplicant"]["applicant"][
-																											"last_name"
-																										]
-																									}
-																								</>
-																							)}
+
 																							<span
 																								className=" 
 																								relative ml-2  inline-block before:absolute before:-inset-1 before:block before:-skew-y-6 before:bg-pink-200"
 																							>
 																								<span className="relative text-xs text-black">
-																									{data["offerfeedback"]["offer"]["capplicant"]
-																										? data["offerfeedback"]["offer"]["capplicant"]["percentage_fit"]
-																										: data["offerfeedback"]["offer"]["vapplicant"]["percentage_fit"]}
+																									{data["offerfeedback"]["offer"]["applicant"] &&
+																										data["offerfeedback"]["offer"]["applicant"]["percentage_fit"]}
 																								</span>
 																							</span>
 																						</div>
 																						<div>
-																							{data["offerfeedback"]["offer"]["capplicant"]
-																								? data["offerfeedback"]["offer"]["capplicant"]["arefid"]
-																								: data["offerfeedback"]["offer"]["vapplicant"]["arefid"]}
+																							{data["offerfeedback"]["offer"]["applicant"] &&
+																								data["offerfeedback"]["offer"]["applicant"]["arefid"]}
 																						</div>
 																					</div>
 																					<div className="flex items-center gap-2 border-b-2 border-borderColor px-5 py-3 text-xs font-medium">
@@ -1778,14 +1741,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 												</div>
 											</div> */}
 										</div>
-										<div className="mx-auto w-fit">
+										{/* <div className="mx-auto w-fit">
 											<Button
 												label="Generate report"
 												btnStyle="outlined"
 												btnType="label"
 												handleClick={() => setgenReport(true)}
 											/>
-										</div>
+										</div> */}
 									</div>
 								)}
 

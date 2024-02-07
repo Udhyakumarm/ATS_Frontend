@@ -149,7 +149,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 
 	async function getCount() {
 		await axiosInstanceAuth2
-			.post(`/job/jobCard-applicant-count/${job.refid}/`)
+			.post(`/applicant/jobCard-applicant-count/${job.refid}/`)
 			.then((res) => {
 				setcount1(res.data.total);
 				setcount2(res.data.active);

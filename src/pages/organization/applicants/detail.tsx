@@ -90,6 +90,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const [aires, setaires] = useState("");
 	const [aiquestion, setaiquestion] = useState([]);
 	const [ailoader, setailoader] = useState(false);
+	//ai c a
+	const [ailoader2, setailoader2] = useState(false);
 
 	//feedback
 	const [feedbackList, setfeedbackList] = useState([]);
@@ -174,6 +176,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		}
 	}
 
+	async function genAIFeedback() {
+		if (!["standard", "starter"].includes(atsVersion)) {
+			setailoader2(true);
+
+			await axiosInstanceAuth21
+				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`)
+				.then(async (res) => {
+					toastcomp("genAIFeedback ", "success");
+					loadNEWAPPDATA(appdata["arefid"]);
+					setailoader2(false);
+				})
+				.catch((err) => {
+					toastcomp("genAIFeedback ", "error");
+					console.log("!", err);
+					setailoader2(false);
+				});
+		}
+	}
+
 	async function loadFeedback() {
 		let canid = appdata["arefid"];
 		let url = `/applicant/listfeedback/${canid}/`;
@@ -195,9 +216,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		if (token && token.length > 0 && aiquestion.length <= 0 && atsVersion && atsVersion.length > 0) {
 			loadFeedback();
 			loadTimeLine();
-			if (!["standard", "starter"].includes(atsVersion)) {
-				loadAIInterviewQuestion();
-			}
+			// if (!["standard", "starter"].includes(atsVersion)) {
+			// 	loadAIInterviewQuestion();
+			// }
 		}
 	}, [token, atsVersion]);
 
@@ -737,7 +758,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									<div className="">
 										<Tab.Group>
 											<Tab.List className={"overflow-auto border-b px-4"}>
-												<div className="flex w-[700px]">
+												<div className="flex w-fit">
 													<Tab as={Fragment}>
 														{({ selected }) => (
 															<button
@@ -812,6 +833,21 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																}
 															>
 																{t("Words.AIGeneratedInterview")}
+															</button>
+														)}
+													</Tab>
+													<Tab as={Fragment}>
+														{({ selected }) => (
+															<button
+																className={
+																	"border-b-4 px-6 py-3 font-semibold focus:outline-none" +
+																	" " +
+																	(selected
+																		? "border-primary text-primary dark:border-white dark:text-white"
+																		: "border-transparent text-darkGray dark:text-gray-400")
+																}
+															>
+																AI Comparative Analysis
 															</button>
 														)}
 													</Tab>
@@ -1825,9 +1861,67 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																					<i className={"fa-solid fa-rotate fa-spin"}></i>
 																				</span>
 																			)}
-																			{ailoader ? <>{t("Btn.InProgress")}</> : <>{t("Btn.Regenerate")}</>}
+																			{ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
 																		</button>
 																	</div>
+																</div>
+															</div>
+														</div>
+													)}
+												</Tab.Panel>
+												{/* #AISUMMARY */}
+												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
+													{["standard", "starter"].includes(atsVersion) ? (
+														<PermiumComp userRole={userRole} />
+													) : (
+														<div>
+															<div className="mx-auto mb-4 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-b from-gradLightBlue to-gradDarkBlue p-2">
+																<Image src={favIcon} alt="Somhako" width={30} />
+															</div>
+															<p className="mb-4 text-center text-darkGray dark:text-gray-400">
+																AI Comparative Analysis
+															</p>
+															<div className="mx-auto w-full max-w-[800px]">
+																<div className="rounded-normal bg-lightBlue shadow-normal dark:bg-gray-600">
+																	<div className="px-10 py-4">
+																		{appdata["ai_text"] && appdata["ai_text"].length > 0 && (
+																			<div className="my-2 rounded border bg-white px-4 py-2 shadow-normal dark:border-gray-600 dark:bg-gray-800">
+																				<div
+																					className=" contentFORAIFeedback text-sm leading-relaxed text-darkGray dark:text-gray-100"
+																					dangerouslySetInnerHTML={{ __html: appdata["ai_text"] }}
+																				></div>
+																			</div>
+																		)}
+																	</div>
+																	{appdata["ai_text"] && appdata["ai_text"].length > 0 ? (
+																		<></>
+																	) : (
+																		<div className="border-t px-10 py-4 dark:border-t-gray-600">
+																			<button
+																				type="button"
+																				className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
+																				disabled={ailoader2}
+																				onClick={genAIFeedback}
+																			>
+																				{ailoader2 && (
+																					<span className="mr-2 block">
+																						<i className={"fa-solid fa-rotate fa-spin"}></i>
+																					</span>
+																				)}
+																				{ailoader2 ? (
+																					<>{t("Btn.InProgress")}</>
+																				) : (
+																					<>
+																						{appdata["ai_text"] && appdata["ai_text"].length > 0 ? (
+																							<>Re-generate</>
+																						) : (
+																							<>Generate</>
+																						)}
+																					</>
+																				)}
+																			</button>
+																		</div>
+																	)}
 																</div>
 															</div>
 														</div>
