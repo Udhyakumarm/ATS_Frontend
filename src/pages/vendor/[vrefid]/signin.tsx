@@ -110,69 +110,114 @@ export default function CanCareerSignIn({ providers }: any) {
 		setBtnLoader(true);
 
 		await axiosInstance2
-			.post("/vendors/vendor_login/", {
+			.post("/vendors/vendor_check/", {
 				email: loginInfo.email,
-				password: loginInfo.password
+				vrefid: vrefid
 			})
-			.then(async (response) => {
-				console.log("@", response.data);
-				setBtnLoader(false);
-				setWrong(false);
-				setSuccess(true);
-				setErrorMsg("");
-				if (response.data.role) {
-					setrole(response.data.role);
-				}
-				if (response.data.type) {
-					settype(response.data.type);
-				}
-				if (response.data.userObj && response.data["userObj"].length > 0) {
-					setuser(response.data.userObj);
-				}
-				setvid(vrefid);
-
-				try {
-					let title = `${response.data.userObj[0]["email"]} has logged in as an ${response.data.role}`;
-					// let notification_type = `${}`
-
+			.then(async (responsee) => {
+				if (responsee.data.success === 1) {
 					await axiosInstance2
-						.post("/chatbot/external-notification/unauth/", {
+						.post("/vendors/vendor_login/", {
 							email: loginInfo.email,
-							title: title
-							// notification_type: notification_type
+							password: loginInfo.password
 						})
-						.then((res) => {
-							// toastcomp("Notify Add", "success");
+						.then(async (response) => {
+							console.log("@", response.data);
+							setBtnLoader(false);
+							setWrong(false);
+							setSuccess(true);
+							setErrorMsg("");
+							if (response.data.role) {
+								setrole(response.data.role);
+							}
+							if (response.data.type) {
+								settype(response.data.type);
+							}
+							if (response.data.userObj && response.data["userObj"].length > 0) {
+								setuser(response.data.userObj);
+							}
+							setvid(vrefid);
+
+							try {
+								let title = `${response.data.userObj[0]["email"]} has logged in as an ${response.data.role}`;
+								// let notification_type = `${}`
+
+								await axiosInstance2
+									.post("/chatbot/external-notification/unauth/", {
+										email: loginInfo.email,
+										title: title
+										// notification_type: notification_type
+									})
+									.then((res) => {
+										// toastcomp("Notify Add", "success");
+									})
+									.catch((err) => {
+										// toastcomp("Notify Not Add", "error");
+									});
+							} catch (error) {
+								// toastcomp("Notify Not Add", "error");
+							}
+
+							const callback = `${
+								process.env.NODE_ENV === "production"
+									? process.env.NEXT_PUBLIC_PROD_FRONTEND + "vendor/" + vrefid + "/clients/"
+									: process.env.NEXT_PUBLIC_DEV_FRONTEND + "vendor/" + vrefid + "/clients/"
+							}`;
+							await signIn("credentials", {
+								email: loginInfo.email,
+								password: loginInfo.password,
+								user_type: "vendor",
+								callbackUrl: callback
+							})
+								.then(async (res) => {
+									console.log({ res });
+									router.push(`/vendor/${vrefid}/clients`);
+								})
+								.catch((err) => {
+									console.log(err);
+									setBtnLoader(false);
+									setWrong(true);
+									setSuccess(false);
+									setErrorMsg("Server Error, Try Again After Few Min ...");
+								});
 						})
 						.catch((err) => {
-							// toastcomp("Notify Not Add", "error");
+							settype("");
+							setrole("");
+							setuser([]);
+							console.log(err);
+							setBtnLoader(false);
+							setWrong(true);
+							setSuccess(false);
+							if (err.response.data.non_field_errors) {
+								err.response.data.non_field_errors.map((text: any) => setErrorMsg(text));
+							} else if (err.response.data.detail) {
+								setErrorMsg(err.response.data.detail);
+							} else if (err.response.data.errors.email) {
+								err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+							} else {
+								setErrorMsg("Server Error, Try Again After Few Min ...");
+							}
+							return false;
 						});
-				} catch (error) {
-					// toastcomp("Notify Not Add", "error");
+				} else {
+					settype("");
+					setrole("");
+					setuser([]);
+					setBtnLoader(false);
+					setWrong(true);
+					setSuccess(false);
+					if (responsee.data.success === 0) {
+						setErrorMsg("Vendor ID does not match, check URL");
+					}
+					if (responsee.data.success === 2) {
+						setErrorMsg("This Email Already Used As Organization");
+					}
+					if (responsee.data.success === 3) {
+						setErrorMsg("This Email Already Used As Candidate");
+					}
+					return false;
 				}
-
-				const callback = `${
-					process.env.NODE_ENV === "production"
-						? process.env.NEXT_PUBLIC_PROD_FRONTEND + "vendor/" + vrefid + "/clients/"
-						: process.env.NEXT_PUBLIC_DEV_FRONTEND + "vendor/" + vrefid + "/clients/"
-				}`;
-				await signIn("credentials", {
-					email: loginInfo.email,
-					password: loginInfo.password,
-					user_type: "vendor",
-					callbackUrl: callback
-				})
-					.then(async (res) => {
-						console.log({ res });
-						router.push(`/vendor/${vrefid}/clients`);
-					})
-					.catch((err) => {
-						console.log(err);
-						setBtnLoader(false);
-						setWrong(true);
-						setSuccess(false);
-						setErrorMsg("Server Error, Try Again After Few Min ...");
-					});
 			})
 			.catch((err) => {
 				settype("");
@@ -182,15 +227,7 @@ export default function CanCareerSignIn({ providers }: any) {
 				setBtnLoader(false);
 				setWrong(true);
 				setSuccess(false);
-				if (err.response.data.non_field_errors) {
-					err.response.data.non_field_errors.map((text: any) => setErrorMsg(text));
-				} else if (err.response.data.detail) {
-					setErrorMsg(err.response.data.detail);
-				} else if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => setErrorMsg(text));
-				} else {
-					setErrorMsg("Server Error, Try Again After Few Min ...");
-				}
+				setErrorMsg("Server Error, Try Again After Few Min ...");
 				return false;
 			});
 	};
