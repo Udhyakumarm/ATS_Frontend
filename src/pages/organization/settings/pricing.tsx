@@ -417,7 +417,7 @@ export default function Pricing() {
 											</div>
 										</div>
 									) : (
-										<div className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg">
+										<div className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600">
 											<div className="flex flex-col gap-1">
 												<div className="text-xs font-bold">FREE Trial</div>
 												<div className="flex gap-1 text-lg font-semibold">
@@ -428,7 +428,7 @@ export default function Pricing() {
 												<div className="text-xs font-[300]">100 Application free</div> */}
 											</div>
 											<div
-												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+												className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 												style={{
 													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 												}}
@@ -462,7 +462,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("STARTER_MONTHLY");
 														setprice(true);
@@ -477,7 +477,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
@@ -511,7 +511,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("STANDARD_MONTHLY");
 														setprice(true);
@@ -529,7 +529,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
@@ -563,7 +563,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("ENTERPRISE_MONTHLY");
 														setprice(true);
@@ -581,7 +581,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
@@ -616,7 +616,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("STARTER_YEARLY");
 														setprice(true);
@@ -631,7 +631,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-7 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
@@ -665,7 +665,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("STANDARD_YEARLY");
 														setprice(true);
@@ -683,7 +683,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
@@ -717,7 +717,7 @@ export default function Pricing() {
 												</div>
 											) : (
 												<div
-													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg"
+													className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600"
 													onClick={() => {
 														setplanInfo("ENTERPRISE_YEARLY");
 														setprice(true);
@@ -735,7 +735,7 @@ export default function Pricing() {
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
 													</div>
 													<div
-														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold"
+														className="ml-[1rem] h-fit w-fit rounded-full bg-white px-5 py-1.5 text-[10px] font-bold dark:bg-gray-800"
 														style={{
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
