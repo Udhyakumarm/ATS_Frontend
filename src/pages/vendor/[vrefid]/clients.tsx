@@ -127,6 +127,9 @@ export default function VendorClients() {
 	const cancelButtonRef = useRef(null);
 	const [addCand, setAddCand] = useState(false);
 	const [viewApplicant, setViewApplicant] = useState(false);
+	const [odocs, setodocs] = useState(false);
+	const [odocsapp, setodocsapp] = useState({});
+	const [odocsresume, setodocsresume] = useState([]);
 	const [selected, setSelected] = useState(people[0]);
 	const [query, setQuery] = useState("");
 
@@ -155,6 +158,79 @@ export default function VendorClients() {
 	const [venapp, setvenapp] = useState([]);
 
 	const [venappdetail, setvenappdetail] = useState({});
+
+	const [docs, setdocs] = useState([]);
+	async function loadAppDosc(arefid: any) {
+		await axiosInstanceAuth2
+			.get(`/applicant/listdocs/${arefid}/`)
+			.then((res) => {
+				console.log("@@@@@", "listdocs", res.data);
+				setdocs(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function delAppDocs(pk: any) {
+		await axiosInstanceAuth2
+			.delete(`/applicant/deletedocs/${pk}/`)
+			.then((res) => {
+				setodocs(false);
+				toastcomp("Document deleted", "success");
+			})
+			.catch((err) => {
+				setodocs(false);
+				toastcomp("Document not deleted", "error");
+				console.log(err);
+			});
+	}
+
+	async function addAppDocs(arefid: any) {
+		try {
+			for (let i = 0; i < odocsresume.length; i++) {
+				const formData = new FormData();
+				formData.append("document", odocsresume[i]); // Append the current resume to FormData
+
+				// Make the POST request with axios
+				const response = await axiosInstanceAuth2.post(`/applicant/createdocs/${arefid}/`, formData);
+
+				// Handle response for each request
+				console.log(`Response for resume ${i + 1}:`, response.data);
+			}
+			setodocs(false);
+			toastcomp(`${odocsresume.length} documets added`, "success");
+		} catch (error) {
+			// Handle error
+			setodocs(false);
+			toastcomp(`doc upload error`, "success");
+			console.error("Error:", error);
+		}
+	}
+
+	function handleODOCSFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files && event.target.files.length > 0) {
+			const files = event.target.files;
+
+			// setodocsresume((prevArray) => [...prevArray, ...files]);
+			setodocsresume((prevArray) => {
+				const uniqueItems = new Map();
+				prevArray.forEach((item) => uniqueItems.set(item.name, item));
+				Array.from(files).forEach((item) => uniqueItems.set(item.name, item));
+				return Array.from(uniqueItems.values());
+			});
+		}
+	}
+
+	useEffect(() => {
+		console.log("####", "odocsresume", odocsresume);
+	}, [odocsresume]);
+
+	useEffect(() => {
+		if (odocs) {
+			setodocsresume([]);
+		}
+	}, [odocs]);
 
 	async function loadOrgDetail(pk: any) {
 		await axiosInstance
@@ -837,6 +913,7 @@ export default function VendorClients() {
 																	<th className="border-b px-3 py-2 text-left">{t("Words.Status")}</th>
 																	<th className="border-b px-3 py-2 text-left">{t("Words.Applied")}</th>
 																	<th className="border-b px-3 py-2 text-left">{t("Words.Profile")}</th>
+																	<th className="border-b px-3 py-2 text-left">Optional Documents</th>
 																</tr>
 															</thead>
 															<tbody className="text-sm font-semibold">
@@ -869,11 +946,24 @@ export default function VendorClients() {
 																					className="text-primary hover:underline dark:text-white"
 																					onClick={() => {
 																						setvenappdetail(data);
-																						// setpopupvcrefid(data["applicant"]["vcrefid"]);
+																						loadAppDosc(data["arefid"]);
 																						setViewApplicant(true);
 																					}}
 																				>
 																					{t("Btn.View")}
+																				</button>
+																			</td>
+																			<td className="px-3 py-2 text-left">
+																				<button
+																					type="button"
+																					className="text-primary hover:underline dark:text-white"
+																					onClick={() => {
+																						setodocsapp(data);
+																						loadAppDosc(data["arefid"]);
+																						setodocs(true);
+																					}}
+																				>
+																					Change
 																				</button>
 																			</td>
 																		</tr>
@@ -1285,6 +1375,25 @@ export default function VendorClients() {
 													<iframe src={venappdetail["resume"]} className="h-[100vh] w-[100%]"></iframe>
 												</p>
 											</div>
+											{docs && docs.length > 0 && (
+												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+													<label className="mb-1 inline-block font-bold">Optional Document</label>
+													<article className="flex flex-col text-sm">
+														{docs.map((data, i) => (
+															<Link
+																key={i}
+																href={data["document"]}
+																target="_blank"
+																className="my-1 inline-block font-bold text-primary hover:underline dark:text-white"
+																download={data["document"].split("/").pop()}
+															>
+																<i className="fa-solid fa-download mr-2"></i>
+																{data["document"].split("/").pop()}
+															</Link>
+														))}
+													</article>
+												</div>
+											)}
 											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
 												<label className="mb-1 inline-block font-bold">Candidate Information</label>
 												<article className="text-sm">
@@ -1330,6 +1439,160 @@ export default function VendorClients() {
 											</div>
 										</div>
 									)}
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={odocs} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setodocs}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="font-semibold leading-none">{t("Words.ApplicantProfile")}</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => setodocs(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{odocsapp && (
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">Candidate Information</label>
+												<article className="text-sm">
+													Name :{" "}
+													{odocsapp["fname"] &&
+													odocsapp["fname"].length > 0 &&
+													odocsapp["lname"] &&
+													odocsapp["lname"].length > 0 ? (
+														<>
+															{odocsapp["fname"]}&nbsp;{odocsapp["lname"]}
+														</>
+													) : (
+														<>N/A</>
+													)}
+												</article>
+												<article className="text-sm">
+													Email : {odocsapp["email"] && odocsapp["email"].length > 0 ? odocsapp["email"] : <>N/A</>}
+												</article>
+												<article className="text-sm">
+													Rating : {odocsapp["percentage_fit"] ? <>{odocsapp["percentage_fit"]}%</> : <>N/A</>}
+												</article>
+											</div>
+										)}
+
+										{docs && docs.length > 0 && (
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">Current Optional Document</label>
+												<article className="flex flex-col text-sm">
+													{docs.map((data, i) => (
+														<div key={i} className="flex items-center justify-between">
+															<Link
+																href={data["document"]}
+																target="_blank"
+																className="my-1 inline-block font-bold text-primary hover:underline dark:text-white"
+																download={data["document"].split("/").pop()}
+															>
+																<i className="fa-solid fa-download mr-2"></i>
+																{data["document"].split("/").pop()}
+															</Link>
+
+															<button
+																type="button"
+																className={`my-1 w-auto min-w-[40px] rounded bg-red-200 px-2 py-1 text-[12px] text-red-600 hover:bg-red-600  hover:text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500`}
+																onClick={() => delAppDocs(data["id"])}
+															>
+																<i className="fa-solid fa-trash"></i>
+															</button>
+														</div>
+													))}
+												</article>
+											</div>
+										)}
+
+										<label
+											htmlFor="uploadCV"
+											className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+										>
+											<p className="mb-2 text-sm">
+												<span className="font-semibold text-primary dark:text-white">
+													Click here to Upload Single or Multiple Optional Documents
+												</span>
+											</p>
+											<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+											<input
+												type="file"
+												className="hidden"
+												id="uploadCV"
+												onChange={handleODOCSFileInputChange}
+												multiple
+											/>
+										</label>
+
+										{odocsresume && odocsresume.length > 0 && (
+											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
+												<label className="mb-1 inline-block font-bold">New Optional Document</label>
+												<article className="flex flex-col text-sm">
+													{odocsresume.map((data, i) => (
+														<div key={i} className="flex items-center justify-between">
+															<button
+																onClick={() => {
+																	if (data) {
+																		const fileUrl = URL.createObjectURL(data);
+																		window.open(fileUrl, "_blank");
+																	}
+																}}
+																className="my-1 inline-block font-bold text-primary hover:underline dark:text-white"
+															>
+																<i className="fa-solid fa-download mr-2"></i>
+																{data["name"]}
+															</button>
+
+															<button
+																type="button"
+																className={`my-1 w-auto min-w-[40px] rounded bg-red-200 px-2 py-1 text-[12px] text-red-600 hover:bg-red-600  hover:text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500`}
+																onClick={() =>
+																	setodocsresume((prevArray) => {
+																		// Make a copy of the previous array
+																		const newArray = [...prevArray];
+																		// Remove the item at the specified index
+																		newArray.splice(i, 1);
+																		return newArray;
+																	})
+																}
+															>
+																<i className="fa-solid fa-trash"></i>
+															</button>
+														</div>
+													))}
+												</article>
+												<Button btnType="button" label="Save" handleClick={() => addAppDocs(odocsapp["arefid"])} />
+											</div>
+										)}
+									</div>
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
