@@ -93,6 +93,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	//ai c a
 	const [ailoader2, setailoader2] = useState(false);
 
+	const [docs, setdocs] = useState([]);
 	//feedback
 	const [feedbackList, setfeedbackList] = useState([]);
 	const [editfeedback, seteditfeedback] = useState(false);
@@ -118,6 +119,19 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			.then((res) => {
 				console.log("@@@@@", "applicant-detail", res.data);
 				setappdata(res.data[0]);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	async function loadAppDosc() {
+		let arefid = appdata["arefid"];
+		await axiosInstanceAuth2
+			.get(`/applicant/listdocs/${arefid}/`)
+			.then((res) => {
+				console.log("@@@@@", "listdocs", res.data);
+				setdocs(res.data);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -216,6 +230,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		if (token && token.length > 0 && aiquestion.length <= 0 && atsVersion && atsVersion.length > 0) {
 			loadFeedback();
 			loadTimeLine();
+			loadAppDosc();
 			// if (!["standard", "starter"].includes(atsVersion)) {
 			// 	loadAIInterviewQuestion();
 			// }
@@ -871,11 +886,59 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															</div>
 															<iframe
 																src={appdata["resume"]}
-																className="mx-auto h-[50vh] w-[100%] max-w-[800px]"
+																className="mx-auto h-[100vh] w-[100%] max-w-[800px]"
 															></iframe>
 														</>
 													)}
-													{/* <div className="px-8">Preview Here</div> */}
+
+													{docs && docs.length > 0 && (
+														<div className="mb-4 mt-4 border-t p-4 pb-4 dark:border-b-gray-600">
+															<label className="mb-1 inline-block font-bold">Optional Document</label>
+															<article className="flex flex-col text-sm">
+																{docs.map((data, i) => (
+																	<Link
+																		key={i}
+																		href={data["document"]}
+																		target="_blank"
+																		className="my-1 inline-block font-bold text-primary hover:underline dark:text-white"
+																		download={data["document"].split("/").pop()}
+																	>
+																		<i className="fa-solid fa-download mr-2"></i>
+																		{data["document"].split("/").pop()}
+																	</Link>
+																))}
+															</article>
+														</div>
+													)}
+
+													{/* {docs && docs.length > 0 && (
+														<div className="px-1 py-2">
+															<small className="mx-4 my-2">Optional Documents :</small>
+															{docs.map((data, i) => (
+																<>
+																	<div
+																		className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-900"
+																		key={i}
+																	>
+																		<p className="my-2">{data["document"].split("/").pop()}</p>
+																		<Link
+																			href={data["document"]}
+																			target="_blank"
+																			className="my-2 inline-block font-bold text-primary hover:underline dark:text-white"
+																			download={data["document"].split("/").pop()}
+																		>
+																			<i className="fa-solid fa-download mr-2"></i>
+																			{t("Btn.Download")}
+																		</Link>
+																	</div>
+																	<iframe
+																		src={data["document"]}
+																		className="mx-auto h-[60vh] w-[100%] max-w-[800px]"
+																	></iframe>
+																</>
+															))}
+														</div>
+													)} */}
 												</Tab.Panel>
 												<Tab.Panel className={"min-h-[calc(100vh-250px)] px-8 py-6"}>
 													{upcomingSoon ? (

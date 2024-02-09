@@ -731,6 +731,10 @@ export default function CanCareerJobDetail(props) {
 											/>
 										</>
 									)}
+									<br />
+									<small className="text-secondary opacity-75">
+										Note: Optional documents can be uploaded in the dashboard.
+									</small>
 
 									<hr className="my-4" />
 									<aside className="mb-4">
