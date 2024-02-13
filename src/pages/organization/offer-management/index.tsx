@@ -395,7 +395,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				const lastName = type === "career" ? applicant.lname : applicant.lname;
 
 				return (
-					(type === "career" || type === "vendor") && // Optionally add more types if needed
+					(type === "career" || type === "vendor" || type === "refer") && // Optionally add more types if needed
 					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
 				);
 			});
@@ -2047,10 +2047,10 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																									{moment(data["timestamp"]).fromNow()}
 																								</p>
 																							</div>
-																							<h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>
-																							<p className="mb-2 text-sm text-darkGray">
+																							{data["feedback"] && <h5 className="mt-2 font-semibold text-black">{t("Form.Feedback")}:</h5>}
+																							{data["feedback"] && <p className="mb-2 text-sm text-darkGray">
 																								{data["feedback"].length > 0 ? data["feedback"] : <>N/A</>}
-																							</p>
+																							</p>}
 																						</div>
 																					))}
 																					{approval
@@ -2059,7 +2059,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																							(email) => !omf.some((item) => item["organization"]["email"] === email)
 																						).length > 0 ? (
 																						<>
-																							<p className="">Remaining Approval Authroties Who Not GIve Feedback :</p>
+																							<p className="">Pending approvals :</p>
 																							{approval
 																								.split(",")
 																								.filter(

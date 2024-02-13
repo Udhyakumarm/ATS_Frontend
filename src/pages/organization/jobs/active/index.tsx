@@ -18,8 +18,36 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import Confetti from "react-confetti";
+import Button from "@/components/Button";
 
 export default function JobsActive({ atsVersion, userRole, upcomingSoon }: any) {
+
+	const [windowSize, setWindowSize] = useState({
+		width: typeof window !== "undefined" ? window.innerWidth : 0,
+		height: typeof window !== "undefined" ? window.innerHeight : 0
+	});
+
+	// useEffect to update window size when it changes
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight
+			});
+		};
+
+		// Add event listener for window resize
+		window.addEventListener("resize", handleResize);
+
+		// Initial cleanup function to remove the event listener
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
+	const [showConfetti, setShowConfetti] = useState(false);
+
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [sklLoad] = useState(true);
@@ -93,6 +121,25 @@ export default function JobsActive({ atsVersion, userRole, upcomingSoon }: any) 
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+				<div className="text-center">
+						{process.env.NODE_ENV != "production" && (
+							<Button
+								btnStyle={"sm"}
+								btnType="button"
+								handleClick={() => setShowConfetti(true)}
+								disabled={showConfetti}
+								label={"Test Confetti"}
+							/>
+						)}
+						{showConfetti && (
+							<Confetti
+								recycle={false}
+								width={windowSize.width}
+								height={windowSize.height}
+								onConfettiComplete={(confetti: Confetti) => setShowConfetti(false)}
+							/>
+						)}
+					</div>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="border-b py-4">
 							<div className="mx-auto w-full max-w-[1100px] px-4">
@@ -138,6 +185,7 @@ export default function JobsActive({ atsVersion, userRole, upcomingSoon }: any) 
 														axiosInstanceAuth2={axiosInstanceAuth2}
 														loadJob={getActiveJobs}
 														userRole={userRole}
+														setShowConfetti={setShowConfetti}
 													/>
 												</div>
 											)

@@ -252,13 +252,32 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			.then((res) => {
 				toastcomp("Feedback Created", "success");
 				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-				addNotifyApplicantLog(
+
+				if(type === "career"){addNotifyApplicantLog(
 					axiosInstanceAuth2,
 					title,
-					`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+					"Applicant",
 					appdata["arefid"],
 					"/organization/applicants/detail"
-				);
+				);}
+				if(type === "vendor"){addNotifyApplicantLog(
+					axiosInstanceAuth2,
+					title,
+					"Vendor Applicant",
+					appdata["arefid"],
+					"/organization/applicants/detail"
+				);}
+				if(type === "refer"){
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Refer Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+				}
+
+				
 				// addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
@@ -313,14 +332,31 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Updated", "success");
 					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-					addNotifyApplicantLog(
+
+					if(type === "career"){addNotifyApplicantLog(
 						axiosInstanceAuth2,
 						title,
-						`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+						"Applicant",
 						appdata["arefid"],
 						"/organization/applicants/detail"
-					);
-					// addNotifyLog(axiosInstanceAuth2, title, "");
+					);}
+					if(type === "vendor"){addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Vendor Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);}
+					if(type === "refer"){
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Refer Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+
 					toggleLoadMode(true);
 					loadFeedback();
 				})
@@ -350,13 +386,30 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Status Updated", "success");
 					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-					addNotifyApplicantLog(
+					if(type === "career"){addNotifyApplicantLog(
 						axiosInstanceAuth2,
 						title,
-						`${type === "career" ? "Applicant" : "Vendor Applicant"}`,
+						"Applicant",
 						appdata["arefid"],
 						"/organization/applicants/detail"
-					);
+					);}
+					if(type === "vendor"){addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Vendor Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);}
+					if(type === "refer"){
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Refer Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					
 					// addNotifyLog(axiosInstanceAuth2, title, "");
 					toggleLoadMode(true);
 					loadFeedback();
@@ -543,6 +596,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 													{appdata["vaccount"] && (
 														<span className="mb-2 text-sm normal-case text-darkGray ">
 															({appdata["vaccount"]["agent_name"]} from {appdata["vaccount"]["company_name"]})
+														</span>
+													)}
+													{appdata["taccount"] && (
+														<span className="mb-2 text-sm normal-case text-darkGray ">
+															({appdata["taccount"]["email"]})
 														</span>
 													)}
 												</span>

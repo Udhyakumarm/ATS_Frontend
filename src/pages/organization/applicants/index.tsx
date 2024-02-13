@@ -254,10 +254,13 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 			const fApplicants = applicantlist.filter((applicant) => {
 				const type = applicant.type;
-				const firstName = applicant.fname;
-				const lastName = applicant.lname;
+				const firstName = type === "career" ? applicant.fname : applicant.fname;
+				const lastName = type === "career" ? applicant.lname : applicant.lname;
 
-				return firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch);
+				return (
+					(type === "career" || type === "vendor" || type === "refer") && // Optionally add more types if needed
+					(firstName.toLowerCase().includes(localSearch) || lastName.toLowerCase().includes(localSearch))
+				);
 			});
 
 			setapplicantlist(fApplicants);

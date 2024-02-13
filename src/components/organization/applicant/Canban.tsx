@@ -47,21 +47,21 @@ function Canban(props: any) {
 	useEffect(() => {
 		let arr = cards;
 		console.log("####", "applicantlist", applicantlist);
-		let _cardId2 = 0;
 		for (let i = 0; i < applicantlist.length; i++) {
 			const abc = arr.some((item) => item.arefid === applicantlist[i]["arefid"]);
 			console.log("####", "abc", abc);
 			if (abc === false) {
+				_cardId++;
 				let dic = {
-					id: ++_cardId2,
-					title: `Card ${_cardId2}`,
+					id: _cardId,
+					title: `Card ${_cardId}`,
 					arefid: `${applicantlist[i]["arefid"]}`,
 					type: `${applicantlist[i]["type"]}`
 				};
 				arr.push(dic);
 				for (let j = 0; j < initialColumns.length; j++) {
 					if (initialColumns[j]["title"] === applicantlist[i]["status"]) {
-						initialColumns[j]["cardIds"].push(_cardId2);
+						initialColumns[j]["cardIds"].push(_cardId);
 					}
 				}
 			}
@@ -116,6 +116,15 @@ function Canban(props: any) {
 						"/organization/applicants/detail"
 					);
 					// addNotifyLog(axiosInstanceAuth2, title, "Vendor Applicant");
+				}
+				if (type === "refer") {
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Refer Applicant",
+						arefid,
+						"/organization/applicants/detail"
+					);
 				}
 
 				toggleLoadMode(true);

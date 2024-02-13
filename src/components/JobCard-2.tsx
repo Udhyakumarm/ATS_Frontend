@@ -8,7 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useUserStore, useNotificationStore } from "@/utils/code";
 import moment from "moment";
-import { addActivityLog, addNotifyJobLog } from "@/pages/api/axiosApi";
+import { addActivityLog, addNotifyJobLog, axiosInstanceOCR } from "@/pages/api/axiosApi";
 import UpcomingComp from "./organization/upcomingComp";
 import { useLangStore } from "@/utils/code";
 import {
@@ -19,7 +19,7 @@ import {
 	EmailShareButton
 } from "react-share";
 
-export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob, userRole }: any) {
+export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob, userRole, setShowConfetti }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const [starred, setStarred] = useState(false);
 	const cancelButtonRef = useRef(null);
@@ -191,6 +191,240 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			});
 	}
 
+
+	//add applicant state
+	const [resume, setresume] = useState<File | null>(null);
+	const [fname, setfname] = useState("");
+	const [lname, setlname] = useState("");
+	const [email, setemail] = useState("");
+	const [summary, setsummary] = useState("");
+	const [ocrLoader, setocrLoader] = useState(false);
+	const [step1Data, setstep1Data] = useState({});
+	const [version, setversion] = useState("");
+	const [step, setstep] = useState(0);
+
+	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files && event.target.files[0];
+			setresume(file);
+		}
+	}
+
+	function resetState() {
+		setresume(null);
+		setfname("");
+		setlname("");
+		setemail("");
+		setstep(0);
+		setsummary("");
+		setstep1Data({});
+		setversion("");
+	}
+
+	function disBtnApply() {
+		return (
+			fname.length > 0 &&
+			lname.length > 0 &&
+			email.length > 0 &&
+			summary.length > 0 &&
+			resume != null &&
+			step1Data["rtext"] &&
+			step1Data["rtext"].length > 0
+		);
+	}
+
+	useEffect(() => {
+		if (addCand) {
+			//add
+			setresume(null);
+			setfname("");
+			setlname("");
+			setemail("");
+			setstep(0);
+			setsummary("");
+			setstep1Data({});
+			setversion("");
+			setocrLoader(false);
+		}
+	}, [addCand]);
+
+	useEffect(() => {
+		if (resume != null && job.refid.length > 0) {
+			console.log("$", "Step1", "Resume Changed Useeffect...");
+			const fd = new FormData();
+			fd.append("resume", resume);
+			step1(job.refid, fd);
+		}
+	}, [resume]);
+
+	async function step1(refid: any, fd: any) {
+		setocrLoader(true);
+		await axiosInstanceOCR
+			.post(`/applicant/step-1/${refid}/`, fd)
+			.then(async (res) => {
+				toastcomp("step 1", "success");
+				const dataObj = res.data;
+				console.log("!!!", "step1", dataObj);
+				console.log("!!!", "step1", dataObj["Email"]);
+				const data = res.data;
+
+				
+				if (
+					data["Email"] &&
+					data["Email"].length > 0 &&
+					data["First Name"] &&
+					data["First Name"].length > 0 &&
+					data["Last Name"] &&
+					data["Last Name"].length > 0 &&
+					((data["Summary"] && data["Summary"].length > 0) ||
+						(data["Candidate Summary"] && data["Candidate Summary"].length > 0)) &&
+					data["rtext"] &&
+					data["rtext"].length > 0
+				){
+					//alldata
+					toastcomp("step 2", "success");
+					applyApplicantForAutomate(refid, data);
+				}
+				else{
+					//somedata missing
+					toastcomp("step 2", "success");
+							if (data["Email"] && data["Email"].length > 0) {
+								setemail(data["Email"]);
+							}
+							if (data["First Name"] && data["First Name"].length > 0) {
+								setfname(data["First Name"]);
+							}
+							if (data["Last Name"] && data["Last Name"].length > 0) {
+								setlname(data["Last Name"]);
+							}
+							if (data["Summary"] && data["Summary"].length > 0) {
+								setsummary(data["Summary"]);
+							}
+							if (data["Candidate Summary"] && data["Candidate Summary"].length > 0) {
+								setsummary(data["Candidate Summary"]);
+							}
+							if (data["version"] && data["version"].length > 0) {
+								setversion(data["version"]);
+							}
+							setstep1Data(data);
+							setocrLoader(false);
+							setstep(2);
+				}
+
+				
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "step1 errr", err);
+				resetState();
+			});
+	}
+
+	
+	async function applyApplicantForAutomate(refid: any, data: any) {
+		toastcomp("step 3", "success");
+		setocrLoader(true);
+		const fd = new FormData();
+		if (data["Email"] && data["Email"].length > 0) {
+			fd.append("email", data["Email"]);
+		}
+		if (data["First Name"] && data["First Name"].length > 0) {
+			fd.append("fname", data["First Name"]);
+		}
+		if (data["Last Name"] && data["Last Name"].length > 0) {
+			fd.append("lname", data["Last Name"]);
+		}
+		if (data["rtext"] && data["rtext"].length > 0) {
+			fd.append("rtext", data["rtext"]);
+		}
+		if (data["Summary"] && data["Summary"].length > 0) {
+			fd.append("summary", data["Summary"]);
+		}
+		if (data["Candidate Summary"] && data["Candidate Summary"].length > 0) {
+			fd.append("summary", data["Candidate Summary"]);
+		}
+		if (data["Percentage"]) {
+			fd.append("percent", data["Percentage"]);
+		}
+		fd.append("resume", resume);
+
+		await axiosInstanceAuth2
+			.post(`/applicant/team-apply/${refid}/`, fd)
+			.then((res) => {
+				console.log("!!!!","applyApplicantForAutomate",res.data)
+				if (res.data.success === 1) {
+					toastcomp("Applied Successfully", "success");
+					setShowConfetti(true);
+				} else if (res.data.success === 2) {
+					toastcomp("Email already refered by other team member", "error");
+				}else if (res.data.success === 3) {
+					toastcomp("Email Account Already Exist", "error");
+				} else {
+					toastcomp("Already Applied", "error");
+				}
+				getCount()
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "apply noauth err", err);
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			});
+	}
+
+	async function applyApplicantForManual() {
+		toastcomp("step 3", "success");
+		setocrLoader(true);
+		const fd = new FormData();
+		fd.append("email", email);
+		fd.append("fname", fname);
+		fd.append("lname", lname);
+		fd.append("summary", summary);
+
+		if (step1Data["rtext"] && step1Data["rtext"].length > 0) {
+			fd.append("rtext", step1Data["rtext"]);
+		}
+
+		if (step1Data["Percentage"]) {
+			fd.append("percent", step1Data["Percentage"]);
+		}
+		fd.append("resume", resume);
+
+		await axiosInstanceAuth2
+			.post(`/applicant/team-apply/${job.refid}/`, fd)
+			.then((res) => {
+				console.log("!!!!","applyApplicantForManual",res.data)
+				if (res.data.success === 1) {
+					toastcomp("Applied Successfully", "success");
+					setShowConfetti(true);
+				} else if (res.data.success === 2) {
+					toastcomp("Email already refered by other team member", "error");
+				}else if (res.data.success === 3) {
+					toastcomp("Email Account Already Exist", "error");
+				} else {
+					toastcomp("Already Applied", "error");
+				}
+				getCount();
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "apply noauth err", err);
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			});
+	}
+
+
+
+
 	return (
 		<>
 			<div className="h-full rounded-normal bg-white px-5 py-2 shadow-normal dark:bg-gray-700">
@@ -279,17 +513,15 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 																	{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
 																</button>
 															</Menu.Item>
-															{/* temp hide naman */}
-															{/* <Menu.Item>
+															<Menu.Item>
 													<button
 														type="button"
 														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														// onClick={() => setAddCand(true)}
-														onClick={() => setComingSoon(true)}
+														onClick={() => setAddCand(true)}
 													>
 														{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
 													</button>
-												</Menu.Item> */}
+												</Menu.Item>
 														</>
 													)}
 
@@ -628,7 +860,14 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			</Transition.Root>
 
 			<Transition.Root show={addCand} as={Fragment}>
-				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setAddCand}>
+				<Dialog
+					as="div"
+					className="relative z-40"
+					initialFocus={cancelButtonRef}
+					onClose={() => {}}
+					static
+					open={false}
+				>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -652,9 +891,18 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-4xl">
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									{ocrLoader && (
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-3 backdrop-blur-md">
+											<div className="text-center">
+												<i className="fa-solid fa-spinner fa-spin"></i>
+												<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
+											</div>
+										</div>
+									)}
+
 									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
-										<h4 className="font-semibold leading-none">Add Applicant</h4>
+										<h4 className="font-semibold leading-none">Refer Applicant</h4>
 										<button
 											type="button"
 											className="leading-none hover:text-gray-700"
@@ -664,208 +912,142 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										</button>
 									</div>
 									<div className="p-8">
-										<label
-											htmlFor="uploadCV"
-											className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
-										>
-											<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
-											<p className="mb-2 text-sm">
-												Or <span className="font-semibold text-primary">Click Here To Upload</span>
-											</p>
-											<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
-											<input type="file" className="hidden" id="uploadCV" />
-										</label>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="text" label="First Name" placeholder="First Name" />
-											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="text" label="Last Name" placeholder="Last Name" />
-											</div>
-										</div>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField fieldType="input" inputType="email" label="Email" placeholder="Email" required />
-											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="number"
-													label="Phone Number"
-													placeholder="Phone Number"
+										{resume === null || step === 0 ? (
+											<label
+												htmlFor="uploadCV"
+												className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+											>
+												<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
+												<p className="mb-2 text-sm">
+													Or{" "}
+													<span className="font-semibold text-primary dark:text-white">
+													Click Here To Upload
+													</span>
+												</p>
+												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+												<input
+													type="file"
+													accept=".doc, .docx,.pdf"
+													className="hidden"
+													id="uploadCV"
+													onChange={handleFileInputChange}
 												/>
-											</div>
-										</div>
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Social Links</label>
-											<div className="flex items-center">
-												<div className="flex min-h-[45px] w-[calc(100%-40px)] items-center rounded-normal border border-borderColor px-3 py-1">
-													<div className="text-lg">
-														<i className="fa-brands fa-behance mr-5"></i>
-														<i className="fa-brands fa-stack-overflow mr-5"></i>
-														<i className="fa-brands fa-linkedin-in mr-5"></i>
-														<i className="fa-brands fa-github mr-5"></i>
-													</div>
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
-												</div>
-											</div>
-										</div>
-										<FormField fieldType="textarea" label="Summary" placeholder="Summary" />
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Skills</label>
-											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-													<div className="text-sm">
-														<p className="my-1">Skill 1</p>
-														<p className="my-1">Skill 2</p>
-														<p className="my-1">Skill 3</p>
-														<p className="my-1">Skill 4</p>
-													</div>
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
-												</div>
-											</div>
-										</div>
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Education</label>
-											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-													{Array(2).fill(
-														<article className="border-b last:border-b-0">
-															<div className="flex flex-wrap text-sm">
-																<div className="my-2 w-[30%]">
-																	<h4 className="font-bold">XYZ Group</h4>
-																</div>
-																<div className="my-2 w-[70%] pl-4">
-																	<p className="font-semibold">2021 Sep - 2022 Nov</p>
-																</div>
-															</div>
-															<p className="mb-2 text-sm">
-																<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-																eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-																quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-																aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-															</p>
-														</article>
-													)}
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
-												</div>
-											</div>
-										</div>
-										<div className="mb-4">
-											<label className="mb-1 inline-block font-bold">Certifications</label>
-											<div className="flex">
-												<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-													{Array(2).fill(
-														<article className="border-b last:border-b-0">
-															<div className="flex flex-wrap text-sm">
-																<div className="my-2 w-[30%]">
-																	<h4 className="font-bold">XYZ Group</h4>
-																</div>
-																<div className="my-2 w-[70%] pl-4">
-																	<p className="font-semibold">2021 Sep - 2022 Nov</p>
-																</div>
-															</div>
-															<p className="mb-2 text-sm">
-																<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-																eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-																quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-																aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-															</p>
-														</article>
-													)}
-												</div>
-												<div className="w-[40px] text-right">
-													<button
-														type="button"
-														className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-													>
-														<i className="fa-regular fa-plus"></i>
-													</button>
-												</div>
-											</div>
-										</div>
-										<hr className="mb-4 mt-8" />
-										<div className="relative mb-4">
-											<label htmlFor="newGraduate" className="absolute right-12 top-0 text-sm font-bold">
-												<input type="checkbox" id="newGraduate" name="newGraduate" className="mb-[3px] mr-2" />
-												New Graduate
 											</label>
-											<div className="mb-0">
-												<label className="mb-1 inline-block font-bold">Education</label>
-												<div className="flex">
-													<div className="min-h-[45px] w-[calc(100%-40px)] rounded-normal border border-borderColor px-3 py-1">
-														{Array(2).fill(
-															<article className="border-b last:border-b-0">
-																<div className="flex flex-wrap text-sm">
-																	<div className="my-2 w-[30%]">
-																		<h4 className="font-bold">XYZ Group</h4>
-																	</div>
-																	<div className="my-2 w-[70%] pl-4">
-																		<p className="font-semibold">2021 Sep - 2022 Nov</p>
-																	</div>
-																</div>
-																<p className="mb-2 text-sm">
-																	<b>Description -</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-																	eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-																	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-																	Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-																</p>
-															</article>
+										) : (
+											<>
+												<div className="my-2 mb-5 flex pb-5">
+													<div className="">
+														{resume.type === "application/pdf" && (
+															<i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
 														)}
+														{resume.type === "application/msword" ||
+															(resume.type ===
+																"application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+																<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
+															))}
 													</div>
-													<div className="w-[40px] text-right">
-														<button
-															type="button"
-															className="h-[30px] w-[30px] rounded bg-gradDarkBlue text-sm text-white"
-														>
-															<i className="fa-regular fa-plus"></i>
-														</button>
+													<div className="flex grow flex-col justify-between pl-4">
+														<div className="flex items-center justify-between text-[15px]">
+															<span className="flex w-[50%] items-center">
+																<p className="clamp_1 mr-2">{resume.name && resume.name}</p>(
+																{resume.size && <>{(resume.size / (1024 * 1024)).toFixed(2)} MB</>})
+															</span>
+															<aside>
+																<button
+																	type="button"
+																	className="hover:text-underline text-primary"
+																	title="View"
+																	onClick={() => {
+																		if (resume) {
+																			const fileUrl = URL.createObjectURL(resume);
+																			window.open(fileUrl, "_blank");
+																		}
+																	}}
+																>
+																	<i className="fa-solid fa-eye"></i>
+																</button>
+																<button
+																	type="button"
+																	className="hover:text-underline ml-4 text-red-500"
+																	title="Delete"
+																	onClick={() => {
+																		setresume(null);
+																		setstep(0);
+																	}}
+																>
+																	<i className="fa-solid fa-trash"></i>
+																</button>
+															</aside>
+														</div>
+														<div className="relative pt-4">
+															<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
+																<span
+																	className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
+																	style={{ width: "100%" }}
+																></span>
+															</div>
+														</div>
 													</div>
 												</div>
-											</div>
-										</div>
-										<div className="mx-[-10px] flex flex-wrap">
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[100%]">
+														<FormField
+															fieldType="input"
+															inputType="email"
+															label={"Email"}
+															value={email}
+															handleChange={(e) => setemail(e.target.value)}
+															placeholder={"Email"}
+															required
+														/>
+													</div>
+												</div>
+
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={"First Name"}
+															value={fname}
+															handleChange={(e) => setfname(e.target.value)}
+															placeholder={"First Name"}
+															required
+														/>
+													</div>
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={"Last Name"}
+															placeholder={"Last Name"}
+															value={lname}
+															handleChange={(e) => setlname(e.target.value)}
+															required
+														/>
+													</div>
+												</div>
+
 												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Current Salary"
-													placeholder="Current Salary"
+													fieldType="textarea"
+													label={"Summary"}
+													placeholder={"Summary"}
+													value={summary}
+													handleChange={(e) => setsummary(e.target.value)}
+													required
 												/>
-											</div>
-											<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
-												<FormField
-													fieldType="input"
-													inputType="text"
-													label="Expected Salary"
-													placeholder="Expected Salary"
+												
+
+												<Button
+													label={"Apply"}
+													loader={false}
+													btnType={"button"}
+													disabled={!disBtnApply()}
+													handleClick={applyApplicantForManual}
 												/>
-											</div>
-										</div>
-										<FormField fieldType="input" inputType="text" label="Notice Period" placeholder="Notice Period" />
-										<FormField fieldType="reactquill" label="Any Message to Recruiter" placeholder="Notice Period" />
-										<Button label="Add" loader={false} btnType="button" />
+											</>
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
@@ -873,7 +1055,6 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 				</Dialog>
 			</Transition.Root>
-
 			<Transition.Root show={comingSoon} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
 					<Transition.Child
