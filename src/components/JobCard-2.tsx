@@ -448,7 +448,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									</button>
 								</>
 							)}
-							{userRole != "Hiring Manager" && (
+							{userRole != "Hiring Manager" ? (
 								<>
 									{(userRole === "Recruiter" && emailExists(userState[0]["email"])) ||
 									userRole === "Collaborator" ||
@@ -619,7 +619,45 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<></>
 									)}
 								</>
-							)}
+							)
+							:
+							<Menu as="div" className="relative inline-block">
+								<Menu.Button className={"p-2"}>
+									<i className="fa-solid fa-ellipsis-vertical"></i>
+								</Menu.Button>
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
+								>
+									<Menu.Items
+										className={
+											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
+										}
+									>
+										{job.jobStatus === "Active" && (
+											<>
+												
+												<Menu.Item>
+										<button
+											type="button"
+											className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+											onClick={() => setAddCand(true)}
+										>
+											{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
+										</button>
+									</Menu.Item>
+											</>
+										)}
+
+									</Menu.Items>
+								</Transition>
+							</Menu>
+							}
 						</div>
 					)}
 				</div>
