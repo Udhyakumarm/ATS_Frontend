@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 import HeaderBar from "@/components/HeaderBar";
 import Link from "next/link";
-import { addExternalNotifyLog, axiosInstance, axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { addExternalNotifyLog, axiosInstance, axiosInstance2, axiosInstanceAuth, axiosInstanceOCR } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
 import { debounce } from "lodash";
 import { axiosInstance as axis } from "@/utils";
@@ -38,8 +38,35 @@ import TwitterShareButton from "react-share/lib/TwitterShareButton";
 import TelegramShareButton from "react-share/lib/TelegramShareButton";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
+import Confetti from "react-confetti";
 
 export default function RecPreivew(props) {
+
+	const [windowSize, setWindowSize] = useState({
+		width: typeof window !== "undefined" ? window.innerWidth : 0,
+		height: typeof window !== "undefined" ? window.innerHeight : 0
+	});
+
+	// useEffect to update window size when it changes
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight
+			});
+		};
+
+		// Add event listener for window resize
+		window.addEventListener("resize", handleResize);
+
+		// Initial cleanup function to remove the event listener
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
+	const [showConfetti, setShowConfetti] = useState(false);
+
 	const { t } = useTranslation("common");
 	const cancelButtonRef = useRef(null);
 	const userRole = useUserStore((state: { role: any }) => state.role);
@@ -132,6 +159,235 @@ export default function RecPreivew(props) {
 			});
 	}
 
+	//add applicant state
+	const [addCand, setAddCand] = useState(false);
+	const [resume, setresume] = useState<File | null>(null);
+	const [fname, setfname] = useState("");
+	const [lname, setlname] = useState("");
+	const [email, setemail] = useState("");
+	const [summary, setsummary] = useState("");
+	const [ocrLoader, setocrLoader] = useState(false);
+	const [step1Data, setstep1Data] = useState({});
+	const [version, setversion] = useState("");
+	const [step, setstep] = useState(0);
+
+	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files && event.target.files[0];
+			setresume(file);
+		}
+	}
+
+	function resetState() {
+		setresume(null);
+		setfname("");
+		setlname("");
+		setemail("");
+		setstep(0);
+		setsummary("");
+		setstep1Data({});
+		setversion("");
+	}
+
+	function disBtnApply() {
+		return (
+			fname.length > 0 &&
+			lname.length > 0 &&
+			email.length > 0 &&
+			summary.length > 0 &&
+			resume != null &&
+			step1Data["rtext"] &&
+			step1Data["rtext"].length > 0
+		);
+	}
+
+	useEffect(() => {
+		if (addCand) {
+			//add
+			setresume(null);
+			setfname("");
+			setlname("");
+			setemail("");
+			setstep(0);
+			setsummary("");
+			setstep1Data({});
+			setversion("");
+			setocrLoader(false);
+		}
+	}, [addCand]);
+
+	useEffect(() => {
+		if (resume != null && detail.length > 0) {
+			console.log("$", "Step1", "Resume Changed Useeffect...");
+			const fd = new FormData();
+			fd.append("resume", resume);
+			step1(detail, fd);
+		}
+	}, [resume]);
+
+	async function step1(refid: any, fd: any) {
+		setocrLoader(true);
+		await axiosInstanceOCR
+			.post(`/applicant/step-1/${refid}/`, fd)
+			.then(async (res) => {
+				toastcomp("step 1", "success");
+				const dataObj = res.data;
+				console.log("!!!", "step1", dataObj);
+				console.log("!!!", "step1", dataObj["Email"]);
+				const data = res.data;
+
+				
+				if (
+					data["Email"] &&
+					data["Email"].length > 0 &&
+					data["First Name"] &&
+					data["First Name"].length > 0 &&
+					data["Last Name"] &&
+					data["Last Name"].length > 0 &&
+					((data["Summary"] && data["Summary"].length > 0) ||
+						(data["Candidate Summary"] && data["Candidate Summary"].length > 0)) &&
+					data["rtext"] &&
+					data["rtext"].length > 0
+				){
+					//alldata
+					toastcomp("step 2", "success");
+					applyApplicantForAutomate(refid, data);
+				}
+				else{
+					//somedata missing
+					toastcomp("step 2", "success");
+							if (data["Email"] && data["Email"].length > 0) {
+								setemail(data["Email"]);
+							}
+							if (data["First Name"] && data["First Name"].length > 0) {
+								setfname(data["First Name"]);
+							}
+							if (data["Last Name"] && data["Last Name"].length > 0) {
+								setlname(data["Last Name"]);
+							}
+							if (data["Summary"] && data["Summary"].length > 0) {
+								setsummary(data["Summary"]);
+							}
+							if (data["Candidate Summary"] && data["Candidate Summary"].length > 0) {
+								setsummary(data["Candidate Summary"]);
+							}
+							if (data["version"] && data["version"].length > 0) {
+								setversion(data["version"]);
+							}
+							setstep1Data(data);
+							setocrLoader(false);
+							setstep(2);
+				}
+
+				
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "step1 errr", err);
+				resetState();
+			});
+	}
+
+	
+	async function applyApplicantForAutomate(refid: any, data: any) {
+		toastcomp("step 3", "success");
+		setocrLoader(true);
+		const fd = new FormData();
+		if (data["Email"] && data["Email"].length > 0) {
+			fd.append("email", data["Email"]);
+		}
+		if (data["First Name"] && data["First Name"].length > 0) {
+			fd.append("fname", data["First Name"]);
+		}
+		if (data["Last Name"] && data["Last Name"].length > 0) {
+			fd.append("lname", data["Last Name"]);
+		}
+		if (data["rtext"] && data["rtext"].length > 0) {
+			fd.append("rtext", data["rtext"]);
+		}
+		if (data["Summary"] && data["Summary"].length > 0) {
+			fd.append("summary", data["Summary"]);
+		}
+		if (data["Candidate Summary"] && data["Candidate Summary"].length > 0) {
+			fd.append("summary", data["Candidate Summary"]);
+		}
+		if (data["Percentage"]) {
+			fd.append("percent", data["Percentage"]);
+		}
+		fd.append("resume", resume);
+
+		await axiosInstanceAuth2
+			.post(`/applicant/team-apply/${refid}/`, fd)
+			.then((res) => {
+				console.log("!!!!","applyApplicantForAutomate",res.data)
+				if (res.data.success === 1) {
+					toastcomp("Applied Successfully", "success");
+					setShowConfetti(true);
+				} else if (res.data.success === 2) {
+					toastcomp("Email already refered by other team member", "error");
+				}else if (res.data.success === 3) {
+					toastcomp("Email Account Already Exist", "error");
+				} else {
+					toastcomp("Already Applied", "error");
+				}
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "apply noauth err", err);
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			});
+	}
+
+	async function applyApplicantForManual() {
+		toastcomp("step 3", "success");
+		setocrLoader(true);
+		const fd = new FormData();
+		fd.append("email", email);
+		fd.append("fname", fname);
+		fd.append("lname", lname);
+		fd.append("summary", summary);
+
+		if (step1Data["rtext"] && step1Data["rtext"].length > 0) {
+			fd.append("rtext", step1Data["rtext"]);
+		}
+
+		if (step1Data["Percentage"]) {
+			fd.append("percent", step1Data["Percentage"]);
+		}
+		fd.append("resume", resume);
+
+		await axiosInstanceAuth2
+			.post(`/applicant/team-apply/${detail}/`, fd)
+			.then((res) => {
+				console.log("!!!!","applyApplicantForManual",res.data)
+				if (res.data.success === 1) {
+					toastcomp("Applied Successfully", "success");
+					setShowConfetti(true);
+				} else if (res.data.success === 2) {
+					toastcomp("Email already refered by other team member", "error");
+				}else if (res.data.success === 3) {
+					toastcomp("Email Account Already Exist", "error");
+				} else {
+					toastcomp("Already Applied", "error");
+				}
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			})
+			.catch((err) => {
+				toastcomp("step 1", "error");
+				console.log("!!!", "apply noauth err", err);
+				resetState();
+				setocrLoader(false);
+				setAddCand(false);
+			});
+	}
+
 	return (
 		<>
 			<Head>
@@ -162,6 +418,25 @@ export default function RecPreivew(props) {
 					{/* <div className="container flex flex-wrap"> */}
 					{jdata && (
 						<div className="w-full">
+							<div className="text-center">
+						{process.env.NODE_ENV != "production" && (
+							<Button
+								btnStyle={"sm"}
+								btnType="button"
+								handleClick={() => setShowConfetti(true)}
+								disabled={showConfetti}
+								label={"Test Confetti"}
+							/>
+						)}
+						{showConfetti && (
+							<Confetti
+								recycle={false}
+								width={windowSize.width}
+								height={windowSize.height}
+								onConfettiComplete={(confetti: Confetti) => setShowConfetti(false)}
+							/>
+						)}
+					</div>
 							<div className="mb-6 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex justify-between overflow-hidden rounded-t-normal">
 									<HeaderBar handleBack={() => router.back()} />
@@ -176,7 +451,7 @@ export default function RecPreivew(props) {
 												<div className="whitespace-nowrap">{srcLang === "ja" ? "求人を編集" : "Share Job"}</div>
 											</button>
 										)}
-										{userRole != "Hiring Manager" && (
+										{userRole != "Hiring Manager" ? (
 											<>
 												{(userRole === "Recruiter" &&
 													jdata.team &&
@@ -228,6 +503,16 @@ export default function RecPreivew(props) {
 																	<i className="fa-solid fa-trash"></i>
 																	<div className="whitespace-nowrap">
 																		{srcLang === "ja" ? "求人をクローズ" : "Delete Job"}
+																	</div>
+																</button>
+																<button
+																	type="button"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => setAddCand(true)}
+																>
+																	<i className="fa-solid fa-upload"></i>
+																	<div className="whitespace-nowrap">
+																	{srcLang === "ja" ? "レジュメをアップロード" : "Upload Resume"}
 																	</div>
 																</button>
 															</>
@@ -293,7 +578,25 @@ export default function RecPreivew(props) {
 													<></>
 												)}
 											</>
-										)}
+										):
+										<>
+														{jdata.jobStatus === "Active" && (
+															<>
+																
+																<button
+																	type="button"
+																	className="flex cursor-pointer items-center justify-center gap-1 p-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => setAddCand(true)}
+																>
+																	<i className="fa-solid fa-upload"></i>
+																	<div className="whitespace-nowrap">
+																	{srcLang === "ja" ? "レジュメをアップロード" : "Upload Resume"}
+																	</div>
+																</button>
+															</>
+														)}
+														</>
+										}
 									</div>
 								</div>
 								<div className="px-8 py-4">
@@ -553,6 +856,204 @@ export default function RecPreivew(props) {
 												</button>
 											</li>
 										</ul>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			
+			<Transition.Root show={addCand} as={Fragment}>
+				<Dialog
+					as="div"
+					className="relative z-40"
+					initialFocus={cancelButtonRef}
+					onClose={() => {}}
+					static
+					open={false}
+				>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-white text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									{ocrLoader && (
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.1)] p-6 pt-3 backdrop-blur-md">
+											<div className="text-center">
+												<i className="fa-solid fa-spinner fa-spin"></i>
+												<p className="my-2 font-bold">Kindly hold on for a moment while we process your request.</p>
+											</div>
+										</div>
+									)}
+
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="font-semibold leading-none">Refer Applicant</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setAddCand(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										{resume === null || step === 0 ? (
+											<label
+												htmlFor="uploadCV"
+												className="mb-6 block cursor-pointer rounded-normal border p-6 text-center"
+											>
+												<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
+												<p className="mb-2 text-sm">
+													Or{" "}
+													<span className="font-semibold text-primary dark:text-white">
+													Click Here To Upload
+													</span>
+												</p>
+												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+												<input
+													type="file"
+													accept=".doc, .docx,.pdf"
+													className="hidden"
+													id="uploadCV"
+													onChange={handleFileInputChange}
+												/>
+											</label>
+										) : (
+											<>
+												<div className="my-2 mb-5 flex pb-5">
+													<div className="">
+														{resume.type === "application/pdf" && (
+															<i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
+														)}
+														{resume.type === "application/msword" ||
+															(resume.type ===
+																"application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+																<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
+															))}
+													</div>
+													<div className="flex grow flex-col justify-between pl-4">
+														<div className="flex items-center justify-between text-[15px]">
+															<span className="flex w-[50%] items-center">
+																<p className="clamp_1 mr-2">{resume.name && resume.name}</p>(
+																{resume.size && <>{(resume.size / (1024 * 1024)).toFixed(2)} MB</>})
+															</span>
+															<aside>
+																<button
+																	type="button"
+																	className="hover:text-underline text-primary"
+																	title="View"
+																	onClick={() => {
+																		if (resume) {
+																			const fileUrl = URL.createObjectURL(resume);
+																			window.open(fileUrl, "_blank");
+																		}
+																	}}
+																>
+																	<i className="fa-solid fa-eye"></i>
+																</button>
+																<button
+																	type="button"
+																	className="hover:text-underline ml-4 text-red-500"
+																	title="Delete"
+																	onClick={() => {
+																		setresume(null);
+																		setstep(0);
+																	}}
+																>
+																	<i className="fa-solid fa-trash"></i>
+																</button>
+															</aside>
+														</div>
+														<div className="relative pt-4">
+															<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
+																<span
+																	className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
+																	style={{ width: "100%" }}
+																></span>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[100%]">
+														<FormField
+															fieldType="input"
+															inputType="email"
+															label={"Email"}
+															value={email}
+															handleChange={(e) => setemail(e.target.value)}
+															placeholder={"Email"}
+															required
+														/>
+													</div>
+												</div>
+
+												<div className="mx-[-10px] flex flex-wrap">
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={"First Name"}
+															value={fname}
+															handleChange={(e) => setfname(e.target.value)}
+															placeholder={"First Name"}
+															required
+														/>
+													</div>
+													<div className="mb-[20px] w-full px-[10px] md:max-w-[50%]">
+														<FormField
+															fieldType="input"
+															inputType="text"
+															label={"Last Name"}
+															placeholder={"Last Name"}
+															value={lname}
+															handleChange={(e) => setlname(e.target.value)}
+															required
+														/>
+													</div>
+												</div>
+
+												<FormField
+													fieldType="textarea"
+													label={"Summary"}
+													placeholder={"Summary"}
+													value={summary}
+													handleChange={(e) => setsummary(e.target.value)}
+													required
+												/>
+												
+
+												<Button
+													label={"Apply"}
+													loader={false}
+													btnType={"button"}
+													disabled={!disBtnApply()}
+													handleClick={applyApplicantForManual}
+												/>
+											</>
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

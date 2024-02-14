@@ -591,7 +591,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											<p className="mb-2 text-sm text-darkGray">{appdata["arefid"]}</p>
 											<p className="mb-2 text-sm text-darkGray">
 												{t("Words.Source")} - &nbsp;
-												<span className="font-semibold uppercase text-primary dark:text-white">
+												<span className="font-semibold lowercase text-primary dark:text-white">
 													{type}{" "}
 													{appdata["vaccount"] && (
 														<span className="mb-2 text-sm normal-case text-darkGray ">
