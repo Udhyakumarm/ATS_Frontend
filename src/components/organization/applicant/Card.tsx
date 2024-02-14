@@ -133,6 +133,7 @@ export default function Card(props: any) {
 							label={srcLang === "ja" ? "みる" : "View"}
 							btnType="button"
 							handleClick={() => {
+								console.log("%%","appdata",props["data"])
 								setjobid(props["data"]["job"]["refid"]);
 								// setcanid(props["data"]["user"]["erefid"]);
 								setappid(props["data"]["arefid"]);
