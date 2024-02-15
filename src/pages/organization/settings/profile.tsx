@@ -40,6 +40,65 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const currentUser = useUserStore((state: { user: any }) => state.user);
+	const setcurrentUser = useUserStore((state: { setuser: any }) => state.setuser);
+
+	const [rating, setrating] = useState(0);
+	const [brating, setbrating] = useState(0);
+	useEffect(()=>{
+		if(userRole === "Super Admin" && currentUser){
+			setrating(currentUser[0]["rating"])
+			setbrating(currentUser[0]["rating"])
+		}
+	},[currentUser])
+
+	const handleRInputChange = (e) => {
+		const value = e.target.value;
+		// Regular expression to match numbers between 0 and 90
+		const regex = /^(?:[0-9]|[1-8][0-9]|90)$/;
+		// Check if the input value matches the regex pattern
+		if (regex.test(value)) {
+			setrating(value);
+			//update in database
+			saveRating(value)
+		}
+		else{
+			toastcomp("Use number between 0-90","error")
+			setrating(brating);
+		}
+	  };
+
+	  async function saveRating(rating:any) {
+		const fd = new FormData();
+		fd.append("rating",rating)
+		await axiosInstanceAuth2
+			.post(`/organization/rating/update/`,fd)
+			.then(async (res) => {
+				if(res.data.success === 1){
+					toastcomp("rating update","success")
+					//load user
+					LoadCUser()
+				}else{
+					toastcomp("rating not update","error")}
+			})
+			.catch((err) => {
+				console.log("@", "rating", err);
+				toastcomp("rating not update","error")
+			});
+	}
+
+	  async function LoadCUser() {
+		await axiosInstanceAuth2
+			.post(`/organization/get/currentUser/`)
+			.then(async (res) => {
+				console.log("@@@@", "LoadCUser", res.data);
+				setcurrentUser(res.data)
+			})
+			.catch((err) => {
+				console.log("@@@@", "LoadCUser", err);
+				toastcomp("rating not update","error")
+			});
+	}
+
 	const router = useRouter();
 	const cancelButtonRef = useRef(null);
 	const [addSocial, setAddSocial] = useState(false);
@@ -1210,6 +1269,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 											/>
 										</div>
 									</Tab.Panel>
+									{/* org profile */}
 									<Tab.Panel>
 										<Tab.Group>
 											<Tab.List className={"mb-6 border-b"}>
@@ -1528,6 +1588,23 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																	/>
 																</div>
 															</div>
+															{/* custom rating */}
+															{userRole === "Super Admin" && <div className="flex rounded-normal border">
+																<div className="flex w-[80%] items-start justify-center p-4 flex-col">
+																	<p>External Career Page AI Rating Filter {currentUser[0]["rating"]}%</p>
+																	<small className="opacity-80">Note: In case you do not wish to add the AI rating filter please mention 0.</small>
+																</div>
+																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600 text-center mx-auto">
+																<input
+        type="number"
+        value={rating}
+		onChange={(e)=>setrating(e.target.value)}
+        onBlur={handleRInputChange}
+		className="w-[40%]"
+      />
+																</div>
+															</div>
+															}			
 														</>
 													)}
 												</Tab.Panel>
