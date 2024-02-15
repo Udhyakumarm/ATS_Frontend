@@ -255,6 +255,14 @@ export default function CanCareerJobDetail(props) {
 
 						//rating is 40% required
 						let rating = res.data["Percentage"];
+						let frating = res.data["rating"];
+
+						if(frating && frating != undefined){
+							if (typeof frating === "string") {
+								frating = parseInt(frating);
+							}
+						}
+						else{frating = 40}
 
 						if (rating && rating != undefined) {
 							if (typeof rating === "string") {
@@ -267,7 +275,7 @@ export default function CanCareerJobDetail(props) {
 							return false;
 						}
 
-						if (rating > 40) {
+						if (rating > frating) {
 							if (noAuth) {
 								//no auth
 								const data = res.data;
