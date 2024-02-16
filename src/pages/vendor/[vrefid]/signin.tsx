@@ -123,7 +123,7 @@ export default function CanCareerSignIn({ providers }: any) {
 						})
 						.then(async (response) => {
 							console.log("@", response.data);
-							setBtnLoader(false);
+							// setBtnLoader(false);
 							setWrong(false);
 							setSuccess(true);
 							setErrorMsg("");

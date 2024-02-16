@@ -121,7 +121,7 @@ export default function CandSignIn({ providers }: any) {
 							password: loginInfo.password
 						})
 						.then(async (response) => {
-							setBtnLoader(false);
+							// setBtnLoader(false);
 
 							setSuccess(true);
 							setWrong(false);
