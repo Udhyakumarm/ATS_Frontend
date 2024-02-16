@@ -51,6 +51,9 @@ export default function CreatePassword() {
 					toastcomp("Password Reset Suceesfully", "success");
 					setpassword("");
 					setpassword2("");
+					if(response.data.url && response.data.url.length > 0){
+						router.push(response.data.url)
+					}
 				})
 				.catch((err) => {
 					// console.log(err);

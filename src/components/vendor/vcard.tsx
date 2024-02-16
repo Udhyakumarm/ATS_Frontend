@@ -5,11 +5,13 @@ import FormField from "../FormField";
 import Button from "../Button";
 import { useLangStore } from "@/utils/code";
 import toastcomp from "../toast";
+import moment from "moment";
 
 export default function VCard(props: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const [companyDetails, setCompanyDetails] = useState(false);
+	const [rcompanyDetails, setRCompanyDetails] = useState(false);
 	const [enabled, setEnabled] = useState(false);
 	useEffect(() => {
 		if (props.data["verified"] === true && props.data["onboard"] === true && props.data["activate"] === true) {
@@ -80,10 +82,10 @@ export default function VCard(props: any) {
 
 	useEffect(() => {
 		console.log("!", companyDetails);
-		if (companyDetails) {
+		if (companyDetails || rcompanyDetails) {
 			loadVendorRegData(props.data["vrefid"]);
 		}
-	}, [companyDetails]);
+	}, [companyDetails,rcompanyDetails]);
 
 	const [accountDelete, setAccountDelete] = useState(false);
 	const [jobFunction1, setjobFunction1] = useState(false);
@@ -190,6 +192,65 @@ export default function VCard(props: any) {
 		}
 	}
 
+	//renew
+	const [ragreement, setragreement] = useState<File | null>(null);
+	const [rfile, setrfile] = useState(false);
+	const [rasdate, setrasdate] = useState("");
+	const [raedate, setraedate] = useState("");
+
+	useEffect(()=>{
+		if(rcompanyDetails){
+			setragreement(null)
+			setrfile(false)
+			setrasdate("")
+			setraedate("")
+		}
+	},[rcompanyDetails])
+
+	function checkFormNewVendor() {
+		return (
+			rasdate.length > 0 &&
+			raedate.length > 0 &&
+			rfile
+		);
+	}
+
+	function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files && event.target.files[0];
+			setragreement(file);
+			setrfile(true);
+		}
+	}
+
+	
+	async function addAgreement() {
+		var formData = new FormData();
+		formData.append("agreement", ragreement);
+		formData.append("agreement_valid_start_date", rasdate);
+		formData.append("agreement_valid_end_date", raedate);
+		await axiosInstanceAuth2
+			.put(`/vendors/renewvendor-update/${props.data["vrefid"]}/`, formData)
+			.then(async (res) => {
+				toastcomp("Agreement Renewed", "success");
+				props.loadVendors();
+				setRCompanyDetails(false)
+				setragreement(null)
+			setrfile(false)
+			setrasdate("")
+			setraedate("")
+			})
+			.catch((err) => {
+				toastcomp("Agreement not Renewed", "error");
+				setRCompanyDetails(false);
+				console.log(err);
+				setragreement(null);
+				setrfile(false);
+				setrasdate("");
+				setraedate("");
+			});
+	}
+
 	return (
 		<>
 			{props.fvendor ? (
@@ -217,23 +278,37 @@ export default function VCard(props: any) {
 							<p className="font-semibold text-darkGray dark:text-gray-300">{props.data["agent_name"]}</p>
 							<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{props.data["email"]}</p>
 							<div className="flex items-center justify-between">
-								<Switch
-									checked={enabled}
-									onChange={(e) => {
-										props.activateVendor(props.data["vrefid"], !enabled);
-										setEnabled(!enabled);
-									}}
-									className={`${
-										enabled ? "bg-green-500" : "bg-gray-400"
-									} relative inline-flex h-5 w-10 items-center rounded-full`}
-								>
-									<span className="sr-only">Enable notifications</span>
-									<span
-										className={`${
-											enabled ? "translate-x-6" : "translate-x-1"
-										} inline-block h-3 w-3 transform rounded-full bg-white transition`}
-									/>
-								</Switch>
+								{moment().isAfter(moment(props.data["agreement_valid_end_date"])) ? (
+									<>
+										<Button
+											btnStyle="outlined"
+											label={srcLang === "ja" ? "詳細" : "Renew Contract"}
+											btnType="button"
+											handleClick={() => setRCompanyDetails(true)}
+										/>
+									</>
+								) : (
+									<>
+										<Switch
+											checked={enabled}
+											onChange={(e) => {
+												props.activateVendor(props.data["vrefid"], !enabled);
+												setEnabled(!enabled);
+											}}
+											className={`${
+												enabled ? "bg-green-500" : "bg-gray-400"
+											} relative inline-flex h-5 w-10 items-center rounded-full`}
+										>
+											<span className="sr-only">Enable notifications</span>
+											<span
+												className={`${
+													enabled ? "translate-x-6" : "translate-x-1"
+												} inline-block h-3 w-3 transform rounded-full bg-white transition`}
+											/>
+										</Switch>
+									</>
+								)}
+
 								<Button
 									btnStyle="sm"
 									label={srcLang === "ja" ? "詳細" : "Company Details"}
@@ -504,6 +579,170 @@ export default function VCard(props: any) {
 											btnType="button"
 											handleClick={() => setCompanyDetails(false)}
 										/>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={rcompanyDetails} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setRCompanyDetails}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-2xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "詳細" : "Company Details"}
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setRCompanyDetails(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="-mx-3 flex flex-wrap items-start">
+											<div className="mb-4 w-full px-3 md:max-w-[50%]">
+												<h6 className="mb-1 font-bold">
+													{"Re-New Agreement"}
+													<sup className="text-red-500">*</sup>
+												</h6>
+												{!rfile ? (
+													<div className="relative min-h-[45px] w-full rounded-normal border border-borderColor p-3 pr-9 text-sm focus:bg-red-500 dark:border-gray-600 dark:bg-gray-700">
+														<input
+															type="file"
+															className="absolute left-0 top-0 z-10 h-full w-full cursor-pointer opacity-0"
+															accept=".pdf,.doc,.docx"
+															onChange={handleFileInputChange}
+														/>
+														<span className="absolute right-3 top-[12px] text-lightGray">
+															<i className="fa-solid fa-paperclip"></i>
+														</span>
+														<span className="absolute left-5 top-[12px] text-darkGray dark:text-gray-400">
+															Pdf, Docx etc...
+														</span>
+													</div>
+												) : (
+													<div className="my-2 flex">
+														<div className="">
+															{ragreement.type === "application/pdf" && (
+																<i className="fa-solid fa-file-pdf text-[50px] text-red-500"></i>
+															)}
+															{ragreement.type === "application/msword" ||
+																(ragreement.type ===
+																	"application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+																	<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
+																))}
+														</div>
+														<div className="flex grow flex-col justify-between pl-4">
+															<div className="flex items-center justify-between text-[12px]">
+																<span className="flex w-[50%] items-center">
+																	<small className="clamp_1 mr-2">{ragreement.name && ragreement.name}</small>(
+																	{ragreement.size && <>{(ragreement.size / (1024 * 1024)).toFixed(2)} MB</>})
+																</span>
+																<aside>
+																	<button
+																		type="button"
+																		className="hover:text-underline text-primary"
+																		title="View"
+																		onClick={() => {
+																			if (ragreement) {
+																				const fileUrl = URL.createObjectURL(ragreement);
+																				window.open(fileUrl, "_blank");
+																			}
+																		}}
+																	>
+																		<i className="fa-solid fa-eye"></i>
+																	</button>
+																	<button
+																		type="button"
+																		className="hover:text-underline ml-4 text-red-500"
+																		title="Delete"
+																		onClick={() => {
+																			setrfile(false);
+																			setragreement(null);
+																		}}
+																	>
+																		<i className="fa-solid fa-trash"></i>
+																	</button>
+																</aside>
+															</div>
+															<div className="relative pt-4">
+																<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
+																	<span
+																		className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
+																		style={{ width: "99%" }}
+																	></span>
+																</div>
+															</div>
+														</div>
+													</div>
+												)}
+											</div>
+											<div className="flex w-full flex-wrap px-3 md:max-w-[50%]">
+												{/* <h6 className="mb-1 w-full font-bold">Agreement Validity</h6> */}
+												<div className="mb-4 w-full pr-2 md:max-w-[50%]">
+													<FormField
+														label={"New start date"}
+														fieldType="input"
+														inputType="date"
+														value={rasdate}
+														handleChange={(e) => {
+															setrasdate(e.target.value);
+														}}
+														required
+													/>
+												</div>
+												<div className="mb-4 w-full md:max-w-[50%] md:pl-2">
+													<FormField
+														label={"New end date"}
+														fieldType="input"
+														inputType="date"
+														value={raedate}
+														handleChange={(e) => setraedate(e.target.value)}
+														required
+													/>
+												</div>
+											</div>
+										</div>
+										<div className="flex w-full justify-between">
+											<Button
+												label={srcLang === "ja" ? "契約書を送付" : "Renew Agreement"}
+												btnType="button"
+												handleClick={addAgreement}
+												disabled={!checkFormNewVendor()}
+											/>
+											<Button
+												label={srcLang === "ja" ? "近い" : "Close"}
+												btnType="button"
+												handleClick={() => setRCompanyDetails(false)}
+											/>
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

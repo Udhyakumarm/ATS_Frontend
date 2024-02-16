@@ -670,6 +670,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 															fvendor={true}
 															delAccount={delAccount}
 															activateVendor={activateVendor}
+															loadVendors={loadVendors}
 															axiosInstanceAuth2={axiosInstanceAuth2}
 														/>
 													))}
