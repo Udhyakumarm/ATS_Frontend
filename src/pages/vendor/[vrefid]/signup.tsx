@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import signature from "public/images/signature.jpg";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -36,12 +35,7 @@ export default function VendorSignup() {
 	const [pass1, setpass1] = useState("");
 	const [pass2, setpass2] = useState("");
 	const [cname, setcname] = useState("");
-	const [phone, setphone] = useState("");
 	const [aname, setaname] = useState("");
-	const [ophone, setophone] = useState("");
-	const [lno, setlno] = useState("");
-	const [add, setadd] = useState("");
-	const [msg, setmsg] = useState("");
 	const [sdate, setsdate] = useState("");
 	const [edate, setedate] = useState("");
 	const [aggrement, setaggrement] = useState("");
@@ -62,9 +56,7 @@ export default function VendorSignup() {
 					for (let i = 0; i < data.length; i++) {
 						setemail(data[i]["email"]);
 						setcname(data[i]["company_name"]);
-						setphone(data[i]["contact_number"]);
 						setaname(data[i]["agent_name"]);
-						setmsg(data[i]["message"]);
 						setsdate(data[i]["agreement_valid_start_date"]);
 						setedate(data[i]["agreement_valid_end_date"]);
 						setaggrement(data[i]["agreement"]);
@@ -105,8 +97,6 @@ export default function VendorSignup() {
 			pass1.length > 0 &&
 			pass2.length > 0 &&
 			pass1 === pass2 &&
-			lno.length > 0 &&
-			add.length > 0 &&
 			check1 &&
 			sign != null
 		);
@@ -115,9 +105,6 @@ export default function VendorSignup() {
 	async function regVendor() {
 		const fd = new FormData();
 		fd.append("email", email);
-		if (ophone && ophone.length > 0) fd.append("contact_2", ophone);
-		fd.append("headquater_address", add);
-		fd.append("license_number", lno);
 		fd.append("signature", sign);
 		fd.append("password", pass1);
 		fd.append("password2", pass2);
@@ -139,22 +126,22 @@ export default function VendorSignup() {
 							toastcomp("Notify Add", "success");
 						})
 						.catch((err) => {
-							toastcomp("Notify Not Add", "error");
+							toastcomp("Notify Add", "success");
 						});
 				} catch (error) {
-					toastcomp("Notify Not Add", "error");
+					toastcomp("Notify Add", "success");
 				}
 
 				setemail("");
 				setpass1("");
 				setpass2("");
 				setcname("");
-				setphone("");
+				
 				setaname("");
-				setophone("");
-				setlno("");
-				setmsg("");
-				setlno("");
+				
+				
+				
+				
 				setsdate("");
 				setedate("");
 				setaggrement("");
@@ -240,35 +227,6 @@ export default function VendorSignup() {
 													: "relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400"
 											}
 										>
-											{t("Words.CreateProfile")}
-										</p>
-									</div>
-									<div className="after:content[''] relative w-[200px] p-4 after:absolute after:left-[50%] after:top-[50px] after:block after:h-[0px] after:w-[200px] after:border-b-2 after:border-dashed last:after:hidden dark:after:border-gray-600">
-										<div
-											className={
-												step === 3
-													? "relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradDarkBlue p-2 shadow-highlight"
-													: "relative z-10 mx-auto mb-2 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white p-2 shadow-highlight dark:bg-gray-600"
-											}
-										>
-											<span
-												className={
-													step === 3
-														? "text-[32px] font-bold text-white"
-														: "text-[32px] font-bold text-darkGray dark:text-gray-400"
-												}
-											>
-												{" "}
-												3{" "}
-											</span>
-										</div>
-										<p
-											className={
-												step === 3
-													? "relative z-10 text-center text-sm font-bold"
-													: "relative z-10 text-center text-sm font-bold text-darkGray dark:text-gray-400"
-											}
-										>
 											{t("Words.ApproveAgreement")}
 										</p>
 									</div>
@@ -276,6 +234,26 @@ export default function VendorSignup() {
 
 								{step === 1 && (
 									<section className="mx-auto w-full max-w-[500px] py-4">
+										<FormField
+											label={t("Form.CompanyName")}
+											fieldType="input"
+											inputType="text"
+											value={cname}
+											handleChange={(e) => setcname(e.target.value)}
+											readOnly
+											required
+										/>
+
+										<FormField
+											label={t("Form.AgentName")}
+											fieldType="input"
+											value={aname}
+											handleChange={(e) => setaname(e.target.value)}
+											inputType="text"
+											readOnly
+											required
+										/>
+
 										<FormField
 											label={t("Form.Email")}
 											fieldType="input"
@@ -308,102 +286,8 @@ export default function VendorSignup() {
 										</div>
 									</section>
 								)}
+								
 								{step === 2 && (
-									<section className="mx-auto w-full max-w-[700px] py-4">
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.CompanyName")}
-													fieldType="input"
-													inputType="text"
-													value={cname}
-													handleChange={(e) => setcname(e.target.value)}
-													readOnly
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.Email")}
-													fieldType="input"
-													inputType="email"
-													value={email}
-													handleChange={(e) => setemail(e.target.value)}
-													readOnly
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.PhoneNumber")}
-													fieldType="input"
-													value={phone}
-													handleChange={(e) => setphone(e.target.value)}
-													inputType="text"
-													readOnly
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.AgentName")}
-													fieldType="input"
-													value={aname}
-													handleChange={(e) => setaname(e.target.value)}
-													inputType="text"
-													readOnly
-													required
-												/>
-											</div>
-										</div>
-										<hr className="my-4" />
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.PhoneNumberOptional")}
-													fieldType="input"
-													inputType="text"
-													value={ophone}
-													handleChange={(e) => setophone(e.target.value)}
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.LicenseNumber")}
-													fieldType="input"
-													inputType="text"
-													value={lno}
-													handleChange={(e) => setlno(e.target.value)}
-													required
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={t("Form.HeadquarterLocation")}
-													fieldType="input"
-													inputType="text"
-													value={add}
-													handleChange={(e) => setadd(e.target.value)}
-													required
-												/>
-											</div>
-										</div>
-										<div className="flex flex-wrap justify-center">
-											<div className="my-1 mr-4 last:mr-0">
-												<Button
-													btnStyle="gray"
-													label={t("Btn.Prev")}
-													btnType={"button"}
-													handleClick={() => setstep(1)}
-												/>
-											</div>
-											<div className="my-1 mr-4 last:mr-0">
-												<Button label={t("Btn.Next")} btnType={"button"} handleClick={() => setstep(3)} />
-											</div>
-										</div>
-									</section>
-								)}
-								{step === 3 && (
 									<section className="mx-auto w-full max-w-[700px] py-4">
 										<p className="text-center">
 											{aggrement && aggrement.length > 0 && (
@@ -411,15 +295,6 @@ export default function VendorSignup() {
 											)}
 										</p>
 										<hr className="my-4" />
-										<FormField
-											label={t("Form.Message")}
-											fieldType="input"
-											inputType="text"
-											value={msg}
-											handleChange={(e) => setmsg(e.target.value)}
-											readOnly
-											required
-										/>
 										<div className="mb-8">
 											{/* <h5 className="mb-2 font-bold">Agreement Validity</h5> */}
 											<div className="mx-[-10px] flex flex-wrap">
@@ -508,7 +383,7 @@ export default function VendorSignup() {
 													btnStyle="gray"
 													label={t("Btn.Prev")}
 													btnType={"button"}
-													handleClick={() => setstep(2)}
+													handleClick={() => setstep(1)}
 												/>
 											</div>
 											<div className="my-1 mr-4 last:mr-0">

@@ -65,13 +65,12 @@ export default function Vendors({ atsVersion, userRole }: any) {
 	//new vendor state & fun
 	const [cname, setcname] = useState("");
 	const [email, setemail] = useState("");
-	const [phone, setphone] = useState("");
 	const [aname, setaname] = useState("");
-	const [msg, setmsg] = useState("");
 	const [agreement, setagreement] = useState<File | null>(null);
 	const [file, setfile] = useState(false);
 	const [asdate, setasdate] = useState("");
 	const [aedate, setaedate] = useState("");
+	const [check1, setcheck1] = useState(false);
 
 	const [nvlink, setnvlink] = useState("");
 	const [err, seterr] = useState(false);
@@ -83,9 +82,9 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		return (
 			cname.length > 0 &&
 			email.length > 0 &&
-			phone.length > 0 &&
+			// phone.length > 0 &&
 			aname.length > 0 &&
-			msg.length > 0 &&
+			// msg.length > 0 &&
 			asdate.length > 0 &&
 			aedate.length > 0 &&
 			file
@@ -125,35 +124,51 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		var formData = new FormData();
 		formData.append("company_name", cname);
 		formData.append("email", email);
-		formData.append("contact_number", phone);
+		// formData.append("contact_number", phone);
 		formData.append("agent_name", aname);
-		formData.append("message", msg);
+		// formData.append("message", msg);
 		formData.append("agreement", agreement);
 		formData.append("agreement_valid_start_date", asdate);
 		formData.append("agreement_valid_end_date", aedate);
+		let url = '';
+		if(check1){
+			url = `/vendors/ex_vendor/`
+		}
+		else{
+			url =  `/vendors/new_vendor/`
+		}
+		toastcomp(url,'success')
 		await axiosInstanceAuth2
-			.post(`/vendors/new_vendor/`, formData)
+			.post(url, formData)
 			.then(async (res) => {
-				toastcomp("New Agreement Send", "success");
+				if(check1){
+					toastcomp("Agreement Send", "success");
+					toastcomp("Vendor receive cred mail", "success");
+				}
+				else{
 
-				let aname2 = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${
-					userState[0]["email"]
-				}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
-
-				addActivityLog(axiosInstanceAuth2, aname2);
-
-				let title = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${userState[0]["email"]}) `;
-
-				addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
-				toggleLoadMode(true);
+					toastcomp("New Agreement Send", "success");
+	
+					let aname2 = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${
+						userState[0]["email"]
+					}) at ${moment().format("MMMM Do YYYY, h:mm:ss a")}`;
+	
+					addActivityLog(axiosInstanceAuth2, aname2);
+	
+					let title = `New Vendor ${aname} (${email}) Agreement Sent by ${userState[0]["name"]} (${userState[0]["email"]}) `;
+	
+					addNotifyLog(axiosInstanceAuth2, title, "", "/organization/settings/vendors");
+					toggleLoadMode(true);
+				}
 
 				setagreement(null);
 				setcname("");
 				// setemail("");
-				setphone("");
+				// setphone("");
 				setaname("");
-				setmsg("");
+				// setmsg("");
 				setasdate("");
+				setcheck1(false);
 				setaedate("");
 				setfile(false);
 				console.log("!", res);
@@ -172,9 +187,11 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				setagreement(null);
 				setcname("");
 				setemail("");
-				setphone("");
+				// setphone("");
 				setaname("");
-				setmsg("");
+				// setmsg("");
+				setcheck1(false);
+				setcheck1(false);
 				setasdate("");
 				setaedate("");
 				setfile(false);
@@ -414,17 +431,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 											<Tab.Panels>
 												<Tab.Panel>
 													<div className="-mx-3 flex flex-wrap">
-														<div className="mb-4 w-full px-3 md:max-w-[50%]">
-															<FormField
-																label={t("Form.CompanyName")}
-																fieldType="input"
-																inputType="text"
-																value={cname}
-																handleChange={(e) => setcname(e.target.value)}
-																required
-															/>
-														</div>
-														<div className="mb-4 w-full px-3 md:max-w-[50%]">
+														<div className="mb-4 w-full px-3">
 															<FormField
 																label={t("Form.Email")}
 																fieldType="input"
@@ -438,11 +445,11 @@ export default function Vendors({ atsVersion, userRole }: any) {
 													<div className="-mx-3 flex flex-wrap">
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
 															<FormField
-																label={t("Form.PhoneNumber")}
+																label={t("Form.CompanyName")}
 																fieldType="input"
 																inputType="text"
-																value={phone}
-																handleChange={(e) => setphone(e.target.value)}
+																value={cname}
+																handleChange={(e) => setcname(e.target.value)}
 																required
 															/>
 														</div>
@@ -457,13 +464,6 @@ export default function Vendors({ atsVersion, userRole }: any) {
 															/>
 														</div>
 													</div>
-													<FormField
-														label={t("Form.Message")}
-														fieldType="textarea"
-														value={msg}
-														handleChange={(e) => setmsg(e.target.value)}
-														required
-													/>
 													<div className="-mx-3 flex flex-wrap items-start">
 														<div className="mb-4 w-full px-3 md:max-w-[50%]">
 															<h6 className="mb-1 font-bold">
@@ -497,8 +497,8 @@ export default function Vendors({ atsVersion, userRole }: any) {
 																				<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
 																			))}
 																	</div>
-																	<div className="flex grow flex-col justify-between pl-4">
-																		<div className="flex items-center justify-between text-[12px]">
+																	<div className="my-auto flex grow flex-col pl-4">
+																		<div className="flex items-center justify-between text-base">
 																			<span className="flex w-[50%] items-center">
 																				<small className="clamp_1 mr-2">{agreement.name && agreement.name}</small>(
 																				{agreement.size && <>{(agreement.size / (1024 * 1024)).toFixed(2)} MB</>})
@@ -530,14 +530,14 @@ export default function Vendors({ atsVersion, userRole }: any) {
 																				</button>
 																			</aside>
 																		</div>
-																		<div className="relative pt-4">
+																		{/* <div className="relative pt-4">
 																			<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
 																				<span
 																					className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
 																					style={{ width: "99%" }}
 																				></span>
 																			</div>
-																		</div>
+																		</div> */}
 																	</div>
 																</div>
 															)}
@@ -567,6 +567,20 @@ export default function Vendors({ atsVersion, userRole }: any) {
 																/>
 															</div>
 														</div>
+													</div>
+													<div className="mb-4">
+														<label htmlFor="agreeWithAgreement" className="flex cursor-pointer text-sm font-bold">
+															<input
+																type="checkbox"
+																id="agreeWithAgreement"
+																className="mr-4 mt-1"
+																checked={check1}
+																onChange={(e) => setcheck1(e.target.checked)}
+															/>
+															{srcLang === "ja"
+																? "既存のベンダーですか？"
+																: "Is this an Existing Vendor?"}
+														</label>
 													</div>
 													<Button
 														label={srcLang === "ja" ? "契約書を送付" : "Send Agreement"}
