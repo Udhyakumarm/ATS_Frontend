@@ -21,11 +21,7 @@ export default function VCard(props: any) {
 
 	const [cname, setcname] = useState("");
 	const [email, setemail] = useState("");
-	const [phone, setphone] = useState("");
 	const [aname, setaname] = useState("");
-	const [phone2, setphone2] = useState("");
-	const [lno, setlno] = useState("");
-	const [add, setadd] = useState("");
 	const [agreement, setagreement] = useState("");
 	const [signature, setsignature] = useState("");
 	const [file, setfile] = useState(false);
@@ -42,10 +38,6 @@ export default function VCard(props: any) {
 					setemail(res.data[0]["email"]);
 					setcname(res.data[0]["vendor"]["company_name"]);
 					setaname(res.data[0]["vendor"]["agent_name"]);
-					setphone(res.data[0]["vendor"]["contact_number"]);
-					setphone2(res.data[0]["contact_2"]);
-					setlno(res.data[0]["license_number"]);
-					setadd(res.data[0]["headquater_address"]);
 					setagreement(res.data[0]["vendor"]["agreement"]);
 					setsignature(res.data[0]["signature"]);
 					setasdate(res.data[0]["vendor"]["agreement_valid_start_date"]);
@@ -54,10 +46,6 @@ export default function VCard(props: any) {
 					setemail("");
 					setcname("");
 					setaname("");
-					setphone("");
-					setphone2("");
-					setlno("");
-					setadd("");
 					setagreement("");
 					setsignature("");
 					setasdate("");
@@ -69,10 +57,6 @@ export default function VCard(props: any) {
 				setemail("");
 				setcname("");
 				setaname("");
-				setphone("");
-				setphone2("");
-				setlno("");
-				setadd("");
 				setagreement("");
 				setasdate("");
 				setaedate("");
@@ -436,6 +420,14 @@ export default function VCard(props: any) {
 										</button>
 									</div>
 									<div className="p-8">
+										<FormField
+											label={srcLang === "ja" ? "メールアドレス" : "Email"}
+											fieldType="input"
+											inputType="email"
+											required
+											value={email}
+											readOnly
+										/>
 										<div className="-mx-3 flex flex-wrap">
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
@@ -448,62 +440,15 @@ export default function VCard(props: any) {
 											</div>
 											<div className="mb-4 w-full px-3 md:max-w-[50%]">
 												<FormField
-													label={srcLang === "ja" ? "メールアドレス" : "Email"}
+													label={srcLang === "ja" ? "担当エージェント" : "Agent Name"}
 													fieldType="input"
-													inputType="email"
-													required
-													value={email}
+													inputType="text"
+													value={aname}
 													readOnly
 												/>
 											</div>
 										</div>
-										<FormField
-											label={srcLang === "ja" ? "担当エージェント" : "Agent Name"}
-											fieldType="input"
-											inputType="text"
-											value={aname}
-											readOnly
-										/>
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={srcLang === "ja" ? "電話番号" : "Phone Number"}
-													fieldType="input"
-													inputType="text"
-													value={phone}
-													readOnly
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={srcLang === "ja" ? "電話番号 (オプション)" : "Phone Number (Optional)"}
-													fieldType="input"
-													inputType="text"
-													value={phone2}
-													readOnly
-												/>
-											</div>
-										</div>
-										<div className="-mx-3 flex flex-wrap">
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={srcLang === "ja" ? "有料職業紹介事業登録番号" : "License Number"}
-													fieldType="input"
-													inputType="text"
-													value={lno}
-													readOnly
-												/>
-											</div>
-											<div className="mb-4 w-full px-3 md:max-w-[50%]">
-												<FormField
-													label={srcLang === "ja" ? "本社所在地" : "Headquarter Location"}
-													fieldType="input"
-													inputType="text"
-													value={add}
-													readOnly
-												/>
-											</div>
-										</div>
+
 										<div className="-mx-3 flex flex-wrap items-start">
 											<div className="mb-4 flex w-full px-3 md:max-w-[50%]">
 												<div className="w-[50%] ">
@@ -659,13 +604,13 @@ export default function VCard(props: any) {
 																	<i className="fa-solid fa-file-word text-[50px] text-indigo-800"></i>
 																))}
 														</div>
-														<div className="flex grow flex-col justify-between pl-4">
-															<div className="flex items-center justify-between text-[12px]">
-																<span className="flex w-[50%] items-center">
+														<div className="my-auto flex grow flex-col pl-4">
+															<div className="flex items-center justify-between text-base">
+																<span className="flex w-full items-center">
 																	<small className="clamp_1 mr-2">{ragreement.name && ragreement.name}</small>(
 																	{ragreement.size && <>{(ragreement.size / (1024 * 1024)).toFixed(2)} MB</>})
 																</span>
-																<aside>
+																<aside className="ml-2 flex gap-0.5">
 																	<button
 																		type="button"
 																		className="hover:text-underline text-primary"
@@ -692,14 +637,14 @@ export default function VCard(props: any) {
 																	</button>
 																</aside>
 															</div>
-															<div className="relative pt-4">
+															{/* <div className="relative pt-4">
 																<div className="relative h-2 w-full overflow-hidden rounded border bg-gray-100">
 																	<span
 																		className="absolute left-0 top-0 h-full w-full bg-primary transition-all"
 																		style={{ width: "99%" }}
 																	></span>
 																</div>
-															</div>
+															</div> */}
 														</div>
 													</div>
 												)}
