@@ -507,7 +507,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		const fd = new FormData();
 		fd.append("text", "Download");
 		await axiosInstanceAuth2
-			.post(`/job/analytics-report/`, fd)
+			.post(`/applicant/analytics-report/`, fd)
 			.then((res) => {
 				console.log("!!!!", "download report", res.data);
 				const data = res.data;
@@ -531,7 +531,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		fd.append("text", "Mail");
 		fd.append("emails", sp.join(","));
 		await axiosInstanceAuth2
-			.post(`/job/analytics-report/`, fd)
+			.post(`/applicant/analytics-report/`, fd)
 			.then((res) => {
 				setstep(5);
 			})
@@ -1741,14 +1741,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 												</div>
 											</div> */}
 										</div>
-										{/* <div className="mx-auto w-fit">
+										 <div className="mx-auto w-fit">
 											<Button
 												label="Generate report"
 												btnStyle="outlined"
 												btnType="label"
 												handleClick={() => setgenReport(true)}
 											/>
-										</div> */}
+										</div> 
 									</div>
 								)}
 
