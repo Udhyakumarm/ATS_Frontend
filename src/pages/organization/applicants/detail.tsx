@@ -566,7 +566,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 									<button
 										className="mr-5 justify-self-start text-darkGray dark:text-gray-400"
 										onClick={() => {
-											router.back();
+											router.replace("/organization/applicants");
 										}}
 									>
 										<i className="fa-solid fa-arrow-left text-xl"></i>

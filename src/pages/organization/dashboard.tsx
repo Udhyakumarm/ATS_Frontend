@@ -49,6 +49,7 @@ import AnalyticsChart from "@/components/organization/AnalyticsChart";
 import Novus from "@/components/Novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
+import HiringChart from "@/components/Charts/HiringChart";
 
 export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
 	useEffect(() => {
@@ -238,7 +239,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 
 				setrecentJob(res.data["recentJob"]);
 				setupcomingInterview(res.data["Interview"]);
-				sethiringAnalytics(res.data["HiringAnalytics"]);
+				sethiringAnalytics(res.data["shiftHiring"]);
 			})
 			.catch((err) => {
 				console.log("!", err);
@@ -384,8 +385,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												)}
 											</div>
 											<div className="p-6 pt-0">
-												{hiringAnalytics && hiringAnalytics.length > 0 && hiringAnalytics.some((item) => item > 0) ? (
-													<AnalyticsChart data={hiringAnalytics} />
+												{hiringAnalytics && hiringAnalytics.length > 0  ? (
+													<div className="pr-8">
+														<HiringChart
+															data={hiringAnalytics}
+														/>
+													</div>
 												) : (
 													// <AnalyticsChart />
 													<>
