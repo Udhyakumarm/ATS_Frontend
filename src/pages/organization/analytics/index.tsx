@@ -22,7 +22,7 @@ import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import nodata_2 from "/public/images/no-data/icon-2.png";
 import AnalyticsChart from "@/components/organization/AnalyticsChart";
-import SourceChart from "@/components/organization/SourceChart";
+// import SourceChart from "@/components/organization/SourceChart";
 import ColumnChart from "@/components/organization/ColumnChart";
 import PermiumComp from "@/components/organization/premiumComp";
 import FunnelChart from "@/components/organization/FunnelChart";
@@ -31,6 +31,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import HiringChart from "@/components/Charts/HiringChart";
+import RadarCharts from "@/components/Charts/RadarCharts";
+import SourceChart from "@/components/Charts/SourceChart";
+import AgingChart from "@/components/Charts/AgingChart";
+import RatioChart from "@/components/Charts/RatioChart";
+import InterviewChart from "@/components/Charts/InterviewChart";
 
 export default function Analytics({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
 	useEffect(() => {
@@ -181,6 +187,14 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 	}, [session]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+	const [chart1, setchart1] = useState([]);
+	const [chart2, setchart2] = useState([]);
+	const [chart3, setchart3] = useState([]);
+	const [chart4, setchart4] = useState([]);
+	const [chart5, setchart5] = useState([]);
+	const [chart6, setchart6] = useState([]);
+
+
 	const [hiringAnalytics, sethiringAnalytics] = useState([]);
 	const [interviewAnalytics, setinterviewAnalytics] = useState([]);
 	const [tapp, settapp] = useState(0);
@@ -206,6 +220,14 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 
 				// setrecentJob(res.data["recentJob"]);
 				// setupcomingInterview(res.data["Interview"]);
+
+				setchart1(res.data["shiftFunnel"]);
+				setchart2(res.data["shiftHiring"])
+				setchart3(res.data["shiftSource"]);
+				setchart4(res.data["shiftInterview"]);
+				setchart5(res.data["shiftSourceAged"]);
+				setchart6(res.data["shiftHiredReject"]);
+
 				sethiringAnalytics(res.data["HiringAnalytics"]);
 				setinterviewAnalytics(res.data["InterviewAnalytics"]);
 				setanalyticsSource(res.data["AnalyticsSource"]);
@@ -306,10 +328,14 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 														<FormField fieldType="select" placeholder={t("Words.AllApplicants")} />
 													</div> */}
 													</div>
-													<div className="p-8">
-														{analyticsFunnel && analyticsFunnel.length > 0 && tapp > 0 ? (
-															<FunnelChart data={analyticsFunnel} />
-														) : (
+													{chart1 && chart1.length > 0 && tapp > 0 ? (
+														<div className="pr-8 pt-8">
+															<RadarCharts
+															 data={chart1}
+															/>
+														</div>
+													) : (
+														<div className="p-8">
 															<div className="py-8 text-center">
 																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
 																	<Image
@@ -323,8 +349,8 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 																	{srcLang === "ja" ? "応募者のパイプラインがありません" : "No Applicant Pipeline"}
 																</p>
 															</div>
-														)}
-													</div>
+														</div>
+													)}
 												</div>
 											</div>
 											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
@@ -335,31 +361,29 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 														<FormField fieldType="select" placeholder="All Time" />
 													</div> */}
 													</div>
-													<div className="p-8">
-														{hiringAnalytics &&
-														hiringAnalytics.length > 0 &&
-														hiringAnalytics.some((item) => item > 0) ? (
-															// <HighchartsReact highcharts={Highcharts} options={options} />
-															<AnalyticsChart data={hiringAnalytics} text="Hiring Trends" />
-														) : (
-															// <AnalyticsChart />
-															<>
-																<div className="py-8 text-center">
-																	<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																		<Image
-																			src={nodata_2}
-																			alt="No Data"
-																			width={300}
-																			className="max-h-[60px] w-auto max-w-[60px]"
-																		/>
-																	</div>
-																	<p className="text-sm text-darkGray">
-																		{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
-																	</p>
+													{chart2 && chart2.length > 0  ? (
+														<div className="pr-8 pt-8">
+															<HiringChart
+																data={chart2}
+															/>
+														</div>
+													) : (
+														<div className="p-8">
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
 																</div>
-															</>
-														)}
-													</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "採用分析は不要" : "No Hiring Analytics"}
+																</p>
+															</div>
+														</div>
+													)}
 												</div>
 											</div>
 											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
@@ -369,7 +393,129 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 															{srcLang === "ja" ? "応募経路" : "Average Source of Candidate"}
 														</h2>
 													</div>
-													<div className="p-8">
+													{chart3 && chart3.length > 0 && tapp > 0 ? (
+														<div className="pt-8 ">
+															<SourceChart
+																data={chart3}
+															/>
+														</div>
+													) : (
+														<div className="p-8">
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "候補者の情報源なし" : "No Source of Candidate"}
+																</p>
+															</div>
+														</div>
+													)}
+												</div>
+											</div>
+											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">
+															{srcLang === "ja" ? "面接実施推移" : "Average Interviews Schedule"}
+														</h2>
+														{/* <div className="w-[180px]">
+														<FormField fieldType="select" placeholder={srcLang === "ja" ? "全期間" : "All Time"} />
+													</div> */}
+													</div>
+													{chart4 &&
+													chart4.length > 0  ? (
+														<div className="pr-8 pt-8">
+															<InterviewChart
+																data={chart4}
+															/>
+														</div>
+													) : (
+														<div className="p-8">
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "面接なし" : "No Interview"}
+																</p>
+															</div>
+														</div>
+													)}
+												</div>
+											</div>
+
+											{/* aging profile */}
+											<div className="mb-6 w-full px-3 ">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">{srcLang === "ja" ? "応募経路" : "Aging Profile"}</h2>
+													</div>
+													{chart5 && chart5.length > 0 && tapp > 0 ? (
+														<div className="pt-8 ">
+															<AgingChart
+																data={chart5}
+															/>
+														</div>
+													) : (
+														<div className="p-8">
+															<div className="py-8 text-center">
+																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																	<Image
+																		src={nodata_2}
+																		alt="No Data"
+																		width={300}
+																		className="max-h-[60px] w-auto max-w-[60px]"
+																	/>
+																</div>
+																<p className="text-sm text-darkGray">
+																	{srcLang === "ja" ? "候補者の情報源なし" : "No Source of Candidate"}
+																</p>
+															</div>
+														</div>
+													)}
+												</div>
+											</div>
+											{/* ratio profile */}
+											<div className="mb-6 w-full px-3 ">
+												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
+													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
+														<h2 className="grow font-bold">
+															{srcLang === "ja" ? "応募経路" : "Hiring/Rejection Ratio"}
+														</h2>
+													</div>
+													{chart6 && chart6.length > 0 && tapp > 0 ? (
+														<div className="pt-8 ">
+															<RatioChart
+																data={chart6}
+															/>
+														</div>
+													) : (
+														<div className="py-8 text-center">
+															<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
+																<Image
+																	src={nodata_2}
+																	alt="No Data"
+																	width={300}
+																	className="max-h-[60px] w-auto max-w-[60px]"
+																/>
+															</div>
+															<p className="text-sm text-darkGray">
+																{srcLang === "ja" ? "候補者の情報源なし" : "No Source of Candidate"}
+															</p>
+														</div>
+													)}
+													{/* <div className="p-8">
 														{analyticsSource && analyticsSource.length > 0 && tapp > 0 ? (
 															<SourceChart data={analyticsSource} />
 														) : (
@@ -387,44 +533,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 																</p>
 															</div>
 														)}
-													</div>
-												</div>
-											</div>
-											<div className="mb-6 w-full px-3 xl:max-w-[50%]">
-												<div className="h-full rounded-normal border shadow-normal dark:border-gray-400">
-													<div className="flex min-h-[80px] items-center border-b p-4 dark:border-gray-400">
-														<h2 className="grow font-bold">
-															{srcLang === "ja" ? "面接実施推移" : "Average Interviews Schedule"}
-														</h2>
-														{/* <div className="w-[180px]">
-														<FormField fieldType="select" placeholder={srcLang === "ja" ? "全期間" : "All Time"} />
 													</div> */}
-													</div>
-													<div className="p-8">
-														{interviewAnalytics &&
-														interviewAnalytics.length > 0 &&
-														interviewAnalytics.some((item) => item > 0) ? (
-															// <HighchartsReact highcharts={Highcharts} options={options} />
-															<AnalyticsChart data={interviewAnalytics} text="Interview Trends" />
-														) : (
-															// {analyticsColumn && analyticsColumn.length > 0 && quickLinkData[5] > 0 ? (
-															// 	<ColumnChart data={analyticsColumn} />
-															// )
-															<div className="py-8 text-center">
-																<div className="mx-auto mb-2 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-gray-200 p-2">
-																	<Image
-																		src={nodata_2}
-																		alt="No Data"
-																		width={300}
-																		className="max-h-[60px] w-auto max-w-[60px]"
-																	/>
-																</div>
-																<p className="text-sm text-darkGray">
-																	{srcLang === "ja" ? "面接なし" : "No Interview"}
-																</p>
-															</div>
-														)}
-													</div>
 												</div>
 											</div>
 										</div>
