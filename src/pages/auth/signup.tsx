@@ -133,16 +133,17 @@ export default function AuthSignUp() {
 		setBtnLoader(true);
 		const form = new FormData();
 		Object.keys(signUpInfo).map((key) => form.append(key, signUpInfo[key as keyof typeof signUpInfo]));
-
 		event.preventDefault();
-		await axiosInstance.api
+		await axiosInstance2
 			.post("/organization/registration/superadmin/", {
 				email: signUpInfo.email,
 				name: signUpInfo.fullName,
 				company_name: signUpInfo.organizationName.toLowerCase().replace(/\s/g, ""),
 				password: signUpInfo.password,
 				password2: signUpInfo.passwordConfirm,
-				company_type: signUpInfo.companyType
+				admin_type:
+					signUpInfo.companyType[0]["name"] === "Corporation" ? "Organization" : signUpInfo.companyType[0]["name"],
+				// company_type: signUpInfo.companyType
 			})
 			.then(async (response) => {
 				// console.log(response);
@@ -287,10 +288,14 @@ export default function AuthSignUp() {
 							id="companyType"
 							singleSelect
 							value={signUpInfo.companyType}
+							// options={[
+							// 	{ name: t("Select.Sole_Proprietorship") },
+							// 	{ name: t("Select.Corporation") },
+							// 	{ name: t("Select.Limited_Liability_Company") }
+							// ]}
 							options={[
-								{ name: t("Select.Sole_Proprietorship") },
-								{ name: t("Select.Corporation") },
-								{ name: t("Select.Limited_Liability_Company") }
+								{ name: "Agency"},
+								{ name: "Corporation" },
 							]}
 							handleChange={dispatch}
 							error={formError.companyType}

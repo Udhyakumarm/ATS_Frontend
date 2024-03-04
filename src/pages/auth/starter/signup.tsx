@@ -134,91 +134,93 @@ export default function AuthSignUp() {
 		const form = new FormData();
 		Object.keys(signUpInfo).map((key) => form.append(key, signUpInfo[key as keyof typeof signUpInfo]));
 
-		event.preventDefault();
-		await axiosInstance.api
-			.post("/organization/registration-starter/superadmin/", {
-				email: signUpInfo.email,
-				name: signUpInfo.fullName,
-				company_name: signUpInfo.organizationName.toLowerCase().replace(/\s/g, ""),
-				password: signUpInfo.password,
-				password2: signUpInfo.passwordConfirm,
-				company_type: signUpInfo.companyType
-			})
-			.then(async (response) => {
-				// console.log(response);
-				setBtnLoader(false);
-				setSuccess(true);
-				setWrong(false);
-				setErrorMsg("");
+		event.preventDefault();		
+			await axiosInstance2
+				.post("/organization/registration-starter/superadmin/", {
+					email: signUpInfo.email,
+					name: signUpInfo.fullName,
+					company_name: signUpInfo.organizationName.toLowerCase().replace(/\s/g, ""),
+					password: signUpInfo.password,
+					password2: signUpInfo.passwordConfirm,
+					admin_type:
+						signUpInfo.companyType[0]["name"] === "Corporation" ? "Organization" : signUpInfo.companyType[0]["name"]
+					// company_type: signUpInfo.companyType
+				})
+				.then(async (response) => {
+					// console.log(response);
+					setBtnLoader(false);
+					setSuccess(true);
+					setWrong(false);
+					setErrorMsg("");
 
-				let aname = "";
-				let title = "";
-				try {
-					aname = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up at ${moment().format(
-						"MMMM Do YYYY, h:mm:ss a"
-					)}`;
+					let aname = "";
+					let title = "";
+					try {
+						aname = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up at ${moment().format(
+							"MMMM Do YYYY, h:mm:ss a"
+						)}`;
 
-					await axiosInstance2
-						.post("/organization/activity-log/unauth/", {
-							email: signUpInfo.email,
-							aname: aname
-						})
-						.then((res) => {
-							// toastcomp("Log Add", "success");
-						})
-						.catch((err) => {
-							// toastcomp("Log Not Add", "error");
-						});
-				} catch (error) {
-					// toastcomp("Log Not Add", "error");
-				}
+						await axiosInstance2
+							.post("/organization/activity-log/unauth/", {
+								email: signUpInfo.email,
+								aname: aname
+							})
+							.then((res) => {
+								// toastcomp("Log Add", "success");
+							})
+							.catch((err) => {
+								// toastcomp("Log Not Add", "error");
+							});
+					} catch (error) {
+						// toastcomp("Log Not Add", "error");
+					}
 
-				try {
-					title = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up`;
-					// let notification_type = `${}`
+					try {
+						title = `${signUpInfo.fullName} (${signUpInfo.email}) has newly sign up`;
+						// let notification_type = `${}`
 
-					await axiosInstance2
-						.post("/applicant/notification/unauth/", {
-							email: signUpInfo.email,
-							title: title
-							// notification_type: notification_type
-						})
-						.then((res) => {
-							// toastcomp("Notify Add", "success");
-						})
-						.catch((err) => {
-							// toastcomp("Notify Not Add", "error");
-						});
-				} catch (error) {
-					// toastcomp("Notify Not Add", "error");
-				}
+						await axiosInstance2
+							.post("/applicant/notification/unauth/", {
+								email: signUpInfo.email,
+								title: title
+								// notification_type: notification_type
+							})
+							.then((res) => {
+								// toastcomp("Notify Add", "success");
+							})
+							.catch((err) => {
+								// toastcomp("Notify Not Add", "error");
+							});
+					} catch (error) {
+						// toastcomp("Notify Not Add", "error");
+					}
 
-				router.push("/auth/signin");
-				// setTimeout(() => {
-				// 	console.log("Send verification email");
-				// }, 100);
+					router.push("/auth/signin");
+					// setTimeout(() => {
+					// 	console.log("Send verification email");
+					// }, 100);
 
-				// toastcomp("Successfully Registerd", "success");
-				// setTimeout(() => {
-				// 	toastcomp("We Send Verification Email", "info");
-				// }, 100);
-			})
-			.catch((err) => {
-				setBtnLoader(false);
-				setSuccess(false);
-				setWrong(true);
-				setErrorMsg("");
+					// toastcomp("Successfully Registerd", "success");
+					// setTimeout(() => {
+					// 	toastcomp("We Send Verification Email", "info");
+					// }, 100);
+				})
+				.catch((err) => {
+					setBtnLoader(false);
+					setSuccess(false);
+					setWrong(true);
+					setErrorMsg("");
 
-				// console.log(err);
-				if (err.response.data.errors.non_field_errors) {
-					err.response.data.errors.non_field_errors.map((text: any) => setErrorMsg(text));
-				} else if (err.response.data.errors.email) {
-					err.response.data.errors.email.map((text: any) => setErrorMsg(text));
-				} else {
-					setErrorMsg("Server Error, Try Again After Few Min ...");
-				}
-				return false;
-			});
+					// console.log(err);
+					if (err.response.data.errors.non_field_errors) {
+						err.response.data.errors.non_field_errors.map((text: any) => setErrorMsg(text));
+					} else if (err.response.data.errors.email) {
+						err.response.data.errors.email.map((text: any) => setErrorMsg(text));
+					} else {
+						setErrorMsg("Server Error, Try Again After Few Min ...");
+					}
+					return false;
+				});
 	}
 
 	return (
@@ -287,11 +289,12 @@ export default function AuthSignUp() {
 							id="companyType"
 							singleSelect
 							value={signUpInfo.companyType}
-							options={[
-								{ name: t("Select.Sole_Proprietorship") },
-								{ name: t("Select.Corporation") },
-								{ name: t("Select.Limited_Liability_Company") }
-							]}
+							// options={[
+							// 	{ name: t("Select.Sole_Proprietorship") },
+							// 	{ name: t("Select.Corporation") },
+							// 	{ name: t("Select.Limited_Liability_Company") }
+							// ]}
+							options={[{ name: "Agency" }, { name: "Corporation" }]}
 							handleChange={dispatch}
 							error={formError.companyType}
 							icon={<i className="fa-regular fa-envelope"></i>}

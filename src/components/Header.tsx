@@ -405,7 +405,7 @@ export default function Header() {
 				</header>
 			</>
 		);
-	} else if (router.asPath == "/organization") {
+	} else if (router.asPath == "/organization" || router.asPath == "/agency") {
 		return (
 			<>
 				<header className="test bg-white shadow-normal dark:bg-gray-800">

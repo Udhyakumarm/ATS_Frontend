@@ -561,6 +561,10 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				<p className="mr-6 rounded-lg bg-primary/75 px-2 py-1 text-center text-xs font-bold uppercase text-white">
 					{role}
 				</p>
+
+				<p className="mr-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-2 py-1 text-center uppercase text-xs font-bold  text-white">
+					{type}
+				</p>
 				<ThemeChange />
 				<button
 					type="button"
@@ -580,7 +584,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
 					)}
 				</button>
-				<button
+				{type != "Agency" && <button
 					type="button"
 					className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
 					onClick={() => {
@@ -599,7 +603,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					{isExpired && (
 						<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
 					)}
-				</button>
+				</button>}
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"
 					onClick={() => {
@@ -620,27 +624,32 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					)}
 				</div>
 				<ToggleLang />
-				{role != "Hiring Manager" && (
-					<button
-						type="button"
-						className={`ml-4 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
-						onClick={() => {
-							if (isExpired) {
-								toastcomp("Plan Expired", "error");
-								router.push("/organization/settings/pricing");
-							} else if (version === "standard" || version === "starter") {
-								seterr(true);
-								seterrMsg("Novus AI");
-							} else {
-								tvisible();
-							}
-						}}
-					>
-						<Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" />
-						{isExpired && (
-							<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+
+				{type != "Agency" && (
+					<>
+						{role != "Hiring Manager" && (
+							<button
+								type="button"
+								className={`ml-4 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+								onClick={() => {
+									if (isExpired) {
+										toastcomp("Plan Expired", "error");
+										router.push("/organization/settings/pricing");
+									} else if (version === "standard" || version === "starter") {
+										seterr(true);
+										seterrMsg("Novus AI");
+									} else {
+										tvisible();
+									}
+								}}
+							>
+								<Image src={novusIcon12} alt={"Novus1"} width={30} className="max-h-[30px]" />
+								{isExpired && (
+									<div className="group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-red-400/[0.05] backdrop-blur-[0.5px]"></div>
+								)}
+							</button>
 						)}
-					</button>
+					</>
 				)}
 			</div>
 			<Transition.Root show={isCalendarOpen} as={Fragment}>
