@@ -31,7 +31,7 @@ export default function TeamMembers({ selectedData, axiosInstanceAuth2 }: any) {
 
 	useEffect(() => {
 		// console.log("team selectedData", selectedData.refid);
-		if (selectedData.name === "All") {
+		if (selectedData.name === "All" || selectedData.name === "Job") {
 			loadTeamMember("all");
 		} else {
 			loadTeamMember(selectedData.refid);

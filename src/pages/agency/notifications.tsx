@@ -312,28 +312,14 @@ export default function OrgNotifications() {
 											)}
 											<div className="m-2 flex items-center justify-between border-t-2 border-borderColor">
 												{notificationALLDATA["count"] && (
-													<div className="text-sm">
-														{srcLang === "ja" ? "合計" : "total"} {notificationALLDATA["count"]}{" "}
-														{srcLang === "ja" ? "通" : "Notifications"},{" "}
-														{notificationALLDATA["next"] && notificationALLDATA["next"].length > 0 ? (
-															<>
-																{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
-																{parseInt(notificationALLDATA["next"].split("=").pop()) - 1}
-															</>
-														) : (
-															<>
-																{notificationALLDATA["previous"] && notificationALLDATA["previous"].length > 0 ? (
-																	<>
-																		{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
-																		{parseInt(notificationALLDATA["previous"].split("=").pop()) + 1}
-																	</>
-																) : (
-																	<>{srcLang === "ja" ? "現在のページ" : "Current Page"} : 1 </>
-																)}
-															</>
+															<div className="text-sm">
+																{srcLang === "ja" ? "合計" : "total"} {notificationALLDATA["count"]} {srcLang === "ja" ? "通" : "Notifications"},{" "}
+																<>
+																	{srcLang === "ja" ? "現在のページ" : "Current Page"} :{" "}
+																	{notificationALLDATA["current_page"]} of {notificationALLDATA["total_pages"]}
+																</>
+															</div>
 														)}
-													</div>
-												)}
 												<div className="flex justify-end gap-2">
 													<Button
 														btnType="button"
