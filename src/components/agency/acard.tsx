@@ -12,6 +12,7 @@ export default function ACard(props: any) {
 	const cancelButtonRef = useRef(null);
 	const [companyDetails, setCompanyDetails] = useState(false);
 	const [rcompanyDetails, setRCompanyDetails] = useState(false);
+	const [allocationList, setallocationList] = useState(false);
 	const [enabled, setEnabled] = useState(false);
 	
 
@@ -98,7 +99,6 @@ export default function ACard(props: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract-share/${props.data["acrefid"]}/`)
 			.then(async (res) => {
-				toastcomp("list contract share ", "success");
 				console.log("!!!!!!", "list-contract-share", res.data);
 				setshareCount(res.data);
 			})
@@ -108,11 +108,39 @@ export default function ACard(props: any) {
 			});
 	}
 
+	const [shareADetail, setshareADetail] = useState({});
+
+	async function loadShareContractDetail() {
+		await axiosInstanceAuth2
+			.get(`/applicant/list-contract-share-detail/${props.data["acrefid"]}/`)
+			.then(async (res) => {
+				console.log("!!!!!!", "list-contract-share-detail", res.data);
+				if(res.data.length > 0){
+
+					setshareADetail(res.data[0]);
+				}
+				else{
+					setshareADetail({})
+				}
+			})
+			.catch((err) => {
+				toastcomp("list contract share", "error");
+				setshareADetail({});
+			});
+	}
+
 	useEffect(()=>{
-		if(props.data && props.data["acrefid"]){
+		if(props.data && props.data["acrefid"] && props.allocate){
 			loadShareCount();
 		}
 	},[props.data])
+
+	useEffect(()=>{
+		if(allocationList){
+			setshareADetail([]);
+			loadShareContractDetail();
+		}
+	},[allocationList])
 
 	
 	const getColorCode = (number) => {
@@ -160,51 +188,72 @@ export default function ACard(props: any) {
 
 	return (
 		<>
-			<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
-				<div className="relative h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
-					<div className="mb-2 flex items-start justify-between">
-						<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["cname"]}</h4>
-						<div className="flex items-center gap-2">
-							<div className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => setAccountDelete(true)}>
-								<i className="fa-solid fa-trash"></i>
-							</div>
+			{props.allocate ? (
+				<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+					<div className="relative h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
+						<div className="mb-2">
+							<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["cname"]}</h4>
 						</div>
-					</div>
-					<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{props.data["email"]}</p>
-					<div className="flex items-center justify-between">
-						{moment().isAfter(moment(props.data["expire"])) && (
-							<>
+						<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{props.data["email"]}</p>
+						{shareCount && (
+							<div className="flex items-center justify-between">
 								<Button
-									btnStyle="outlined"
-									label={srcLang === "ja" ? "詳細" : "Renew Contract"}
+									btnStyle="sm"
+									label={srcLang === "ja" ? "詳細" : "Shared Applications"}
 									btnType="button"
-									handleClick={() => setRCompanyDetails(true)}
+									handleClick={() => setallocationList(true)}
 								/>
-							</>
+							</div>
 						)}
 
-						<Button
-							btnStyle="sm"
-							label={srcLang === "ja" ? "詳細" : "Contract Details"}
-							btnType="button"
-							handleClick={() => setCompanyDetails(true)}
-						/>
+						{shareCount && (
+							<div
+								className="absolute -left-2 -top-2 h-6 w-6 rounded-full  text-sm text-darkGray dark:text-white"
+								style={{
+									borderColor: getColorCode(shareCount["percentage"]),
+									borderWidth: "0 .05rem .01rem .20rem",
+									backgroundColor: rgbaFromHex(getColorCode(shareCount["percentage"]), 0.2)
+								}}
+							>
+								<div className="flex h-full w-full items-center justify-center">{shareCount["count"]}</div>
+							</div>
+						)}
 					</div>
-
-					{shareCount && (
-						<div
-							className="absolute -left-2 -top-2 h-6 w-6 rounded-full  text-sm text-darkGray dark:text-white"
-							style={{
-								borderColor: getColorCode(shareCount["percentage"]),
-								borderWidth: "0 .05rem .01rem .20rem",
-								backgroundColor: rgbaFromHex(getColorCode(shareCount["percentage"]), 0.2)
-							}}
-						>
-							<div className="flex h-full w-full items-center justify-center">{shareCount["count"]}</div>
-						</div>
-					)}
 				</div>
-			</div>
+			) : (
+				<div className="mb-[30px] w-full px-[15px] md:max-w-[50%] lg:max-w-[33.3333%]">
+					<div className=" h-full rounded-normal bg-lightBlue p-4 shadow-lg dark:bg-gray-700">
+						<div className="mb-2 flex items-start justify-between">
+							<h4 className="my-1 mr-2 text-lg font-semibold">{props.data["cname"]}</h4>
+							<div className="flex items-center gap-2">
+								<div className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => setAccountDelete(true)}>
+									<i className="fa-solid fa-trash"></i>
+								</div>
+							</div>
+						</div>
+						<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{props.data["email"]}</p>
+						<div className="flex items-center justify-between">
+							{moment().isAfter(moment(props.data["expire"])) && (
+								<>
+									<Button
+										btnStyle="outlined"
+										label={srcLang === "ja" ? "詳細" : "Renew Contract"}
+										btnType="button"
+										handleClick={() => setRCompanyDetails(true)}
+									/>
+								</>
+							)}
+
+							<Button
+								btnStyle="sm"
+								label={srcLang === "ja" ? "詳細" : "Contract Details"}
+								btnType="button"
+								handleClick={() => setCompanyDetails(true)}
+							/>
+						</div>
+					</div>
+				</div>
+			)}
 
 			<Transition.Root show={companyDetails} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setCompanyDetails}>
@@ -477,6 +526,143 @@ export default function ACard(props: any) {
 												label={srcLang === "ja" ? "近い" : "Close"}
 												btnType="button"
 												handleClick={() => setRCompanyDetails(false)}
+											/>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={allocationList} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setallocationList}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:mx-4">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">
+											{srcLang === "ja" ? "詳細" : "Shared Application List"}
+										</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setallocationList(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="-mx-3 flex flex-wrap items-start">
+											<div className="flex h-auto w-full flex-col justify-between overflow-auto bg-white dark:bg-gray-800">
+												{shareADetail && shareADetail["applicant"] && shareADetail["applicant"].length > 0 ? (
+													<table cellPadding={"0"} cellSpacing={"0"} className="h-fit w-full">
+														<thead>
+															<tr>
+																<th className="border-b px-3 py-2 text-left">AI rating</th>
+																<th className="border-b px-3 py-2 text-left">ID</th>
+																<th className="border-b px-3 py-2 text-left">name</th>
+																<th className="border-b px-3 py-2 text-left">email</th>
+																<th className="border-b px-3 py-2 text-left">job title</th>
+																<th className="border-b px-3 py-2 text-left">status</th>
+																<th className="border-b px-3 py-2 text-left">type</th>
+																<th className="border-b px-3 py-2 text-left">application date</th>
+															</tr>
+														</thead>
+														<tbody>
+															{shareADetail["applicant"] && shareADetail["applicant"].map((data, i) => (
+															<tr key={i} className="h-auto cursor-pointer">
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["percentage_fit"] && (
+																		<span
+																			className="px-2 py-1"
+																			style={{
+																				borderColor: getColorCode(data.percentage_fit),
+																				borderWidth: ".20rem .05rem .01rem 0",
+																				borderRadius: ".5rem 2rem"
+																			}}
+																		>
+																			{data["percentage_fit"]}%
+																		</span>
+																	)}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["arefid"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["fname"]}&nbsp;{data["lname"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["email"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["job"]["jobTitle"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["status"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{data["type"]}
+																</td>
+																<td
+																	className="border-b px-3 py-2 text-sm"
+																>
+																	{moment(data["created_at"]).format("MM/DD/YYYY")}
+																</td>
+																</tr>
+															))}
+														</tbody>
+													</table>
+												) : (
+													<p className="mb-4 text-center text-base font-bold">
+														{srcLang === "ja"
+															? "アカウントを削除してもよろしいですか?"
+															: "No application shared with this."}
+													</p>
+												)}
+											</div>
+										</div>
+										<div className="flex w-full justify-between">
+											<Button
+												label={srcLang === "ja" ? "近い" : "Close"}
+												btnType="button"
+												handleClick={() => setallocationList(false)}
 											/>
 										</div>
 									</div>
