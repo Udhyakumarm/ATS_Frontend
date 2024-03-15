@@ -103,7 +103,7 @@ export default function index({ atsVersion, userRole }: any) {
 									<div className="mr-4 flex h-[45px] w-[45px] items-center justify-center rounded bg-[#B2E3FF] p-3">
 										<Image src={integrationIcon} alt="Active Job" height={20} />
 									</div>
-									<span>Allocation of Application</span>
+									<span>Shared Application</span>
 								</h2>
 							</div>
                             <div className={"border-t px-4"}>

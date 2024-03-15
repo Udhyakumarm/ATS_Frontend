@@ -875,73 +875,73 @@ export default function OrgSideBar() {
 				</svg>
 			)
 		},
-		{
-			title: srcLang === "ja" ? "契約" : "Pipeline",
-			url: "/agency/pipeline",
-			pre: preOrNot("pipeline"),
-			com: comOrNot("pipeline"),
-			expired: isExpired,
+		// {
+		// 	title: srcLang === "ja" ? "契約" : "Pipeline",
+		// 	url: "/agency/pipeline",
+		// 	pre: preOrNot("pipeline"),
+		// 	com: comOrNot("pipeline"),
+		// 	expired: isExpired,
 
-			icon: (
-				<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 39 46" fill="none">
-					<g filter="url(#filter0_d_2512_2700)">
-						<mask
-							id="mask0_2512_2700"
-							style={{ maskType: "alpha" }}
-							maskUnits="userSpaceOnUse"
-							x="0"
-							y="0"
-							width="39"
-							height="42"
-						>
-							<rect y="0.957031" width="38.0312" height="40.1877" fill="#D9D9D9" />
-						</mask>
-						<g mask="url(#mask0_2512_2700)">
-							<path
-								d="M9.50781 37.7945C8.18728 37.7945 7.06483 37.3061 6.14046 36.3293C5.21609 35.3525 4.75391 34.1664 4.75391 32.771V27.7475H9.50781V4.30469H33.2773V32.771C33.2773 34.1664 32.8152 35.3525 31.8908 36.3293C30.9664 37.3061 29.844 37.7945 28.5234 37.7945H9.50781ZM28.5234 34.4455C28.9724 34.4455 29.3488 34.285 29.6525 33.9641C29.9562 33.6431 30.1081 33.2454 30.1081 32.771V7.65366H12.6771V27.7475H26.9388V32.771C26.9388 33.2454 27.0907 33.6431 27.3944 33.9641C27.6981 34.285 28.0745 34.4455 28.5234 34.4455ZM14.2617 16.0261V12.6771H28.5234V16.0261H14.2617ZM14.2617 21.0496V17.7006H28.5234V21.0496H14.2617ZM9.50781 34.4455H23.7695V31.0965H7.92318V32.771C7.92318 33.2454 8.07504 33.6431 8.37876 33.9641C8.68248 34.285 9.05883 34.4455 9.50781 34.4455ZM9.50781 34.4455H7.92318H23.7695H9.50781Z"
-								fill="url(#paint0_linear_2512_2700)"
-							/>
-						</g>
-					</g>
-					<defs>
-						<filter
-							id="filter0_d_2512_2700"
-							x="0.753906"
-							y="4.30469"
-							width="36.5234"
-							height="41.4883"
-							filterUnits="userSpaceOnUse"
-							color-interpolation-filters="sRGB"
-						>
-							<feFlood flood-opacity="0" result="BackgroundImageFix" />
-							<feColorMatrix
-								in="SourceAlpha"
-								type="matrix"
-								values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-								result="hardAlpha"
-							/>
-							<feOffset dy="4" />
-							<feGaussianBlur stdDeviation="2" />
-							<feComposite in2="hardAlpha" operator="out" />
-							<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-							<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2512_2700" />
-							<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2512_2700" result="shape" />
-						</filter>
-						<linearGradient
-							id="paint0_linear_2512_2700"
-							x1="1.23885"
-							y1="33.3284"
-							x2="45.9983"
-							y2="19.341"
-							gradientUnits="userSpaceOnUse"
-						>
-							<stop stop-color="#2D129A" />
-							<stop offset="1" stop-color="#47BBFD" />
-						</linearGradient>
-					</defs>
-				</svg>
-			)
-		},
+		// 	icon: (
+		// 		<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 39 46" fill="none">
+		// 			<g filter="url(#filter0_d_2512_2700)">
+		// 				<mask
+		// 					id="mask0_2512_2700"
+		// 					style={{ maskType: "alpha" }}
+		// 					maskUnits="userSpaceOnUse"
+		// 					x="0"
+		// 					y="0"
+		// 					width="39"
+		// 					height="42"
+		// 				>
+		// 					<rect y="0.957031" width="38.0312" height="40.1877" fill="#D9D9D9" />
+		// 				</mask>
+		// 				<g mask="url(#mask0_2512_2700)">
+		// 					<path
+		// 						d="M9.50781 37.7945C8.18728 37.7945 7.06483 37.3061 6.14046 36.3293C5.21609 35.3525 4.75391 34.1664 4.75391 32.771V27.7475H9.50781V4.30469H33.2773V32.771C33.2773 34.1664 32.8152 35.3525 31.8908 36.3293C30.9664 37.3061 29.844 37.7945 28.5234 37.7945H9.50781ZM28.5234 34.4455C28.9724 34.4455 29.3488 34.285 29.6525 33.9641C29.9562 33.6431 30.1081 33.2454 30.1081 32.771V7.65366H12.6771V27.7475H26.9388V32.771C26.9388 33.2454 27.0907 33.6431 27.3944 33.9641C27.6981 34.285 28.0745 34.4455 28.5234 34.4455ZM14.2617 16.0261V12.6771H28.5234V16.0261H14.2617ZM14.2617 21.0496V17.7006H28.5234V21.0496H14.2617ZM9.50781 34.4455H23.7695V31.0965H7.92318V32.771C7.92318 33.2454 8.07504 33.6431 8.37876 33.9641C8.68248 34.285 9.05883 34.4455 9.50781 34.4455ZM9.50781 34.4455H7.92318H23.7695H9.50781Z"
+		// 						fill="url(#paint0_linear_2512_2700)"
+		// 					/>
+		// 				</g>
+		// 			</g>
+		// 			<defs>
+		// 				<filter
+		// 					id="filter0_d_2512_2700"
+		// 					x="0.753906"
+		// 					y="4.30469"
+		// 					width="36.5234"
+		// 					height="41.4883"
+		// 					filterUnits="userSpaceOnUse"
+		// 					color-interpolation-filters="sRGB"
+		// 				>
+		// 					<feFlood flood-opacity="0" result="BackgroundImageFix" />
+		// 					<feColorMatrix
+		// 						in="SourceAlpha"
+		// 						type="matrix"
+		// 						values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+		// 						result="hardAlpha"
+		// 					/>
+		// 					<feOffset dy="4" />
+		// 					<feGaussianBlur stdDeviation="2" />
+		// 					<feComposite in2="hardAlpha" operator="out" />
+		// 					<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+		// 					<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2512_2700" />
+		// 					<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2512_2700" result="shape" />
+		// 				</filter>
+		// 				<linearGradient
+		// 					id="paint0_linear_2512_2700"
+		// 					x1="1.23885"
+		// 					y1="33.3284"
+		// 					x2="45.9983"
+		// 					y2="19.341"
+		// 					gradientUnits="userSpaceOnUse"
+		// 				>
+		// 					<stop stop-color="#2D129A" />
+		// 					<stop offset="1" stop-color="#47BBFD" />
+		// 				</linearGradient>
+		// 			</defs>
+		// 		</svg>
+		// 	)
+		// },
 		{
 			title: srcLang === "ja" ? "候補者" : "Applicants",
 			url: "/agency/applicants",
@@ -1010,10 +1010,10 @@ export default function OrgSideBar() {
 			)
 		},
 		{
-			title: srcLang === "ja" ? "契約" : "Allocate",
-			url: "/agency/allocate",
-			pre: preOrNot("allocate"),
-			com: comOrNot("allocate"),
+			title: srcLang === "ja" ? "契約" : "Shared",
+			url: "/agency/shared",
+			pre: preOrNot("shared"),
+			com: comOrNot("shared"),
 			expired: isExpired,
 
 			icon: (

@@ -9,7 +9,7 @@ import { ChangeEvent, Fragment, useRef } from "react";
 import Button from "@/components/Button";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore } from "@/utils/code";
+import { useLangStore,useUserStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
@@ -22,6 +22,8 @@ import { PopupModal } from "react-calendly";
 import { InlineWidget } from "react-calendly";
 
 export default function Pricing() {
+	
+	const type = useUserStore((state: { type: any }) => state.type);
 	const { t } = useTranslation("common");
 
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -789,18 +791,14 @@ export default function Pricing() {
 														</Transition>
 													</Menu> */}
 												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
+												<td className="px-3 py-2 text-center">Coming soon</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-xmark"></i>
 												</td>
 												<td className="px-3 py-2 text-center">
 													<i className="fa-solid fa-xmark"></i>
 												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
+												<td className="px-3 py-2 text-center">Coming soon</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
@@ -876,7 +874,42 @@ export default function Pricing() {
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
-													Vendors/Agency Contracts
+													Client Contracts
+													{/* <Menu as="div" className="relative inline-block">
+														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
+															<i className="fa-solid fa-circle-question"></i>
+														</Menu.Button>
+														<Transition
+															as={Fragment}
+															enter="transition ease-out duration-100"
+															enterFrom="transform opacity-0 scale-95"
+															enterTo="transform opacity-100 scale-100"
+															leave="transition ease-in duration-75"
+															leaveFrom="transform opacity-100 scale-100"
+															leaveTo="transform opacity-0 scale-95"
+														>
+															<Menu.Items
+																className={
+																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
+																}
+															>
+																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
+																<Menu.Item>
+																	<p>Lorem impsum is a dummy text provide here.</p>
+																</Menu.Item>
+															</Menu.Items>
+														</Transition>
+													</Menu> */}
+												</td>
+												<td className="px-3 py-2 text-center">Up to 2</td>
+												<td className="px-3 py-2 text-center">Up to 3</td>
+												<td className="px-3 py-2 text-center">Up to 5</td>
+												<td className="px-3 py-2 text-center">Unlimited</td>
+											</tr>
+
+											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
+												<td className="w-[300px] px-3 py-2">
+													SubVendors Contracts
 													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
@@ -984,58 +1017,15 @@ export default function Pricing() {
 														</Transition>
 													</Menu> */}
 												</td>
-												<td className="px-3 py-2 text-center">Automate & Manual</td>
 												<td className="px-3 py-2 text-center">Manual</td>
 												<td className="px-3 py-2 text-center">Manual</td>
-												<td className="px-3 py-2 text-center">Automate & Manual</td>
+												<td className="px-3 py-2 text-center">Manual</td>
+												<td className="px-3 py-2 text-center">Manual</td>
 											</tr>
 
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Custimize Dashboard
-													{/* <Menu as="div" className="relative inline-block">
-														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-															<i className="fa-solid fa-circle-question"></i>
-														</Menu.Button>
-														<Transition
-															as={Fragment}
-															enter="transition ease-out duration-100"
-															enterFrom="transform opacity-0 scale-95"
-															enterTo="transform opacity-100 scale-100"
-															leave="transition ease-in duration-75"
-															leaveFrom="transform opacity-100 scale-100"
-															leaveTo="transform opacity-0 scale-95"
-														>
-															<Menu.Items
-																className={
-																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
-																}
-															>
-																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
-																<Menu.Item>
-																	<p>Lorem impsum is a dummy text provide here.</p>
-																</Menu.Item>
-															</Menu.Items>
-														</Transition>
-													</Menu> */}
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-xmark"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-xmark"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-											</tr>
-
-											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-												<td className="w-[300px] px-3 py-2">
-													Offer Management
 													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
@@ -1294,49 +1284,6 @@ export default function Pricing() {
 											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
 												<td className="w-[300px] px-3 py-2">
 													Career & Widget
-													{/* <Menu as="div" className="relative inline-block">
-														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
-															<i className="fa-solid fa-circle-question"></i>
-														</Menu.Button>
-														<Transition
-															as={Fragment}
-															enter="transition ease-out duration-100"
-															enterFrom="transform opacity-0 scale-95"
-															enterTo="transform opacity-100 scale-100"
-															leave="transition ease-in duration-75"
-															leaveFrom="transform opacity-100 scale-100"
-															leaveTo="transform opacity-0 scale-95"
-														>
-															<Menu.Items
-																className={
-																	"absolute left-[100%] top-0 z-[2] ml-2 w-[200px] rounded bg-gradDarkBlue px-4 py-2 text-[10px] leading-normal text-white shadow-highlight"
-																}
-															>
-																<span className="absolute -left-1 top-4 block h-3 w-3 rotate-45 bg-gradDarkBlue"></span>
-																<Menu.Item>
-																	<p>Lorem impsum is a dummy text provide here.</p>
-																</Menu.Item>
-															</Menu.Items>
-														</Transition>
-													</Menu> */}
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-												<td className="px-3 py-2 text-center">
-													<i className="fa-solid fa-check"></i>
-												</td>
-											</tr>
-
-											<tr className="odd:bg-gray-100 dark:odd:bg-gray-600">
-												<td className="w-[300px] px-3 py-2">
-													Application Kanban Board
 													{/* <Menu as="div" className="relative inline-block">
 														<Menu.Button className="ml-2 w-6 py-2 text-darkGray dark:text-gray-400">
 															<i className="fa-solid fa-circle-question"></i>
