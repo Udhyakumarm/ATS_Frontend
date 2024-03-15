@@ -169,9 +169,11 @@ export default function AuthSignIn({ providers }: any) {
 						}
 						if (response.data.version) {
 							setversion(response.data.version);
+							toastcomp(response.data.version, "success");
 						}
 						if (response.data.type) {
 							settype(response.data.type);
+							toastcomp(response.data.type, "success");
 						}
 						if (response.data.userObj && response.data["userObj"].length > 0) {
 							setuser(response.data.userObj);
