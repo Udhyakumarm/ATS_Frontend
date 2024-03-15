@@ -1017,8 +1017,8 @@ export default function OrgSideBar() {
 			expired: isExpired,
 
 			icon: (
-				<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 39 46" fill="none">
-					<g filter="url(#filter0_d_2512_2700)">
+				<svg xmlns="http://www.w3.org/2000/svg" width="29" height="35" viewBox="0 0 29 35" fill="none">
+					{/* <g filter="url(#filter0_d_2512_2700)">
 						<mask
 							id="mask0_2512_2700"
 							style={{ maskType: "alpha" }}
@@ -1072,6 +1072,51 @@ export default function OrgSideBar() {
 							<stop stop-color="#2D129A" />
 							<stop offset="1" stop-color="#47BBFD" />
 						</linearGradient>
+					</defs> */}
+					<g filter="url(#a)">
+						<mask
+							id="b"
+							width={28}
+							height={30}
+							x={1}
+							y={0}
+							maskUnits="userSpaceOnUse"
+							style={{
+								maskType: "alpha"
+							}}
+						>
+							<path fill="#D9D9D9" d="M1 0h27.027v30H1z" />
+						</mask>
+						<g mask="url(#b)">
+							<path
+								fill="url(#c)"
+								d="M8.883 18.75v-7.5c0-.688.22-1.276.662-1.766.441-.49.971-.734 1.59-.734h9.179l-2.9-3.219 1.604-1.781L24.65 10l-5.63 6.25-1.605-1.75 2.9-3.25h-9.178v7.5H8.883Zm-2.252 7.5c-.62 0-1.15-.245-1.59-.734-.442-.49-.662-1.078-.662-1.766V5H6.63v18.75h13.514v-5h2.252v5c0 .688-.22 1.276-.662 1.766-.44.49-.971.734-1.59.734H6.63Z"
+							/>
+						</g>
+					</g>
+					<defs>
+						<linearGradient id="c" x1={1.881} x2={33.357} y1={23.25} y2={12.845} gradientUnits="userSpaceOnUse">
+							<stop stopColor="#2D129A" />
+							<stop offset={1} stopColor="#47BBFD" />
+						</linearGradient>
+						<filter
+							id="a"
+							width={28.27}
+							height={30.5}
+							x={0.379}
+							y={3.75}
+							colorInterpolationFilters="sRGB"
+							filterUnits="userSpaceOnUse"
+						>
+							<feFlood floodOpacity={0} result="BackgroundImageFix" />
+							<feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+							<feOffset dy={4} />
+							<feGaussianBlur stdDeviation={2} />
+							<feComposite in2="hardAlpha" operator="out" />
+							<feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+							<feBlend in2="BackgroundImageFix" result="effect1_dropShadow_2759_2122" />
+							<feBlend in="SourceGraphic" in2="effect1_dropShadow_2759_2122" result="shape" />
+						</filter>
 					</defs>
 				</svg>
 			)
