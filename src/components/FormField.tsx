@@ -157,6 +157,7 @@ export default function FormField({
 								`min-h-[45px] w-full resize-none rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 								" "
 							}
+							disabled={disabled}
 							value={value}
 							onChange={handleChange}
 							placeholder={placeholder}

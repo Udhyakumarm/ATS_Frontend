@@ -59,10 +59,10 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 				let title = `${userState[0]["name"]} (${userState[0]["email"]}) has ${status} a Job`;
 
 				addActivityLog(axiosInstanceAuth2, aname);
-				addNotifyJobLog(axiosInstanceAuth2, title, "Job", refid, `/organization/jobs/${status.toLowerCase()}/`);
+				addNotifyJobLog(axiosInstanceAuth2, title, "Job", refid, `/agency/jobs/${status.toLowerCase()}/`);
 				toggleLoadMode(true);
 
-				router.push(`/organization/jobs/${status.toLowerCase()}/`);
+				router.push(`/agency/jobs/${status.toLowerCase()}/`);
 			})
 			.catch((err) => {
 				toastcomp(`${status} Not Successfully`, "error");
@@ -514,14 +514,14 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 																</button>
 															</Menu.Item>
 															<Menu.Item>
-													<button
-														type="button"
-														className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-														onClick={() => setAddCand(true)}
-													>
-														{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
-													</button>
-												</Menu.Item>
+																<button
+																	type="button"
+																	className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+																	onClick={() => setAddCand(true)}
+																>
+																	{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
+																</button>
+															</Menu.Item>
 														</>
 													)}
 
@@ -619,45 +619,42 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 										<></>
 									)}
 								</>
-							)
-							:
-							<Menu as="div" className="relative inline-block">
-								<Menu.Button className={"p-2"}>
-									<i className="fa-solid fa-ellipsis-vertical"></i>
-								</Menu.Button>
-								<Transition
-									as={Fragment}
-									enter="transition ease-out duration-100"
-									enterFrom="transform opacity-0 scale-95"
-									enterTo="transform opacity-100 scale-100"
-									leave="transition ease-in duration-75"
-									leaveFrom="transform opacity-100 scale-100"
-									leaveTo="transform opacity-0 scale-95"
-								>
-									<Menu.Items
-										className={
-											"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
-										}
+							) : (
+								<Menu as="div" className="relative inline-block">
+									<Menu.Button className={"p-2"}>
+										<i className="fa-solid fa-ellipsis-vertical"></i>
+									</Menu.Button>
+									<Transition
+										as={Fragment}
+										enter="transition ease-out duration-100"
+										enterFrom="transform opacity-0 scale-95"
+										enterTo="transform opacity-100 scale-100"
+										leave="transition ease-in duration-75"
+										leaveFrom="transform opacity-100 scale-100"
+										leaveTo="transform opacity-0 scale-95"
 									>
-										{job.jobStatus === "Active" && (
-											<>
-												
-												<Menu.Item>
-										<button
-											type="button"
-											className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
-											onClick={() => setAddCand(true)}
+										<Menu.Items
+											className={
+												"absolute right-0 top-[100%] w-[200px] rounded-normal bg-white py-2 text-darkGray shadow-normal dark:bg-black dark:text-gray-200"
+											}
 										>
-											{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
-										</button>
-									</Menu.Item>
-											</>
-										)}
-
-									</Menu.Items>
-								</Transition>
-							</Menu>
-							}
+											{job.jobStatus === "Active" && (
+												<>
+													<Menu.Item>
+														<button
+															type="button"
+															className="relative w-full cursor-pointer px-6 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-900"
+															onClick={() => setAddCand(true)}
+														>
+															{srcLang === "ja" ? "レジュメをアップロード (pdf/doc)" : "Upload Resume (PDF/DOC)"}
+														</button>
+													</Menu.Item>
+												</>
+											)}
+										</Menu.Items>
+									</Transition>
+								</Menu>
+							)}
 						</div>
 					)}
 				</div>
@@ -710,7 +707,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					btnStyle="outlined"
 					btnType="button"
 					label={srcLang === "ja" ? "みる" : "View"}
-					handleClick={() => router.push(`/organization/jobs/preview/${shareCN}/${job.refid}`)}
+					handleClick={() => router.push(`/agency/jobs/preview/${shareCN}/${job.refid}`)}
 				/>
 			</div>
 
@@ -957,10 +954,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 											>
 												<h5 className="mb-2 text-darkGray">Drag and Drop Resume Here</h5>
 												<p className="mb-2 text-sm">
-													Or{" "}
-													<span className="font-semibold text-primary dark:text-white">
-													Click Here To Upload
-													</span>
+													Or <span className="font-semibold text-primary dark:text-white">Click Here To Upload</span>
 												</p>
 												<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
 												<input
@@ -1075,7 +1069,6 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 													handleChange={(e) => setsummary(e.target.value)}
 													required
 												/>
-												
 
 												<Button
 													label={"Apply"}

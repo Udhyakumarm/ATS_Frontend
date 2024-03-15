@@ -12,6 +12,9 @@ export default function Home() {
 			if (type === "Organization") {
 				router.replace("/organization");
 			}
+			if (type === "Agency") {
+				router.replace("/agency");
+			}
 			if (type === "Candidate" && cname && cname.length > 0) {
 				router.replace(`/organization/${cname}/`);
 			}
