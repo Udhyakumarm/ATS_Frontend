@@ -8,13 +8,11 @@ import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import startNewChat from "/public/images/no-data/iconGroup-4.png";
 import InboxChatMsg from "./chatMsg";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import toastcomp from "@/components/toast";
 import moment from "moment";
 import Link from "next/link";
-import EmojiPicker from "emoji-picker-react";
 import { useTheme } from "next-themes";
+import InputEmoji from "react-input-emoji";
 
 export default function InboxFrame({
 	togglePages,
@@ -48,8 +46,8 @@ export default function InboxFrame({
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
 
 	const handleEmojiClick = (emoji) => {
-		console.log("emoji", emoji);
-		// settext(text + emoji.native);
+		console.log(emoji);
+		// console.log("emoji", emoji);
 		settext(text + emoji.emoji);
 		setIsPickerOpen(false);
 	};
@@ -1014,7 +1012,7 @@ export default function InboxFrame({
 								</div>
 							)}
 							<div className="flex items-center gap-2 rounded bg-white p-2 shadow-normal dark:bg-gray-800">
-								<textarea
+								{/* <textarea
 									name=""
 									id=""
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
@@ -1037,25 +1035,67 @@ export default function InboxFrame({
 											handleSendClick();
 										}
 									}}
-								></textarea>
+								></textarea> */}
+								{/*----------------------- React input emoji----------------------- */}
+								<InputEmoji
+									value={text}
+									onChange={(newText) => {
+										settext(newText);
+										setisTyping(true);
+									}}
+									cleanOnEnter
+									fontFamily="poppins"
+									placeholder="Message"
+									onCompositionStart={handleCompositionStart}
+									onCompositionUpdate={handleCompositionUpdate}
+									onCompositionEnd={handleCompositionEnd}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" && !composition) {
+											e.preventDefault();
+											e.stopPropagation();
+											handleSendClick();
+										}
+									}}
+									onFocus={(e) => {
+										setisTyping(true);
+									}}
+									onBlur={(e) => {
+										setisTyping(false);
+									}}
+									borderRadius={10}
+									fontSize={16}
+									keepOpened={true}
+									style={{
+										height: "40px",
+										width: "100%",
+										resize: "none",
+										border: "0",
+										backgroundColor: "transparent",
+										boxShadow: "none",
+										outline: "none",
+										ring: "0"
+									}}
+								/>
 								<div className="flex gap-4">
-									<button
+									{/* <button
 										type="button"
 										className="block px-0.5 text-lg leading-normal"
 										onClick={() => setIsPickerOpen(!isPickerOpen)}
 									>
 										<i className="fa-regular fa-face-smile"></i>
-									</button>
+									</button> */}
 
 									{isPickerOpen && (
 										<div style={{ position: "absolute", bottom: "50px", right: "10px" }}>
-											<EmojiPicker
+											{/* <EmojiPicker
 												onEmojiClick={handleEmojiClick}
 												emojiStyle={"google"}
 												theme={ctheme === "dark" ? "dark" : "light"}
-											/>
+											/> */}
 											{/* <Picker
 												data={data}
+												set="google"
+												emojiSize={28}
 												onEmojiSelect={handleEmojiClick}
 												emojiButtonRadius="6px"
 												emojiButtonColors={[
