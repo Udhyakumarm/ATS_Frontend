@@ -238,7 +238,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		}
 	}, [shareJob]);
 
-	async function uploadResumeFinalStep(trefid:any,refid:any) {
+	async function uploadResumeFinalStep(trefid: any, refid: any) {
 		const fd = new FormData();
 		fd.append("jid", refid);
 		fd.append("trefid", trefid);
@@ -246,12 +246,10 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			.post(`/applicant/pipeline-applicant-apply/`, fd)
 			.then(async (res) => {
 				console.log("!-", res.data);
-				if(res.data.success === 1){
-					toastcomp("Applicant added","sucess");
-				}
-				else{
+				if (res.data.success === 1) {
+					toastcomp("Applicant added", "sucess");
+				} else {
 					toastcomp("Applicant not added", "error");
-
 				}
 			})
 			.catch((err) => {
@@ -261,15 +259,62 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 	}
 
 	async function shareAppToCon() {
-		setocrLoader2(true)
+		setocrLoader2(true);
+		let requests = [];
+		for (let i = 0; i < sc2.length; i++) {
+			//job
 
-		for(let i=0;i<sc2.length;i++){//job
-
-			for(let j=0;j<sc.length;j++){//resume
-				uploadResumeFinalStep(sc[j],sc2[i])
+			for (let j = 0; j < sc.length; j++) {
+				//resume
+				const fd = new FormData();
+				fd.append("jid", sc2[i]);
+				fd.append("trefid", sc[j]);
+				const abc = axiosInstanceAuth2.post(`/applicant/pipeline-applicant-apply/`, fd);
+				requests.push(abc);
 			}
 		}
-		setocrLoader2(false);	
+
+		Promise.all(requests)
+			.then((responses) => {
+				console.log("responses", "@@@", responses);
+				let success = 0;
+				let error = 0;
+
+				setocrLoader2(false);
+				// Responses from all requests
+				for (let i = 0; i < responses.length; i++) {
+					if (responses[i].data.success === 1) {
+						success = success + 1;
+					} else {
+						error = error + 1;
+					}
+				}
+
+				if (success != 0) {
+					toastcomp(`${success} Applicants added`, "sucess");
+				}
+
+				if (error != 0) {
+					toastcomp(`${error} Applicants already exists`, "sucess");
+				}
+
+				setsc([])
+				setsc2([])
+				setshareJob(false)
+
+				// const [response1, response2, response3] = responses;
+				// console.log("Response 1:", response1.data);
+				// console.log("Response 2:", response2.data);
+				// console.log("Response 3:", response3.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching data:", "@@@", error);
+				toastcomp("Applicant not added fun collapsed", "error");
+				setocrLoader2(false);
+				setsc([]);
+				setsc2([]);
+				setshareJob(false);
+			});
 	}
 
 	// add resume
@@ -300,11 +345,10 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		setstep(0);
 		setstep1Data({});
 
-
 		setsearch("");
 		loadResumes();
-		setsc([])
-		setsc2([])
+		setsc([]);
+		setsc2([]);
 	}
 
 	function disBtnApply() {
@@ -332,7 +376,6 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		}
 	}, [addCand]);
 
-	
 	useEffect(() => {
 		if (resume != null) {
 			console.log("$", "Step1", "Resume Changed Useeffect...");
@@ -342,7 +385,6 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		}
 	}, [resume]);
 
-	
 	async function addResumeStep1(fd: any) {
 		setocrLoader(true);
 		await axiosInstanceAuth2
@@ -391,7 +433,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 				resetState();
 			});
 	}
-	
+
 	async function uploadResumeStep2_1(data: any) {
 		toastcomp("step 3", "success");
 		setocrLoader(true);
@@ -431,7 +473,6 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			});
 	}
 
-	
 	async function uploadResumeStep2_2() {
 		toastcomp("step 3", "success");
 		setocrLoader(true);
@@ -443,14 +484,14 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		if (step1Data["rtext"] && step1Data["rtext"].length > 0) {
 			fd.append("r_text", step1Data["rtext"]);
 		}
-		
+
 		fd.append("resume", resume);
 
 		await axiosInstanceAuth2
 			.post(`/applicant/create-db/`, fd)
 			.then((res) => {
 				console.log("!!!", "apply noauth md", res.data);
-				if(res.data.success === 1) {
+				if (res.data.success === 1) {
 					toastcomp("Resume Added Successfully", "success");
 				} else {
 					toastcomp("The resume already exists in the Database.", "error");
