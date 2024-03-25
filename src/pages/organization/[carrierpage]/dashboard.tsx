@@ -377,7 +377,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																		{data["job"]["jobEmploymentType"] ? (
 																			data["job"]["jobEmploymentType"]
 																		) : (
-																			<>Not Disclosed</>
+																			<>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</>
 																		)}
 																	</li>
 																	<li>
@@ -390,12 +390,13 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																				{data["job"]["jobToSalary"]}
 																			</>
 																		) : (
-																			<>Not Disclosed</>
+																			<>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</>
 																		)}
 																	</li>
 																</ul>
 																<p className="border-b pb-3 text-[12px] text-darkGray dark:text-gray-400">
-																	Applied On - {moment(data["created_at"]).format("DD MMM YYYY, h:mm a")}
+																{srcLang === "ja" ? "適用日" : "Applied On"}
+ - {moment(data["created_at"]).format("DD MMM YYYY, h:mm a")}
 																</p>
 																<ul className="flex justify-between pt-3 text-[12px] font-bold text-darkGray dark:text-gray-400">
 																	<li className="flex items-center">
@@ -412,7 +413,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																				setViewApplicant(true);
 																			}}
 																		>
-																			View
+																			{srcLang === "ja" ? "表示" : "View"}
 																		</button>
 																		<span>|</span>
 																		<button
@@ -424,7 +425,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																				setodocs(true);
 																			}}
 																		>
-																			Change
+																			{srcLang === "ja" ? "変更" : "Change"}
 																		</button>
 																	</div>
 																</ul>
@@ -454,7 +455,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 											</>
 										) : (
 											<>
-												<p className="text-center">No Applied Jobs Found</p>
+												<p className="text-center">{srcLang === "ja" ? "適用された求人は見つかりません" : "No Applied Jobs Found"}</p>
 											</>
 										)}
 									</div>
@@ -484,8 +485,8 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 											<section className="">
 												<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 													<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-													<p className="text-lg">No Offer</p>
-													<small className="font-semibold">Right Now There Are No Offers For You.</small>
+													<p className="text-lg">{srcLang === "ja" ? "オファーなし" : "No Offer"}</p>
+													<small className="font-semibold">{srcLang === "ja" ? "現在、あなたへのオファーはありません。" : "Right Now There Are No Offers For You."}</small>
 												</div>
 											</section>
 										) : (
@@ -499,13 +500,13 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																		<section>
 																			<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																				<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																				{data["step"] === 3 && <p className="text-lg">Offer In A Disscussion Stage </p>}
+																				{data["step"] === 3 && <p className="text-lg">{srcLang === "ja" ? "討論段階の提供" : "Offer In A Disscussion Stage"} </p>}
 																				{data["step"] === 2 && (
-																					<p className="text-lg">Offer In A Finalization Stage </p>
+																					<p className="text-lg"> {srcLang === "ja" ? "討論段階の提供" : "Offer In A Disscussion Stage"} </p>
 																				)}
 																				{data["step"] === 3 && (
 																					<small className="font-semibold">
-																						You can view the offer letter once the recruiter makes it visible to you.
+																						{srcLang === "ja" ? "オファーレターは、採用担当者が閲覧できるようにした時点で見ることができます" : "You can view the offer letter once the recruiter makes it visible to you."}
 																					</small>
 																				)}
 																			</div>
@@ -514,7 +515,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																) : (
 																	<>
 																		<div className="flex flex-wrap items-center justify-between bg-lightBlue p-2 px-8 text-sm dark:bg-gray-700">
-																			<p className="my-2 font-bold">Offer Letter</p>
+																			<p className="my-2 font-bold"> {srcLang === "ja" ? "提供書" : "Offer Letter"}</p>
 																			<button
 																				className="my-2 inline-block font-bold text-primary hover:underline dark:text-gray-200"
 																				onClick={() => {
@@ -526,7 +527,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																				}}
 																			>
 																				<i className="fa-solid fa-download mr-2"></i>
-																				Download
+																				{srcLang === "ja" ? "ダウンロード" : "Download"}
 																			</button>
 																		</div>
 
@@ -561,7 +562,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																						)}
 																					</p>
 																					<div className="pt-8">
-																						<h5 className="mb-2 font-bold">Add Signature</h5>
+																						<h5 className="mb-2 font-bold">{srcLang === "ja" ? "署名を追加" : "Add Signature"}</h5>
 																						<label
 																							htmlFor="uploadBanner"
 																							className="flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-normal border-2 border-dashed py-4 hover:bg-lightBlue dark:hover:bg-gray-700"
@@ -570,9 +571,9 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 																								<>
 																									<i className="fa-solid fa-plus text-[80px] text-lightGray"></i>
 																									<p className="text-sm text-darkGray dark:text-gray-400">
-																										Upload Signature or Photo
+																									{srcLang === "ja" ? "署名または写真をアップロード" : "Upload Signature or Photo"}
 																										<br />
-																										<small>(File type should be .png format)</small>
+																										<small> {srcLang === "ja" ? "(ファイルタイプは .png 形式である必要があります)" : "(File type should be .png format)"}</small>
 																									</p>
 																								</>
 																							) : (
@@ -625,7 +626,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 															<section>
 																<div className="mb-6 rounded-normal bg-yellow-100 px-6 py-8 text-center font-bold text-gray-700">
 																	<i className="fa-regular fa-clock mb-2 text-[40px]"></i>
-																	<p className="text-lg">Offer In A Prepration Stage </p>
+																	<p className="text-lg">{srcLang === "ja" ? "準備段階の提供" : "Offer In A Prepration Stage"} </p>
 																</div>
 															</section>
 														)}
@@ -685,7 +686,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 											</div>
 											{docs && docs.length > 0 && (
 												<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-													<label className="mb-1 inline-block font-bold">Optional Document</label>
+													<label className="mb-1 inline-block font-bold">{srcLang === "ja" ? "オプションの文書" : "Optional Document"}</label>
 													<article className="flex flex-col text-sm">
 														{docs.map((data, i) => (
 															<Link
@@ -703,7 +704,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 												</div>
 											)}
 											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-												<label className="mb-1 inline-block font-bold">Candidate Information</label>
+												<label className="mb-1 inline-block font-bold">{srcLang === "ja" ? "候補者情報" : "Candidate Information"}</label>
 												<article className="text-sm">
 													Name :{" "}
 													{venappdetail["fname"] &&
@@ -789,7 +790,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 									<div className="p-8">
 										{odocsapp && (
 											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-												<label className="mb-1 inline-block font-bold">Candidate Information</label>
+												<label className="mb-1 inline-block font-bold"> {srcLang === "ja" ? "現在のオプションの文書" : "Current Optional Document"}</label>
 												<article className="text-sm">
 													Name :{" "}
 													{odocsapp["fname"] &&
@@ -814,7 +815,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 
 										{docs && docs.length > 0 && (
 											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-												<label className="mb-1 inline-block font-bold">Current Optional Document</label>
+												<label className="mb-1 inline-block font-bold">{srcLang === "ja" ? "現在のオプションの文書" : "Current Optional Document"}</label>
 												<article className="flex flex-col text-sm">
 													{docs.map((data, i) => (
 														<div key={i} className="flex items-center justify-between">
@@ -847,10 +848,10 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 										>
 											<p className="mb-2 text-sm">
 												<span className="font-semibold text-primary dark:text-white">
-													Click here to Upload Single or Multiple Optional Documents
+												{srcLang === "ja" ? "単一または複数の任意書類をアップロードするには、ここをクリックしてください。" : "Click here to Upload Single or Multiple Optional Documents"}
 												</span>
 											</p>
-											<p className="text-sm text-darkGray">Maximum File Size: 5 MB</p>
+											<p className="text-sm text-darkGray"> {srcLang === "ja" ? "最大ファイルサイズ: 5 MB" : "Maximum File Size: 5 MB"}</p>
 											<input
 												type="file"
 												className="hidden"
@@ -862,7 +863,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 
 										{odocsresume && odocsresume.length > 0 && (
 											<div className="mb-4 border-b pb-4 dark:border-b-gray-600">
-												<label className="mb-1 inline-block font-bold">New Optional Document</label>
+												<label className="mb-1 inline-block font-bold">{srcLang === "ja" ? "新しいオプションの文書" : "New Optional Document"}</label>
 												<article className="flex flex-col text-sm">
 													{odocsresume.map((data, i) => (
 														<div key={i} className="flex items-center justify-between">

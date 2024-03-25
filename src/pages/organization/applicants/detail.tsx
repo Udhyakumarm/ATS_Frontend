@@ -253,21 +253,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				toastcomp("Feedback Created", "success");
 				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
 
-				if(type === "career"){addNotifyApplicantLog(
-					axiosInstanceAuth2,
-					title,
-					"Applicant",
-					appdata["arefid"],
-					"/organization/applicants/detail"
-				);}
-				if(type === "vendor"){addNotifyApplicantLog(
-					axiosInstanceAuth2,
-					title,
-					"Vendor Applicant",
-					appdata["arefid"],
-					"/organization/applicants/detail"
-				);}
-				if(type === "refer"){
+				if (type === "career") {
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+				}
+				if (type === "vendor") {
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Vendor Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+				}
+				if (type === "refer") {
 					addNotifyApplicantLog(
 						axiosInstanceAuth2,
 						title,
@@ -277,7 +281,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					);
 				}
 
-				
 				// addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
@@ -333,21 +336,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					toastcomp("Feedback Updated", "success");
 					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
 
-					if(type === "career"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "vendor"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Vendor Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "refer"){
+					if (type === "career") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "vendor") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Vendor Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "refer") {
 						addNotifyApplicantLog(
 							axiosInstanceAuth2,
 							title,
@@ -386,21 +393,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Status Updated", "success");
 					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-					if(type === "career"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "vendor"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Vendor Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "refer"){
+					if (type === "career") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "vendor") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Vendor Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "refer") {
 						addNotifyApplicantLog(
 							axiosInstanceAuth2,
 							title,
@@ -409,7 +420,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							"/organization/applicants/detail"
 						);
 					}
-					
+
 					// addNotifyLog(axiosInstanceAuth2, title, "");
 					toggleLoadMode(true);
 					loadFeedback();
@@ -909,6 +920,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															</button>
 														)}
 													</Tab>
+													{/* added missing translation of AI Comparative Analysis */}
 													<Tab as={Fragment}>
 														{({ selected }) => (
 															<button
@@ -920,7 +932,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
-																AI Comparative Analysis
+																{/* {t("Words.AIComparativeAnalysis")} */}
+																{srcLang === "ja" ? "AI比較分析" : "AI Comparative Analysis"}
 															</button>
 														)}
 													</Tab>

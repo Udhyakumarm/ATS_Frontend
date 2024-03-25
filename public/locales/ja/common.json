@@ -277,7 +277,9 @@
 		"GenerateDescription": "説明の生成",
 		"ApplyJob": "求人に応募する",
 		"InterviewDetails": "インタビューの詳細",
-		"EventDuration": "イベント期間"
+		"EventDuration": "イベント期間",
+		"Qualification": "資格",
+		"AIComparativeAnalysis": "AI比較分析"
 	},
 	"Plans": {
 		"Starter": "スターター",

@@ -257,12 +257,13 @@ export default function CanCareerJobDetail(props) {
 						let rating = res.data["Percentage"];
 						let frating = res.data["rating"];
 
-						if(frating && frating != undefined){
+						if (frating && frating != undefined) {
 							if (typeof frating === "string") {
 								frating = parseInt(frating);
 							}
+						} else {
+							frating = 40;
 						}
-						else{frating = 40}
 
 						if (rating && rating != undefined) {
 							if (typeof rating === "string") {
@@ -686,7 +687,7 @@ export default function CanCareerJobDetail(props) {
 										className="mr-6 flex items-center text-sm text-gray-400"
 										onClick={() => mainShareJobOpen(true)}
 									>
-										<span className="mr-2">Share Job</span>
+										<span className="mr-2">{srcLang === "ja" ? "シェアジョブ" : "Share job"}</span>
 										<i className="fa-solid fa-share"></i>
 									</button>
 								</div>
@@ -741,7 +742,9 @@ export default function CanCareerJobDetail(props) {
 									)}
 									<br />
 									<small className="text-secondary opacity-75">
-										Note: Optional documents can be uploaded in the dashboard.
+										{srcLang === "ja"
+											? "注：ダッシュボードでは、任意の文書をアップロードすることができます。"
+											: "Note: Optional documents can be uploaded in the dashboard."}
 									</small>
 
 									<hr className="my-4" />

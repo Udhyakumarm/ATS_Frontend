@@ -325,8 +325,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 			.then(async (res) => {
 				console.log("!-", res.data);
 				setshareContract(false);
-				setsc([])
-				setsc2([])
+				setsc([]);
+				setsc2([]);
 				setPublishThanks(true);
 			})
 			.catch((err) => {
@@ -571,14 +571,22 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 												<table cellPadding={"0"} cellSpacing={"0"} className="h-fit w-full min-w-[948px]">
 													<thead>
 														<tr>
-															<th className="border-b px-3 py-2 text-left">AI rating</th>
-															<th className="border-b px-3 py-2 text-left">ID</th>
-															<th className="border-b px-3 py-2 text-left">name</th>
-															<th className="border-b px-3 py-2 text-left">email</th>
-															<th className="border-b px-3 py-2 text-left">job title</th>
-															<th className="border-b px-3 py-2 text-left">status</th>
-															<th className="border-b px-3 py-2 text-left">type</th>
-															<th className="border-b px-3 py-2 text-left">application date</th>
+															<th className="border-b px-3 py-2 text-left">
+																{srcLang === "ja" ? "AI 評価" : "AI rating"}
+															</th>
+															<th className="border-b px-3 py-2 text-left">{srcLang === "ja" ? "ID" : "ID"}</th>
+															<th className="border-b px-3 py-2 text-left">{srcLang === "ja" ? "名前" : "name"}</th>
+															<th className="border-b px-3 py-2 text-left">{srcLang === "ja" ? "メール" : "email"}</th>
+															<th className="border-b px-3 py-2 text-left">
+																{srcLang === "ja" ? "役職" : "job title"}
+															</th>
+															<th className="border-b px-3 py-2 text-left">
+																{srcLang === "ja" ? "ステータス" : "status"}
+															</th>
+															<th className="border-b px-3 py-2 text-left">{srcLang === "ja" ? "タイプ" : "type"}</th>
+															<th className="border-b px-3 py-2 text-left">
+																{srcLang === "ja" ? "申請日" : "application date"}
+															</th>
 															<th className="border-b px-3 py-2 text-left"></th>
 														</tr>
 													</thead>

@@ -13,6 +13,7 @@ import moment from "moment";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import InputEmoji from "react-input-emoji";
+import { useLangStore } from "@/utils/code";
 
 export default function InboxFrame({
 	togglePages,
@@ -44,6 +45,7 @@ export default function InboxFrame({
 	const [showContactData, setShowContactData] = useState([]);
 
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const handleEmojiClick = (emoji) => {
 		console.log(emoji);
@@ -653,7 +655,7 @@ export default function InboxFrame({
 														// fill="#5500FF"
 													/>
 												</svg> */}
-												<span>Chats</span>
+												<span>{srcLang === "ja" ? "チャット" : "Chats"}</span>
 											</div>
 											<div>|</div>
 											<div
@@ -682,7 +684,7 @@ export default function InboxFrame({
 														// fill="#727272"
 													/>
 												</svg> */}
-												<span>Files</span>
+												<span>{srcLang === "ja" ? "ファイル" : "Files"}</span>
 											</div>
 										</div>
 									</h4>
@@ -759,7 +761,7 @@ export default function InboxFrame({
 										}
 										onClick={() => setoggle2(true)}
 									>
-										<span>Document</span>
+										<span>{srcLang === "ja" ? "ドキュメント" : "Documents"}</span>
 									</div>
 									<div>|</div>
 									<div
@@ -773,7 +775,7 @@ export default function InboxFrame({
 										}
 										onClick={() => setoggle2(false)}
 									>
-										<span>Media</span>
+										<span>{srcLang === "ja" ? "メディア" : "Media"}</span>
 									</div>
 								</div>
 								{toggle2 ? (
@@ -784,13 +786,13 @@ export default function InboxFrame({
 													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 														<tr>
 															<th scope="col" className="px-6 py-3">
-																Document name
+																{srcLang == "ja" ? "文書名" : "Document Name"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																Uploaded Date
+																{srcLang == "ja" ? "アップロード日" : "Uploaded Date"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																<span className="sr-only">view</span>
+																<span className="sr-only">{srcLang == "ja" ? "ビュー" : "View"}</span>
 															</th>
 														</tr>
 													</thead>
@@ -828,7 +830,7 @@ export default function InboxFrame({
 																		target="_blank"
 																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
 																	>
-																		View
+																		{srcLang == "ja" ? "ビュー" : "View"}
 																	</Link>
 																</td>
 															</tr>
@@ -837,7 +839,9 @@ export default function InboxFrame({
 												</table>
 											</div>
 										) : (
-											<p className="text-center text-base">No Document Found</p>
+											<p className="text-center text-base">
+												{srcLang == "ja" ? "ドキュメントが見つかりません。" : "No Document Found"}
+											</p>
 										)}
 									</div>
 								) : (
@@ -848,13 +852,13 @@ export default function InboxFrame({
 													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 														<tr>
 															<th scope="col" className="px-6 py-3">
-																Media name
+																{srcLang == "ja" ? "メディア名" : "Media name"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																Uploaded Date
+																{srcLang == "ja" ? "アップロード日" : "Uploaded Date"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																<span className="sr-only">view</span>
+																<span className="sr-only">{srcLang == "ja" ? "ビュー" : "View"}</span>
 															</th>
 														</tr>
 													</thead>
@@ -898,7 +902,7 @@ export default function InboxFrame({
 																		target="_blank"
 																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
 																	>
-																		View
+																		{srcLang == "ja" ? "ビュー" : "View"}
 																	</Link>
 																</td>
 															</tr>
@@ -907,7 +911,9 @@ export default function InboxFrame({
 												</table>
 											</div>
 										) : (
-											<p className="text-center text-base">No Media Found</p>
+											<p className="text-center text-base">
+												{srcLang == "ja" ? "メディアが見つかりません。" : "No Media Found"}
+											</p>
 										)}
 									</div>
 								)}
@@ -1045,7 +1051,7 @@ export default function InboxFrame({
 									}}
 									cleanOnEnter
 									fontFamily="poppins"
-									placeholder="Message"
+									placeholder={srcLang === "ja" ? "メッセージ" : "Messages"}
 									onCompositionStart={handleCompositionStart}
 									onCompositionUpdate={handleCompositionUpdate}
 									onCompositionEnd={handleCompositionEnd}

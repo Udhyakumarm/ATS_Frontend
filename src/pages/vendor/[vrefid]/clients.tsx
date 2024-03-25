@@ -553,7 +553,7 @@ export default function VendorClients() {
 														{data["jobIndustry"] && data["jobIndustry"].length > 0 ? data["jobIndustry"] : <>N/A</>}
 													</li>
 													<li className="mr-3">
-														Vacancy -{" "}
+													{srcLang === "ja" ? "空き" : "Vacancy"} -{" "}
 														{data["jobVacancy"] && data["jobVacancy"].length > 0 ? data["jobVacancy"] : <>0</>}
 													</li>
 												</ul>
@@ -597,11 +597,11 @@ export default function VendorClients() {
 															{vjdata[vjobclick]["jobToSalary"]}
 														</>
 													) : (
-														<>Salary Not Disclosed</>
+														<> {srcLang === "ja" ? "給与非公開" : "Salary Not Disclosed"}</>
 													)}
 												</li>
 												<li className="mr-3">
-													Vacancy - {vjdata[vjobclick]["jobVacancy"] ? vjdata[vjobclick]["jobVacancy"] : <>N/A</>}
+												{srcLang === "ja" ? "空き" : "Vacancy"} - {vjdata[vjobclick]["jobVacancy"] ? vjdata[vjobclick]["jobVacancy"] : <>N/A</>}
 												</li>
 											</ul>
 										</aside>

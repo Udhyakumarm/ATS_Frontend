@@ -220,7 +220,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 																		{moment(cplan.expire).diff(moment(), "days") <= 0
 																			? "0"
 																			: moment(cplan.expire).diff(moment(), "days")}
-																		&nbsp;days left
+																		&nbsp;{srcLang === "ja" ? "残り日数" : "days left"}
 																	</>
 																)}
 															</p>

@@ -1194,11 +1194,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														id="experience"
 													/>
 												</div>
+												{/* ------Translation changes:- changed the qualification to japanese  */}
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={"Qualification"}
+														label={t("Words.Qualification")}
 														value={jedu}
 														handleChange={(e) => setjedu(e.target.value)}
 														id="qualification"

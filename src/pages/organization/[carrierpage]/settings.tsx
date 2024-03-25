@@ -165,7 +165,9 @@ export default function CandSettings({ upcomingSoon }: any) {
 							<>
 								<div className="mb-4">
 									<UploadProfile
-										note="Supported Formats 2MB  : png , jpg "
+										note={
+											srcLang === "ja" ? "サポートされている形式 2MB: png、jpg" : "Supported Formats 2MB : png , jpg"
+										}
 										purl={data["profile"]}
 										handleChange={(e) => setProfileImg(e.target.files[0])}
 									/>
@@ -194,7 +196,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 								</div>
 								<FormField fieldType="input" inputType="email" label={t("Form.Email")} value={data["email"]} readOnly />
 								<div className="mb-4">
-									<h6 className="mb-1 inline-block font-bold">Unique ID</h6>
+									<h6 className="mb-1 inline-block font-bold">{srcLang === "ja" ? "ユニーク" : "Unique"} ID</h6>
 									<div className="flex w-full items-center rounded-normal border border-borderColor p-1 dark:border-gray-600 dark:bg-gray-700">
 										<input
 											type="text"
