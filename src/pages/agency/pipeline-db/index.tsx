@@ -23,6 +23,7 @@ import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import moment from "moment";
+// import GradientButton from "@/components/Button2";
 
 const useDebounce = (value, delay) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -298,9 +299,9 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 					toastcomp(`${error} Applicants already exists`, "sucess");
 				}
 
-				setsc([])
-				setsc2([])
-				setshareJob(false)
+				setsc([]);
+				setsc2([]);
+				setshareJob(false);
 
 				// const [response1, response2, response3] = responses;
 				// console.log("Response 1:", response1.data);
@@ -596,20 +597,25 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 															<button
 																key={i}
 																type="button"
-																className="leading-pro ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 active:opacity-85 font-base my-2 mr-3 inline-block cursor-pointer rounded-lg bg-gradient-to-tl from-cyan-500 to-indigo-600 px-4 py-2 text-center align-middle text-sm uppercase text-white transition-all hover:rotate-2 hover:scale-110 hover:bg-indigo-700 hover:text-pink-200 hover:shadow-lg"
+																className="leading-pro ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 active:opacity-85 font-base my-2 mr-3 inline-flex cursor-pointer items-center justify-between rounded-lg bg-gradient-to-tr from-blue-800 to-sky-400 px-4 py-2 text-center align-middle text-sm uppercase text-white transition-all duration-300 hover:scale-105 hover:bg-indigo-700 hover:text-pink-200 hover:shadow-lg"
 															>
-																{data}
-																&nbsp;
-																<span
-																	className="font-bold text-red-500"
+																<span>{data}</span>
+																<svg
+																	className="ml-2 h-4 w-4 cursor-pointer text-gray-300 transition-colors duration-200 hover:text-red-500"
 																	onClick={(e) => {
 																		e.stopPropagation();
 																		const updatedValues = sc.filter((value) => value !== data);
 																		setsc(updatedValues);
 																	}}
+																	viewBox="0 0 20 20"
+																	fill="currentColor"
 																>
-																	X
-																</span>
+																	<path
+																		fillRule="evenodd"
+																		d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+																		clipRule="evenodd"
+																	/>
+																</svg>
 															</button>
 														))}
 													</div>
@@ -698,6 +704,23 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 														))}
 													</tbody>
 												</table>
+												{/* <div>
+													<GradientButton>Primary</GradientButton>
+													<GradientButton variant="secondary">Secondary</GradientButton>
+													<GradientButton variant="success">Success</GradientButton>
+													<GradientButton variant="danger">Danger</GradientButton>
+													<GradientButton outlined>Outlined Primary</GradientButton>
+													<GradientButton variant="secondary" outlined>
+														Outlined Secondary
+													</GradientButton>
+													<GradientButton variant="success" outlined>
+														Outlined Success
+													</GradientButton>
+													<GradientButton variant="danger" outlined>
+														Outlined Danger
+													</GradientButton>
+													<GradientButton disabled>Disabled</GradientButton>
+												</div> */}
 
 												<div className="m-2 flex items-center justify-between border-t-2 border-borderColor">
 													{fresumeList["count"] && (

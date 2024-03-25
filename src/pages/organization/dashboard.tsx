@@ -189,7 +189,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/organization/list-activity-log/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				console.log("!activitylog:", res.data);
 				setactivityLog(res.data);
 			})
 			.catch((err) => {
@@ -385,11 +385,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 												)}
 											</div>
 											<div className="p-6 pt-0">
-												{hiringAnalytics && hiringAnalytics.length > 0  ? (
+												{hiringAnalytics && hiringAnalytics.length > 0 ? (
 													<div className="pr-8">
-														<HiringChart
-															data={hiringAnalytics}
-														/>
+														<HiringChart data={hiringAnalytics} />
 													</div>
 												) : (
 													// <AnalyticsChart />
@@ -806,7 +804,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																			<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
 																				<i className="fa-solid fa-briefcase"></i>
 																			</span>
-																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																			<p className="w-[calc(100%-40px)] text-sm">
+																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																			</p>
 																		</div>
 																	</div>
 																) : (
@@ -818,7 +818,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																			<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
 																				<i className="fa-solid fa-star"></i>
 																			</div>
-																			<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																			<p className="w-[calc(100%-40px)] text-sm">
+																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																			</p>
 																		</div>
 																	</div>
 																)
@@ -1057,7 +1059,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	<span className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-gradDarkBlue text-lg leading-normal text-white">
 																		<i className="fa-solid fa-briefcase"></i>
 																	</span>
-																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																	<p className="w-[calc(100%-40px)] text-sm">
+																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																	</p>
 																</div>
 															</div>
 														) : (
@@ -1066,7 +1070,9 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																	<div className="mr-2 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#FF930F] text-lg leading-normal text-white">
 																		<i className="fa-solid fa-star"></i>
 																	</div>
-																	<p className="w-[calc(100%-40px)] text-sm">{data["aname"]}</p>
+																	<p className="w-[calc(100%-40px)] text-sm">
+																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																	</p>
 																</div>
 															</div>
 														)

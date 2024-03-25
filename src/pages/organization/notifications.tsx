@@ -137,6 +137,7 @@ export default function OrgNotifications() {
 									notificationALLDATA["results"].length > 0 ? (
 										<>
 											{notificationALLDATA["results"].map((data, i) =>
+											    
 												data["notification_type"] === null || data["notification_type"] === "" ? (
 													<div
 														className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
