@@ -128,7 +128,7 @@ async function redirectToStripe(planId:any) {
 			.then(async (res) => {
 				if(res.data["url"] && res.data["url"].length > 0){
 					toastcomp("Redirecting to Stripe", "success");
-					router.replace(response.data.url);
+					router.replace(res.data.url);
 				} else {
 					toastcomp("Error occured", "error");
 				}
