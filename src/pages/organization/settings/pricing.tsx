@@ -119,43 +119,57 @@ export default function Pricing() {
 			});
 	}
 	// /subscription/get-pricelist/
-	const redirectToStripe = async (planId:any) => {
-		try {
-			const formData = new FormData();
-			formData.append("product_id", planId);
+	// const redirectToStripe = async (planId:any) => {
+async function redirectToStripe(planId:any) {
+		const fd = new FormData();
+		fd.append("product_id", planId);
+		await axiosInstanceAuth2
+			.post(`/subscription/create-subscription/`, fd)
+			.then(async (res) => {
+				if(res.data["url"] && res.data["url"].length > 0){
+					toastcomp("Redirecting to Stripe", "success");
+					router.replace(response.data.url);
+				} else {
+					toastcomp("Error occured", "error");
+				}
+			})
+			.catch((err) => {
+				console.error("Error redirecting to Stripe:", err);
+				toastcomp("Error redirecting to Stripe", "error");
+			});
 
-			const response = await axiosInstanceAuth2.post(`/subscription/create-subscription/`, formData);
-			if (response.data.url && response.data.url.length > 0) {
-				toastcomp("Redirecting to Stripe", "success");
-				router.replace(response.data.url);
-			} else {
-				toastcomp("Error occured", "error");
-			}
-		} catch (error) {
-			console.error("Error redirecting to Stripe:", error);
-			toastcomp("Error redirecting to Stripe", "error");
-		}
+		// try {
+		// 	const formData = new FormData();
+		// 	formData.append("product_id", planId);
+
+		// 	const response = await axiosInstanceAuth2.post(`/subscription/create-subscription/`, formData);
+		// 	if (response.data.url && response.data.url.length > 0) {
+		// 		toastcomp("Redirecting to Stripe", "success");
+		// 		router.replace(response.data.url);
+		// 	} else {
+		// 		toastcomp("Error occured", "error");
+		// 	}
+		// } catch (error) {
+		// 	console.error("Error redirecting to Stripe:", error);
+		// 	toastcomp("Error redirecting to Stripe", "error");
+		// }
 	};
 	// 
 	// getplansData();
-	const getplansData = async () => {
-		try {
-			const response = await axiosInstanceAuth2.get(`/subscription/get-pricelist/`);
-			console.log("response from get pricelist api:", response.data);
-			setPlansData(response.data);
-			console.log(plansData[0].price_id);
-		} catch (error) {
-			console.error("Error fetching plan data:", error);
-			return null;
-		}
-	};
-	// getplansData();
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			getplansData();
-		}, 3000);
-		return () => clearTimeout(timer);
-	}, []);
+	async function getplansData() {
+		await axiosInstanceAuth2
+			.get(`/subscription/get-pricelist/`)
+			.then(async (res) => {
+				setPlansData(res.data);
+				toastcomp("All planinfo ID retrived", "success");
+
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setPlansData([]);
+				toastcomp("getInvoice error", "error");
+			});
+	}
 
 	const [path, setpath] = useState("");
 	const [step, setstep] = useState(1);
@@ -272,6 +286,7 @@ export default function Pricing() {
 			// getALLVPlanInfo();
 			// getALLVCPlanInfo();
 			getBillingInfo();
+			getplansData();
 		}
 	}, [token, tab]);
 
@@ -1754,7 +1769,9 @@ export default function Pricing() {
 												/>
 											</div>
 											<div className="my-1 mr-4 last:mr-0">
-												<Button label={"Change Plan"} btnType="button" onClick={redirectToStripe(selectedPlanId)} />
+												<Button label={"Change Plan"} btnType="button" 
+												handleClick={()=>redirectToStripe(selectedPlanId)}
+												 />
 											</div>
 										</div>
 									</div>
