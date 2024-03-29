@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { axiosInstanceAuth, axiosInstance2 } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import OrgRSideBar from "@/components/organization/RSideBar";
@@ -69,6 +69,8 @@ export default function Pricing() {
 	const [biaddress, setbiaddress] = useState("");
 	const [bicon, setbicon] = useState("");
 	const [acheck, setacheck] = useState(false);
+	const [plansData, setPlansData] = useState([]);
+	const [selectedPlanId, setSelectedPlanId] = useState(null);
 
 	function checkForm1() {
 		return (
@@ -116,6 +118,44 @@ export default function Pricing() {
 				getBillingInfo();
 			});
 	}
+	// /subscription/get-pricelist/
+	const redirectToStripe = async (planId:any) => {
+		try {
+			const formData = new FormData();
+			formData.append("product_id", planId);
+
+			const response = await axiosInstanceAuth2.post(`/subscription/create-subscription/`, formData);
+			if (response.data.url && response.data.url.length > 0) {
+				toastcomp("Redirecting to Stripe", "success");
+				router.replace(response.data.url);
+			} else {
+				toastcomp("Error occured", "error");
+			}
+		} catch (error) {
+			console.error("Error redirecting to Stripe:", error);
+			toastcomp("Error redirecting to Stripe", "error");
+		}
+	};
+	// 
+	// getplansData();
+	const getplansData = async () => {
+		try {
+			const response = await axiosInstanceAuth2.get(`/subscription/get-pricelist/`);
+			console.log("response from get pricelist api:", response.data);
+			setPlansData(response.data);
+			console.log(plansData[0].price_id);
+		} catch (error) {
+			console.error("Error fetching plan data:", error);
+			return null;
+		}
+	};
+	// getplansData();
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			getplansData();
+		}, 3000);
+		return () => clearTimeout(timer);
+	}, []);
 
 	const [path, setpath] = useState("");
 	const [step, setstep] = useState(1);
@@ -468,6 +508,8 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("STARTER_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[0].price_id);
+														// redirectToStripe("price_1OzDl8SHBwE4Ooa9diFz5Ca5");
 													}}
 												>
 													<div className="flex flex-col gap-1">
@@ -521,6 +563,8 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("STANDARD_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[1].price_id);
+														// redirectToStripe("price_1OzDllSHBwE4Ooa93HdCGu4d");
 													}}
 												>
 													<div className="flex flex-col gap-1">
@@ -577,6 +621,8 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("ENTERPRISE_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[2].price_id);
+														// redirectToStripe("price_1OzDm5SHBwE4Ooa9rBn3ipJR");
 													}}
 												>
 													<div className="flex flex-col justify-center gap-1">
@@ -1708,7 +1754,7 @@ export default function Pricing() {
 												/>
 											</div>
 											<div className="my-1 mr-4 last:mr-0">
-												<Button label={"Change Plan"} btnType="button" handleClick={initatePopup} />
+												<Button label={"Change Plan"} btnType="button" onClick={redirectToStripe(selectedPlanId)} />
 											</div>
 										</div>
 									</div>

@@ -13,6 +13,8 @@
 		"@emoji-mart/react": "^1.1.1",
 		"@headlessui/react": "^1.7.13",
 		"@next/font": "13.1.6",
+		"@stripe/react-stripe-js": "^2.6.2",
+		"@stripe/stripe-js": "^3.1.0",
 		"@szhsin/react-menu": "^4.0.3",
 		"@tailwindcss/forms": "^0.5.3",
 		"@types/node": "18.14.0",
