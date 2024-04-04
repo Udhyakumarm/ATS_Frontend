@@ -18,8 +18,10 @@ import OrgRSideBar from "@/components/organization/RSideBar";
 import { Menu, Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import toastcomp from "@/components/toast";
 import moment from "moment";
+import Script from "next/script";
 import { PopupModal } from "react-calendly";
 import { InlineWidget } from "react-calendly";
+import handler from "@/pages/api/hello";
 
 export default function Pricing() {
 	const { t } = useTranslation("common");
@@ -34,6 +36,24 @@ export default function Pricing() {
 	const [changePlan, setchangePlan] = useState(false);
 	const [changePlan2, setchangePlan2] = useState(false);
 	const [billingInfo2, setbillingInfo2] = useState(false);
+	const [isPaymentTabOpen, setIsPaymentTabOpen] = useState(false);
+	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+	const handlePaymentClick = (option: any) => {
+		setIsPaymentTabOpen(false);
+		switch (option) {
+			case "stripe":
+				redirectToStripe(selectedPlanId);
+				break;
+			case "razorpay":
+				handleRazorpay(selectedRazorpayPlanId);
+				break;
+			case "paypal":
+				handlePayPal();
+				break;
+			default:
+				break;
+		}
+	};
 	const tabHeading_1 = [
 		{
 			title: "Plan & billing Information"
@@ -71,6 +91,7 @@ export default function Pricing() {
 	const [acheck, setacheck] = useState(false);
 	const [plansData, setPlansData] = useState([]);
 	const [selectedPlanId, setSelectedPlanId] = useState(null);
+	const [selectedRazorpayPlanId, setSelectedRazorpayPlanId] = useState(null);
 
 	function checkForm1() {
 		return (
@@ -120,13 +141,13 @@ export default function Pricing() {
 	}
 	// /subscription/get-pricelist/
 	// const redirectToStripe = async (planId:any) => {
-async function redirectToStripe(planId:any) {
+	async function redirectToStripe(planId: any) {
 		const fd = new FormData();
 		fd.append("product_id", planId);
 		await axiosInstanceAuth2
 			.post(`/subscription/create-subscription/`, fd)
 			.then(async (res) => {
-				if(res.data["url"] && res.data["url"].length > 0){
+				if (res.data["url"] && res.data["url"].length > 0) {
 					toastcomp("Redirecting to Stripe", "success");
 					router.replace(res.data.url);
 				} else {
@@ -153,8 +174,95 @@ async function redirectToStripe(planId:any) {
 		// 	console.error("Error redirecting to Stripe:", error);
 		// 	toastcomp("Error redirecting to Stripe", "error");
 		// }
-	};
-	// 
+	}
+	//Razor pay success/failure function
+	// const handleRazorpayPaymentSuccess() = async (response) => {
+	// 	const fd = new FormData();
+	// 	fd.append('razorpay_payment_id', response.razorpay_payment_id);
+	// 	fd.append('razorpay_signature', response.razorpay_signature);
+	// 	fd.append('razorpay_subscription_id', response.razorpay_subscription_id);
+	// 	toastcomp('Processing payment...', 'info');
+	// 	await axiosInstanceAuth2
+	// 	  .post(`/subscription/razorpay-callback/`, fd)
+	// 	  .then((res) => {
+	// 		console.log("razor pay success check response:",res);
+	// 		if (res.data.res === 'Subscription is now active') {
+	// 		  toastcomp('Subscription is now active', 'success');
+	// 		} else {
+	// 		  toastcomp('Payment failed', 'error');
+	// 		}
+	// 	  })
+	// 	  .catch((err) => {
+	// 		console.error('Error:', err);
+	// 		toastcomp('Error occurred during payment', 'error');
+	// 	  });
+	//   };
+	//RazorPay checkout Function!!!
+	async function handleRazorpay(planId: any) {
+		const fd = new FormData();
+		fd.append("plan_id", planId);
+		toastcomp("Connecting to Razorpay...", "info");
+		console.log(planId);
+		await axiosInstanceAuth2
+			.post(`/subscription/razorpay-subscription/`, fd)
+			.then(async (res) => {
+				console.log("razorpay data", res.data);
+				const { razorpay_key, order, product_name, callback_url } = res.data;
+				if (!razorpay_key || !order || !product_name || !callback_url) {
+					toastcomp("Error occurred while processing Razorpay payment", "error");
+					return;
+				}
+				toastcomp("Preparing Razorpay checkout...", "info");
+				const options = {
+					key: razorpay_key,
+					subscription_id: order.id,
+					name: product_name,
+					description: "Subscribe to our plan",
+					// callback_url,
+					handler: async function (res) {
+						console.log(res["razorpay_payment_id"]);
+						// const fd = new FormData();
+						// fd.append("razorpay_payment_id", res.razorpay_payment_id);
+						// fd.append("razorpay_signature", res.razorpay_signature);
+						// fd.append("razorpay_subscription_id", res.razorpay_subscription_id);
+						// console.log("form data :",fd)
+						const response = {
+							razorpay_payment_id: res["razorpay_payment_id"],
+							razorpay_signature: res["razorpay_signature"],
+							razorpay_subscription_id: res["razorpay_subscription_id"],
+						};
+						console.log(response)
+						toastcomp("Processing payment...", "info");
+						axiosInstanceAuth2
+							.post(`/subscription/razorpay-callback/`, response)
+							.then(async (res) => {
+								console.log("razor pay success check response:", res);
+								if (res.data.message === "payment successfully received!") {
+									toastcomp("Subscription is now active", "success");
+								} else {
+									toastcomp("Payment failed", "error");
+								}
+							})
+							.catch((err) => {
+								console.error("Error:", err);
+								toastcomp("Error occurred during payment", "error");
+							});
+					}
+				};
+				const rzp1 = new window.Razorpay(options);
+				rzp1.open();
+				toastcomp("Razorpay checkout opened", "success");
+				rzp1.on("payment.failed", (res) => {
+					console.log("Payment Failed", res);
+					toastcomp("Payment Failed", "error");
+				});
+			})
+			.catch((error) => {
+				console.log("Error Connecting to RazorPay", error);
+				toastcomp("Error occurred while processing Razorpay payment", "error");
+			});
+	}
+
 	// getplansData();
 	async function getplansData() {
 		await axiosInstanceAuth2
@@ -162,7 +270,6 @@ async function redirectToStripe(planId:any) {
 			.then(async (res) => {
 				setPlansData(res.data);
 				toastcomp("All planinfo ID retrived", "success");
-
 			})
 			.catch((err) => {
 				console.log("!", err);
@@ -359,6 +466,7 @@ async function redirectToStripe(planId:any) {
 
 	return (
 		<>
+			{/* <Script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" /> */}
 			<Head>
 				<title>{t("Words.Plans_Pricing")}</title>
 			</Head>
@@ -524,6 +632,7 @@ async function redirectToStripe(planId:any) {
 														setplanInfo("STARTER_MONTHLY");
 														setprice(true);
 														setSelectedPlanId(plansData[0].price_id);
+														setSelectedRazorpayPlanId("plan_NtLHBajAf6Z1aO");
 														// redirectToStripe("price_1OzDl8SHBwE4Ooa9diFz5Ca5");
 													}}
 												>
@@ -579,6 +688,7 @@ async function redirectToStripe(planId:any) {
 														setplanInfo("STANDARD_MONTHLY");
 														setprice(true);
 														setSelectedPlanId(plansData[1].price_id);
+														setSelectedRazorpayPlanId("plan_NtLGoGawf58li1");
 														// redirectToStripe("price_1OzDllSHBwE4Ooa93HdCGu4d");
 													}}
 												>
@@ -637,6 +747,7 @@ async function redirectToStripe(planId:any) {
 														setplanInfo("ENTERPRISE_MONTHLY");
 														setprice(true);
 														setSelectedPlanId(plansData[2].price_id);
+														setSelectedRazorpayPlanId("plan_NtLHSUgb0pDkk6");
 														// redirectToStripe("price_1OzDm5SHBwE4Ooa9rBn3ipJR");
 													}}
 												>
@@ -1713,7 +1824,7 @@ async function redirectToStripe(planId:any) {
 										<h4 className="flex items-center font-semibold leading-none">Change Plan</h4>
 										<button
 											type="button"
-											className="leading-none hover:text-gray-700"
+											className="leading-none text-black hover:text-gray-700"
 											onClick={() => setchangePlan(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
@@ -1769,9 +1880,14 @@ async function redirectToStripe(planId:any) {
 												/>
 											</div>
 											<div className="my-1 mr-4 last:mr-0">
-												<Button label={"Change Plan"} btnType="button" 
-												handleClick={()=>redirectToStripe(selectedPlanId)}
-												 />
+												<Button
+													label={"Change Plan"}
+													btnType="button"
+													handleClick={() => {
+														setIsPaymentTabOpen(true);
+														setchangePlan(false);
+													}}
+												/>
 											</div>
 										</div>
 									</div>
@@ -1781,6 +1897,81 @@ async function redirectToStripe(planId:any) {
 					</div>
 				</Dialog>
 			</Transition.Root>
+			{/* Payment Dialog BOx
+			 *************
+			 *********
+			 *******
+			 */}
+
+			<Transition.Root show={isPaymentTabOpen} as={Fragment}>
+				<Dialog as="div" onClose={() => setIsPaymentTabOpen(false)} className="fixed inset-0 z-10 overflow-y-auto">
+					{/* <div className="flex min-h-screen items-center justify-center"> */}
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Payment Options</h4>
+										<button type="button" className="hover:text-gray-700" onClick={() => setIsPaymentTabOpen(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="mt-3 py-6 text-center sm:mt-0 sm:text-left">
+										<Dialog.Title as="h3" className="mb-4 px-6 text-xl font-extrabold leading-6 text-gray-900">
+											Choose Payment Option
+										</Dialog.Title>
+
+										<div className="flex flex-col items-center space-y-4">
+											<button
+												type="button"
+												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+												onClick={() => handlePaymentClick("stripe")}
+											>
+												<img src="/images/logos/Stripe_logo.png" alt="Stripe" className="mr-2 h-8" />
+											</button>
+											<button
+												type="button"
+												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+												onClick={() => handlePaymentClick("razorpay")}
+											>
+												<img src="/images/logos/Razorpay_logo.png" alt="Razorpay" className="mr-2 h-8" />
+											</button>
+											<button
+												type="button"
+												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+												onClick={() => handlePaymentClick("paypal")}
+											>
+												<img src="/images/logos/paypal_logo.png" alt="PayPal" className="mr-2 h-8" />
+											</button>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+					{/* </div> */}
+				</Dialog>
+			</Transition.Root>
+			{/* ******************* */}
 
 			<Transition.Root show={billingInfo2} as={Fragment}>
 				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setbillingInfo2}>
