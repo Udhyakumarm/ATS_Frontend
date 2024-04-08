@@ -47,9 +47,6 @@ export default function Pricing() {
 			case "razorpay":
 				handleRazorpay(selectedRazorpayPlanId);
 				break;
-			case "paypal":
-				handlePayPal();
-				break;
 			default:
 				break;
 		}
@@ -220,27 +217,30 @@ export default function Pricing() {
 					description: "Subscribe to our plan",
 					// callback_url,
 					handler: async function (res) {
-						console.log(res["razorpay_payment_id"]);
-						// const fd = new FormData();
-						// fd.append("razorpay_payment_id", res.razorpay_payment_id);
-						// fd.append("razorpay_signature", res.razorpay_signature);
-						// fd.append("razorpay_subscription_id", res.razorpay_subscription_id);
-						// console.log("form data :",fd)
-						const response = {
-							razorpay_payment_id: res["razorpay_payment_id"],
-							razorpay_signature: res["razorpay_signature"],
-							razorpay_subscription_id: res["razorpay_subscription_id"],
-						};
-						console.log(response)
+						console.log("yeh hai payment ID",res["razorpay_payment_id"]);
+						console.log("yeh bhi hai payment ID",res.razorpay_payment_id)
+						const fd = new FormData();
+						fd.append("pay_id", res.razorpay_payment_id);
+						console.log("pay_id:", fd.get("pay_id"));
+						fd.append("sign", res.razorpay_signature);
+						fd.append("sub_id", res.razorpay_subscription_id);
+						console.log("form data :",fd)
+						// const response = {
+						// 	razorpay_payment_id: res["razorpay_payment_id"],
+						// 	razorpay_signature: res["razorpay_signature"],
+						// 	razorpay_subscription_id: res["razorpay_subscription_id"],
+						// };
+						// console.log(response)
 						toastcomp("Processing payment...", "info");
 						axiosInstanceAuth2
-							.post(`/subscription/razorpay-callback/`, response)
+							.post(`/subscription/razorpay-callback/`, fd)
 							.then(async (res) => {
-								console.log("razor pay success check response:", res);
-								if (res.data.message === "payment successfully received!") {
-									toastcomp("Subscription is now active", "success");
+								toastcomp("Validating Transaction..", "info");
+								console.log("Payement verify hui",res)
+								if (res.status == 200) {
+									toastcomp("Success!! Subscription is now active", "success");
 								} else {
-									toastcomp("Payment failed", "error");
+									toastcomp("Subscription verification Failed!", "error");
 								}
 							})
 							.catch((err) => {
@@ -1940,7 +1940,7 @@ export default function Pricing() {
 											Choose Payment Option
 										</Dialog.Title>
 
-										<div className="flex flex-col items-center space-y-4">
+										<div className="flex flex-col items-center space-y-2">
 											<button
 												type="button"
 												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -1948,19 +1948,13 @@ export default function Pricing() {
 											>
 												<img src="/images/logos/Stripe_logo.png" alt="Stripe" className="mr-2 h-8" />
 											</button>
+											<span className="mx-4  font-extrabold text-xl">or</span>
 											<button
 												type="button"
 												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
 												onClick={() => handlePaymentClick("razorpay")}
 											>
 												<img src="/images/logos/Razorpay_logo.png" alt="Razorpay" className="mr-2 h-8" />
-											</button>
-											<button
-												type="button"
-												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
-												onClick={() => handlePaymentClick("paypal")}
-											>
-												<img src="/images/logos/paypal_logo.png" alt="PayPal" className="mr-2 h-8" />
 											</button>
 										</div>
 									</div>
