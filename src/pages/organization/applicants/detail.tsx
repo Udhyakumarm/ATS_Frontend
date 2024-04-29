@@ -36,9 +36,11 @@ import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import FormField from "@/components/FormField";
 import PermiumComp from "@/components/organization/premiumComp";
+import outlookicon from "/public/images/social/outlook-email-icon.png"
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" },
+	{provider:"Outlook Calendar", icon:outlookicon, link: "/api/integrations/outlook/calendar/create" },
 ];
 
 const people = [
@@ -301,11 +303,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							//GCAL
 
 							checkGCAL();
+							checkOutlook();
 						}
 					} else {
 						chnageStatus("Interview", appdata["arefid"]);
 
 						checkGCAL();
+						checkOutlook();
 					}
 				}
 			})
@@ -461,6 +465,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}, [feedbackList, currentUser]);
 
 	const [gcall, setgcall] = useState(false);
+	const [outlook,Setoutlook] = useState(false);
 
 	async function checkGCAL() {
 		setgcall(false);
@@ -476,6 +481,20 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				setIsCalendarOpen(true);
 			});
 	}
+	async function checkOutlook(){
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
+		.then(
+			(res)=>{
+				console.log("outlook connect res:::", res);
+				if(res.data.res === "success"){
+					Setoutlook(true);
+				}
+				setIsCalendarOpen(true);
+			}).catch(()=>{
+				setIsCalendarOpen(true);
+			})
+	}
 
 	async function coonectGoogleCal() {
 		setgcall(false);
@@ -486,6 +505,24 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
 				// setIsCalendarOpen(true);
 				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+	async function coonectOutlook() {
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
+			console.log("outlook connect res:::", res);
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				Setoutlook(true);
 			}
 		});
 		// .catch((res) => {
@@ -787,6 +824,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																router.push("/organization/applicants/schedule-interview");
 															} else {
 																checkGCAL();
+																checkOutlook();
 															}
 														}}
 													/>
@@ -2188,7 +2226,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{gcall ? (
+								{gcall||outlook ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Schedule Interview</h4>
@@ -2226,7 +2264,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{CalendarIntegrationOptions.map((integration, i) => (
 													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
 														<div
-															onClick={coonectGoogleCal}
+															onClick={()=>{
+																if (integration.provider === "Google Calendar") {
+																	coonectGoogleCal();
+																}
+																else if (integration.provider === "Outlook Calendar") {
+																	coonectOutlook();
+																}
+															}}
 															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
 														>
 															<Image

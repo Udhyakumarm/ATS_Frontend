@@ -11,6 +11,7 @@ import OrganizationCalendar2 from "./OrganizationCalendar2";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
+import outlookicon from "/public/images/social/outlook-email-icon.png"
 import { useCalStore, useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
@@ -30,7 +31,8 @@ import toastcomp2 from "../toast2";
 import ToastComp22 from "../toast3";
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" },
+	{provider:"Outlook Calendar", icon:outlookicon, link: "/api/integrations/outlook/calendar/create" },
 ];
 
 const preVersions = [{ name: "free" }, { name: "starter" }, { name: "standard" }, { name: "enterprise" }];
@@ -336,6 +338,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 	}, [todoLoadMore]);
 
 	const [gcall, setgcall] = useState(false);
+	const [outlook,Setoutlook] = useState(false);
 
 	async function checkGCAL() {
 		setgcall(false);
@@ -350,6 +353,20 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 			.catch(() => {
 				setIsCalendarOpen(true);
 			});
+	}
+	async function checkOutlook(){
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
+		.then(
+			(res)=>{
+				console.log("outlook connect res:::", res);
+				if(res.data.res === "success"){
+					Setoutlook(true);
+				}
+				setIsCalendarOpen(true);
+			}).catch(()=>{
+				setIsCalendarOpen(true);
+			})
 	}
 
 	async function coonectGoogleCal() {
@@ -371,6 +388,24 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 		// 	}
 		// });
 	}
+	async function coonectOutlook() {
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
+			console.log("outlook connect res:::", res);
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				Setoutlook(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
 
 	const { gcal } = router.query;
 	const { res } = router.query;
@@ -379,6 +414,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 		if (gcal && gcal === "success") {
 			toastcomp("google calendar integreated", "success");
 			checkGCAL();
+			checkOutlook();
 		} else if (gcal && gcal === "error") {
 			toastcomp("google calendar not integreated", "error");
 			if (res) {
@@ -596,6 +632,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 							seterrMsg("Calendar Automation");
 						} else {
 							checkGCAL();
+							checkOutlook();
 						}
 					}}
 				>
@@ -677,11 +714,13 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{gcall ? (
+								{gcall||outlook ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-5xl">
 										<OrganizationCalendar2
 											axiosInstanceAuth2={axiosInstanceAuth2}
 											setIsCalendarOpen={setIsCalendarOpen}
+											gcallactive={gcall}
+											outlookactive={outlook}
 										/>
 									</Dialog.Panel>
 								) : (
@@ -701,7 +740,14 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 												{CalendarIntegrationOptions.map((integration, i) => (
 													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
 														<div
-															onClick={coonectGoogleCal}
+															onClick={()=>{
+																if (integration.provider === "Google Calendar") {
+																	coonectGoogleCal();
+																}
+																else if (integration.provider === "Outlook Calendar") {
+																	coonectOutlook();
+																}
+															}}
 															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
 														>
 															<Image

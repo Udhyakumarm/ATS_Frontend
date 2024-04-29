@@ -4,6 +4,7 @@ import userImg from "/public/images/user-image.png";
 import FormField from "./FormField";
 import Button from "./Button";
 import moment from "moment";
+import 'moment-timezone';
 import { useCalStore } from "@/utils/code";
 import { axiosInstance } from "@/utils";
 import toastcomp from "./toast";
@@ -39,6 +40,26 @@ export default function TImeSlot({
 				toastcomp("load error", "error");
 			});
 	}
+	async function getEventsList2() {
+		await axiosInstanceAuth2
+			.get("/gcal/outlook/get-events/")
+			.then((res) => {
+				console.log("microsoft outlook events", res);
+				if (res.data.current && res.data.prevent) {
+					const newArray=[...res.data.current,...res.data.prevent];
+					setEventList(newArray);
+					console.log(newArray);
+				} else {
+					setEventList([]);
+					toastcomp("load partial success", "success");
+				}
+			})
+			.catch((err) => {
+				console.log("$", "err", err);
+				setEventList([]);
+				
+			});
+	}
 
 	// const integration = useCalStore((state: { integration: any }) => state.integration);
 	// const setIntegration = useCalStore((state: { setIntegration: any }) => state.setIntegration);
@@ -62,6 +83,7 @@ export default function TImeSlot({
 
 	useEffect(() => {
 		getEventsList();
+		getEventsList2();
 	}, []);
 
 	const [date1, setdate1] = useState("");
@@ -185,6 +207,7 @@ export default function TImeSlot({
 			for (let i = 0; i < eventList.length; i++) {
 				if (eventList[i]["start"]) {
 					console.log("allevent", "$", eventList[i]);
+					
 					if (
 						dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day")
 						// &&
@@ -200,8 +223,25 @@ export default function TImeSlot({
 
 			let timeSlots = [];
 			for (let i = 0; i < currentdayEvent.length; i++) {
-				const startMoment = moment(currentdayEvent[i]["start"]["dateTime"]);
-				const endMoment = moment(currentdayEvent[i]["end"]["dateTime"]);
+				const startTime = currentdayEvent[i]["start"]["dateTime"]; // Get the start time from the event object
+				let startMoment = moment(startTime); // Initialize startMoment with the start time
+				
+				const timeZone = currentdayEvent[i]["start"]["timeZone"]; // Get the time zone from the event object
+				if (timeZone) {
+					// Convert start time to the provided time zone and then to the current time zone
+					startMoment = moment.tz(startTime, timeZone).tz(moment.tz.guess());
+				}
+			
+				const endTime = currentdayEvent[i]["end"]["dateTime"]; // Get the end time from the event object
+				let endMoment = moment(endTime); // Initialize endMoment with the end time
+			
+				// Check if timeZone is provided
+				if (timeZone) {
+					// Convert end time to the provided time zone and then to the current time zone
+					endMoment = moment.tz(endTime, timeZone).tz(moment.tz.guess());
+				}
+			
+				
 
 				// console.log("MatchDay T1:1", "$", startMoment.format("HH:mm A"));
 

@@ -2,12 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import userImg from "/public/images/user-image.png";
 import { Fragment, useCallback, useEffect, useReducer, useState, useRef } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Switch } from "@headlessui/react";
 import FormField from "../FormField";
 import Button from "../Button";
 import { axiosInstance } from "@/utils";
 import Validator, { Rules } from "validatorjs";
 import toastcomp from "@/components/toast";
+import outlookicon from "/public/images/social/outlook-email-icon.png";
+import gcalIcon from "/public/images/social/google-cal-icon2.png";
 
 type DateAction = "setDate" | "nextMonth" | "previousMonth";
 
@@ -127,7 +129,15 @@ function EventCard({
 	);
 
 	const meetingIcon =
-		platform == "Google Meet" ? <i className="fa-solid fa-video"></i> : <i className="fa-solid fa-phone"></i>;
+		platform === "Google Meet" ? (
+			<Image src={gcalIcon} alt="Google Calendar Icon" className=" object-contain" />
+		) : (
+			<Image src={outlookicon} alt="Outlook Icon" className=" object-contain" />
+		);
+	const local = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
+	console.log("localTime", local);
+
+	// Parse the UTC time string and create a Date object in UTC
 
 	return (
 		<div className="mb-4 overflow-hidden rounded-[10px] shadow">
@@ -146,24 +156,32 @@ function EventCard({
 				<div className="mb-3">{participantCards}</div>
 				<h4 className="mb-1 font-bold">Platform</h4>
 				<div className="flex">
-					<span className="mt-1 flex h-[16px] w-[16px] items-center justify-center rounded border border-violet-400 bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-[8px] text-white">
+					<span className="mt-1 flex h-[25px] w-[25px] items-center justify-center rounded text-[8px]  text-white shadow-md">
 						{meetingIcon}
 					</span>
 					<div className="w-[calc(100%-16px)] pl-2 text-darkGray">
-						<h6 className="font-semibold">{platform}</h6>
-						<p className="my-1 text-sm">{`${start.toDateString()}\n ${start.getHours()}:${start.getMinutes()}`}</p>
+						<h6 className="font-semibold">{platform ? "Google Meet" : "Outlook"}</h6>
+
+						<p className="my-1 text-sm">{`${local.toDateString()}\n ${local.getHours()}:${local.getMinutes()}0`}</p>
 						<p className="my-1 text-sm">{`Duration : ${(end.getTime() - start.getTime()) / 60 / 1000} minutes`}</p>
-						<Link
-							href={meetingLink}
-							target="_blank"
-							className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-[3px] text-[12px] leading-normal text-white"
-						>
-							Meet
-						</Link>
+						{meetingLink ? (
+							<Link
+								href={meetingLink}
+								target="_blank"
+								className="inline-block rounded bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-3 py-[3px] text-[12px] leading-normal text-white"
+							>
+								Meet
+							</Link>
+						) : (
+							<span className="inline-block cursor-not-allowed rounded bg-gray-300 px-3 py-[3px] text-[12px] leading-normal text-gray-500 ">
+								Meet
+							</span>
+						)}
+
 						<Link
 							href={calendarLink}
 							target="_blank"
-							className="inline-block rounded px-3 py-[3px] text-[12px] leading-normal text-gradDarkBlue"
+							className="inline-block rounded px-3 py-[3px] text-[12px] leading-normal text-gradDarkBlue hover:underline"
 						>
 							Calendar
 						</Link>
@@ -340,7 +358,12 @@ function CreateNewCalendarEventModal({
 	);
 }
 
-export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalendarOpen }: any) {
+export default function OrganizationCalendar2({
+	axiosInstanceAuth2,
+	setIsCalendarOpen,
+	gcallactive,
+	outlookactive
+}: any) {
 	const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 	const updateDate = (prevDate: Date, { action, value }: DateUpdate) => {
@@ -363,6 +386,7 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 	const [eventsLoading, setEventsLoading] = useState(false);
 	const cancelButtonRef = useRef(null);
 	const [dissgcal, setdissgcal] = useState(false);
+	const [disoutlook, setdisoutlook] = useState(false);
 
 	const [eventList, setEventList] = useState<Array<any>>([]);
 
@@ -437,6 +461,26 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 			.catch((res) => {
 				setEventList([]);
 				setEventsLoading(false);
+				// toastcomp("load error", "error");
+			});
+	}
+	async function getEventsList3() {
+		await axiosInstanceAuth2
+			.get("/gcal/outlook/get-events/")
+			.then((res) => {
+				console.log("microsoft outlook events", res);
+				if (res.data.current) {
+					setEventList(res.data.current);
+					console.log("$", res.data);
+					setEventsLoading(false);
+				} else {
+					setEventList([]);
+					setEventsLoading(false);
+				}
+			})
+			.catch((err) => {
+				setEventList([]);
+				setEventsLoading(false);
 				toastcomp("load error", "error");
 			});
 	}
@@ -474,6 +518,7 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 	useEffect(() => {
 		setEventsLoading(true);
 		getEventsList2();
+		getEventsList3();
 	}, []);
 
 	useEffect(() => {
@@ -496,6 +541,26 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 			}
 		});
 	}
+	async function disconnectOutlook() {
+		await axiosInstanceAuth2.post("gcal/outlook/disconnect/").then((res) => {
+			console.log("logout outlook response", res);
+			if (res.data.res) {
+				// router.replace(`http://localhost:3000/gcal`);
+				toastcomp("Outlook Calendar Successfully Removed.", "success");
+				setdisoutlook(false);
+				setIsCalendarOpen(false);
+			}
+		});
+	}
+	const handleGoogleCalendarToggle = () => {
+		setdissgcal(true);
+		// Additional logic for disconnecting Google Calendar
+	};
+
+	const handleOutlookCalendarToggle = () => {
+		setdisoutlook(true);
+		// Additional logic for disconnecting Outlook Calendar
+	};
 
 	return (
 		<>
@@ -514,15 +579,53 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 								Today
 							</button>
 						</div>
-						<button
-							type={"button"}
-							className={`my-2 w-auto min-w-[60px] rounded bg-red-200 px-2 py-1 text-[12px] font-semibold text-red-600 hover:bg-red-600  hover:text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-gray-500`}
-							// disabled={disabled}
-							onClick={() => setdissgcal(true)}
-						>
-							Disconnect Google Calendar
-						</button>
-						<aside className="flex items-center">
+						<div className="flex items-center justify-center space-x-4">
+						{gcallactive && (
+							<div className="flex items-center space-x-2">
+								<span className="mt-1 flex h-[30px] w-[30px] items-center justify-center rounded text-[8px] bg-green-200 shadow-lg">
+									<Image src={gcalIcon} alt="Google Calendar Icon" className=" content-center object-contain" />
+								</span>
+								<span>Google Calendar</span>
+								{gcallactive && <i className="fa fa-check-circle text-green-600"></i>}
+								<Switch
+									checked={gcallactive}
+									onChange={handleGoogleCalendarToggle}
+									className={`${
+										gcallactive ? "bg-green-600" : "bg-gray-200"
+									} relative inline-flex h-6 w-11 items-center rounded-full`}
+								>
+									<span
+										className={`${
+											gcallactive ? "translate-x-6" : "translate-x-1"
+										} inline-block h-4 w-4 transform rounded-full bg-white transition`}
+									/>
+								</Switch>
+							</div>
+						)}
+						{outlookactive && (
+							<div className="flex items-center space-x-2">
+							<span className="mt-1 flex h-[30px] w-[30px] items-center justify-center rounded text-[8px]  text-white shadow-md">
+									<Image src={outlookicon} alt="outlook Icon" className=" content-center object-contain" />
+								</span>
+								<span>Outlook Calendar</span>
+								{outlookactive && <i className="fa fa-check-circle text-green-600"></i>}
+								<Switch
+									checked={outlookactive}
+									onChange={handleOutlookCalendarToggle}
+									className={`${
+										outlookactive ? "bg-blue-600" : "bg-gray-200"
+									} relative inline-flex h-6 w-11 items-center rounded-full`}
+								>
+									<span
+										className={`${
+											outlookactive ? "translate-x-6" : "translate-x-1"
+										} inline-block h-4 w-4 transform rounded-full bg-white transition`}
+									/>
+								</Switch>
+							</div>
+						)}
+						</div>
+						<aside className="flex items-center ">
 							<button
 								type="button"
 								className="hover:text-gray-600"
@@ -580,13 +683,15 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 								jobTitle={"Software Developer"}
 								jobId={"ID-573219"}
 								platform={eventItem?.conferenceData?.conferenceSolution?.name}
-								participants={eventItem?.attendees.map((attendee: any) => ({ email: attendee.email }))}
+								participants={eventItem?.attendees.map((attendee: any) => ({
+									email: attendee.email ?? attendee.emailAddress.address
+								}))}
 								start={new Date(eventItem.start.dateTime)}
 								end={new Date(eventItem.end.dateTime)}
 								meetingLink={
 									eventItem?.conferenceData?.entryPoints[0]?.uri ? eventItem?.conferenceData?.entryPoints[0]?.uri : ""
 								}
-								calendarLink={eventItem.htmlLink}
+								calendarLink={eventItem.htmlLink ?? eventItem.webLink}
 							/>
 						))}
 
@@ -654,6 +759,64 @@ export default function OrganizationCalendar2({ axiosInstanceAuth2, setIsCalenda
 										<div className="flex justify-center gap-2">
 											<Button label={"Yes"} btnType="button" btnStyle="danger" handleClick={disconnectGoogle} />
 											<Button label={"No"} btnType="button" btnStyle="success" handleClick={() => setdissgcal(false)} />
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={disoutlook} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setdisoutlook}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Disconnect Outlook Calendar</h4>
+										<button
+											type="button"
+											className="leading-none hover:text-gray-700"
+											onClick={() => setdisoutlook(false)}
+										>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="p-8">
+										<div className="text-sm">
+											If You Wanna Disconnect Your Outlook Calendar That Would Be Delete Your Upcoming & Past Interview
+											Events Related Data.
+										</div>
+										<div className="flex justify-center gap-2">
+											<Button label={"Yes"} btnType="button" btnStyle="danger" handleClick={disconnectOutlook} />
+											<Button
+												label={"No"}
+												btnType="button"
+												btnStyle="success"
+												handleClick={() => setdisoutlook(false)}
+											/>
 										</div>
 									</div>
 								</Dialog.Panel>
