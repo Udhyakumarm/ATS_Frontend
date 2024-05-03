@@ -18,6 +18,8 @@ import {
 	TelegramShareButton,
 	EmailShareButton
 } from "react-share";
+import noActivedata from "/public/images/no-data/iconGroup-1.png";
+import Image from "next/image";
 
 export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad, dashbaord, loadJob, userRole, setShowConfetti }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -32,6 +34,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const router = useRouter();
 
 	const userState = useUserStore((state: { user: any }) => state.user);
+	
+	const companytype = useUserStore((state: { type: any }) => state.type);
 
 	useEffect(() => {
 		console.log("^^^", "JD", job);
@@ -44,6 +48,51 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 	const [comingSoon, setComingSoon] = useState(false);
+	const [recPop, setrecPop] = useState(false);
+	const [rjobLoader, setrjobLoader] = useState(0);
+	const [rjob, setrjob] = useState([]);
+
+	async function loadRecomandedJob() {
+		var url = ''
+		if(companytype === "Agency"){url = `/ocr/new2/${job.refid}/`;}
+		else{url = `/ocr/new1/${job.refid}/`;}
+		await axiosInstanceAuth2
+			.post(url)
+			.then(async (res) => {
+				if (res.data && res.data.message) {
+					setrjobLoader(-1);
+				}
+				if(res.data.length > 0){
+
+				setrjob(res.data);
+				setrjobLoader(1);
+				}
+				else{
+setrjob([]);
+setrjobLoader(-1);
+				}
+				console.log("$", "timeline", res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setrjob([]);
+				setrjobLoader(-1);
+			});
+	}
+
+	useEffect(()=>{
+		if(recPop){
+			setrjobLoader(0)
+			setrjob([])
+			loadRecomandedJob()
+		}
+		else{
+			setrjobLoader(0);
+			setrjob([]);
+		}
+	},[recPop])
+
+
 
 	async function statusUpdate(status: string, refid: string) {
 		const formData = new FormData();
@@ -422,6 +471,32 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			});
 	}
 
+	const [loader, setloader] = useState(false);
+
+	async function applyJob(arefid) {
+		setloader(true);
+		const fd = new FormData();
+		fd.append("refid", job.refid);
+		fd.append("arefid", arefid);
+		await axiosInstanceAuth2
+			.post(`/ocr/recommend-apply/`, fd)
+			.then(async (res) => {
+				console.log("res", res.data.success);
+				if (res.data["success"] === 0) {
+					toastcomp("Not applied", "error");
+				} else if (res.data["success"] === 1) {
+					toastcomp("Applied successfully", "success");
+				}
+				setloader(false);
+				loadRecomandedJob();
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("Not applied", "error");
+				setloader(false);
+				loadRecomandedJob();
+			});
+	}
 
 
 
@@ -703,12 +778,24 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 						<h6 className="clamp_1 w-[100px] break-all text-lg font-semibold">{job.refid}</h6>
 					</div>
 				</div>
-				<Button
-					btnStyle="outlined"
-					btnType="button"
-					label={srcLang === "ja" ? "みる" : "View"}
-					handleClick={() => router.push(`/agency/jobs/preview/${shareCN}/${job.refid}`)}
-				/>
+				<div className="flex items-center justify-between">
+					<Button
+						btnStyle="outlined"
+						btnType="button"
+						label={srcLang === "ja" ? "みる" : "View"}
+						handleClick={() => router.push(`/agency/jobs/preview/${shareCN}/${job.refid}`)}
+					/>
+					{job.jobStatus === "Active" && (
+						<>
+							<Button
+								btnStyle="outlined"
+								btnType="button"
+								label={srcLang === "ja" ? "みる" : "Recommendations"}
+								handleClick={() => setrecPop(true)}
+							/>
+						</>
+					)}
+				</div>
 			</div>
 
 			<Transition.Root show={previewPopup} as={Fragment}>
@@ -1086,6 +1173,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 					</div>
 				</Dialog>
 			</Transition.Root>
+
 			<Transition.Root show={comingSoon} as={Fragment}>
 				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setComingSoon}>
 					<Transition.Child
@@ -1124,6 +1212,124 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 									</div>
 									<div className="p-8">
 										<UpcomingComp title={"Upload Manually Candidate Feature"} setComingSoon={setComingSoon} />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+
+			<Transition.Root show={recPop} as={Fragment}>
+				<Dialog as="div" className="relative z-40" initialFocus={cancelButtonRef} onClose={setrecPop}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+								enterTo="opacity-100 translate-y-0 sm:scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#fff] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-xl">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Recommendation applicants</h4>
+										<button type="button" className="leading-none hover:text-gray-700" onClick={() => setrecPop(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="relative min-h-[100px] overflow-auto border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800">
+										{loader && (
+											<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
+												<div className="flex h-full flex-col items-center justify-center text-center">
+													<i className="fa-solid fa-spinner fa-spin"></i>
+													<p className="my-2 font-bold">Applying in progress...</p>
+												</div>
+											</div>
+										)}
+										{rjobLoader === 0 && (
+											<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
+												<div className="flex h-full flex-col items-center justify-center text-center">
+													<i className="fa-solid fa-spinner fa-spin"></i>
+													<p className="my-2 font-bold">Loading recommendation applicants...</p>
+												</div>
+											</div>
+										)}
+										{rjobLoader === -1 && (
+											<div className="mx-auto w-full py-2 text-center">
+												<div className="mb-6 p-2">
+													<Image
+														src={noActivedata}
+														alt="No Data"
+														width={150}
+														className="mx-auto max-h-[200px] w-auto "
+													/>
+												</div>
+												<h5 className="mb-4 text-lg font-semibold">No recommendation candidates</h5>
+												<p className="mb-2 text-sm text-darkGray">
+													{srcLang === "ja"
+														? "アクティブなジョブはありません。アクティブなジョブを管理するには、新しいジョブを投稿してください"
+														: "There are not suitable any Candidates for recommendation "}
+												</p>
+											</div>
+										)}
+										{rjobLoader === 1 && (
+											<h3 className="mb-4 text-lg font-semibold">
+												Recommendation Applicants from {companytype === "Agency" ? "Pipeline Database" : "kanban"}
+											</h3>
+										)}
+										{rjobLoader === 1 && rjob.length > 0 && (
+											<div>
+												{rjob.map((data, i) => (
+													<div className="mb-[15px] w-full px-[7px] py-1 last:mb-0 xl:max-w-[100%]" key={i}>
+														<div className="h-full rounded-normal bg-white px-3 py-2 shadow-normal dark:bg-gray-700">
+															<div className="flex w-full flex-row-reverse gap-1">
+																<div className="flex w-fit gap-1">
+																	<Button
+																		btnStyle="outlined"
+																		btnType="button"
+																		label={srcLang === "ja" ? "みる" : "View"}
+																		handleClick={() => {
+																			window.open(
+																				process.env.NODE_ENV === "production"
+																					? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/media/${data["resume"]}`
+																					: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/media/${data["resume"]}`,
+																				"_blank"
+																			);
+																		}}
+																	/>
+																	<Button
+																		btnStyle="outlined"
+																		btnType="button"
+																		label={srcLang === "ja" ? "みる" : "Apply"}
+																		handleClick={() => applyJob(companytype === "Agency" ? data.trefid : data.arefid)}
+																	/>
+																</div>
+																<div className="flex w-full flex-wrap items-center">
+																	<h4 className="font-bold">
+																		{data.email}&nbsp;|&nbsp;{companytype === "Agency" ? data.trefid : data.arefid}
+																	</h4>
+																</div>
+															</div>
+														</div>
+													</div>
+												))}
+											</div>
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

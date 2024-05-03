@@ -805,7 +805,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																				<i className="fa-solid fa-briefcase"></i>
 																			</span>
 																			<p className="w-[calc(100%-40px)] text-sm">
-																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																				{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																			</p>
 																		</div>
 																	</div>
@@ -819,7 +819,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																				<i className="fa-solid fa-star"></i>
 																			</div>
 																			<p className="w-[calc(100%-40px)] text-sm">
-																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																				{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																			</p>
 																		</div>
 																	</div>
@@ -1060,7 +1060,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		<i className="fa-solid fa-briefcase"></i>
 																	</span>
 																	<p className="w-[calc(100%-40px)] text-sm">
-																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																	</p>
 																</div>
 															</div>
@@ -1071,7 +1071,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 																		<i className="fa-solid fa-star"></i>
 																	</div>
 																	<p className="w-[calc(100%-40px)] text-sm">
-																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																	</p>
 																</div>
 															</div>
