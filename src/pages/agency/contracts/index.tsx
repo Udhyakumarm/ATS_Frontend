@@ -18,6 +18,7 @@ import FormField from "@/components/FormField";
 import Button from "@/components/Button";
 import toastcomp from "@/components/toast";
 import ACard from "@/components/agency/acard";
+import Button2 from "@/components/Button2";
 
 export default function index({ atsVersion, userRole }: any) {
 	const { t } = useTranslation("common");
@@ -353,7 +354,7 @@ export default function index({ atsVersion, userRole }: any) {
 													/>
 												</div>
 
-										<Button
+										<Button2
 											label={srcLang === "ja" ? "契約書を送付" : "Send Contract"}
 											btnType="button"
 											handleClick={addContract}

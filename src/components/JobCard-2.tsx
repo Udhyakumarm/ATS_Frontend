@@ -18,6 +18,7 @@ import {
 	TelegramShareButton,
 	EmailShareButton
 } from "react-share";
+import Button2 from "./Button2";
 import noActivedata from "/public/images/no-data/iconGroup-1.png";
 import Image from "next/image";
 
@@ -779,19 +780,21 @@ setrjobLoader(-1);
 					</div>
 				</div>
 				<div className="flex items-center justify-between">
-					<Button
+					<Button2
 						btnStyle="outlined"
 						btnType="button"
 						label={srcLang === "ja" ? "みる" : "View"}
 						handleClick={() => router.push(`/agency/jobs/preview/${shareCN}/${job.refid}`)}
+						small
 					/>
 					{job.jobStatus === "Active" && (
 						<>
-							<Button
+							<Button2
 								btnStyle="outlined"
 								btnType="button"
 								label={srcLang === "ja" ? "みる" : "Recommendations"}
 								handleClick={() => setrecPop(true)}
+								small
 							/>
 						</>
 					)}

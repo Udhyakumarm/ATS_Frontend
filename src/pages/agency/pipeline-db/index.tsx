@@ -23,7 +23,8 @@ import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import moment from "moment";
-// import GradientButton from "@/components/Button2";
+import Button2 from "@/components/Button2";
+import GradientButton from "@/components/Button2";
 
 const useDebounce = (value, delay) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -576,11 +577,13 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 												</div>
 											</div>
 											<aside className="flex items-center gap-4">
-												<Button
+												<Button2
 													label={"Upload Resume"}
 													btnType="button"
-													btnStyle="outlined"
+													btnStyle="primary"
 													handleClick={() => setAddCand(true)}
+													transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"
+													small
 												/>
 												<TeamMembers
 													selectedData={{ id: 1, name: "Job", refid: null, unavailable: false }}
@@ -597,11 +600,11 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 															<button
 																key={i}
 																type="button"
-																className="leading-pro ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 active:opacity-85 font-base my-2 mr-3 inline-flex cursor-pointer items-center justify-between rounded-lg bg-gradient-to-tr from-blue-800 to-sky-400 px-4 py-2 text-center align-middle text-sm uppercase text-white transition-all duration-300 hover:scale-105 hover:bg-indigo-700 hover:text-pink-200 hover:shadow-lg"
+																className="leading-pro ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 active:opacity-85 font-base my-2 mr-3 inline-flex cursor-pointer items-center justify-between rounded-lg border-2 border-blue-400 from-blue-400 to-indigo-700 px-4 py-2 text-center align-middle text-sm uppercase text-gradLightBlue transition-all duration-300 hover:scale-105 hover:bg-indigo-700 hover:bg-gradient-to-tr hover:text-pink-200 hover:shadow-lg"
 															>
 																<span>{data}</span>
 																<svg
-																	className="ml-2 h-4 w-4 cursor-pointer text-gray-300 transition-colors duration-200 hover:text-red-500"
+																	className="ml-2 h-4 w-4 cursor-pointer text-gray-400 transition-colors duration-200 hover:text-red-500"
 																	onClick={(e) => {
 																		e.stopPropagation();
 																		const updatedValues = sc.filter((value) => value !== data);
@@ -620,12 +623,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 														))}
 													</div>
 													<div>
-														<Button
-															label={"apply"}
-															btnType="button"
-															btnStyle="sm"
-															handleClick={() => setshareJob(true)}
-														/>
+														<Button2 label={"apply"} btnStyle="link" handleClick={() => setshareJob(true)} small />
 													</div>
 												</div>
 											</>
@@ -704,22 +702,52 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 														))}
 													</tbody>
 												</table>
-												{/* <div>
-													<GradientButton>Primary</GradientButton>
-													<GradientButton variant="secondary">Secondary</GradientButton>
-													<GradientButton variant="success">Success</GradientButton>
-													<GradientButton variant="danger">Danger</GradientButton>
-													<GradientButton outlined>Outlined Primary</GradientButton>
-													<GradientButton variant="secondary" outlined>
-														Outlined Secondary
-													</GradientButton>
-													<GradientButton variant="success" outlined>
-														Outlined Success
-													</GradientButton>
-													<GradientButton variant="danger" outlined>
-														Outlined Danger
-													</GradientButton>
-													<GradientButton disabled>Disabled</GradientButton>
+												{/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+													<div style={{ marginBottom: "20px" }}>
+														<Button2 label="Primary Button" btnStyle="primary" />
+														<Button2 label="Secondary Button" btnStyle="secondary" />
+														<Button2
+															label="Icon Left Button"
+															btnStyle="iconLeftBtn"
+															iconLeft={<i className="fa-solid fa-heart"></i>}
+														/>
+														<Button2
+															label="Icon Right Button"
+															btnStyle="iconRightBtn"
+															iconRight={<i className="fa-solid fa-heart"></i>}
+														/>
+														<Button2 label="Success Button" btnStyle="success" />
+														<Button2 label="Danger Button" btnStyle="danger" />
+														<Button2 label="Gray Button" btnStyle="gray" />
+														<Button2 label="Ghost Button" btnStyle="ghost" />
+														<Button2 label="Link Button" btnStyle="link" />
+														<Button2 loader label="Outlined" btnStyle="outlined" />
+														<Button2 disabled label="Disabled Button" />
+													</div>
+													<hr />
+													<div>
+														<Button2 label="Primary Button" btnStyle="primary" small />
+														<Button2 label="Secondary Button" btnStyle="secondary" small />
+														<Button2
+															label="Icon Left Button"
+															btnStyle="iconLeftBtn"
+															small
+															iconLeft={<i className="fa-solid fa-heart"></i>}
+														/>
+														<Button2
+															label="Icon Right Button"
+															btnStyle="iconRightBtn"
+															small
+															iconRight={<i className="fa-solid fa-heart"></i>}
+														/>
+														<Button2 label="Success Button" btnStyle="success" small />
+														<Button2 label="Danger Button" btnStyle="danger" small />
+														<Button2 label="Gray Button" btnStyle="gray" small />
+														<Button2 label="Ghost Button" btnStyle="ghost" small />
+														<Button2 label="Link Button" btnStyle="link" small />
+														<Button2 loader label="Outlined" btnStyle="outlined" small />
+														<Button2 disabled label="Disabled Button" small />
+													</div>
 												</div> */}
 
 												<div className="m-2 flex items-center justify-between border-t-2 border-borderColor">

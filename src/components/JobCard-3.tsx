@@ -18,6 +18,7 @@ import {
 	TelegramShareButton,
 	EmailShareButton
 } from "react-share";
+import Button2 from "./Button2";
 
 export default function JobCard_3({ job, axiosInstanceAuth2, arefid, loadRecomandedJob }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -62,18 +63,20 @@ export default function JobCard_3({ job, axiosInstanceAuth2, arefid, loadRecoman
 			<div className="h-full rounded-normal bg-white px-3 py-2 shadow-normal dark:bg-gray-700">
 				<div className="flex w-full flex-row-reverse gap-1">
 					<div className="flex w-auto gap-1 flex-nowrap">
-						<Button
+						<Button2
 							btnStyle="outlined"
 							btnType="button"
 							label={srcLang === "ja" ? "みる" : "View"}
 							handleClick={() => setPreviewPopup(true)}
+							small
 						/>
-						<Button
+						<Button2
 							btnStyle="outlined"
 							btnType="button"
 							label={loader ? "" : "Apply"}
 							loader={loader}
 							handleClick={applyJob}
+							small
 						/>
 					</div>
 					<div className="flex w-full flex-wrap items-center">
@@ -251,7 +254,7 @@ export default function JobCard_3({ job, axiosInstanceAuth2, arefid, loadRecoman
 											</div>
 										</div>
 										<div className="py-4">
-											<Button
+											<Button2
 												label={srcLang === "ja" ? "近い" : "Close"}
 												btnType="button"
 												handleClick={() => setPreviewPopup(false)}

@@ -16,8 +16,10 @@ import { useCarrierStore, useLangStore, useUserStore, useVersionStore } from "@/
 import UpcomingComp from "../organization/upcomingComp";
 import { Dialog, Transition } from "@headlessui/react";
 import { isMobile } from "react-device-detect";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
 
-export default function VendorSideBar() {
+export default function VendorSideBar({ShouldshowSidebar}) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
 	const { theme } = useTheme();
@@ -76,6 +78,35 @@ export default function VendorSideBar() {
 	const [title, settitle] = useState("");
 	const [comingSoon, setComingSoon] = useState(false);
 	const cancelButtonRef = useRef(null);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
+	const joyrideSteps = [
+		{
+			target: ".menuItem-0",
+			title:  "Clients",
+			content: "Clients tab is where you can see the list of clients and their details",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			// hideFooter: true,
+		},
+		{
+			target: ".menuItem-2",
+			title: "Settings",
+			content: "Settings tab is where you can change your account settings and preferences",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true,
+			hideFooter: true,
+		},
+	]
 
 	function handleClickLink(url, com, title) {
 		settitle(title);
@@ -122,11 +153,54 @@ export default function VendorSideBar() {
 							)}
 						</div>
 						<div className="h-[calc(100%-65px)] overflow-y-auto p-3">
+						{ShouldshowSidebar && (
+						<Joyride
+							steps={joyrideSteps}
+							run={shouldShowJoyride}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							continuous={true}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								const { action, status, step } = data;
+								
+								// if ((action === "next" || action === "back") && status === "ready") {
+								// 	if (action === "next" && status === "running") {
+								// 		setStepIndex((prevStep) => prevStep + 1);
+								// 	} else if (action === "back") {
+								// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+								// 	}
+								// }
+								if (action === "close") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+								if (action === "skip") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+							}}
+						/>
+					)}
 							<ul>
 								{menu.map((menuItem, i) => (
 									<>
 										{!menuItem.com && (
-											<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")} key={i}>
+											<li className={`my-[12px] menuItem-${i}` + " " + (show ? "my-[24px]" : "")} key={i}>
 												<div
 													onClick={() => handleClickLink(menuItem.url2, menuItem.com, menuItem.title)}
 													className={

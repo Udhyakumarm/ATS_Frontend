@@ -5,8 +5,10 @@ import ToggleLang from "../ToggleLang";
 import { useState, useEffect } from "react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useRouter } from "next/router";
+import useJoyrideStore from "@/utils/joyride";
 
-export default function VendorTopBar() {
+export default function VendorTopBar({ShouldshowTopbar}) {
+	console.log("topbar ka bool",ShouldshowTopbar)
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
@@ -56,6 +58,8 @@ export default function VendorTopBar() {
 
 	const load = useNotificationStore((state: { load: any }) => state.load);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride, resetTour } = useJoyrideStore();
+
 
 	useEffect(() => {
 		if ((token && token.length > 0) || load) {
@@ -70,6 +74,14 @@ export default function VendorTopBar() {
 				id="topbar"
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
+				{ShouldshowTopbar&& (<i
+					className="fas fa-question-circle my-1 cursor-pointer rounded-l bg-white mx-6  text-xl font-bold text-gray-500 transition-colors duration-300 hover:text-slate-800"
+					onClick={() => {
+						resetTour();
+						console.log("shouldsowjob ride value",shouldShowJoyride);
+						console.log(" is joride completed ki value",isJoyrideCompleted)
+					}}
+				/>)}
 				<ThemeChange />
 				<div
 					className="relative mr-6 cursor-pointer uppercase text-darkGray dark:text-gray-400"

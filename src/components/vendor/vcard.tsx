@@ -6,6 +6,7 @@ import Button from "../Button";
 import { useLangStore } from "@/utils/code";
 import toastcomp from "../toast";
 import moment from "moment";
+import Button2 from "../Button2";
 
 export default function VCard(props: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -264,11 +265,12 @@ export default function VCard(props: any) {
 							<div className="flex items-center justify-between">
 								{moment().isAfter(moment(props.data["agreement_valid_end_date"])) ? (
 									<>
-										<Button
+										<Button2
 											btnStyle="outlined"
 											label={srcLang === "ja" ? "詳細" : "Renew Contract"}
 											btnType="button"
 											handleClick={() => setRCompanyDetails(true)}
+											small
 										/>
 									</>
 								) : (
@@ -293,11 +295,12 @@ export default function VCard(props: any) {
 									</>
 								)}
 
-								<Button
-									btnStyle="sm"
+								<Button2
+									small
 									label={srcLang === "ja" ? "詳細" : "Company Details"}
 									btnType="button"
 									handleClick={() => setCompanyDetails(true)}
+									
 								/>
 							</div>
 						</div>

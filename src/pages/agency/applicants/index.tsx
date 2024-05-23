@@ -23,6 +23,7 @@ import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import moment from "moment";
+import Button2 from "@/components/Button2";
 
 const useDebounce = (value, delay) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -555,10 +556,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 														))}
 													</div>
 													<div>
-														<Button
+														<Button2
 															label={"share"}
 															btnType="button"
-															btnStyle="sm"
+															btnStyle="ghost"
+															small
 															handleClick={() => setshareContract(true)}
 														/>
 													</div>
@@ -732,16 +734,16 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 														</div>
 													)}
 													<div className="flex justify-end gap-2">
-														<Button
+														<Button2
 															btnType="button"
-															btnStyle="sm"
+															small
 															label={srcLang === "ja" ? "前へ" : "Previous"}
 															disabled={!(fapplicantList["previous"] && fapplicantList["previous"].length > 0)}
 															handleClick={() => loadApplicant2(fapplicantList["previous"])}
 														/>
-														<Button
+														<Button2
 															btnType="button"
-															btnStyle="sm"
+															small
 															label={srcLang === "ja" ? "次のページ" : "Next"}
 															disabled={!(fapplicantList["next"] && fapplicantList["next"].length > 0)}
 															handleClick={() => loadApplicant2(fapplicantList["next"])}

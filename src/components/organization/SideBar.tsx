@@ -19,15 +19,33 @@ import { useLangStore } from "@/utils/code";
 import Button from "../Button";
 import { isMobile } from "react-device-detect";
 import { useNewNovusStore } from "@/utils/novus";
+import Joyride from "react-joyride";
 import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import useJoyrideStore from "@/utils/joyride";
 
-export default function OrgSideBar() {
+export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
+	// console.log("current step is", typeof currentStep, currentStep);
 	const router = useRouter();
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
+	// const [showSidebarTour, setShowSidebarTour] = useState(false);
+
+	console.log("current step is", typeof currentStep, currentStep);
+
+	// const TOUR_STATUS_KEY = "tourCompleted";
+
+	// // Check if the tour has been completed before
+	// const storedTourStatus = localStorage.getItem(TOUR_STATUS_KEY);
+	// const initialTourStatus = storedTourStatus ? JSON.parse(storedTourStatus) : false;
+
+	// Initialize the tour completion state with the stored value
+	const [tourCompleted, setTourCompleted] = useState(false);
+
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
 
 	useEffect(() => {
 		if (session) {
@@ -58,6 +76,13 @@ export default function OrgSideBar() {
 			};
 		}
 	}, [token]);
+	useEffect(() => {
+		if (shouldShowSidebarTour && !isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, shouldShowSidebarTour, showJoyride]);
+	console.log("sidebar khulega",shouldShowSidebarTour)
+	console.log("shouldshowjoyride ki value ye hai",shouldShowJoyride)
 
 	// useEffect(() => {
 	// 	if (token && token.length > 0) {
@@ -337,7 +362,7 @@ export default function OrgSideBar() {
 			)
 		},
 		{
-			title: srcLang === "ja"  ? "オファー管理" : "Offer Management",
+			title: srcLang === "ja" ? "オファー管理" : "Offer Management",
 			url: "/organization/offer-management",
 			pre: preOrNot("Offer Management"),
 			com: comOrNot("Offer Management"),
@@ -1380,6 +1405,148 @@ export default function OrgSideBar() {
 			)
 		}
 	];
+	console.log("role hai", role);
+	console.log("type ye hai",type)
+	const steps = [
+		{
+			target:type === "Agency" ? ".menuItem2-1" : ".menuItem-1",
+			title: "Jobs",
+			content: "Lets see, click here Manage and track job postings and applications.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter:role === "Hiring Manager" || type === "Agency" ? false : true
+		},
+		{
+			target:type === "Agency" ?".menuItem2-2": ".menuItem-2",
+			title:type === "Agency" ?"Contracts": "Applicants",
+			content:type === "Agency" ?"Review and manage contracts of existing entities": "Review and manage applicants for your job openings.",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true
+		},
+		{
+			target: type === "Agency" ?".menuItem2-3":".menuItem-3",
+			title: type === "Agency" ?"Applicants":"Offer Management",
+			content: type === "Agency" ? "Review and manage applicants for your job openings.":version==="enterprise"|| version==="free"?"Create, manage, and send offers to candidates.":"Upgrade to Enterpertise to access this feature",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: type === "Agency" ?".menuItem2-4":".menuItem-4",
+			title: type === "Agency" ?"Shared": "Interviews",
+			content: type === "Agency" ?"Track the status of shared applications":"Schedule and conduct interviews with candidates.",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target:type === "Agency" ?".menuItem2-5": ".menuItem-5",
+			title:type === "Agency"? "Interviews": "Analytics",
+			content:type === "Agency" ?"Schedule and conduct interviews with candidates.": "Analyze data and metrics related to your organization's recruitment process.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			// disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		// {
+		// 	target:type === "Agency" ? ".menuItem2-6":"",
+		// 	title: type === "Agency" ?"Analytics":"",
+		// 	content:type === "Agency" ? "Analyze data and metrics related to your organization's recruitment process.":"",
+		// 	placement: "right",
+		// 	disableBeacon: true,
+		// 	spotlightClicks: true,
+		// 	// disableOverlayClose: true,
+		// 	hideCloseButton: true
+		// },
+		{
+			target:type === "Agency" ? ".menuItem2-7": ".menuItem-6",
+			title: "Inboxes",
+			content: version==="enterprise"|| version==="free"?"Manage all your incoming messages and communications in one place.":"Upgrade to Enterpertise to access this feature",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			// disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		// {
+		// 	target:type === "Agency" ? ".menuItem2-8":"",
+		// 	title: type === "Agency" ?"Pipeline":"",
+		// 	content:type === "Agency" ? "Manage and configure the pipeline of applicants":"",
+		// 	placement: "right",
+		// 	disableBeacon: true,
+		// 	spotlightClicks: true,
+		// 	// disableOverlayClose: true,
+		// 	hideCloseButton: true
+		// },
+		{
+			target:type === "Agency" ? ".menuItem2-9": ".menuItem-7",
+			title: "Settings",
+			content: "Click here to configure and customize your organization's account settings.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter: true
+		},
+		// ...(type === "Agency" ? [
+		// 	{
+		// 		target: ".menuItem2-6",
+		// 		title: "Analytics",
+		// 		content: "Analyze data and metrics related to your organization's recruitment process.",
+		// 		placement: "right",
+		// 		disableBeacon: true,
+		// 		spotlightClicks: true,
+		// 		hideCloseButton: true
+		// 	},
+		// 	{
+		// 		target: ".menuItem2-8",
+		// 		title: "Pipeline",
+		// 		content: "Manage and configure the pipeline of applicants",
+		// 		placement: "right",
+		// 		disableBeacon: true,
+		// 		spotlightClicks: true,
+		// 		hideCloseButton: true
+		// 	}
+		// ] : []),
+	];
+	if (type === "Agency") {
+		steps.push(
+			{
+				target: ".menuItem2-6",
+				title: "Analytics",
+				content: "Analyze data and metrics related to your organization's recruitment process.",
+				placement: "right",
+				disableBeacon: true,
+				spotlightClicks: true,
+				hideCloseButton: true
+			},
+			{
+				target: ".menuItem2-8",
+				title: "Pipeline",
+				content: "Manage and configure the pipeline of applicants",
+				placement: "right",
+				disableBeacon: true,
+				spotlightClicks: true,
+				hideCloseButton: true
+			}
+		);
+	}
+	
+
+	const filteredsteps = currentStep ? steps.slice(1) : steps;
 
 	function handleClickLink(url, com, pre, title) {
 		settitle(title);
@@ -1462,7 +1629,7 @@ export default function OrgSideBar() {
 							<>
 								{menu2.map((menuItem, i) => (
 									<li
-										className={`relative my-[12px]` + " " + (show ? "my-[24px]" : "")}
+										className={`relative my-[12px] menuItem2-${i}` + " " + (show ? "my-[24px]" : "")}
 										key={i}
 										data-te-toggle="tooltip"
 										data-te-placement="right"
@@ -1539,7 +1706,7 @@ export default function OrgSideBar() {
 							<>
 								{menu.map((menuItem, i) => (
 									<li
-										className={`relative my-[12px]` + " " + (show ? "my-[24px]" : "")}
+										className={`relative my-[12px] menuItem-${i}` + " " + (show ? "my-[24px]" : "")}
 										key={i}
 										data-te-toggle="tooltip"
 										data-te-placement="right"
@@ -1614,7 +1781,7 @@ export default function OrgSideBar() {
 							</>
 						)}
 
-						<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}>
+						<li className={`logout my-[12px]` + " " + (show ? "my-[24px]" : "")}>
 							<div
 								onClick={() => {
 									toastcomp(currentUser[0]["email"], "success");
@@ -1682,6 +1849,49 @@ export default function OrgSideBar() {
 								/>
 							</div>
 						</div>
+					)}
+					{shouldShowSidebarTour && (
+						<Joyride
+							steps={filteredsteps}
+							run={shouldShowJoyride}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							continuous={true}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								const { action, status, step } = data;
+								
+								// if ((action === "next" || action === "back") && status === "ready") {
+								// 	if (action === "next" && status === "running") {
+								// 		setStepIndex((prevStep) => prevStep + 1);
+								// 	} else if (action === "back") {
+								// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+								// 	}
+								// }
+								if (action === "close") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+								if (action === "skip") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+							}}
+						/>
 					)}
 				</div>
 			</div>

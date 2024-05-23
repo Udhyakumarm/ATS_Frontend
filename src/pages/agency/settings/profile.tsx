@@ -35,6 +35,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import Button2 from "@/components/Button2";
 
 export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
@@ -1231,7 +1232,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 										<div>
 											<div className="flex flex-wrap items-center justify-between">
 												<h6 className="mb-1 font-bold">{t("Words.AddSocialLogins")}</h6>
-												<Button
+												<Button2
 													btnType="button"
 													btnStyle="iconRightBtn"
 													label={t("Btn.Add")}
@@ -1262,7 +1263,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 										<hr className="my-4" />
 										<div>
 											<h6 className="mb-1 font-bold">{t("Form.Password") + " " + t("Words.Settings")}</h6>
-											<Button
+											<Button2
 												btnType="button"
 												label={t("Btn.ChangePassword")}
 												handleClick={() => setChangePass(true)}
@@ -1494,8 +1495,8 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 														<div className="overflow-hidden rounded-normal bg-white shadow-highlight dark:bg-gray-700">
 															<div className="flex items-center justify-between bg-lightBlue p-3 dark:bg-gray-600">
 																<h4 className="font-semibold">{t("Words.UploadImages")}</h4>
-																<Button
-																	btnStyle="sm"
+																<Button2
+																	small
 																	btnType="submit"
 																	label={t("Btn.Add")}
 																	handleClick={() => setAddGalImages(true)}
@@ -1581,7 +1582,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																	<p>Link ATS Career Page with External Career Page</p>
 																</div>
 																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600">
-																	<Button
+																	<Button2
 																		btnType="button"
 																		label={t("Btn.Add")}
 																		handleClick={() => setAddWidget(true)}
@@ -1618,7 +1619,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 											<>
 												<div className="mb-6 flex flex-wrap items-center justify-between">
 													<h5 className="mb-2 font-bold">Add Groups to your Parent Organization</h5>
-													<Button
+													<Button2
 														btnStyle="iconRightBtn"
 														label={t("Btn.Add")}
 														iconRight={<i className="fa-solid fa-circle-plus"></i>}

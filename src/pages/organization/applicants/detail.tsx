@@ -39,6 +39,7 @@ import FormField from "@/components/FormField";
 import PermiumComp from "@/components/organization/premiumComp";
 import outlookicon from "/public/images/social/outlook-email-icon.png"
 import JobCard_3 from "@/components/JobCard-3";
+import Button2 from "@/components/Button2";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" },
@@ -263,9 +264,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	async function genAIFeedback() {
 		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader2(true);
-
+			console.log("started``````")
+			const lang= srcLang==="ja"?"ja":"";
 			await axiosInstanceAuth21
-				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`)
+				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`,{lang:lang})
 				.then(async (res) => {
 					toastcomp("genAIFeedback ", "success");
 					loadNEWAPPDATA(appdata["arefid"]);
@@ -971,7 +973,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</aside>
 										<aside className="flex items-center">
 											<div className="mr-4">
-												<Button
+												<Button2
 													btnType="button"
 													btnStyle="iconLeftBtn"
 													label="Manual Interview"
@@ -981,7 +983,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											</div>
 											{!["standard", "starter"].includes(atsVersion) && (
 												<div className="mr-4">
-													<Button
+													<Button2
 														btnType="button"
 														btnStyle="iconLeftBtn"
 														label={t("Words.ScheduleInterview")}
@@ -2185,15 +2187,18 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																			))}
 																	</div>
 																	<div className="border-t px-10 py-4 dark:border-t-gray-600">
-																		<button
-																			type="button"
-																			className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
+																		<Button2
+																			btnType="button"
+																			// className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
 																			disabled={ailoader}
 																			onClick={() => {
 																				setaiquestion([]);
 																				setaires("");
 																				loadAIInterviewQuestion();
 																			}}
+																			btnStyle="outlined"
+																			label={ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
+																			transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"														
 																		>
 																			{ailoader && (
 																				<span className="mr-2 block">
@@ -2201,7 +2206,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				</span>
 																			)}
 																			{ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
-																		</button>
+																		</Button2>
 																	</div>
 																</div>
 															</div>

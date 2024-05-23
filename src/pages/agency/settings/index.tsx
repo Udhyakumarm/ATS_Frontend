@@ -20,6 +20,9 @@ import OrgRSideBar from "@/components/organization/RSideBar";
 import { useSession } from "next-auth/react";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import toastcomp from "@/components/toast";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
+
 
 export default function Settings({ atsVersion, userRole, comingSoon, currentUser }: any) {
 	const { t } = useTranslation("common");
@@ -70,6 +73,19 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 				setcplan({});
 			});
 	}
+	async function UpdateIntro(){
+		await axiosInstanceAuth2
+			.post(`/organization/intro-update/`)
+			.then(async (res) => {
+				// console.log("!!!", "update-intro", res.data);
+				toastcomp("intro api ","success")
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("update-intro error", "error");
+			});
+	
+	}
 
 	useEffect(() => {
 		console.log("!!!", "currentuser", currentUser);
@@ -86,6 +102,10 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
+	const [tourCompleted, setTourCompleted] = useState(false);
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	const [shouldShowTopBar,setShouldShowTopBar]=useState(false);
 	useEffect(() => {
 		if (session) {
 			settoken(session.accessToken as string);
@@ -99,6 +119,11 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 			getCurrentPlanInfo();
 		}
 	}, [token]);
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	function isExpired(name: any) {
@@ -170,6 +195,53 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 			expired: isExpired("Plans & Pricing")
 		}
 	];
+	const joyrideSteps = [
+		{
+			target: ".quicklink-2",
+			title:  t("Words.SubVendors"),
+			content: "Modify the subvendor's settings.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true,
+			// spotlightClicks: true
+		},
+		{
+			target: ".quicklink-4",
+			title: t("Words.TeamMembers"),
+			content: "Modify the team members settings.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true,
+			// spotlightClicks: true
+		},
+		{
+			target: ".quicklink-6",
+			title: t("Words.Plans_Pricing"),
+			content: "Modify and configure the plans & pricing related settings.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true,
+			// spotlightClicks: true
+		},
+		{
+			target: ".quicklink-0",
+			title: "Welcome to " + t("Words.Profile"),
+			content: "Congratulations! You've reached the end of the tour. You can now explore and manage your organizations profile.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter: false ,
+			spotlightClicks: true
+		}
+	];
+
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
 	return (
@@ -186,6 +258,35 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+				<Joyride
+						steps={joyrideSteps}
+						run={shouldShowJoyride}
+						continuous={true}
+						styles={{
+							options: {
+								arrowColor: "#0066ff", // Set to primary color
+								backgroundColor: "#F5F8FA", // Set to lightBlue
+								overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+								primaryColor: "#0066ff", // Set to primary color
+								textColor: "#3358c5", // Set to secondary color
+								// width: 100, // Adjust as needed
+								zIndex: 1000 // Set as needed
+							}
+						}}
+						showProgress={true}
+						showSkipButton={false}
+						callback={(data: any) => {
+							const { action, status, step } = data;
+							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) ) {
+								completeJoyride();
+								UpdateIntro();
+							}
+							if (action === "close") {
+								setIsTourOpen(false);
+								setTourCompleted(true); 
+							}
+						}}
+					/>
 					<div className="relative rounded-normal bg-white p-10 dark:bg-gray-800">
 						<h1 className="mb-6 text-xl font-bold">{t("Words.Settings")}</h1>
 						<div className="-mx-4 flex flex-wrap items-center">
@@ -195,7 +296,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 								) : (
 									<>
 										{!links.hide && (
-											<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
+											<div key={i} className={`mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%] quicklink-${i}`}>
 												<Link
 													href={links.blur || links.expired ? "/agency/settings/pricing" : links.link}
 													className={`relative block overflow-hidden rounded-normal p-6 shadow-normal dark:bg-gray-700 dark:hover:bg-gray-600`}

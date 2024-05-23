@@ -35,7 +35,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
-
+import Joyride,{STATUS} from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
+import Button2 from "@/components/Button2";
 export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -44,12 +46,12 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 
 	const [rating, setrating] = useState(0);
 	const [brating, setbrating] = useState(0);
-	useEffect(()=>{
-		if(userRole === "Super Admin" && currentUser){
-			setrating(currentUser[0]["rating"])
-			setbrating(currentUser[0]["rating"])
+	useEffect(() => {
+		if (userRole === "Super Admin" && currentUser) {
+			setrating(currentUser[0]["rating"]);
+			setbrating(currentUser[0]["rating"]);
 		}
-	},[currentUser])
+	}, [currentUser]);
 
 	const handleRInputChange = (e) => {
 		const value = e.target.value;
@@ -59,43 +61,43 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		if (regex.test(value)) {
 			setrating(value);
 			//update in database
-			saveRating(value)
-		}
-		else{
-			toastcomp("Use number between 0-90","error")
+			saveRating(value);
+		} else {
+			toastcomp("Use number between 0-90", "error");
 			setrating(brating);
 		}
-	  };
+	};
 
-	  async function saveRating(rating:any) {
+	async function saveRating(rating: any) {
 		const fd = new FormData();
-		fd.append("rating",rating)
+		fd.append("rating", rating);
 		await axiosInstanceAuth2
-			.post(`/organization/rating/update/`,fd)
+			.post(`/organization/rating/update/`, fd)
 			.then(async (res) => {
-				if(res.data.success === 1){
-					toastcomp("rating update","success")
+				if (res.data.success === 1) {
+					toastcomp("rating update", "success");
 					//load user
-					LoadCUser()
-				}else{
-					toastcomp("rating not update","error")}
+					LoadCUser();
+				} else {
+					toastcomp("rating not update", "error");
+				}
 			})
 			.catch((err) => {
 				console.log("@", "rating", err);
-				toastcomp("rating not update","error")
+				toastcomp("rating not update", "error");
 			});
 	}
 
-	  async function LoadCUser() {
+	async function LoadCUser() {
 		await axiosInstanceAuth2
 			.post(`/organization/get/currentUser/`)
 			.then(async (res) => {
 				console.log("@@@@", "LoadCUser", res.data);
-				setcurrentUser(res.data)
+				setcurrentUser(res.data);
 			})
 			.catch((err) => {
 				console.log("@@@@", "LoadCUser", err);
-				toastcomp("rating not update","error")
+				toastcomp("rating not update", "error");
 			});
 	}
 
@@ -111,6 +113,19 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	const [enabled, setEnabled] = useState(false);
 
 	const [gallUpload, setGallUpload] = useState(false);
+
+	const [tourCompleted, setTourCompleted] = useState(false);
+
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const [shouldShowTopBar,setShouldShowTopBar]=useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride } = useJoyrideStore();
+
+	// const [activeTab, setActiveTab] = useState(0);
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
 
 	function blurOrNot(name: any) {
 		// if (userRole === "Super Admin") {
@@ -1086,6 +1101,35 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 	}
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+	const joyrideSteps = [
+		{
+			target: ".tab-heading-0",
+			title: t("Words.IndividualProfile"),
+			content: "This tab allows you to view and manage details specific to individual profiles.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".tab-heading-1",
+			title: t("Words.OrganizationProfile"),
+			content: "This tab allows you to view and manage details specific to your organization's profile.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".tab-heading-3",
+			title: t("Words.OfferLetterFormat"),
+			content: "This tab allows you to customize the format and content of offer letters.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		}
+	];
 
 	return (
 		<>
@@ -1094,13 +1138,47 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			</Head>
 			<main>
 				<OrgSideBar />
-				<OrgTopBar />
+				<OrgTopBar showTopbar={shouldShowTopBar} />
 				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
+					<Joyride
+						steps={joyrideSteps}
+						run={shouldShowJoyride}
+						continuous={true}
+						styles={{
+							options: {
+								arrowColor: "#0066ff", // Set to primary color
+								backgroundColor: "#F5F8FA", // Set to lightBlue
+								overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+								primaryColor: "#0066ff", // Set to primary color
+								textColor: "#3358c5", // Set to secondary color
+								// width: 100, // Adjust as needed
+								zIndex: 1000 // Set as needed
+							}
+						}}
+						showProgress={true}
+						showSkipButton={true}
+						callback={(data: any) => {
+							const { action, status, step, index } = data;
+							// console.log("index ye hai", index);
+							// console.log("status ye hai", status);
+							// setActiveTab(index);
+							// console.log("abhi step ye hain", step.title);
+							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+								// setTourCompleted(true);
+								setShouldShowTopBar(true);
+								// setCurrentStep(1);
+							}
+							if (action === "close") {
+								setIsTourOpen(false);
+								setTourCompleted(true); // Mark the tour as completed when the user closes it
+							}
+						}}
+					/>
 					<div className="rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<div className="py-4">
 							<div className="mx-auto mb-4 flex w-full max-w-[1100px] flex-wrap items-center justify-start px-4 py-2">
@@ -1122,7 +1200,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 									<Tab.List className={"mx-auto w-full max-w-[950px]"}>
 										<div className="w-[790px]">
 											{tabHeading_1.map((item, i) => (
-												<Tab key={i} as={Fragment}>
+												<Tab key={i} as={Fragment} className={`tab-heading-${i}`}>
 													{({ selected }) => (
 														<button
 															className={
@@ -1231,7 +1309,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 										<div>
 											<div className="flex flex-wrap items-center justify-between">
 												<h6 className="mb-1 font-bold">{t("Words.AddSocialLogins")}</h6>
-												<Button
+												<Button2
 													btnType="button"
 													btnStyle="iconRightBtn"
 													label={t("Btn.Add")}
@@ -1262,10 +1340,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 										<hr className="my-4" />
 										<div>
 											<h6 className="mb-1 font-bold">{t("Form.Password") + " " + t("Words.Settings")}</h6>
-											<Button
+											<Button2
 												btnType="button"
 												label={t("Btn.ChangePassword")}
 												handleClick={() => setChangePass(true)}
+												transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"
 											/>
 										</div>
 									</Tab.Panel>
@@ -1494,8 +1573,8 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 														<div className="overflow-hidden rounded-normal bg-white shadow-highlight dark:bg-gray-700">
 															<div className="flex items-center justify-between bg-lightBlue p-3 dark:bg-gray-600">
 																<h4 className="font-semibold">{t("Words.UploadImages")}</h4>
-																<Button
-																	btnStyle="sm"
+																<Button2
+																	small
 																	btnType="submit"
 																	label={t("Btn.Add")}
 																	handleClick={() => setAddGalImages(true)}
@@ -1581,7 +1660,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																	<p>Link ATS Career Page with External Career Page</p>
 																</div>
 																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600">
-																	<Button
+																	<Button2
 																		btnType="button"
 																		label={t("Btn.Add")}
 																		handleClick={() => setAddWidget(true)}
@@ -1589,22 +1668,25 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 																</div>
 															</div>
 															{/* custom rating */}
-															{userRole === "Super Admin" && <div className="flex rounded-normal border">
-																<div className="flex w-[80%] items-start justify-center p-4 flex-col">
-																	<p>External Career Page AI Rating Filter {currentUser[0]["rating"]}%</p>
-																	<small className="opacity-80">Note: In case you do not wish to add the AI rating filter please mention 0.</small>
+															{userRole === "Super Admin" && (
+																<div className="flex rounded-normal border">
+																	<div className="flex w-[80%] flex-col items-start justify-center p-4">
+																		<p>External Career Page AI Rating Filter {currentUser[0]["rating"]}%</p>
+																		<small className="opacity-80">
+																			Note: In case you do not wish to add the AI rating filter please mention 0.
+																		</small>
+																	</div>
+																	<div className="mx-auto w-[20%] rounded-normal bg-lightBlue p-4 text-center text-center dark:bg-gray-600">
+																		<input
+																			type="number"
+																			value={rating}
+																			onChange={(e) => setrating(e.target.value)}
+																			onBlur={handleRInputChange}
+																			className="w-[40%]"
+																		/>
+																	</div>
 																</div>
-																<div className="w-[20%] rounded-normal bg-lightBlue p-4 text-center dark:bg-gray-600 text-center mx-auto">
-																<input
-        type="number"
-        value={rating}
-		onChange={(e)=>setrating(e.target.value)}
-        onBlur={handleRInputChange}
-		className="w-[40%]"
-      />
-																</div>
-															</div>
-															}			
+															)}
 														</>
 													)}
 												</Tab.Panel>

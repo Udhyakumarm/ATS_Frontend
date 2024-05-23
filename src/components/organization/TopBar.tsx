@@ -11,7 +11,6 @@ import OrganizationCalendar2 from "./OrganizationCalendar2";
 import { axiosInstance } from "@/utils";
 import { useRouter } from "next/router";
 import googleIcon from "/public/images/social/google-icon.png";
-import outlookicon from "/public/images/social/outlook-email-icon.png"
 import { useCalStore, useLangStore, useNotificationStore, useUserStore, useVersionStore } from "@/utils/code";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import UpcomingComp from "./upcomingComp";
@@ -21,6 +20,7 @@ import ToggleLang from "../ToggleLang";
 import toastcomp from "../toast";
 import moment from "moment";
 import gcalIcon from "/public/images/social/google-cal-icon2.png";
+import outlookicon from "/public/images/social/outlook-email-icon.png"
 import novusIcon from "/public/images/novus1.png";
 import novusIcon12 from "/public/images/novus12.png";
 
@@ -29,6 +29,10 @@ import { useNewNovusStore } from "@/utils/novus";
 import PermiumComp from "./premiumComp";
 import toastcomp2 from "../toast2";
 import ToastComp22 from "../toast3";
+import Button2 from "../Button2";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
+import UserMenu from "./UserMenu";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: gcalIcon, link: "/api/integrations/gcal/create" },
@@ -37,7 +41,8 @@ const CalendarIntegrationOptions = [
 
 const preVersions = [{ name: "free" }, { name: "starter" }, { name: "standard" }, { name: "enterprise" }];
 
-export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: any) {
+export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, showTopbar }: any) {
+	console.log("top bar ka bool aa rha ", showTopbar);
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -96,6 +101,15 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 
 	const [token, settoken] = useState("");
 	const [count, setcount] = useState(0);
+	const [tourCompleted, setTourCompleted] = useState(false);
+
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride, resetTour } = useJoyrideStore();
+	useEffect(() => {
+		if (showTopbar && !isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [showTopbar, isJoyrideCompleted, showJoyride]);
 
 	useEffect(() => {
 		if (session) {
@@ -186,6 +200,19 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 		},
 		{
 			title: srcLang === "ja" ? "完了しました" : "Completed"
+		}
+	];
+	const steps = [
+		{
+			target: ".novus",
+			title: "Novus AI",
+			content:version === "standard" || version === "starter" ? "Upgrade to Enterprise to access Novus AI" : "Click here to access Novus AI",
+			placement: "bottom",
+			disableBeacon: true,
+			spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true
 		}
 	];
 
@@ -508,6 +535,20 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				router.push("/organization/notifications");
 			});
 	}
+	async function UpdateIntro(){
+		await axiosInstanceAuth2
+			.post(`/organization/intro-update/`)
+			.then(async (res) => {
+				// console.log("!!!", "update-intro", res.data);
+				toastcomp("intro api ","success")
+			})
+			.catch((err) => {
+				console.log("!", err);
+				toastcomp("update-intro error", "error");
+			});
+	
+	}
+
 
 	useEffect(() => {
 		if (token && token.length > 0 && !isExpired) {
@@ -543,6 +584,46 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 				id="topbar"
 				className="fixed left-0 top-0 z-[12] flex h-[65px] w-full items-center justify-end bg-white px-6 py-3 shadow transition dark:bg-gray-800 lg:left-[270px] lg:w-[calc(100%-270px)]"
 			>
+				{showTopbar && (
+					<Joyride
+						steps={steps}
+						run={shouldShowJoyride}
+						styles={{
+							options: {
+								arrowColor: "#0066ff", // Set to primary color
+								backgroundColor: "#F5F8FA", // Set to lightBlue
+								overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+								primaryColor: "#0066ff", // Set to primary color
+								textColor: "#3358c5", // Set to secondary color
+								// width: 100, // Adjust as needed
+								zIndex: 1000 // Set as needed
+							}
+						}}
+						continuous={true}
+						showProgress={true}
+						showSkipButton={true}
+						callback={(data: any) => {
+							const { action, status, step } = data;
+							console.log("yeh hai action", action);
+							console.log("yeh hai status", status);
+							console.log("yeh hai step", step);
+
+							// if ((action === "next" || action === "back") && status === "ready") {
+							// 	if (action === "next" && status === "running") {
+							// 		setStepIndex((prevStep) => prevStep + 1);
+							// 	} else if (action === "back") {
+							// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+							// 	}
+							// }
+							if ([STATUS.FINISHED, STATUS.SKIPPED, STATUS.READY].includes(status)) {
+								completeJoyride();
+								UpdateIntro();
+								console.log("joyride khatam hua", isJoyrideCompleted); // Hide the topbar when the tour is completed or skipped
+							}
+						}}
+					/>
+				)}
+
 				{/* {role === "Super Admin" && (
 					<div className="mr-6 ms-3">
 						<Listbox value={selectedPreVersion} onChange={setPreVersion}>
@@ -590,7 +671,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					</div>
 				)} */}
 
-				<p className="mr-6 rounded-lg bg-primary/75 px-2 py-1 text-center text-xs font-bold uppercase text-white">
+				{/* <p className="mr-6 rounded-lg bg-primary/75 px-2 py-1 text-center text-xs font-bold uppercase text-white">
 					{version}
 				</p>
 
@@ -598,13 +679,21 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 					{role}
 				</p>
 
-				<p className="mr-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-2 py-1 text-center uppercase text-xs font-bold  text-white">
+				<p className="mr-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-2 py-1 text-center text-xs font-bold uppercase  text-white">
 					{type}
-				</p>
+				</p> */}
+				<UserMenu version={version} role={role} type={type} />
 				<ThemeChange />
+				<i
+					className="fas fa-question-circle my-1 cursor-pointer rounded-l bg-white dark:bg-inherit px-1  text-xl font-bold text-gray-500 transition-colors duration-300 hover:text-slate-800 dark:hover:text-slate-200"
+					onClick={() => {
+						resetTour();
+						router.push("/organization/dashboard");
+					}}
+				/>
 				<button
 					type="button"
-					className={`mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+					className={`ml-6 mr-6 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
 					// disabled={isExpired}
 					onClick={() => {
 						if (isExpired) {
@@ -667,7 +756,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo }: a
 						{role != "Hiring Manager" && (
 							<button
 								type="button"
-								className={`ml-4 text-darkGray dark:text-gray-400 ${isExpired && "relative"}`}
+								className={`ml-4 text-darkGray dark:text-gray-400 ${isExpired && "relative"} novus`}
 								onClick={() => {
 									if (isExpired) {
 										toastcomp("Plan Expired", "error");

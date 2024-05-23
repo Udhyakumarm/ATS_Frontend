@@ -21,6 +21,7 @@ import noApplicantdata from "/public/images/no-data/iconGroup-2.png";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import PermiumComp from "@/components/organization/premiumComp";
+import Button2 from "@/components/Button2";
 
 const people = [{ name: "Recruiter" }];
 
@@ -370,12 +371,13 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 											</div>
 											<div className="flex grow items-center justify-end">
 												<div className="mr-3">
-													<Button
+													<Button2
 														btnType="button"
 														btnStyle="iconRightBtn"
 														label={t("Btn.Add")}
 														iconRight={<i className="fa-solid fa-circle-plus"></i>}
 														handleClick={() => setAddTeam(true)}
+														transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"
 													/>
 												</div>
 												{/* <div className="mr-3 w-[150px]">

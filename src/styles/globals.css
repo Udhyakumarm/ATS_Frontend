@@ -1563,3 +1563,47 @@ button:hover .button-text {
 .contentFORAIFeedback ol {
 	list-style-type: decimal;
 }
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px); /* Adjust the value for desired floating height */
+    }
+}
+
+
+.floating-effect {
+    animation: floating 3s ease-in-out infinite; /* Adjust the duration for desired speed */
+}
+.disabled-icon {
+	position: relative;
+  }
+  
+  .disabled-icon:after {
+	
+  
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	height: 2px;
+	background-color: #374151;
+	transform: translate(-50%, -50%) rotate(45deg);
+	position: absolute;
+	content: '';
+  }
+  
+  .tooltip {
+	opacity: 0;
+	transition: opacity 0.3s ease;
+  }
+  /* .fab-menu {
+	opacity: 0;
+	transform: scale(0.8);
+	transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+  .fab-menu.show {
+	opacity: 1;
+	transform: scale(1);
+  } */

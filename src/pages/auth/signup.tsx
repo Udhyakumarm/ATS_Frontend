@@ -15,6 +15,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import ToggleLang from "@/components/ToggleLang";
+import { motion } from "framer-motion";
+import CandFooter from "@/components/candidate/footer";
+import ToggleLangBottom from "@/components/ToggleLangBottom";
 
 const signUpInfoRules: Rules = {
 	email: "required|email",
@@ -142,7 +145,7 @@ export default function AuthSignUp() {
 				password: signUpInfo.password,
 				password2: signUpInfo.passwordConfirm,
 				admin_type:
-					signUpInfo.companyType[0]["name"] === "Corporation" ? "Organization" : signUpInfo.companyType[0]["name"],
+					signUpInfo.companyType[0]["name"] === "Corporation" ? "Organization" : signUpInfo.companyType[0]["name"]
 				// company_type: signUpInfo.companyType
 			})
 			.then(async (response) => {
@@ -228,21 +231,41 @@ export default function AuthSignUp() {
 				<title>{srcLang === "ja" ? "アカウント作成" : "Sign Up"}</title>
 				<meta name="description" />
 			</Head>
-			<main className="py-8">
-				<div className="mx-auto w-full max-w-[550px] px-4">
-					<div className="mb-4 text-center">
-						<Logo width={180} />
+			<main
+				className="flex min-h-screen flex-col md:flex-row  bg-gray-50"
+				// initial={{ opacity: 0 }}
+				// animate={{ opacity: 1 }}
+				// exit={{ opacity: 0 }}
+			>
+				
+				<div
+					className="flex flex-col justify-center  rounded-lg content-center p-4  md:w-1/2"
+					// initial={{ opacity: 0, x: 50 }}
+					// animate={{ opacity: 1, x: 0 }}
+					// transition={{ duration: 1.8, ease: "easeInOut" }}
+				>
+					<div className="absolute left-4 top-4  mr-4   flex items-center space-x-4">
+						<img src="/images/noAuth/headerLogo1.png" alt="logo" />
 					</div>
 					<form
-						className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8"
+						className=" relative ml-34 mt-8 mb-4 min-h-[400px] max-w-md mx-auto rounded-xl border-2  border-neutral-200 bg-white p-6 shadow-normal dark:bg-gray-800 md:px-16 md:py-6"
 						onSubmit={handleSignUp}
 					>
-						<h1 className="mb-6 text-3xl font-bold">
+						{/* <div className="mb-4 text-center">
+							<Logo width={280} />
+						</div> */}
+						{/* <div className="absolute right-0 top-0 mr-1 mt-1 inline-block text-center">
+							<img src="/images/noAuth/headerLogo.png" alt="logo" className="w-12" />
+						</div> */}
+						<h1 className="mb-6 mt-6 text-3xl font-bold whitespace-nowrap">
 							{srcLang === "ja" ? (
 								"アカウント作成"
 							) : (
 								<>
-									Sign <span className="text-primary">Up</span>
+									Welcome to{" "}
+								<span className="bg-gradient-to-r from-blue-700 to-sky-400 bg-clip-text font-extrabold text-transparent">
+									Somhako
+								</span>
 								</>
 							)}
 						</h1>
@@ -251,40 +274,43 @@ export default function AuthSignUp() {
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label={t("Form.OrgName")}
+							// label={t("Form.OrgName")}
 							id="organizationName"
 							handleChange={dispatch}
 							value={signUpInfo.organizationName}
 							error={formError.organizationName}
 							icon={<i className="fa-regular fa-user"></i>}
 							required
+							placeholder={t("Form.OrgName")}
 						/>
 						<FormField
 							fieldType="input"
 							inputType="text"
-							label={t("Form.FullName")}
+							// label={t("Form.FullName")}
 							id="fullName"
 							value={signUpInfo.fullName}
 							error={formError.fullName}
 							handleChange={dispatch}
 							icon={<i className="fa-regular fa-user"></i>}
 							required
+							placeholder={t("Form.FullName")}
 						/>
 						<FormField
 							fieldType="input"
 							inputType="email"
-							label={t("Form.Email")}
+							// label={t("Form.Email")}
 							id="email"
 							value={signUpInfo.email}
 							handleChange={dispatch}
 							error={formError.email}
 							icon={<i className="fa-regular fa-envelope"></i>}
 							required
+							placeholder={t("Form.Email")}
 						/>
 						<FormField
 							fieldType="select"
 							inputType="text"
-							label={t("Form.OrgType")}
+							// label={t("Form.OrgType")}
 							id="companyType"
 							singleSelect
 							value={signUpInfo.companyType}
@@ -293,38 +319,37 @@ export default function AuthSignUp() {
 							// 	{ name: t("Select.Corporation") },
 							// 	{ name: t("Select.Limited_Liability_Company") }
 							// ]}
-							options={[
-								{ name: "Agency"},
-								{ name: "Corporation" },
-							]}
+							options={[{ name: "Agency" }, { name: "Corporation" }]}
 							handleChange={dispatch}
 							error={formError.companyType}
 							icon={<i className="fa-regular fa-envelope"></i>}
 							required
 						/>
-						<div className="-mx-3 flex flex-wrap">
-							<div className="mb-4 w-full px-3 md:max-w-[50%]">
+						<div className="-mx-2 mb-2 flex flex-wrap">
+							<div className="mb-4 w-full px-2 md:max-w-[50%] ">
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label={t("Form.Password")}
+									// label={t("Form.Password")}
 									id="password"
 									value={signUpInfo.password}
 									error={formError.password}
 									handleChange={dispatch}
 									required
+									placeholder={t("Form.Password")}
 								/>
 							</div>
-							<div className="mb-4 w-full px-3 md:max-w-[50%]">
+							<div className="mb-4 w-full px-2 md:max-w-[50%] ">
 								<FormField
 									fieldType="input"
 									inputType="password"
-									label={t("Form.ConfirmPassword")}
+									// label={t("Form.ConfirmPassword")}
 									id="passwordConfirm"
 									value={signUpInfo.passwordConfirm}
 									error={formError.passwordConfirm}
 									handleChange={dispatch}
 									required
+									placeholder="Confirm"
 								/>
 							</div>
 						</div>
@@ -347,7 +372,7 @@ export default function AuthSignUp() {
 								</Link>
 							</label>
 						</div>
-						<div className="mb-4">
+						<div className="mb-2">
 							<Button
 								btnType="submit"
 								label={t("Btn.CreateAccount")}
@@ -373,10 +398,43 @@ export default function AuthSignUp() {
 								{srcLang === "ja" ? "こちら" : "Sign In"}
 							</Link>
 						</p>
+						{/* <div className="pt-2 text-right">
+							<ToggleLang />
+						</div> */}
 					</form>
-					<div className="pt-2 text-right">
-						<ToggleLang />
+					<div className="absolute bottom-4 left-4 flex items-center space-x-4">
+						<i className="fas fa-globe ml-7 text-2xl text-gray-600"></i>
+						<div className="relative">
+							<ToggleLangBottom />
+						</div>
 					</div>
+
+					{/* <div
+						className="mx-auto flex flex-col"
+						// initial={{ opacity: 0, y: 20 }}
+						// animate={{ opacity: 1, y: 0 }}
+						// transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }}
+					>
+						<CandFooter />
+					</div> */}
+					
+				</div>
+				<div
+					className="flex items-center justify-center md:w-1/2"
+					// initial={{ opacity: 0, x: -50 }}
+					// animate={{ opacity: 1, x: 0 }}
+					// transition={{ duration: 0.8, ease: "easeInOut" }}
+				>
+						<div className="flex  h-screen items-center flex-col text-center justify-center">
+						<img
+							src="/images/signup.svg"
+							alt="Image Description"
+							className="floating-effect mx-auto mr-44 inline-block h-auto max-w-xl r  border-b-2 border-black  object-contain p-4 opacity-90"
+						/>
+						<h1 className="bg-gradient-to-r from-blue-300 to-blue-700 bg-clip-text text-transparent mt-8 mr-32 text-4xl font-extra-bold text-gray-800 whitespace-nowrap">Start Your Journey with Somhako</h1>
+						<p className="mt-4 text-lg font-extrabold text-gray-600 mr-60">Create your account and unlock endless opportunities.</p>
+					</div>
+	
 				</div>
 			</main>
 		</>

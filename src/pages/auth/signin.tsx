@@ -21,6 +21,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ToggleLang from "@/components/ToggleLang";
 import Novus from "@/components/Novus";
 import Validator, { Rules } from "validatorjs";
+import Button2 from "@/components/Button2";
+import CandFooter from "@/components/candidate/footer";
+import { motion } from "framer-motion";
+import ToggleLangBottom from "@/components/ToggleLangBottom";
 
 const signInInfoRules: Rules = {
 	email: "required|email",
@@ -103,6 +107,7 @@ export default function AuthSignIn({ providers }: any) {
 	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
 	const [btnLoader, setBtnLoader] = useState(false);
 	const [rememberMe, setrememberMe] = useState(true);
+	const [termsandcond, setTermsandcond] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [wrong, setWrong] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
@@ -268,91 +273,212 @@ export default function AuthSignIn({ providers }: any) {
 			<Head>
 				<title>{srcLang === "ja" ? "ログイン" : "Sign In"}</title>
 			</Head>
-			<main className="py-8">
-				<Toaster />
-				<form className="mx-auto w-full max-w-[550px] px-4" onSubmit={handleSubmit}>
-					<div className="mb-4 text-center">
-						<Logo width={180} />
+			<main
+				className="flex  min-h-screen flex-col bg-gray-50 md:flex-row"
+				// initial={{ opacity: 0 }}
+				// animate={{ opacity: 1 }}
+				// exit={{ opacity: 0}}
+			>
+				<div className="relative items-center justify-center align-middle md:w-1/2">
+					<div className="absolute left-4 top-4  mr-4  flex items-center space-x-4">
+						<img src="/images/noAuth/headerLogo1.png" alt="logo" />
 					</div>
-					<div className="min-h-[400px] rounded-large bg-white p-6 shadow-normal dark:bg-gray-800 md:px-12 md:py-8">
-						<h1 className="mb-6 text-3xl font-bold">
-							{srcLang === "ja" ? (
-								"ログイン"
-							) : (
-								<>
-									Sign <span className="text-primary">In</span>
-								</>
-							)}
-						</h1>
-						<FormField
-							fieldType="input"
-							inputType="email"
-							label={t("Form.Email")}
-							id="email"
-							value={loginInfo.email}
-							handleChange={dispatch}
-							icon={<i className="fa-regular fa-envelope"></i>}
-							error={formError.email}
-							required
+					<div className="flex  h-screen items-center flex-col text-center justify-center">
+						<img
+							src="/signin.svg"
+							alt="Image Description"
+							className="floating-effect mx-auto ml-44 inline-block h-auto max-w-xl  border-b-2 border-black  object-contain p-4 opacity-90"
 						/>
-						<FormField
-							fieldType="input"
-							inputType="password"
-							label={t("Form.Password")}
-							id="password"
-							value={loginInfo.password}
-							handleChange={dispatch}
-							error={formError.password}
-							required
-						/>
-						<div className="mb-4 flex flex-wrap items-center justify-between">
-							<div className="flex items-center">
-								<label htmlFor="rememberMe" className="text-darkGray">
+						<h1 className="mt-8 ml-56 text-4xl font-extra-bold bg-gradient-to-r from-blue-300 to-blue-700 bg-clip-text text-transparent whitespace-nowrap">Unlock the Magic with Somhako!</h1>
+						<p className="mt-4 text-lg font-extrabold text-gray-600 ml-56">Sign in to your account.</p>
+					</div>
+					<div className="absolute bottom-4 left-4 flex items-center space-x-4">
+						<i className="fas fa-globe ml-7 text-2xl text-gray-600"></i>
+						<div className="relative">
+							<ToggleLangBottom />
+						</div>
+					</div>
+				</div>
+				<div
+					className="flex flex-col justify-center  shadow-slate-300 md:w-1/2 "
+					// initial={{ opacity: 0, x: 100 }}
+					// animate={{ opacity: 1, x: 0 }}
+					// transition={{ duration: 1.7,ease: "easeInOut"  }}
+				>
+					<Toaster />
+					<form
+						className="relative mx-auto h-[550px]  max-w-md rounded-xl border-2  border-neutral-200 bg-white px-6 pt-2 shadow-normal dark:bg-gray-800 md:px-8 md:py-12"
+						onSubmit={handleSubmit}
+						// initial={{ opacity: 0, y: 50 }}
+						// animate={{ opacity: 1, y: 0 }}
+						// transition={{ duration: 0.5 }}
+					>
+						{/* <div className="absolute right-0 top-0 mr-4 mt-4">
+							<img src="images/somhako_logo.png" alt="" /> 
+						</div> */}
+
+						{/* <div className="absolute right-0 top-0 mr-1 mt-1 inline-block text-center">
+							<img src="/images/noAuth/headerLogo.png" alt="logo" className="w-12" />
+						</div> */}
+						<div className="min-h-[350px]  rounded-large p-6 dark:bg-gray-800 md:px-8 md:py-4">
+							<h1 className="mb-8 whitespace-nowrap text-3xl font-bold">
+								{/* {srcLang === "ja" ? (
+									"ログイン"
+								) : (
+									<>
+										Sign <span className="text-primary">In</span>
+									</>
+								)} */}
+								Welcome {" "}
+								<span className="bg-gradient-to-r from-blue-700 to-sky-400 bg-clip-text font-extrabold text-transparent ">
+									Back
+								</span>
+							</h1>
+							<FormField
+								fieldType="input"
+								inputType="email"
+								// label={t("Form.Email")}
+								id="email"
+								value={loginInfo.email}
+								handleChange={dispatch}
+								icon={<i className="fa-regular fa-envelope"></i>}
+								error={formError.email}
+								required
+								placeholder="Email"
+							/>
+							<FormField
+								fieldType="input"
+								inputType="password"
+								// label={t("Form.Password")}
+								id="password"
+								value={loginInfo.password}
+								handleChange={dispatch}
+								error={formError.password}
+								required
+								placeholder="Password"
+							/>
+							<div className="mb-4 mt-2 px-2 flex flex-wrap items-end justify-between">
+								<div className="flex items-center">
+									<label htmlFor="rememberMe" className="text-darkGray mr-3">
+										<input
+											type="checkbox"
+											id="rememberMe"
+											className="mb-1 mr-2 rounded border-lightGray"
+											checked={rememberMe}
+											onChange={(e) => setrememberMe(!rememberMe)}
+										/>
+										{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
+									</label>
+								</div>
+								<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline dark:text-white ml-1">
+									{srcLang === "ja" ? "パスワードを忘れた方" : "Forgot Password?"}
+								</Link>
+							</div>
+							<div className="mb-2 mt-2 text-blue-200">
+								<Button2
+									btnType="submit"
+									btnStyle="secondary"
+									label={t("Btn.SignIn")}
+									full={true}
+									loader={btnLoader}
+									disabled={btnLoader || !checkLoginFun()}
+									transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"
+								/>
+							</div>
+							<div className="mt-4 flex flex-col items-start  font-normal">
+								{/* <label htmlFor="termsAndPrivacy" className=" text-md flex  items-center text-darkGray">
+									<input
+										type="checkbox"
+										id="termsAndPrivacy"
+										className="mb-1 mr-2 rounded border-lightGray "
+										checked={termsandcond}
+										onChange={(e) => setTermsandcond(!termsandcond)}
+										// Add your checkbox state and handler here
+									/>
+									{srcLang === "ja" ? (
+										<span>
+											<Link href="/terms-of-service" className="text-blue-500 hover:underline ">
+												利用規約
+											</Link>
+											および
+											<Link href="/privacy-policy" className="text-blue-500 hover:underline">
+												プライバシーポリシー
+											</Link>
+											を読み、同意しました。
+										</span>
+									) : (
+										<span>
+											I have read and accepted the{" "}
+											<Link href="/terms-of-service" className="text-blue-500 hover:underline">
+												Terms of Service
+											</Link>{" "}
+											and{" "}
+											<Link href="/privacy-policy" className="text-blue-500 hover:underline">
+												Privacy Policy
+											</Link>
+											.
+										</span>
+									)}
+								</label>
+								<label htmlFor="rememberMe" className="text-md flex items-center text-darkGray">
 									<input
 										type="checkbox"
 										id="rememberMe"
-										className="mb-1 mr-2 rounded border-lightGray"
+										className="mb-1 mr-2 flex rounded border-lightGray"
 										checked={rememberMe}
 										onChange={(e) => setrememberMe(!rememberMe)}
 									/>
 									{srcLang === "ja" ? "ログイン情報を保存" : "Remember Me"}
-								</label>
+								</label> */}
 							</div>
-							<Link href={"/auth/forgot"} className="font-bold text-primary hover:underline dark:text-white">
-								{srcLang === "ja" ? "パスワードを忘れた方" : "Forgot Password?"}
-							</Link>
-						</div>
-						<div className="mb-4">
-							<Button
-								btnType="submit"
-								label={t("Btn.SignIn")}
-								full={true}
-								loader={btnLoader}
-								disabled={btnLoader || !checkLoginFun()}
-							/>
-						</div>
-						<AuthError error={error} />
-						{success && (
-							<p className="mb-4 text-center text-sm text-green-600">
-								<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+							<AuthError error={error} />
+							{success && (
+								<p className="mb-4 text-center text-sm text-green-600">
+									<i className="fa-solid fa-check fa-lg mr-2 align-middle"></i> Login Successfully
+								</p>
+							)}
+							{wrong && (
+								<p className="mb-4 text-center text-sm capitalize text-red-600">
+									<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i>
+									{errorMsg}
+								</p>
+							)}
+							<div className="mt-2 flex items-center">
+								<hr className="mr-2 flex-grow border-t border-gray-300" />
+								<span className="text-gray-500">OR</span>
+								<hr className="ml-2 flex-grow border-t border-gray-300" />
+							</div>
+
+							<p className="mt-6 text-center text-darkGray">
+								{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
+								<Link href={"/auth/signup"} className="font-bold text-primary hover:underline dark:text-white">
+									{srcLang === "ja" ? "こちら" : "Create Account"}
+								</Link>
+								{/* <CandFooter /> */}
 							</p>
-						)}
-						{wrong && (
-							<p className="mb-4 text-center text-sm capitalize text-red-600">
-								<i className="fa-solid fa-xmark fa-lg mr-2 align-middle"></i> {errorMsg}
-							</p>
-						)}
-						<p className="text-center text-darkGray">
-							{srcLang === "ja" ? "アカウント作成がまだの方は" : "Not sign up yet ?"}{" "}
-							<Link href={"/auth/signup"} className="font-bold text-primary hover:underline dark:text-white">
-								{srcLang === "ja" ? "こちら" : "Create Account"}
-							</Link>
-						</p>
-					</div>
-					<div className="pt-2 text-right">
-						<ToggleLang />
-					</div>
-				</form>
+						</div>
+						{/* <hr className="my-1 w-full" />
+						<div className="mt-2 text-right">
+							<ToggleLang />
+						</div> */}
+						{/* <motion.div
+							className="mx-auto  flex flex-col"
+							initial={{ opacity: 0, y: 50 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5, delay: 0.8,ease: "easeOut" }}
+						>
+							<CandFooter />
+						</motion.div> */}
+					</form>
+					{/* <div
+							className="mx-auto  flex flex-col"
+							// initial={{ opacity: 0, y: 50 }}
+							// animate={{ opacity: 1, y: 0 }}
+							// transition={{ duration: 0.5, delay: 0.8,ease: "easeOut" }}
+						>
+							<CandFooter />
+						</div> */}
+				</div>
 			</main>
 		</>
 	);
@@ -369,3 +495,4 @@ export async function getStaticProps({ context, locale }: any) {
 }
 
 AuthSignIn.noAuth = true;
+// AS HERE you can see teh in the main div htere is a form and a cand footer component currently due to cand footer being render outisdie the form due to which its being render at top of the pagejust beside teh forma I wnat this structure only that there must be a image aove this footer at the top of the page and the footer i pushed down and teh tis whole image + footer beng parallel to the form div to its side I want o achieve this layout help me do it

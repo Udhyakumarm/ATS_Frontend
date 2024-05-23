@@ -37,7 +37,9 @@ module.exports = {
 				// gradDarkBlue: "#6A67EA",1
 				gradDarkBlue: "#67a0ea",
 				// gradDarkBlue: "#4E76DC",
-				borderColor: "#e5e7eb"
+				borderColor: "#e5e7eb",
+				whitesmoke: 'rgb(246, 241, 245)',
+                lavender: 'rgb(242, 239, 243)',
 			},
 			boxShadow: {
 				normal: "0 0 10px rgba(0, 0, 0, 0.1)",
