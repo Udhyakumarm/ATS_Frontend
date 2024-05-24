@@ -12,6 +12,7 @@ import cn from "classnames";
 import _ from "lodash";
 import React from "react";
 import toastcomp from "@/components/toast";
+import Button2 from "@/components/Button2";
 
 export default function Card(props: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -128,7 +129,7 @@ export default function Card(props: any) {
 							<i className="fa-solid fa-calendar-days mr-2 text-[16px]"></i>
 							<p>{moment(props["data"]["created_at"]).format("Do MMM YYYY")}</p>
 						</aside>
-						<Button
+						<Button2
 							btnStyle="outlined"
 							label={srcLang === "ja" ? "みる" : "View"}
 							btnType="button"
@@ -143,6 +144,7 @@ export default function Card(props: any) {
 								// router.push("applicants/detail");
 								window.open("applicants/detail", '_blank');
 							}}
+							small
 						/>
 					</div>
 				</div>

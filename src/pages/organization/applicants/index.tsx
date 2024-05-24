@@ -31,9 +31,11 @@ import TImeSlot from "@/components/TimeSlot";
 import { debounce } from "lodash";
 import toastcomp from "@/components/toast";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import outlookicon from "/public/images/social/outlook-email-icon.png"
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" },
+	{provider:"Outlook Calendar", icon:outlookicon, link: "/api/integrations/outlook/calendar/create" },
 ];
 
 const useDebounce = (value, delay) => {
@@ -205,6 +207,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		if (cardstatus.length > 0) {
 			if (cardstatus === "Interview" && cardarefid.length > 0) {
 				checkGCAL();
+				checkOutlook();
 				// setanimation(true);
 				// setkanbanAID(cardarefid);
 				// setTimeout(() => {
@@ -283,6 +286,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	}
 
 	const [gcall, setgcall] = useState(false);
+	const [outlook,Setoutlook] = useState(false);
 
 	async function checkGCAL() {
 		setgcall(false);
@@ -297,6 +301,20 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 			.catch(() => {
 				setIsCalendarOpen(true);
 			});
+	}
+	async function checkOutlook(){
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
+		.then(
+			(res)=>{
+				console.log("outlook connect res:::", res);
+				if(res.data.res === "success"){
+					Setoutlook(true);
+				}
+				setIsCalendarOpen(true);
+			}).catch(()=>{
+				setIsCalendarOpen(true);
+			})
 	}
 
 	async function coonectGoogleCal() {
@@ -318,6 +336,25 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		// 	}
 		// });
 	}
+	async function coonectOutlook() {
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
+			console.log("outlook connect res:::", res);
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				Setoutlook(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+
 	return (
 		<>
 			<Head>
@@ -654,7 +691,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{gcall ? (
+								{gcall||outlook ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Schedule Interview</h4>
@@ -692,7 +729,14 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 												{CalendarIntegrationOptions.map((integration, i) => (
 													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
 														<div
-															onClick={coonectGoogleCal}
+															onClick={()=>{
+																if (integration.provider === "Google Calendar") {
+																	coonectGoogleCal();
+																}
+																else if (integration.provider === "Outlook Calendar") {
+																	coonectOutlook();
+																}
+															}}
 															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
 														>
 															<Image

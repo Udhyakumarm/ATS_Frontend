@@ -55,7 +55,7 @@ export default function FormField({
 	if (fieldType === "input") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="mb-6 last:mb-0">
 					<div>
 						{label ? (
 							<label htmlFor={`field_` + label.replace(/\s+/g, "")} className="mb-1 inline-block font-bold">
@@ -78,7 +78,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-md border-2 border-gray-200 p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -101,7 +101,7 @@ export default function FormField({
 												placeholder={placeholder}
 												readOnly={readOnly}
 												className={
-													`min-h-[45px] w-full rounded-normal border border-borderColor p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
+													`min-h-[45px] w-full rounded-md border-2 border-gray-200 p-3 text-sm dark:border-gray-600 dark:bg-gray-700` +
 													" " +
 													(icon ? "pr-9" : "")
 												}
@@ -138,7 +138,7 @@ export default function FormField({
 	if (fieldType === "textarea") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="mb-6 last:mb-0">
 					<div>
 						{label ? (
 							<label
@@ -171,7 +171,7 @@ export default function FormField({
 	if (fieldType === "select") {
 		return (
 			<>
-				<div className="mb-4 last:mb-0">
+				<div className="mb-6 last:mb-0">
 					<div>
 						{label ? (
 							<label

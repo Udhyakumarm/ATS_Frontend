@@ -11,13 +11,18 @@ import offerManageIcon from "/public/images/icons/offer-manage.png";
 import interviewsIcon from "/public/images/icons/interviews.png";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore } from "@/utils/code";
+import { useLangStore, useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
 import { useEffect } from "react";
+import useJoyrideStore from "@/utils/joyride";
+import Joyride from "react-joyride";
 
 export default function Organization({ atsVersion, userRole, currentUser }: any) {
 	const { t } = useTranslation("common");
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	const user = useUserStore((state: { user: any }) => state.user);
+	const role = useUserStore((state: { role: any }) => state.role);
 	function blurOrNot(name: any) {
 		if (atsVersion === "standard" || atsVersion === "starter") {
 			return name === "Offer Management";
@@ -568,10 +573,54 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 			)
 		}
 	];
+	const firstQuickLink = quicklinks[0];
+	const joyrideSteps = [
+		{
+			target: `.quicklink-${firstQuickLink.name.toLowerCase()}`, // Assuming each link has a unique name
+			content: (
+				<div>
+					<h1 className="mb-2 text-2xl font-bold">Welcome to Somhako!</h1>
+					<p>
+						{srcLang === "ja"
+							? "このツアーでは、Somhakoの使い方を紹介します。"
+							: "This tour will guide you through how to use Somhako."}
+					</p>
+				</div>
+			),
+			placement: "bottom",
+			disableBeacon: true,
+			hideCloseButton: true,
+			hideFooter: true,
+			title: "Dashboard",
+			spotlightClicks: true
+		}
+	];
 
 	useEffect(() => {
 		console.log("!!!", "cuser", currentUser);
 	}, [currentUser]);
+	useEffect(()=>{
+		console.log(user[0]["intro"])
+		console.log(role)
+		if(user && user.length>0 ){
+			console.log("ye hai itnro ki value",user[0]["intro"]);
+			if(!user[0]["intro"] && isJoyrideCompleted){
+				toastcomp("The intro is alreay completed!!","success")
+			}
+			else if(!user[0]["intro"] && !isJoyrideCompleted){
+				completeJoyride();
+				toastcomp("The intro is alreay completed but the store value was different!!","success")
+			}
+			else{
+				showJoyride();
+				toastcomp("Intro Starting","success")
+			}
+		}
+		else{
+			console.log("chal ni rha")
+		}
+	},[user])
+	console.log("isjoridecompleted bool value",isJoyrideCompleted)
 
 	return (
 		<>
@@ -579,12 +628,37 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 				<title>{srcLang === "ja" ? "ショートカット" : "Quicklinks"}</title>
 			</Head>
 			<main className="py-4">
+				<Joyride
+					steps={joyrideSteps}
+					run={shouldShowJoyride}
+					continuous={true}
+					styles={{
+						options: {
+							arrowColor: "#0066ff", // Set to primary color
+							backgroundColor: "#F5F8FA", // Set to lightBlue
+							overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+							primaryColor: "#0066ff", // Set to primary color
+							textColor: "#3358c5", // Set to secondary color
+							// width: 100, // Adjust as needed
+							zIndex: 1000 // Set as needed
+						}
+					}}
+					showProgress={true}
+					showSkipButton={true}
+					callback={(data: any) => {
+						const { action } = data;
+						if (action === "close") {
+							completeJoyride(); // Mark the tour as completed when the user closes it
+						}
+					}}
+				/>
+			
 				<div className="md:px-26 mx-auto w-full max-w-[1920px] px-4 lg:px-40">
 					<div className="rounded-normal bg-white p-6 dark:bg-gray-800">
 						<div className="mx-auto w-full max-w-[1100px]">
 							<div className="-mx-4 flex flex-wrap items-center">
 								{quicklinks.map((links, i) => (
-									<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%]">
+									<div key={i} className={`mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] quicklink-${links.name.toLowerCase()}`}>
 										<Link
 											href={links.blur || links.expired ? "/agency/settings/pricing" : links.link}
 											className="relative flex w-full items-center overflow-hidden rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"

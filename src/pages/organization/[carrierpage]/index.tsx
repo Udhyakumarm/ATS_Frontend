@@ -131,34 +131,36 @@ export default function CanCareer() {
 													</Link>
 												) : (
 													<>
-														Company URL <small>Not Disclosed</small>
+														{srcLang === "ja" ? "企業の URL" : "Company URL"} <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 													</>
 												)}
 											</li>
 											<li className="mr-3">
 												{data["contact_Number"] && data["contact_Number"] != "" ? (
-													<>Company Contact : {data["contact_Number"]}</>
+													<>{srcLang === "ja" ? "企業連絡先" : "Company Contact"} : {data["contact_Number"]}</>
 												) : (
 													<>
-														Company Contact <small>Not Disclosed</small>
+														{srcLang === "ja" ? "企業連絡先" : "Company Contact"}<small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 													</>
 												)}
 											</li>
 											<li className="mr-3">
 												{data["company_Size"] && data["company_Size"] != "" ? (
-													<>Company Size : {data["company_Size"]} Employees</>
+													<>{srcLang === "ja" ? "企業規模" : "Company Size"}: {data["company_Size"]} {srcLang === "ja" ? "従業員" : "Employees"}</>
 												) : (
 													<>
-														Company Size <small>Not Disclosed</small>
+														{srcLang === "ja" ? "企業規模" : "Company Size"} <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 													</>
 												)}
 											</li>
 											<li className="mr-3">
 												{data["workplace_Type"] && data["workplace_Type"] != "" ? (
-													<>Workplace Culture : {data["workplace_Type"]}</>
+													<>{srcLang === "ja" ? "職場文化" : "Workplace Culture"}
+													: {data["workplace_Type"]}</>
 												) : (
 													<>
-														Workplace Culture <small>Not Disclosed</small>
+														{srcLang === "ja" ? "職場文化" : "Workplace Culture"}
+ <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 													</>
 												)}
 											</li>
@@ -169,50 +171,50 @@ export default function CanCareer() {
 										{data["about_org"] && data["about_org"] != "" ? (
 											<article className="mb-6" dangerouslySetInnerHTML={{ __html: data["about_org"] }}></article>
 										) : (
-											<small>Not Disclosed</small>
+											<small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 										)}
 										<hr className="mb-6" />
 										<h2 className="mb-3 text-lg font-bold">{t("Form.AboutTheFounder")}</h2>
 										{data["about_founder"] && data["about_founder"] != "" ? (
 											<article className="mb-6" dangerouslySetInnerHTML={{ __html: data["about_founder"] }}></article>
 										) : (
-											<small>Not Disclosed</small>
+											<small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 										)}
 										<hr className="mb-6" />
 										<h2 className="mb-3 text-lg font-bold">Other Information</h2>
 										<h4 className="mb-2">
 											{data["headquarter_Location"] && data["headquarter_Location"] != "" ? (
-												<>Headquarter Location : {data["headquarter_Location"]}</>
+												<>{srcLang === "ja" ? "本社所在地" : "Headquarter Location"} : {data["headquarter_Location"]}</>
 											) : (
 												<>
-													Headquarter Location : <small>Not Disclosed</small>
+													{srcLang === "ja" ? "本社所在地" : "Headquarter Location"} : <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 												</>
 											)}
 										</h4>
 										<h4 className="mb-2">
 											{data["branch_Office"] && data["branch_Office"] != "" ? (
-												<>Branch Office : {data["branch_Office"]}</>
+												<>{srcLang === "ja" ? "支店" : "Branch Office"} : {data["branch_Office"]}</>
 											) : (
 												<>
-													Branch Office : <small>Not Disclosed</small>
+													{srcLang === "ja" ? "支店" : "Branch Office"} : <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 												</>
 											)}
 										</h4>
 										<h4 className="mb-2">
 											{data["funding_Details"] && data["funding_Details"] != "" ? (
-												<>Funding Details : {data["funding_Details"]}</>
+												<>{srcLang === "ja" ? "資金調達の詳細" : "Funding Details"}: {data["funding_Details"]}</>
 											) : (
 												<>
-													Funding Details : <small>Not Disclosed</small>
+													{srcLang === "ja" ? "資金調達の詳細" : "Funding Details"} : <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 												</>
 											)}
 										</h4>
 										<h4 className="mb-2">
 											{data["organization_Benefits"] && data["organization_Benefits"] != "" ? (
-												<>Organization Benefits : {data["organization_Benefits"]}</>
+												<>{srcLang === "ja" ? "組織の福利厚生" : "Organization Benefits"} : {data["organization_Benefits"]}</>
 											) : (
 												<>
-													Organization Benefits : <small>Not Disclosed</small>
+													{srcLang === "ja" ? "組織の福利厚生" : "Organization Benefits"} : <small>{srcLang === "ja" ? "非公開" : "Not Disclosed"}</small>
 												</>
 											)}
 										</h4>

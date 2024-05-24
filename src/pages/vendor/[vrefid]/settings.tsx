@@ -13,6 +13,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore, useNotificationStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
 
 export default function VendorSettings() {
 	const { t } = useTranslation("common");
@@ -195,6 +197,35 @@ export default function VendorSettings() {
 				}
 			});
 	}
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
+	const joyrideSteps = [
+		{
+			target: ".tab-heading-0",
+			title: t("Words.Profile"),
+			content: "Profile tab is where you can see the profile details and other details of the organization",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true
+		},
+		{
+			target: ".tab-heading-1",
+			title:  t("Form.Agreement"),
+			content: "Agreement tab is where you can see the agreement details of the organization! Congratulations the guide is completed!",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			// spotlightClicks: true
+		},
+		
+	];
 
 	useEffect(() => {
 		//img,bophone,badd vdata2
@@ -242,13 +273,45 @@ export default function VendorSettings() {
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className="layoutWrap p-4 lg:p-8">
+				<Joyride
+							steps={joyrideSteps}
+							run={shouldShowJoyride}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							continuous={true}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								
+								// if ((action === "next" || action === "back") && status === "ready") {
+								// 	if (action === "next" && status === "running") {
+								// 		setStepIndex((prevStep) => prevStep + 1);
+								// 	} else if (action === "back") {
+								// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+								// 	}
+								// }
+								const { action, status, step } = data;
+							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) ) {
+								completeJoyride();
+							}
+							}}
+						/>
 					<div className="relative rounded-normal bg-white shadow-normal dark:bg-gray-800">
 						<h1 className="mb-3 p-10 pb-0 text-xl font-bold">{t("Words.Settings")}</h1>
 						<Tab.Group>
 							<div className="border-b dark:border-b-gray-600">
 								<Tab.List className={"mx-auto w-full max-w-[1150px] px-4"}>
 									{tabHeading_1.map((item, i) => (
-										<Tab key={i} as={Fragment}>
+										<Tab key={i} as={Fragment} className={`tab-heading-${i}`}>
 											{({ selected }) => (
 												<button
 													className={

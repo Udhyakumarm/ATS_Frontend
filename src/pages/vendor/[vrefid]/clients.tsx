@@ -27,6 +27,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore, useNotificationStore } from "@/utils/code";
 import Confetti from "react-confetti";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
+
 
 const people = [
 	{ id: 1, name: "Wade Cooper" },
@@ -80,6 +83,11 @@ export default function VendorClients() {
 	const [sadApply, setsadApply] = useState(false);
 	const [vjobclick, setvjobclick] = useState(-1);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
+	const [tourCompleted, setTourCompleted] = useState(false);
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	const [shouldShowTopBar,setShouldShowTopBar]=useState(false);
+	const [shouldShowSidebarTour, setShouldShowSidebarTour] = useState(false);
 
 	async function offerVisible(arefid: any) {
 		await axiosInstanceAuth2
@@ -117,6 +125,11 @@ export default function VendorClients() {
 				console.log("!", err);
 			});
 	}
+	useEffect(()=>{
+		if(vjdata&& vjdata.length>0){
+			setShouldShowTopBar(true)
+	}},[vjdata])
+	
 
 	useEffect(() => {
 		if (vrefid && vrefid.length > 0 && token && token.length > 0) {
@@ -442,7 +455,72 @@ export default function VendorClients() {
 				setAddCand(false);
 			});
 	}
-
+	useEffect(() => {
+		// Call completeJoyride when the component mounts
+		completeJoyride();
+	  }, [completeJoyride]);
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
+	console.log("joride ki value ", isJoyrideCompleted);
+	console.log("should showjoyride ki value ", shouldShowJoyride)
+	const joyrideSteps = [
+		{
+			target: ".jobs-0",
+			title:  t("Words.Jobs"),
+			content: "Click here to Manage ,handle and recommend candidates for active jobs",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			// hideFooter: true,
+			spotlightClicks: true
+		},
+		{
+			target: ".tab-heading-0",
+			title: t("Words.JobDescription"),
+			content: "Job description tab is where you can see the job description and other details of the job",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true
+		},
+		{
+			target: ".tab-heading-1",
+			title: t("Words.AboutOrganization"),
+			content: "About organization tab is where you can see the organization details and other details of the organization",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true
+		},
+		{
+			target: ".tab-heading-2",
+			title: t("Words.AllApplicants"),
+			content: "All applicants tab is where you can see the list of all the applicants for the job",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true
+		},
+		{
+			target: ".recommendButton",
+			title: "Recommend Candidates",
+			content: " Click here to recommend candidates for the jobs by adding their resumes to the list",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			spotlightClicks: true
+		},
+		
+	];
+	// recommendButton
 	return (
 		<>
 			<Head>
@@ -451,8 +529,37 @@ export default function VendorClients() {
 				</title>
 			</Head>
 			<main>
-				<VendorSideBar />
-				<VendorTopBar />
+			
+				<VendorSideBar ShouldshowSidebar={shouldShowSidebarTour} />
+				<VendorTopBar ShouldshowTopbar={shouldShowTopBar} />
+				<Joyride
+						steps={joyrideSteps}
+						run={shouldShowJoyride}
+						continuous={true}
+						styles={{
+							options: {
+								arrowColor: "#0066ff", // Set to primary color
+								backgroundColor: "#F5F8FA", // Set to lightBlue
+								overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+								primaryColor: "#0066ff", // Set to primary color
+								textColor: "#3358c5", // Set to secondary color
+								// width: 100, // Adjust as needed
+								zIndex: 1000 // Set as needed
+							}
+						}}
+						showProgress={true}
+						showSkipButton={false}
+						callback={(data: any) => {
+							const { action, status, step } = data;
+							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) ) {
+								setShouldShowSidebarTour(true);
+							}
+							if (action === "close") {
+								setIsTourOpen(false);
+								setTourCompleted(true); 
+							}
+						}}
+					/>
 				<div
 					id="overlay"
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
@@ -538,7 +645,7 @@ export default function VendorClients() {
 										vjdata.map((data, i) => (
 											<div
 												className={
-													"border border-transparent border-b-slate-200 px-3 py-4 last:border-b-0 hover:shadow-highlight dark:border-b-gray-600 dark:hover:bg-gray-900"
+													`border border-transparent border-b-slate-200 px-3 py-4 last:border-b-0 hover:shadow-highlight dark:border-b-gray-600 dark:hover:bg-gray-900 jobs-${i}`
 												}
 												key={i}
 												onClick={() => {
@@ -553,7 +660,7 @@ export default function VendorClients() {
 														{data["jobIndustry"] && data["jobIndustry"].length > 0 ? data["jobIndustry"] : <>N/A</>}
 													</li>
 													<li className="mr-3">
-														Vacancy -{" "}
+													{srcLang === "ja" ? "空き" : "Vacancy"} -{" "}
 														{data["jobVacancy"] && data["jobVacancy"].length > 0 ? data["jobVacancy"] : <>0</>}
 													</li>
 												</ul>
@@ -597,14 +704,15 @@ export default function VendorClients() {
 															{vjdata[vjobclick]["jobToSalary"]}
 														</>
 													) : (
-														<>Salary Not Disclosed</>
+														<> {srcLang === "ja" ? "給与非公開" : "Salary Not Disclosed"}</>
 													)}
 												</li>
 												<li className="mr-3">
-													Vacancy - {vjdata[vjobclick]["jobVacancy"] ? vjdata[vjobclick]["jobVacancy"] : <>N/A</>}
+												{srcLang === "ja" ? "空き" : "Vacancy"} - {vjdata[vjobclick]["jobVacancy"] ? vjdata[vjobclick]["jobVacancy"] : <>N/A</>}
 												</li>
 											</ul>
 										</aside>
+										<div className="recommendButton">
 										<Button
 											label={"Recommend Candidate"}
 											btnType="button"
@@ -613,12 +721,13 @@ export default function VendorClients() {
 												setpopuprefid(vjdata[vjobclick]["refid"]);
 											}}
 										/>
+										</div>
 									</div>
 									<Tab.Group>
 										<div className="border-b dark:border-b-gray-600">
 											<Tab.List className={"mx-auto w-full max-w-[800px] px-4"}>
 												{tabHeading_1.map((item, i) => (
-													<Tab key={i} as={Fragment}>
+													<Tab key={i} as={Fragment} className={`tab-heading-${i}`}>
 														{({ selected }) => (
 															<button
 																className={

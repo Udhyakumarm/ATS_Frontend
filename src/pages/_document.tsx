@@ -34,6 +34,7 @@ export default function Document() {
 
 				<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
 				<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+				<script src="https://checkout.razorpay.com/v1/checkout.js" async/>
 			</Head>
 			<body className="bg-lightBlue text-black dark:bg-gray-900 dark:text-white">
 				<Main />

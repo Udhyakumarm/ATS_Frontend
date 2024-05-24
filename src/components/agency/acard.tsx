@@ -6,6 +6,7 @@ import Button from "../Button";
 import { useLangStore } from "@/utils/code";
 import toastcomp from "../toast";
 import moment from "moment";
+import Button2 from "../Button2";
 
 export default function ACard(props: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
@@ -197,11 +198,12 @@ export default function ACard(props: any) {
 						<p className="mb-4 text-sm text-darkGray dark:text-gray-300">{props.data["email"]}</p>
 						{shareCount && (
 							<div className="flex items-center justify-between">
-								<Button
-									btnStyle="sm"
+								<Button2
+									small
 									label={srcLang === "ja" ? "詳細" : "Shared Applications"}
 									btnType="button"
 									handleClick={() => setallocationList(true)}
+									transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"
 								/>
 							</div>
 						)}
@@ -235,7 +237,8 @@ export default function ACard(props: any) {
 						<div className="flex items-center justify-between">
 							{moment().isAfter(moment(props.data["expire"])) && (
 								<>
-									<Button
+									<Button2
+										small
 										btnStyle="outlined"
 										label={srcLang === "ja" ? "詳細" : "Renew Contract"}
 										btnType="button"
@@ -244,7 +247,8 @@ export default function ACard(props: any) {
 								</>
 							)}
 
-							<Button
+							<Button2
+							small
 								btnStyle="sm"
 								label={srcLang === "ja" ? "詳細" : "Contract Details"}
 								btnType="button"

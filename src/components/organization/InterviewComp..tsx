@@ -12,6 +12,7 @@ import { useLangStore, useNotificationStore, useUserStore, useVersionStore } fro
 import toastcomp from "../toast";
 import TImeSlot from "../TimeSlot";
 import { debounce } from "lodash";
+import Button2 from "../Button2";
 
 const CalendarIntegrationOptions = [
 	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
@@ -180,9 +181,10 @@ export default function InterviewComp({ sklLoad, data, axiosInstanceAuth2, upcom
 							<p className="text-[12px] text-darkGray dark:text-gray-400">2:00 PM to 3:00 PM</p>
 						</div> */}
 						<div className="w-full py-3 lg:max-w-[10%]">
-							<Button
-								btnStyle="sm"
+							<Button2
+								small
 								label={srcLang === "ja" ? "参加" : "Join"}
+								btnStyle="primary"
 								btnType="button"
 								handleClick={() => {
 									window.open(

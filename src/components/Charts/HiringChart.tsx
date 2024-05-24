@@ -25,7 +25,7 @@ const HiringChart = ({ data }:any) => {
 				<XAxis dataKey="date" />
 				<YAxis domain={[0, "auto"]} tickCount={maxHires} />
 				<Tooltip />
-				<Legend />
+				<Legend  />
 				<Line type="monotone" dataKey="hires" stroke="#0066ff" strokeWidth={2} />
 			</LineChart>
 		</ResponsiveContainer>

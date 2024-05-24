@@ -34,6 +34,7 @@ import TImeSlot from "@/components/TimeSlot";
 import { debounce } from "lodash";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
+import Button2 from "@/components/Button2";
 
 const useDebounce = (value, delay) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -2025,13 +2026,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																						required
 																					/>
 
-																					<Button
+																					<Button2
 																						label={
 																							offer.length <= 0 ? t("Btn.SendForApproval") : t("Btn.ReSendForApproval")
 																						}
 																						btnType={"button"}
 																						disabled={!checkBtnOffer()}
 																						handleClick={() => handleOfferManagement(currentApplicant["arefid"])}
+																						btnStyle="primary"
 																					/>
 																				</>
 																			) : omf && omf.length > 0 ? (
@@ -2211,8 +2213,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
 																					<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
 																					<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
-																					<button
-																						onClick={() => {
+																					<Button2
+																						handleClick={() => {
 																							if (
 																								offer[0]["finalofferLetter"] &&
 																								offer[0]["finalofferLetter"].length > 0
@@ -2222,10 +2224,12 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																								toastcomp("Under proccessing", "error");
 																							}
 																						}}
-																						className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-																					>
-																						{t("Btn.Download")} {t("Words.OfferLetter")}
-																					</button>
+																						// className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																						btnType="button"
+																						btnStyle="success"
+																						label={`${t("Btn.Download")} ${t("Words.OfferLetter")}`}
+																					/>
+																	
 																				</div>
 																			)}
 																		</section>
@@ -2246,8 +2250,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																				<div className="mb-6 rounded-normal bg-green-100 px-6 py-8 text-center font-bold text-gray-700">
 																					<i className="fa-solid fa-check-circle mb-2 text-[40px] text-green-700"></i>
 																					<p className="mb-2 text-lg text-green-700">{t("Words.OfferAccepted")}</p>
-																					<button
-																						onClick={() => {
+																					<Button2
+																						handleClick={() => {
 																							if (
 																								offer[0]["finalofferLetter"] &&
 																								offer[0]["finalofferLetter"].length > 0
@@ -2257,10 +2261,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 																								toastcomp("Under proccessing", "error");
 																							}
 																						}}
-																						className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
-																					>
-																						{t("Btn.Download")} {t("Words.OfferLetter")}
-																					</button>
+																						// className="inline-block rounded bg-green-700 px-4 py-1 text-[12px] font-semibold text-white"
+																						btnType="button"
+																						btnStyle="success"
+																						label={`${t("Btn.Download")} ${t("Words.OfferLetter")}`}
+																					/>
 																				</div>
 																			)}
 																		</section>

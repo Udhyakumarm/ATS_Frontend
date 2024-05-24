@@ -13,6 +13,7 @@ import { useApplicantStore, useLangStore, useNotificationStore, useUserStore } f
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Button from "@/components/Button";
+import Button2 from "@/components/Button2";
 
 export default function OrgNotifications() {
 	const router = useRouter();
@@ -137,6 +138,7 @@ export default function OrgNotifications() {
 									notificationALLDATA["results"].length > 0 ? (
 										<>
 											{notificationALLDATA["results"].map((data, i) =>
+											    
 												data["notification_type"] === null || data["notification_type"] === "" ? (
 													<div
 														className={`mb-2 overflow-hidden rounded-lg bg-lightBlue last:mb-0 dark:bg-gray-600 ${
@@ -335,19 +337,21 @@ export default function OrgNotifications() {
 													</div>
 												)}
 												<div className="flex justify-end gap-2">
-													<Button
+													<Button2
 														btnType="button"
 														btnStyle="sm"
 														label={srcLang === "ja" ? "前へ" : "Previous"}
 														disabled={!(notificationALLDATA["previous"] && notificationALLDATA["previous"].length > 0)}
 														handleClick={() => loadNotification2(notificationALLDATA["previous"])}
+														small
 													/>
-													<Button
+													<Button2
 														btnType="button"
 														btnStyle="sm"
 														label={srcLang === "ja" ? "次のページ" : "Next"}
 														disabled={!(notificationALLDATA["next"] && notificationALLDATA["next"].length > 0)}
 														handleClick={() => loadNotification2(notificationALLDATA["next"])}
+														small
 													/>
 												</div>
 											</div>

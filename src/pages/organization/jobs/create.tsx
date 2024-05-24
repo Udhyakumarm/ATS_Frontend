@@ -34,6 +34,8 @@ import OrgRSideBar from "@/components/organization/RSideBar";
 import UnsavedChangesPrompt from "@/components/UnsavedChangesPrompt";
 import { Switch } from "@headlessui/react";
 import genDesc from "/public/images/genDesc.png";
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
 
 const JobActionButton = ({ label, handleClick, icon, iconBg, dis }: any) => {
 	return (
@@ -75,6 +77,16 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 		GlassDoor: { access: null },
 		Twitter: { access: null }
 	});
+	const [tourCompleted, setTourCompleted] = useState(false);
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const [shouldShowSidebarTour2, setShouldShowSidebarTour2] = useState(false);
+	const [currentStep, setCurrentStep] = useState(0);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
 
 	const jobActions = [
 		{
@@ -745,6 +757,65 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 			title: " "
 		}
 	];
+	const activateTab = (tabIndex) => {
+		const tabButton = document.querySelector(`.tab-heading-${tabIndex}`);
+		if (tabButton) {
+			const clickEvent = new MouseEvent("click", {
+				view: window,
+				bubbles: true,
+				cancelable: true
+			});
+			tabButton.dispatchEvent(clickEvent);
+		}
+	};
+	// aijobdescription topoptions
+	const joyrideSteps = [
+		{
+			target: ".tab-heading-0",
+			title: t("Words.JobDetails"),
+			content: "Job Details tab is where you can add all the details of the job you are creating.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".aijobdescription",
+			title: t("Words.GenerateDescription"),
+			content: "Generate Job Description using Gen-AI",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".tab-heading-2",
+			title: t("Words.TeamMembers"),
+			content: "Navigate to the Team Members tab.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".tab-heading-3",
+			title: t("Words.Vendors"),
+			content: "Navigate to the Vendors tab.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".topoptions",
+			title: "Action Buttons",
+			content: "Here you can preview/create a draft/publish a job posting using these buttons",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		}
+	];
 
 	const [isVisible, setIsVisible] = useState(false);
 	const scrollToTop = () => {
@@ -830,7 +901,38 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 				<title>{t("Words.PostNewJob")}</title>
 			</Head>
 			<main>
-				<Orgsidebar />
+				<Joyride
+					steps={joyrideSteps}
+					run={shouldShowJoyride}
+					continuous={true}
+					styles={{
+						options: {
+							arrowColor: "#0066ff", // Set to primary color
+							backgroundColor: "#F5F8FA", // Set to lightBlue
+							overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+							primaryColor: "#0066ff", // Set to primary color
+							textColor: "#3358c5", // Set to secondary color
+							// width: 100, // Adjust as needed
+							zIndex: 1000 // Set as needed
+						}
+					}}
+					showProgress={true}
+					showSkipButton={true}
+					callback={(data: any) => {
+						const { action, status, step } = data;
+						console.log("abhi step ye hain", step.title);
+						if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+							// setTourCompleted(true);
+							setShouldShowSidebarTour2(true);
+							setCurrentStep(1);
+						}
+						if (action === "close") {
+							setIsTourOpen(false);
+							setTourCompleted(true); // Mark the tour as completed when the user closes it
+						}
+					}}
+				/>
+				<Orgsidebar shouldShowSidebarTour={shouldShowSidebarTour2} currentStep={currentStep} />
 				<Orgtopbar />
 				{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 				<div
@@ -838,7 +940,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 					className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 				></div>
 				<div className={`layoutWrap p-4` + " " + (visible && "mr-[calc(27.6%+1rem)]")}>
-					<div className="scroll-to-top relative">
+					<div className="scroll-to-top mainsection relative">
 						<Tab.Group>
 							<div className="mb-8 rounded-t-normal bg-white shadow-normal dark:bg-gray-800">
 								<div className="flex flex-wrap items-center justify-between p-6">
@@ -853,7 +955,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 											<span>{jtitle && jtitle.length > 0 ? jtitle : <>{t("Words.JobTitle")}</>}</span>
 										</h2>
 									</div>
-									<div className="flex flex-wrap items-center">
+									<div className="topoptions flex flex-wrap items-center">
 										{jobActions.map((action, i) => (
 											<JobActionButton
 												label={action.label}
@@ -868,14 +970,14 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 								<Tab.List className={"mx-auto w-full max-w-[1100px] overflow-auto"}>
 									<div className="flex w-[820px]">
 										{tabHeading_1.map((item, i) => (
-											<Tab key={i} as={Fragment}>
+											<Tab key={i} as={Fragment} className={`tab-heading-${i}`}>
 												{({ selected }) => (
 													<button
 														className={
 															"border-b-4 px-10 py-1 font-semibold focus:outline-none" +
 															" " +
 															(selected
-																? "border-primary text-primary dark:border-white dark:text-white"
+																? "border-primary text-primary dark:border-white dark:text-white "
 																: "border-transparent text-darkGray dark:text-gray-400") +
 															" " +
 															(!item.hide && "display-none")
@@ -1079,11 +1181,11 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 										<StickyLabel label={t("Words.JobDescription")} />
 										<div className="mx-auto w-full max-w-[1055px] px-4 pb-8 pt-2">
 											{!["standard", "starter"].includes(atsVersion) && (
-												<div className="mb-4 w-full text-right">
+												<div className="mb-4 w-full text-right ">
 													<button
 														type="button"
 														onClick={() => onAIGenerateHandler()}
-														className="ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
+														className="aijobdescription ml-auto flex min-h-[46px] items-center rounded bg-white p-2 px-4 text-sm shadow-highlight hover:shadow-normal dark:bg-gray-700 md:mt-[-45px]"
 													>
 														<span className="mr-3">{t("Words.GenerateDescription")}</span>
 														{aiLoader ? (
@@ -1194,11 +1296,12 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 														id="experience"
 													/>
 												</div>
+												{/* ------Translation changes:- changed the qualification to japanese  */}
 												<div className="mb-4 w-full px-3 md:max-w-[50%]">
 													<FormField
 														fieldType="input"
 														inputType="text"
-														label={"Qualification"}
+														label={t("Words.Qualification")}
 														value={jedu}
 														handleChange={(e) => setjedu(e.target.value)}
 														id="qualification"
@@ -1310,7 +1413,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 								<Tab.Panel>
 									<div className="relative mb-8 rounded-normal bg-white shadow-normal dark:bg-gray-800">
 										<StickyLabel label={t("Words.TeamMembers")} />
-										<div className="mx-auto w-full max-w-[1055px] px-4 py-8">
+										<div className=" mx-auto w-full max-w-[1055px] px-4 py-8">
 											<Tab.Group>
 												<Tab.List className={"mb-6 flex border-b"}>
 													{tabHeading_2.map((item, i) => (
@@ -1337,7 +1440,7 @@ export default function JobsCreate({ atsVersion, userRole, upcomingSoon }: any) 
 												</Tab.List>
 												<Tab.Panels>
 													<Tab.Panel>
-														<div className="mb-6 flex flex-wrap items-center justify-between">
+														<div className=" mb-6 flex flex-wrap items-center justify-between">
 															<div className="w-[350px] pr-2">
 																<FormField
 																	fieldType="input"

@@ -69,7 +69,7 @@ export default function CanNotifications() {
 					<div className="rounded-normal border bg-white shadow-normal dark:border-gray-600 dark:bg-gray-800">
 						<div className="border-b dark:border-gray-600">
 							<div className="mx-auto w-full max-w-[1300px] px-4 py-4">
-								<h1 className="text-xl font-bold">Notifications</h1>
+								<h1 className="text-xl font-bold">{srcLang === "ja" ? "お知らせ" : "Notifications"}</h1>
 							</div>
 						</div>
 						<div className="mx-auto w-full max-w-[1300px] px-4 py-4">

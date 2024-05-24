@@ -32,8 +32,10 @@ import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
+import Button2 from "@/components/Button2";
 
 export default function Integrations({ upcomingSoon }: any) {
+	console.log("ye hain upcoming soon",upcomingSoon)
 	const router = useRouter();
 	const [enabled, setEnabled] = useState(false);
 	const tabHeading_1 = [
@@ -62,6 +64,20 @@ export default function Integrations({ upcomingSoon }: any) {
 			settoken("");
 		}
 	}, [session]);
+	async function connectLinkedin(){
+		axiosInstanceAuth2.post('').then((res)=>{
+			try {
+				if (res.data) {
+					console.log(res.data);
+				}
+			} catch (error) {
+				console.log(error);
+				
+			}
+		}).catch((error)=>{
+			console.log("Error connecting to linkedin",error);
+		})
+	}
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
@@ -97,7 +113,7 @@ export default function Integrations({ upcomingSoon }: any) {
 									<span>Integrations</span>
 								</h2>
 							</div>
-							{upcomingSoon ? (
+							{!upcomingSoon ? (
 								<>
 									<UpcomingComp />
 								</>
@@ -318,7 +334,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Calendly to get access
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -326,7 +342,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<Image src={zoomIcon} alt="Social" width={150} className="mb-2 max-h-[26px] w-auto" />
 															<h4 className="mb-4 font-bold">Zoom</h4>
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">Integrate with Zoom</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 												</div>
@@ -340,7 +356,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Bamboo HR to get access
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -350,7 +366,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with ADP to get access
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -360,7 +376,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Checkr to check the background of any user
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 												</div>
@@ -374,7 +390,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with LinkedIn to post a jobs in your LinkedIn account
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small handleClick={connectLinkedin} />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -384,17 +400,17 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Somhako Marketplace to post a jobs
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
 														<div className="h-full rounded-normal bg-lightBlue p-5 shadow-highlight dark:bg-gray-700">
 															<Image src={indeedIcon} alt="Social" width={150} className="mb-2 max-h-[26px] w-auto" />
 															<h4 className="mb-4 font-bold">Indeed</h4>
-															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
+															<p className="mb-9 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Indeed to post a jobs
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -409,7 +425,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Glassdoor to post a jobs
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 												</div>
@@ -421,7 +437,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<Image src={codilityIcon} alt="Social" width={150} className="mb-2 max-h-[20px] w-auto" />
 															<h4 className="mb-4 font-bold">Codility</h4>
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">Integrate with Codility</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 													<div className="mb-6 w-full px-3 md:max-w-[50%] lg:max-w-[33.3333%]">
@@ -431,7 +447,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Test Gorilla
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 												</div>
@@ -445,7 +461,7 @@ export default function Integrations({ upcomingSoon }: any) {
 															<p className="mb-4 text-sm text-darkGray dark:text-gray-400">
 																Integrate with Slack to communicate with your team members
 															</p>
-															<Button btnStyle="outlined" label="Integrate" />
+															<Button2 btnStyle="outlined" label="Integrate" small />
 														</div>
 													</div>
 												</div>

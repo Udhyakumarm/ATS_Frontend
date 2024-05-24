@@ -6,6 +6,7 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import Orgsidebar from "@/components/organization/SideBar";
 import Orgtopbar from "@/components/organization/TopBar";
+import noActivedata from "/public/images/no-data/iconGroup-1.png";
 import {
 	addNotifyApplicantLog,
 	addNotifyLog,
@@ -36,9 +37,13 @@ import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import FormField from "@/components/FormField";
 import PermiumComp from "@/components/organization/premiumComp";
+import outlookicon from "/public/images/social/outlook-email-icon.png"
+import JobCard_3 from "@/components/JobCard-3";
+import Button2 from "@/components/Button2";
 
 const CalendarIntegrationOptions = [
-	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" }
+	{ provider: "Google Calendar", icon: googleIcon, link: "/api/integrations/gcal/create" },
+	{provider:"Outlook Calendar", icon:outlookicon, link: "/api/integrations/outlook/calendar/create" },
 ];
 
 const people = [
@@ -60,6 +65,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	const type = useApplicantStore((state: { type: any }) => state.type);
 	const appdata = useApplicantStore((state: { appdata: any }) => state.appdata);
 	const setappdata = useApplicantStore((state: { setappdata: any }) => state.setappdata);
+
+	const setjobid = useApplicantStore((state: { setjobid: any }) => state.setjobid);
+	const setappid = useApplicantStore((state: { setappid: any }) => state.setappid);
+	const settype = useApplicantStore((state: { settype: any }) => state.settype);
+
+
 	const currentUser = useUserStore((state: { user: any }) => state.user);
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 
@@ -85,6 +96,14 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	//tiemline
 	const [timeline, settimeline] = useState([]);
+
+	//rec job
+	const [rjobLoader, setrjobLoader] = useState(0);
+	const [rjob, setrjob] = useState([]);
+
+	//same profile
+	const [sprofileLoader, setsprofileLoader] = useState(0);
+	const [sprofile, setsprofile] = useState([]);
 
 	//ai interview question
 	const [aires, setaires] = useState("");
@@ -172,6 +191,58 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			});
 	}
 
+	async function loadRecomandedJob() {
+		setrjobLoader(0)
+		await axiosInstanceAuth21
+			.post(`/ocr/new/${appdata["arefid"]}/`)
+			.then(async (res) => {
+				if(res.data && res.data.message){
+					setrjobLoader(-1)
+				}
+				if(res.data.length > 0){
+
+					setrjob(res.data);
+					setrjobLoader(1)
+				}
+				else{
+					setrjob([]);
+					setrjobLoader(-1)
+				}
+				console.log("$", "timeline", res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setrjob([]);
+				setrjobLoader(-1)
+			});
+	}
+
+	async function loadSameProfile() {
+		setsprofileLoader(0)
+		await axiosInstanceAuth21
+			.post(`/ocr/same/profile/${appdata["arefid"]}/`)
+			.then(async (res) => {
+				if(res.data && res.data.message){
+					setsprofileLoader(-1)
+				}
+				if(res.data.length > 0){
+
+					setsprofile(res.data);
+					setsprofileLoader(1)
+				}
+				else{
+					setsprofile([]);
+					setsprofileLoader(-1)
+				}
+				console.log("$", "same profile", res.data);
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setsprofile([]);
+				setsprofileLoader(-1)
+			});
+	}
+
 	async function loadAIInterviewQuestion() {
 		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader(true);
@@ -193,9 +264,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	async function genAIFeedback() {
 		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader2(true);
-
+			console.log("started``````")
+			const lang= srcLang==="ja"?"ja":"";
 			await axiosInstanceAuth21
-				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`)
+				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`,{lang:lang})
 				.then(async (res) => {
 					toastcomp("genAIFeedback ", "success");
 					loadNEWAPPDATA(appdata["arefid"]);
@@ -227,7 +299,9 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}
 
 	useEffect(() => {
-		if (token && token.length > 0 && aiquestion.length <= 0 && atsVersion && atsVersion.length > 0) {
+		if (token && token.length > 0 && atsVersion && atsVersion.length > 0) {
+			loadRecomandedJob();
+			loadSameProfile();
 			loadFeedback();
 			loadTimeLine();
 			loadAppDosc();
@@ -235,7 +309,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			// 	loadAIInterviewQuestion();
 			// }
 		}
-	}, [token, atsVersion]);
+	}, [token, atsVersion,router]);
 
 	function checkDis() {
 		return feedbackStatus.length > 0 && feedbackTA.length > 0;
@@ -253,21 +327,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				toastcomp("Feedback Created", "success");
 				let title = `Feedback Added By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
 
-				if(type === "career"){addNotifyApplicantLog(
-					axiosInstanceAuth2,
-					title,
-					"Applicant",
-					appdata["arefid"],
-					"/organization/applicants/detail"
-				);}
-				if(type === "vendor"){addNotifyApplicantLog(
-					axiosInstanceAuth2,
-					title,
-					"Vendor Applicant",
-					appdata["arefid"],
-					"/organization/applicants/detail"
-				);}
-				if(type === "refer"){
+				if (type === "career") {
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+				}
+				if (type === "vendor") {
+					addNotifyApplicantLog(
+						axiosInstanceAuth2,
+						title,
+						"Vendor Applicant",
+						appdata["arefid"],
+						"/organization/applicants/detail"
+					);
+				}
+				if (type === "refer") {
 					addNotifyApplicantLog(
 						axiosInstanceAuth2,
 						title,
@@ -277,7 +355,6 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					);
 				}
 
-				
 				// addNotifyLog(axiosInstanceAuth2, title, "");
 				toggleLoadMode(true);
 				loadFeedback();
@@ -298,11 +375,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							//GCAL
 
 							checkGCAL();
+							checkOutlook();
 						}
 					} else {
 						chnageStatus("Interview", appdata["arefid"]);
 
 						checkGCAL();
+						checkOutlook();
 					}
 				}
 			})
@@ -333,21 +412,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					toastcomp("Feedback Updated", "success");
 					let title = `Feedback Updated By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
 
-					if(type === "career"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "vendor"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Vendor Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "refer"){
+					if (type === "career") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "vendor") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Vendor Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "refer") {
 						addNotifyApplicantLog(
 							axiosInstanceAuth2,
 							title,
@@ -386,21 +469,25 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				.then((res) => {
 					toastcomp("Feedback Status Updated", "success");
 					let title = `Feedback Status change to ${status} By ${currentUser[0]["name"]} (${currentUser[0]["email"]}) to Applicant ${appdata["arefid"]}`;
-					if(type === "career"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "vendor"){addNotifyApplicantLog(
-						axiosInstanceAuth2,
-						title,
-						"Vendor Applicant",
-						appdata["arefid"],
-						"/organization/applicants/detail"
-					);}
-					if(type === "refer"){
+					if (type === "career") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "vendor") {
+						addNotifyApplicantLog(
+							axiosInstanceAuth2,
+							title,
+							"Vendor Applicant",
+							appdata["arefid"],
+							"/organization/applicants/detail"
+						);
+					}
+					if (type === "refer") {
 						addNotifyApplicantLog(
 							axiosInstanceAuth2,
 							title,
@@ -409,7 +496,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 							"/organization/applicants/detail"
 						);
 					}
-					
+
 					// addNotifyLog(axiosInstanceAuth2, title, "");
 					toggleLoadMode(true);
 					loadFeedback();
@@ -450,6 +537,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	}, [feedbackList, currentUser]);
 
 	const [gcall, setgcall] = useState(false);
+	const [outlook,Setoutlook] = useState(false);
 
 	async function checkGCAL() {
 		setgcall(false);
@@ -465,6 +553,20 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				setIsCalendarOpen(true);
 			});
 	}
+	async function checkOutlook(){
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
+		.then(
+			(res)=>{
+				console.log("outlook connect res:::", res);
+				if(res.data.res === "success"){
+					Setoutlook(true);
+				}
+				setIsCalendarOpen(true);
+			}).catch(()=>{
+				setIsCalendarOpen(true);
+			})
+	}
 
 	async function coonectGoogleCal() {
 		setgcall(false);
@@ -475,6 +577,24 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				// router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
 				// setIsCalendarOpen(true);
 				setgcall(true);
+			}
+		});
+		// .catch((res) => {
+		// 	if (res.data.authorization_url) {
+		// 		router.replace(`${res.data.authorization_url}`);
+		// 	} else if (res.data.res === "success") {
+		// 		router.replace(`http://localhost:3000/organization/dashboard?gcal=success`);
+		// 	}
+		// });
+	}
+	async function coonectOutlook() {
+		Setoutlook(false);
+		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
+			console.log("outlook connect res:::", res);
+			if (res.data.authorization_url) {
+				router.replace(`${res.data.authorization_url}`);
+			} else if (res.data.res === "success") {
+				Setoutlook(true);
 			}
 		});
 		// .catch((res) => {
@@ -744,6 +864,103 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</div>
 									)}
 								</div>
+								<div className="relative mb-4 min-h-[100px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
+									{rjobLoader === 0 && (
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
+											<div className="flex h-full flex-col items-center justify-center text-center">
+												<i className="fa-solid fa-spinner fa-spin"></i>
+												<p className="my-2 font-bold">Loading recommendation jobs...</p>
+											</div>
+										</div>
+									)}
+									{rjobLoader === -1 && (
+										<div className="mx-auto w-full py-2 text-center">
+											<div className="mb-6 p-2">
+												<Image src={noActivedata} alt="No Data" width={150} className="mx-auto max-h-[200px] w-auto " />
+											</div>
+											<h5 className="mb-4 text-lg font-semibold">No recommendation jobs</h5>
+											<p className="mb-2 text-sm text-darkGray">
+												{srcLang === "ja"
+													? "アクティブなジョブはありません。アクティブなジョブを管理するには、新しいジョブを投稿してください"
+													: "There are not suitable any Jobs for recommendation "}
+											</p>
+										</div>
+									)}
+									{rjobLoader === 1 && <h3 className="mb-4 text-lg font-semibold">Recommendation jobs</h3>}
+									{rjobLoader === 1 && rjob.length > 0 && (
+										<div>
+											{rjob.map((data, i) => (
+												<div className="mb-[15px] w-full px-[7px] py-1 last:mb-0 xl:max-w-[100%]" key={i}>
+													<JobCard_3
+														job={data}
+														axiosInstanceAuth2={axiosInstanceAuth2}
+														arefid={appdata["arefid"]}
+														loadRecomandedJob={loadRecomandedJob}
+													/>
+												</div>
+											))}
+										</div>
+									)}
+								</div>
+								<div className="relative mb-4 min-h-[100px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
+									{sprofileLoader === 0 && (
+										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
+											<div className="flex h-full flex-col items-center justify-center text-center">
+												<i className="fa-solid fa-spinner fa-spin"></i>
+												<p className="my-2 font-bold">Loading smiliar application...</p>
+											</div>
+										</div>
+									)}
+									{sprofileLoader === -1 && (
+										<div className="mx-auto w-full py-2 text-center">
+											<div className="mb-6 p-2">
+												<Image src={noActivedata} alt="No Data" width={150} className="mx-auto max-h-[200px] w-auto " />
+											</div>
+											<h5 className="mb-4 text-lg font-semibold">No similar application</h5>
+											<p className="mb-2 text-sm text-darkGray">
+												{srcLang === "ja"
+													? "アクティブなジョブはありません。アクティブなジョブを管理するには、新しいジョブを投稿してください"
+													: "There are not similar application of this specific candidate"}
+											</p>
+										</div>
+									)}
+									{sprofileLoader === 1 && <h3 className="mb-4 text-lg font-semibold">Similar Application</h3>}
+									{sprofileLoader === 1 && sprofile.length > 0 && (
+										<div>
+											{sprofile.map((data, i) => (
+												<div className="mb-[15px] w-full px-[7px] py-1 last:mb-0 xl:max-w-[100%]" key={i}>
+													<div className="h-full rounded-normal bg-white px-3 py-2 shadow-normal dark:bg-gray-700">
+														<div className="flex w-full flex-row-reverse gap-1">
+															<div className="flex w-auto flex-nowrap gap-1">
+																<Button
+																	btnStyle="outlined"
+																	btnType="button"
+																	label={srcLang === "ja" ? "みる" : "View"}
+																	handleClick={() => {
+																		console.log("%%","appdata",data)
+																		setjobid(data["job"]["refid"]);
+																		// setcanid(data["user"]["erefid"]);
+																		setappid(data["arefid"]);
+																		settype(data["type"]);
+																		setappdata(data);
+																		console.log("&&&&", "click ", data);
+																		router.replace("/organization/applicants/detail");
+																		
+																	}}
+																/>
+															</div>
+															<div className="flex w-full flex-wrap items-center">
+																<h4 className="font-bold capitalize">
+																	{data.arefid}&nbsp;|&nbsp;{data.status}
+																</h4>
+															</div>
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+									)}
+								</div>
 							</div>
 							<div className="w-full xl:max-w-[calc(100%-300px)] xl:pl-4 2xl:max-w-[calc(100%-400px)]">
 								<div className="overflow-hidden rounded-large border-2 border-slate-300 bg-white shadow-normal dark:border-gray-700 dark:bg-gray-800">
@@ -756,7 +973,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</aside>
 										<aside className="flex items-center">
 											<div className="mr-4">
-												<Button
+												<Button2
 													btnType="button"
 													btnStyle="iconLeftBtn"
 													label="Manual Interview"
@@ -766,7 +983,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											</div>
 											{!["standard", "starter"].includes(atsVersion) && (
 												<div className="mr-4">
-													<Button
+													<Button2
 														btnType="button"
 														btnStyle="iconLeftBtn"
 														label={t("Words.ScheduleInterview")}
@@ -776,6 +993,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																router.push("/organization/applicants/schedule-interview");
 															} else {
 																checkGCAL();
+																checkOutlook();
 															}
 														}}
 													/>
@@ -909,6 +1127,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 															</button>
 														)}
 													</Tab>
+													{/* added missing translation of AI Comparative Analysis */}
 													<Tab as={Fragment}>
 														{({ selected }) => (
 															<button
@@ -920,7 +1139,8 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																		: "border-transparent text-darkGray dark:text-gray-400")
 																}
 															>
-																AI Comparative Analysis
+																{/* {t("Words.AIComparativeAnalysis")} */}
+																{srcLang === "ja" ? "AI比較分析" : "AI Comparative Analysis"}
 															</button>
 														)}
 													</Tab>
@@ -1967,15 +2187,18 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																			))}
 																	</div>
 																	<div className="border-t px-10 py-4 dark:border-t-gray-600">
-																		<button
-																			type="button"
-																			className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
+																		<Button2
+																			btnType="button"
+																			// className="flex items-center justify-center rounded border border-slate-300 px-3 py-2 text-sm hover:bg-primary hover:text-white"
 																			disabled={ailoader}
 																			onClick={() => {
 																				setaiquestion([]);
 																				setaires("");
 																				loadAIInterviewQuestion();
 																			}}
+																			btnStyle="outlined"
+																			label={ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
+																			transitionClass="leading-pro ease-soft-in tracking-tight-soft active:opacity-85 transition-all duration-300 hover:scale-105"														
 																		>
 																			{ailoader && (
 																				<span className="mr-2 block">
@@ -1983,7 +2206,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																				</span>
 																			)}
 																			{ailoader ? <>{t("Btn.InProgress")}</> : <>Generate</>}
-																		</button>
+																		</Button2>
 																	</div>
 																</div>
 															</div>
@@ -2175,7 +2398,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 								leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 								leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 							>
-								{gcall ? (
+								{gcall || outlook ? (
 									<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-md">
 										<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
 											<h4 className="font-semibold leading-none">Schedule Interview</h4>
@@ -2213,7 +2436,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 												{CalendarIntegrationOptions.map((integration, i) => (
 													<div key={i} className="my-2 w-full cursor-pointer overflow-hidden rounded-normal border">
 														<div
-															onClick={coonectGoogleCal}
+															onClick={() => {
+																if (integration.provider === "Google Calendar") {
+																	coonectGoogleCal();
+																} else if (integration.provider === "Outlook Calendar") {
+																	coonectOutlook();
+																}
+															}}
 															className="flex w-full items-center justify-between p-4 hover:bg-lightBlue hover:dark:bg-gray-900"
 														>
 															<Image

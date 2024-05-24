@@ -19,8 +19,9 @@ import { useLangStore } from "@/utils/code";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
 import { useEffect, useState } from "react";
+import Joyride from "react-joyride";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
-
+import useJoyrideStore from "@/utils/joyride";
 export default function JobsDashboard({ atsVersion, userRole, comingSoon, currentUser }: any) {
 	useEffect(() => {
 		if (currentUser.is_expired) {
@@ -34,6 +35,9 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon, curren
 
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
+	const [tourCompleted, setTourCompleted] = useState(false);
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
 
 	useEffect(() => {
 		if (session) {
@@ -42,6 +46,11 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon, curren
 			settoken("");
 		}
 	}, [session]);
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
 
 	const axiosInstanceAuth2 = axiosInstanceAuth(token);
 
@@ -91,6 +100,56 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon, curren
 	];
 	const visible = useNewNovusStore((state: { visible: any }) => state.visible);
 	const tvisible = useNewNovusStore((state: { tvisible: any }) => state.tvisible);
+	const joyrideSteps = [
+		{
+			target: ".quicklink-1",
+			title: t("Words.ActiveJobs"),
+			content: "Here you can View teh active jobs",
+			placement: "top",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".quicklink-2",
+			title: t("Words.DraftJobs"),
+			content: "Here you can view your draft jobs",
+			placement: "top",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".quicklink-3",
+			title: t("Words.ArchivedJobs"),
+			content: "Archived job postings in the system are available here.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".quicklink-4",
+			title: t("Words.ClosedJobs"),
+			content: "Closed jobs are available here.",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: ".quicklink-0",
+			title: t("Words.PostNewJob"),
+			content: "Lets create a Job ,Click here to post a new job.",
+			// placement: "top",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter: true,
+			spotlightClicks: true
+		}
+		// Define steps for other quicklinks similarly
+	];
 
 	return (
 		<>
@@ -110,7 +169,10 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon, curren
 								{quicklinks.map((links, i) => (
 									<>
 										{!links.hide && (
-											<div key={i} className="mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%]">
+											<div
+												key={i}
+												className={`mb-8 w-full px-4 md:max-w-[50%] xl:max-w-[33.3333%] 2xl:max-w-[25%] quicklink-${i}`}
+											>
 												<Link
 													href={links.link}
 													className="block rounded-normal bg-white p-6 shadow-normal hover:bg-lightBlue dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -134,6 +196,31 @@ export default function JobsDashboard({ atsVersion, userRole, comingSoon, curren
 								))}
 							</div>
 						</div>
+						<Joyride
+							steps={joyrideSteps}
+							run={shouldShowJoyride}
+							continuous={true}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								const { action } = data;
+								if (action === "close") {
+									setIsTourOpen(false);
+									setTourCompleted(true); // Mark the tour as completed when the user closes it
+								}
+							}}
+						/>
 					</div>
 				</main>
 			)}

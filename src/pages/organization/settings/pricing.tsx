@@ -11,15 +11,17 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
-import { axiosInstanceAuth } from "@/pages/api/axiosApi";
+import { axiosInstanceAuth, axiosInstance2 } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { Menu, Tab, Listbox, Transition, Dialog } from "@headlessui/react";
 import toastcomp from "@/components/toast";
 import moment from "moment";
+import Script from "next/script";
 import { PopupModal } from "react-calendly";
 import { InlineWidget } from "react-calendly";
+import handler from "@/pages/api/hello";
 
 export default function Pricing() {
 	const { t } = useTranslation("common");
@@ -34,6 +36,21 @@ export default function Pricing() {
 	const [changePlan, setchangePlan] = useState(false);
 	const [changePlan2, setchangePlan2] = useState(false);
 	const [billingInfo2, setbillingInfo2] = useState(false);
+	const [isPaymentTabOpen, setIsPaymentTabOpen] = useState(false);
+	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+	const handlePaymentClick = (option: any) => {
+		setIsPaymentTabOpen(false);
+		switch (option) {
+			case "stripe":
+				redirectToStripe(selectedPlanId);
+				break;
+			case "razorpay":
+				handleRazorpay(selectedRazorpayPlanId);
+				break;
+			default:
+				break;
+		}
+	};
 	const tabHeading_1 = [
 		{
 			title: "Plan & billing Information"
@@ -69,6 +86,9 @@ export default function Pricing() {
 	const [biaddress, setbiaddress] = useState("");
 	const [bicon, setbicon] = useState("");
 	const [acheck, setacheck] = useState(false);
+	const [plansData, setPlansData] = useState([]);
+	const [selectedPlanId, setSelectedPlanId] = useState(null);
+	const [selectedRazorpayPlanId, setSelectedRazorpayPlanId] = useState(null);
 
 	function checkForm1() {
 		return (
@@ -114,6 +134,147 @@ export default function Pricing() {
 				console.log("!", err);
 				toastcomp("regBillingInfo error", "error");
 				getBillingInfo();
+			});
+	}
+	// /subscription/get-pricelist/
+	// const redirectToStripe = async (planId:any) => {
+	async function redirectToStripe(planId: any) {
+		const fd = new FormData();
+		fd.append("product_id", planId);
+		await axiosInstanceAuth2
+			.post(`/subscription/create-subscription/`, fd)
+			.then(async (res) => {
+				if (res.data["url"] && res.data["url"].length > 0) {
+					toastcomp("Redirecting to Stripe", "success");
+					router.replace(res.data.url);
+				} else {
+					toastcomp("Error occured", "error");
+				}
+			})
+			.catch((err) => {
+				console.error("Error redirecting to Stripe:", err);
+				toastcomp("Error redirecting to Stripe", "error");
+			});
+
+		// try {
+		// 	const formData = new FormData();
+		// 	formData.append("product_id", planId);
+
+		// 	const response = await axiosInstanceAuth2.post(`/subscription/create-subscription/`, formData);
+		// 	if (response.data.url && response.data.url.length > 0) {
+		// 		toastcomp("Redirecting to Stripe", "success");
+		// 		router.replace(response.data.url);
+		// 	} else {
+		// 		toastcomp("Error occured", "error");
+		// 	}
+		// } catch (error) {
+		// 	console.error("Error redirecting to Stripe:", error);
+		// 	toastcomp("Error redirecting to Stripe", "error");
+		// }
+	}
+	//Razor pay success/failure function
+	// const handleRazorpayPaymentSuccess() = async (response) => {
+	// 	const fd = new FormData();
+	// 	fd.append('razorpay_payment_id', response.razorpay_payment_id);
+	// 	fd.append('razorpay_signature', response.razorpay_signature);
+	// 	fd.append('razorpay_subscription_id', response.razorpay_subscription_id);
+	// 	toastcomp('Processing payment...', 'info');
+	// 	await axiosInstanceAuth2
+	// 	  .post(`/subscription/razorpay-callback/`, fd)
+	// 	  .then((res) => {
+	// 		console.log("razor pay success check response:",res);
+	// 		if (res.data.res === 'Subscription is now active') {
+	// 		  toastcomp('Subscription is now active', 'success');
+	// 		} else {
+	// 		  toastcomp('Payment failed', 'error');
+	// 		}
+	// 	  })
+	// 	  .catch((err) => {
+	// 		console.error('Error:', err);
+	// 		toastcomp('Error occurred during payment', 'error');
+	// 	  });
+	//   };
+	//RazorPay checkout Function!!!
+	async function handleRazorpay(planId: any) {
+		const fd = new FormData();
+		fd.append("plan_id", planId);
+		toastcomp("Connecting to Razorpay...", "info");
+		console.log(planId);
+		await axiosInstanceAuth2
+			.post(`/subscription/razorpay-subscription/`, fd)
+			.then(async (res) => {
+				console.log("razorpay data", res.data);
+				const { razorpay_key, order, product_name, callback_url } = res.data;
+				if (!razorpay_key || !order || !product_name || !callback_url) {
+					toastcomp("Error occurred while processing Razorpay payment", "error");
+					return;
+				}
+				toastcomp("Preparing Razorpay checkout...", "info");
+				const options = {
+					key: razorpay_key,
+					subscription_id: order.id,
+					name: product_name,
+					description: "Subscribe to our plan",
+					// callback_url,
+					handler: async function (res) {
+						console.log("yeh hai payment ID",res["razorpay_payment_id"]);
+						console.log("yeh bhi hai payment ID",res.razorpay_payment_id)
+						const fd = new FormData();
+						fd.append("pay_id", res.razorpay_payment_id);
+						console.log("pay_id:", fd.get("pay_id"));
+						fd.append("sign", res.razorpay_signature);
+						fd.append("sub_id", res.razorpay_subscription_id);
+						console.log("form data :",fd)
+						// const response = {
+						// 	razorpay_payment_id: res["razorpay_payment_id"],
+						// 	razorpay_signature: res["razorpay_signature"],
+						// 	razorpay_subscription_id: res["razorpay_subscription_id"],
+						// };
+						// console.log(response)
+						toastcomp("Processing payment...", "info");
+						axiosInstanceAuth2
+							.post(`/subscription/razorpay-callback/`, fd)
+							.then(async (res) => {
+								toastcomp("Validating Transaction..", "info");
+								console.log("Payement verify hui",res)
+								if (res.status == 200) {
+									toastcomp("Success!! Subscription is now active", "success");
+								} else {
+									toastcomp("Subscription verification Failed!", "error");
+								}
+							})
+							.catch((err) => {
+								console.error("Error:", err);
+								toastcomp("Error occurred during payment", "error");
+							});
+					}
+				};
+				const rzp1 = new window.Razorpay(options);
+				rzp1.open();
+				toastcomp("Razorpay checkout opened", "success");
+				rzp1.on("payment.failed", (res) => {
+					console.log("Payment Failed", res);
+					toastcomp("Payment Failed", "error");
+				});
+			})
+			.catch((error) => {
+				console.log("Error Connecting to RazorPay", error);
+				toastcomp("Error occurred while processing Razorpay payment", "error");
+			});
+	}
+
+	// getplansData();
+	async function getplansData() {
+		await axiosInstanceAuth2
+			.get(`/subscription/get-pricelist/`)
+			.then(async (res) => {
+				setPlansData(res.data);
+				toastcomp("All planinfo ID retrived", "success");
+			})
+			.catch((err) => {
+				console.log("!", err);
+				setPlansData([]);
+				toastcomp("getInvoice error", "error");
 			});
 	}
 
@@ -232,6 +393,7 @@ export default function Pricing() {
 			// getALLVPlanInfo();
 			// getALLVCPlanInfo();
 			getBillingInfo();
+			getplansData();
 		}
 	}, [token, tab]);
 
@@ -304,6 +466,7 @@ export default function Pricing() {
 
 	return (
 		<>
+			{/* <Script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" /> */}
 			<Head>
 				<title>{t("Words.Plans_Pricing")}</title>
 			</Head>
@@ -342,7 +505,7 @@ export default function Pricing() {
 												}
 												onClick={() => settab(0)}
 											>
-												Plan & billing Information
+												{srcLang === "ja" ? "プランと請求について" : "Plan & Billing Information"}
 											</button>
 											<button
 												className={
@@ -354,7 +517,7 @@ export default function Pricing() {
 												}
 												onClick={() => settab(1)}
 											>
-												Billing history
+												{srcLang === "ja" ? "請求履歴" : "Billing History"}
 											</button>
 										</div>
 									</div>
@@ -399,7 +562,7 @@ export default function Pricing() {
 									{cplan.plan_info && cplan.plan_info === "FREE" ? (
 										<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">FREE Trial</div>
+												<div className="text-xs font-bold">{srcLang === "ja" ? "無料体験" : "FREE Trial"}</div>
 												<div className="flex gap-1 text-lg font-semibold">
 													<div className="font-black">0 ￥</div>
 													<div>30 days</div>
@@ -413,16 +576,16 @@ export default function Pricing() {
 													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 												}}
 											>
-												Enterprise
+												{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 											</div>
 										</div>
 									) : (
 										<div className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600">
 											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">FREE Trial</div>
+												<div className="text-xs font-bold">{srcLang === "ja" ? "無料体験" : "FREE Trial"}</div>
 												<div className="flex gap-1 text-lg font-semibold">
 													<div className="font-black text-primary">0 ￥</div>
-													<div>30 days</div>
+													<div>30 {srcLang === "ja" ? "日" : "days"}</div>
 												</div>
 												{/* <div className="text-xs font-bold">Flexible</div>
 												<div className="text-xs font-[300]">100 Application free</div> */}
@@ -433,7 +596,7 @@ export default function Pricing() {
 													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 												}}
 											>
-												Enterprise
+												{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 											</div>
 										</div>
 									)}
@@ -443,10 +606,12 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "STARTER_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black">5,000￥/monthly</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
+														<div className="text-lg font-black">5,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -457,7 +622,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Starter
+														{srcLang === "ja" ? "スターター" : "Starter"}
 													</div>
 												</div>
 											) : (
@@ -466,11 +631,16 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("STARTER_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[0].price_id);
+														setSelectedRazorpayPlanId("plan_NtLHBajAf6Z1aO");
+														// redirectToStripe("price_1OzDl8SHBwE4Ooa9diFz5Ca5");
 													}}
 												>
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black text-primary ">5,000￥/monthly</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
+														<div className="text-lg font-black text-primary ">
+															5,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -482,7 +652,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Starter
+														{srcLang === "ja" ? "スターター" : "Starter"}
 													</div>
 												</div>
 											)}
@@ -491,11 +661,13 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														<div className="text-base font-black line-through decoration-red-500">30,000￥</div>
-														<div className="text-lg font-black ">12,000￥/monthly</div>
+														<div className="text-lg font-black ">12,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -506,7 +678,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Standard
+														{srcLang === "ja" ? "標準" : "Standard"}
 													</div>
 												</div>
 											) : (
@@ -515,14 +687,19 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("STANDARD_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[1].price_id);
+														setSelectedRazorpayPlanId("plan_NtLGoGawf58li1");
+														// redirectToStripe("price_1OzDllSHBwE4Ooa93HdCGu4d");
 													}}
 												>
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														<div className="text-base font-black text-primary line-through decoration-red-500">
 															30,000￥
 														</div>
-														<div className="text-lg font-black text-primary ">12,000￥/monthly</div>
+														<div className="text-lg font-black text-primary ">
+															12,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -534,7 +711,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Standard
+														{srcLang === "ja" ? "標準" : "Standard"}
 													</div>
 												</div>
 											)}
@@ -543,11 +720,13 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col justify-center gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														{/* <div className="text-base font-black line-through decoration-red-500">60,000￥</div> */}
-														<div className="text-lg font-black">45,000￥/monthly</div>
+														<div className="text-lg font-black">45,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -558,7 +737,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Enterprise
+														{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 													</div>
 												</div>
 											) : (
@@ -567,14 +746,19 @@ export default function Pricing() {
 													onClick={() => {
 														setplanInfo("ENTERPRISE_MONTHLY");
 														setprice(true);
+														setSelectedPlanId(plansData[2].price_id);
+														setSelectedRazorpayPlanId("plan_NtLHSUgb0pDkk6");
+														// redirectToStripe("price_1OzDm5SHBwE4Ooa9rBn3ipJR");
 													}}
 												>
 													<div className="flex flex-col justify-center gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														{/* <div className="text-base font-black text-primary line-through decoration-red-500">
 															60,000￥
 														</div> */}
-														<div className="text-lg font-black text-primary ">45,000￥/monthly</div>
+														<div className="text-lg font-black text-primary ">
+															45,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -586,7 +770,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Enterprise
+														{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 													</div>
 												</div>
 											)}
@@ -753,10 +937,10 @@ export default function Pricing() {
 										<thead>
 											<tr>
 												<th className="w-[300px] border-b px-3 py-2"></th>
-												<th className="border-b px-3 py-2">Free Trial</th>
-												<th className="border-b px-3 py-2">Starter</th>
-												<th className="border-b px-3 py-2">Standard</th>
-												<th className="border-b px-3 py-2">Enterprise</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "無料体験" : "FREE Trial"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "スターター" : "Starter"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "標準" : "Standard"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}</th>
 											</tr>
 										</thead>
 										<tbody className="text-sm font-semibold">
@@ -1415,64 +1599,98 @@ export default function Pricing() {
 												fill="#3358C5"
 											/>
 										</svg>
-										<span>Plan subscribtion</span>
+										<span>{srcLang === "ja" ? "プラン購読" : "Plan Subscription"}</span>
 									</button>
 									{aplan && aplan.length > 0 ? (
 										<>
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 												<thead>
 													<tr>
-														<th className="border-b px-4 py-2 text-left">Plan Name</th>
-														<th className="border-b px-4 py-2 text-left">Plan Duration</th>
-														<th className="border-b px-4 py-2 text-left">Status</th>
-														<th className="border-b px-4 py-2 text-left">Paid</th>
+														<th className="border-b px-4 py-2 text-left">
+															{srcLang === "ja" ? "プラン名" : "Plan Name"}
+														</th>
+														<th className="border-b px-4 py-2 text-left">
+															{srcLang === "ja" ? "計画期間" : "Plan Duration"}
+														</th>
+														<th className="border-b px-4 py-2 text-left">
+															{srcLang === "ja" ? "ステータス" : "Status"}
+														</th>
+														<th className="border-b px-4 py-2 text-left">{srcLang === "ja" ? "有料" : "Paid"}</th>
 													</tr>
 												</thead>
 												<tbody>
 													{aplan.map((data, i) => (
 														<tr key={i}>
 															{data.plan_info && data.plan_info === "FREE" && (
-																<td className="border-b px-4 py-2 text-sm">Free Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "無料版" : "Free Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STARTER_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Starter Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "スターター・バージョン" : "Starter Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "スタンダード版" : "Standard Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Enterprise Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "エンタープライズ版" : "Enterprise Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STARTER_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Starter Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "スターター・バージョン" : "Starter Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Standard Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "スタンダード版" : "Standard Version"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Enterprise Version</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "エンタープライズ版" : "Enterprise Version"}
+																</td>
 															)}
 
 															{data.plan_info && data.plan_info === "FREE" && (
-																<td className="border-b px-4 py-2 text-sm">Just For Month</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "ジャスト・フォー・マンス" : "Just For Month"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STARTER_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "月次ベース" : "Monthly Basis"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "月次ベース" : "Monthly Basis"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_MONTHLY" && (
-																<td className="border-b px-4 py-2 text-sm">Monthly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "月次ベース" : "Monthly Basis"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STARTER_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "年間ベース" : "Yearly Basis"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "STANDARD_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "年間ベース" : "Yearly Basis"}
+																</td>
 															)}
 															{data.plan_info && data.plan_info === "ENTERPRISE_YEARLY" && (
-																<td className="border-b px-4 py-2 text-sm">Yearly Basis</td>
+																<td className="border-b px-4 py-2 text-sm">
+																	{srcLang === "ja" ? "年間ベース" : "Yearly Basis"}
+																</td>
 															)}
 															<td className="border-b px-4 py-2 text-sm">{data.active_plan ? "Active" : "Inactive"}</td>
 															<td className="border-b px-4 py-2 text-sm">
@@ -1492,7 +1710,7 @@ export default function Pricing() {
 										</>
 									) : (
 										<>
-											<p>No Data</p>
+											<p>{srcLang === "ja" ? "データなし" : "No Data"}</p>
 										</>
 									)}
 								</div>
@@ -1606,7 +1824,7 @@ export default function Pricing() {
 										<h4 className="flex items-center font-semibold leading-none">Change Plan</h4>
 										<button
 											type="button"
-											className="leading-none hover:text-gray-700"
+											className="leading-none text-black hover:text-gray-700"
 											onClick={() => setchangePlan(false)}
 										>
 											<i className="fa-solid fa-xmark"></i>
@@ -1662,7 +1880,14 @@ export default function Pricing() {
 												/>
 											</div>
 											<div className="my-1 mr-4 last:mr-0">
-												<Button label={"Change Plan"} btnType="button" handleClick={initatePopup} />
+												<Button
+													label={"Change Plan"}
+													btnType="button"
+													handleClick={() => {
+														setIsPaymentTabOpen(true);
+														setchangePlan(false);
+													}}
+												/>
 											</div>
 										</div>
 									</div>
@@ -1672,6 +1897,75 @@ export default function Pricing() {
 					</div>
 				</Dialog>
 			</Transition.Root>
+			{/* Payment Dialog BOx
+			 *************
+			 *********
+			 *******
+			 */}
+
+			<Transition.Root show={isPaymentTabOpen} as={Fragment}>
+				<Dialog as="div" onClose={() => setIsPaymentTabOpen(false)} className="fixed inset-0 z-10 overflow-y-auto">
+					{/* <div className="flex min-h-screen items-center justify-center"> */}
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+					<div className="fixed inset-0 z-10 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="relative w-full transform overflow-hidden rounded-[30px] bg-[#FBF9FF] text-left text-black shadow-xl transition-all dark:bg-gray-800 dark:text-white sm:my-8 sm:max-w-lg">
+									<div className="flex items-center justify-between bg-gradient-to-b from-gradLightBlue to-gradDarkBlue px-8 py-3 text-white">
+										<h4 className="flex items-center font-semibold leading-none">Payment Options</h4>
+										<button type="button" className="hover:text-gray-700" onClick={() => setIsPaymentTabOpen(false)}>
+											<i className="fa-solid fa-xmark"></i>
+										</button>
+									</div>
+									<div className="mt-3 py-6 text-center sm:mt-0 sm:text-left">
+										<Dialog.Title as="h3" className="mb-4 px-6 text-xl font-extrabold leading-6 text-gray-900">
+											Choose Payment Option
+										</Dialog.Title>
+
+										<div className="flex flex-col items-center space-y-2">
+											<button
+												type="button"
+												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+												onClick={() => handlePaymentClick("stripe")}
+											>
+												<img src="/images/logos/Stripe_logo.png" alt="Stripe" className="mr-2 h-8" />
+											</button>
+											<span className="mx-4  font-extrabold text-xl">or</span>
+											<button
+												type="button"
+												className="inline-flex w-full max-w-xs items-center justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+												onClick={() => handlePaymentClick("razorpay")}
+											>
+												<img src="/images/logos/Razorpay_logo.png" alt="Razorpay" className="mr-2 h-8" />
+											</button>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+					{/* </div> */}
+				</Dialog>
+			</Transition.Root>
+			{/* ******************* */}
 
 			<Transition.Root show={billingInfo2} as={Fragment}>
 				<Dialog as="div" className="relative z-[1000]" initialFocus={cancelButtonRef} onClose={setbillingInfo2}>

@@ -9,7 +9,7 @@ import { ChangeEvent, Fragment, useRef } from "react";
 import Button from "@/components/Button";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useLangStore,useUserStore } from "@/utils/code";
+import { useLangStore, useUserStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import { useSession } from "next-auth/react";
@@ -22,7 +22,6 @@ import { PopupModal } from "react-calendly";
 import { InlineWidget } from "react-calendly";
 
 export default function Pricing() {
-	
 	const type = useUserStore((state: { type: any }) => state.type);
 	const { t } = useTranslation("common");
 
@@ -344,7 +343,7 @@ export default function Pricing() {
 												}
 												onClick={() => settab(0)}
 											>
-												Plan & billing Information
+												{srcLang === "ja" ? "プランと請求について" : "Plan & Billing Information"}
 											</button>
 											<button
 												className={
@@ -356,7 +355,7 @@ export default function Pricing() {
 												}
 												onClick={() => settab(1)}
 											>
-												Billing history
+												{srcLang === "ja" ? "請求履歴" : "Billing History"}
 											</button>
 										</div>
 									</div>
@@ -401,10 +400,10 @@ export default function Pricing() {
 									{cplan.plan_info && cplan.plan_info === "FREE" ? (
 										<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">FREE Trial</div>
+												<div className="text-xs font-bold">{srcLang === "ja" ? "無料体験" : "FREE Trial"}</div>
 												<div className="flex gap-1 text-lg font-semibold">
 													<div className="font-black">0 ￥</div>
-													<div>30 days</div>
+													<div>30 {srcLang === "ja" ? "日" : "days"}</div>
 												</div>
 												{/* <div className="text-xs font-bold">Flexible</div>
 												<div className="text-xs font-[300]">100 Application free</div> */}
@@ -415,13 +414,13 @@ export default function Pricing() {
 													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 												}}
 											>
-												Enterprise
+												{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 											</div>
 										</div>
 									) : (
 										<div className="m-2 flex min-w-[20vw] cursor-pointer justify-between rounded-normal bg-white p-4 px-6 shadow-md hover:shadow-lg dark:bg-gray-900 dark:hover:shadow-gray-600">
 											<div className="flex flex-col gap-1">
-												<div className="text-xs font-bold">FREE Trial</div>
+												<div className="text-xs font-bold">{srcLang === "ja" ? "無料体験" : "FREE Trial"}</div>
 												<div className="flex gap-1 text-lg font-semibold">
 													<div className="font-black text-primary">0 ￥</div>
 													<div>30 days</div>
@@ -435,7 +434,7 @@ export default function Pricing() {
 													boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 												}}
 											>
-												Enterprise
+												{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 											</div>
 										</div>
 									)}
@@ -445,10 +444,12 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "STARTER_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black">5,000￥/monthly</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
+														<div className="text-lg font-black">5,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -459,7 +460,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Starter
+														{srcLang === "ja" ? "スターター" : "Starter"}
 													</div>
 												</div>
 											) : (
@@ -471,8 +472,10 @@ export default function Pricing() {
 													}}
 												>
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
-														<div className="text-lg font-black text-primary ">5,000￥/monthly</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
+														<div className="text-lg font-black text-primary ">
+															5,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -484,7 +487,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Starter
+														{srcLang === "ja" ? "スターター" : "Starter"}
 													</div>
 												</div>
 											)}
@@ -493,11 +496,13 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "STANDARD_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														<div className="text-base font-black line-through decoration-red-500">30,000￥</div>
-														<div className="text-lg font-black ">12,000￥/monthly</div>
+														<div className="text-lg font-black ">12,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -508,7 +513,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Standard
+														{srcLang === "ja" ? "標準" : "Standard"}
 													</div>
 												</div>
 											) : (
@@ -520,11 +525,13 @@ export default function Pricing() {
 													}}
 												>
 													<div className="flex flex-col gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														<div className="text-base font-black text-primary line-through decoration-red-500">
 															30,000￥
 														</div>
-														<div className="text-lg font-black text-primary ">12,000￥/monthly</div>
+														<div className="text-lg font-black text-primary ">
+															12,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -536,7 +543,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Standard
+														{srcLang === "ja" ? "標準" : "Standard"}
 													</div>
 												</div>
 											)}
@@ -545,11 +552,13 @@ export default function Pricing() {
 											{cplan.plan_info && cplan.plan_info === "ENTERPRISE_MONTHLY" ? (
 												<div className="m-2 flex min-w-[20vw] cursor-default justify-between rounded-normal bg-[#3358C5] p-4 px-6 text-white shadow-lg shadow-[#3358C5]/[0.7]">
 													<div className="flex flex-col justify-center gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														{/* <div className="text-base font-black line-through decoration-red-500">60,000￥</div> */}
-														<div className="text-lg font-black">45,000￥/monthly</div>
+														<div className="text-lg font-black">45,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}</div>
 
-														<div className="text-[10px] font-bold">Active/Paid</div>
+														<div className="text-[10px] font-bold">
+															{srcLang === "ja" ? "現役／有給" : "Active/Paid"}
+														</div>
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
 														<div className="text-xs font-[300]">1,001 and above = 100￥/ applicant</div> */}
@@ -560,7 +569,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Enterprise
+														{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 													</div>
 												</div>
 											) : (
@@ -572,11 +581,13 @@ export default function Pricing() {
 													}}
 												>
 													<div className="flex flex-col justify-center gap-1">
-														<div className="text-xs font-bold">Monthly Fixed</div>
+														<div className="text-xs font-bold">{srcLang === "ja" ? "毎月固定" : "Monthly Fixed"}</div>
 														{/* <div className="text-base font-black text-primary line-through decoration-red-500">
 															60,000￥
 														</div> */}
-														<div className="text-lg font-black text-primary ">45,000￥/monthly</div>
+														<div className="text-lg font-black text-primary ">
+															45,000￥/{srcLang === "ja" ? "毎月" : "Monthly"}
+														</div>
 
 														{/* <div className="text-xs font-bold">Flexible</div>
 														<div className="text-xs font-[300]">1000 = 200￥/applicant</div>
@@ -588,7 +599,7 @@ export default function Pricing() {
 															boxShadow: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)"
 														}}
 													>
-														Enterprise
+														{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}
 													</div>
 												</div>
 											)}
@@ -755,10 +766,10 @@ export default function Pricing() {
 										<thead>
 											<tr>
 												<th className="w-[300px] border-b px-3 py-2"></th>
-												<th className="border-b px-3 py-2">Free Trial</th>
-												<th className="border-b px-3 py-2">Starter</th>
-												<th className="border-b px-3 py-2">Standard</th>
-												<th className="border-b px-3 py-2">Enterprise</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "無料体験" : "Free Trial"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "スターター" : "Starter"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "標準" : "Standard"}</th>
+												<th className="border-b px-3 py-2">{srcLang === "ja" ? "エンタープライズ" : "Enterprise"}</th>
 											</tr>
 										</thead>
 										<tbody className="text-sm font-semibold">
@@ -1362,17 +1373,17 @@ export default function Pricing() {
 												fill="#3358C5"
 											/>
 										</svg>
-										<span>Plan subscribtion</span>
+										<span>{srcLang === "ja" ? "プラン購読" : "Plan Subscription"}</span>
 									</button>
 									{aplan && aplan.length > 0 ? (
 										<>
 											<table cellPadding={"0"} cellSpacing={"0"} className="w-full">
 												<thead>
 													<tr>
-														<th className="border-b px-4 py-2 text-left">Plan Name</th>
-														<th className="border-b px-4 py-2 text-left">Plan Duration</th>
-														<th className="border-b px-4 py-2 text-left">Status</th>
-														<th className="border-b px-4 py-2 text-left">Paid</th>
+														<th className="border-b px-4 py-2 text-left">{srcLang === "ja" ? "プラン名" : "Plan Name"}</th>
+														<th className="border-b px-4 py-2 text-left">{srcLang === "ja" ? "計画期間" : "Plan Duration"}</th>
+														<th className="border-b px-4 py-2 text-left">{srcLang === "ja" ? "ステータス" : "Status"}</th>
+														<th className="border-b px-4 py-2 text-left">{srcLang === "ja" ? "有料" : "Paid"}</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -1439,7 +1450,7 @@ export default function Pricing() {
 										</>
 									) : (
 										<>
-											<p>No Data</p>
+											<p>{srcLang === "ja" ? "データなし" : "No Data"}</p>
 										</>
 									)}
 								</div>
@@ -1594,7 +1605,7 @@ export default function Pricing() {
 													{moment(cplan.expire).diff(moment(), "days") <= 0
 														? "0"
 														: moment(cplan.expire).diff(moment(), "days")}
-													&nbsp;days left)
+													&nbsp;{srcLang === "ja" ? "残り日数" : "days left"})
 												</p>
 											)}
 										</div>

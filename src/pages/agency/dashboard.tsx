@@ -44,12 +44,14 @@ import PermiumComp from "@/components/organization/premiumComp";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useLangStore } from "@/utils/code";
-
+import Joyride, { STATUS } from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
 import AnalyticsChart from "@/components/organization/AnalyticsChart";
 import Novus from "@/components/Novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import { useNewNovusStore } from "@/utils/novus";
 import HiringChart from "@/components/Charts/HiringChart";
+import Button2 from "@/components/Button2";
 
 export default function OrganizationDashboard({ atsVersion, userRole, upcomingSoon, currentUser }: any) {
 	useEffect(() => {
@@ -200,6 +202,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 	const [todos, settodos] = useState([]);
 	const [nctodos, setnctodos] = useState([]);
 	const [todoLoadMore, settodoLoadMore] = useState(false);
+	const [tourCompleted, setTourCompleted] = useState(false);
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const [shouldShowSidebarTour, setShouldShowSidebarTour] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
+
 
 	async function loadTodo() {
 		await axiosInstanceAuth2
@@ -260,7 +267,118 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 			return "#FE8F66";
 		}
 	}
-
+	const joyrideSteps = [
+		{
+			target: ".dashboardSlider",
+			content: "This section displays important details regarding applicants.",
+			placement: "bottom",
+			disableBeacon: true,
+			title: "Welcome to Dashboard!",
+			disableOverlayClose: true,
+			// hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".hiring-analytics-section",
+			content:
+				"This section displays hiring analytics through graphs, providing insights into hiring trends and performance.",
+			placement: "top",
+			title: "Hiring Analytics",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".upcoming-interviews-section",
+			content:
+				"This section displays upcoming interviews or meetings with applicants. You can view details such as the applicant's name, job title, and interview schedule here.",
+			placement: "top",
+			disableBeacon: true,
+			title: "Upcoming Interviews",
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".todo-list-section",
+			content: "This is your ToDo List section where you can see your tasks and priority markers.",
+			placement: "top",
+			disableBeacon: true,
+			title: "Todo List",
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".recent-jobs",
+			content: "This section displays your recent job postings along with their details.",
+			placement: "top",
+			disableBeacon: true,
+			title: "Recent Jobs",
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".activity-log",
+			content: "This section displays all recent activities, including logins, hiring updates, and applicant updates",
+			placement: "top",
+			disableBeacon: true,
+			title: "Activity Log",
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		
+		{
+			target:atsVersion==="enterprise" || atsVersion==="free"? ".popover":".upgrade",
+			content:atsVersion==="enterprise" || atsVersion==="free"?"This section displays the customization options for your dashboard.":"Upgrade to Enterprise for more features",
+			placement: "bottom",
+			disableBeacon: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			// hideFooter: true,
+			spotlightClicks: true,
+			// event: "click",
+			title:atsVersion==="enterprise" ||atsVersion==="free"? "Click here to customize your Dashboard.":" Upgrade to Enterprise",
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		}
+		
+	];
+	useEffect(() => {
+		if (!isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
 	useEffect(() => {
 		if (token && token.length > 0) {
 			loadTodo();
@@ -278,7 +396,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				<main>
 					{/* <Novus /> */}
 					{session && !upcomingSoon && <ChatAssistance accessToken={session.accessToken} />}
-					<Orgsidebar />
+					<Orgsidebar shouldShowSidebarTour={shouldShowSidebarTour} currentStep={undefined} />
 					<Orgtopbar todoLoadMore={todoLoadMore} settodoLoadMore={settodoLoadMore} loadTodo={loadTodo} />
 					{token && token.length > 0 && <OrgRSideBar axiosInstanceAuth2={axiosInstanceAuth2} />}
 					<div
@@ -368,7 +486,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									<></>
 								)}
 								{check2 ? (
-									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+									<div className="hiring-analytics-section w-full xl:max-w-[calc(50%-1rem)] ">
 										{/* <div className="h-full rounded-normal bg-white shadow dark:bg-gray-800"> */}
 										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
@@ -433,7 +551,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									<></>
 								)}
 								{check3 ? (
-									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+									<div className="upcoming-interviews-section w-full xl:max-w-[calc(50%-1rem)] ">
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.UpcomingInterviews")}</h2>
@@ -539,7 +657,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									<></>
 								)}
 								{check4 ? (
-									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
+									<div className="todo-list-section w-full xl:max-w-[calc(50%-1rem)] ">
 										<div className="relative h-full overflow-hidden rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.ToDoList")}</h2>
@@ -670,7 +788,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								)}
 								{check5 ? (
 									<div className="w-full xl:max-w-[calc(50%-1rem)] ">
-										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
+										<div className="recent-jobs h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.RecentJobs")}</h2>
 												{!["standard", "starter"].includes(atsVersion) && (
@@ -777,7 +895,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									</div>
 								)}
 								{check6 ? (
-									<div className="w-full xl:max-w-[calc(50%-1rem)]">
+									<div className="activity-log w-full xl:max-w-[calc(50%-1rem)]">
 										<div className="h-full rounded-normal bg-white shadow dark:bg-gray-800">
 											<div className="flex items-center justify-between p-6">
 												<h2 className="text-lg font-bold">{t("Words.ActivityLog")}</h2>
@@ -825,11 +943,12 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 															)}
 														</div>
 														<div className="pt-4">
-															<Button
+															<Button2
 																btnStyle="outlined"
 																label={t("Btn.LoadMore")}
 																btnType="button"
 																handleClick={() => setActivityLogPopup(true)}
+																small
 															/>
 														</div>
 													</>
@@ -855,8 +974,45 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 									<></>
 								)}
 							</div>
+							<Joyride
+								steps={tourCompleted ? [] : joyrideSteps}
+								run={shouldShowJoyride}
+								// scrollOffset={5}
+								styles={{
+									options: {
+										arrowColor: "#0066ff", // Set to primary color
+										backgroundColor: "#F5F8FA", // Set to lightBlue
+										overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+										primaryColor: "#0066ff", // Set to primary color
+										textColor: "#3358c5", // Set to secondary color
+										// width: 100, // Adjust as needed
+										zIndex: 1000 // Set as needed
+									}
+								}}
+								continuous={true}
+								showProgress={true}
+								showSkipButton={true}
+								callback={(data: any) => {
+									const { action, status, type } = data;
+									// console.log("yeh hai status", status);
+									if ([STATUS.FINISHED, STATUS.SKIPPED, STATUS.READY].includes(status)) {
+										// console.log("finish toh ho gya!!");
+										// console.log("type to yeh hai", type);
+										// // Check if the completed step is the last step of the main dashboard
+										// if (data.step === joyrideSteps.length - 1) {
+										// setTourCompleted(true);
+										setShouldShowSidebarTour(true);
+										console.log("completed this tour");
+										// }
+									}
+									if (action === "close") {
+										setIsTourOpen(false);
+										setTourCompleted(true);
+									}
+								}}
+							/>
 							{!["standard", "starter"].includes(atsVersion) && (
-								<aside className="absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
+								<aside className=" popover absolute left-0 top-0 rounded-br-normal rounded-tl-normal bg-lightBlue p-3 dark:bg-gray-700">
 									<Popover className="relative">
 										<Popover.Button
 											className={`flex h-[45px] w-[45px] items-center justify-center rounded-[10px] bg-gradient-to-b from-gradLightBlue to-gradDarkBlue text-xl text-white hover:from-gradDarkBlue hover:to-gradDarkBlue focus:outline-none`}

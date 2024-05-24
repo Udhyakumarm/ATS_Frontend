@@ -11,7 +11,9 @@ import ToggleLang from "./ToggleLang";
 import { axiosInstanceAuth } from "@/pages/api/axiosApi";
 import moment from "moment";
 import toast from "react-hot-toast";
-
+import Joyride,{STATUS} from "react-joyride";
+import useJoyrideStore from "@/utils/joyride";
+import { title } from "process";
 export default function Header() {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const router = useRouter();
@@ -87,6 +89,76 @@ export default function Header() {
 	const toggleLoadMode = useNotificationStore((state: { toggleLoadMode: any }) => state.toggleLoadMode);
 	const reminder = useNotificationStore((state: { reminder: any }) => state.reminder);
 	const togglereminderMode = useNotificationStore((state: { togglereminderMode: any }) => state.togglereminderMode);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride,resetTour } = useJoyrideStore();
+	useEffect(() => {
+		if (!isJoyrideCompleted && role==="Candidate") {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, showJoyride]);
+	// console.log("shouldshowjoyride", shouldShowJoyride)
+	// console.log("isjouride completed", isJoyrideCompleted)
+	const joyrideSteps=[
+		{
+			target: ".searchjob",
+			disableBeacon: true,
+			title:srcLang === "ja" ? "求人検索" : "Search Jobs",
+			content: "This section has all the active jobs available for you to apply. You can search for jobs based on your preferences and apply for them directly from here.",
+			placement: "bottom",
+			disableOverlayClose: true,
+			// hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".dashboard",
+			disableBeacon: true,
+			title:srcLang === "ja" ? "ダッシュボード" : "Dashboard",
+			content:"Here you can see all the jobs you have applied for and the status of your applications. You can also see the jobs you have been shortlisted for and the jobs you have been rejected for and see the offers you have received.",
+			placement: "bottom",
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		{
+			target: ".settings",
+			disableBeacon: true,
+			title:"Profile",
+			content:"Click on this profile icon to view your profile settings. You can also logout from here.",
+			placement: "bottom",
+			disableOverlayClose: true,
+			spotlightClicks: true,
+			hideCloseButton: true,
+			styles: {
+				options: {
+					zIndex: 10000
+				}
+			}
+		},
+		// {
+		// 	target: ".last",
+		// 	disableBeacon: true,
+		// 	title:"Settings",
+		// 	content:"Click here to view your profile settings",
+		// 	placement: "left",
+		// 	disableOverlayClose: true,
+		// 	spotlightClicks: true,
+		// 	hideCloseButton: true,
+		// 	hideFooter: true,
+		// 	styles: {
+		// 		options: {
+		// 			zIndex: 10000
+		// 		}
+		// 	}
+		// },
+		
+	]
 
 	// useEffect(() => {
 	// 	if ((token && token.length > 0) || load) {
@@ -137,8 +209,52 @@ export default function Header() {
 		return (
 			<>
 				<header className="hello  bg-white shadow-normal dark:bg-gray-800">
+				<Joyride
+							steps={joyrideSteps}
+							run={shouldShowJoyride}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							continuous={true}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								const { action, status, step } = data;
+								
+								// if ((action === "next" || action === "back") && status === "ready") {
+								// 	if (action === "next" && status === "running") {
+								// 		setStepIndex((prevStep) => prevStep + 1);
+								// 	} else if (action === "back") {
+								// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+								// 	}
+								// }
+								if([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+									completeJoyride();
+								}
+								// if (action === "close") {
+								// 	setIsTourOpen(false);
+								// 	setTourCompleted(true);
+								// 	// setShowSidebarTour(false);
+								// 	// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								// }
+								// if (action === "skip") {
+								// 	setIsTourOpen(false);
+								// 	setTourCompleted(true);
+								// 	// setShowSidebarTour(false);
+								// 	// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								// }
+							}}
+						/>
 					<div className="mx-auto flex w-full max-w-[1920px] items-center justify-between  px-4 py-3 md:px-10 lg:px-14">
-						{/*  */}
+						{/*  */}	
 						<div className="flex items-center  max-md:hidden">
 							{orgdetail["OrgProfile"] && (
 								<Image
@@ -157,7 +273,7 @@ export default function Header() {
 								/>
 							)}
 							<ul className="flex text-sm font-semibold">
-								<li className="mx-3">
+								<li className="mx-3 searchjob">
 									<Link
 										href={"/organization/" + cname + "/search-jobs"}
 										className={
@@ -172,7 +288,7 @@ export default function Header() {
 									</Link>
 								</li>
 								{auth && (
-									<li className="mx-3">
+									<li className="mx-3 dashboard">
 										<Link
 											href={"/organization/" + cname + "/dashboard"}
 											className={
@@ -190,6 +306,12 @@ export default function Header() {
 							</ul>
 						</div>
 						<div className=" flex items-center  max-md:hidden">
+						<i
+					className="fas fa-question-circle my-1 cursor-pointer rounded-l bg-white px-1  text-xl font-bold mx-6 text-gray-500 transition-colors duration-300 hover:text-slate-800"
+					onClick={() => {
+						resetTour();
+					}}
+				/>
 							<ThemeChange />
 							<ToggleLang />
 							{!auth && (
@@ -238,7 +360,7 @@ export default function Header() {
 
 									<Popover className="relative">
 										<Popover.Button>
-											<button type="button" className="h-[35px] w-[35px] rounded-full bg-darkGray text-white">
+											<button type="button" className="h-[35px] w-[35px] rounded-full bg-darkGray text-white settings">
 												{role === "Candidate" ? user[0]["first_name"].charAt(0) : <>S</>}
 											</button>
 										</Popover.Button>
@@ -247,7 +369,7 @@ export default function Header() {
 												<li>
 													<Link
 														href={`/organization/${cname}/settings`}
-														className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200 dark:hover:text-black"
+														className="block w-full px-4 py-1 py-2 font-bold hover:bg-gray-200 dark:hover:text-black last"
 													>
 														<i className="fa-solid fa-gear mr-3"></i>
 														{srcLang === "ja" ? "設定" : "Settings"}

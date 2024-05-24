@@ -19,15 +19,33 @@ import { useLangStore } from "@/utils/code";
 import Button from "../Button";
 import { isMobile } from "react-device-detect";
 import { useNewNovusStore } from "@/utils/novus";
+import Joyride from "react-joyride";
 import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
+import useJoyrideStore from "@/utils/joyride";
 
-export default function OrgSideBar() {
+export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
+	// console.log("current step is", typeof currentStep, currentStep);
 	const router = useRouter();
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
 	const [show, setShow] = useState(false);
 	const { data: session } = useSession();
 	const [token, settoken] = useState("");
+	// const [showSidebarTour, setShowSidebarTour] = useState(false);
+
+	console.log("current step is", typeof currentStep, currentStep);
+
+	// const TOUR_STATUS_KEY = "tourCompleted";
+
+	// // Check if the tour has been completed before
+	// const storedTourStatus = localStorage.getItem(TOUR_STATUS_KEY);
+	// const initialTourStatus = storedTourStatus ? JSON.parse(storedTourStatus) : false;
+
+	// Initialize the tour completion state with the stored value
+	const [tourCompleted, setTourCompleted] = useState(false);
+
+	const [isTourOpen, setIsTourOpen] = useState(false);
+	const { shouldShowJoyride, isJoyrideCompleted, showJoyride, completeJoyride } = useJoyrideStore();
 
 	useEffect(() => {
 		if (session) {
@@ -58,6 +76,13 @@ export default function OrgSideBar() {
 			};
 		}
 	}, [token]);
+	useEffect(() => {
+		if (shouldShowSidebarTour && !isJoyrideCompleted) {
+			showJoyride();
+		}
+	}, [isJoyrideCompleted, shouldShowSidebarTour, showJoyride]);
+	console.log("sidebar khulega",shouldShowSidebarTour)
+	console.log("shouldshowjoyride ki value ye hai",shouldShowJoyride)
 
 	// useEffect(() => {
 	// 	if (token && token.length > 0) {
@@ -337,7 +362,7 @@ export default function OrgSideBar() {
 			)
 		},
 		{
-			title: srcLang === "ja"  ? "オファー管理" : "Offer Management",
+			title: srcLang === "ja" ? "オファー管理" : "Offer Management",
 			url: "/organization/offer-management",
 			pre: preOrNot("Offer Management"),
 			com: comOrNot("Offer Management"),
@@ -875,73 +900,7 @@ export default function OrgSideBar() {
 				</svg>
 			)
 		},
-		// {
-		// 	title: srcLang === "ja" ? "契約" : "Pipeline",
-		// 	url: "/agency/pipeline",
-		// 	pre: preOrNot("pipeline"),
-		// 	com: comOrNot("pipeline"),
-		// 	expired: isExpired,
 
-		// 	icon: (
-		// 		<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 39 46" fill="none">
-		// 			<g filter="url(#filter0_d_2512_2700)">
-		// 				<mask
-		// 					id="mask0_2512_2700"
-		// 					style={{ maskType: "alpha" }}
-		// 					maskUnits="userSpaceOnUse"
-		// 					x="0"
-		// 					y="0"
-		// 					width="39"
-		// 					height="42"
-		// 				>
-		// 					<rect y="0.957031" width="38.0312" height="40.1877" fill="#D9D9D9" />
-		// 				</mask>
-		// 				<g mask="url(#mask0_2512_2700)">
-		// 					<path
-		// 						d="M9.50781 37.7945C8.18728 37.7945 7.06483 37.3061 6.14046 36.3293C5.21609 35.3525 4.75391 34.1664 4.75391 32.771V27.7475H9.50781V4.30469H33.2773V32.771C33.2773 34.1664 32.8152 35.3525 31.8908 36.3293C30.9664 37.3061 29.844 37.7945 28.5234 37.7945H9.50781ZM28.5234 34.4455C28.9724 34.4455 29.3488 34.285 29.6525 33.9641C29.9562 33.6431 30.1081 33.2454 30.1081 32.771V7.65366H12.6771V27.7475H26.9388V32.771C26.9388 33.2454 27.0907 33.6431 27.3944 33.9641C27.6981 34.285 28.0745 34.4455 28.5234 34.4455ZM14.2617 16.0261V12.6771H28.5234V16.0261H14.2617ZM14.2617 21.0496V17.7006H28.5234V21.0496H14.2617ZM9.50781 34.4455H23.7695V31.0965H7.92318V32.771C7.92318 33.2454 8.07504 33.6431 8.37876 33.9641C8.68248 34.285 9.05883 34.4455 9.50781 34.4455ZM9.50781 34.4455H7.92318H23.7695H9.50781Z"
-		// 						fill="url(#paint0_linear_2512_2700)"
-		// 					/>
-		// 				</g>
-		// 			</g>
-		// 			<defs>
-		// 				<filter
-		// 					id="filter0_d_2512_2700"
-		// 					x="0.753906"
-		// 					y="4.30469"
-		// 					width="36.5234"
-		// 					height="41.4883"
-		// 					filterUnits="userSpaceOnUse"
-		// 					color-interpolation-filters="sRGB"
-		// 				>
-		// 					<feFlood flood-opacity="0" result="BackgroundImageFix" />
-		// 					<feColorMatrix
-		// 						in="SourceAlpha"
-		// 						type="matrix"
-		// 						values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-		// 						result="hardAlpha"
-		// 					/>
-		// 					<feOffset dy="4" />
-		// 					<feGaussianBlur stdDeviation="2" />
-		// 					<feComposite in2="hardAlpha" operator="out" />
-		// 					<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-		// 					<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2512_2700" />
-		// 					<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2512_2700" result="shape" />
-		// 				</filter>
-		// 				<linearGradient
-		// 					id="paint0_linear_2512_2700"
-		// 					x1="1.23885"
-		// 					y1="33.3284"
-		// 					x2="45.9983"
-		// 					y2="19.341"
-		// 					gradientUnits="userSpaceOnUse"
-		// 				>
-		// 					<stop stop-color="#2D129A" />
-		// 					<stop offset="1" stop-color="#47BBFD" />
-		// 				</linearGradient>
-		// 			</defs>
-		// 		</svg>
-		// 	)
-		// },
 		{
 			title: srcLang === "ja" ? "候補者" : "Applicants",
 			url: "/agency/applicants",
@@ -1324,6 +1283,61 @@ export default function OrgSideBar() {
 			)
 		},
 		{
+			title: srcLang === "ja" ? "契約" : "Pipeline-DB",
+			url: "/agency/pipeline-db",
+			pre: preOrNot("pipeline-db"),
+			com: comOrNot("pipeline-db"),
+			expired: isExpired,
+
+			icon: (
+				<svg xmlns="http://www.w3.org/2000/svg" width="28" height="30" viewBox="0 0 28 30" fill="none">
+					<mask
+						id="a"
+						width={28}
+						height={30}
+						x={0}
+						y={0}
+						maskUnits="userSpaceOnUse"
+						style={{
+							maskType: "alpha"
+						}}
+					>
+						<path fill="#D9D9D9" d="M0 0h27.895v30H0z" />
+					</mask>
+					<g filter="url(#b)" mask="url(#a)">
+						<path
+							fill="url(#c)"
+							d="M13.947 26.25c-2.925 0-5.4-.484-7.424-1.453-2.025-.969-3.037-2.151-3.037-3.547V8.75c0-1.375 1.022-2.552 3.066-3.531 2.043-.98 4.508-1.469 7.395-1.469 2.886 0 5.351.49 7.395 1.469 2.043.979 3.065 2.156 3.065 3.531v12.5c0 1.396-1.012 2.578-3.036 3.547-2.024.969-4.5 1.453-7.424 1.453Zm0-14.969a17.77 17.77 0 0 0 5.201-.797c1.743-.53 2.722-1.099 2.935-1.703-.213-.604-1.187-1.177-2.92-1.719a17.404 17.404 0 0 0-5.216-.812c-1.763 0-3.492.266-5.187.797-1.695.531-2.678 1.11-2.95 1.734.272.625 1.255 1.198 2.95 1.719 1.695.52 3.424.781 5.187.781Zm0 6.219c.813 0 1.598-.042 2.353-.125a19.319 19.319 0 0 0 2.165-.36 14.948 14.948 0 0 0 1.947-.578c.61-.229 1.167-.49 1.67-.78v-3.75c-.503.29-1.06.551-1.67.78-.61.23-1.26.422-1.947.579-.688.156-1.41.276-2.165.359-.755.083-1.54.125-2.353.125-.814 0-1.608-.042-2.383-.125a19.13 19.13 0 0 1-2.194-.36 14.296 14.296 0 0 1-1.932-.578c-.6-.229-1.143-.49-1.627-.78v3.75c.484.29 1.027.551 1.627.78.6.23 1.245.422 1.932.579a19.13 19.13 0 0 0 2.194.359c.775.083 1.57.125 2.383.125Zm0 6.25c.89 0 1.796-.073 2.717-.219.92-.146 1.767-.338 2.542-.578.775-.24 1.424-.51 1.947-.812.523-.302.833-.61.93-.922v-3.063c-.504.292-1.06.552-1.671.782-.61.229-1.26.421-1.947.578-.688.156-1.41.276-2.165.359-.755.083-1.54.125-2.353.125-.814 0-1.608-.042-2.383-.125a19.13 19.13 0 0 1-2.194-.36 14.296 14.296 0 0 1-1.932-.578c-.6-.229-1.143-.49-1.627-.78v3.093c.097.313.402.615.915.906.513.292 1.158.558 1.932.797.775.24 1.628.432 2.557.578.93.146 1.84.219 2.732.219Z"
+						/>
+					</g>
+					<defs>
+						<linearGradient id="c" x1={0.908} x2={33.187} y1={23.25} y2={12.237} gradientUnits="userSpaceOnUse">
+							<stop stopColor="#2D129A" />
+							<stop offset={1} stopColor="#47BBFD" />
+						</linearGradient>
+						<filter
+							id="b"
+							width={28.922}
+							height={30.5}
+							x={-0.514}
+							y={3.75}
+							colorInterpolationFilters="sRGB"
+							filterUnits="userSpaceOnUse"
+						>
+							<feFlood floodOpacity={0} result="BackgroundImageFix" />
+							<feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+							<feOffset dy={4} />
+							<feGaussianBlur stdDeviation={2} />
+							<feComposite in2="hardAlpha" operator="out" />
+							<feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+							<feBlend in2="BackgroundImageFix" result="effect1_dropShadow_2755_2137" />
+							<feBlend in="SourceGraphic" in2="effect1_dropShadow_2755_2137" result="shape" />
+						</filter>
+					</defs>
+				</svg>
+			)
+		},
+		{
 			title: srcLang === "ja" ? "設定" : "Settings",
 			url: "/agency/settings",
 			pre: preOrNot("Settings"),
@@ -1391,6 +1405,148 @@ export default function OrgSideBar() {
 			)
 		}
 	];
+	console.log("role hai", role);
+	console.log("type ye hai",type)
+	const steps = [
+		{
+			target:type === "Agency" ? ".menuItem2-1" : ".menuItem-1",
+			title: "Jobs",
+			content: "Lets see, click here Manage and track job postings and applications.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter:role === "Hiring Manager" || type === "Agency" ? false : true
+		},
+		{
+			target:type === "Agency" ?".menuItem2-2": ".menuItem-2",
+			title:type === "Agency" ?"Contracts": "Applicants",
+			content:type === "Agency" ?"Review and manage contracts of existing entities": "Review and manage applicants for your job openings.",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+			// hideFooter: true
+		},
+		{
+			target: type === "Agency" ?".menuItem2-3":".menuItem-3",
+			title: type === "Agency" ?"Applicants":"Offer Management",
+			content: type === "Agency" ? "Review and manage applicants for your job openings.":version==="enterprise"|| version==="free"?"Create, manage, and send offers to candidates.":"Upgrade to Enterpertise to access this feature",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target: type === "Agency" ?".menuItem2-4":".menuItem-4",
+			title: type === "Agency" ?"Shared": "Interviews",
+			content: type === "Agency" ?"Track the status of shared applications":"Schedule and conduct interviews with candidates.",
+			placement: "right",
+			disableBeacon: true,
+			// spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		{
+			target:type === "Agency" ?".menuItem2-5": ".menuItem-5",
+			title:type === "Agency"? "Interviews": "Analytics",
+			content:type === "Agency" ?"Schedule and conduct interviews with candidates.": "Analyze data and metrics related to your organization's recruitment process.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			// disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		// {
+		// 	target:type === "Agency" ? ".menuItem2-6":"",
+		// 	title: type === "Agency" ?"Analytics":"",
+		// 	content:type === "Agency" ? "Analyze data and metrics related to your organization's recruitment process.":"",
+		// 	placement: "right",
+		// 	disableBeacon: true,
+		// 	spotlightClicks: true,
+		// 	// disableOverlayClose: true,
+		// 	hideCloseButton: true
+		// },
+		{
+			target:type === "Agency" ? ".menuItem2-7": ".menuItem-6",
+			title: "Inboxes",
+			content: version==="enterprise"|| version==="free"?"Manage all your incoming messages and communications in one place.":"Upgrade to Enterpertise to access this feature",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			// disableOverlayClose: true,
+			hideCloseButton: true
+		},
+		// {
+		// 	target:type === "Agency" ? ".menuItem2-8":"",
+		// 	title: type === "Agency" ?"Pipeline":"",
+		// 	content:type === "Agency" ? "Manage and configure the pipeline of applicants":"",
+		// 	placement: "right",
+		// 	disableBeacon: true,
+		// 	spotlightClicks: true,
+		// 	// disableOverlayClose: true,
+		// 	hideCloseButton: true
+		// },
+		{
+			target:type === "Agency" ? ".menuItem2-9": ".menuItem-7",
+			title: "Settings",
+			content: "Click here to configure and customize your organization's account settings.",
+			placement: "right",
+			disableBeacon: true,
+			spotlightClicks: true,
+			disableOverlayClose: true,
+			hideCloseButton: true,
+			hideFooter: true
+		},
+		// ...(type === "Agency" ? [
+		// 	{
+		// 		target: ".menuItem2-6",
+		// 		title: "Analytics",
+		// 		content: "Analyze data and metrics related to your organization's recruitment process.",
+		// 		placement: "right",
+		// 		disableBeacon: true,
+		// 		spotlightClicks: true,
+		// 		hideCloseButton: true
+		// 	},
+		// 	{
+		// 		target: ".menuItem2-8",
+		// 		title: "Pipeline",
+		// 		content: "Manage and configure the pipeline of applicants",
+		// 		placement: "right",
+		// 		disableBeacon: true,
+		// 		spotlightClicks: true,
+		// 		hideCloseButton: true
+		// 	}
+		// ] : []),
+	];
+	if (type === "Agency") {
+		steps.push(
+			{
+				target: ".menuItem2-6",
+				title: "Analytics",
+				content: "Analyze data and metrics related to your organization's recruitment process.",
+				placement: "right",
+				disableBeacon: true,
+				spotlightClicks: true,
+				hideCloseButton: true
+			},
+			{
+				target: ".menuItem2-8",
+				title: "Pipeline",
+				content: "Manage and configure the pipeline of applicants",
+				placement: "right",
+				disableBeacon: true,
+				spotlightClicks: true,
+				hideCloseButton: true
+			}
+		);
+	}
+	
+
+	const filteredsteps = currentStep ? steps.slice(1) : steps;
 
 	function handleClickLink(url, com, pre, title) {
 		settitle(title);
@@ -1473,7 +1629,7 @@ export default function OrgSideBar() {
 							<>
 								{menu2.map((menuItem, i) => (
 									<li
-										className={`relative my-[12px]` + " " + (show ? "my-[24px]" : "")}
+										className={`relative my-[12px] menuItem2-${i}` + " " + (show ? "my-[24px]" : "")}
 										key={i}
 										data-te-toggle="tooltip"
 										data-te-placement="right"
@@ -1550,7 +1706,7 @@ export default function OrgSideBar() {
 							<>
 								{menu.map((menuItem, i) => (
 									<li
-										className={`relative my-[12px]` + " " + (show ? "my-[24px]" : "")}
+										className={`relative my-[12px] menuItem-${i}` + " " + (show ? "my-[24px]" : "")}
 										key={i}
 										data-te-toggle="tooltip"
 										data-te-placement="right"
@@ -1625,7 +1781,7 @@ export default function OrgSideBar() {
 							</>
 						)}
 
-						<li className={`my-[12px]` + " " + (show ? "my-[24px]" : "")}>
+						<li className={`logout my-[12px]` + " " + (show ? "my-[24px]" : "")}>
 							<div
 								onClick={() => {
 									toastcomp(currentUser[0]["email"], "success");
@@ -1693,6 +1849,49 @@ export default function OrgSideBar() {
 								/>
 							</div>
 						</div>
+					)}
+					{shouldShowSidebarTour && (
+						<Joyride
+							steps={filteredsteps}
+							run={shouldShowJoyride}
+							styles={{
+								options: {
+									arrowColor: "#0066ff", // Set to primary color
+									backgroundColor: "#F5F8FA", // Set to lightBlue
+									overlayColor: "rgba(0, 0, 0, 0.4)", // Adjusted to match your styling
+									primaryColor: "#0066ff", // Set to primary color
+									textColor: "#3358c5", // Set to secondary color
+									// width: 100, // Adjust as needed
+									zIndex: 1000 // Set as needed
+								}
+							}}
+							continuous={true}
+							showProgress={true}
+							// showSkipButton={true}
+							callback={(data: any) => {
+								const { action, status, step } = data;
+								
+								// if ((action === "next" || action === "back") && status === "ready") {
+								// 	if (action === "next" && status === "running") {
+								// 		setStepIndex((prevStep) => prevStep + 1);
+								// 	} else if (action === "back") {
+								// 		setStepIndex((prevStep) => Math.max(prevStep - 1, 0)); // Ensure currentStep doesn't go below 0
+								// 	}
+								// }
+								if (action === "close") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+								if (action === "skip") {
+									setIsTourOpen(false);
+									setTourCompleted(true);
+									// setShowSidebarTour(false);
+									// localStorage.setItem(TOUR_STATUS_KEY, JSON.stringify(true)); // Mark the tour as completed when the user closes it
+								}
+							}}
+						/>
 					)}
 				</div>
 			</div>

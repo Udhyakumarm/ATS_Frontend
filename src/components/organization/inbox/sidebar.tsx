@@ -6,6 +6,7 @@ import userImg1 from "/public/images/user-image1.jpeg";
 import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import InboxCard from "./card";
+import { useLangStore } from "@/utils/code";
 
 export default function InboxSideBar({
 	togglePages,
@@ -23,6 +24,7 @@ export default function InboxSideBar({
 	settypingPK,
 	loadSidebar
 }: any) {
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	return (
 		<div className="overflow-hidden rounded-normal border bg-white/50 shadow-normal dark:border-gray-600 dark:bg-gray-800/50">
 			<Tab.Group>
@@ -51,7 +53,7 @@ export default function InboxSideBar({
 								}
 								onClick={() => setTogglePages(false)}
 							>
-								Chats
+								{srcLang === "ja" ? "チャット" : "Chats"}
 							</button>
 						)}
 					</Tab>
@@ -247,10 +249,11 @@ export default function InboxSideBar({
 											</svg>
 											<input
 												type="search"
-												placeholder={"Search Team Members ..."}
+												placeholder={srcLang === "ja" ? "チームメンバーを検索 ..." : "Search Team members.."}
 												className={`min-h-[45px] w-full border-none bg-transparent p-3 text-sm `}
 											/>
 											{/* <svg
+											チームメンバーを検索 ...
 												xmlns="http://www.w3.org/2000/svg"
 												width="20"
 												height="20"

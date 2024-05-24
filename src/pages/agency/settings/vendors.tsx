@@ -20,6 +20,7 @@ import { useLangStore } from "@/utils/code";
 import { useNewNovusStore } from "@/utils/novus";
 import OrgRSideBar from "@/components/organization/RSideBar";
 import PermiumComp from "@/components/organization/premiumComp";
+import Button2 from "@/components/Button2";
 
 export default function Vendors({ atsVersion, userRole }: any) {
 	const { t } = useTranslation("common");
@@ -582,7 +583,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 																: "Is this an Existing Vendor?"}
 														</label>
 													</div>
-													<Button
+													<Button2
 														label={srcLang === "ja" ? "契約書を送付" : "Send Agreement"}
 														btnType="button"
 														handleClick={addAgreement}

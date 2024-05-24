@@ -8,13 +8,12 @@ import Button from "@/components/Button";
 import AutoTextarea from "@/components/organization/AutoTextarea";
 import startNewChat from "/public/images/no-data/iconGroup-4.png";
 import InboxChatMsg from "./chatMsg";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import toastcomp from "@/components/toast";
 import moment from "moment";
 import Link from "next/link";
-import EmojiPicker from "emoji-picker-react";
 import { useTheme } from "next-themes";
+import InputEmoji from "react-input-emoji";
+import { useLangStore } from "@/utils/code";
 
 export default function InboxFrame({
 	togglePages,
@@ -46,10 +45,11 @@ export default function InboxFrame({
 	const [showContactData, setShowContactData] = useState([]);
 
 	const [isPickerOpen, setIsPickerOpen] = useState(false);
+	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const handleEmojiClick = (emoji) => {
-		console.log("emoji", emoji);
-		// settext(text + emoji.native);
+		console.log(emoji);
+		// console.log("emoji", emoji);
 		settext(text + emoji.emoji);
 		setIsPickerOpen(false);
 	};
@@ -655,7 +655,7 @@ export default function InboxFrame({
 														// fill="#5500FF"
 													/>
 												</svg> */}
-												<span>Chats</span>
+												<span>{srcLang === "ja" ? "チャット" : "Chats"}</span>
 											</div>
 											<div>|</div>
 											<div
@@ -684,7 +684,7 @@ export default function InboxFrame({
 														// fill="#727272"
 													/>
 												</svg> */}
-												<span>Files</span>
+												<span>{srcLang === "ja" ? "ファイル" : "Files"}</span>
 											</div>
 										</div>
 									</h4>
@@ -761,7 +761,7 @@ export default function InboxFrame({
 										}
 										onClick={() => setoggle2(true)}
 									>
-										<span>Document</span>
+										<span>{srcLang === "ja" ? "ドキュメント" : "Documents"}</span>
 									</div>
 									<div>|</div>
 									<div
@@ -775,7 +775,7 @@ export default function InboxFrame({
 										}
 										onClick={() => setoggle2(false)}
 									>
-										<span>Media</span>
+										<span>{srcLang === "ja" ? "メディア" : "Media"}</span>
 									</div>
 								</div>
 								{toggle2 ? (
@@ -786,13 +786,13 @@ export default function InboxFrame({
 													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 														<tr>
 															<th scope="col" className="px-6 py-3">
-																Document name
+																{srcLang == "ja" ? "文書名" : "Document Name"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																Uploaded Date
+																{srcLang == "ja" ? "アップロード日" : "Uploaded Date"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																<span className="sr-only">view</span>
+																<span className="sr-only">{srcLang == "ja" ? "ビュー" : "View"}</span>
 															</th>
 														</tr>
 													</thead>
@@ -830,7 +830,7 @@ export default function InboxFrame({
 																		target="_blank"
 																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
 																	>
-																		View
+																		{srcLang == "ja" ? "ビュー" : "View"}
 																	</Link>
 																</td>
 															</tr>
@@ -839,7 +839,9 @@ export default function InboxFrame({
 												</table>
 											</div>
 										) : (
-											<p className="text-center text-base">No Document Found</p>
+											<p className="text-center text-base">
+												{srcLang == "ja" ? "ドキュメントが見つかりません。" : "No Document Found"}
+											</p>
 										)}
 									</div>
 								) : (
@@ -850,13 +852,13 @@ export default function InboxFrame({
 													<thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 														<tr>
 															<th scope="col" className="px-6 py-3">
-																Media name
+																{srcLang == "ja" ? "メディア名" : "Media name"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																Uploaded Date
+																{srcLang == "ja" ? "アップロード日" : "Uploaded Date"}
 															</th>
 															<th scope="col" className="px-6 py-3">
-																<span className="sr-only">view</span>
+																<span className="sr-only">{srcLang == "ja" ? "ビュー" : "View"}</span>
 															</th>
 														</tr>
 													</thead>
@@ -900,7 +902,7 @@ export default function InboxFrame({
 																		target="_blank"
 																		className="font-medium text-blue-600 hover:underline dark:text-blue-500"
 																	>
-																		View
+																		{srcLang == "ja" ? "ビュー" : "View"}
 																	</Link>
 																</td>
 															</tr>
@@ -909,7 +911,9 @@ export default function InboxFrame({
 												</table>
 											</div>
 										) : (
-											<p className="text-center text-base">No Media Found</p>
+											<p className="text-center text-base">
+												{srcLang == "ja" ? "メディアが見つかりません。" : "No Media Found"}
+											</p>
 										)}
 									</div>
 								)}
@@ -1014,7 +1018,7 @@ export default function InboxFrame({
 								</div>
 							)}
 							<div className="flex items-center gap-2 rounded bg-white p-2 shadow-normal dark:bg-gray-800">
-								<textarea
+								{/* <textarea
 									name=""
 									id=""
 									className="h-[40px] w-full resize-none  border-0 bg-transparent focus:border-0 focus:shadow-none focus:outline-none focus:ring-0"
@@ -1037,25 +1041,67 @@ export default function InboxFrame({
 											handleSendClick();
 										}
 									}}
-								></textarea>
+								></textarea> */}
+								{/*----------------------- React input emoji----------------------- */}
+								<InputEmoji
+									value={text}
+									onChange={(newText) => {
+										settext(newText);
+										setisTyping(true);
+									}}
+									cleanOnEnter
+									fontFamily="poppins"
+									placeholder={srcLang === "ja" ? "メッセージ" : "Messages"}
+									onCompositionStart={handleCompositionStart}
+									onCompositionUpdate={handleCompositionUpdate}
+									onCompositionEnd={handleCompositionEnd}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" && !composition) {
+											e.preventDefault();
+											e.stopPropagation();
+											handleSendClick();
+										}
+									}}
+									onFocus={(e) => {
+										setisTyping(true);
+									}}
+									onBlur={(e) => {
+										setisTyping(false);
+									}}
+									borderRadius={10}
+									fontSize={16}
+									keepOpened={true}
+									style={{
+										height: "40px",
+										width: "100%",
+										resize: "none",
+										border: "0",
+										backgroundColor: "transparent",
+										boxShadow: "none",
+										outline: "none",
+										ring: "0"
+									}}
+								/>
 								<div className="flex gap-4">
-									<button
+									{/* <button
 										type="button"
 										className="block px-0.5 text-lg leading-normal"
 										onClick={() => setIsPickerOpen(!isPickerOpen)}
 									>
 										<i className="fa-regular fa-face-smile"></i>
-									</button>
+									</button> */}
 
 									{isPickerOpen && (
 										<div style={{ position: "absolute", bottom: "50px", right: "10px" }}>
-											<EmojiPicker
+											{/* <EmojiPicker
 												onEmojiClick={handleEmojiClick}
 												emojiStyle={"google"}
 												theme={ctheme === "dark" ? "dark" : "light"}
-											/>
+											/> */}
 											{/* <Picker
 												data={data}
+												set="google"
+												emojiSize={28}
 												onEmojiSelect={handleEmojiClick}
 												emojiButtonRadius="6px"
 												emojiButtonColors={[
