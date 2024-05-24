@@ -917,7 +917,13 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				}
 
 				if (oprofile[i]["offer"]) {
-					setwordpath(oprofile[i]["offer"]);
+					if(process.env.NODE_ENV === "production"){
+setwordpath(oprofile[i]["offer"].replace("http:","https:"));
+					}
+					else{
+
+						setwordpath(oprofile[i]["offer"]);
+					}
 				} else {
 					setwordpath("");
 				}
