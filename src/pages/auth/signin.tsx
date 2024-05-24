@@ -320,7 +320,7 @@ export default function AuthSignIn({ providers }: any) {
 						{/* <div className="absolute right-0 top-0 mr-1 mt-1 inline-block text-center">
 							<img src="/images/noAuth/headerLogo.png" alt="logo" className="w-12" />
 						</div> */}
-						<div className="min-h-[350px]  rounded-large p-6  md:px-8 md:py-4">
+						<div className="min-h-[350px]  rounded-large p-6 dark:bg-gray-800 md:px-8 md:py-4">
 							<h1 className="mb-8 whitespace-nowrap text-3xl font-bold">
 								{/* {srcLang === "ja" ? (
 									"ログイン"

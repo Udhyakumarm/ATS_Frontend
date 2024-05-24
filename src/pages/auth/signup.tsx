@@ -248,7 +248,7 @@ export default function AuthSignUp() {
 						<img src="/images/noAuth/headerLogo1.png" alt="logo" />
 					</div>
 					<form
-						className=" relative ml-34 mt-8 mb-4 min-h-[400px] max-w-md mx-auto rounded-xl border-2  border-neutral-200 bg-white p-6 shadow-normal  md:px-16 md:py-6"
+						className=" relative ml-34 mt-8 mb-4 min-h-[400px] max-w-md mx-auto rounded-xl border-2  border-neutral-200 bg-white p-6 shadow-normal dark:bg-gray-800 md:px-16 md:py-6"
 						onSubmit={handleSignUp}
 					>
 						{/* <div className="mb-4 text-center">
