@@ -191,31 +191,31 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			});
 	}
 
-	async function loadRecomandedJob() {
-		setrjobLoader(0)
-		await axiosInstanceAuth21
-			.post(`/ocr/new/${appdata["arefid"]}/`)
-			.then(async (res) => {
-				if(res.data && res.data.message){
-					setrjobLoader(-1)
-				}
-				if(res.data.length > 0){
+	// async function loadRecomandedJob() {
+	// 	setrjobLoader(0)
+	// 	await axiosInstanceAuth21
+	// 		.post(`/ocr/new/${appdata["arefid"]}/`)
+	// 		.then(async (res) => {
+	// 			if(res.data && res.data.message){
+	// 				setrjobLoader(-1)
+	// 			}
+	// 			if(res.data.length > 0){
 
-					setrjob(res.data);
-					setrjobLoader(1)
-				}
-				else{
-					setrjob([]);
-					setrjobLoader(-1)
-				}
-				console.log("$", "timeline", res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				setrjob([]);
-				setrjobLoader(-1)
-			});
-	}
+	// 				setrjob(res.data);
+	// 				setrjobLoader(1)
+	// 			}
+	// 			else{
+	// 				setrjob([]);
+	// 				setrjobLoader(-1)
+	// 			}
+	// 			console.log("$", "timeline", res.data);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("!", err);
+	// 			setrjob([]);
+	// 			setrjobLoader(-1)
+	// 		});
+	// }
 
 	async function loadSameProfile() {
 		setsprofileLoader(0)
@@ -300,7 +300,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 
 	useEffect(() => {
 		if (token && token.length > 0 && atsVersion && atsVersion.length > 0) {
-			loadRecomandedJob();
+			// loadRecomandedJob();
 			loadSameProfile();
 			loadFeedback();
 			loadTimeLine();
@@ -864,7 +864,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 										</div>
 									)}
 								</div>
-								<div className="relative mb-4 min-h-[100px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
+								{/* <div className="relative mb-4 min-h-[100px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
 									{rjobLoader === 0 && (
 										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">
 											<div className="flex h-full flex-col items-center justify-center text-center">
@@ -901,7 +901,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 											))}
 										</div>
 									)}
-								</div>
+								</div> */}
 								<div className="relative mb-4 min-h-[100px] overflow-auto rounded-large border-2 border-slate-300 bg-white p-5 shadow-normal dark:border-gray-700 dark:bg-gray-800 xl:max-h-[inherit]">
 									{sprofileLoader === 0 && (
 										<div className="absolute left-0 top-0 z-[1] flex h-full w-full cursor-pointer items-start justify-center bg-[rgba(0,0,0,0.1)] backdrop-blur-md">

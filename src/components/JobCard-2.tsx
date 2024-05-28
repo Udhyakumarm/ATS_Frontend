@@ -53,45 +53,45 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const [rjobLoader, setrjobLoader] = useState(0);
 	const [rjob, setrjob] = useState([]);
 
-	async function loadRecomandedJob() {
-		var url = ''
-		if(companytype === "Agency"){url = `/ocr/new2/${job.refid}/`;}
-		else{url = `/ocr/new1/${job.refid}/`;}
-		await axiosInstanceAuth2
-			.post(url)
-			.then(async (res) => {
-				if (res.data && res.data.message) {
-					setrjobLoader(-1);
-				}
-				if(res.data.length > 0){
+// 	async function loadRecomandedJob() {
+// 		var url = ''
+// 		if(companytype === "Agency"){url = `/ocr/new2/${job.refid}/`;}
+// 		else{url = `/ocr/new1/${job.refid}/`;}
+// 		await axiosInstanceAuth2
+// 			.post(url)
+// 			.then(async (res) => {
+// 				if (res.data && res.data.message) {
+// 					setrjobLoader(-1);
+// 				}
+// 				if(res.data.length > 0){
 
-				setrjob(res.data);
-				setrjobLoader(1);
-				}
-				else{
-setrjob([]);
-setrjobLoader(-1);
-				}
-				console.log("$", "timeline", res.data);
-			})
-			.catch((err) => {
-				console.log("!", err);
-				setrjob([]);
-				setrjobLoader(-1);
-			});
-	}
+// 				setrjob(res.data);
+// 				setrjobLoader(1);
+// 				}
+// 				else{
+// setrjob([]);
+// setrjobLoader(-1);
+// 				}
+// 				console.log("$", "timeline", res.data);
+// 			})
+// 			.catch((err) => {
+// 				console.log("!", err);
+// 				setrjob([]);
+// 				setrjobLoader(-1);
+// 			});
+// 	}
 
-	useEffect(()=>{
-		if(recPop){
-			setrjobLoader(0)
-			setrjob([])
-			loadRecomandedJob()
-		}
-		else{
-			setrjobLoader(0);
-			setrjob([]);
-		}
-	},[recPop])
+// 	useEffect(()=>{
+// 		if(recPop){
+// 			setrjobLoader(0)
+// 			setrjob([])
+// 			loadRecomandedJob()
+// 		}
+// 		else{
+// 			setrjobLoader(0);
+// 			setrjob([]);
+// 		}
+// 	},[recPop])
 
 
 
@@ -779,7 +779,7 @@ setrjobLoader(-1);
 						<h6 className="clamp_1 w-[100px] break-all text-lg font-semibold">{job.refid}</h6>
 					</div>
 				</div>
-				<div className="flex items-center justify-between">
+				<div className="flex items-center justify-start">
 					<Button2
 						btnStyle="outlined"
 						btnType="button"
@@ -787,17 +787,17 @@ setrjobLoader(-1);
 						handleClick={() => router.push(`/agency/jobs/preview/${shareCN}/${job.refid}`)}
 						small
 					/>
-					{job.jobStatus === "Active" && (
-						<>
-							<Button2
-								btnStyle="outlined"
-								btnType="button"
-								label={srcLang === "ja" ? "みる" : "Recommendations"}
-								handleClick={() => setrecPop(true)}
-								small
-							/>
-						</>
-					)}
+					{/* {job.jobStatus === "Active" && ( 
+						 <>
+						 	<Button2
+						 		btnStyle="outlined"
+						 		btnType="button"
+						 		label={srcLang === "ja" ? "みる" : "Recommendations"}
+						 		handleClick={() => setrecPop(true)}
+						 		small
+						 	/>
+						 </>
+					)} */}
 				</div>
 			</div>
 
