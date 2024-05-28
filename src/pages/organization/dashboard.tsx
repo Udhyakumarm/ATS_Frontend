@@ -595,21 +595,20 @@ console.log("hnnbulaYA")
 						className="fixed left-0 top-0 z-[9] hidden h-full w-full bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.2)]"
 					></div>
 					{!["standard", "starter"].includes(atsVersion) && (
-						<Draggable onStop={onDragStop} onDrag={onDrag} position={position} >
-							<div className="fixed bottom-8 right-3 z-50" ref={buttonRef} >
+						<Draggable onStop={onDragStop} onDrag={onDrag} position={position}>
+							<div className="fixed bottom-8 right-3 z-50" ref={buttonRef}>
 								<div
-									className={`fab-button cursor-pointer rounded-full bg-gradient-to-tl from-blue-300 to-sky-400  from-blue-500 to-pink-500 p-1 text-white shadow-lg transition-all duration-300 hover:bg-gradient-to-r ${
+									className={`fab-button cursor-pointer rounded-full bg-gradient-to-tl from-blue-300 from-blue-500  to-pink-500 to-sky-400 p-1 text-white shadow-lg transition-all duration-300 hover:bg-gradient-to-r ${
 										isMenuOpen ? "rotate-90 bg-gradient-to-tl from-blue-300 to-sky-400 p-3" : ""
 									}`}
 									onClick={toggleMenu}
-									
 								>
-									<i className={`fas fa-eye ${isMenuOpen ? 'fa-lg' : 'fa-sm px-1'}  `}></i>
+									<i className={`fas fa-eye ${isMenuOpen ? "fa-lg" : "fa-sm px-1"}  `}></i>
 								</div>
 								{isMenuOpen && (
 									<div
 										className={`fab-menu absolute flex flex-col items-center rounded-lg bg-white    p-2 shadow-xl transition-transform duration-200 ${
-											isMenuOpen&&top? "top-16" :"bottom-16"
+											isMenuOpen && top ? "top-16" : "bottom-16"
 										}`}
 									>
 										{menuItems2.map((item, index) => (
@@ -1207,7 +1206,9 @@ console.log("hnnbulaYA")
 																				<i className="fa-solid fa-briefcase"></i>
 																			</span>
 																			<p className="w-[calc(100%-40px)] text-xs font-medium">
-																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																				{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0
+																					? data["jtitle"]
+																					: data["aname"]}
 																			</p>
 																		</div>
 																	</div>
@@ -1221,7 +1222,7 @@ console.log("hnnbulaYA")
 																				<i className="fa-solid fa-star"></i>
 																			</div>
 																			<p className="w-[calc(100%-40px)] text-xs font-medium">
-																				{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																				{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																			</p>
 																		</div>
 																	</div>
@@ -1366,7 +1367,7 @@ console.log("hnnbulaYA")
 																		<i className="fa-solid fa-briefcase"></i>
 																	</span>
 																	<p className="w-[calc(100%-40px)] text-xs font-medium">
-																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																	</p>
 																</div>
 															</div>
@@ -1377,7 +1378,7 @@ console.log("hnnbulaYA")
 																		<i className="fa-solid fa-star"></i>
 																	</div>
 																	<p className="w-[calc(100%-40px)] text-xs font-medium">
-																		{srcLang === "ja" && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
+																		{srcLang === "ja" && data["jtitle"] && data["jtitle"].length > 0 ? data["jtitle"] : data["aname"]}
 																	</p>
 																</div>
 															</div>

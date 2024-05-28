@@ -20,7 +20,7 @@ import {
 } from "react-share";
 import Button2 from "./Button2";
 
-export default function JobCard_3({ job, axiosInstanceAuth2, arefid, loadRecomandedJob }: any) {
+export default function JobCard_3({ job, axiosInstanceAuth2, arefid }: any) {
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const [previewPopup, setPreviewPopup] = useState(false);
