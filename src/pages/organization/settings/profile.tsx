@@ -1654,7 +1654,7 @@ setwordpath(oprofile[i]["offer"].replace("http:","https:"));
 																{oprofile && oprofile.length > 0 && oprofile[0]["user"] && (
 																	<Link
 																		className="whitespace-nowrap text-primary underline"
-																		href={`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}`}
+																		href={`https://ats.somhako.com/organization/${oprofile[0]["user"]["company_name"]}/search-jobs`}
 																		target="_blank"
 																	>
 																		Visit Career Page
