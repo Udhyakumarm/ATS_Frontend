@@ -18,6 +18,10 @@ import toastcomp from "@/components/toast";
 import useJoyrideStore from "@/utils/joyride";
 import Joyride from "react-joyride";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { axiosInstanceAuth } from "../api/axiosApi";
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 export default function Organization({ atsVersion, userRole, currentUser }: any) {
 	const { t } = useTranslation("common");
@@ -632,6 +636,43 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 	// 	}
 	// }, [isJoyrideCompleted, showJoyride]);
 	console.log(isJoyrideCompleted)
+
+
+
+	//inbox
+	
+	const router = useRouter();
+	const { data: session } = useSession();
+	const [token, settoken] = useState("");
+
+	useEffect(() => {
+		if (session) {
+			settoken(session.accessToken as string);
+		} else if (!session) {
+			settoken("");
+		}
+	}, [session]);
+
+	const axiosInstanceAuth2 = axiosInstanceAuth(token);
+
+	useEffect(() => {
+		if (token && token.length > 0 && !currentUser.is_expired) {
+			console.log("&&&", "token", token);
+			const rws = new ReconnectingWebSocket(
+				process.env.NODE_ENV === "production"
+					? `wss://atsapi2.somhako.com/ws/chat/?access_token=${token}`
+					: `ws://127.0.0.1:8000/ws/chat/?access_token=${token}`
+			);
+
+			rws.addEventListener("open", () => {
+				toastcomp("Login success", "success");
+			});
+
+
+		}
+	}, [token]);
+
+
 
 	return (
 		<>
