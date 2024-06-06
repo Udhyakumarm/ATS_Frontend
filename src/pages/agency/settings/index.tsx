@@ -191,7 +191,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 			link: "/agency/settings/pricing",
 			color: "#FFC0E9",
 			blur: blurOrNot("Plans & Pricing"),
-			hide: hideOrNot("Plans & Pricing"),
+			hide: true,
 			expired: isExpired("Plans & Pricing")
 		}
 	];
