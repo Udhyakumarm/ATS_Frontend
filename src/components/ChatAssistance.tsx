@@ -60,8 +60,8 @@ export default function ChatAssistance(props: any) {
 			.get(`/chatbot/listchat/`)
 			.then(async (res) => {
 				setdes(false);
-				console.log("$", res);
-				console.log("@", res.data);
+				// console.log("$", res);
+				// console.log("@", res.data);
 				setmsgs(res.data);
 				let a = res.data;
 				for (let i = 0; i < a.length; i++) {
@@ -71,7 +71,7 @@ export default function ChatAssistance(props: any) {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -82,7 +82,7 @@ export default function ChatAssistance(props: any) {
 				loadChat();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -117,7 +117,7 @@ export default function ChatAssistance(props: any) {
 				setprompt("");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setprompt("");
 			});
 	}
@@ -138,17 +138,17 @@ export default function ChatAssistance(props: any) {
 							loadChat();
 						})
 						.catch((err) => {
-							console.log(err);
+							// console.log(err);
 						});
 				})
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 				});
 		} else if (type === "change") {
 			const formData2 = new FormData();
 			formData2.append("summary", intername);
 			formData2.append("desc", interdesc);
-			console.log("$", moment(`${interdate} ${interstime}`).format());
+			// console.log("$", moment(`${interdate} ${interstime}`).format());
 			formData2.append("stime", moment(`${interdate} ${interstime}`).format());
 			formData2.append("etime", moment(`${interdate} ${interetime}`).format());
 			await axiosInstanceAuth2
@@ -168,11 +168,11 @@ export default function ChatAssistance(props: any) {
 							loadChat();
 						})
 						.catch((err) => {
-							console.log(err);
+							// console.log(err);
 						});
 				})
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 				});
 		} else {
 			const formData2 = new FormData();
@@ -183,7 +183,7 @@ export default function ChatAssistance(props: any) {
 					loadChat();
 				})
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 				});
 		}
 	}

@@ -423,7 +423,7 @@ export default function OrganizationCalendar({ integration }: any) {
 				.then((response) => response.data)
 				.then((data) => {
 					setEventList(data.items);
-					console.log("$", data);
+					// console.log("$", data);
 				})
 				.then(() => setEventsLoading(false)),
 		[integration]

@@ -57,7 +57,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		await axiosInstanceAuth2
 			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-active-plan", res.data);
+				// console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
 				if (data.length > 0) {
 					setcplan(data[0]);
@@ -66,7 +66,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-active-plan error", "error");
 				setcplan({});
 			});
@@ -75,18 +75,18 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		await axiosInstanceAuth2
 			.post(`/organization/intro-update/`)
 			.then(async (res) => {
-				// console.log("!!!", "update-intro", res.data);
+				// // console.log("!!!", "update-intro", res.data);
 				toastcomp("intro api ","success")
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("update-intro error", "error");
 			});
 	
 	}
 
 	useEffect(() => {
-		console.log("!!!", "currentuser", currentUser);
+		// console.log("!!!", "currentuser", currentUser);
 		// if (userRole === "Super Admin" && currentuser && currentuser.length > 0) {
 		// 	if (currentuser[0]["register_date"]) {
 		// 		setrdate(currentuser[0]["register_date"]);
@@ -282,16 +282,16 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 						// showSkipButton={true}
 						callback={(data: any) => {
 							const { action, status, step } = data;
-							console.log("yeh hai action", action);
-							console.log("yeh hai status", status);
-							console.log("yeh hai step", step);
+							// console.log("yeh hai action", action);
+							// console.log("yeh hai status", status);
+							// console.log("yeh hai step", step);
 							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) && userRole === "Hiring Manager") {
 								completeJoyride();
 								UpdateIntro();
 							}
 							if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) && userRole === "Recruiter") {
 								setShouldShowTopBar(true);
-								console.log("yeh hai recruiter ka bool",shouldShowTopBar)
+								// console.log("yeh hai recruiter ka bool",shouldShowTopBar)
 							}
 							if (action === "close") {
 								setIsTourOpen(false);

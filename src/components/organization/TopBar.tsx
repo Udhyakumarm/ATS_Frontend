@@ -42,7 +42,7 @@ const CalendarIntegrationOptions = [
 const preVersions = [{ name: "free" }, { name: "starter" }, { name: "standard" }, { name: "enterprise" }];
 
 export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, showTopbar }: any) {
-	console.log("top bar ka bool aa rha ", showTopbar);
+	// console.log("top bar ka bool aa rha ", showTopbar);
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const cancelButtonRef = useRef(null);
 	const router = useRouter();
@@ -89,7 +89,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 	// 			.get("/api/integrations/calendar")
 	// 			.then((response) => response.data)
 	// 			.catch((err) => {
-	// 				// console.log(err);
+	// 				// // console.log(err);
 	// 				return { data: { success: false } };
 	// 			});
 
@@ -126,21 +126,21 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 			await axiosInstanceAuth2
 				.get(`/applicant/get-notification-count-admin/`)
 				.then(async (res) => {
-					// console.log("!", res.data);
+					// // console.log("!", res.data);
 					setcount(res.data.length);
 				})
 				.catch((err) => {
-					console.log("!", err);
+					// console.log("!", err);
 				});
 		} else {
 			await axiosInstanceAuth2
 				.get(`/applicant/get-notification-count/`)
 				.then(async (res) => {
-					// console.log("!", res.data);
+					// // console.log("!", res.data);
 					setcount(res.data.length);
 				})
 				.catch((err) => {
-					console.log("!", err);
+					// console.log("!", err);
 				});
 		}
 	}
@@ -150,23 +150,23 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 	// 		await axiosInstanceAuth2
 	// 			.get(`/chatbot/read-notification-count-admin/`)
 	// 			.then(async (res) => {
-	// 				// console.log("!", res.data);
+	// 				// // console.log("!", res.data);
 	// 				setcount(res.data.length);
 	// 				router.push("/organization/notifications");
 	// 			})
 	// 			.catch((err) => {
-	// 				console.log("!", err);
+	// 				// console.log("!", err);
 	// 			});
 	// 	} else {
 	// 		await axiosInstanceAuth2
 	// 			.get(`/chatbot/read-notification-count/`)
 	// 			.then(async (res) => {
-	// 				// console.log("!", res.data);
+	// 				// // console.log("!", res.data);
 	// 				setcount(res.data.length);
 	// 				router.push("/organization/notifications");
 	// 			})
 	// 			.catch((err) => {
-	// 				console.log("!", err);
+	// 				// console.log("!", err);
 	// 			});
 	// 	}
 	// }
@@ -249,7 +249,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 				toastcomp("Todo Created", "success");
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				loadTodo();
 				toastcomp("Todo Not Created", "error");
 			});
@@ -303,7 +303,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 				loadTodo();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Todo Not Updted", "error");
 				loadTodo();
 			});
@@ -319,7 +319,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 				loadTodo();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Todo Not Deleted", "error");
 			});
 	}
@@ -328,7 +328,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		await axiosInstanceAuth2
 			.get(`/chatbot/list-todo/`)
 			.then(async (res) => {
-				console.log("!", "TODO", res.data);
+				// console.log("!", "TODO", res.data);
 				settodos(res.data);
 				var data = res.data;
 				let arr = [],
@@ -354,7 +354,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 				sethtodos(arr4);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -386,7 +386,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
 		.then(
 			(res)=>{
-				console.log("outlook connect res:::", res);
+				// console.log("outlook connect res:::", res);
 				if(res.data.res === "success"){
 					Setoutlook(true);
 				}
@@ -418,7 +418,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 	async function coonectOutlook() {
 		Setoutlook(false);
 		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
-			console.log("outlook connect res:::", res);
+			// console.log("outlook connect res:::", res);
 			if (res.data.authorization_url) {
 				router.replace(`${res.data.authorization_url}`);
 			} else if (res.data.res === "success") {
@@ -473,12 +473,12 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		await axiosInstanceAuth2
 			.get(`/applicant/get-real-notification-count/`)
 			.then(async (res) => {
-				console.log("!!!!", "Real Notification Count", res.data.length);
+				// console.log("!!!!", "Real Notification Count", res.data.length);
 				setrealNotificationCount(res.data.length);
 			})
 			.catch((err) => {
 				setrealNotificationCount(0);
-				console.log("!!!!", "Real Notification Count", err);
+				// console.log("!!!!", "Real Notification Count", err);
 			});
 	}
 
@@ -486,7 +486,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		await axiosInstanceAuth2
 			.get(`/applicant/real-notification/`)
 			.then(async (res) => {
-				console.log("!!!!", "Real Notification", res.data);
+				// console.log("!!!!", "Real Notification", res.data);
 				const data = res.data.slice(0, 4);
 				// for (let i = 0; i < data.length; i++) {
 				// 	toastcomp2(data[i]["title"], data[i]["jtitle"], data[i]["created"], data[i], router.locale);
@@ -506,7 +506,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 			.catch((err) => {
 				setrealNotification([]);
 				afterRealNotification();
-				console.log("!!!!", "Real Notification", err);
+				// console.log("!!!!", "Real Notification", err);
 			});
 	}
 
@@ -515,11 +515,11 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 			.post(`/applicant/real-notification-after/`)
 			.then(async (res) => {
 				// setrealNotification([]);
-				console.log("!!!", "After Real Notification", res.data);
+				// console.log("!!!", "After Real Notification", res.data);
 			})
 			.catch((err) => {
 				// setrealNotification([]);
-				console.log("!!!", "After Real Notification", err);
+				// console.log("!!!", "After Real Notification", err);
 			});
 	}
 
@@ -539,11 +539,11 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		await axiosInstanceAuth2
 			.post(`/organization/intro-update/`)
 			.then(async (res) => {
-				// console.log("!!!", "update-intro", res.data);
+				// // console.log("!!!", "update-intro", res.data);
 				toastcomp("intro api ","success")
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("update-intro error", "error");
 			});
 	
@@ -554,13 +554,13 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 		if (token && token.length > 0 && !isExpired) {
 			// Call the async function immediately when the component mounts
 
-			console.log("!!!", "timeout1");
+			// console.log("!!!", "timeout1");
 			fetchRealNotificationCount();
 			fetchRealNotification();
 
 			// Set up an interval to call the async function every 5 seconds
 			const intervalId = setInterval(() => {
-				console.log("!!!", "timeout2");
+				// console.log("!!!", "timeout2");
 				fetchRealNotificationCount();
 				fetchRealNotification();
 			}, 12000); //12000 5000 milliseconds = 5 seconds
@@ -604,9 +604,9 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 						showSkipButton={true}
 						callback={(data: any) => {
 							const { action, status, step } = data;
-							console.log("yeh hai action", action);
-							console.log("yeh hai status", status);
-							console.log("yeh hai step", step);
+							// console.log("yeh hai action", action);
+							// console.log("yeh hai status", status);
+							// console.log("yeh hai step", step);
 
 							// if ((action === "next" || action === "back") && status === "ready") {
 							// 	if (action === "next" && status === "running") {
@@ -618,7 +618,7 @@ export default function OrgTopBar({ todoLoadMore, settodoLoadMore, loadTodo, sho
 							if ([STATUS.FINISHED, STATUS.SKIPPED, STATUS.READY].includes(status)) {
 								completeJoyride();
 								UpdateIntro();
-								console.log("joyride khatam hua", isJoyrideCompleted); // Hide the topbar when the tour is completed or skipped
+								// console.log("joyride khatam hua", isJoyrideCompleted); // Hide the topbar when the tour is completed or skipped
 							}
 						}}
 					/>

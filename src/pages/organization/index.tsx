@@ -606,36 +606,36 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 		// Add more steps as needed
 	];
 	useEffect(()=>{
-		console.log(user[0]["intro"])
-		console.log(role)
+		// console.log(user[0]["intro"])
+		// console.log(role)
 		if(user && user.length>0 ){
-			console.log("ye hai itnro ki value",user[0]["intro"]);
+			// console.log("ye hai itnro ki value",user[0]["intro"]);
 			if(!user[0]["intro"] && isJoyrideCompleted){
-				console.log("The intro is alreay completed!!","success")
+				// console.log("The intro is alreay completed!!","success")
 			}
 			else if(!user[0]["intro"] && !isJoyrideCompleted){
 				completeJoyride();
-				console.log("The intro is alreay completed but the store value was different!!","success")
+				// console.log("The intro is alreay completed but the store value was different!!","success")
 			}
 			else{
 				showJoyride();
-				console.log("Intro Starting","success")
+				// console.log("Intro Starting","success")
 			}
 		}
 		else{
-			console.log("Something went wrong!!")
+			// console.log("Something went wrong!!")
 		}
 	},[user])
 
 	useEffect(() => {
-		console.log("!!!", "cuser", currentUser);
+		// console.log("!!!", "cuser", currentUser);
 	}, [currentUser]);
 	// useEffect(() => {
 	// 	if (!isJoyrideCompleted) {
 	// 		showJoyride();
 	// 	}
 	// }, [isJoyrideCompleted, showJoyride]);
-	console.log(isJoyrideCompleted)
+	// console.log(isJoyrideCompleted)
 
 
 
@@ -657,7 +657,7 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 
 	useEffect(() => {
 		if (token && token.length > 0 && !currentUser.is_expired) {
-			console.log("&&&", "token", token);
+			// console.log("&&&", "token", token);
 			const rws = new ReconnectingWebSocket(
 				process.env.NODE_ENV === "production"
 					? `wss://atsapi3.somhako.com:8001/ws/chat/?access_token=${token}`

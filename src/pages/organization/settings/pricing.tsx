@@ -106,11 +106,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/organization/billinginfo/`)
 			.then(async (res) => {
-				console.log("!!!", "setbilingData", res.data);
+				// console.log("!!!", "setbilingData", res.data);
 				setbilingData(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("setbilingData error", "error");
 			});
 	}
@@ -131,7 +131,7 @@ export default function Pricing() {
 				initatePopup();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("regBillingInfo error", "error");
 				getBillingInfo();
 			});
@@ -182,7 +182,7 @@ export default function Pricing() {
 	// 	await axiosInstanceAuth2
 	// 	  .post(`/subscription/razorpay-callback/`, fd)
 	// 	  .then((res) => {
-	// 		console.log("razor pay success check response:",res);
+	// 		// console.log("razor pay success check response:",res);
 	// 		if (res.data.res === 'Subscription is now active') {
 	// 		  toastcomp('Subscription is now active', 'success');
 	// 		} else {
@@ -199,11 +199,11 @@ export default function Pricing() {
 		const fd = new FormData();
 		fd.append("plan_id", planId);
 		toastcomp("Connecting to Razorpay...", "info");
-		console.log(planId);
+		// console.log(planId);
 		await axiosInstanceAuth2
 			.post(`/subscription/razorpay-subscription/`, fd)
 			.then(async (res) => {
-				console.log("razorpay data", res.data);
+				// console.log("razorpay data", res.data);
 				const { razorpay_key, order, product_name, callback_url } = res.data;
 				if (!razorpay_key || !order || !product_name || !callback_url) {
 					toastcomp("Error occurred while processing Razorpay payment", "error");
@@ -217,26 +217,26 @@ export default function Pricing() {
 					description: "Subscribe to our plan",
 					// callback_url,
 					handler: async function (res) {
-						console.log("yeh hai payment ID",res["razorpay_payment_id"]);
-						console.log("yeh bhi hai payment ID",res.razorpay_payment_id)
+						// console.log("yeh hai payment ID",res["razorpay_payment_id"]);
+						// console.log("yeh bhi hai payment ID",res.razorpay_payment_id)
 						const fd = new FormData();
 						fd.append("pay_id", res.razorpay_payment_id);
-						console.log("pay_id:", fd.get("pay_id"));
+						// console.log("pay_id:", fd.get("pay_id"));
 						fd.append("sign", res.razorpay_signature);
 						fd.append("sub_id", res.razorpay_subscription_id);
-						console.log("form data :",fd)
+						// console.log("form data :",fd)
 						// const response = {
 						// 	razorpay_payment_id: res["razorpay_payment_id"],
 						// 	razorpay_signature: res["razorpay_signature"],
 						// 	razorpay_subscription_id: res["razorpay_subscription_id"],
 						// };
-						// console.log(response)
+						// // console.log(response)
 						toastcomp("Processing payment...", "info");
 						axiosInstanceAuth2
 							.post(`/subscription/razorpay-callback/`, fd)
 							.then(async (res) => {
 								toastcomp("Validating Transaction..", "info");
-								console.log("Payement verify hui",res)
+								// console.log("Payement verify hui",res)
 								if (res.status == 200) {
 									toastcomp("Success!! Subscription is now active", "success");
 								} else {
@@ -253,12 +253,12 @@ export default function Pricing() {
 				rzp1.open();
 				toastcomp("Razorpay checkout opened", "success");
 				rzp1.on("payment.failed", (res) => {
-					console.log("Payment Failed", res);
+					// console.log("Payment Failed", res);
 					toastcomp("Payment Failed", "error");
 				});
 			})
 			.catch((error) => {
-				console.log("Error Connecting to RazorPay", error);
+				// console.log("Error Connecting to RazorPay", error);
 				toastcomp("Error occurred while processing Razorpay payment", "error");
 			});
 	}
@@ -272,7 +272,7 @@ export default function Pricing() {
 				toastcomp("All planinfo ID retrived", "success");
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setPlansData([]);
 				toastcomp("getInvoice error", "error");
 			});
@@ -307,20 +307,20 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.post(`/subscription/invoice/`, fd)
 			.then(async (res) => {
-				console.log("!!!", "getInvoice", res.data);
+				// console.log("!!!", "getInvoice", res.data);
 				const data = res.data;
 				const path =
 					process.env.NODE_ENV === "production"
 						? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/${data.Path}`
 						: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/${data.Path}`;
 
-				console.log("!!!", "path", path);
+				// console.log("!!!", "path", path);
 				setpath(path);
 
 				// setbilingData(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("getInvoice error", "error");
 			});
 	}
@@ -329,7 +329,7 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-active-plan", res.data);
+				// console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
 				if (data.length > 0) {
 					setcplan(data[0]);
@@ -338,7 +338,7 @@ export default function Pricing() {
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-active-plan error", "error");
 				setcplan({});
 			});
@@ -348,11 +348,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-plan", res.data);
+				// console.log("!!!", "get-all-plan", res.data);
 				setaplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-plan error", "error");
 				setaplan([]);
 			});
@@ -362,11 +362,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvplan([]);
 			});
@@ -376,11 +376,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh1/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvcplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvcplan([]);
 			});
@@ -399,7 +399,7 @@ export default function Pricing() {
 
 	async function initatePopup() {
 		await axiosInstanceAuth2.get(`/subscription/get-all-pay-proof-plan/`).then(async (res) => {
-			console.log("!!!", "get-all-pay-proof-plan", res.data);
+			// console.log("!!!", "get-all-pay-proof-plan", res.data);
 			toastcomp("get-all-pay-proof-plan success", "success");
 			const data = res.data;
 			toastcomp("initatePopup", "success");
@@ -411,7 +411,7 @@ export default function Pricing() {
 				setchangePlan2(true);
 			} else {
 				await axiosInstanceAuth2.get(`/organization/billinginfo/`).then(async (res) => {
-					console.log("!!!", "setbilingData", res.data);
+					// console.log("!!!", "setbilingData", res.data);
 					setbilingData(res.data);
 					const data2 = res.data;
 					if (data2 && data2.length <= 0) {
@@ -422,7 +422,7 @@ export default function Pricing() {
 						setsign(null);
 						setfile(false);
 						setpath("");
-						console.log("!!!", "planInfo", planInfo);
+						// console.log("!!!", "planInfo", planInfo);
 						getInvoice(planInfo);
 						setchangePlan2(true);
 					}
@@ -459,7 +459,7 @@ export default function Pricing() {
 				setfile(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("reg error", "error");
 			});
 	}

@@ -48,12 +48,12 @@ export default function OfferSchedule() {
 		await axiosInstance
 			.get(`/applicant/list-offer-dl/${omrefid}/`)
 			.then(async (res) => {
-				console.log("!", "Offer Detail", res.data);
+				// console.log("!", "Offer Detail", res.data);
 				setofferDetails(res.data);
 				setloader(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setofferDetails([]);
 				setloader(false);
 			});
@@ -63,7 +63,7 @@ export default function OfferSchedule() {
 		await axiosInstance2
 			.post(`/applicant/list-offer-dl-update/${omrefid}/`, fd)
 			.then(async (res) => {
-				console.log("!", "Offer Detail", res.data);
+				// console.log("!", "Offer Detail", res.data);
 				loadOffer(omrefid).then(() => {
 					if (type === "Reject") {
 						toastcomp("Offer Rejected", "success");
@@ -74,7 +74,7 @@ export default function OfferSchedule() {
 				});
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				loadOffer(omrefid).then(() => {
 					if (type === "Reject") {
 						toastcomp("Offer Can't Rejected", "error");

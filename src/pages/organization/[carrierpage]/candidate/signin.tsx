@@ -126,7 +126,7 @@ export default function CandSignIn({ providers }: any) {
 							setSuccess(true);
 							setWrong(false);
 							setErrorMsg("");
-							console.log("@", res.data);
+							// console.log("@", res.data);
 							setSuccess(true);
 							if (response.data.role) {
 								setrole(response.data.role);
@@ -170,11 +170,11 @@ export default function CandSignIn({ providers }: any) {
 								callbackUrl: callback
 							})
 								.then(async (res) => {
-									console.log({ res });
+									// console.log({ res });
 									router.push(`/organization/${cname}`);
 								})
 								.catch((err) => {
-									console.log(err);
+									// console.log(err);
 								});
 						})
 						.catch((err) => {
@@ -182,7 +182,7 @@ export default function CandSignIn({ providers }: any) {
 							settype("");
 							setrole("");
 							setuser([]);
-							console.log(err);
+							// console.log(err);
 							setWrong(true);
 							setSuccess(false);
 							if (err.response.data.non_field_errors) {
@@ -210,7 +210,7 @@ export default function CandSignIn({ providers }: any) {
 				settype("");
 				setrole("");
 				setuser([]);
-				console.log(err);
+				// console.log(err);
 				setBtnLoader(false);
 				setWrong(true);
 				setSuccess(false);

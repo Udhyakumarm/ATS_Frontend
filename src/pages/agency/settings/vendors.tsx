@@ -104,7 +104,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data1/${email}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				if (res.data && res.data.length > 0) {
 					if (res.data[0]["vrefid"]) {
 						if (process.env.NODE_ENV === "production") {
@@ -117,7 +117,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				setSentAgreement(true);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -173,7 +173,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				setcheck1(false);
 				setaedate("");
 				setfile(false);
-				console.log("!", res);
+				// console.log("!", res);
 				loadVendors();
 			})
 			.catch((err) => {
@@ -184,7 +184,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				} else {
 					toastcomp("New Agreement Not Send", "error");
 				}
-				console.log(err);
+				// console.log(err);
 				setagreement(null);
 				setcname("");
 				setemail("");
@@ -196,7 +196,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				setasdate("");
 				setaedate("");
 				setfile(false);
-				console.log("!", err);
+				// console.log("!", err);
 				loadVendors();
 			});
 	}
@@ -213,7 +213,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.get(`/vendors/list_vendors/`)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				setvendors(res.data);
 				setFilterVendors(res.data);
 				const data = res.data;
@@ -230,7 +230,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				setfvendors(arr2);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -261,7 +261,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.post(`/vendors/onboard_vendors/${vid}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 
 				if (res.data.message === "Onboard Successfully") {
 					let aname2 = `Vendor ${vid} Onboard by ${userState[0]["name"]} (${
@@ -280,7 +280,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				loadVendors();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Server Error", "error");
 				loadVendors();
 			});
@@ -292,7 +292,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.post(`/vendors/activate_vendors/${vid}/`, fd)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 
 				if (res.data.message === "Update Successfully" && activate) {
 					let aname2 = `Vendor ${vid} Activate by ${userState[0]["name"]} (${
@@ -324,7 +324,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				loadVendors();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Server Error", "error");
 				loadVendors();
 			});
@@ -345,7 +345,7 @@ export default function Vendors({ atsVersion, userRole }: any) {
 				// setuser([]);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("Vendor Account Not Deleted", "error");
 				// setAccountDelete(false);
 			});

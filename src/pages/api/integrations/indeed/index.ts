@@ -10,7 +10,7 @@ type Data = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-	console.log(req.query);
+	// console.log(req.query);
 	const { code, error } = req.query;
 
 	const session = await getServerSession(req, res, authOptions);

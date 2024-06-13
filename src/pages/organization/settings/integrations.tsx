@@ -35,7 +35,7 @@ import { useSession } from "next-auth/react";
 import Button2 from "@/components/Button2";
 
 export default function Integrations({ upcomingSoon }: any) {
-	console.log("ye hain upcoming soon",upcomingSoon)
+	// console.log("ye hain upcoming soon",upcomingSoon)
 	const router = useRouter();
 	const [enabled, setEnabled] = useState(false);
 	const tabHeading_1 = [
@@ -68,14 +68,14 @@ export default function Integrations({ upcomingSoon }: any) {
 		axiosInstanceAuth2.post('').then((res)=>{
 			try {
 				if (res.data) {
-					console.log(res.data);
+					// console.log(res.data);
 				}
 			} catch (error) {
-				console.log(error);
+				// console.log(error);
 				
 			}
 		}).catch((error)=>{
-			console.log("Error connecting to linkedin",error);
+			// console.log("Error connecting to linkedin",error);
 		})
 	}
 

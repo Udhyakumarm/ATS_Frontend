@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useJoyrideStore from "@/utils/joyride";
 
 export default function VendorTopBar({ShouldshowTopbar}) {
-	console.log("topbar ka bool",ShouldshowTopbar)
+	// console.log("topbar ka bool",ShouldshowTopbar)
 	const settype = useUserStore((state: { settype: any }) => state.settype);
 	const setrole = useUserStore((state: { setrole: any }) => state.setrole);
 	const setuser = useUserStore((state: { setuser: any }) => state.setuser);
@@ -35,11 +35,11 @@ export default function VendorTopBar({ShouldshowTopbar}) {
 		await axiosInstanceAuth2
 			.get(`/chatbot/external-get-notification-count/`)
 			.then(async (res) => {
-				// console.log("!", res.data);
+				// // console.log("!", res.data);
 				setcount(res.data.length);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -47,12 +47,12 @@ export default function VendorTopBar({ShouldshowTopbar}) {
 		await axiosInstanceAuth2
 			.get(`/chatbot/external-read-notification-count/`)
 			.then(async (res) => {
-				// console.log("!", res.data);
+				// // console.log("!", res.data);
 				setcount(res.data.length);
 				router.push(`/vendor/${vid}/notifications`);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -78,8 +78,8 @@ export default function VendorTopBar({ShouldshowTopbar}) {
 					className="fas fa-question-circle my-1 cursor-pointer rounded-l bg-white mx-6  text-xl font-bold text-gray-500 transition-colors duration-300 hover:text-slate-800"
 					onClick={() => {
 						resetTour();
-						console.log("shouldsowjob ride value",shouldShowJoyride);
-						console.log(" is joride completed ki value",isJoyrideCompleted)
+						// console.log("shouldsowjob ride value",shouldShowJoyride);
+						// console.log(" is joride completed ki value",isJoyrideCompleted)
 					}}
 				/>)}
 				<ThemeChange />

@@ -28,7 +28,7 @@ export default function InboxChatMsg({
 	const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
 	function handleContextClick(e) {
-		console.log(`[MenuItem] ${e.value} clicked`);
+		// console.log(`[MenuItem] ${e.value} clicked`);
 		if (e.value === "DeleteMe") {
 			delMsg(data["id"]);
 		}
@@ -40,7 +40,7 @@ export default function InboxChatMsg({
 		}
 		if (e.value === "ReplyMe" || e.value === "ReplyOther") {
 			setreply(true);
-			console.log("reply", data);
+			// console.log("reply", data);
 			setreplyC(data);
 		}
 	}
@@ -49,7 +49,7 @@ export default function InboxChatMsg({
 		await axiosInstanceAuth2
 			.get(`/inbox/get_msg/${id}/`)
 			.then(async (res) => {
-				console.log("replyData", id, "+", res.data);
+				// console.log("replyData", id, "+", res.data);
 				setreplyMSG(res.data);
 			})
 			.catch((err) => {

@@ -63,11 +63,11 @@ export default function Interviews({ upcomingSoon, currentUser }: any) {
 			// .get(`/job/upcoming-listing-interview/`)
 			.get(`/applicant/upcoming-listing-interview/`)
 			.then(async (res) => {
-				console.log("!", "upcome", res.data);
+				// console.log("!", "upcome", res.data);
 				setinterviewUpcoming(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setinterviewUpcoming([]);
 			});
 	}
@@ -77,11 +77,11 @@ export default function Interviews({ upcomingSoon, currentUser }: any) {
 			// .get(`/job/past-listing-interview/`)
 			.get(`/applicant/past-listing-interview/`)
 			.then(async (res) => {
-				console.log("!", "past", res.data);
+				// console.log("!", "past", res.data);
 				setinterviewPast(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setinterviewPast([]);
 			});
 	}

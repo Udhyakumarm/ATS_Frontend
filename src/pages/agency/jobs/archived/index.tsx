@@ -54,7 +54,7 @@ export default function JobsDrafted({ atsVersion, userRole, upcomingSoon }: any)
 				setFilterJobs(arr);
 			})
 			.catch((error) => {
-				console.log({ error });
+				// console.log({ error });
 				return null;
 			});
 

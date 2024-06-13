@@ -11,7 +11,7 @@ export default function AnalyticsComp({ data2, axiosInstanceAuth2 }: any) {
 	async function getAnalyticsData2(refid: any) {
 		await axiosInstanceAuth2.post(`/applicant/only-analytics/${refid}/`).then((res) => {
 			setdata(res.data);
-			console.log("&&", "AD!", res.data);
+			// console.log("&&", "AD!", res.data);
 		});
 	}
 

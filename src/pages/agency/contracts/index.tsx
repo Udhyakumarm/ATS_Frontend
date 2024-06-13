@@ -93,7 +93,7 @@ export default function index({ atsVersion, userRole }: any) {
 				setadd("");
 				setaedate("");
 				setfile(false);
-				console.log("!", res);
+				// console.log("!", res);
 				loadContracts();
 			})
 			.catch((err) => {
@@ -104,7 +104,7 @@ export default function index({ atsVersion, userRole }: any) {
 				} else {
 					toastcomp("New Agreement Not Send", "error");
 				}
-				console.log(err);
+				// console.log(err);
 				setagreement(null);
 				setcname("");
 				setemail("");
@@ -112,7 +112,7 @@ export default function index({ atsVersion, userRole }: any) {
 				setadd("");
 				setaedate("");
 				setfile(false);
-				console.log("!", res);
+				// console.log("!", res);
 				loadContracts();
 			});
 	}
@@ -121,12 +121,12 @@ export default function index({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract/`)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				setFilterContract(res.data);
 				setfcontracts(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -160,7 +160,7 @@ export default function index({ atsVersion, userRole }: any) {
 					loadContracts();
 				})
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 					toastcomp("Contract Not Deleted", "error");
 					// setAccountDelete(false);
 				});

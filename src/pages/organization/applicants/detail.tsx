@@ -136,11 +136,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth2
 			.get(`/applicant/applicant-detail/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "applicant-detail", res.data);
+				// console.log("@@@@@", "applicant-detail", res.data);
 				setappdata(res.data[0]);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -149,11 +149,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth2
 			.get(`/applicant/listdocs/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "listdocs", res.data);
+				// console.log("@@@@@", "listdocs", res.data);
 				setdocs(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -168,7 +168,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				loadTimeLine();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("Status Not Change", "error");
 			});
 	}
@@ -183,10 +183,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			.get(`/applicant/list-applicant-timeline/${appdata["arefid"]}/`)
 			.then(async (res) => {
 				settimeline(res.data);
-				console.log("$", "timeline", res.data);
+				// console.log("$", "timeline", res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				settimeline([]);
 			});
 	}
@@ -208,10 +208,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	// 				setrjob([]);
 	// 				setrjobLoader(-1)
 	// 			}
-	// 			console.log("$", "timeline", res.data);
+	// 			// console.log("$", "timeline", res.data);
 	// 		})
 	// 		.catch((err) => {
-	// 			console.log("!", err);
+	// 			// console.log("!", err);
 	// 			setrjob([]);
 	// 			setrjobLoader(-1)
 	// 		});
@@ -234,10 +234,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					setsprofile([]);
 					setsprofileLoader(-1)
 				}
-				console.log("$", "same profile", res.data);
+				// console.log("$", "same profile", res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setsprofile([]);
 				setsprofileLoader(-1)
 			});
@@ -255,7 +255,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					setailoader(false);
 				})
 				.catch((err) => {
-					console.log("!", err);
+					// console.log("!", err);
 					setailoader(false);
 				});
 		}
@@ -264,7 +264,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	async function genAIFeedback() {
 		if (!["standard", "starter"].includes(atsVersion)) {
 			setailoader2(true);
-			console.log("started``````")
+			// console.log("started``````")
 			const lang= srcLang==="ja"?"ja":"";
 			await axiosInstanceAuth21
 				.post(`/applicant/ai-feedback/${appdata["arefid"]}/`,{lang:lang})
@@ -275,7 +275,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				})
 				.catch((err) => {
 					toastcomp("genAIFeedback ", "error");
-					console.log("!", err);
+					// console.log("!", err);
 					setailoader2(false);
 				});
 		}
@@ -288,12 +288,12 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth21
 			.get(url)
 			.then(async (res) => {
-				console.log("@@", res.data);
+				// console.log("@@", res.data);
 				setfeedbackList(res.data);
 				seteditfeedback(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setfeedbackList([]);
 			});
 	}
@@ -558,7 +558,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
 		.then(
 			(res)=>{
-				console.log("outlook connect res:::", res);
+				// console.log("outlook connect res:::", res);
 				if(res.data.res === "success"){
 					Setoutlook(true);
 				}
@@ -590,7 +590,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 	async function coonectOutlook() {
 		Setoutlook(false);
 		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
-			console.log("outlook connect res:::", res);
+			// console.log("outlook connect res:::", res);
 			if (res.data.authorization_url) {
 				router.replace(`${res.data.authorization_url}`);
 			} else if (res.data.res === "success") {
@@ -937,13 +937,13 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 																	btnType="button"
 																	label={srcLang === "ja" ? "みる" : "View"}
 																	handleClick={() => {
-																		console.log("%%","appdata",data)
+																		// console.log("%%","appdata",data)
 																		setjobid(data["job"]["refid"]);
 																		// setcanid(data["user"]["erefid"]);
 																		setappid(data["arefid"]);
 																		settype(data["type"]);
 																		setappdata(data);
-																		console.log("&&&&", "click ", data);
+																		// console.log("&&&&", "click ", data);
 																		router.replace("/organization/applicants/detail");
 																		
 																	}}

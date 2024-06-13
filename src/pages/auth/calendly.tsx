@@ -46,15 +46,15 @@ export default function CalendyInt() {
 
 		try {
 			const response = await axios.request(config);
-			console.log(JSON.stringify(response.data));
+			// console.log(JSON.stringify(response.data));
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 			router.push("/auth/calendly");
 		}
 	}
 
 	useEffect(() => {
-		console.log("$", "router", router);
+		// console.log("$", "router", router);
 	}, [router]);
 
 	return (

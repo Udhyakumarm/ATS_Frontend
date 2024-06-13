@@ -109,11 +109,11 @@ export default function RecPreivew(props) {
 			.get(`/job/detail-job/${refid}/`)
 			.then((res) => {
 				toastcomp("job load", "success");
-				console.log("^^^", "JDetail", res.data[0]);
+				// console.log("^^^", "JDetail", res.data[0]);
 				setjdata(res.data[0]);
 			})
 			.catch((err) => {
-				console.log("@", err);
+				// console.log("@", err);
 			});
 	}
 
@@ -124,7 +124,7 @@ export default function RecPreivew(props) {
 				setcname(res.data[0]["user"]["company_name"]);
 			})
 			.catch((err) => {
-				console.log("@", "oprofile", err);
+				// console.log("@", "oprofile", err);
 			});
 	}
 	useEffect(() => {
@@ -218,7 +218,7 @@ export default function RecPreivew(props) {
 
 	useEffect(() => {
 		if (resume != null && detail.length > 0) {
-			console.log("$", "Step1", "Resume Changed Useeffect...");
+			// console.log("$", "Step1", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
 			step1(detail, fd);
@@ -232,8 +232,8 @@ export default function RecPreivew(props) {
 			.then(async (res) => {
 				toastcomp("step 1", "success");
 				const dataObj = res.data;
-				console.log("!!!", "step1", dataObj);
-				console.log("!!!", "step1", dataObj["Email"]);
+				// console.log("!!!", "step1", dataObj);
+				// console.log("!!!", "step1", dataObj["Email"]);
 				const data = res.data;
 
 				
@@ -283,7 +283,7 @@ export default function RecPreivew(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "step1 errr", err);
+				// console.log("!!!", "step1 errr", err);
 				resetState();
 			});
 	}
@@ -319,7 +319,7 @@ export default function RecPreivew(props) {
 		await axiosInstanceAuth2
 			.post(`/applicant/team-apply/${refid}/`, fd)
 			.then((res) => {
-				console.log("!!!!","applyApplicantForAutomate",res.data)
+				// console.log("!!!!","applyApplicantForAutomate",res.data)
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -336,7 +336,7 @@ export default function RecPreivew(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -364,7 +364,7 @@ export default function RecPreivew(props) {
 		await axiosInstanceAuth2
 			.post(`/applicant/team-apply/${detail}/`, fd)
 			.then((res) => {
-				console.log("!!!!","applyApplicantForManual",res.data)
+				// console.log("!!!!","applyApplicantForManual",res.data)
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -381,7 +381,7 @@ export default function RecPreivew(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -1066,7 +1066,7 @@ export default function RecPreivew(props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
-	console.log("#", context.query);
+	// console.log("#", context.query);
 	const { cname } = context.query;
 	const { detail } = context.query;
 
@@ -1084,7 +1084,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	await axiosInstance
 		.get(`/job/detail-job/${detail}/`)
 		.then(async (res) => {
-			// console.log(res.data)
+			// // console.log(res.data)
 			var arr = res.data;
 			ftitle = arr[0]["jobTitle"];
 			otitle = arr[0]["jobTitle"];
@@ -1112,7 +1112,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 			});
 		})
 		.catch((err) => {
-			console.log("err");
+			// console.log("err");
 		});
 
 	return {

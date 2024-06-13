@@ -24,7 +24,7 @@ import { axiosInstance2, axiosInstanceAuth } from "@/pages/api/axiosApi";
 import useJoyrideStore from "@/utils/joyride";
 
 export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
-	// console.log("current step is", typeof currentStep, currentStep);
+	// // console.log("current step is", typeof currentStep, currentStep);
 	const router = useRouter();
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 	const { theme } = useTheme();
@@ -33,7 +33,7 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 	const [token, settoken] = useState("");
 	// const [showSidebarTour, setShowSidebarTour] = useState(false);
 
-	console.log("current step is", typeof currentStep, currentStep);
+	// console.log("current step is", typeof currentStep, currentStep);
 
 	// const TOUR_STATUS_KEY = "tourCompleted";
 
@@ -61,12 +61,12 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 		if (token && token.length > 0 && !isExpired && process.env.NODE_ENV === "production") {
 			// Call the async function immediately when the component mounts
 
-			console.log("!!!", "timeout1");
+			// console.log("!!!", "timeout1");
 			fetchCount();
 
 			// Set up an interval to call the async function every 5 seconds
 			const intervalId = setInterval(() => {
-				console.log("!!!", "timeout2");
+				// console.log("!!!", "timeout2");
 				fetchCount();
 			}, 10000); // 5000 milliseconds = 5 seconds
 
@@ -81,8 +81,8 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 			showJoyride();
 		}
 	}, [isJoyrideCompleted, shouldShowSidebarTour, showJoyride]);
-	console.log("sidebar khulega",shouldShowSidebarTour)
-	console.log("shouldshowjoyride ki value ye hai",shouldShowJoyride)
+	// console.log("sidebar khulega",shouldShowSidebarTour)
+	// console.log("shouldshowjoyride ki value ye hai",shouldShowJoyride)
 
 	// useEffect(() => {
 	// 	if (token && token.length > 0) {
@@ -93,7 +93,7 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 	// useEffect(() => {
 	// 	// Creating a timeout within the useEffect hook
 	// 	setTimeout(() => {
-	// 		console.log("!!!", "timeout");
+	// 		// console.log("!!!", "timeout");
 	// 		fetchCount();
 	// 	}, 5000);
 	// }, []);
@@ -1405,8 +1405,8 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 			)
 		}
 	];
-	console.log("role hai", role);
-	console.log("type ye hai",type)
+	// console.log("role hai", role);
+	// console.log("type ye hai",type)
 	const steps = [
 		{
 			target:type === "Agency" ? ".menuItem2-1" : ".menuItem-1",
@@ -1565,12 +1565,12 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 		await axiosInstanceAuth2
 			.get(`/inbox/total-unread-count/`)
 			.then(async (res) => {
-				console.log("!!!", res.data);
+				// console.log("!!!", res.data);
 				setcount(res.data["total"]);
 			})
 			.catch((err) => {
 				setcount(0);
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -1580,10 +1580,10 @@ export default function OrgSideBar({ shouldShowSidebarTour, currentStep }) {
 		await axiosInstance2
 			.post(`/organization/after-logout/`, fd)
 			.then((res) => {
-				console.log("$", "res", res.data);
+				// console.log("$", "res", res.data);
 			})
 			.catch((err) => {
-				console.log("$", "err", err);
+				// console.log("$", "err", err);
 			});
 	}
 

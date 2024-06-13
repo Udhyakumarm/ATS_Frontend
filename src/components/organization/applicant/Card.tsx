@@ -134,13 +134,13 @@ export default function Card(props: any) {
 							label={srcLang === "ja" ? "みる" : "View"}
 							btnType="button"
 							handleClick={() => {
-								console.log("%%","appdata",props["data"])
+								// console.log("%%","appdata",props["data"])
 								setjobid(props["data"]["job"]["refid"]);
 								// setcanid(props["data"]["user"]["erefid"]);
 								setappid(props["data"]["arefid"]);
 								settype(props["data"]["type"]);
 								setappdata(props["data"]);
-								console.log("&&&&", "click ", props["data"]);
+								// console.log("&&&&", "click ", props["data"]);
 								// router.push("applicants/detail");
 								window.open("applicants/detail", '_blank');
 							}}

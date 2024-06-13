@@ -69,7 +69,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 				toggleLoadMode(true);
 			})
 			.catch((err) => {
-				console.log("@", "gallery", err);
+				// console.log("@", "gallery", err);
 				toastcomp("Password Not Change", "error");
 				setChangePass(false);
 				setpass("");
@@ -81,13 +81,13 @@ export default function CandSettings({ upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/candidate/get-candidate-settings/`)
 			.then(async (res) => {
-				console.log("&", "Settings", res.data);
+				// console.log("&", "Settings", res.data);
 				setdata(res.data[0]);
 				setfname(res.data[0]["first_name"]);
 				setlname(res.data[0]["last_name"]);
 			})
 			.catch((err) => {
-				console.log("&", "Settings", err);
+				// console.log("&", "Settings", err);
 			});
 	}
 
@@ -109,7 +109,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 				toggleLoadMode(true);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Settings Not Updated", "error");
 				}
@@ -148,7 +148,7 @@ export default function CandSettings({ upcomingSoon }: any) {
 				setuser([]);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("Account Not Deleted", "error");
 				setAccountDelete(false);
 			});

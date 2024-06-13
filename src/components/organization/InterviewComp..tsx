@@ -26,8 +26,8 @@ function UserProfile({ data, axiosInstanceAuth2 }) {
 			var profile = "";
 			await axiosInstanceAuth2.get(`/organization/get/profile/${id}/`).then((res) => {
 				profile = res.data[0]["profile"];
-				console.log("$", id, res.data);
-				console.log("$", id, profile);
+				// console.log("$", id, res.data);
+				// console.log("$", id, profile);
 				setProfileUrl(profile);
 			});
 		}

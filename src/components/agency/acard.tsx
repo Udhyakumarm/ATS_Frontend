@@ -39,7 +39,7 @@ export default function ACard(props: any) {
 			...prevCheckedCheckboxes,
 			[checkboxId]: !prevCheckedCheckboxes[checkboxId]
 		}));
-		console.log("@!!", "check", checkedCheckboxes);
+		// console.log("@!!", "check", checkedCheckboxes);
 	};
 
 	//renew
@@ -85,7 +85,7 @@ export default function ACard(props: any) {
 			.catch((err) => {
 				toastcomp("Contract not Renewed", "error");
 				setRCompanyDetails(false);
-				console.log(err);
+				// console.log(err);
 				props.loadContracts();
 				setRCompanyDetails(false);
 				setragreement(null);
@@ -100,7 +100,7 @@ export default function ACard(props: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract-share/${props.data["acrefid"]}/`)
 			.then(async (res) => {
-				console.log("!!!!!!", "list-contract-share", res.data);
+				// console.log("!!!!!!", "list-contract-share", res.data);
 				setshareCount(res.data);
 			})
 			.catch((err) => {
@@ -115,7 +115,7 @@ export default function ACard(props: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract-share-detail/${props.data["acrefid"]}/`)
 			.then(async (res) => {
-				console.log("!!!!!!", "list-contract-share-detail", res.data);
+				// console.log("!!!!!!", "list-contract-share-detail", res.data);
 				if(res.data.length > 0){
 
 					setshareADetail(res.data[0]);

@@ -87,11 +87,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/organization/billinginfo/`)
 			.then(async (res) => {
-				console.log("!!!", "setbilingData", res.data);
+				// console.log("!!!", "setbilingData", res.data);
 				setbilingData(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("setbilingData error", "error");
 			});
 	}
@@ -112,7 +112,7 @@ export default function Pricing() {
 				initatePopup();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("regBillingInfo error", "error");
 				getBillingInfo();
 			});
@@ -147,20 +147,20 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.post(`/subscription/invoice/`, fd)
 			.then(async (res) => {
-				console.log("!!!", "getInvoice", res.data);
+				// console.log("!!!", "getInvoice", res.data);
 				const data = res.data;
 				const path =
 					process.env.NODE_ENV === "production"
 						? `${process.env.NEXT_PUBLIC_PROD_BACKEND}/${data.Path}`
 						: `${process.env.NEXT_PUBLIC_DEV_BACKEND}/${data.Path}`;
 
-				console.log("!!!", "path", path);
+				// console.log("!!!", "path", path);
 				setpath(path);
 
 				// setbilingData(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("getInvoice error", "error");
 			});
 	}
@@ -169,7 +169,7 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-active-plan", res.data);
+				// console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
 				if (data.length > 0) {
 					setcplan(data[0]);
@@ -178,7 +178,7 @@ export default function Pricing() {
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-active-plan error", "error");
 				setcplan({});
 			});
@@ -188,11 +188,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-plan", res.data);
+				// console.log("!!!", "get-all-plan", res.data);
 				setaplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-plan error", "error");
 				setaplan([]);
 			});
@@ -202,11 +202,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvplan([]);
 			});
@@ -216,11 +216,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh1/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvcplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvcplan([]);
 			});
@@ -238,7 +238,7 @@ export default function Pricing() {
 
 	async function initatePopup() {
 		await axiosInstanceAuth2.get(`/subscription/get-all-pay-proof-plan/`).then(async (res) => {
-			console.log("!!!", "get-all-pay-proof-plan", res.data);
+			// console.log("!!!", "get-all-pay-proof-plan", res.data);
 			toastcomp("get-all-pay-proof-plan success", "success");
 			const data = res.data;
 			toastcomp("initatePopup", "success");
@@ -250,7 +250,7 @@ export default function Pricing() {
 				setchangePlan2(true);
 			} else {
 				await axiosInstanceAuth2.get(`/organization/billinginfo/`).then(async (res) => {
-					console.log("!!!", "setbilingData", res.data);
+					// console.log("!!!", "setbilingData", res.data);
 					setbilingData(res.data);
 					const data2 = res.data;
 					if (data2 && data2.length <= 0) {
@@ -261,7 +261,7 @@ export default function Pricing() {
 						setsign(null);
 						setfile(false);
 						setpath("");
-						console.log("!!!", "planInfo", planInfo);
+						// console.log("!!!", "planInfo", planInfo);
 						getInvoice(planInfo);
 						setchangePlan2(true);
 					}
@@ -298,7 +298,7 @@ export default function Pricing() {
 				setfile(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("reg error", "error");
 			});
 	}

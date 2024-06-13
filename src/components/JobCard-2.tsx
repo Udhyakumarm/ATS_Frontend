@@ -39,11 +39,11 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 	const companytype = useUserStore((state: { type: any }) => state.type);
 
 	useEffect(() => {
-		console.log("^^^", "JD", job);
+		// console.log("^^^", "JD", job);
 	}, [job]);
 
 	function emailExists(email: any) {
-		console.log("^^^", "emailExists", email);
+		// console.log("^^^", "emailExists", email);
 		return job.team.some((member) => member.email === email);
 	}
 
@@ -72,10 +72,10 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 // setrjob([]);
 // setrjobLoader(-1);
 // 				}
-// 				console.log("$", "timeline", res.data);
+// 				// console.log("$", "timeline", res.data);
 // 			})
 // 			.catch((err) => {
-// 				console.log("!", err);
+// 				// console.log("!", err);
 // 				setrjob([]);
 // 				setrjobLoader(-1);
 // 			});
@@ -217,7 +217,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 				setshareCN(res.data[0]["user"]["company_name"]);
 			})
 			.catch((err) => {
-				console.log("@", "oprofile", err);
+				// console.log("@", "oprofile", err);
 			});
 	}
 
@@ -300,7 +300,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 
 	useEffect(() => {
 		if (resume != null && job.refid.length > 0) {
-			console.log("$", "Step1", "Resume Changed Useeffect...");
+			// console.log("$", "Step1", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
 			step1(job.refid, fd);
@@ -314,8 +314,8 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			.then(async (res) => {
 				toastcomp("step 1", "success");
 				const dataObj = res.data;
-				console.log("!!!", "step1", dataObj);
-				console.log("!!!", "step1", dataObj["Email"]);
+				// console.log("!!!", "step1", dataObj);
+				// console.log("!!!", "step1", dataObj["Email"]);
 				const data = res.data;
 
 				
@@ -365,7 +365,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "step1 errr", err);
+				// console.log("!!!", "step1 errr", err);
 				resetState();
 			});
 	}
@@ -401,7 +401,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		await axiosInstanceAuth2
 			.post(`/applicant/team-apply/${refid}/`, fd)
 			.then((res) => {
-				console.log("!!!!","applyApplicantForAutomate",res.data)
+				// console.log("!!!!","applyApplicantForAutomate",res.data)
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -419,7 +419,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -447,7 +447,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		await axiosInstanceAuth2
 			.post(`/applicant/team-apply/${job.refid}/`, fd)
 			.then((res) => {
-				console.log("!!!!","applyApplicantForManual",res.data)
+				// console.log("!!!!","applyApplicantForManual",res.data)
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -465,7 +465,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -482,7 +482,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 		await axiosInstanceAuth2
 			.post(`/ocr/recommend-apply/`, fd)
 			.then(async (res) => {
-				console.log("res", res.data.success);
+				// console.log("res", res.data.success);
 				if (res.data["success"] === 0) {
 					toastcomp("Not applied", "error");
 				} else if (res.data["success"] === 1) {
@@ -492,7 +492,7 @@ export default function JobCard_2({ job, handleView, axiosInstanceAuth2, sklLoad
 				loadRecomandedJob();
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Not applied", "error");
 				setloader(false);
 				loadRecomandedJob();

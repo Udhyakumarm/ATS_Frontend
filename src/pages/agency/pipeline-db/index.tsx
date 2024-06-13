@@ -78,12 +78,12 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		await axiosInstanceAuth2
 			.get(`/applicant/list-db/`)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfresumeList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfresumeList({});
 				setrefresh(2);
 			});
@@ -93,12 +93,12 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		await axiosInstanceAuth2
 			.get(link)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfresumeList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfresumeList({});
 				setrefresh(2);
 			});
@@ -111,7 +111,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 
 		link = link.replaceAll("null", "");
 
-		console.log("data2", "LINK", link);
+		// console.log("data2", "LINK", link);
 		return link;
 	}
 
@@ -121,12 +121,12 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		await axiosInstanceAuth2
 			.get(link)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfresumeList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfresumeList({});
 				setrefresh(2);
 			});
@@ -142,7 +142,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 	const debouncedSearchTerm = useDebounce(search, 500);
 
 	useEffect(() => {
-		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		// console.log("debouncedSearchTerm", debouncedSearchTerm);
 		loadResumes3();
 	}, [debouncedSearchTerm]);
 
@@ -226,10 +226,10 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 				let arr = [];
 				res.data.map((job: any) => job.jobStatus === "Active" && arr.push(job));
 				setfcontracts(arr);
-				console.log("&", "jobs", arr);
+				// console.log("&", "jobs", arr);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setfcontracts();
 			});
 	}
@@ -247,7 +247,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		await axiosInstanceAuth2
 			.post(`/applicant/pipeline-applicant-apply/`, fd)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Applicant added", "sucess");
 				} else {
@@ -255,7 +255,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Applicant not added", "error");
 			});
 	}
@@ -278,7 +278,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 
 		Promise.all(requests)
 			.then((responses) => {
-				console.log("responses", "@@@", responses);
+				// console.log("responses", "@@@", responses);
 				let success = 0;
 				let error = 0;
 
@@ -305,9 +305,9 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 				setshareJob(false);
 
 				// const [response1, response2, response3] = responses;
-				// console.log("Response 1:", response1.data);
-				// console.log("Response 2:", response2.data);
-				// console.log("Response 3:", response3.data);
+				// // console.log("Response 1:", response1.data);
+				// // console.log("Response 2:", response2.data);
+				// // console.log("Response 3:", response3.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", "@@@", error);
@@ -380,7 +380,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 
 	useEffect(() => {
 		if (resume != null) {
-			console.log("$", "Step1", "Resume Changed Useeffect...");
+			// console.log("$", "Step1", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
 			addResumeStep1(fd);
@@ -394,8 +394,8 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			.then(async (res) => {
 				toastcomp("step 1", "success");
 				const dataObj = res.data;
-				console.log("!!!", "step1", dataObj);
-				console.log("!!!", "step1", dataObj["Email"]);
+				// console.log("!!!", "step1", dataObj);
+				// console.log("!!!", "step1", dataObj["Email"]);
 				const data = res.data;
 
 				if (
@@ -431,7 +431,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "step1 errr", err);
+				// console.log("!!!", "step1 errr", err);
 				resetState();
 			});
 	}
@@ -468,7 +468,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			})
 			.catch((err) => {
 				toastcomp("resume add fun1 error", "error");
-				console.log("!!!", "resume add fun1 error", err);
+				// console.log("!!!", "resume add fun1 error", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -492,7 +492,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 		await axiosInstanceAuth2
 			.post(`/applicant/create-db/`, fd)
 			.then((res) => {
-				console.log("!!!", "apply noauth md", res.data);
+				// console.log("!!!", "apply noauth md", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Resume Added Successfully", "success");
 				} else {
@@ -504,7 +504,7 @@ export default function Index({ atsVersion, userRole, upcomingSoon, currentUser 
 			})
 			.catch((err) => {
 				toastcomp("resume add fun2 error", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);

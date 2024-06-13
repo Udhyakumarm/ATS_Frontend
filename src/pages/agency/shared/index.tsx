@@ -44,12 +44,12 @@ export default function index({ atsVersion, userRole }: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract/`)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				setFilterContract(res.data);
 				setfcontracts(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 

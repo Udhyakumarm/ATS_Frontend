@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		})
 		.then((response) => response.data)
 		.catch((err) => {
-			console.log({ err: err.data });
+			// console.log({ err: err.data });
 			return { data: { success: false } };
 		});
 
@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			})
 			.then((res) => res.data)
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				return { data: { success: false } };
 			});
 
@@ -76,7 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		)
 		.then((res) => res.data)
 		.catch((err) => {
-			console.log(err);
+			// console.log(err);
 			return { data: { creationSuccess: false } };
 		});
 

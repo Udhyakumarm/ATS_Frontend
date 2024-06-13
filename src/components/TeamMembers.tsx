@@ -12,7 +12,7 @@ export default function TeamMembers({ selectedData, axiosInstanceAuth2 }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/list/team/${refid}/`)
 			.then(async (res) => {
-				// console.log("team data", res.data);
+				// // console.log("team data", res.data);
 				settm(res.data);
 				var data = res.data;
 				let fdata = {};
@@ -21,16 +21,16 @@ export default function TeamMembers({ selectedData, axiosInstanceAuth2 }: any) {
 						fdata[data[i]["id"]] = res2.data[0];
 					});
 				}
-				// console.log("team org data", fdata);
+				// // console.log("team org data", fdata);
 				setorgdata(fdata);
 			})
 			.catch((err) => {
-				console.log("team data", err);
+				// console.log("team data", err);
 			});
 	}
 
 	useEffect(() => {
-		// console.log("team selectedData", selectedData.refid);
+		// // console.log("team selectedData", selectedData.refid);
 		if (selectedData.name === "All" || selectedData.name === "Job") {
 			loadTeamMember("all");
 		} else {

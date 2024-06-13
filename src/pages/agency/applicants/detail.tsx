@@ -118,11 +118,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth2
 			.get(`/applicant/applicant-detail/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "applicant-detail", res.data);
+				// console.log("@@@@@", "applicant-detail", res.data);
 				setappdata(res.data[0]);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -131,11 +131,11 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 		await axiosInstanceAuth2
 			.get(`/applicant/listdocs/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "listdocs", res.data);
+				// console.log("@@@@@", "listdocs", res.data);
 				setdocs(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -150,7 +150,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				loadTimeLine();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("Status Not Change", "error");
 			});
 	}
@@ -165,10 +165,10 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 			.get(`/applicant/list-applicant-timeline/${appdata["arefid"]}/`)
 			.then(async (res) => {
 				settimeline(res.data);
-				console.log("$", "timeline", res.data);
+				// console.log("$", "timeline", res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				settimeline([]);
 			});
 	}
@@ -185,7 +185,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 					setailoader(false);
 				})
 				.catch((err) => {
-					console.log("!", err);
+					// console.log("!", err);
 					setailoader(false);
 				});
 		}
@@ -204,7 +204,7 @@ export default function ApplicantsDetail({ atsVersion, userRole, upcomingSoon }:
 				})
 				.catch((err) => {
 					toastcomp("genAIFeedback ", "error");
-					console.log("!", err);
+					// console.log("!", err);
 					setailoader2(false);
 				});
 		}

@@ -146,13 +146,13 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 				arr = arr.sort((a, b) => b.percentage_fit - a.percentage_fit);
 			}
 
-			console.log("data", "applicant list", arr);
+			// console.log("data", "applicant list", arr);
 			setapplicantlist(arr);
 			setfapplicantList(arr);
 			setrefresh(2);
 		} catch (error) {
 			// toastcomp("2", "error");
-			console.log("Error fetching data:", error);
+			// console.log("Error fetching data:", error);
 			setapplicantlist([]);
 			setfapplicantList([]);
 			setrefresh(2);
@@ -170,16 +170,16 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		if (selectedJob && fapplicantList.length > 0) {
 			setrefresh(1);
 			if (selectedJob.name === "All") {
-				console.log("data old f", applicantlist);
+				// console.log("data old f", applicantlist);
 				setapplicantlist(fapplicantList);
-				console.log("data new f", fapplicantList);
+				// console.log("data new f", fapplicantList);
 				setTimeout(() => {
 					setrefresh(2);
 				}, 500);
 			} else {
-				console.log("data old f", fapplicantList);
+				// console.log("data old f", fapplicantList);
 				const filteredArray = fapplicantList.filter((item) => item.job.refid.includes(selectedJob.refid));
-				console.log("data new f", filteredArray);
+				// console.log("data new f", filteredArray);
 				setapplicantlist(filteredArray);
 				setTimeout(() => {
 					setrefresh(2);
@@ -191,8 +191,8 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	}, [selectedJob]);
 
 	useEffect(() => {
-		console.log("applicantdetail", applicantdetail);
-		console.log("applicantlist", applicantlist);
+		// console.log("applicantdetail", applicantdetail);
+		// console.log("applicantlist", applicantlist);
 	}, [applicantdetail, applicantlist]);
 
 	useEffect(() => {
@@ -241,7 +241,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	const debouncedSearchTerm = useDebounce(search, 500);
 
 	useEffect(() => {
-		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		// console.log("debouncedSearchTerm", debouncedSearchTerm);
 		performSearch(debouncedSearchTerm);
 	}, [debouncedSearchTerm]);
 
@@ -274,7 +274,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		} else {
 			if (selectedJob.name === "All") {
 				// setrefresh(1);
-				console.log("###", fapplicantList);
+				// console.log("###", fapplicantList);
 				setapplicantlist(fapplicantList);
 				setTimeout(() => {
 					setrefresh(2);
@@ -307,7 +307,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2.post("/gcal/outlook/connect/")
 		.then(
 			(res)=>{
-				console.log("outlook connect res:::", res);
+				// console.log("outlook connect res:::", res);
 				if(res.data.res === "success"){
 					Setoutlook(true);
 				}
@@ -339,7 +339,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	async function coonectOutlook() {
 		Setoutlook(false);
 		await axiosInstanceAuth2.post("gcal/outlook/connect/").then((res) => {
-			console.log("outlook connect res:::", res);
+			// console.log("outlook connect res:::", res);
 			if (res.data.authorization_url) {
 				router.replace(`${res.data.authorization_url}`);
 			} else if (res.data.res === "success") {

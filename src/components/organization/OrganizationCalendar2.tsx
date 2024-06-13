@@ -135,7 +135,7 @@ function EventCard({
 			<Image src={outlookicon} alt="Outlook Icon" className=" object-contain" />
 		);
 	const local = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
-	console.log("localTime", local);
+	// console.log("localTime", local);
 
 	// Parse the UTC time string and create a Date object in UTC
 
@@ -449,7 +449,7 @@ export default function OrganizationCalendar2({
 			.then((res) => {
 				if (res.data) {
 					setEventList(res.data.current.items);
-					console.log("$", res.data);
+					// console.log("$", res.data);
 					setEventsLoading(false);
 					// toastcomp("load success", "success");
 				} else {
@@ -468,10 +468,10 @@ export default function OrganizationCalendar2({
 		await axiosInstanceAuth2
 			.get("/gcal/outlook/get-events/")
 			.then((res) => {
-				console.log("microsoft outlook events", res);
+				// console.log("microsoft outlook events", res);
 				if (res.data.current) {
 					setEventList(res.data.current);
-					console.log("$", res.data);
+					// console.log("$", res.data);
 					setEventsLoading(false);
 				} else {
 					setEventList([]);
@@ -494,7 +494,7 @@ export default function OrganizationCalendar2({
 	// 			.then((response) => response.data)
 	// 			.then((data) => {
 	// 				setEventList(data.items);
-	// 				console.log("$", data);
+	// 				// console.log("$", data);
 	// 			})
 	// 			.then(() => setEventsLoading(false)),
 	// 	[integration]
@@ -543,7 +543,7 @@ export default function OrganizationCalendar2({
 	}
 	async function disconnectOutlook() {
 		await axiosInstanceAuth2.post("gcal/outlook/disconnect/").then((res) => {
-			console.log("logout outlook response", res);
+			// console.log("logout outlook response", res);
 			if (res.data.res) {
 				// router.replace(`http://localhost:3000/gcal`);
 				toastcomp("Outlook Calendar Successfully Removed.", "success");

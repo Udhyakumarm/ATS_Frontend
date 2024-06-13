@@ -168,7 +168,7 @@ export default function AuthSignIn({ providers }: any) {
 						setSuccess(true);
 						setWrong(false);
 						setErrorMsg("");
-						// console.log("@", response.data);
+						// // console.log("@", response.data);
 						if (response.data.role) {
 							setrole(response.data.role);
 						}
@@ -234,7 +234,7 @@ export default function AuthSignIn({ providers }: any) {
 							user_type: "organization",
 							callbackUrl: callback
 						})
-							// .then(async (res) => console.log({ res }))
+							// .then(async (res) => // console.log({ res }))
 							.then(async () => await router.push("/"));
 					}
 				})
@@ -243,7 +243,7 @@ export default function AuthSignIn({ providers }: any) {
 					settype("");
 					setrole("");
 					setuser([]);
-					// console.log(err);
+					// // console.log(err);
 
 					setWrong(true);
 					setSuccess(false);

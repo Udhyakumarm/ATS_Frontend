@@ -597,13 +597,13 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 	];
 
 	useEffect(() => {
-		console.log("!!!", "cuser", currentUser);
+		// console.log("!!!", "cuser", currentUser);
 	}, [currentUser]);
 	useEffect(()=>{
-		console.log(user[0]["intro"])
-		console.log(role)
+		// console.log(user[0]["intro"])
+		// console.log(role)
 		if(user && user.length>0 ){
-			console.log("ye hai itnro ki value",user[0]["intro"]);
+			// console.log("ye hai itnro ki value",user[0]["intro"]);
 			if(!user[0]["intro"] && isJoyrideCompleted){
 				toastcomp("The intro is alreay completed!!","success")
 			}
@@ -617,10 +617,10 @@ export default function Organization({ atsVersion, userRole, currentUser }: any)
 			}
 		}
 		else{
-			console.log("chal ni rha")
+			// console.log("chal ni rha")
 		}
 	},[user])
-	console.log("isjoridecompleted bool value",isJoyrideCompleted)
+	// console.log("isjoridecompleted bool value",isJoyrideCompleted)
 
 	return (
 		<>

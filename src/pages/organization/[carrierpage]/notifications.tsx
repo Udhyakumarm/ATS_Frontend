@@ -38,12 +38,12 @@ export default function CanNotifications() {
 		await axiosInstanceAuth2
 			.get(`/chatbot/external-list-notification/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				setnotification(res.data);
 				setloader(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setloader(false);
 			});
 	}

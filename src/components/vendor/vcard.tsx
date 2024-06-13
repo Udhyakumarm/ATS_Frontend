@@ -54,7 +54,7 @@ export default function VCard(props: any) {
 				}
 			})
 			.catch((err: any) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setemail("");
 				setcname("");
 				setaname("");
@@ -66,7 +66,7 @@ export default function VCard(props: any) {
 	}
 
 	useEffect(() => {
-		console.log("!", companyDetails);
+		// console.log("!", companyDetails);
 		if (companyDetails || rcompanyDetails) {
 			loadVendorRegData(props.data["vrefid"]);
 		}
@@ -85,7 +85,7 @@ export default function VCard(props: any) {
 			...prevCheckedCheckboxes,
 			[checkboxId]: !prevCheckedCheckboxes[checkboxId]
 		}));
-		console.log("@!!", "check", checkedCheckboxes);
+		// console.log("@!!", "check", checkedCheckboxes);
 	};
 
 	async function loadActiveJobs(vid: string) {
@@ -93,13 +93,13 @@ export default function VCard(props: any) {
 			.get(`/vendors/vendor_data2/${vid}/`)
 			.then(async (res: any) => {
 				if (res.data.length > 0) {
-					console.log("@@@", "loadActiveJobs step1 vendor ID", res.data[0]["vendor"]["id"]);
+					// console.log("@@@", "loadActiveJobs step1 vendor ID", res.data[0]["vendor"]["id"]);
 					setcurrentvid(res.data[0]["vendor"]["id"]);
 					var vvid = res.data[0]["vendor"]["id"];
 					await axiosInstanceAuth2
 						.get(`/job/active-list-job/`)
 						.then(async (res: any) => {
-							console.log("@@@", "loadActiveJobs step2 jobs", res.data);
+							// console.log("@@@", "loadActiveJobs step2 jobs", res.data);
 							setjobData(res.data);
 							const jobs = res.data;
 							var checkedState = {};
@@ -110,12 +110,12 @@ export default function VCard(props: any) {
 									checkedState[jobs[i]["refid"]] = false;
 								}
 							}
-							console.log("@!!", "loadActiveJobs before check", checkedState);
+							// console.log("@!!", "loadActiveJobs before check", checkedState);
 							setCheckedCheckboxes(checkedState);
 							setBChecked(checkedState);
 						})
 						.catch((err: any) => {
-							console.log("@@@", "loadActiveJobs step2 jobs", err);
+							// console.log("@@@", "loadActiveJobs step2 jobs", err);
 							setjobData([]);
 							setcurrentvid(null);
 						});
@@ -125,7 +125,7 @@ export default function VCard(props: any) {
 				}
 			})
 			.catch((err: any) => {
-				console.log("@@@", "loadActiveJobs step1 vendor", err);
+				// console.log("@@@", "loadActiveJobs step1 vendor", err);
 				setjobData([]);
 				setcurrentvid(null);
 			});
@@ -140,20 +140,20 @@ export default function VCard(props: any) {
 	}, [jobFunction1]);
 
 	async function saveJobsVendor() {
-		console.log("@!!", "before", bchecked);
-		console.log("@!!", "new", checkedCheckboxes);
+		// console.log("@!!", "before", bchecked);
+		// console.log("@!!", "new", checkedCheckboxes);
 
 		const differingPairs = Object.keys(bchecked)
 			.filter((key) => bchecked[key] !== checkedCheckboxes[key])
 			.map((key) => ({ key, value: checkedCheckboxes[key] }));
 
-		console.log("@!!", "new after", differingPairs);
+		// console.log("@!!", "new after", differingPairs);
 
 		const trueValuesKeys = differingPairs.filter((item) => item.value === true).map((item) => item.key);
 		const falseValuesKeys = differingPairs.filter((item) => item.value === false).map((item) => item.key);
 
-		console.log("@!!", "new after true", trueValuesKeys);
-		console.log("@!!", "new after false", falseValuesKeys);
+		// console.log("@!!", "new after true", trueValuesKeys);
+		// console.log("@!!", "new after false", falseValuesKeys);
 
 		if (trueValuesKeys.length > 0 || falseValuesKeys.length > 0) {
 			const fd = new FormData();
@@ -162,12 +162,12 @@ export default function VCard(props: any) {
 			await axiosInstanceAuth2
 				.post(`/job/active-vendors-change/${currentvid}/`, fd)
 				.then(async (res: any) => {
-					console.log("@!!", "active-vendors-change", res.data);
+					// console.log("@!!", "active-vendors-change", res.data);
 					setjobFunction1(false);
 					toastcomp("vendors job updated successfully", "success");
 				})
 				.catch((err: any) => {
-					console.log("@!!", "active-vendors-change", err);
+					// console.log("@!!", "active-vendors-change", err);
 					setjobFunction1(false);
 					toastcomp("vendors job updated unsuccessfully", "error");
 				});
@@ -228,7 +228,7 @@ export default function VCard(props: any) {
 			.catch((err) => {
 				toastcomp("Agreement not Renewed", "error");
 				setRCompanyDetails(false);
-				console.log(err);
+				// console.log(err);
 				setragreement(null);
 				setrfile(false);
 				setrasdate("");

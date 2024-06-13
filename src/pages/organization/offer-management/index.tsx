@@ -189,14 +189,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		if (selectedJob && applicantlist.length > 0) {
 			setstepform(false);
 			if (selectedJob.name === "All") {
-				console.log("old data", filterApplicants);
+				// console.log("old data", filterApplicants);
 				setFilterApplicants(applicantlist);
-				console.log("new data", applicantlist);
+				// console.log("new data", applicantlist);
 			} else {
-				console.log("old data", applicantlist);
+				// console.log("old data", applicantlist);
 				const filteredArray = applicantlist.filter((item) => item.job.refid.includes(selectedJob.refid));
 				setFilterApplicants(filteredArray);
-				console.log("new data", filteredArray);
+				// console.log("new data", filteredArray);
 			}
 		}
 	}, [selectedJob]);
@@ -205,11 +205,11 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				console.log("@", "listorguser", res.data);
+				// console.log("@", "listorguser", res.data);
 				settm(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "listorguser", err);
+				// console.log("@", "listorguser", err);
 			});
 	}
 
@@ -217,7 +217,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		await axiosInstanceAuth2
 			.get(`/organization/listorganizationprofile/`)
 			.then(async (res) => {
-				console.log("@", "oprofile", res.data);
+				// console.log("@", "oprofile", res.data);
 				let data = res.data;
 				if (data && data.length > 0) {
 					for (let i = 0; i < data.length; i++) {
@@ -231,7 +231,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				}
 			})
 			.catch((err) => {
-				console.log("@", "oprofile", err);
+				// console.log("@", "oprofile", err);
 			});
 	}
 
@@ -254,7 +254,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			currentApplicant["type"] &&
 			currentApplicant["type"].length > 0
 		) {
-			// console.log(wordpath);
+			// // console.log(wordpath);
 			convertDocxToArrayBuffer(wordpath)
 				.then((arrayBuffer) => {
 					// Use the arrayBuffer as needed
@@ -272,8 +272,8 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 						.then(function (result) {
 							var html = result.value; // The generated HTML
 							var messages = result.messages; // Any messages, such as warnings during conversion
-							// console.log("@", html);
-							// console.log("@", messages);
+							// // console.log("@", html);
+							// // console.log("@", messages);
 							html = html.replaceAll("<p></p>", "<br/>");
 							html = html + "<br/><br/>";
 							setbvalue(html);
@@ -357,14 +357,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 							setvalue(html);
 						})
 						.catch(function (error) {
-							console.log("@", "err1", error);
+							// console.log("@", "err1", error);
 							setword(null);
 							toastcomp("This Word Does Not Support Use .docx Only", "error");
 						});
 				})
 				.catch((error) => {
 					// Handle any errors
-					console.log("@", "err2", error);
+					// console.log("@", "err2", error);
 					setword(null);
 					toastcomp("Not Convert2", "error");
 				});
@@ -375,7 +375,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 	const debouncedSearchTerm = useDebounce(search, 500);
 
 	useEffect(() => {
-		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		// console.log("debouncedSearchTerm", debouncedSearchTerm);
 		performSearch(debouncedSearchTerm);
 	}, [debouncedSearchTerm]);
 
@@ -524,7 +524,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 					setapproval(fstring.join(","));
 				}
 			} else {
-				console.log("data", "Zustand", "current_data", current_data);
+				// console.log("data", "Zustand", "current_data", current_data);
 				setstep(1);
 				setomf([]);
 				if (current_data["job"]["jobTitle"]) {
@@ -586,7 +586,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 		await axiosInstanceAuth2
 			.get(`/applicant/list-offerfeedback/${omrefid}/`)
 			.then(async (res) => {
-				console.log("@", "list-offer-feedback", res.data);
+				// console.log("@", "list-offer-feedback", res.data);
 				setomf(res.data);
 				setfeedreject(false);
 				var data = res.data;
@@ -598,12 +598,12 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			})
 			.catch((err) => {
 				setomf([]);
-				console.log("@", "list-offer-feedback", err);
+				// console.log("@", "list-offer-feedback", err);
 			});
 	}
 
 	useEffect(() => {
-		console.log("data", "step", step);
+		// console.log("data", "step", step);
 	}, [step]);
 
 	function rejectVerify() {
@@ -676,14 +676,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 			.then(async (res) => {
 				toastcomp("offer stage Updated", "success");
 				offerDetail(currentApplicant["arefid"], currentApplicant);
-				console.log("@", "Offer stage Updated", res.data);
+				// console.log("@", "Offer stage Updated", res.data);
 				// setom(res.data);
 			})
 			.catch((err) => {
 				toastcomp("offer stage Not Updated", "error");
 				offerDetail(currentApplicant["arefid"], currentApplicant);
 				// setom([]);
-				console.log("@", "Offer stage Not Updated", err);
+				// console.log("@", "Offer stage Not Updated", err);
 			});
 	}
 
@@ -726,7 +726,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				.post(`/applicant/create-offer/${arefid}/`, fd)
 				.then(async (res) => {
 					toastcomp("offer Sent", "success");
-					console.log("@", "Offer Sent", res.data);
+					// console.log("@", "Offer Sent", res.data);
 					offerDetail(arefid, currentApplicant);
 					// setom(res.data);
 				})
@@ -734,7 +734,7 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 					toastcomp("offer Not Sent", "error");
 					offerDetail(arefid, currentApplicant);
 					// setom([]);
-					console.log("@", "Offer Not Sent", err);
+					// console.log("@", "Offer Not Sent", err);
 				});
 		} else {
 			await axiosInstanceAuth2
@@ -742,14 +742,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				.then(async (res) => {
 					toastcomp("offer Updated", "success");
 					offerDetail(arefid, currentApplicant);
-					console.log("@", "Offer Updated", res.data);
+					// console.log("@", "Offer Updated", res.data);
 					// setom(res.data);
 				})
 				.catch((err) => {
 					toastcomp("offer Not Updated", "error");
 					offerDetail(arefid, currentApplicant);
 					// setom([]);
-					console.log("@", "Offer Not Updated", err);
+					// console.log("@", "Offer Not Updated", err);
 				});
 		}
 	}
@@ -868,13 +868,13 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				.put(`/applicant/update-offer-step2/${omrefid}/`, fd)
 				.then(async (res) => {
 					toastcomp("offer Updated", "success");
-					console.log("@", "Offer Updated", res.data);
+					// console.log("@", "Offer Updated", res.data);
 					// setom(res.data);
 				})
 				.catch((err) => {
 					toastcomp("offer Not Updated", "error");
 					// setom([]);
-					console.log("@", "Offer Not Updated", err);
+					// console.log("@", "Offer Not Updated", err);
 				});
 
 			offerDetail(arefid, currentApplicant);
@@ -901,14 +901,14 @@ export default function OfferManagement({ atsVersion, userRole, upcomingSoon, cu
 				toastcomp("offer visiblity Updated", "success");
 				sendOLDL(arefid);
 				offerDetail(arefid, currentApplicant);
-				console.log("@", "Offer Updated", res.data);
+				// console.log("@", "Offer Updated", res.data);
 				// setom(res.data);
 			})
 			.catch((err) => {
 				toastcomp("offer visiblity Not Updated", "error");
 				offerDetail(arefid, currentApplicant);
 				// setom([]);
-				console.log("@", "Offer Not Updated", err);
+				// console.log("@", "Offer Not Updated", err);
 			});
 	}
 

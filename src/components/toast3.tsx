@@ -19,16 +19,16 @@ const ToastComp22 = ({ data, axiosInstanceAuth2, fetchRealNotificationCount, aft
 		await axiosInstanceAuth2
 			.put(`/applicant/read-real-notification/${id}/`)
 			.then(async (res) => {
-				console.log("!!!!", "Real Notification Read success");
+				// console.log("!!!!", "Real Notification Read success");
 				fetchRealNotificationCount();
 			})
 			.catch((err) => {
-				console.log("!!!!", "Real Notification Read error", err);
+				// console.log("!!!!", "Real Notification Read error", err);
 			});
 	}
 
 	async function handleClick(data: any) {
-		console.log("!!!!!", "notification clicked");
+		// console.log("!!!!!", "notification clicked");
 		//first action unread
 
 		if (data["notification_type"] === "Applicant") {
@@ -56,13 +56,13 @@ const ToastComp22 = ({ data, axiosInstanceAuth2, fetchRealNotificationCount, aft
 	}
 
 	function handleClick2() {
-		console.log("!!!!!", "notification clicked all");
+		// console.log("!!!!!", "notification clicked all");
 		afterclickRealNotification();
 	}
 
 	useEffect(() => {
 		if (data) {
-			console.log("!!!!", "toast3");
+			// console.log("!!!!", "toast3");
 			const limitedData = data.slice(0, 4);
 			for (let i = 0; i < limitedData.length; i++) {
 				toast(

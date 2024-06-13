@@ -226,8 +226,8 @@ function Novus(props: any) {
 					loadListOfApplicant();
 				}
 				// setdes(false);
-				// console.log("$", res);
-				// console.log("@", res.data);
+				// // console.log("$", res);
+				// // console.log("@", res.data);
 				// setmsgs(res.data);
 				// let a = res.data;
 				// for (let i = 0; i < a.length; i++) {
@@ -237,7 +237,7 @@ function Novus(props: any) {
 				// }
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -256,7 +256,7 @@ function Novus(props: any) {
 				setfinalquery("");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setdisablechat(false);
 				setfinalquery("");
 			});
@@ -277,7 +277,7 @@ function Novus(props: any) {
 				setfinalquery("");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setdisablechat(false);
 				setfinalquery("");
 			});
@@ -298,7 +298,7 @@ function Novus(props: any) {
 				setfinalquery("");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setdisablechat(false);
 				setfinalquery("");
 			});
@@ -344,7 +344,7 @@ function Novus(props: any) {
 				setdisablechat(false);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("error", "error");
 				setfinalquery("");
 				setdisablechat(false);
@@ -355,26 +355,26 @@ function Novus(props: any) {
 	async function loadListOfApplicant() {
 		let arr2 = [];
 		await axiosInstanceAuth2.get(`/job/listapplicant/`).then(async (res) => {
-			// console.log("!", "applicant", res.data);
+			// // console.log("!", "applicant", res.data);
 			let arr = res.data;
 			for (let i = 0; i < arr.length; i++) {
 				let dic = arr[i];
 				dic["type"] = "career";
 				arr2.push(dic);
 			}
-			// console.log("!", "applicant2", arr2);
+			// // console.log("!", "applicant2", arr2);
 			setlistOfApplicant(arr2);
 		});
 
 		await axiosInstanceAuth2.get(`/job/listvendorapplicant/`).then(async (res) => {
-			// console.log("!", "vendorapplicant", res.data);
+			// // console.log("!", "vendorapplicant", res.data);
 			let arr = res.data;
 			for (let i = 0; i < arr.length; i++) {
 				let dic = arr[i];
 				dic["type"] = "vendor";
 				arr2.push(dic);
 			}
-			// console.log("!", "vendorapplicant2", arr2);
+			// // console.log("!", "vendorapplicant2", arr2);
 			setlistOfApplicant(arr2);
 		});
 	}
