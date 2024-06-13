@@ -122,7 +122,7 @@ export default function CanCareerSignIn({ providers }: any) {
 							password: loginInfo.password
 						})
 						.then(async (response) => {
-							console.log("@", response.data);
+							// console.log("@", response.data);
 							// setBtnLoader(false);
 							setWrong(false);
 							setSuccess(true);
@@ -170,11 +170,11 @@ export default function CanCareerSignIn({ providers }: any) {
 								callbackUrl: callback
 							})
 								.then(async (res) => {
-									console.log({ res });
+									// console.log({ res });
 									router.push(`/vendor/${vrefid}/clients`);
 								})
 								.catch((err) => {
-									console.log(err);
+									// console.log(err);
 									setBtnLoader(false);
 									setWrong(true);
 									setSuccess(false);
@@ -185,7 +185,7 @@ export default function CanCareerSignIn({ providers }: any) {
 							settype("");
 							setrole("");
 							setuser([]);
-							console.log(err);
+							// console.log(err);
 							setBtnLoader(false);
 							setWrong(true);
 							setSuccess(false);
@@ -223,7 +223,7 @@ export default function CanCareerSignIn({ providers }: any) {
 				settype("");
 				setrole("");
 				setuser([]);
-				console.log(err);
+				// console.log(err);
 				setBtnLoader(false);
 				setWrong(true);
 				setSuccess(false);

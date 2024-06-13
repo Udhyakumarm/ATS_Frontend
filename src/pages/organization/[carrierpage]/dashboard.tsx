@@ -75,11 +75,11 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/carrer-dashbaord/${cid}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				setloadash(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -98,12 +98,12 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/can/offer/detail/${id}/`)
 			.then(async (res) => {
-				console.log("data", res.data);
+				// console.log("data", res.data);
 				setOffers(res.data);
 			})
 			.catch((err) => {
 				setOffers([]);
-				console.log("data", err);
+				// console.log("data", err);
 			});
 	}
 
@@ -124,7 +124,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 				if (orgdetail["OrgProfile"].length > 0) {
 					loadOffer(orgdetail["OrgProfile"][0]["user"]["id"]);
 				}
-				console.log("data", err);
+				// console.log("data", err);
 			});
 	}
 
@@ -237,11 +237,11 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/applicant/listdocs/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "listdocs", res.data);
+				// console.log("@@@@@", "listdocs", res.data);
 				setdocs(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -255,7 +255,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 			.catch((err) => {
 				setodocs(false);
 				toastcomp("Document not deleted", "error");
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -269,7 +269,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 				const response = await axiosInstanceAuth2.post(`/applicant/createdocs/${arefid}/`, formData);
 
 				// Handle response for each request
-				console.log(`Response for resume ${i + 1}:`, response.data);
+				// console.log(`Response for resume ${i + 1}:`, response.data);
 			}
 			setodocs(false);
 			toastcomp(`${odocsresume.length} documets added`, "success");
@@ -296,7 +296,7 @@ export default function CanCareerDashboard({ upcomingSoon }: any) {
 	}
 
 	useEffect(() => {
-		console.log("####", "odocsresume", odocsresume);
+		// console.log("####", "odocsresume", odocsresume);
 	}, [odocsresume]);
 
 	useEffect(() => {

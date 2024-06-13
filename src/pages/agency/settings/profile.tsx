@@ -82,7 +82,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 					toastcomp("rating not update","error")}
 			})
 			.catch((err) => {
-				console.log("@", "rating", err);
+				// console.log("@", "rating", err);
 				toastcomp("rating not update","error")
 			});
 	}
@@ -91,11 +91,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.post(`/organization/get/currentUser/`)
 			.then(async (res) => {
-				console.log("@@@@", "LoadCUser", res.data);
+				// console.log("@@@@", "LoadCUser", res.data);
 				setcurrentUser(res.data)
 			})
 			.catch((err) => {
-				console.log("@@@@", "LoadCUser", err);
+				// console.log("@@@@", "LoadCUser", err);
 				toastcomp("rating not update","error")
 			});
 	}
@@ -336,15 +336,15 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				.then(function (result) {
 					var html = result.value; // The generated HTML
 					var messages = result.messages; // Any messages, such as warnings during conversion
-					console.log("@", html);
-					console.log("@", messages);
+					// console.log("@", html);
+					// console.log("@", messages);
 					html = html.replaceAll("<p></p>", "<br/>");
 					html = html + "<br/><br/>";
 					setbvalue(html);
 					setvalue(html);
 				})
 				.catch(function (error) {
-					console.log("@", error);
+					// console.log("@", error);
 					setword(null);
 					setwordfile(null);
 					toastcomp("This Word Does Not Support Use .docx Only", "error");
@@ -365,7 +365,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 
 	useEffect(() => {
 		if (wordpath && wordpath.length > 0) {
-			console.log(wordpath);
+			// console.log(wordpath);
 			convertDocxToArrayBuffer(wordpath)
 				.then((arrayBuffer) => {
 					// Use the arrayBuffer as needed
@@ -383,15 +383,15 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 						.then(function (result) {
 							var html = result.value; // The generated HTML
 							var messages = result.messages; // Any messages, such as warnings during conversion
-							console.log("@", html);
-							console.log("@", messages);
+							// console.log("@", html);
+							// console.log("@", messages);
 							html = html.replaceAll("<p></p>", "<br/>");
 							html = html + "<br/><br/>";
 							setbvalue(html);
 							setvalue(html);
 						})
 						.catch(function (error) {
-							console.log("@", error);
+							// console.log("@", error);
 							setword(null);
 							setwordfile(null);
 							toastcomp("Not Convert", "error");
@@ -465,11 +465,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listindividualprofile/`)
 			.then(async (res) => {
-				console.log("@", "iprofile", res.data);
+				// console.log("@", "iprofile", res.data);
 				setiprofile(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "iprofile", err);
+				// console.log("@", "iprofile", err);
 			});
 	}
 
@@ -490,7 +490,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				loadIndividualProfile();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Individual Profile Not Updated", "error");
 				}
@@ -501,11 +501,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listindividuallink/${iuniqueid}/`)
 			.then(async (res) => {
-				console.log("@", "Link", res.data);
+				// console.log("@", "Link", res.data);
 				setilink(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "Link", err);
+				// console.log("@", "Link", err);
 			});
 	}
 
@@ -529,7 +529,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("Link Not Added", "error");
-				console.log(err);
+				// console.log(err);
 				loadIndividualLink();
 				setiaddlink("");
 				setAddSocial(false);
@@ -554,7 +554,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("Link Not Deleted", "error");
-				console.log(err);
+				// console.log(err);
 				loadIndividualLink();
 				setiaddlink("");
 				setAddSocial(false);
@@ -565,11 +565,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listorganizationprofile/`)
 			.then(async (res) => {
-				console.log("@", "oprofile", res.data);
+				// console.log("@", "oprofile", res.data);
 				setoprofile(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "oprofile", err);
+				// console.log("@", "oprofile", err);
 			});
 	}
 
@@ -588,7 +588,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				loadOrganizationProfile();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Organization Profile Not Updated", "error");
 				}
@@ -603,7 +603,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				loadOrganizationProfile();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Organization Profile Not Updated", "error");
 				}
@@ -614,11 +614,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listorganizationfounder/`)
 			.then(async (res) => {
-				console.log("@", "founder", res.data);
+				// console.log("@", "founder", res.data);
 				setofounder(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "founder", err);
+				// console.log("@", "founder", err);
 			});
 	}
 
@@ -646,7 +646,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("founder Not Added", "error");
-				console.log(err);
+				// console.log(err);
 				loadOrganizationFounder();
 				setofounderdes("");
 				setofounderimg();
@@ -675,7 +675,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("Founder Not Deleted", "error");
-				console.log(err);
+				// console.log(err);
 				loadOrganizationFounder();
 				setofounderdes("");
 				setofounderimg();
@@ -688,11 +688,11 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listorganizationgallery/`)
 			.then(async (res) => {
-				console.log("@", "gallery", res.data);
+				// console.log("@", "gallery", res.data);
 				setoGallery(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "gallery", err);
+				// console.log("@", "gallery", err);
 			});
 	}
 
@@ -714,7 +714,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("Gallery Not Added", "error");
-				console.log(err);
+				// console.log(err);
 				loadOrganizationGallery();
 				setoFile([]);
 				setAddGalImages(false);
@@ -747,7 +747,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 			})
 			.catch((err) => {
 				toastcomp("Gallery Not Deleted", "error");
-				console.log(err);
+				// console.log(err);
 				loadOrganizationGallery();
 			});
 	}
@@ -1078,7 +1078,7 @@ export default function Profile({ atsVersion, userRole, upcomingSoon }: any) {
 				setcpass("");
 			})
 			.catch((err) => {
-				console.log("@", "gallery", err);
+				// console.log("@", "gallery", err);
 				toastcomp("Password Not Change", "error");
 				setChangePass(false);
 				setpass("");

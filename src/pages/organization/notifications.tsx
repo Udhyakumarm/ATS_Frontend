@@ -38,12 +38,12 @@ export default function OrgNotifications() {
 		await axiosInstanceAuth2
 			.get(`/applicant/get-all-real-notification/`)
 			.then(async (res) => {
-				console.log("!!!!!", "all notifications", res.data);
+				// console.log("!!!!!", "all notifications", res.data);
 				setnotificationALLDATA(res.data);
 				setloader(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setnotificationALLDATA({});
 				setloader(false);
 			});
@@ -61,7 +61,7 @@ export default function OrgNotifications() {
 	const settype = useApplicantStore((state: { settype: any }) => state.settype);
 
 	async function handleClick(data: any) {
-		console.log("!!!!!", "notification clicked");
+		// console.log("!!!!!", "notification clicked");
 		//first action unread
 
 		if (data["notification_type"] === "Applicant") {
@@ -89,12 +89,12 @@ export default function OrgNotifications() {
 		await axiosInstanceAuth2
 			.get(link)
 			.then(async (res) => {
-				console.log("!!!!!", "all notifications link", res.data);
+				// console.log("!!!!!", "all notifications link", res.data);
 				setnotificationALLDATA(res.data);
 				setloader(false);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setnotificationALLDATA({});
 				setloader(false);
 			});

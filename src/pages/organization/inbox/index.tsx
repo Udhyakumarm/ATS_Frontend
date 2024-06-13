@@ -20,7 +20,7 @@ import { useLangStore, useUserStore } from "@/utils/code";
 import toastcomp from "@/components/toast";
 
 const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, reply_id: any) => {
-	console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
+	// console.log(`Sending text message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
@@ -29,16 +29,16 @@ const sendOutgoingTextMessage = (socket: any, text: any, user_pk: any, reply_id:
 		reply_id: reply_id
 	};
 
-	console.log("^^", "final data", data);
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+	// console.log("^^", "final data", data);
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
 
 	socket.send(JSON.stringify({ msg_type: 3, data })); // Adjust the message structure as needed
 
-	console.log("Message Send Process DOne");
+	// console.log("Message Send Process DOne");
 };
 
 const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: any, reply_id: any) => {
-	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	// console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
@@ -48,16 +48,16 @@ const sendOutgoingFileMessage = (socket: any, file_id: any, text: any, user_pk: 
 		reply_id: reply_id
 	};
 
-	console.log("^^", "final data", data);
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+	// console.log("^^", "final data", data);
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
 
 	socket.send(JSON.stringify({ msg_type: 4, data })); // Adjust the message structure as needed
 
-	console.log("File Message Send Process DOne");
+	// console.log("File Message Send Process DOne");
 };
 
 const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk: any, reply_id: any) => {
-	console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
+	// console.log(`Sending File message: '${text}', user_pk: '${user_pk}'`);
 	const randomId = Math.floor(1000 + Math.random() * 9000);
 	const data = {
 		text,
@@ -67,12 +67,12 @@ const sendOutgoingMediaMessage = (socket: any, file_id: any, text: any, user_pk:
 		reply_id: reply_id
 	};
 
-	console.log("^^", "final data", data);
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
+	// console.log("^^", "final data", data);
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 3, data }));
 
 	socket.send(JSON.stringify({ msg_type: 11, data })); // Adjust the message structure as needed
 
-	console.log("Mieda Message Send Process DOne");
+	// console.log("Mieda Message Send Process DOne");
 };
 
 const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any, reply_id: any) => {
@@ -84,12 +84,12 @@ const sendOutgoingContactMessage = (socket: any, contact_id: any, user_pk: any, 
 		reply_id: reply_id
 	};
 
-	console.log("^^", "final data", data);
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 13, data }));
+	// console.log("^^", "final data", data);
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 13, data }));
 
 	socket.send(JSON.stringify({ msg_type: 13, data })); // Adjust the message structure as needed
 
-	console.log("Contact Message Send Process DOne");
+	// console.log("Contact Message Send Process DOne");
 };
 
 const callbackOnline = (socket: any, user_pk: any) => {
@@ -97,19 +97,19 @@ const callbackOnline = (socket: any, user_pk: any) => {
 };
 
 const isTyping = (socket: any, user_pk: any) => {
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 5, user_pk: user_pk }));
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 5, user_pk: user_pk }));
 
 	socket.send(JSON.stringify({ msg_type: 5, user_pk: user_pk })); // Adjust the message structure as needed
 
-	console.log("Message Typing Process DOne");
+	// console.log("Message Typing Process DOne");
 };
 
 const isStopTyping = (socket: any, user_pk: any) => {
-	console.log("^^", "final data2", JSON.stringify({ msg_type: 10, user_pk: user_pk }));
+	// console.log("^^", "final data2", JSON.stringify({ msg_type: 10, user_pk: user_pk }));
 
 	socket.send(JSON.stringify({ msg_type: 10, user_pk: user_pk })); // Adjust the message structure as needed
 
-	console.log("Message Stopped Typing Process DOne");
+	// console.log("Message Stopped Typing Process DOne");
 };
 
 export default function Inbox({ currentUser, atsVersion }: any) {
@@ -190,7 +190,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 	const [socket, setSocket] = useState(null);
 	useEffect(() => {
 		if (token && token.length > 0 && !currentUser.is_expired) {
-			console.log("&&&", "token", token);
+			// console.log("&&&", "token", token);
 			const rws = new ReconnectingWebSocket(
 				process.env.NODE_ENV === "production"
 					? `wss://atsapi3.somhako.com:8001/ws/chat/?access_token=${token}`
@@ -199,7 +199,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 
 			rws.addEventListener("open", () => {
 				toastcomp("Connected to WebSocket server", "success");
-				console.log();
+				// console.log();
 				setSocket(rws);
 				loadSidebar();
 			});
@@ -208,7 +208,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 				// toastcomp("On message " + e.data, "success");
 				loadSidebar();
 				// 	var fdata = JSON.parse(e.data);
-				// 	console.log("***", "socket.onMsg", fdata);
+				// 	// console.log("***", "socket.onMsg", fdata);
 
 				// 	if (
 				// 		fdata["msg_type"] === 1 &&
@@ -217,8 +217,8 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 				// 		if (!onlinePK.includes(parseInt(fdata["user_pk"]))) {
 				// 			setonlinePK([...onlinePK, parseInt(fdata["user_pk"])]);
 				// 		}
-				// 		console.log("***", "Online PK Array", onlinePK);
-				// 		console.log("***", "Callback Online Function Called From ClientSide");
+				// 		// console.log("***", "Online PK Array", onlinePK);
+				// 		// console.log("***", "Callback Online Function Called From ClientSide");
 				// 		callbackOnline(socket, fdata["user_pk"]);
 				// 	}
 				// 	if (
@@ -229,7 +229,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 				// 			const updatedItems = onlinePK.filter((existingItem: any) => existingItem !== parseInt(fdata["user_pk"]));
 				// 			setonlinePK(updatedItems);
 				// 		}
-				// 		console.log("***", "Online PK Array", onlinePK);
+				// 		// console.log("***", "Online PK Array", onlinePK);
 				// 	}
 			};
 
@@ -263,12 +263,12 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 		await axiosInstanceAuth2
 			.get(`/inbox/dialogs/`)
 			.then(async (res) => {
-				console.log("&&&", "dialogs", res.data);
+				// console.log("&&&", "dialogs", res.data);
 
 				setsidebarData(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setsidebarData([]);
 			});
 	}
@@ -301,7 +301,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 	// if (socket != null) {
 	// 	socket.onmessage = function (e: any) {
 	// 		loadSidebar();
-	// 		console.log("***", "socket.onMsg", e.data);
+	// 		// console.log("***", "socket.onMsg", e.data);
 	// 	};
 	// }
 

@@ -191,11 +191,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/organization/list-activity-log/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				setactivityLog(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -212,7 +212,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/chatbot/list-todo/`)
 			.then(async (res) => {
-				console.log("!", "TODO", res.data);
+				// console.log("!", "TODO", res.data);
 				settodos(res.data);
 				var data = res.data;
 				let arr = [];
@@ -224,7 +224,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				setnctodos(arr);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -232,7 +232,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/applicant/get_analytics/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				// setactivityLog(res.data);
 				setapplicantDetail(res.data["Applicants"]);
 				settApp(res.data["Applicants"]["totalApplicants"]);
@@ -249,7 +249,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				sethiringAnalytics(res.data["shiftHiring"]);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -994,15 +994,15 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 								showSkipButton={true}
 								callback={(data: any) => {
 									const { action, status, type } = data;
-									// console.log("yeh hai status", status);
+									// // console.log("yeh hai status", status);
 									if ([STATUS.FINISHED, STATUS.SKIPPED, STATUS.READY].includes(status)) {
-										// console.log("finish toh ho gya!!");
-										// console.log("type to yeh hai", type);
+										// // console.log("finish toh ho gya!!");
+										// // console.log("type to yeh hai", type);
 										// // Check if the completed step is the last step of the main dashboard
 										// if (data.step === joyrideSteps.length - 1) {
 										// setTourCompleted(true);
 										setShouldShowSidebarTour(true);
-										console.log("completed this tour");
+										// console.log("completed this tour");
 										// }
 									}
 									if (action === "close") {

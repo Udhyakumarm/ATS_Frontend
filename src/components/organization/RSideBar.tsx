@@ -63,7 +63,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 				toastcomp("success org---", "success");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("error", "error");
 			});
 	}
@@ -91,7 +91,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.get(`/applicant/listchat/`)
 			.then(async (res) => {
-				console.log("&&", "chat", res.data);
+				// console.log("&&", "chat", res.data);
 				setchat(res.data);
 				setSelectedCheckboxes([]);
 				setssuggestion([]);
@@ -101,7 +101,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 				getAllProfile();
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setchat([]);
 			});
 	}
@@ -111,11 +111,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.get(`/chatbot/listachat/`)
 			.then(async (res) => {
-				console.log("&&", "Analytics chat", res.data);
+				// console.log("&&", "Analytics chat", res.data);
 				setachat(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setachat([]);
 			});
 	}
@@ -127,11 +127,11 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.post(`/applicant/all-analytics/`)
 			.then(async (res) => {
-				console.log("&&", "analytics", res.data);
+				// console.log("&&", "analytics", res.data);
 				setanalyticsdata(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -206,7 +206,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		} else if (tab === 1) {
 			const fd = new FormData();
@@ -225,7 +225,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		}
 	}
@@ -254,9 +254,9 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 	};
 
 	async function handleSuggestionFinal() {
-		console.log("&&&", "pre defined suggstion", ssuggestion);
-		console.log("&&&", "other skill", suggSkill);
-		console.log("&&&", "other year", suggYear);
+		// console.log("&&&", "pre defined suggstion", ssuggestion);
+		// console.log("&&&", "other skill", suggSkill);
+		// console.log("&&&", "other year", suggYear);
 		let finalSkill = "";
 		var prompt = "";
 		var prompt2 = "";
@@ -273,13 +273,13 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		if (finalSkill.length > 0 || suggYear.length > 0) {
 			if (finalSkill.length > 0 && suggYear.length <= 0) {
 				prompt = `show me top applicants who are having ${finalSkill} skills`;
-				console.log("&&&", "prompt", prompt);
+				// console.log("&&&", "prompt", prompt);
 			} else if (finalSkill.length <= 0 && suggYear.length > 0) {
 				prompt = `show me top applicants who are having greater than or equal to ${suggYear} years of experience`;
-				console.log("&&&", "prompt", prompt);
+				// console.log("&&&", "prompt", prompt);
 			} else if (finalSkill.length > 0 && suggYear.length > 0) {
 				prompt = `show me top applicants who are having ${finalSkill} skills and having greater than or equal to ${suggYear} years of experience`;
-				console.log("&&&", "prompt", prompt);
+				// console.log("&&&", "prompt", prompt);
 			}
 		}
 		if (suggJtitle.length > 0) {
@@ -304,7 +304,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		}
 		if (prompt2.length > 0) {
@@ -326,7 +326,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		}
 	}
@@ -366,7 +366,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		} else if (baseText === "Move Candidates to next stage") {
 			var prompt = `[${selectedCheckboxes.toString()}] move to next`;
@@ -394,7 +394,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		} else if (baseText === "Show me Top Applicants") {
 			if (srcLang === "ja") {
@@ -424,7 +424,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 					settmpLoader(false);
 					settext("");
 
-					console.log(err);
+					// console.log(err);
 				});
 		}
 	}
@@ -434,14 +434,14 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 
 	async function getAllUserName() {
 		await axiosInstanceAuth2.get(`/organization/list/org/all/`).then((res) => {
-			console.log("&&", "data name", res.data);
+			// console.log("&&", "data name", res.data);
 			setdataname(res.data);
 		});
 	}
 
 	async function getAllProfile() {
 		await axiosInstanceAuth2.get(`/organization/list/ind/all/`).then((res) => {
-			console.log("&&", "data profile", res.data);
+			// console.log("&&", "data profile", res.data);
 			setdataprofile(res.data);
 		});
 	}
@@ -483,12 +483,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				console.log("!!!!", "share report team", res.data);
+				// console.log("!!!!", "share report team", res.data);
 				settm(res.data);
 				setstep(3);
 			})
 			.catch((err) => {
-				console.log("!!!!", "share report team err", err);
+				// console.log("!!!!", "share report team err", err);
 				setstep(1);
 			});
 	}
@@ -509,7 +509,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.post(`/applicant/analytics-report/`, fd)
 			.then((res) => {
-				console.log("!!!!", "download report", res.data);
+				// console.log("!!!!", "download report", res.data);
 				const data = res.data;
 				if (data.url && data.url.length > 0) {
 					setpath(data.url);
@@ -520,12 +520,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			})
 			.catch((err) => {
 				setstep(0);
-				console.log("!!!!", "download report err", err);
+				// console.log("!!!!", "download report err", err);
 			});
 	}
 
 	async function shareReport() {
-		console.log("!!!!", "share report sp", sp);
+		// console.log("!!!!", "share report sp", sp);
 		setstep(4);
 		const fd = new FormData();
 		fd.append("text", "Mail");
@@ -537,7 +537,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			})
 			.catch((err) => {
 				setstep(0);
-				console.log("!!!!", "download report err", err);
+				// console.log("!!!!", "download report err", err);
 			});
 	}
 
@@ -1022,12 +1022,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																								<button
 																									className="relative overflow-hidden text-ellipsis whitespace-nowrap border-l border-gray-700 p-2 dark:border-white"
 																									onClick={() => {
-																										console.log("&&&&", "Other", data2["status"]);
+																										// console.log("&&&&", "Other", data2["status"]);
 																										setjobid(data2["job"]["refid"]);
 																										setappid(data2["arefid"]);
 																										settype(data2["type"]);
 																										setappdata(data2);
-																										console.log("&&&&", "Novus click", data2);
+																										// console.log("&&&&", "Novus click", data2);
 																										router.push("/organization/applicants/detail");
 																									}}
 																								>
@@ -1079,13 +1079,13 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 																								<button
 																									className="relative overflow-hidden text-ellipsis whitespace-nowrap p-2 "
 																									onClick={() => {
-																										console.log("&&&&", "Other", data2["status"]);
+																										// console.log("&&&&", "Other", data2["status"]);
 																										setjobid(data2["job"]["refid"]);
 																										setappid(data2["arefid"]);
 																										settype(data2["type"]);
 
 																										setappdata(data2);
-																										console.log("&&&&", "Novus click", data2);
+																										// console.log("&&&&", "Novus click", data2);
 																										router.push("/organization/applicants/detail");
 																									}}
 																								>

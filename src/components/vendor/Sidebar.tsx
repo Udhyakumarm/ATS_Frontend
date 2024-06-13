@@ -72,7 +72,7 @@ export default function VendorSideBar({ShouldshowSidebar}) {
 	];
 
 	useEffect(() => {
-		console.log(router.pathname);
+		// console.log(router.pathname);
 	});
 
 	const [title, settitle] = useState("");

@@ -128,7 +128,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 				})
 				.then((response) => response.data)
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 					return { OrganizationAccounts: [], IndividualProfiles: [] };
 				});
 
@@ -167,7 +167,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 				.get("/api/integrations/calendar")
 				.then((response) => response.data)
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 					return { validatedIntegrations: [] };
 				});
 
@@ -179,7 +179,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 
 	const createEvent = async (e: { preventDefault: () => void }) => {
 		e.preventDefault();
-		console.log("@", "newSchedule", newSchedule);
+		// console.log("@", "newSchedule", newSchedule);
 
 		if (calendarIntegrations.length == 0) return;
 
@@ -190,16 +190,16 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 			})
 			.then(async (res) => {
 				toastcomp("Interview Scheduled, Invitations Sent", "success");
-				console.log("!", "res", res);
+				// console.log("!", "res", res);
 				let link = res.data.data.hangoutLink;
 				let arefid = appdata["arefid"];
 				let teamId = [];
 				let refid = jobid;
 
-				console.log("@", link);
-				console.log("@", arefid);
-				console.log("@", refid);
-				console.log("@", interviewerList);
+				// console.log("@", link);
+				// console.log("@", arefid);
+				// console.log("@", refid);
+				// console.log("@", interviewerList);
 
 				let att = newSchedule["attendees"];
 
@@ -211,7 +211,7 @@ export default function ScheduleInterview({ userRole, atsVersion, upcomingSoon }
 					}
 				}
 
-				console.log("@", teamId);
+				// console.log("@", teamId);
 
 				const fd = new FormData();
 				fd.append("teamID", teamId.join("|"));

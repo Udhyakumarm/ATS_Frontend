@@ -62,11 +62,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		})
 		.then((response) => response.data)
 		.catch((err) => {
-			// console.log(err);
+			// // console.log(err);
 			return { data: { success: false } };
 		});
 
-	// console.log("$", "gcla", "integrations1", integrations);
+	// // console.log("$", "gcla", "integrations1", integrations);
 
 	if (!integrations) return res.status(200).json({ validatedIntegrations: [] });
 

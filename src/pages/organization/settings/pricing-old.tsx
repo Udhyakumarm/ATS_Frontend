@@ -63,7 +63,7 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-active-plan", res.data);
+				// console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
 				if (data.length > 0) {
 					setcplan(data[0]);
@@ -72,7 +72,7 @@ export default function Pricing() {
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-active-plan error", "error");
 				setcplan({});
 			});
@@ -82,11 +82,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-plan", res.data);
+				// console.log("!!!", "get-all-plan", res.data);
 				setaplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-plan error", "error");
 				setaplan([]);
 			});
@@ -96,11 +96,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvplan([]);
 			});
@@ -110,11 +110,11 @@ export default function Pricing() {
 		await axiosInstanceAuth2
 			.get(`/subscription/get-all-csh1/`)
 			.then(async (res) => {
-				console.log("!!!", "get-all-csh", res.data);
+				// console.log("!!!", "get-all-csh", res.data);
 				setvcplan(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-all-csh error", "error");
 				setvcplan([]);
 			});

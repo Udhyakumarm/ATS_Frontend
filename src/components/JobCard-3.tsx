@@ -34,7 +34,7 @@ export default function JobCard_3({ job, axiosInstanceAuth2, arefid }: any) {
 		await axiosInstanceAuth2
 			.post(`/ocr/recommend-apply/`,fd)
 			.then(async (res) => {
-				console.log("res",res.data.success)
+				// console.log("res",res.data.success)
 				if (res.data["success"] === 0) {
 					toastcomp("Not applied", "error");
 				}
@@ -45,7 +45,7 @@ export default function JobCard_3({ job, axiosInstanceAuth2, arefid }: any) {
 				loadRecomandedJob()
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("Not applied", "error");
 				setloader(false);
 				loadRecomandedJob()
@@ -55,7 +55,7 @@ export default function JobCard_3({ job, axiosInstanceAuth2, arefid }: any) {
 	const router = useRouter();
 
 	useEffect(() => {
-		console.log("^^^", "JD", job);
+		// console.log("^^^", "JD", job);
 	}, [job]);
 
 	return (

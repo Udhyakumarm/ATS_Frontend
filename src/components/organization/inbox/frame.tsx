@@ -48,8 +48,8 @@ export default function InboxFrame({
 	const srcLang = useLangStore((state: { lang: any }) => state.lang);
 
 	const handleEmojiClick = (emoji) => {
-		console.log(emoji);
-		// console.log("emoji", emoji);
+		// console.log(emoji);
+		// // console.log("emoji", emoji);
 		settext(text + emoji.emoji);
 		setIsPickerOpen(false);
 	};
@@ -58,7 +58,7 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.get(`/inbox/cc/`)
 			.then(async (res) => {
-				console.log("^^^", "CDATA", res.data);
+				// console.log("^^^", "CDATA", res.data);
 
 				setShowContactData(res.data);
 			})
@@ -93,11 +93,11 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.get(`/inbox/messages/${id}/`)
 			.then(async (res) => {
-				console.log("&&&", "msg", res.data);
+				// console.log("&&&", "msg", res.data);
 				setmsg(res.data.reverse());
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setmsg([]);
 			});
 	}
@@ -111,14 +111,14 @@ export default function InboxFrame({
 				// toastcomp("media load", "success");
 				if (res.data.length > 0) {
 					var flatArray = [].concat(...res.data);
-					console.log("media", flatArray);
+					// console.log("media", flatArray);
 					setdataMwdia(flatArray);
 				} else {
 					setdataMwdia([]);
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setdataMwdia([]);
 			});
 	}
@@ -128,7 +128,7 @@ export default function InboxFrame({
 			.then(async (res) => {
 				if (res.data.length > 0) {
 					var flatArray = [].concat(...res.data);
-					console.log("document", flatArray);
+					// console.log("document", flatArray);
 					setdataFile(flatArray);
 				} else {
 					setdataFile([]);
@@ -136,7 +136,7 @@ export default function InboxFrame({
 				// toastcomp("file load", "success");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setdataFile([]);
 			});
 	}
@@ -225,7 +225,7 @@ export default function InboxFrame({
 	socket.onmessage = function (e) {
 		loadSidebar();
 		var fdata = JSON.parse(e.data);
-		// console.log("^^^", "eee data", data);
+		// // console.log("^^^", "eee data", data);
 		if (cardActive) {
 			if (fdata["msg_type"] === 3 || fdata["msg_type"] === 4 || fdata["msg_type"] === 11 || fdata["msg_type"] === 13) {
 				loadFrame(cardActiveData["other_user_id"]);
@@ -238,7 +238,7 @@ export default function InboxFrame({
 			var unreadItems1 = msg.filter((item) => item.read === false);
 			const unreadItems = unreadItems1.filter((item) => item.out === false);
 			for (let i = 0; i < unreadItems.length; i++) {
-				console.log("^^^", "MAR", i);
+				// console.log("^^^", "MAR", i);
 				markASRead(socket, unreadItems[i]["sender"], unreadItems[i]["id"]);
 			}
 		}
@@ -296,7 +296,7 @@ export default function InboxFrame({
 				fd.append("file", file);
 				await axiosInstanceAuth2.post(`/inbox/upload/`, fd).then(async (res) => {
 					var id = res.data["id"].toString();
-					console.log("id", id);
+					// console.log("id", id);
 					if (id != null && id.length > 0) {
 						let user_pk = cardActiveData["other_user_id"].toString();
 						if (reply) {
@@ -317,7 +317,7 @@ export default function InboxFrame({
 				fd.append("file", media);
 				await axiosInstanceAuth2.post(`/inbox/upload2/`, fd).then(async (res) => {
 					var id = res.data["id"].toString();
-					console.log("id", id);
+					// console.log("id", id);
 					if (id != null && id.length > 0) {
 						let user_pk = cardActiveData["other_user_id"].toString();
 						if (reply) {
@@ -361,7 +361,7 @@ export default function InboxFrame({
 		await axiosInstanceAuth2
 			.post(`/inbox/pro/`, fd)
 			.then(async (res) => {
-				console.log("^^^", "CDATA2", res.data);
+				// console.log("^^^", "CDATA2", res.data);
 				let user_pk = cardActiveData["other_user_id"].toString();
 				if (reply) {
 					sendOutgoingContactMessage(socket, res.data["id"], user_pk, replyC["id"]);
@@ -372,7 +372,7 @@ export default function InboxFrame({
 				setreplyC({});
 			})
 			.catch((err) => {
-				console.log("^^^ error cdata2");
+				// console.log("^^^ error cdata2");
 			});
 	}
 
@@ -388,17 +388,17 @@ export default function InboxFrame({
 
 	const [composition, setcomposition] = useState(false);
 	const handleCompositionStart = (e) => {
-		console.log("Composition Start:", e.data);
+		// console.log("Composition Start:", e.data);
 		setcomposition(true);
 	};
 
 	const handleCompositionUpdate = (e) => {
-		console.log("Composition Update:", e.data);
+		// console.log("Composition Update:", e.data);
 		// setCompositionText(e.data);
 	};
 
 	const handleCompositionEnd = (e) => {
-		console.log("Composition End:", e.data);
+		// console.log("Composition End:", e.data);
 		setcomposition(false);
 		// setCompositionText('');
 		// setInputText(e.target.value); // Save the final composed text

@@ -49,7 +49,7 @@ export default function VendorSignup() {
 		await axiosInstance
 			.get(`/vendors/vendor_data/${id}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				if (res.data && res.data.length > 0) {
 					setvdata(res.data[0]);
 					const data = res.data;
@@ -65,7 +65,7 @@ export default function VendorSignup() {
 				setload(true);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setload(false);
 			});
 	}
@@ -111,7 +111,7 @@ export default function VendorSignup() {
 		await axiosInstance2
 			.post(`/vendors/vendor_registration/${vrefid}/`, fd)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				try {
 					let title = `${aname} (${email}) has signup in as an vendor`;
 					// let notification_type = `${}`
@@ -153,7 +153,7 @@ export default function VendorSignup() {
 				router.push(`/vendor/${vrefid}/signin`);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("reg error", "error");
 			});
 	}

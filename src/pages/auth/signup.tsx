@@ -149,7 +149,7 @@ export default function AuthSignUp() {
 				// company_type: signUpInfo.companyType
 			})
 			.then(async (response) => {
-				// console.log(response);
+				// // console.log(response);
 				setBtnLoader(false);
 				setSuccess(true);
 				setWrong(false);
@@ -199,7 +199,7 @@ export default function AuthSignUp() {
 
 				router.push("/auth/signin");
 				// setTimeout(() => {
-				// 	console.log("Send verification email");
+				// 	// console.log("Send verification email");
 				// }, 100);
 
 				// toastcomp("Successfully Registerd", "success");
@@ -213,7 +213,7 @@ export default function AuthSignUp() {
 				setWrong(true);
 				setErrorMsg("");
 
-				// console.log(err);
+				// // console.log(err);
 				if (err.response.data.errors.non_field_errors) {
 					err.response.data.errors.non_field_errors.map((text: any) => setErrorMsg(text));
 				} else if (err.response.data.errors.email) {

@@ -73,7 +73,7 @@ export default function VendorSettings() {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data/${id}/`)
 			.then(async (res) => {
-				console.log("!", "vendor", res.data);
+				// console.log("!", "vendor", res.data);
 				if (res.data && res.data.length > 0) {
 					// setvdata(res.data[0]);
 					setvdata1(res.data[0]);
@@ -93,7 +93,7 @@ export default function VendorSettings() {
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -101,7 +101,7 @@ export default function VendorSettings() {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_data2/${id}/`)
 			.then(async (res) => {
-				console.log("!", "vendor", res.data);
+				// console.log("!", "vendor", res.data);
 				if (res.data && res.data.length > 0) {
 					setvdata(res.data[0]);
 					setvdata2(res.data[0]);
@@ -117,7 +117,7 @@ export default function VendorSettings() {
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -149,7 +149,7 @@ export default function VendorSettings() {
 				setcpass("");
 			})
 			.catch((err) => {
-				console.log("@", "gallery", err);
+				// console.log("@", "gallery", err);
 				toastcomp("Password Not Change", "error");
 				setChangePass(false);
 				setpass("");
@@ -172,7 +172,7 @@ export default function VendorSettings() {
 				toggleLoadMode(true);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Settings Not Updated", "error");
 				}
@@ -191,7 +191,7 @@ export default function VendorSettings() {
 				toggleLoadMode(true);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.message != "Request failed with status code 401") {
 					toastcomp("Settings Not Updated", "error");
 				}

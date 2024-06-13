@@ -35,7 +35,7 @@ export default function CandSchedule() {
 		await axiosInstance
 			.get(`/gcal/slot/detail/${refid}/`)
 			.then((res) => {
-				console.log("$", "res", res.data);
+				// console.log("$", "res", res.data);
 				setdata(res.data[0]);
 				if (res.data[0]["vapplicant"]) {
 					setemail(res.data[0]["vapplicant"]["applicant"]["email"]);
@@ -71,7 +71,7 @@ export default function CandSchedule() {
 				setloader(false);
 			})
 			.catch((err) => {
-				console.log("$", "err", err);
+				// console.log("$", "err", err);
 				setdata({});
 				loadInterviewDetail(refid);
 			});
@@ -117,7 +117,7 @@ export default function CandSchedule() {
 		}
 
 		// for (let [key, value] of fd) {
-		// 	console.log("$", "fd", `${key}: ${value}`);
+		// 	// console.log("$", "fd", `${key}: ${value}`);
 		// }
 		await axiosInstance2
 			.post(`/gcal/can/slot/update/${refid}/`, fd)
@@ -133,7 +133,7 @@ export default function CandSchedule() {
 			})
 			.catch((err) => {
 				setloader(false);
-				console.log("$", "err", err);
+				// console.log("$", "err", err);
 				toastcomp(
 					`${
 						data["type"].length > 0 && data["type"][0].toUpperCase() + data["type"].slice(1)
@@ -157,13 +157,13 @@ export default function CandSchedule() {
 		const start = startTime.format("hh:mm A");
 		const end = endTime.format("hh:mm A");
 		return `${start} to ${end}`;
-		// console.log("$", "-----");
-		// console.log("$", "date", date);
-		// console.log("$", "duration", duration);
-		// console.log("$", "startTime", startTime.format("DD/MM/YYYY hh:mm A"));
-		// console.log("$", "endTime", endTime.format("DD/MM/YYYY hh:mm A"));
-		// console.log("$", "start", start);
-		// console.log("$", "end", end);
+		// // console.log("$", "-----");
+		// // console.log("$", "date", date);
+		// // console.log("$", "duration", duration);
+		// // console.log("$", "startTime", startTime.format("DD/MM/YYYY hh:mm A"));
+		// // console.log("$", "endTime", endTime.format("DD/MM/YYYY hh:mm A"));
+		// // console.log("$", "start", start);
+		// // console.log("$", "end", end);
 	};
 	return (
 		<>

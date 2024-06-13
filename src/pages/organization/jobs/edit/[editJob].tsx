@@ -166,7 +166,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				var data = res.data;
 				if (data.length > 0) {
 					toastcomp("Job Loaded Successfully", "success");
-					console.log("#", "job load data", res.data);
+					// console.log("#", "job load data", res.data);
 					var jobData = data[0];
 					if (jobData["jobTitle"]) {
 						setjtitle(jobData["jobTitle"]);
@@ -273,14 +273,14 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				console.log("@", "listorguser", res.data);
-				console.log("#", "listorguser", res.data);
+				// console.log("@", "listorguser", res.data);
+				// console.log("#", "listorguser", res.data);
 				settm(res.data);
 				setFilterTeam(res.data);
-				console.log("#", ujtm);
+				// console.log("#", ujtm);
 			})
 			.catch((err) => {
-				console.log("@", "listorguser", err);
+				// console.log("@", "listorguser", err);
 			});
 	}
 
@@ -307,7 +307,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 		await axiosInstanceAuth2
 			.get(`/vendors/list_vendors/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				setvendors(res.data);
 				const data = res.data;
 				var arr = [];
@@ -324,7 +324,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				setFilterVendors(arr2);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -404,7 +404,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				} else {
 					toastcomp("Job Not Updated", "error");
 				}
-				console.log("!!!", "JobErr", err);
+				// console.log("!!!", "JobErr", err);
 			});
 	}
 
@@ -513,26 +513,26 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			if (jfv.length > 0) {
 				fd.append("vendorID", jfv.join("|"));
 			}
-			// console.log("jtitle", jtitle);
-			// console.log("jfunction", jfunction);
-			// console.log("jdept", jdept);
-			// console.log("jind", jind);
-			// console.log("jgrp", jgrp);
-			// console.log("jvac", jvac);
-			// console.log("jdeptinfo", jdeptinfo);
-			// console.log("jres", jres);
-			// console.log("jlooking", jlooking);
-			// console.log("jskill", jskill);
-			// console.log("jetype", jetype);
-			// console.log("jexp", jexp);
-			// console.log("jedu", jedu);
-			// console.log("jlang", jlang);
-			// console.log("jloc", jloc);
-			// console.log("jsalary", jsalary);
-			// console.log("jcurr", jcurr);
-			// console.log("jreloc", jreloc);
-			// console.log("jvisa", jvisa);
-			// console.log("jwtype", jwtype);
+			// // console.log("jtitle", jtitle);
+			// // console.log("jfunction", jfunction);
+			// // console.log("jdept", jdept);
+			// // console.log("jind", jind);
+			// // console.log("jgrp", jgrp);
+			// // console.log("jvac", jvac);
+			// // console.log("jdeptinfo", jdeptinfo);
+			// // console.log("jres", jres);
+			// // console.log("jlooking", jlooking);
+			// // console.log("jskill", jskill);
+			// // console.log("jetype", jetype);
+			// // console.log("jexp", jexp);
+			// // console.log("jedu", jedu);
+			// // console.log("jlang", jlang);
+			// // console.log("jloc", jloc);
+			// // console.log("jsalary", jsalary);
+			// // console.log("jcurr", jcurr);
+			// // console.log("jreloc", jreloc);
+			// // console.log("jvisa", jvisa);
+			// // console.log("jwtype", jwtype);
 			addJob(fd, "active");
 		}
 	}
@@ -634,26 +634,26 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			if (jfv.length > 0) {
 				fd.append("vendorID", jfv.join("|"));
 			}
-			// console.log("jtitle", jtitle);
-			// console.log("jfunction", jfunction);
-			// console.log("jdept", jdept);
-			// console.log("jind", jind);
-			// console.log("jgrp", jgrp);
-			// console.log("jvac", jvac);
-			// console.log("jdeptinfo", jdeptinfo);
-			// console.log("jres", jres);
-			// console.log("jlooking", jlooking);
-			// console.log("jskill", jskill);
-			// console.log("jetype", jetype);
-			// console.log("jexp", jexp);
-			// console.log("jedu", jedu);
-			// console.log("jlang", jlang);
-			// console.log("jloc", jloc);
-			// console.log("jsalary", jsalary);
-			// console.log("jcurr", jcurr);
-			// console.log("jreloc", jreloc);
-			// console.log("jvisa", jvisa);
-			// console.log("jwtype", jwtype);
+			// // console.log("jtitle", jtitle);
+			// // console.log("jfunction", jfunction);
+			// // console.log("jdept", jdept);
+			// // console.log("jind", jind);
+			// // console.log("jgrp", jgrp);
+			// // console.log("jvac", jvac);
+			// // console.log("jdeptinfo", jdeptinfo);
+			// // console.log("jres", jres);
+			// // console.log("jlooking", jlooking);
+			// // console.log("jskill", jskill);
+			// // console.log("jetype", jetype);
+			// // console.log("jexp", jexp);
+			// // console.log("jedu", jedu);
+			// // console.log("jlang", jlang);
+			// // console.log("jloc", jloc);
+			// // console.log("jsalary", jsalary);
+			// // console.log("jcurr", jcurr);
+			// // console.log("jreloc", jreloc);
+			// // console.log("jvisa", jvisa);
+			// // console.log("jwtype", jwtype);
 			addJob(fd, "draft");
 		}
 	}
@@ -683,7 +683,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			.get(`/job/load/location/?search=${value}`)
 			.then(async (res) => {
 				let obj = res.data;
-				console.log(obj);
+				// console.log(obj);
 				let arr = Object.values(obj);
 				// for (const [key, value] of Object.entries(obj)) {
 				//   arr.push(value)
@@ -692,7 +692,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				setload(false);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -712,12 +712,12 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 				setload(false);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
 	useEffect(() => {
-		console.log("#", router.query);
+		// console.log("#", router.query);
 	}, [router]);
 
 	function checkHideOrNot(title: any) {
@@ -755,7 +755,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 			}
 
 			const fd = new FormData();
-			console.log("!", "Prompt", prompt);
+			// console.log("!", "Prompt", prompt);
 			fd.append("prompt", prompt);
 			await axiosInstanceAuth2
 				.post(`/job/ai-description-job/`, fd)
@@ -766,7 +766,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 						data = data.replaceAll("\n\n", "<br />");
 						setjdesc(data);
 					}
-					console.log("!", "desc", res.data);
+					// console.log("!", "desc", res.data);
 					setAiLoader(false);
 				})
 				.catch((err) => {
@@ -849,7 +849,7 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	}, []);
 
 	function changeSwith(value: Boolean, data: any) {
-		console.log("Switch", "^^^", value);
+		// console.log("Switch", "^^^", value);
 
 		if (value) {
 			setujtm([...ujtm, data["id"]]);
@@ -859,12 +859,12 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 
 			arr = arr.filter((item: any) => item !== value2);
 			setujtm(arr);
-			console.log("Switch", "^^^", value, arr);
+			// console.log("Switch", "^^^", value, arr);
 		}
 	}
 
 	function changeSwith1(value: Boolean, data: any) {
-		console.log("Switch Vendor", "^^^", value);
+		// console.log("Switch Vendor", "^^^", value);
 
 		if (value) {
 			setjfv([...jfv, data["id"]]);
@@ -874,13 +874,13 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 
 			arr = arr.filter((item: any) => item !== value2);
 			setjfv(arr);
-			console.log("Switch Vendor", "^^^", value, arr);
+			// console.log("Switch Vendor", "^^^", value, arr);
 		}
 	}
 
 	useEffect(() => {
-		console.log("After Switch", "^^^^", ujtm);
-		console.log("After Switch", "^^^^", filterTeam);
+		// console.log("After Switch", "^^^^", ujtm);
+		// console.log("After Switch", "^^^^", filterTeam);
 		setjcollaborator(false);
 		setjrecruiter(false);
 		if (tm.length > 0) {
@@ -898,8 +898,8 @@ export default function JobsEdit({ atsVersion, userRole, upcomingSoon }: any) {
 	}, [ujtm]);
 
 	useEffect(() => {
-		console.log("After Switch jrecruiter", "^^^^", jrecruiter);
-		console.log("After Switch jcollaborator", "^^^^", jcollaborator);
+		// console.log("After Switch jrecruiter", "^^^^", jrecruiter);
+		// console.log("After Switch jcollaborator", "^^^^", jcollaborator);
 	}, [jrecruiter, jcollaborator]);
 
 	return (

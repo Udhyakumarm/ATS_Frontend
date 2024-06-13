@@ -73,12 +73,12 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 		await axiosInstanceAuth2
 			.get(`/organization/listorguser/`)
 			.then(async (res) => {
-				console.log("@", "listorguser", res.data);
+				// console.log("@", "listorguser", res.data);
 				settm(res.data);
 				setFilterTeam(res.data);
 			})
 			.catch((err) => {
-				console.log("@", "listorguser", err);
+				// console.log("@", "listorguser", err);
 			});
 	}
 
@@ -109,7 +109,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 		await axiosInstanceAuth2
 			.post(`/organization/create/org/user/`, fd)
 			.then(async (res) => {
-				console.log("@", "iprofile", res.data);
+				// console.log("@", "iprofile", res.data);
 				toastcomp("New User Add", "Success");
 
 				let aname = `New User ${name} (${oemail}) as ${role["name"]} joined in our Agency by ${
@@ -138,7 +138,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 				} else {
 					toastcomp("New User Not Add", "error");
 				}
-				console.log("@", "iprofile", err);
+				// console.log("@", "iprofile", err);
 				setAddTeam(false);
 				setname("");
 				setoemail("");
@@ -155,7 +155,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 			.put(`/organization/updateorguser/${pk}/`, fd)
 			.then(async (res) => {
 				toastcomp("User Updated", "Success");
-				console.log("@", res.data);
+				// console.log("@", res.data);
 
 				let aname = `Agency User role Updated to ${res.data["role"]} by ${userState[0]["name"]} (${
 					userState[0]["email"]
@@ -171,7 +171,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 				loadTeamMember();
 			})
 			.catch((err) => {
-				console.log("@", "iprofile", err);
+				// console.log("@", "iprofile", err);
 				toastcomp("User Not Updated", "error");
 				loadTeamMember();
 			});
@@ -182,7 +182,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 			.delete(`/organization/deleteorguser/${pk}/`)
 			.then(async (res) => {
 				toastcomp("User Removed", "Success");
-				console.log("@", res.data);
+				// console.log("@", res.data);
 
 				let aname = `Agency User (${email}) Removed by ${userState[0]["name"]} (${
 					userState[0]["email"]
@@ -198,7 +198,7 @@ export default function TeamMembers({ upcomingSoon, userRole }: any) {
 				loadTeamMember();
 			})
 			.catch((err) => {
-				console.log("@", "iprofile", err);
+				// console.log("@", "iprofile", err);
 				toastcomp("User Not Deleted", "error");
 				loadTeamMember();
 			});

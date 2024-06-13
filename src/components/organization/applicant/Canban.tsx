@@ -46,10 +46,10 @@ function Canban(props: any) {
 
 	useEffect(() => {
 		let arr = cards;
-		console.log("####", "applicantlist", applicantlist);
+		// console.log("####", "applicantlist", applicantlist);
 		for (let i = 0; i < applicantlist.length; i++) {
 			const abc = arr.some((item) => item.arefid === applicantlist[i]["arefid"]);
-			console.log("####", "abc", abc);
+			// console.log("####", "abc", abc);
 			if (abc === false) {
 				_cardId++;
 				let dic = {
@@ -66,17 +66,17 @@ function Canban(props: any) {
 				}
 			}
 		}
-		console.log("####", "arr", arr);
+		// console.log("####", "arr", arr);
 		setcards(arr);
 		setcolumns(initialColumns);
 		setr(1);
 	}, [applicantlist]);
 
 	useEffect(() => {
-		console.log("------------");
-		console.log("applicantlist", applicantlist);
-		console.log("cards", cards);
-		console.log("columns", columns);
+		// console.log("------------");
+		// console.log("applicantlist", applicantlist);
+		// console.log("cards", cards);
+		// console.log("columns", columns);
 	}, [cards, columns]);
 
 	const userState = useUserStore((state: { user: any }) => state.user);
@@ -134,7 +134,7 @@ function Canban(props: any) {
 				// setrefersh1(1);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				toastcomp("Status Not Change", "error");
 				setcardarefid("");
 				setcardstatus("");
@@ -163,15 +163,15 @@ function Canban(props: any) {
 						if (columns[k]["id"] === destColumnId) {
 							for (let j = 0; j < cards.length; j++) {
 								if (cards[j]["id"] === cardId) {
-									console.log("*", "arefid", cards[j]["arefid"]);
+									// console.log("*", "arefid", cards[j]["arefid"]);
 									chnageStatus(columns[k]["title"], cards[j]["arefid"], cards[j]["type"]);
 								}
 							}
 						}
 					}
-					console.log("*", "column change");
+					// console.log("*", "column change");
 				} else {
-					console.log("*", "column not change");
+					// console.log("*", "column not change");
 				}
 			}
 		}

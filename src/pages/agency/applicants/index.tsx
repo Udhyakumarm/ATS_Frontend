@@ -125,12 +125,12 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2
 			.get(`/applicant/list-agency-applicant/`)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfapplicantList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfapplicantList({});
 				setrefresh(2);
 			});
@@ -140,12 +140,12 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2
 			.get(link)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfapplicantList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfapplicantList({});
 				setrefresh(2);
 			});
@@ -160,7 +160,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 		link = link.replaceAll("null", "");
 
-		console.log("data2", "LINK", link);
+		// console.log("data2", "LINK", link);
 		return link;
 	}
 
@@ -170,12 +170,12 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2
 			.get(link)
 			.then(async (res) => {
-				console.log("data", "applicant list", res.data);
+				// console.log("data", "applicant list", res.data);
 				setfapplicantList(res.data);
 				setrefresh(2);
 			})
 			.catch((err) => {
-				console.log("Error fetching data:", err);
+				// console.log("Error fetching data:", err);
 				setfapplicantList({});
 				setrefresh(2);
 			});
@@ -190,7 +190,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 	useEffect(() => {
 		if (selectedJob && fapplicantList && fapplicantList["results"] && fapplicantList["results"].length > 0) {
-			console.log("data", "selectedJob", selectedJob);
+			// console.log("data", "selectedJob", selectedJob);
 			setrefresh(1);
 			loadApplicant3();
 		} else {
@@ -200,7 +200,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 	useEffect(() => {
 		if (selectedType && fapplicantList && fapplicantList["results"] && fapplicantList["results"].length > 0) {
-			console.log("data", "selectedType", selectedType);
+			// console.log("data", "selectedType", selectedType);
 			setrefresh(1);
 			loadApplicant3();
 		} else {
@@ -210,7 +210,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 
 	useEffect(() => {
 		if (selectedStatus && fapplicantList && fapplicantList["results"] && fapplicantList["results"].length > 0) {
-			console.log("data", "selectedStatus", selectedStatus);
+			// console.log("data", "selectedStatus", selectedStatus);
 			setrefresh(1);
 			loadApplicant3();
 		} else {
@@ -222,7 +222,7 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 	const debouncedSearchTerm = useDebounce(search, 500);
 
 	useEffect(() => {
-		console.log("debouncedSearchTerm", debouncedSearchTerm);
+		// console.log("debouncedSearchTerm", debouncedSearchTerm);
 		loadApplicant3();
 	}, [debouncedSearchTerm]);
 
@@ -303,11 +303,11 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2
 			.get(`/applicant/list-contract/`)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				setfcontracts(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -324,14 +324,14 @@ export default function Applicants({ atsVersion, userRole, upcomingSoon, current
 		await axiosInstanceAuth2
 			.post(`/applicant/share-contract/`, fd)
 			.then(async (res) => {
-				console.log("!-", res.data);
+				// console.log("!-", res.data);
 				setshareContract(false);
 				setsc([]);
 				setsc2([]);
 				setPublishThanks(true);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 

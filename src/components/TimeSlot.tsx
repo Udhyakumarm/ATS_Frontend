@@ -27,7 +27,7 @@ export default function TImeSlot({
 				if (res.data.current && res.data.primary) {
 					const newArray = [...res.data.current.items, ...res.data.primary.items];
 					setEventList(newArray);
-					console.log("$", res.data);
+					// console.log("$", res.data);
 					// toastcomp("load success", "success");
 				} else {
 					setEventList([]);
@@ -35,7 +35,7 @@ export default function TImeSlot({
 				}
 			})
 			.catch((err) => {
-				console.log("$", "err", err);
+				// console.log("$", "err", err);
 				setEventList([]);
 				toastcomp("load error", "error");
 			});
@@ -44,18 +44,18 @@ export default function TImeSlot({
 		await axiosInstanceAuth2
 			.get("/gcal/outlook/get-events/")
 			.then((res) => {
-				console.log("microsoft outlook events", res);
+				// console.log("microsoft outlook events", res);
 				if (res.data.current && res.data.prevent) {
 					const newArray=[...res.data.current,...res.data.prevent];
 					setEventList(newArray);
-					console.log(newArray);
+					// console.log(newArray);
 				} else {
 					setEventList([]);
 					toastcomp("load partial success", "success");
 				}
 			})
 			.catch((err) => {
-				console.log("$", "err", err);
+				// console.log("$", "err", err);
 				setEventList([]);
 				
 			});
@@ -73,10 +73,10 @@ export default function TImeSlot({
 	// 			.then((response) => response.data)
 	// 			.then((data) => {
 	// 				setEventList(data.items);
-	// 				// console.log("$", data.items);
+	// 				// // console.log("$", data.items);
 	// 			})
 	// 			.catch((err) => {
-	// 				// console.log("$", err);
+	// 				// // console.log("$", err);
 	// 			}),
 	// 	[integration]
 	// );
@@ -163,12 +163,12 @@ export default function TImeSlot({
 				try {
 					loadUpcomingInterview();
 				} catch {
-					console.log("error");
+					// console.log("error");
 				}
 			})
 			.catch((err) => {
 				toastcomp("Slot Not Created", "error");
-				console.log("$", "slot error", err);
+				// console.log("$", "slot error", err);
 				setIsCalendarOpen(false);
 			});
 	}
@@ -206,7 +206,7 @@ export default function TImeSlot({
 			let dateParam2 = moment(dateParam);
 			for (let i = 0; i < eventList.length; i++) {
 				if (eventList[i]["start"]) {
-					console.log("allevent", "$", eventList[i]);
+					// console.log("allevent", "$", eventList[i]);
 					
 					if (
 						dateParam2.isSame(moment(eventList[i]["start"]["dateTime"]), "day")
@@ -214,10 +214,10 @@ export default function TImeSlot({
 						// dateParam2.isSame(moment(eventList[i]["end"]["dateTime"]), "day")
 					) {
 						currentdayEvent.push(eventList[i]);
-						console.log("currentdayEvent", "$", eventList[i]);
+						// console.log("currentdayEvent", "$", eventList[i]);
 					}
 				} else {
-					console.log("allcccevent", "$", eventList[i]);
+					// console.log("allcccevent", "$", eventList[i]);
 				}
 			}
 
@@ -243,12 +243,12 @@ export default function TImeSlot({
 			
 				
 
-				// console.log("MatchDay T1:1", "$", startMoment.format("HH:mm A"));
+				// // console.log("MatchDay T1:1", "$", startMoment.format("HH:mm A"));
 
 				// Round the start time down to the nearest hour
 				startMoment.startOf("hour");
 
-				// console.log("MatchDay T1:1", "$", startMoment.startOf("hour").format("HH:mm A"));
+				// // console.log("MatchDay T1:1", "$", startMoment.startOf("hour").format("HH:mm A"));
 
 				// Round the end time up to the nearest hour
 				endMoment.endOf("hour");
@@ -263,7 +263,7 @@ export default function TImeSlot({
 				}
 			}
 
-			// console.log(
+			// // console.log(
 			// 	"$",
 			// 	"final",
 			// 	basearr.filter((element) => !timeSlots.includes(element))

@@ -79,10 +79,10 @@ export default function JobsActive({ atsVersion, userRole, upcomingSoon }: any) 
 
 				setActiveJobs(arr);
 				setFActiveJobs(arr);
-				console.log("&", "jobs", arr);
+				// console.log("&", "jobs", arr);
 			})
 			.catch((error) => {
-				console.log({ error });
+				// console.log({ error });
 				return null;
 			});
 

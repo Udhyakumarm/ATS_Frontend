@@ -56,16 +56,16 @@ export default function CreatePassword() {
 					}
 				})
 				.catch((err) => {
-					// console.log(err);
+					// // console.log(err);
 					toastcomp("Password Reset Unuceesfully", "error");
 				});
 		}
 	}
 
 	useEffect(() => {
-		console.log("#", asPath);
+		// console.log("#", asPath);
 		let c = asPath.substring(1).split("/")[2].split("&");
-		console.log("#", c);
+		// console.log("#", c);
 		if (c) {
 			seti1(c[2].split("=")[1]);
 			seti2(c[3].split("=")[1]);

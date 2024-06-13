@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	await Integration.googleCalendarOAuth2Client.refreshAccessToken();
 	// .catch((err) => {
-	// 	console.log("$", err);
+	// 	// console.log("$", err);
 	// });
 
 	const calendar = google.calendar({ version: "v3" });
@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			{ headers: { authorization: "Bearer " + session.accessToken, "Content-Type": "application/json" } }
 		)
 		.catch((err) => {
-			console.log(err);
+			// console.log(err);
 			return { data: { success: false } };
 		});
 

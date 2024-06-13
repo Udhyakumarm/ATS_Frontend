@@ -59,7 +59,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		await axiosInstanceAuth2
 			.get(`/subscription/get-active-plan/`)
 			.then(async (res) => {
-				console.log("!!!", "get-active-plan", res.data);
+				// console.log("!!!", "get-active-plan", res.data);
 				const data = res.data;
 				if (data.length > 0) {
 					setcplan(data[0]);
@@ -68,7 +68,7 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 				}
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("get-active-plan error", "error");
 				setcplan({});
 			});
@@ -77,18 +77,18 @@ export default function Settings({ atsVersion, userRole, comingSoon, currentUser
 		await axiosInstanceAuth2
 			.post(`/organization/intro-update/`)
 			.then(async (res) => {
-				// console.log("!!!", "update-intro", res.data);
+				// // console.log("!!!", "update-intro", res.data);
 				toastcomp("intro api ","success")
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				toastcomp("update-intro error", "error");
 			});
 	
 	}
 
 	useEffect(() => {
-		console.log("!!!", "currentuser", currentUser);
+		// console.log("!!!", "currentuser", currentUser);
 		// if (userRole === "Super Admin" && currentuser && currentuser.length > 0) {
 		// 	if (currentuser[0]["register_date"]) {
 		// 		setrdate(currentuser[0]["register_date"]);

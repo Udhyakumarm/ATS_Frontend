@@ -63,11 +63,11 @@ export default function Header() {
 		await axiosInstanceAuth2
 			.get(`/chatbot/external-get-notification-count/`)
 			.then(async (res) => {
-				// console.log("!", res.data);
+				// // console.log("!", res.data);
 				setcount(res.data.length);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -76,12 +76,12 @@ export default function Header() {
 		await axiosInstanceAuth2
 			.get(`/chatbot/external-read-notification-count/`)
 			.then(async (res) => {
-				// console.log("!", res.data);
+				// // console.log("!", res.data);
 				setcount(res.data.length);
 				router.push(`/organization/${cname}/notifications`);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -95,8 +95,8 @@ export default function Header() {
 			showJoyride();
 		}
 	}, [isJoyrideCompleted, showJoyride]);
-	// console.log("shouldshowjoyride", shouldShowJoyride)
-	// console.log("isjouride completed", isJoyrideCompleted)
+	// // console.log("shouldshowjoyride", shouldShowJoyride)
+	// // console.log("isjouride completed", isJoyrideCompleted)
 	const joyrideSteps=[
 		{
 			target: ".searchjob",

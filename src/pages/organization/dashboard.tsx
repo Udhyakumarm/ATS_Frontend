@@ -192,11 +192,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/organization/list-activity-log/`)
 			.then(async (res) => {
-				console.log("!activitylog:", res.data);
+				// console.log("!activitylog:", res.data);
 				setactivityLog(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -269,11 +269,11 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 
 		setSectionsOrder(newOrder);
 		// const parent = e.target.parentElement;
-		// console.log("this the parent element", parent)
+		// // console.log("this the parent element", parent)
 		// const draggedElement = sectionRefs.current[draggedId];
-		// console.log("dragged element", draggedElement)
+		// // console.log("dragged element", draggedElement)
 		// const droppedElement = sectionRefs.current[droppedId];
-		// console.log("dropped element", droppedElement)
+		// // console.log("dropped element", droppedElement)
 		// if (parent && draggedElement && droppedElement) {
 		//   parent.insertBefore(draggedElement, droppedElement);
 		// }
@@ -287,7 +287,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		}
 	};
 	useEffect(() => {
-		console.log("ye hai section ka order", sectionsOrder);
+		// console.log("ye hai section ka order", sectionsOrder);
 		const container = document.querySelector(".parent");
 		sectionsOrder.forEach((sectionId) => {
 			const section = document.getElementById(sectionId);
@@ -320,7 +320,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/chatbot/list-todo/`)
 			.then(async (res) => {
-				console.log("!", "TODO", res.data);
+				// console.log("!", "TODO", res.data);
 				settodos(res.data);
 				var data = res.data;
 				let arr = [];
@@ -332,7 +332,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				setnctodos(arr);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -340,7 +340,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 		await axiosInstanceAuth2
 			.get(`/applicant/get_analytics/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				// setactivityLog(res.data);
 				setapplicantDetail(res.data["Applicants"]);
 				settApp(res.data["Applicants"]["totalApplicants"]);
@@ -357,7 +357,7 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 				sethiringAnalytics(res.data["shiftHiring"]);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 
@@ -543,14 +543,14 @@ export default function OrganizationDashboard({ atsVersion, userRole, upcomingSo
 	};
 	const buttonRef = useRef(null);
 	const onDrag = (e, data) => {
-  console.log("Event: ", e);
-  console.log("Data: ", data);
+  // console.log("Event: ", e);
+  // console.log("Data: ", data);
   setPosition({ x: data.x, y: data.y });
 
 };
 
 const onDragStop = () => {
-console.log("Drag stopped");
+// console.log("Drag stopped");
 
    handlePosition();
 };
@@ -558,11 +558,11 @@ console.log("Drag stopped");
 
 
 const handlePosition = () => {
-console.log("hnnbulaYA")
+// console.log("hnnbulaYA")
     if (buttonRef.current)  {
 	  const buttonpos=buttonRef.current;
       const buttonRect = buttonpos.getBoundingClientRect();
-	  console.log("button positon",buttonRect);
+	  // console.log("button positon",buttonRect);
       const viewportHeight = window.innerHeight;
       const middleOfViewport = viewportHeight / 2;
 
@@ -1281,15 +1281,15 @@ console.log("hnnbulaYA")
 								showSkipButton={false}
 								callback={(data: any) => {
 									const { action, status, type } = data;
-									// console.log("yeh hai status", status);
+									// // console.log("yeh hai status", status);
 									if ([STATUS.FINISHED, STATUS.SKIPPED, STATUS.READY].includes(status)) {
-										// console.log("finish toh ho gya!!");
-										// console.log("type to yeh hai", type);
+										// // console.log("finish toh ho gya!!");
+										// // console.log("type to yeh hai", type);
 										// // Check if the completed step is the last step of the main dashboard
 										// if (data.step === joyrideSteps.length - 1) {
 										// setTourCompleted(true);
 										setShouldShowSidebarTour(true);
-										console.log("completed this tour");
+										// console.log("completed this tour");
 										// }
 									}
 									if (action === "close") {

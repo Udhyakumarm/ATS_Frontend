@@ -26,7 +26,7 @@ export default function AuthForgot() {
 				setemail("");
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.response.data.non_field_errors) {
 					err.response.data.non_field_errors.map((text) => toastcomp(text, "error"));
 					return false;

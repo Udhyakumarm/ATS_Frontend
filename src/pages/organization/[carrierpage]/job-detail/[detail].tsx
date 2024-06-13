@@ -103,19 +103,19 @@ export default function CanCareerJobDetail(props) {
 			.get(`/organization/get/organizationprofile/carrier/${carrierID}/`)
 			.then((res) => {
 				setorgdetail(res.data);
-				console.log("@", res.data);
+				// console.log("@", res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setorgdetail({});
 			});
 	}
 
 	async function getcid(cname: any) {
 		await axiosInstance.get(`/organization/get/organizationprofilecid/carrier/${cname}/`).then((res) => {
-			console.log(res.data);
-			console.log(res.data["OrgProfile"]);
-			console.log(res.data["OrgProfile"][0]["unique_id"]);
+			// console.log(res.data);
+			// console.log(res.data["OrgProfile"]);
+			// console.log(res.data["OrgProfile"][0]["unique_id"]);
 			setcid(res.data["OrgProfile"][0]["unique_id"]);
 			loadOrgDetail(res.data["OrgProfile"][0]["unique_id"]);
 			setload(true);
@@ -143,7 +143,7 @@ export default function CanCareerJobDetail(props) {
 		await axiosInstanceAuth2
 			.get(`/applicant/career-applicant/check/${detail}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				if (res.data["Message"] == 1) {
 					setbtndis(true);
 				} else {
@@ -151,7 +151,7 @@ export default function CanCareerJobDetail(props) {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -234,7 +234,7 @@ export default function CanCareerJobDetail(props) {
 				setjdata(res.data[0]);
 			})
 			.catch((err) => {
-				console.log("@", err);
+				// console.log("@", err);
 			});
 	}
 
@@ -245,8 +245,8 @@ export default function CanCareerJobDetail(props) {
 			.then(async (res) => {
 				toastcomp("step 1", "success");
 				const dataObj = res.data;
-				console.log("!!!", "step1", dataObj);
-				console.log("!!!", "step1", dataObj["Email"]);
+				// console.log("!!!", "step1", dataObj);
+				// console.log("!!!", "step1", dataObj["Email"]);
 
 				if (res.data.version === "enterprise") {
 					if (res.data.Qualified === "Perfect") {
@@ -419,7 +419,7 @@ export default function CanCareerJobDetail(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "step1 errr", err);
+				// console.log("!!!", "step1 errr", err);
 				resetState();
 			});
 	}
@@ -454,7 +454,7 @@ export default function CanCareerJobDetail(props) {
 		await axiosInstance2
 			.post(`/applicant/carrer-apply/${refid}/`, fd)
 			.then((res) => {
-				console.log("!!!", "apply noauth", res.data);
+				// console.log("!!!", "apply noauth", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -470,7 +470,7 @@ export default function CanCareerJobDetail(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -498,7 +498,7 @@ export default function CanCareerJobDetail(props) {
 		await axiosInstance2
 			.post(`/applicant/carrer-apply/${detail}/`, fd)
 			.then((res) => {
-				console.log("!!!", "apply noauth md", res.data);
+				// console.log("!!!", "apply noauth md", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -512,7 +512,7 @@ export default function CanCareerJobDetail(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -555,7 +555,7 @@ export default function CanCareerJobDetail(props) {
 		await axiosInstanceAuth2
 			.post(`/applicant/carrer-apply/${detail}/`, fd)
 			.then((res) => {
-				console.log("!!!", "apply noauth md", res.data);
+				// console.log("!!!", "apply noauth md", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -570,7 +570,7 @@ export default function CanCareerJobDetail(props) {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -579,7 +579,7 @@ export default function CanCareerJobDetail(props) {
 
 	useEffect(() => {
 		if (resume != null && jdata["refid"].length > 0) {
-			console.log("$", "Step1", "Resume Changed Useeffect...");
+			// console.log("$", "Step1", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
 			step1(jdata["refid"], fd);
@@ -591,12 +591,12 @@ export default function CanCareerJobDetail(props) {
 		await axiosInstanceAuth2
 			.get(`/candidate/get-candidate-settings/`)
 			.then(async (res) => {
-				console.log("&", "Settings", res.data);
+				// console.log("&", "Settings", res.data);
 				setfname(res.data[0]["first_name"]);
 				setlname(res.data[0]["last_name"]);
 			})
 			.catch((err) => {
-				console.log("&", "Settings", err);
+				// console.log("&", "Settings", err);
 			});
 	}
 
@@ -1194,7 +1194,7 @@ export default function CanCareerJobDetail(props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
-	console.log("#", context.query);
+	// console.log("#", context.query);
 	const { carrierpage } = context.query;
 	const { detail } = context.query;
 	var ftitle = "";
@@ -1211,7 +1211,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	await axiosInstance
 		.get(`/job/detail-job/${detail}/`)
 		.then(async (res) => {
-			// console.log(res.data)
+			// // console.log(res.data)
 			var arr = res.data;
 			ftitle = arr[0]["jobTitle"];
 			otitle = arr[0]["jobTitle"];
@@ -1239,7 +1239,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 			});
 		})
 		.catch((err) => {
-			console.log("err");
+			// console.log("err");
 		});
 
 	return {

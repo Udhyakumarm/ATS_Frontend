@@ -23,7 +23,7 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({ value, onChange, extra, pla
 	function handleKeyPress(event) {
 		if ((event.ctrlKey && event.key === "Enter") || event.key === "Enter") {
 			// Handle Ctrl+Enter event here
-			console.log("Ctrl+Enter pressed");
+			// console.log("Ctrl+Enter pressed");
 			event.preventDefault(); // Prevent the default behavior (new line)
 			setcepress(true);
 		}

@@ -206,7 +206,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 		await axiosInstanceAuth2
 			.get(`/applicant/get_analytics/`)
 			.then(async (res) => {
-				console.log("$", res.data);
+				// console.log("$", res.data);
 				// setactivityLog(res.data);
 				// setapplicantDetail(res.data["Applicants"]);
 				// settApp(res.data["Applicants"]["totalApplicants"]);
@@ -246,7 +246,7 @@ export default function Analytics({ atsVersion, userRole, upcomingSoon, currentU
 				settapp(res.data["Applicants"]["totalApplicants"]);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 

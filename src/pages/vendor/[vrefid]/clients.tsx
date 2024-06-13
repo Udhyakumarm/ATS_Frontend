@@ -93,13 +93,13 @@ export default function VendorClients() {
 		await axiosInstanceAuth2
 			.get(`/applicant/list-offer/${arefid}/`)
 			.then(async (res) => {
-				console.log("!", "Offer Detail", res.data);
+				// console.log("!", "Offer Detail", res.data);
 				setofferDetails(res.data);
 				setshowOffer(true);
 				// setvjdata(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 				setofferDetails([]);
 			});
 	}
@@ -118,11 +118,11 @@ export default function VendorClients() {
 		await axiosInstanceAuth2
 			.get(`/vendors/vendor_job_data/${id}/`)
 			.then(async (res) => {
-				console.log("!", res.data);
+				// console.log("!", res.data);
 				setvjdata(res.data);
 			})
 			.catch((err) => {
-				console.log("!", err);
+				// console.log("!", err);
 			});
 	}
 	useEffect(()=>{
@@ -177,11 +177,11 @@ export default function VendorClients() {
 		await axiosInstanceAuth2
 			.get(`/applicant/listdocs/${arefid}/`)
 			.then((res) => {
-				console.log("@@@@@", "listdocs", res.data);
+				// console.log("@@@@@", "listdocs", res.data);
 				setdocs(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -195,7 +195,7 @@ export default function VendorClients() {
 			.catch((err) => {
 				setodocs(false);
 				toastcomp("Document not deleted", "error");
-				console.log(err);
+				// console.log(err);
 			});
 	}
 
@@ -209,7 +209,7 @@ export default function VendorClients() {
 				const response = await axiosInstanceAuth2.post(`/applicant/createdocs/${arefid}/`, formData);
 
 				// Handle response for each request
-				console.log(`Response for resume ${i + 1}:`, response.data);
+				// console.log(`Response for resume ${i + 1}:`, response.data);
 			}
 			setodocs(false);
 			toastcomp(`${odocsresume.length} documets added`, "success");
@@ -236,7 +236,7 @@ export default function VendorClients() {
 	}
 
 	useEffect(() => {
-		console.log("####", "odocsresume", odocsresume);
+		// console.log("####", "odocsresume", odocsresume);
 	}, [odocsresume]);
 
 	useEffect(() => {
@@ -250,10 +250,10 @@ export default function VendorClients() {
 			.get(`/organization/get/organizationprofile/vendor/${pk.toString()}/`)
 			.then((res) => {
 				setorgdetail(res.data);
-				console.log("@", res.data);
+				// console.log("@", res.data);
 			})
 			.catch((err) => {
-				console.log("@", err);
+				// console.log("@", err);
 			});
 	}
 
@@ -262,11 +262,11 @@ export default function VendorClients() {
 			.get(`/vendors/vendor-list2/${refid}/${vrefid}/`)
 			.then((res) => {
 				setvenapp(res.data);
-				console.log("&", res.data);
+				// console.log("&", res.data);
 			})
 			.catch((err) => {
 				setvenapp([]);
-				console.log("&", err);
+				// console.log("&", err);
 			});
 	}
 
@@ -275,11 +275,11 @@ export default function VendorClients() {
 	// 		.get(`/vendors/vendoruser/${refid}/${vcrefid}/`)
 	// 		.then((res) => {
 	// 			setvenappdetail(res.data);
-	// 			console.log("&", res.data);
+	// 			// console.log("&", res.data);
 	// 		})
 	// 		.catch((err) => {
 	// 			setvenappdetail({});
-	// 			console.log("&", err);
+	// 			// console.log("&", err);
 	// 		});
 	// }
 
@@ -298,7 +298,7 @@ export default function VendorClients() {
 
 	// useEffect(() => {
 	// 	if (viewApplicant) {
-	// 		console.log("NA");
+	// 		// console.log("NA");
 	// 		loadVendorSingleAppDetail(vjdata[vjobclick]["refid"], popupvcrefid);
 	// 	}
 	// }, [viewApplicant]);
@@ -365,7 +365,7 @@ export default function VendorClients() {
 
 	useEffect(() => {
 		if (resume != null && popuprefid.length > 0) {
-			console.log("$", "Step1", "Resume Changed Useeffect...");
+			// console.log("$", "Step1", "Resume Changed Useeffect...");
 			const fd = new FormData();
 			fd.append("resume", resume);
 			step1(popuprefid, fd);
@@ -379,8 +379,8 @@ export default function VendorClients() {
 			.then(async (res) => {
 				toastcomp("step 1", "success");
 				const dataObj = res.data;
-				console.log("!!!", "step1", dataObj);
-				console.log("!!!", "step1", dataObj["Email"]);
+				// console.log("!!!", "step1", dataObj);
+				// console.log("!!!", "step1", dataObj["Email"]);
 				const data = res.data;
 				toastcomp("step 2", "success");
 				if (data["Email"] && data["Email"].length > 0) {
@@ -407,7 +407,7 @@ export default function VendorClients() {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "step1 errr", err);
+				// console.log("!!!", "step1 errr", err);
 				resetState();
 			});
 	}
@@ -434,7 +434,7 @@ export default function VendorClients() {
 		await axiosInstanceAuth2
 			.post(`/applicant/vendor-apply/${popuprefid}/${vrefid}/`, fd)
 			.then((res) => {
-				console.log("!!!", "apply noauth md", res.data);
+				// console.log("!!!", "apply noauth md", res.data);
 				if (res.data.success === 1) {
 					toastcomp("Applied Successfully", "success");
 					setShowConfetti(true);
@@ -449,7 +449,7 @@ export default function VendorClients() {
 			})
 			.catch((err) => {
 				toastcomp("step 1", "error");
-				console.log("!!!", "apply noauth err", err);
+				// console.log("!!!", "apply noauth err", err);
 				resetState();
 				setocrLoader(false);
 				setAddCand(false);
@@ -464,8 +464,8 @@ export default function VendorClients() {
 			showJoyride();
 		}
 	}, [isJoyrideCompleted, showJoyride]);
-	console.log("joride ki value ", isJoyrideCompleted);
-	console.log("should showjoyride ki value ", shouldShowJoyride)
+	// console.log("joride ki value ", isJoyrideCompleted);
+	// console.log("should showjoyride ki value ", shouldShowJoyride)
 	const joyrideSteps = [
 		{
 			target: ".jobs-0",

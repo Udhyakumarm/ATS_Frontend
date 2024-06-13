@@ -33,7 +33,7 @@ namespace NextAuthUtils {
 				return [access, refreshToken];
 			}
 		} catch (err: any) {
-			console.log("Token refresh error, signing out");
+			// console.log("Token refresh error, signing out");
 			return [null, null];
 		}
 	};
@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
 						}
 					)
 					.then((response) => {
-						console.log({ response: response.data.userObj });
+						// console.log({ response: response.data.userObj });
 						return response;
 					})
 					.then((response) => ({
@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
 						accessToken: response.data.tokens.access
 					}))
 					.catch((err) => {
-						console.log({ err });
+						// console.log({ err });
 						return null;
 					});
 				if (!userObj) return null;
@@ -96,7 +96,7 @@ export const authOptions: NextAuthOptions = {
 			if (JwtUtils.isJwtExpired(token.accessToken as string)) {
 				const [newAccessToken, newRefreshToken] = await NextAuthUtils.refreshToken(token.refreshToken);
 
-				console.log(newAccessToken && newRefreshToken);
+				// console.log(newAccessToken && newRefreshToken);
 				if (newAccessToken && newRefreshToken) {
 					token = {
 						...token,

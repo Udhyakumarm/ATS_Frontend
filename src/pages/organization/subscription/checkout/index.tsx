@@ -23,7 +23,7 @@ const CheckoutPage: React.FC = () => {
 					toastcomp("rating not update","error")}
 			})
 			.catch((err) => {
-				console.log("@", "rating", err);
+				// console.log("@", "rating", err);
 				toastcomp("rating not update","error")
 			});
 
@@ -47,7 +47,7 @@ const CheckoutPage: React.FC = () => {
 			try {
 				const queryParams = new URLSearchParams(window.location.search);
 				const planId = queryParams.get("planId");
-				console.log(typeof planId);
+				// console.log(typeof planId);
 
 				if (!planId) {
 					console.error("planId is not available.");

@@ -44,8 +44,8 @@ export default function CandSignUp() {
 
 	useEffect(() => {
 		if ((carrierpage && cname == "") || cname != carrierpage) {
-			console.log("@", 1);
-			console.log("@", carrierpage);
+			// console.log("@", 1);
+			// console.log("@", carrierpage);
 			setcname(carrierpage);
 			setcid("");
 		}
@@ -53,9 +53,9 @@ export default function CandSignUp() {
 
 	async function getcid(cname: any) {
 		await axiosInstance22.get(`/organization/get/organizationprofilecid/carrier/${cname}/`).then((res) => {
-			console.log(res.data);
-			console.log(res.data["OrgProfile"]);
-			console.log(res.data["OrgProfile"][0]["unique_id"]);
+			// console.log(res.data);
+			// console.log(res.data["OrgProfile"]);
+			// console.log(res.data["OrgProfile"][0]["unique_id"]);
 			setcid(res.data["OrgProfile"][0]["unique_id"]);
 		});
 	}
@@ -158,10 +158,10 @@ export default function CandSignUp() {
 				} catch (error) {
 					toastcomp("Notify Not Add", "error");
 				}
-				console.log(response);
+				// console.log(response);
 				router.push(`/organization/${cname}/`);
 				setTimeout(() => {
-					console.log("Send verification email");
+					// console.log("Send verification email");
 				}, 100);
 				toastcomp("Successfully Registerd", "success");
 				setTimeout(() => {
@@ -169,7 +169,7 @@ export default function CandSignUp() {
 				}, 100);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				if (err.response.data.errors.non_field_errors) {
 					err.response.data.errors.non_field_errors.map((text: any) => toastcomp(text, "error"));
 					return false;
