@@ -22,7 +22,7 @@ const nextConfig = {
 			"localhost",
 			"127.0.0.1",
 			"atsapi.somhako.com",
-			"atsapi2.somhako.com",
+			"atsapi3.somhako.com",
 			"images.pexels.com",
 			"cdn-images-1.medium.com",
 			"images.unsplash.com"
