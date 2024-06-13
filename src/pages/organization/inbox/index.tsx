@@ -193,7 +193,7 @@ export default function Inbox({ currentUser, atsVersion }: any) {
 			console.log("&&&", "token", token);
 			const rws = new ReconnectingWebSocket(
 				process.env.NODE_ENV === "production"
-					? `wss://atsapi3.somhako.com/ws/chat/?access_token=${token}`
+					? `wss://atsapi3.somhako.com:8001/ws/chat/?access_token=${token}`
 					: `ws://127.0.0.1:8000/ws/chat/?access_token=${token}`
 			);
 
