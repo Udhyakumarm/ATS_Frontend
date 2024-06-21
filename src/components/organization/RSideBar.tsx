@@ -91,7 +91,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.get(`/applicant/listchat/`)
 			.then(async (res) => {
-				// console.log("&&", "chat", res.data);
+				console.log("&&", "chat", res.data);
 				setchat(res.data);
 				setSelectedCheckboxes([]);
 				setssuggestion([]);
@@ -109,7 +109,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 	//load Analytics chat
 	async function loadAnalyticsChat() {
 		await axiosInstanceAuth2
-			.get(`/applicant/listchat/`)
+			.get(`/chatbot/listachat/`)
 			.then(async (res) => {
 				// console.log("&&", "Analytics chat", res.data);
 				setachat(res.data);
