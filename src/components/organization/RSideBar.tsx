@@ -93,7 +93,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			.then(async (res) => {
 				console.log("&&", "chat", res.data);
 				const data = res.data
-				data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+				data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 				console.log("&&", "chat after", data);
 
 
