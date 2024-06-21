@@ -91,7 +91,7 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 		await axiosInstanceAuth2
 			.get(`/applicant/listchat/`)
 			.then(async (res) => {
-				// console.log("&&", "chat", res.data);
+				console.log("&&", "chat", res.data);
 				setchat(res.data);
 				setSelectedCheckboxes([]);
 				setssuggestion([]);
