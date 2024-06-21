@@ -92,7 +92,12 @@ export default function OrgRSideBar({ axiosInstanceAuth2, setrefresh, refresh }:
 			.get(`/applicant/listchat/`)
 			.then(async (res) => {
 				console.log("&&", "chat", res.data);
-				setchat(res.data);
+				const data = res.data
+				data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+				console.log("&&", "chat after", data);
+
+
+				setchat(data);
 				setSelectedCheckboxes([]);
 				setssuggestion([]);
 				setsuggSkill("");
